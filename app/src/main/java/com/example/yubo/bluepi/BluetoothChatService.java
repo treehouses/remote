@@ -17,7 +17,13 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -47,6 +53,12 @@ public class BluetoothChatService {
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+//    private static final UUID MY_UUID_SECURE =
+//            UUID.fromString("815425a5-bfac-47bf-9321-c5ff980b5e11");
+//
+//    private static final UUID MY_UUID_INSECURE =
+//            UUID.fromString("815425a5-bfac-47bf-9321-c5ff980b5e11");
+
     // Member fields
     private final BluetoothAdapter mAdapter;
     private final Handler mHandler;
@@ -56,6 +68,7 @@ public class BluetoothChatService {
     private ConnectedThread mConnectedThread;
     private int mState;
     private int mNewState;
+
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -467,7 +480,9 @@ public class BluetoothChatService {
             // Get the BluetoothSocket input and output streams
             try {
                 tmpIn = socket.getInputStream();
+                Log.d(TAG, " tmpIn = " + tmpIn);
                 tmpOut = socket.getOutputStream();
+                Log.d(TAG, " tmpOut = " + tmpOut);
             } catch (IOException e) {
                 Log.e(TAG, "temp sockets not created", e);
             }
@@ -480,23 +495,67 @@ public class BluetoothChatService {
         public void run() {
             Log.i(TAG, "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
-            int bytes;
+            int bytes = -1;
+            String out = new String();
+            List<String>  tempOutputList = new ArrayList<String>();
+            // Keep listening to the InputStream while connected
+//            while (mState == STATE_CONNECTED) {
+//                try {
+//                    // Read from the InputStream
+//                    //bytes = mmInStream.read(buffer);
+//                    //Log.d(TAG, "bytes = " + bytes + ", buffer = " + buffer);
+//
+//                    while(true){
+//                        bytes = mmInStream.read(buffer);
+//                        out += new String(buffer, 0, bytes);
+//                        if(bytes < 1024){
+//                            break;
+//                        }
+//                    }
+//                    tempOutputList = getTokens("[a-zA-Z._]+", out);
+//                    HashSet<String> mSet = new HashSet<String>();
+//                    for(String s : tempOutputList){
+//                        if(!mSet.contains(s)){
+//                            mSet.add(s);
+//                        }
+//                    }
+//
+//                    System.out.println("mSet = " + mSet);
+//
+//
+//                    Log.d(TAG, "out = " + out + "size of out = " + out.length());
+//                    Log.d(TAG, "tempOutputList = " + mSet.iterator().next());
+//
+//
+//                    // Send the obtained bytes to the UI Activity
+//                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+//                            .sendToTarget();
+//                } catch (IOException e) {
+//                    Log.e(TAG, "disconnected", e);
+//                    connectionLost();
+//                    break;
+//                }
+//            }
 
             // Keep listening to the InputStream while connected
-            while (mState == STATE_CONNECTED) {
+            while (true) {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
-
-                    // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
+                    out = new String(buffer, 0, bytes);
+                    Log.d(TAG, "out = " + out + "size of out = " + out.length());
+                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
+//                    mEmulatorView.write(buffer, bytes);
+                    // Send the obtained bytes to the UI Activity
+                    //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();
                     break;
                 }
             }
+
         }
 
         /**
@@ -523,5 +582,17 @@ public class BluetoothChatService {
                 Log.e(TAG, "close() of connect socket failed", e);
             }
         }
+    }
+
+    private List<String> getTokens(String pattern, String text){
+        ArrayList<String> tokens = new ArrayList<String>();
+        Pattern tokSplitter = Pattern.compile(pattern);
+        Matcher m = tokSplitter.matcher(text);
+        while (m.find()) {
+            if(!tokens.contains(m.group())){
+                tokens.add(m.group());
+            }
+        }
+        return tokens;
     }
 }

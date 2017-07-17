@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -25,6 +26,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by yubo on 7/11/17.
@@ -140,6 +146,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
+//        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message,android.R.id.text1){
+//            @NonNull
+//            @Override
+//            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//                TextView textView = (TextView) super.getView(position, convertView, parent);
+//                if()
+//            }
+//        };
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
@@ -281,13 +295,21 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
                     mConversationArrayAdapter.add("Me:  " + writeMessage);
+
                     break;
                 case Constants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
+                    //byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+//                    String readMessage = new String(readBuf, 0, msg.arg1);
+//                    String readMessage = new String(readBuf);
+                    String readMessage = (String)msg.obj;
+                    //List<String>  tempOutputList = getTokens("[a-zA-Z._]+", readMessage);
+                    Log.d(TAG, "readMessage = " + readMessage);
+//                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    mConversationArrayAdapter.add(readMessage);
+
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -380,5 +402,17 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         }
         return false;
+    }
+
+    private List<String> getTokens(String pattern, String text){
+        ArrayList<String> tokens = new ArrayList<String>();
+        Pattern tokSplitter = Pattern.compile(pattern);
+        Matcher m = tokSplitter.matcher(text);
+        while (m.find()) {
+            if(!tokens.contains(m.group())){
+                tokens.add(m.group());
+            }
+        }
+        return tokens;
     }
 }
