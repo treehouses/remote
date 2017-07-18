@@ -33,6 +33,7 @@
         android:orientation="horizontal" >
 
         <EditText
+            android:hint="@string/command_hint"
             android:id="@+id/edit_text_out"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

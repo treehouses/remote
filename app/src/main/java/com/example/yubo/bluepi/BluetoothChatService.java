@@ -485,8 +485,8 @@ public class BluetoothChatService {
             Log.i(TAG, "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes = -1;
-            String out = new String();
-            List<String>  tempOutputList = new ArrayList<String>();
+            String out = "";
+//            List<String>  tempOutputList = new ArrayList<String>();
             // Keep listening to the InputStream while connected
 //            while (mState == STATE_CONNECTED) {
 //                try {
