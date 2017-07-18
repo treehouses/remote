@@ -11,6 +11,7 @@ gen/
 /.idea/libraries
 .idea/vcs.xml
 .idea/misc.xml
+.idea/inspectionProfiles/
 .DS_Store
 /build
 /captures

@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -41,23 +39,14 @@ public class BluetoothChatService {
     private static final String NAME_SECURE = "BluetoothChatSecure";
     private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
-    // Unique UUID for this application
-//    private static final UUID MY_UUID_SECURE =
-//            UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-//    private static final UUID MY_UUID_INSECURE =
-//            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
+    // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
     private static final UUID MY_UUID_SECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-//    private static final UUID MY_UUID_SECURE =
-//            UUID.fromString("815425a5-bfac-47bf-9321-c5ff980b5e11");
-//
-//    private static final UUID MY_UUID_INSECURE =
-//            UUID.fromString("815425a5-bfac-47bf-9321-c5ff980b5e11");
 
     // Member fields
     private final BluetoothAdapter mAdapter;
