@@ -14,7 +14,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -30,13 +29,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by yubo on 7/11/17.
@@ -106,14 +98,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
-
-        // setup alert dialog for wifi configuration
-        setupAlertDialog();
-    }
-
-    private void setupAlertDialog() {
-        FragmentActivity activity = getActivity();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        
     }
 
     @Override
@@ -337,11 +322,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
                     String readMessage = (String)msg.obj;
-                    //List<String>  tempOutputList = getTokens("[a-zA-Z._]+", readMessage);
                     Log.d(TAG, "readMessage = " + readMessage);
+
                     //remove the space at the very end of the readMessage -> eliminate space between items
                     readMessage = readMessage.substring(0,readMessage.length()-1);
-                    //Log.d(TAG, "modified readMessage = " + readMessage.substring(0,readMessage.length()-2));
 //                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     mConversationArrayAdapter.add(readMessage);
 
@@ -462,18 +446,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
 
-    }
-
-    private List<String> getTokens(String pattern, String text){
-        ArrayList<String> tokens = new ArrayList<String>();
-        Pattern tokSplitter = Pattern.compile(pattern);
-        Matcher m = tokSplitter.matcher(text);
-        while (m.find()) {
-            if(!tokens.contains(m.group())){
-                tokens.add(m.group());
-            }
-        }
-        return tokens;
     }
 
 }
