@@ -532,7 +532,7 @@ public class BluetoothChatService {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     out = new String(buffer, 0, bytes);
-                    Log.d(TAG, "out = " + out + "size of out = " + out.length());
+                    Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
 //                    mEmulatorView.write(buffer, bytes);

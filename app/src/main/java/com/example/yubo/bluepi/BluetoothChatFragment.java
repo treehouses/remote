@@ -6,9 +6,11 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -29,6 +31,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -42,7 +46,7 @@ import java.util.regex.Pattern;
  * This fragment controls Bluetooth to communicate with other devices.
  */
 
-public class BluetoothChatFragment extends android.support.v4.app.Fragment implements WifiDialogFragment.WifiDialogListener {
+public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
 
     private static final String TAG = "BluetoothChatFragment";
@@ -86,6 +90,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
+
+    private static boolean isRead = false;
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
@@ -160,15 +166,21 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
-//        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message,android.R.id.text1){
-//            @NonNull
-//            @Override
-//            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//                TextView textView = (TextView) super.getView(position, convertView, parent);
-//                if()
-//            }
-//        };
+//        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView tView = (TextView) view.findViewById(R.id.listItem);
+                if(isRead){
+                    tView.setTextColor(Color.BLUE);
+                }else{
+                    tView.setTextColor(Color.RED);
+                }
+                return view;
+            }
+        };
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
@@ -310,6 +322,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
+                    isRead = false;
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
@@ -318,6 +331,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
 
                     break;
                 case Constants.MESSAGE_READ:
+                    isRead = true;
                     //byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
@@ -325,6 +339,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
                     String readMessage = (String)msg.obj;
                     //List<String>  tempOutputList = getTokens("[a-zA-Z._]+", readMessage);
                     Log.d(TAG, "readMessage = " + readMessage);
+                    //remove the space at the very end of the readMessage -> eliminate space between items
+                    readMessage = readMessage.substring(0,readMessage.length()-1);
+                    //Log.d(TAG, "modified readMessage = " + readMessage.substring(0,readMessage.length()-2));
 //                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     mConversationArrayAdapter.add(readMessage);
 
@@ -377,6 +394,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
             case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
                     Log.d(TAG, "back from dialog, ok");
+                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi
+
                 }else{
                     Log.d(TAG, "back from dialog, fail");
                 }
@@ -457,15 +476,4 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
         return tokens;
     }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        Log.d(TAG,"In onDialogPositiveClick");
-
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        Log.d(TAG,"In onDialogNegativeClick");
-
-    }
 }

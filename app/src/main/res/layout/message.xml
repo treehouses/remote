@@ -14,8 +14,11 @@
      limitations under the License.
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
     android:textSize="18sp"
+    android:layout_weight="1"
+    android:padding="0dp"
+    android:layout_margin="0dp"
     />

@@ -20,16 +20,16 @@ public class WifiDialogFragment extends DialogFragment {
 
     private static final String TAG = "WifiDialogFragment";
 
-    /* The activity that creates an instance of this dialog fragment must
-    * implement this interface in order to receive event callbacks.
-    * Each method passes the DialogFragment in case the host needs to query it. */
-    public interface WifiDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
-    }
+//    /* The activity that creates an instance of this dialog fragment must
+//    * implement this interface in order to receive event callbacks.
+//    * Each method passes the DialogFragment in case the host needs to query it. */
+//    public interface WifiDialogListener {
+//        public void onDialogPositiveClick(DialogFragment dialog);
+//        public void onDialogNegativeClick(DialogFragment dialog);
+//    }
 
-    // Use this instance of the interface to deliver action events
-    WifiDialogListener mListener;
+//    // Use this instance of the interface to deliver action events
+//    WifiDialogListener mListener;
 
 
     public static WifiDialogFragment newInstance(int num){
