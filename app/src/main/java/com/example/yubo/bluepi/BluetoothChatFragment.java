@@ -2,6 +2,7 @@ package com.example.yubo.bluepi;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -9,7 +10,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,15 +42,20 @@ import java.util.regex.Pattern;
  * This fragment controls Bluetooth to communicate with other devices.
  */
 
-public class BluetoothChatFragment extends android.support.v4.app.Fragment {
+public class BluetoothChatFragment extends android.support.v4.app.Fragment implements WifiDialogFragment.WifiDialogListener {
 
 
     private static final String TAG = "BluetoothChatFragment";
+
+    //current connection status
+    static String currentStatus = "not connected";
 
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+    public static final int DIALOG_FRAGMENT = 4;
+
 
     // Layout Views
     private ListView mConversationView;
@@ -92,6 +100,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
+
+        // setup alert dialog for wifi configuration
+        setupAlertDialog();
+    }
+
+    private void setupAlertDialog() {
+        FragmentActivity activity = getActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     }
 
     @Override
@@ -246,7 +262,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             return;
         }
         Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
+        currentStatus = getString(resId);
         actionBar.setSubtitle(resId);
+
     }
 
     /**
@@ -264,6 +282,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             return;
         }
         Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
+        currentStatus = subTitle.toString();
         actionBar.setSubtitle(subTitle);
     }
 
@@ -355,6 +374,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
+            case DIALOG_FRAGMENT:
+                if(resultCode == Activity.RESULT_OK){
+                    Log.d(TAG, "back from dialog, ok");
+                }else{
+                    Log.d(TAG, "back from dialog, fail");
+                }
         }
     }
 
@@ -383,9 +408,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.secure_connect_scan: {
-                // Launch the DeviceListActivity to see devices and do scan
-                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+//                // Launch the DeviceListActivity to see devices and do scan
+//                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+//                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+
+                //create wifiDialogFragment
+                showNWifiDialog();
                 return true;
             }
             case R.id.insecure_connect_scan: {
@@ -403,6 +431,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         return false;
     }
 
+    public void showNWifiDialog() {
+        // Create an instance of the dialog fragment and show it
+//        DialogFragment dialog = new WifiDialogFragment ();
+//        android.support.v4.app.DialogFragment dialog = new WifiDialogFragment();
+//        WifiDialogFragment dialog = WifiDialogFragment.newInstance();
+//        dialog.show(getChildFragmentManager(), "WifiDialogFragment");
+
+        DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
+
+
+    }
+
     private List<String> getTokens(String pattern, String text){
         ArrayList<String> tokens = new ArrayList<String>();
         Pattern tokSplitter = Pattern.compile(pattern);
@@ -413,5 +455,17 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         }
         return tokens;
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Log.d(TAG,"In onDialogPositiveClick");
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        Log.d(TAG,"In onDialogNegativeClick");
+
     }
 }

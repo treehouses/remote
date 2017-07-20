@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -56,4 +55,12 @@
 
         ]]>
     </string>
+
+    <!-- WifiDialogFragment -->
+    <string name="cancel">Cancel</string>
+    <string name="start_configuration">Start Configuration</string>
+    <string name="dialog_message">message comes here</string>
+    <string name="ssid">SSID</string>
+    <string name="password">Password</string>
+
 </resources>
