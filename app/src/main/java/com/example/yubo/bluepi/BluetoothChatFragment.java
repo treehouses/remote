@@ -54,7 +54,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
-    public static final int DIALOG_FRAGMENT = 4;
+    public static final int REQUEST_DIALOG_FRAGMENT = 4;
 
 
     // Layout Views
@@ -374,7 +374,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
-            case DIALOG_FRAGMENT:
+            case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
                     Log.d(TAG, "back from dialog, ok");
                 }else{
@@ -439,7 +439,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment imple
 //        dialog.show(getChildFragmentManager(), "WifiDialogFragment");
 
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
+        dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
 
