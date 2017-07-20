@@ -2,7 +2,6 @@ package com.example.yubo.bluepi;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -98,7 +97,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
-        
+
     }
 
     @Override
