@@ -572,16 +572,5 @@ public class BluetoothChatService {
             }
         }
     }
-
-    private List<String> getTokens(String pattern, String text){
-        ArrayList<String> tokens = new ArrayList<String>();
-        Pattern tokSplitter = Pattern.compile(pattern);
-        Matcher m = tokSplitter.matcher(text);
-        while (m.find()) {
-            if(!tokens.contains(m.group())){
-                tokens.add(m.group());
-            }
-        }
-        return tokens;
-    }
+    
 }
