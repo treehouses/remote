@@ -7,11 +7,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 
 /**
  * Created by yubo on 7/19/17.
@@ -36,7 +37,7 @@ public class WifiDialogFragment extends DialogFragment {
     private EditText mSSIDEditText;
     private EditText mPWDEditText;
 
-    private boolean isIvalidInput;
+    private boolean isValidInput;
 
     public static WifiDialogFragment newInstance(int num){
 
@@ -56,16 +57,19 @@ public class WifiDialogFragment extends DialogFragment {
         Log.d(TAG,"In onCreateDialog()");
 
         // Build the dialog and set up the button click handlers
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        AlertDialog mDialog = new AlertDialog.Builder(getActivity())
-                .setView(inflater.inflate(R.layout.dialog_design,null))
+        View mView = inflater.inflate(R.layout.dialog_design,null);
+        initLayoutView(mView);
+
+        final AlertDialog mDialog = new AlertDialog.Builder(getActivity())
+                .setView(mView)
                 .setTitle(R.string.dialog_message)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                if(checkValidInput()){
+//                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
+                                if(isValidInput){
                                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                                 }
                             }
@@ -78,28 +82,56 @@ public class WifiDialogFragment extends DialogFragment {
                 })
                 .create();
 
-        initLayoutView();
+        //initially disable button click
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setClickable(false);
+                mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                mSSIDEditText.setError(getString(R.string.error_ssid_empty));
+            }
+        });
+        setTextChangeListener(mDialog);
 
-        //mDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         return mDialog;
 
 
     }
 
-    private void initLayoutView() {
-        isIvalidInput = true;
-        mSSIDEditText = (EditText)getActivity().findViewById(R.id.SSID);
-        mPWDEditText = (EditText)getActivity().findViewById(R.id.password);
+    private void setTextChangeListener(final AlertDialog mDialog) {
 
+        mSSIDEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG,"s.length() = " + s.length());
+                if(s.length() > 0){
+                    isValidInput = true;
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }else{
+                    isValidInput = false;
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    mSSIDEditText.setError(getString(R.string.error_ssid_empty));
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
-    private boolean checkValidInput(){
-        if(mSSIDEditText.getText().toString().length() > 0){
-            return true;
-        }
-
-        mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-        return false;
+    private void initLayoutView(View mView) {
+        mSSIDEditText = (EditText)mView.findViewById(R.id.SSID);
+        mPWDEditText = (EditText)mView.findViewById(R.id.password);
 
     }
 

@@ -378,6 +378,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 if(resultCode == Activity.RESULT_OK){
                     Log.d(TAG, "back from dialog, ok");
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi
+//                    Boolean isValidInput = data.getExtras().getBoolean("isValidInput");
+//                    if(isValidInput != null && isValidInput){
+//                        Toast.makeText(getActivity(), "configuring RPi...", Toast.LENGTH_LONG).show();
+//                    }else{
+//                        Toast.makeText(getActivity(), "required SSID input", Toast.LENGTH_LONG).show();
+//                    }
 
                 }else{
                     Log.d(TAG, "back from dialog, fail");
@@ -410,11 +416,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.secure_connect_scan: {
-//                // Launch the DeviceListActivity to see devices and do scan
-//                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-//                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-
-                //create wifiDialogFragment
                 showNWifiDialog();
                 return true;
             }
@@ -435,10 +436,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     public void showNWifiDialog() {
         // Create an instance of the dialog fragment and show it
-//        DialogFragment dialog = new WifiDialogFragment ();
-//        android.support.v4.app.DialogFragment dialog = new WifiDialogFragment();
-//        WifiDialogFragment dialog = WifiDialogFragment.newInstance();
-//        dialog.show(getChildFragmentManager(), "WifiDialogFragment");
 
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
