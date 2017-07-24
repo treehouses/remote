@@ -9,6 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 /**
  * Created by yubo on 7/19/17.
@@ -29,6 +32,11 @@ public class WifiDialogFragment extends DialogFragment {
 //    // Use this instance of the interface to deliver action events
 //    WifiDialogListener mListener;
 
+    // Layout Views
+    private EditText mSSIDEditText;
+    private EditText mPWDEditText;
+
+    private boolean isIvalidInput;
 
     public static WifiDialogFragment newInstance(int num){
 
@@ -50,14 +58,16 @@ public class WifiDialogFragment extends DialogFragment {
         // Build the dialog and set up the button click handlers
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        return new AlertDialog.Builder(getActivity())
+        AlertDialog mDialog = new AlertDialog.Builder(getActivity())
                 .setView(inflater.inflate(R.layout.dialog_design,null))
                 .setTitle(R.string.dialog_message)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                if(checkValidInput()){
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                }
                             }
                         }
                 )
@@ -67,6 +77,30 @@ public class WifiDialogFragment extends DialogFragment {
                     }
                 })
                 .create();
+
+        initLayoutView();
+
+        //mDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        return mDialog;
+
+
+    }
+
+    private void initLayoutView() {
+        isIvalidInput = true;
+        mSSIDEditText = (EditText)getActivity().findViewById(R.id.SSID);
+        mPWDEditText = (EditText)getActivity().findViewById(R.id.password);
+
+    }
+
+    private boolean checkValidInput(){
+        if(mSSIDEditText.getText().toString().length() > 0){
+            return true;
+        }
+
+        mSSIDEditText.setError(getString(R.string.error_ssid_empty));
+        return false;
+
     }
 
 }
