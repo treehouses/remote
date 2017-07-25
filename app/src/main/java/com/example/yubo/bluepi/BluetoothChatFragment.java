@@ -376,14 +376,28 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }
             case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
-                    Log.d(TAG, "back from dialog, ok");
-                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi
+
+                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+//                    String SSID = data.getStringExtra("SSID");
+//                    String PWD = data.getStringExtra("PWD");
+                    Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
+
+                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Boolean isValidInput = data.getExtras().getBoolean("isValidInput");
 //                    if(isValidInput != null && isValidInput){
 //                        Toast.makeText(getActivity(), "configuring RPi...", Toast.LENGTH_LONG).show();
 //                    }else{
 //                        Toast.makeText(getActivity(), "required SSID input", Toast.LENGTH_LONG).show();
 //                    }
+                    if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
+                        Toast.makeText(getActivity(), R.string.not_connected,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Toast.makeText(getActivity(), R.string.config_success,
+                            Toast.LENGTH_SHORT).show();
 
                 }else{
                     Log.d(TAG, "back from dialog, fail");

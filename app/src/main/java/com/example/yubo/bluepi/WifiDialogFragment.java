@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -70,7 +71,13 @@ public class WifiDialogFragment extends DialogFragment {
                             public void onClick(DialogInterface dialog, int whichButton) {
 //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
                                 if(isValidInput){
-                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                    String SSID = mSSIDEditText.getText().toString();
+                                    String PWD = mPWDEditText.getText().toString();
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra("SSID", SSID);
+                                    intent.putExtra("PWD", PWD);
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                                 }
                             }
                         }
