@@ -29,6 +29,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by yubo on 7/11/17.
  */
@@ -227,6 +230,33 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    private void sendMessage(String SSID, String PWD) {
+        // Check that we're actually connected before trying anything
+        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (SSID.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            JSONObject mJson = new JSONObject();
+            try {
+                mJson.put("SSID",SSID);
+                mJson.put("PWD",PWD);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            byte[] send = mJson.toString().getBytes();
+            mChatService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+            mOutEditText.setText(mOutStringBuffer);
+        }
+    }
+
     /**
      * The action listener for the EditText widget, to listen for the return key
      */
@@ -377,27 +407,25 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
-                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
-//                    String SSID = data.getStringExtra("SSID");
-//                    String PWD = data.getStringExtra("PWD");
-                    Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
-
-                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-//                    Boolean isValidInput = data.getExtras().getBoolean("isValidInput");
-//                    if(isValidInput != null && isValidInput){
-//                        Toast.makeText(getActivity(), "configuring RPi...", Toast.LENGTH_LONG).show();
-//                    }else{
-//                        Toast.makeText(getActivity(), "required SSID input", Toast.LENGTH_LONG).show();
-//                    }
+                    //check status
                     if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
 
+                    //get SSID & PWD from user input
+                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+
+                    Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
+
+                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
                     Toast.makeText(getActivity(), R.string.config_success,
                             Toast.LENGTH_SHORT).show();
+
+                    sendMessage(SSID,PWD);
+                    //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
                     Log.d(TAG, "back from dialog, fail");
