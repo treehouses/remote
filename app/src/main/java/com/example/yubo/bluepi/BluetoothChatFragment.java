@@ -153,7 +153,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-//        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
             @NonNull
             @Override
@@ -341,22 +340,26 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     Log.d(TAG, "writeMessage = " + writeMessage);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    mConversationArrayAdapter.add("Command:  " + writeMessage);
 
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
-                    //byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
+//                    byte[] readBuf = (byte[]) msg.obj;
+//                     construct a string from the valid bytes in the buffer
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
                     String readMessage = (String)msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
-
-                    //remove the space at the very end of the readMessage -> eliminate space between items
-                    readMessage = readMessage.substring(0,readMessage.length()-1);
-//                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                    mConversationArrayAdapter.add(readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if(isJson(readMessage)){
+                        handleCallback(readMessage);
+                    }else{
+                        //remove the space at the very end of the readMessage -> eliminate space between items
+                        readMessage = readMessage.substring(0,readMessage.length()-1);
+                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        mConversationArrayAdapter.add(readMessage);
+                    }
 
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -483,6 +486,31 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
+
+    }
+
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
 
     }
 
