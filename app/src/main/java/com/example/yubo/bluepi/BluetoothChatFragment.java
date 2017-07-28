@@ -2,6 +2,7 @@ package com.example.yubo.bluepi;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -59,6 +60,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
+    private ProgressDialog mProgressDialog;
+
 
     /**
      * Name of the connected device
@@ -191,6 +194,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
+
+        //get spinner
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setTitle("Loading");
+        mProgressDialog.setMessage("Wait while loading...");
+        mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
     }
 
     /**
@@ -417,6 +427,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         return;
                     }
 
+                    //show the progress bar, disable user interaction
+                    mProgressDialog.show();
+
                     //get SSID & PWD from user input
                     String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
                     String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
@@ -424,8 +437,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-                    Toast.makeText(getActivity(), R.string.config_success,
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
 
                     sendMessage(SSID,PWD);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
@@ -501,11 +514,21 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public void handleCallback(String str){
         String result;
         String ip;
+        //enable user interaction
+        mProgressDialog.dismiss();
         try{
             JSONObject mJSON = new JSONObject(str);
             result = mJSON.getString("result") == null? "" : mJSON.getString("result");
             ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
             Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getActivity(), R.string.config_fail,
+                            Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getActivity(), R.string.config_success,
+                            Toast.LENGTH_SHORT).show();
+            }
 
         }catch (JSONException e){
             // error handling

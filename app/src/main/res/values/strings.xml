@@ -65,6 +65,6 @@
     <string name="error_ssid_empty">Enter the name of the Wifi you want to configure</string>
     <string name="config_configuring">Start configuring...</string>
     <string name="config_success">Configure Wifi successfully</string>
-    <string name="config_fail">Fail to configure Wifi</string>
+    <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
 
 </resources>
