@@ -90,6 +90,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     private static boolean isRead = false;
 
+    private static boolean isCountdown = false;
+
     @Override
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +126,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+        }
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
@@ -321,6 +325,18 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         actionBar.setSubtitle(subTitle);
     }
 
+    private final Runnable watchDogTimeOut = new Runnable() {
+        @Override
+        public void run() {
+            isCountdown = false;
+            //time out
+            if(mProgressDialog.isShowing()){
+                mProgressDialog.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -365,9 +381,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     if(isJson(readMessage)){
                         handleCallback(readMessage);
                     }else{
+                        if(isCountdown){
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
                         if(mProgressDialog.isShowing()){
                             mProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT);
+                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
@@ -433,6 +453,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
                     //show the progress bar, disable user interaction
                     mProgressDialog.show();
+                    //TODO: start watchdog
+                    isCountdown = true;
+                    mHandler.postDelayed(watchDogTimeOut,30000);
+                    Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
                     String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
@@ -518,6 +542,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public void handleCallback(String str){
         String result;
         String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+            isCountdown = false;
+        }
+
         //enable user interaction
         mProgressDialog.dismiss();
         try{
