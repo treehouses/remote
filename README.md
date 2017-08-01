@@ -1,18 +1,13 @@
 # Bluetooth-RPi
 
-Get RPi’s Terminal Access and Configure Wifi Setting from Android Device through Bluetooth 
+Bluetooth-RPi is an Android App that allows you to:
+1. Get Raspberry Pi's terminal access so that you can send commands to / receive executed result from RPi
 
-## Getting Started
+2. Configure RPi's Wifi Setting without the help of monitor, keyboard, usb cable, etc.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Prerequisites
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+Bluetooth-RPi is used with this Python script(with be added soon) runnung on your RPi.
 
 ### Installing
 
