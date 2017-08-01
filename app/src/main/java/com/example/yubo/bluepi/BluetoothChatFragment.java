@@ -367,6 +367,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     }else{
                         if(mProgressDialog.isShowing()){
                             mProgressDialog.dismiss();
+                            Toast.makeText(activity, R.string.config_alreadyConfig);
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
