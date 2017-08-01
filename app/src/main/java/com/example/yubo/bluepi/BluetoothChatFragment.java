@@ -365,6 +365,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     if(isJson(readMessage)){
                         handleCallback(readMessage);
                     }else{
+                        if(mProgressDialog.isShowing()){
+                            mProgressDialog.dismiss();
+                        }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
