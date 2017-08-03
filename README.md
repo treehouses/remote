@@ -1,6 +1,6 @@
 # Bluetooth-RPi
 
-Bluetooth-RPi is an Android App based on Google samples - [Android-BluetoothChat](https://github.com/googlesamples/android-BluetoothChat). It allows you to:
+An Android App based on Google samples - [Android-BluetoothChat](https://github.com/googlesamples/android-BluetoothChat). Bluetooth-RPi allows you to:
 1. Get Raspberry Pi's terminal access so that you can send commands to / receive executed results from RPi
 
 2. Configure RPi's Wifi Setting without the help of monitor, keyboard, mouse, etc.
