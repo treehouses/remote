@@ -485,8 +485,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
-                    //DEBUG
-//                    sendMessage(SSID,PWD);
+
+                    sendMessage(SSID,PWD);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
