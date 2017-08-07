@@ -16,10 +16,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/secure_connect_scan"
-        android:icon="@drawable/ic_action_device_access_bluetooth_searching"
+        android:id="@+id/wifi_configuration"
+        android:icon="@drawable/wifi_configuration"
         android:showAsAction="ifRoom"
         android:title="@string/secure_connect"/>
+
+    <!--<item-->
+        <!--android:id="@+id/secure_connect_scan"-->
+        <!--android:icon="@drawable/ic_action_device_access_bluetooth_searching"-->
+        <!--android:showAsAction="ifRoom"-->
+        <!--android:title="@string/secure_connect"/>-->
 
     <item
         android:id="@+id/insecure_connect_scan"
@@ -29,6 +35,7 @@
     <item
         android:id="@+id/discoverable"
         android:showAsAction="never"
+        android:visible="false"
         android:title="@string/discoverable"/>
 
 </menu>

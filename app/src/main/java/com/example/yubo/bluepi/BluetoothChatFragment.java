@@ -519,7 +519,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.secure_connect_scan: {
+            case R.id.wifi_configuration: {
                 showNWifiDialog();
                 return true;
             }
@@ -571,14 +571,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             JSONObject mJSON = new JSONObject(str);
             result = mJSON.getString("result") == null? "" : mJSON.getString("result");
             ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
             if(!result.equals("SUCCESS")){
                 Toast.makeText(getActivity(), R.string.config_fail,
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
             }else{
-                Toast.makeText(getActivity(), R.string.config_success,
-                            Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
             }
 
         }catch (JSONException e){
