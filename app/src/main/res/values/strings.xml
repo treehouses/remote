@@ -24,6 +24,10 @@
     <string name="title_not_connected">not connected</string>
     <string name="command_hint">commands</string>
 
+    <!-- ProgressDialog -->
+    <string name="progress_dialog_title">Configuring</string>
+    <string name="progress_dialog_message">Wait while configuring...</string>
+
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices...</string>
     <string name="select_device">select a device to connect</string>
@@ -59,10 +63,10 @@
     <!-- WifiDialogFragment -->
     <string name="cancel">Cancel</string>
     <string name="start_configuration">Start Configuration</string>
-    <string name="dialog_message">message comes here</string>
+    <string name="dialog_message">Configure RPi\'s Wi-Fi</string>
     <string name="ssid">SSID</string>
     <string name="password">Password</string>
-    <string name="error_ssid_empty">Enter the name of the Wifi you want to configure</string>
+    <string name="error_ssid_empty">Tpye in the name of the Wi-Fi</string>
     <string name="config_configuring">Start configuring...</string>
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>

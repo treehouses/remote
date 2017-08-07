@@ -219,8 +219,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
         //get spinner
         mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setTitle("Loading");
-        mProgressDialog.setMessage("Wait while loading...");
+        mProgressDialog.setTitle(R.string.progress_dialog_title);
+        mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
         mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
     }
@@ -485,8 +485,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
-
-                    sendMessage(SSID,PWD);
+                    //DEBUG
+//                    sendMessage(SSID,PWD);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
