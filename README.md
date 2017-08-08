@@ -13,16 +13,16 @@ Bluetooth-RPi is used with [Bluetooth-RPi-Python](https://github.com/Yurockkk/Bl
 
 ### Step 1 - Scan and connect to your RPi 3 through bluetooth insecure connection
 
-![](https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/connect_device.png | width=100)
+<img src="https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/connect_device.png" width="100">
 
 After connecting your RPi 3, you are able to 
 1. Send commands to / receive executed results from RPi 3
 
-![](https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/sending-command.png | width=100)
+<img src="https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/sending-command.png" width="100">
 
 2. Configure RPi's wifi setting by entering SSID & password 
 
-![](https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/wifi-configuration.png | width=100)
+<img src="https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/wifi-configuration.png" width="100">
 
 ## Author
 
