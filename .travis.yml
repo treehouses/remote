@@ -2,7 +2,7 @@ language: android
 
 notifications:
   slack:
-    on_success: always
+    on_success: never
 
 components:
 
