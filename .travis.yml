@@ -1,9 +1,7 @@
 language: android
 
 notifications:
-email: false
-  slack:
-    on_success: never
+email: false  
 
 components:
 
