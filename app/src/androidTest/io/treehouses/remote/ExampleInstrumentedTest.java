@@ -1,4 +1,4 @@
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.yubo.bluepi", appContext.getPackageName());
+        assertEquals("io.treehouses.remote", appContext.getPackageName());
     }
 }
