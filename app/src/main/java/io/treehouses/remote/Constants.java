@@ -16,11 +16,9 @@
 
 */
 
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
-/**
- * Created by yubo on 7/11/17.
- */
+
 
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.

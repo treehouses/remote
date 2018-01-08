@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -37,9 +37,7 @@ import android.widget.TextView;
 
 import java.util.Set;
 
-/**
- * Created by yubo on 7/11/17.
- */
+
 
 public class DeviceListActivity extends Activity {
 

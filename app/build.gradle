@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "com.example.yubo.bluepi"
+        applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 2

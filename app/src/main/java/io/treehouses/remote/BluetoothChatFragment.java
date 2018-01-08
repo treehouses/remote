@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -51,9 +51,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by yubo on 7/11/17.
- */
+
 
 /**
  * This fragment controls Bluetooth to communicate with other devices.
