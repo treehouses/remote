@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package com.example.ole.bluepi;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -34,6 +34,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.ole.bluepi.R;
 
 import java.util.Set;
 

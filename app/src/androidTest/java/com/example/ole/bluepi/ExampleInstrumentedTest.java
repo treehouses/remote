@@ -1,4 +1,4 @@
-package com.example.yubo.bluepi;
+package com.example.ole.bluepi;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

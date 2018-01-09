@@ -1,4 +1,4 @@
-package com.example.yubo.bluepi;
+package com.example.ole.bluepi;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+
+import com.example.ole.bluepi.R;
 
 /**
  * Created by yubo on 7/19/17.

@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package com.example.ole.bluepi;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -47,6 +47,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.ole.bluepi.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

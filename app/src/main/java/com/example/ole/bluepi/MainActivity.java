@@ -17,13 +17,15 @@
 */
 
 
-package com.example.yubo.bluepi;
+package com.example.ole.bluepi;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.ole.bluepi.R;
 
 public class MainActivity extends FragmentActivity {
 

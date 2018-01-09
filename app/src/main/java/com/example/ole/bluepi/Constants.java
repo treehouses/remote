@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package com.example.ole.bluepi;
 
 /**
  * Created by yubo on 7/11/17.
