@@ -17,15 +17,15 @@
 */
 
 
-package com.example.ole.bluepi;
+package io.treehouse.remote;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.example.ole.bluepi.R;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends FragmentActivity {
 

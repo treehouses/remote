@@ -16,7 +16,7 @@
 
 */
 
-package com.example.ole.bluepi;
+package io.treehouse.remote;
 
 /**
  * Created by yubo on 7/11/17.

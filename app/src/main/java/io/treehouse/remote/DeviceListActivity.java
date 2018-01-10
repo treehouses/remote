@@ -16,7 +16,7 @@
 
 */
 
-package com.example.ole.bluepi;
+package io.treehouse.remote;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -35,9 +35,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.ole.bluepi.R;
-
 import java.util.Set;
+
+import io.treehouse.remote.R;
 
 /**
  * Created by yubo on 7/11/17.

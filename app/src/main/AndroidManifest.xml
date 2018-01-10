@@ -17,7 +17,7 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ole.bluepi">
+    package="io.treehouse.remote">
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle -->
 
@@ -36,7 +36,7 @@
         <!--android:supportsRtl="true"-->
         <!--android:theme="@style/AppTheme"-->
 
-        <activity android:name="com.example.ole.bluepi.MainActivity"
+        <activity android:name="io.treehouse.remote.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="OLE">
             <intent-filter>
@@ -46,7 +46,7 @@
         </activity>
 
         <activity
-            android:name="com.example.ole.bluepi.DeviceListActivity"
+            android:name="io.treehouse.remote.DeviceListActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/select_device"
             android:theme="@android:style/Theme.Holo.Dialog"/>
