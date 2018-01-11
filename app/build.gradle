@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "io.treehouse.remote"
+        applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 2

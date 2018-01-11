@@ -1,4 +1,4 @@
-package io.treehouse.remote;
+package io.treehouses.remote;
 
 import org.junit.Test;
 
