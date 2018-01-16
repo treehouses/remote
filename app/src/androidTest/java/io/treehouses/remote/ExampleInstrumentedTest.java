@@ -1,4 +1,4 @@
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

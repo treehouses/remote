@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -260,6 +260,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             mOutEditText.setText(mOutStringBuffer);
         }
     }
+
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything

@@ -1,4 +1,4 @@
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 import android.app.Activity;
 import android.app.AlertDialog;

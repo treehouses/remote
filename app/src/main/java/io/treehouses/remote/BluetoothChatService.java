@@ -16,7 +16,7 @@
 
 */
 
-package com.example.yubo.bluepi;
+package io.treehouses.remote;
 
 /**
  * Created by yubo on 7/11/17.
@@ -35,11 +35,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
