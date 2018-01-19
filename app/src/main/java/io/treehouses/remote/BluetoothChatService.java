@@ -586,5 +586,11 @@ public class BluetoothChatService {
             }
         }
     }
+
+    public void Write(byte[] out){
+        ConnectedThread r;
+        Log.d(TAG, "write: write called");
+        mConnectedThread.write(out);
+    }
     
 }

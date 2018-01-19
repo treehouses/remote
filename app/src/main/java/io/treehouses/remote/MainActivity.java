@@ -24,10 +24,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends FragmentActivity {
 
     public static final String TAG = "MainActivity";
+
+    BluetoothChatService mBluetoothChatService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,17 @@ public class MainActivity extends FragmentActivity {
             transaction.replace(R.id.sample_content_fragment, fragment);
             transaction.commit();
         }
+
+        Button tbutton = (Button)findViewById(R.id.TestButton);
+        tbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String t = "pirateship";
+                byte[] bytes = t.getBytes();
+                mBluetoothChatService.Write(bytes);
+            }
+        });
     }
 
 //    @Override

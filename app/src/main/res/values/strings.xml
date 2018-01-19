@@ -24,6 +24,7 @@
     <string name="title_not_connected">not connected</string>
     <string name="command_hint">commands</string>
 
+    <string name="TestButton">TEST</string>
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
     <string name="progress_dialog_message">Wait while configuring...</string>
