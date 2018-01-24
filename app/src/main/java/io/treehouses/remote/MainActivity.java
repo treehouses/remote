@@ -19,19 +19,30 @@
 
 package io.treehouses.remote;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 
     public static final String TAG = "MainActivity";
 
-    BluetoothChatService mBluetoothChatService;
+    Context context;
+    Handler mHandler;
+    BluetoothChatService mBluetoothChatService = new BluetoothChatService(context,mHandler);
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +61,14 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
 
-                String t = "pirateship";
-                byte[] bytes = t.getBytes();
-                mBluetoothChatService.Write(bytes);
+                    //Toast toast = Toast.makeText(getApplicationContext(),"pirateship command in MainActivity", Toast.LENGTH_LONG);
+                   // toast.show();
+                    String t = "pirateship";
+                    byte[] b = t.getBytes();
+              //        myBluetoothService.Write(b);
+                mBluetoothChatService.write(b);
+
+
             }
         });
     }

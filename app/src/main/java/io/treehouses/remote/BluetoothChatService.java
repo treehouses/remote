@@ -257,6 +257,7 @@ public class BluetoothChatService {
      */
     public void write(byte[] out) {
         // Create temporary object
+        Log.d(TAG, "write: I am in outside write");
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
@@ -568,6 +569,7 @@ public class BluetoothChatService {
          */
         public void write(byte[] buffer) {
             try {
+                Log.d(TAG, "write: I am in inside write method");
                 mmOutStream.write(buffer);
 
                 // Share the sent message back to the UI Activity
@@ -575,6 +577,7 @@ public class BluetoothChatService {
                         .sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);
+                Log.d(TAG, "write: i am in inside write method exception");
             }
         }
 
@@ -587,10 +590,5 @@ public class BluetoothChatService {
         }
     }
 
-    public void Write(byte[] out){
-        ConnectedThread r;
-        Log.d(TAG, "write: write called");
-        mConnectedThread.write(out);
-    }
     
 }
