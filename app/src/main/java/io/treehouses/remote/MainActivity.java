@@ -39,13 +39,6 @@ public class MainActivity extends FragmentActivity {
 
     public static final String TAG = "MainActivity";
 
-//    Context context;
- //   Handler mHandler;
-  //  BluetoothChatService mBluetoothChatService = new BluetoothChatService(context,mHandler);
-   // BluetoothSocket mmSocket;
-    //BluetoothDevice mmDevice;
-
-   // private ListView mlistview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,23 +51,6 @@ public class MainActivity extends FragmentActivity {
             transaction.commit();
         }
 
-/*        mlistview = (ListView)findViewById(R.id.IN);
-
-
-        Button tbutton = (Button)findViewById(R.id.TestButton);
-       tbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                    //Toast toast = Toast.makeText(getApplicationContext(),"pirateship command in MainActivity", Toast.LENGTH_LONG);
-                   // toast.show();
-                    String t = "pirateship";
-                    byte[] b = t.getBytes();
-               mBluetoothChatService.write(b);
-
-
-            }
-       });  */
     }
 
 //    @Override
