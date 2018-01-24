@@ -32,18 +32,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 
     public static final String TAG = "MainActivity";
 
-    Context context;
-    Handler mHandler;
-    BluetoothChatService mBluetoothChatService = new BluetoothChatService(context,mHandler);
-    BluetoothSocket mmSocket;
-    BluetoothDevice mmDevice;
+//    Context context;
+ //   Handler mHandler;
+  //  BluetoothChatService mBluetoothChatService = new BluetoothChatService(context,mHandler);
+   // BluetoothSocket mmSocket;
+    //BluetoothDevice mmDevice;
 
+   // private ListView mlistview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +58,11 @@ public class MainActivity extends FragmentActivity {
             transaction.commit();
         }
 
+/*        mlistview = (ListView)findViewById(R.id.IN);
+
+
         Button tbutton = (Button)findViewById(R.id.TestButton);
-        tbutton.setOnClickListener(new View.OnClickListener() {
+       tbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -65,12 +70,11 @@ public class MainActivity extends FragmentActivity {
                    // toast.show();
                     String t = "pirateship";
                     byte[] b = t.getBytes();
-              //        myBluetoothService.Write(b);
-                mBluetoothChatService.write(b);
+               mBluetoothChatService.write(b);
 
 
             }
-        });
+       });  */
     }
 
 //    @Override

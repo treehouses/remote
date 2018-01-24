@@ -79,7 +79,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private EditText mOutEditText;
     private Button mSendButton;
     private ProgressDialog mProgressDialog;
-
+    private Button Tbutton;
 
     /**
      * Name of the connected device
@@ -169,6 +169,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        Tbutton = (Button) view.findViewById(R.id.TB);
     }
 
     /**
@@ -208,6 +209,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String message = textView.getText().toString();
                     sendMessage(message);
                 }
+            }
+        });
+
+        Tbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String t = "pirateship";
+                sendMessage(t);
             }
         });
 
