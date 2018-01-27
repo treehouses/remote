@@ -24,7 +24,9 @@
     <string name="title_not_connected">not connected</string>
     <string name="command_hint">commands</string>
 
-    <string name="TestButton">TEST</string>
+    <string name="TestButton">PIRATESHIP</string>
+    <string name="DockerButton">DOCKER PS</string>
+    <string name="VersionButton">PIRATESHIP DETECTRPI</string>
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
     <string name="progress_dialog_message">Wait while configuring...</string>
@@ -43,7 +45,7 @@
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
 
-    <string name="app_name">BluePi</string>
+    <string name="app_name">Treehouses Remote</string>
 
     <string name="intro_message">
         <![CDATA[

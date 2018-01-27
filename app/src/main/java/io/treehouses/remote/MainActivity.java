@@ -19,6 +19,7 @@
 
 package io.treehouses.remote;
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -43,6 +44,10 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setLogo(R.mipmap.ic_launcher);
+        getActionBar().setDisplayUseLogoEnabled(true);
+
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
