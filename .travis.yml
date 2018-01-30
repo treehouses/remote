@@ -1,11 +1,62 @@
 language: android
+sudo: false
+jdk: oraclejdk8
+before_install:
+- chmod +x gradlew
+before_script:
+- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+- emulator -avd test -no-skin -no-audio -no-window &
+- android-wait-for-emulator
+- adb shell input keyevent 82 &
+install:
+- echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
+- echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+- echo y | android update sdk -u -a -t tools
+- echo y | android update sdk -u -a -t platform-tools
+- echo y | android update sdk -u -a -t build-tools-25.0.2
+- echo y | android update sdk -u -a -t android-25
+- echo y | android update sdk -u -a -t extra-google-m2repository
+- echo y | android update sdk -u -a -t extra-android-m2repository
+env:
+  global:
+  - ANDROID_API=25
+  - EMULATOR_API=21
+  - ANDROID_BUILD_TOOLS=25.0.2
+  - ADB_INSTALL_TIMEOUT=5
 android:
   components:
-    - tools # to get the new `repository-11.xml`
-    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
-    - platform-tools
-    - build-tools-26.0.1
-    - android-26
-
-script:
-   - ./gradlew build connectedCheck
+  - tools
+  - platform-tools
+  - build-tools-$ANDROID_BUILD_TOOLS
+  - android-$ANDROID_API
+  - android-$EMULATOR_API_LEVEL
+  - extra-google-m2repository
+  - extra-android-m2repository
+  - addon-google_apis-google-19
+  - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
+  - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
+  - build-tools-23.0.1
+  - android-24
+  - android-23
+  - android-22
+  - sys-img-armeabi-v7a-android-22
+  - extra-android-support
+  - extra-android-m2repository
+  licenses:
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
+notifications:
+  email: false
+deploy:
+  provider: releases
+  api_key:
+    secure: DnJ2fHeGuY74PGRDp1q58dzW4fABxEhm6VpcTxiMxPOPlrhm7KdhuKXYljMr5vDcXqzK44jWQEJlCWZMYKpdGopwqs3KgpCOiD0pUyas1LXewr1h8SQaLCVUKVwYWRd/r7/i0VUQV8N+P0aokI95k/Xw2xfrkWjYdYIYg5+eBMCb7ykUY1Qd8KaaKJsmCNZ/7fqRw7sFk8HfAAzYF1mC1YUSgtlB6Ry1aAkTGeUG7DyYiYKG/2OxC4yWwwIi+ZGZ2gxqh2Dwy2eGRck/RblFFlHkvrvecn0p8ayyWziKRVAy0MZkWFET6QCSbpPyejHBE4apUqx2jhY/tvnFoHsW7qiqynZOS4i4nH8Km0ikyIt3DV3G0clGTnXXvBQZ002VInKhxlYCtiYVgYSrLf7WWsr+aI85BLDLqVB+7wg2TtqAqX89fw0vnX5zXB0qCh3BwVmPDuBY6+9pOOEjE2H5ZOb3qKA9S+RNQGdmtnLcHjIaa7SEX+RmoLWsPbHhoViE2F6hXWFRIqsnV+YtDU4L0nGTI+6fc3+H27veUQPmJsAEFYtn1/tnAgujS+3ubd+j8LgwaOp/1hKrBal8Cxono+rIU+7fEX1Q2gnMz6UzO7MJSESuCIM8P08idb9QyRcX0NZq1T9jdejwXStMSmJvSGwA3GaQnakeSTlmPFLZrbo=
+  file_glob: true
+  file: app/build/outputs/apk/* 
+  skip-cleanup: true
+  on:
+    branch: master
+    repo: kylemathias/SDCardBuilder
+after_success:
+  - sh set_tags.sh
