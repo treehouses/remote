@@ -17,11 +17,7 @@ allprojects {
         jcenter()
     }
 }
-android {
-    lintOptions {
-        abortOnError false
-    }
-}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
