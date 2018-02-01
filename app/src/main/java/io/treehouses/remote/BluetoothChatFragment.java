@@ -79,7 +79,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private EditText mOutEditText;
     private Button mSendButton;
     private ProgressDialog mProgressDialog;
-
+    private Button Tbutton;
+    private Button Dbutton;
+    private Button Vbutton;
 
     /**
      * Name of the connected device
@@ -123,7 +125,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
-
     }
 
     @Override
@@ -169,6 +170,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        Tbutton = (Button) view.findViewById(R.id.TB);
+        Dbutton = (Button)view.findViewById(R.id.DB);
+        Vbutton = (Button)view.findViewById(R.id.VB);
     }
 
     /**
@@ -211,6 +215,29 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         });
 
+        Tbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String t = "pirateship";
+                sendMessage(t);
+            }
+        });
+
+        Dbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String d = "docker ps";
+                sendMessage(d);
+            }
+        });
+
+        Vbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String v = "pirateship detectrpi";
+                sendMessage(v);
+            }
+        });
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
@@ -259,6 +286,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             mOutStringBuffer.setLength(0);
             mOutEditText.setText(mOutStringBuffer);
         }
+
     }
 
 
