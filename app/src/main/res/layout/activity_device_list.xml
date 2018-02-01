@@ -27,8 +27,7 @@
         android:paddingLeft="5dp"
         android:text="@string/title_paired_devices"
         android:textColor="#fff"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/paired_devices"
