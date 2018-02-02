@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="72dp">
+
+    <ListView
+        android:id="@+id/in"
+        android:layout_width="0dp"
+        android:layout_height="199dp"
+        android:layout_weight="1"
+        android:divider="#00000000"
+        android:dividerHeight="0dp"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:padding="0dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:layout_width="430dp"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
         android:layout_height="52dp"
         android:orientation="horizontal"
-        tools:layout_editor_absoluteX="-3dp"
-        tools:layout_editor_absoluteY="196dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <EditText
             android:id="@+id/edit_text_out"
@@ -29,77 +47,5 @@
             android:layout_weight=".1"
             android:text="@string/send" />
     </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="429dp"
-        android:layout_height="196dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item 1" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item 2" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item 3" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item 4" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Item 5" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="item 6" />
-        </LinearLayout>
-
-    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

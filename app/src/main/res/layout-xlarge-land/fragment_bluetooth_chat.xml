@@ -3,43 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <EditText
-            android:id="@+id/edit_text_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:hint="@string/command_hint"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight=".1"
-            android:text="@string/send"
-            android:textSize="20sp" />
-
-    </LinearLayout>
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="89dp">
 
     <ListView
         android:id="@+id/in"
-        android:layout_width="wrap_content"
-        android:layout_height="361dp"
-        android:layout_margin="0dp"
+        android:layout_width="0dp"
+        android:layout_height="569dp"
         android:layout_weight="1"
         android:divider="#00000000"
         android:dividerHeight="0dp"
@@ -48,6 +18,38 @@
         android:padding="0dp"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/edit_text_out"
+            android:layout_width="wrap_content"
+            android:layout_height="92dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:hint="@string/command_hint"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="146dp"
+            android:layout_height="96dp"
+            android:layout_gravity="bottom"
+            android:layout_weight=".1"
+            android:text="@string/send"
+            android:textSize="20sp" />
+
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

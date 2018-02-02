@@ -1,146 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="89dp">
+
+    <ListView
+        android:id="@+id/new_devices"
+        android:layout_width="0dp"
+        android:layout_height="494dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginEnd="3dp"
+        android:layout_weight="2"
+        android:stackFromBottom="true"
+        app:layout_constraintBottom_toBottomOf="@+id/paired_devices"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/paired_devices" />
+
+    <ListView
+        android:id="@+id/paired_devices"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        android:layout_weight="1"
+        android:stackFromBottom="true"
+        app:layout_constraintBottom_toTopOf="@+id/button_scan"
+        app:layout_constraintEnd_toStartOf="@+id/new_devices"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_paired_devices" />
 
     <TextView
         android:id="@+id/title_paired_devices"
-        android:layout_width="675dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#666"
         android:paddingLeft="5dp"
         android:text="@string/title_paired_devices"
         android:textColor="#fff"
         android:textSize="54sp"
-        android:visibility="visible" />
-
-    <ScrollView
-        android:id="@+id/scrollView_paired_devices"
-        android:layout_width="675dp"
-        android:layout_height="498dp"
-        android:scrollbars="none"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="70dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-        </LinearLayout>
-    </ScrollView>
-
-    <ScrollView
-        android:id="@+id/scrollView_available_devices"
-        android:layout_width="591dp"
-        android:layout_height="496dp"
-        android:scrollbars="none"
-        tools:layout_editor_absoluteX="684dp"
-        tools:layout_editor_absoluteY="74dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="54sp" />
-        </LinearLayout>
-    </ScrollView>
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/paired_devices"
+        app:layout_constraintEnd_toStartOf="@+id/title_new_devices"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title_new_devices"
-        android:layout_width="605dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#666"
         android:paddingLeft="5dp"
@@ -148,8 +55,9 @@
         android:textColor="#fff"
         android:textSize="54sp"
         android:visibility="visible"
-        tools:layout_editor_absoluteX="675dp"
-        tools:layout_editor_absoluteY="0dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/title_paired_devices"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/title_paired_devices"
         tools:text="@string/title_other_devices" />
 
     <Button
@@ -158,7 +66,8 @@
         android:layout_height="wrap_content"
         android:text="@string/button_scan"
         android:textSize="54sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="569dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/paired_devices"
+        app:layout_constraintStart_toEndOf="@+id/paired_devices"
+        app:layout_constraintTop_toBottomOf="@+id/paired_devices" />
 </android.support.constraint.ConstraintLayout>
