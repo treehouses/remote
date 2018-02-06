@@ -1,45 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<!--
+Copyright 2014 The Android Open Source Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <EditText
-            android:id="@+id/edit_text_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:hint="@string/command_hint"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight=".1"
-            android:text="@string/send"
-            android:textSize="20sp" />
-
-    </LinearLayout>
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
     <ListView
-        android:id="@+id/in"
-        android:layout_width="wrap_content"
-        android:layout_height="361dp"
-        android:layout_margin="0dp"
+        android:id="@id/in"
+        android:layout_width="match_parent"
+        android:layout_height="187dp"
         android:layout_weight="1"
         android:divider="#00000000"
         android:dividerHeight="0dp"
@@ -47,7 +30,78 @@
         android:headerDividersEnabled="false"
         android:padding="0dp"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
-</android.support.constraint.ConstraintLayout>
+        android:transcriptMode="alwaysScroll" />
+
+    <LinearLayout
+        android:id="@id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@id/edit_text_out"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:hint="@string/command_hint" />
+
+        <Button
+            android:id="@id/button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_dark"
+            android:text="@string/send"
+            android:textColor="@android:color/background_light" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@id/TB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="@string/TestButton"
+                    android:textColor="@android:color/background_light" />
+
+                <Button
+                    android:id="@id/VB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="@string/VersionButton"
+                    android:textColor="@android:color/background_light" />
+
+                <Button
+                    android:id="@id/DB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="@string/DockerButton"
+                    android:textColor="@android:color/background_light" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</LinearLayout>
