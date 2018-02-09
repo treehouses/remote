@@ -45,13 +45,12 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getActionBar().setDisplayShowHomeEnabled(true);
+        BluetoothChatFragment fragment = new BluetoothChatFragment();
         getActionBar().setLogo(R.mipmap.ic_launcher);
         getActionBar().setDisplayUseLogoEnabled(true);
 
-
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            BluetoothChatFragment fragment = new BluetoothChatFragment();
             transaction.replace(R.id.sample_content_fragment, fragment);
             transaction.commit();
         }
