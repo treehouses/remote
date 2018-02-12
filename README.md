@@ -1,34 +1,55 @@
-# Bluetooth-RPi
+# Treehouse Remote
 
-An Android App based on Google samples - [Android-BluetoothChat](https://github.com/googlesamples/android-BluetoothChat). Bluetooth-RPi allows you to:
-1. Get Raspberry Pi's terminal access so that you can send commands to / receive executed results from RPi
+is an Android app to communicate with headless Raspberry Pi driven mobile server.
+Trough a Bluetooth connection it gives you detailed information about the Soft- and Hardware.
+On top of that there is an interface to run a cli command and other stuff to remote control this RPI server.
 
-2. Configure RPi's Wifi Setting without the help of monitor, keyboard, mouse, etc.
 
-## Instruction
+## Prerequisites
+<!---
+#please move to builder
+--->
+In order to complete this installation, we will need a few hardware and software components as follows:
 
-Bluetooth-RPi is used with [Bluetooth-RPi-Python](https://github.com/Yurockkk/Bluetooth-RPi-Python) runnung on your RPi 3. You'll need to bluetooth connect to your RPi before configuring its wifi setting.
+* Raspberry Pi 3 (or zero W) and 5V 2.4A power supply with microUSB connector
 
-### Step 0 - Get [Bluetooth-RPi-Python](https://github.com/Yurockkk/Bluetooth-RPi-Python) running on your RPi 3
+* A microSD card reader
 
-### Step 1 - Scan and connect to your RPi 3 through bluetooth insecure connection
+* A [Class 10](https://www.sdcard.org/developers/overview/speed_class/index.html) microSD card (minimal 8GB, but we recommend 16GB or greater)
 
-<img src="https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/connect_device.png" width="300">
+* Software for burning OS image to microSD card. We recommend [Etcher](https://etcher.io), but there are many from which to choose
 
-After connecting your RPi 3, you are able to 
-1. Send commands to / receive executed results from RPi 3
+* The latest version of [Treehouse image](http://dev.ole.org/)
 
-<img src="https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/sending-command.png" width="300">
+* Wi-Fi or a ethernet connection
 
-2. Configure RPi's wifi setting by entering SSID & password 
+## Installation Steps
 
-<img src="https://yurockkk.github.io/Bluetooth-RPi-Python/images/Blue-RPi/wifi-configuration.png" width="300">
+1. Burn the treehouse image to the microSD card. This is a simple process with Etcher - select the treehouse image, select the microSD card and burn the image;
 
-## Author
+2. Once it's done burning, remount the microSD card if its unmounted by Etcher, so that you can view the contents in the `boot` partition. You will see a long list of files as follows:
 
-* **[Yurockkk](https://github.com/Yurockkk)**
+3. In order for the installation to complete, we must create a small text file called `autorunonce` and place it in the `boot` partition of the microSD card.
 
-## License
+  * Open code editor of your choice
 
-This project is licensed under the MIT License
+    ```
+    pirateship rename ole
+    pirateship bluetooth on
+    # if you do not have ethernet cable/access to router, uncomment next line and replace yours wifi ssid and password 
+    # pirateship wifi ssid password
+    ```
 
+  * Save the file with name `autorunonce` and place it in the `boot` partition of the microSD card.
+
+4. Unmount and remove the microSD card from the card reader and place it into the RPi.
+
+5. Connect a RJ45 network cable to the Ethernet port on the RPi. (Skip this step if you have Wi-Fi configured in step 3)
+
+6. Connect the RPi to power.
+
+7. Wait for a minute or two and look for `ole` in your Android device's bluetooth setting
+
+## Setting Up The Android Device
+
+* Steps to be determined
