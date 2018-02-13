@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.yubo.bluepi", appContext.getPackageName());
+        assertEquals("io.treehouses.remote", appContext.getPackageName());
     }
 }
