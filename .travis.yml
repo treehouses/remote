@@ -51,12 +51,10 @@ notifications:
 deploy:
   provider: releases
   api_key:
-    secure: DnJ2fHeGuY74PGRDp1q58dzW4fABxEhm6VpcTxiMxPOPlrhm7KdhuKXYljMr5vDcXqzK44jWQEJlCWZMYKpdGopwqs3KgpCOiD0pUyas1LXewr1h8SQaLCVUKVwYWRd/r7/i0VUQV8N+P0aokI95k/Xw2xfrkWjYdYIYg5+eBMCb7ykUY1Qd8KaaKJsmCNZ/7fqRw7sFk8HfAAzYF1mC1YUSgtlB6Ry1aAkTGeUG7DyYiYKG/2OxC4yWwwIi+ZGZ2gxqh2Dwy2eGRck/RblFFlHkvrvecn0p8ayyWziKRVAy0MZkWFET6QCSbpPyejHBE4apUqx2jhY/tvnFoHsW7qiqynZOS4i4nH8Km0ikyIt3DV3G0clGTnXXvBQZ002VInKhxlYCtiYVgYSrLf7WWsr+aI85BLDLqVB+7wg2TtqAqX89fw0vnX5zXB0qCh3BwVmPDuBY6+9pOOEjE2H5ZOb3qKA9S+RNQGdmtnLcHjIaa7SEX+RmoLWsPbHhoViE2F6hXWFRIqsnV+YtDU4L0nGTI+6fc3+H27veUQPmJsAEFYtn1/tnAgujS+3ubd+j8LgwaOp/1hKrBal8Cxono+rIU+7fEX1Q2gnMz6UzO7MJSESuCIM8P08idb9QyRcX0NZq1T9jdejwXStMSmJvSGwA3GaQnakeSTlmPFLZrbo=
-  file_glob: true
-  file: app/build/outputs/apk/* 
+    secure: iy9swklBaimL81BHitMWkTVJ2Qg63J01i5aP8JLEylWXGnyR9xeJU+Nz6FWs6Rn6pUPrWdtCJIZFISJ9v9ilbnXbnyMu4+Tdaiitrv8e/+LgQqIXdPCQSSzHmDS6LvpJ9jvc5Y+3krDmn/oQzKC2HPj0YDHy1vvFIBVTjXdlmem2kr0h4Kiie/265zAJKPQtmU5iHx7/yNq9Vem40NQFnV22b6UYIdq8oF1b2XDeC3hbVTtINBdi+JCGzna67BwlV+4BV3sUUJywIKuZrIucnfgdSZRH5Jp2XSdmortXVikCO2zVZ5bqWmR2COMu58HdmUfqCE09f77lQ9XICU7h4sNN7SFbKkKvmSFye/RRExEHl0KXUJCIdUDICwYNjCHvnCYvlXEUump2ADlAE0FaygYjP5olK5ANXoBqxS6q05z3waCQuMcEZikGLO7W4bEPE6dTusqMniQxWmDiAm06i2FLH6cbj41TdocMqzL4+qGBDs6+3iYlds/VXz3g+tPnf2Y+VfBgt4pKsHS5GYZ8Evt8vVbbY216uWS7YBhVaONYKNiY97l0iMWvNyJI2aVSpj8iqtQbIoKfJXmNBuM/Vb2cncLFWsCqTaBm3cDhVDXsAGAgWF+QUdvywX+vsG9dYewXig8WBSZr6FosFqOAGQi+HEqs4HizWD+bxH9Cknc=
+    file_glob: true
+  file: app/build/outputs/apk/*
   skip-cleanup: true
   on:
     branch: master
-    repo: kylemathias/SDCardBuilder
-after_success:
-  - sh set_tags.sh
+    repo: treehouses/remote
