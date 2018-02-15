@@ -28,5 +28,8 @@ android {
         testCompile 'junit:junit:4.12'
         androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
