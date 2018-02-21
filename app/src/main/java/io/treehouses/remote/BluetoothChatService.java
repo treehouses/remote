@@ -77,7 +77,7 @@ public class BluetoothChatService {
     // Private fields (by Jack)
     private FragmentActivity mActivity;
     private String out;
-
+    private boolean alreadyExecuted = false;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -570,20 +570,25 @@ public class BluetoothChatService {
                      * in a long run.
                      */
 
-                    if (out.contains("release-")) {
-                        mActivity.runOnUiThread(new Runnable() {
+                    if(!alreadyExecuted) {
+                        if (out.contains("release-")) {
+                            mActivity.runOnUiThread(new Runnable() {
 
-                            @Override
-                            public void run() {
-                                final ActionBar actionBar = mActivity.getActionBar();
-                                if (null == actionBar) {
-                                    return;
+                                @Override
+                                public void run() {
+                                    final ActionBar actionBar = mActivity.getActionBar();
+                                    if (null == actionBar) {
+                                        return;
+                                    }
+                                    Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + out);
+                                    //currentStatus = subTitle.toString();
+                                    actionBar.setSubtitle("Version: " + out);
                                 }
-                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + out);
-                                //currentStatus = subTitle.toString();
-                                actionBar.setSubtitle("Version: " + out);
-                            }
-                        });
+
+                            });
+                        }
+                        //set alreadyExecuted to true so it only checks for "release-" once
+                        alreadyExecuted = true;
                     }
 
                     // mEmulatorView.write(buffer, bytes);
