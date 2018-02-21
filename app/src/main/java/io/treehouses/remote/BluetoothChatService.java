@@ -570,8 +570,7 @@ public class BluetoothChatService {
                      * in a long run.
                      */
 
-                    if(!alreadyExecuted) {
-                        if (out.contains("release-")) {
+                    if(!alreadyExecuted && out.contains("release-")) {
                             mActivity.runOnUiThread(new Runnable() {
 
                                 @Override
@@ -586,7 +585,6 @@ public class BluetoothChatService {
                                 }
 
                             });
-                        }
                         //set alreadyExecuted to true so it only checks for "release-" once
                         alreadyExecuted = true;
                     }
