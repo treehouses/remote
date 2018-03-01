@@ -27,7 +27,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -77,6 +76,10 @@ public class BluetoothChatService {
     // Private fields (by Jack)
     private FragmentActivity mActivity;
     private String out;
+    private String SWver = "";
+    private String HWver = "";
+    private String header = "";
+    private boolean alreadyExecuted = false;
 
 
     // Constants that indicate the current connection state
@@ -220,6 +223,11 @@ public class BluetoothChatService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
+
+        write("cd boot\n".getBytes());
+        write("cat version.txt\n".getBytes());
+        write("pirateship detectrpi\n".getBytes());
+
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
@@ -557,6 +565,7 @@ public class BluetoothChatService {
                     Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
+
                     /**
                      * Block created by Jack
                      *
@@ -570,6 +579,40 @@ public class BluetoothChatService {
                      * in a long run.
                      */
 
+                    if(out.contains("release-")) {
+                        SWver += "Version: " + out.substring(8, 10);
+                        Log.d(TAG, header);
+                    } else if(out.contains("RPI")){
+                        HWver += "; " + out;
+                        Log.d(TAG, header);
+                    }
+
+                    header += SWver + HWver;
+
+
+                    Log.d("final", header);
+                    if (!alreadyExecuted && header.contains("Version:") && header.contains("RPI")) {
+                        mActivity.runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                final ActionBar actionBar = mActivity.getActionBar();
+                                if (null == actionBar) {
+                                    return;
+                                }
+                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + header);
+                                //currentStatus = subTitle.toString();
+                                actionBar.setSubtitle(header);
+                            }
+                        });
+
+                        //set alreadyExecuted to true so it only checks for "release-" once
+                        alreadyExecuted = true;
+                        header = "";
+                    }
+
+
+                    /*
                     if (out.contains("release-")) {
                         mActivity.runOnUiThread(new Runnable() {
 
@@ -585,6 +628,7 @@ public class BluetoothChatService {
                             }
                         });
                     }
+                    */
 
                     // mEmulatorView.write(buffer, bytes);
                     // Send the obtained bytes to the UI Activity

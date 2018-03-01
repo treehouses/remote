@@ -397,8 +397,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
 
+                            /*
                             mChatService.write("cd boot\n".getBytes());
                             mChatService.write("cat version.txt\n".getBytes());
+                            mChatService.write("pirateship detectrpi\n".getBytes());
+                            */
 
                             mConversationArrayAdapter.clear();
                             break;
