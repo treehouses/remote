@@ -77,10 +77,12 @@ public class BluetoothChatService {
     private FragmentActivity mActivity;
     private String out;
     private String SWver = "";
+    private boolean getSW = false;
     private String HWver = "";
+    private boolean getHW = false;
     private String header = "";
+    private boolean getHeader = false;
     private boolean alreadyExecuted = false;
-
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -224,9 +226,10 @@ public class BluetoothChatService {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
 
-        write("cd boot\n".getBytes());
-        write("cat version.txt\n".getBytes());
-        write("pirateship detectrpi\n".getBytes());
+        String[] firstRun = {"cd bootN", "cat version.txtN", "pirateship detectrpiN"};
+        for(int i = 0; i <= 2; i++){
+            write(firstRun[i].getBytes());
+        }
 
         msg.setData(bundle);
         mHandler.sendMessage(msg);
@@ -515,48 +518,8 @@ public class BluetoothChatService {
             Log.i(TAG, "BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes = -1;
-            //String out = "";
-//            List<String>  tempOutputList = new ArrayList<String>();
-            // Keep listening to the InputStream while connected
-//            while (mState == STATE_CONNECTED) {
-//                try {
-//                    // Read from the InputStream
-//                    //bytes = mmInStream.read(buffer);
-//                    //Log.d(TAG, "bytes = " + bytes + ", buffer = " + buffer);
-//
-//                    while(true){
-//                        bytes = mmInStream.read(buffer);
-//                        out += new String(buffer, 0, bytes);
-//                        if(bytes < 1024){
-//                            break;
-//                        }
-//                    }
-//                    tempOutputList = getTokens("[a-zA-Z._]+", out);
-//                    HashSet<String> mSet = new HashSet<String>();
-//                    for(String s : tempOutputList){
-//                        if(!mSet.contains(s)){
-//                            mSet.add(s);
-//                        }
-//                    }
-//
-//                    System.out.println("mSet = " + mSet);
-//
-//
-//                    Log.d(TAG, "out = " + out + "size of out = " + out.length());
-//                    Log.d(TAG, "tempOutputList = " + mSet.iterator().next());
-//
-//
-//                    // Send the obtained bytes to the UI Activity
-//                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-//                            .sendToTarget();
-//                } catch (IOException e) {
-//                    Log.e(TAG, "disconnected", e);
-//                    connectionLost();
-//                    break;
-//                }
-//            }
+            String out = "";
 
-            // Keep listening to the InputStream while connected
             while (true) {
                 try {
                     // Read from the InputStream
@@ -579,19 +542,22 @@ public class BluetoothChatService {
                      * in a long run.
                      */
 
-                    if(out.contains("release-")) {
+                    if(out.contains("release-") && !getSW) {
                         SWver += "Version: " + out.substring(8, 10);
+                        header += SWver;
                         Log.d(TAG, header);
-                    } else if(out.contains("RPI")){
-                        HWver += "; " + out;
-                        Log.d(TAG, header);
+                        getSW = true;
                     }
 
-                    header += SWver + HWver;
-
+                    if(out.contains("RPI") && !getHW){
+                        HWver += "; " + out;
+                        header += HWver;
+                        Log.d(TAG, header);
+                        getHW = true;
+                    }
 
                     Log.d("final", header);
-                    if (!alreadyExecuted && header.contains("Version:") && header.contains("RPI")) {
+                    if (!alreadyExecuted && header.length() > 0) {
                         mActivity.runOnUiThread(new Runnable() {
 
                             @Override
@@ -611,28 +577,6 @@ public class BluetoothChatService {
                         header = "";
                     }
 
-
-                    /*
-                    if (out.contains("release-")) {
-                        mActivity.runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                final ActionBar actionBar = mActivity.getActionBar();
-                                if (null == actionBar) {
-                                    return;
-                                }
-                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + out);
-                                //currentStatus = subTitle.toString();
-                                actionBar.setSubtitle("Version: " + out);
-                            }
-                        });
-                    }
-                    */
-
-                    // mEmulatorView.write(buffer, bytes);
-                    // Send the obtained bytes to the UI Activity
-                    // mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();
