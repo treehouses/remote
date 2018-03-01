@@ -22,14 +22,15 @@ package io.treehouses.remote;
  * Created by yubo on 7/11/17.
  */
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import java.io.IOException;
@@ -72,6 +73,16 @@ public class BluetoothChatService {
     private int mState;
     private int mNewState;
 
+    // Private fields (by Jack)
+    private FragmentActivity mActivity;
+    private String out;
+    private String SWver = "";
+    private boolean getSW = false;
+    private String HWver = "";
+    private boolean getHW = false;
+    private String header = "";
+    private boolean getHeader = false;
+    private boolean alreadyExecuted = false;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -82,14 +93,15 @@ public class BluetoothChatService {
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
-     * @param context The UI Activity Context
+     * @param activity The BluetoothCharFragment Activity
      * @param handler A Handler to send messages back to the UI Activity
      */
-    public BluetoothChatService(Context context, Handler handler) {
+    public BluetoothChatService(FragmentActivity activity, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
         mHandler = handler;
+        mActivity = activity;
     }
 
     /**
@@ -213,6 +225,12 @@ public class BluetoothChatService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
+
+        String[] firstRun = {"cd bootN", "cat version.txtN", "pirateship detectrpiN"};
+        for(int i = 0; i <= 2; i++){
+            write(firstRun[i].getBytes());
+        }
+
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
@@ -501,47 +519,7 @@ public class BluetoothChatService {
             byte[] buffer = new byte[1024];
             int bytes = -1;
             String out = "";
-//            List<String>  tempOutputList = new ArrayList<String>();
-            // Keep listening to the InputStream while connected
-//            while (mState == STATE_CONNECTED) {
-//                try {
-//                    // Read from the InputStream
-//                    //bytes = mmInStream.read(buffer);
-//                    //Log.d(TAG, "bytes = " + bytes + ", buffer = " + buffer);
-//
-//                    while(true){
-//                        bytes = mmInStream.read(buffer);
-//                        out += new String(buffer, 0, bytes);
-//                        if(bytes < 1024){
-//                            break;
-//                        }
-//                    }
-//                    tempOutputList = getTokens("[a-zA-Z._]+", out);
-//                    HashSet<String> mSet = new HashSet<String>();
-//                    for(String s : tempOutputList){
-//                        if(!mSet.contains(s)){
-//                            mSet.add(s);
-//                        }
-//                    }
-//
-//                    System.out.println("mSet = " + mSet);
-//
-//
-//                    Log.d(TAG, "out = " + out + "size of out = " + out.length());
-//                    Log.d(TAG, "tempOutputList = " + mSet.iterator().next());
-//
-//
-//                    // Send the obtained bytes to the UI Activity
-//                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-//                            .sendToTarget();
-//                } catch (IOException e) {
-//                    Log.e(TAG, "disconnected", e);
-//                    connectionLost();
-//                    break;
-//                }
-//            }
 
-            // Keep listening to the InputStream while connected
             while (true) {
                 try {
                     // Read from the InputStream
@@ -550,9 +528,55 @@ public class BluetoothChatService {
                     Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
-//                    mEmulatorView.write(buffer, bytes);
-                    // Send the obtained bytes to the UI Activity
-                    //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
+                    /**
+                     * Block created by Jack
+                     *
+                     * Functionality: Use to update the Action bar menu.
+                     *
+                     * First we will check for the out result from the RPI, if it contains "release-"
+                     * then we will update the the ActionBar subtitle.
+                     *
+                     * Need improvement: Because we are constantly checking for every result that is
+                     * coming back from the RPI, it is going to eat up the battery and resources
+                     * in a long run.
+                     */
+
+                    if(out.contains("release-") && !getSW) {
+                        SWver += "Version: " + out.substring(8, 10);
+                        header += SWver;
+                        Log.d(TAG, header);
+                        getSW = true;
+                    }
+
+                    if(out.contains("RPI") && !getHW){
+                        HWver += "; " + out;
+                        header += HWver;
+                        Log.d(TAG, header);
+                        getHW = true;
+                    }
+
+                    Log.d("final", header);
+                    if (!alreadyExecuted && header.length() > 0) {
+                        mActivity.runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                final ActionBar actionBar = mActivity.getActionBar();
+                                if (null == actionBar) {
+                                    return;
+                                }
+                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + header);
+                                //currentStatus = subTitle.toString();
+                                actionBar.setSubtitle(header);
+                            }
+                        });
+
+                        //set alreadyExecuted to true so it only checks for "release-" once
+                        alreadyExecuted = true;
+                        header = "";
+                    }
+
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                     connectionLost();

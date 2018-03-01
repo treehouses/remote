@@ -22,6 +22,9 @@ package io.treehouses.remote;
  * Created by yubo on 7/11/17.
  */
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
@@ -37,5 +40,7 @@ public interface Constants {
     // Key names received from the BluetoothChatService Handler
     String DEVICE_NAME = "device_name";
     String TOAST = "toast";
+
+
 
 }
