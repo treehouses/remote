@@ -226,10 +226,12 @@ public class BluetoothChatService {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
 
-        String[] firstRun = {"cd bootN", "cat version.txtN", "pirateship detectrpiN"};
+        /*
+        String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n"};
         for(int i = 0; i <= 2; i++){
             write(firstRun[i].getBytes());
         }
+        */
 
         msg.setData(bundle);
         mHandler.sendMessage(msg);
