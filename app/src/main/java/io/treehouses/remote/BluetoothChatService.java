@@ -546,20 +546,15 @@ public class BluetoothChatService {
 
                     if(out.contains("release-") && !getSW) {
                         SWver += "Version: " + out.substring(8, 10);
-                        header += SWver;
-                        Log.d(TAG, header);
                         getSW = true;
                     }
 
                     if(out.contains("RPI") && !getHW){
                         HWver += "; " + out;
-                        header += HWver;
-                        Log.d(TAG, header);
                         getHW = true;
                     }
 
-                    Log.d("final", header);
-                    if (!alreadyExecuted && header.length() > 0) {
+                    if (!alreadyExecuted && SWver.length() > 1 && HWver.length() > 1) {
                         mActivity.runOnUiThread(new Runnable() {
 
                             @Override
@@ -568,15 +563,14 @@ public class BluetoothChatService {
                                 if (null == actionBar) {
                                     return;
                                 }
-                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + header);
+                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + SWver + HWver);
                                 //currentStatus = subTitle.toString();
-                                actionBar.setSubtitle(header);
+                                actionBar.setSubtitle(SWver + HWver);
                             }
                         });
 
                         //set alreadyExecuted to true so it only checks for "release-" once
                         alreadyExecuted = true;
-                        header = "";
                     }
 
                 } catch (IOException e) {
