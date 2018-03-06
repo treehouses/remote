@@ -25,6 +25,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -82,6 +83,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Tbutton;
     private Button Dbutton;
     private Button Vbutton;
+    private Button Pbutton;
 
     /**
      * Name of the connected device
@@ -118,6 +120,16 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         setHasOptionsMenu(true);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        //start pinging for wifi check
+        final Handler h = new Handler();
+        final int delay = 20000;
+        h.postDelayed(new Runnable(){
+            public void run(){
+                sendPing("ping -c 1 raspberrypi.org");
+                h.postDelayed(this, delay);
+            }
+        }, delay);
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
@@ -173,6 +185,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Tbutton = (Button) view.findViewById(R.id.TB);
         Dbutton = (Button)view.findViewById(R.id.DB);
         Vbutton = (Button)view.findViewById(R.id.VB);
+        Pbutton = (Button)view.findViewById(R.id.PING);
     }
 
     /**
@@ -273,6 +286,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+            bgShape.setColor(Color.GRAY);
             return;
         }
 
@@ -289,11 +304,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     }
 
+    private void sendPing(String ping) {
+        // Get the message bytes and tell the BluetoothChatService to write
+        byte[] pSend = ping.getBytes();
+        mChatService.write(pSend);
+
+        mOutStringBuffer.setLength(0);
+    }
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+            bgShape.setColor(Color.GRAY);
             return;
         }
 
@@ -404,6 +428,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case BluetoothChatService.STATE_LISTEN:
                         case BluetoothChatService.STATE_NONE:
                             setStatus(R.string.title_not_connected);
+                            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+                            bgShape.setColor(Color.GRAY);
                             break;
                     }
                     break;
@@ -412,9 +438,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
-                    mConversationArrayAdapter.add("Command:  " + writeMessage);
-
+                    if(!writeMessage.contains("raspberrypi.org")) {
+                        Log.d(TAG, "writeMessage = " + writeMessage);
+                        mConversationArrayAdapter.add("Command:  " + writeMessage);
+                    }
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -427,7 +454,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     //TODO: if message is json -> callback from RPi
                     if(isJson(readMessage)){
                         handleCallback(readMessage);
-                    }else{
+                    }
+                    else{
                         if(isCountdown){
                             mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
@@ -439,9 +467,23 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        mConversationArrayAdapter.add(readMessage);
-                    }
 
+                        //check if ping was successful
+                        if(readMessage.contains("1 packets")){
+                        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+                        bgShape.setColor(Color.GREEN);
+                        }
+                        if(readMessage.contains("unreachable") || readMessage.contains("failure")){
+                            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+                            bgShape.setColor(Color.RED);
+                        }
+                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages string by string)
+                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("raspberrypi.org") &&
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                            mConversationArrayAdapter.add(readMessage);
+                        }
+
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -495,6 +537,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
+                                GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+                                bgShape.setColor(Color.GRAY);
                         return;
                     }
 

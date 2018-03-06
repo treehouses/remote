@@ -99,6 +99,17 @@ limitations under the License.
                     android:text="@string/DockerButton"
                     android:textColor="@android:color/background_light" />
 
+                <Button
+                    android:id="@+id/PING"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="@string/PingWIFI"
+                    android:textColor="@android:color/background_light" />
+
             </LinearLayout>
         </ScrollView>
 
