@@ -57,6 +57,6 @@ deploy:
   skip-cleanup: true
   on:
     repo: treehouses/remote
-    branch: travis-deploy2
+    branch: master
 after_success:
 - sh set_tags.sh
