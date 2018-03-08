@@ -454,8 +454,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     //TODO: if message is json -> callback from RPi
                     if(isJson(readMessage)){
                         handleCallback(readMessage);
-                    }
-                    else{
+                    }else{
                         if(isCountdown){
                             mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
@@ -482,7 +481,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
                             mConversationArrayAdapter.add(readMessage);
                         }
-
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
