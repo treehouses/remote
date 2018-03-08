@@ -286,8 +286,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
-            bgShape.setColor(Color.GRAY);
+            iIdle();
             return;
         }
 
@@ -316,8 +315,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
-            bgShape.setColor(Color.GRAY);
+            iIdle();
             return;
         }
 
@@ -428,8 +426,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case BluetoothChatService.STATE_LISTEN:
                         case BluetoothChatService.STATE_NONE:
                             setStatus(R.string.title_not_connected);
-                            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
-                            bgShape.setColor(Color.GRAY);
+                            iIdle();
                             break;
                     }
                     break;
@@ -469,12 +466,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
                         //check if ping was successful
                         if(readMessage.contains("1 packets")){
-                        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
-                        bgShape.setColor(Color.GREEN);
+                        iConnect();
                         }
                         if(readMessage.contains("unreachable") || readMessage.contains("failure")){
-                            GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
-                            bgShape.setColor(Color.RED);
+                            iOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages string by string)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("raspberrypi.org") &&
@@ -535,8 +530,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
-                                GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
-                                bgShape.setColor(Color.GRAY);
+                                iIdle();
                         return;
                     }
 
@@ -660,4 +654,18 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     }
 
+    public void iOffline(){
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.RED);
+    }
+
+    public void iIdle(){
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.GRAY);
+    }
+
+    public void iConnect(){
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.GREEN);
+    }
 }
