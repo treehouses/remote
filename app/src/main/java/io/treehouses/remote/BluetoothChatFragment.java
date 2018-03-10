@@ -82,6 +82,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Tbutton;
     private Button Dbutton;
     private Button Vbutton;
+    private Button HNbutton;
 
     /**
      * Name of the connected device
@@ -173,6 +174,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Tbutton = (Button) view.findViewById(R.id.TB);
         Dbutton = (Button)view.findViewById(R.id.DB);
         Vbutton = (Button)view.findViewById(R.id.VB);
+        HNbutton = (Button)view.findViewById(R.id.HN);
     }
 
     /**
