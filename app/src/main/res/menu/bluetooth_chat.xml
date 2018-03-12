@@ -37,5 +37,10 @@
         android:showAsAction="never"
         android:visible="false"
         android:title="@string/discoverable"/>
+    <item
+        android:id="@+id/hotspot_configuration"
+        android:showAsAction="ifRoom"
+        android:title="@string/create_hotspot"
+        android:visible="false" />
 
 </menu>

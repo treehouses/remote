@@ -74,5 +74,7 @@
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
     <string name="config_alreadyConfig">You have already configured the wifi</string>
+        <!--Hotspot-->
+        <string name="create_hotspot">Create Hotspot</string>
 
 </resources>

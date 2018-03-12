@@ -563,6 +563,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 ensureDiscoverable();
                 return true;
             }
+            case R.id.hotspot_configuration: {
+                showHotspotDialog();
+                return true;
+            }
         }
         return false;
     }
@@ -575,6 +579,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
 
+    }
+
+    public void showHotspotDialog(){
+        //Reusing WifiDialogFragment code for HotSpot
+
+        DialogFragment hDialogFragment = WifiDialogFragment.newInstance(123);
+        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT);
+        hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
     }
 
     public boolean isJson(String str) {
