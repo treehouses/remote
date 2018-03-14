@@ -35,7 +35,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -268,6 +270,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     }
 
+    /**
+     * This block is to create a dialog box for creating a new name for the PI device
+     * Sets the dialog button to be disabled if no text is in the EditText
+     */
     private void showDialog() {
         final EditText input = new EditText(getActivity());
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
@@ -291,14 +297,32 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     }
                 })
                 .show();
+        
+        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
+        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
 
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        input.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onShow(DialogInterface dialog) {
-                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setClickable(false);
-                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
-                input.setError("Please enter new hostname");
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 0) {
+                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
+                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }else{
+                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
+                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
         });
     }
 
