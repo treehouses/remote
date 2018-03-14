@@ -69,12 +69,13 @@
     <string name="dialog_message">Configure RPi\'s Wi-Fi setting</string>
     <string name="ssid">SSID</string>
     <string name="password">Password</string>
-    <string name="error_ssid_empty">Tpye in the name of the Wi-Fi</string>
+    <string name="error_ssid_empty">Type in the name of the network \nyou want to use </string>
     <string name="config_configuring">Start configuring...</string>
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
     <string name="config_alreadyConfig">You have already configured the wifi</string>
         <!--Hotspot-->
         <string name="create_hotspot">Create Hotspot</string>
+        <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
 
 </resources>

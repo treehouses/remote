@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,31 +14,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import io.treehouses.remote.BluetoothChatFragment;
+
 /**
- * Created by yubo on 7/19/17.
+ * Created by Terrence on 3/12/2018.
  */
 
-public class WifiDialogFragment extends DialogFragment {
+public class HotspotDialogFragment extends WifiDialogFragment {
 
-    private static final String TAG = "WifiDialogFragment";
+    private static final String TAG = "HotspotDialogFragment";
 
-    // Layout Views
-    protected EditText mSSIDEditText;
-    protected EditText mPWDEditText;
 
-    protected boolean isValidInput;
-
-    public static WifiDialogFragment newInstance(int num){
-
-        WifiDialogFragment dialogFragment = new WifiDialogFragment();
+    public static HotspotDialogFragment newInstance(int num) {
+        HotspotDialogFragment hDialogFragment = new HotspotDialogFragment();
 //        Bundle bundle = new Bundle();
 //        bundle.putInt("num", num);
 //        dialogFragment.setArguments(bundle);
 
-        return dialogFragment;
-
+        return hDialogFragment;
     }
-
 
     @NonNull
     @Override
@@ -53,7 +46,7 @@ public class WifiDialogFragment extends DialogFragment {
 
         final AlertDialog mDialog = new AlertDialog.Builder(getActivity())
                 .setView(mView)
-                .setTitle(R.string.dialog_message)
+                .setTitle(R.string.dialog_message_hotspot)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
@@ -93,43 +86,6 @@ public class WifiDialogFragment extends DialogFragment {
 
 
     }
-
-    public void setTextChangeListener(final AlertDialog mDialog) {
-
-        mSSIDEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG,"s.length() = " + s.length());
-                if(s.length() > 0){
-                    isValidInput = true;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }else{
-                    isValidInput = false;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-    }
-
-    protected void initLayoutView(View mView) {
-        mSSIDEditText = (EditText)mView.findViewById(R.id.SSID);
-        mPWDEditText = (EditText)mView.findViewById(R.id.password);
-
-    }
-
 }
+
 
