@@ -82,6 +82,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private EditText mOutEditText;
     private Button mSendButton;
     private ProgressDialog mProgressDialog;
+    private ProgressDialog hProgressDialog;
     private Button Tbutton;
     private Button Dbutton;
     private Button Vbutton;
@@ -253,6 +254,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
         mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
+        //get spinner for hotspot
+        hProgressDialog = new ProgressDialog(getActivity());
+        hProgressDialog.setTitle(R.string.progress_dialog_title_hotspot);
+        hProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        hProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
     }
 
     /**
@@ -384,6 +391,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 mProgressDialog.dismiss();
                 Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
             }
+            if(hProgressDialog.isShowing()){
+                hProgressDialog.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
+            }
         }
     };
 
@@ -437,6 +448,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         }
                         if(mProgressDialog.isShowing()){
                             mProgressDialog.dismiss();
+                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                        if(hProgressDialog.isShowing()){
+                            hProgressDialog.dismiss();
                             Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
@@ -519,6 +534,41 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 //                            Toast.LENGTH_SHORT).show();
 
                     sendMessage(SSID,PWD);
+                    //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
+
+                }else{
+                    Log.d(TAG, "back from dialog, fail");
+                }
+            case REQUEST_DIALOG_FRAGMENT_HOTSPOT:
+                if(resultCode == Activity.RESULT_OK){
+
+                    //check status
+                    if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
+                        Toast.makeText(getActivity(), R.string.not_connected,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    //show the progress bar, disable user interaction
+                    hProgressDialog.show();
+                    //TODO: start watchdog
+                    isCountdown = true;
+                    mHandler.postDelayed(watchDogTimeOut,30000);
+                    Log.d(TAG, "watchDog start");
+
+                    //get SSID & PWD from user input
+                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+
+                    String hotSpot = "pirateship hotspot " + SSID + " " + PWD;
+
+                    Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
+
+                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
+//                    Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+
+                    sendMessage(hotSpot);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
