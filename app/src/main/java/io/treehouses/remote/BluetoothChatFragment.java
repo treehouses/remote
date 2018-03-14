@@ -20,9 +20,12 @@ package io.treehouses.remote;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,6 +35,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -83,6 +87,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Dbutton;
     private Button Vbutton;
     private Button HNbutton;
+    private String hnInput;
+    private Boolean isValidInput;
 
     /**
      * Name of the connected device
@@ -240,6 +246,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 sendMessage(v);
             }
         });
+
+        HNbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+
+        });
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
@@ -252,6 +266,40 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
         mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
+    }
+
+    private void showDialog() {
+        final EditText input = new EditText(getActivity());
+        final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setTitle("Rename Hostname")
+                .setMessage("Please enter new hostname")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setView(input)
+                .setPositiveButton("Change Hostname", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        hnInput = input.getText().toString();
+                        String h = "pirateship rename " + hnInput.toString();
+                        sendMessage(h);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setClickable(false);
+                alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                input.setError("Please enter new hostname");
+            }
+        });
     }
 
     /**
