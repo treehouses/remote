@@ -7,14 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
-
-import io.treehouses.remote.BluetoothChatFragment;
 
 /**
  * Created by Terrence on 3/12/2018.
