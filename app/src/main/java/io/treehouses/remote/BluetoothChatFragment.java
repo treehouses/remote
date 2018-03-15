@@ -603,25 +603,31 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         switch (item.getItemId()) {
             case R.id.wifi_configuration: {
                 showNWifiDialog();
-                return true;
+                //return true;
+                break;
             }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-                return true;
+                //return true;
+                break;
             }
             case R.id.discoverable: {
                 // Ensure this device is discoverable by others
                 ensureDiscoverable();
-                return true;
+                //return true;
+                break;
             }
             case R.id.hotspot_configuration: {
                 showHotspotDialog();
-                return true;
+                //return true;
+                break;
             }
+            default:
+                return false;
         }
-        return false;
+        return true;
     }
 
     public void showNWifiDialog() {
@@ -635,11 +641,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     public void showHotspotDialog(){
-        //Reusing WifiDialogFragment code for HotSpot
+        //Reusing WifiDialogFragment code for Hotspot
 
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
         hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
+
     }
 
     public boolean isJson(String str) {
