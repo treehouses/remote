@@ -276,37 +276,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      */
     private void showDialog() {
         final EditText input = new EditText(getActivity());
-        final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setTitle("Rename Hostname")
-                .setMessage("Please enter new hostname")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setView(input)
-                .setPositiveButton("Change Hostname", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        hnInput = input.getText().toString();
-                        String h = "pirateship rename " + hnInput.toString();
-                        sendMessage(h);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .show();
-        
+        final AlertDialog alertDialog = getAlertDialog(input);
+
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
 
         input.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() > 0) {
@@ -317,13 +295,34 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-
             }
-
         });
+    }
+
+    private AlertDialog getAlertDialog(final EditText input) {
+        return new AlertDialog.Builder(getActivity())
+                    .setTitle("Rename Hostname")
+                    .setMessage("Please enter new hostname")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setView(input)
+                    .setPositiveButton("Change Hostname", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            hnInput = input.getText().toString();
+                            String h = "pirateship rename " + hnInput.toString();
+                            sendMessage(h);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .show();
     }
 
     /**
