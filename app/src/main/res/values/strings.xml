@@ -78,5 +78,6 @@
         <!--Hotspot-->
         <string name="create_hotspot">Create Hotspot</string>
         <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
+        <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
 </resources>

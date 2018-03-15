@@ -83,8 +83,6 @@ public class HotspotDialogFragment extends WifiDialogFragment {
         setTextChangeListener(mDialog);
 
         return mDialog;
-
-
     }
 }
 

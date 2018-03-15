@@ -452,7 +452,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         }
                         if(hProgressDialog.isShowing()){
                             hProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
@@ -562,7 +562,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
                     String hotSpot = "pirateship hotspot " + SSID + " " + PWD;
 
-                    Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
+                    Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + SSID + ", PWD = " + PWD);
 
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Toast.makeText(getActivity(), R.string.config_success,
@@ -572,7 +572,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
-                    Log.d(TAG, "back from dialog, fail");
+                    Log.d(TAG, "back from dialog_hotspot, fail");
                 }
         }
     }
