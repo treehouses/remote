@@ -1,6 +1,6 @@
 # Treehouse Remote
 
-An Android app that communicates with headless Raspberry Pi mobile server runing [treehouses images](https://github.com/treehouses/builder) via bluetooth.
+An Android app that communicates with headless Raspberry Pi mobile server running [treehouses image](https://github.com/treehouses/builder) via Bluetooth.
 - Get detailed software and hardware information of a Raspberry Pi.
 - Configure a Raspberry Pi through user-friendly interface.
 
@@ -46,7 +46,7 @@ We will need a few hardware and software components as follows:
 
 6. Connect the RPi to power.
 
-7. Wait for a minute or two and look for `ole` in your Android device's bluetooth setting
+7. Wait for a minute or two and look for `ole` in your Android device's Bluetooth setting
 
 ## Setting Up The Android Device
 
