@@ -25,6 +25,7 @@ package io.treehouses.remote;
 import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothHeadset;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
@@ -102,6 +103,7 @@ public class BluetoothChatService {
         mNewState = mState;
         mHandler = handler;
         mActivity = activity;
+        alreadyExecuted = false;
     }
 
     /**
@@ -218,6 +220,7 @@ public class BluetoothChatService {
         }
 
         // Start the thread to manage the connection and perform transmissions
+
         mConnectedThread = new ConnectedThread(socket, socketType);
         mConnectedThread.start();
 
@@ -226,17 +229,11 @@ public class BluetoothChatService {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
 
-        /*
-        String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n"};
-        for(int i = 0; i <= 2; i++){
-            write(firstRun[i].getBytes());
-        }
-        */
-
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
         updateUserInterfaceTitle();
+
     }
 
     /**
@@ -544,6 +541,7 @@ public class BluetoothChatService {
                      * in a long run.
                      */
 
+
                     if(out.contains("release-") && !getSW) {
                         SWver += "Version: " + out.substring(8, 10);
                         getSW = true;
@@ -610,5 +608,8 @@ public class BluetoothChatService {
         }
     }
 
+    public void setAlreadyExecuted(boolean set){
+        alreadyExecuted = set;
+    }
     
 }

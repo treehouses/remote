@@ -90,8 +90,6 @@ public class WifiDialogFragment extends DialogFragment {
         setTextChangeListener(mDialog);
 
         return mDialog;
-
-
     }
 
     private void setTextChangeListener(final AlertDialog mDialog) {
