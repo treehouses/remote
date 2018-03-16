@@ -23,11 +23,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothHeadset;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -129,7 +125,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
-
     }
 
     @Override
@@ -243,6 +238,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 sendMessage(v);
             }
         });
+
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
@@ -402,21 +398,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
 
-                            /*
-                            mChatService.write("cd boot\n".getBytes());
-                            mChatService.write("cat version.txt\n".getBytes());
-                            mChatService.write("pirateship detectrpi\n".getBytes());
-                            */
-
-                            mConversationArrayAdapter.clear();
-
-                            if(isBluetoothHeadsetConnected()) {
-                                String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n"};
-                                for (int i = 0; i <= 2; i++) {
-                                    mChatService.write(firstRun[i].getBytes());
-                                }
+                            String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
+                            for(int i = 0; i <= 2; i++){
+                                mChatService.write(firstRun[i].getBytes());
                             }
 
+                            mConversationArrayAdapter.clear();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -500,7 +487,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    mChatService.setAlreadyExecuted(false);
                     setupChat();
                 } else {
                     // User did not enable Bluetooth or an error occurred
@@ -595,7 +581,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
-
     }
 
     public boolean isJson(String str) {
@@ -626,22 +611,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             if(!result.equals("SUCCESS")){
                 Toast.makeText(getActivity(), R.string.config_fail,
                             Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
+            }else{ Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show(); }
 
         }catch (JSONException e){
             // error handling
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
 
-    }
-
-    public boolean isBluetoothHeadsetConnected() {
-        return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()
-                && mBluetoothAdapter.getProfileConnectionState(BluetoothHeadset.HEADSET) == BluetoothHeadset.STATE_CONNECTED;
     }
 
 }
