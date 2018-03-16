@@ -238,6 +238,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 sendMessage(v);
             }
         });
+
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
@@ -397,17 +398,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
 
-                            String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n"};
+                            String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
                             for(int i = 0; i <= 2; i++){
                                 mChatService.write(firstRun[i].getBytes());
                             }
-
-
-                            /*
-                            mChatService.write("cd boot\n".getBytes());
-                            mChatService.write("cat version.txt\n".getBytes());
-                            mChatService.write("pirateship detectrpi\n".getBytes());
-                            */
 
                             mConversationArrayAdapter.clear();
                             break;
@@ -587,7 +581,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
-
     }
 
     public boolean isJson(String str) {
@@ -618,11 +611,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             if(!result.equals("SUCCESS")){
                 Toast.makeText(getActivity(), R.string.config_fail,
                             Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
+            }else{ Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show(); }
 
         }catch (JSONException e){
             // error handling

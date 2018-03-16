@@ -72,16 +72,11 @@ public class BluetoothChatService {
     private ConnectedThread mConnectedThread;
     private int mState;
     private int mNewState;
-
-    // Private fields (by Jack)
     private FragmentActivity mActivity;
-    private String out;
     private String SWver = "";
     private boolean getSW = false;
     private String HWver = "";
     private boolean getHW = false;
-    private String header = "";
-    private boolean getHeader = false;
     private boolean alreadyExecuted = false;
 
     // Constants that indicate the current connection state
@@ -225,14 +220,6 @@ public class BluetoothChatService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
-
-        /*
-        String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n"};
-        for(int i = 0; i <= 2; i++){
-            write(firstRun[i].getBytes());
-        }
-        */
-
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
@@ -531,19 +518,6 @@ public class BluetoothChatService {
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
 
-                    /**
-                     * Block created by Jack
-                     *
-                     * Functionality: Use to update the Action bar menu.
-                     *
-                     * First we will check for the out result from the RPI, if it contains "release-"
-                     * then we will update the the ActionBar subtitle.
-                     *
-                     * Need improvement: Because we are constantly checking for every result that is
-                     * coming back from the RPI, it is going to eat up the battery and resources
-                     * in a long run.
-                     */
-
                     if(out.contains("release-") && !getSW) {
                         SWver += "Version: " + out.substring(8, 10);
                         getSW = true;
@@ -555,8 +529,8 @@ public class BluetoothChatService {
                     }
 
                     if (!alreadyExecuted && SWver.length() > 1 && HWver.length() > 1) {
-                        mActivity.runOnUiThread(new Runnable() {
 
+                        mActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 final ActionBar actionBar = mActivity.getActionBar();
@@ -564,7 +538,6 @@ public class BluetoothChatService {
                                     return;
                                 }
                                 Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + SWver + HWver);
-                                //currentStatus = subTitle.toString();
                                 actionBar.setSubtitle(SWver + HWver);
                             }
                         });
