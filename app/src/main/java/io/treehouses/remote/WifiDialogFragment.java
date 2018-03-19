@@ -107,18 +107,15 @@ public class WifiDialogFragment extends DialogFragment {
        textWatcher(mDialog,mSSIDEditText);
        textWatcher(mDialog,mPWDEditText);
     }
-    
+
 
     public void textWatcher(final AlertDialog mDialog, final EditText textWatcher) {
         textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG,"s.length() = " + s.length());
                 if(textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
                     isValidInput = false;
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
@@ -137,10 +134,8 @@ public class WifiDialogFragment extends DialogFragment {
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
