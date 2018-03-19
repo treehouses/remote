@@ -104,6 +104,34 @@ public class WifiDialogFragment extends DialogFragment {
 
     public void setTextChangeListener(final AlertDialog mDialog) {
 
+        mSSIDEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG,"s.length() = " + s.length());
+                if(s.length() > 0){
+                    isValidInput = true;
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }else{
+                    isValidInput = false;
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    mSSIDEditText.setError(getString(R.string.error_ssid_empty));
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         mPWDEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -113,15 +141,14 @@ public class WifiDialogFragment extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG,"s.length() = " + s.length());
-                if(s.length() >= 8){
-                    isValidInput = true;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }else{
-                    isValidInput = false;
+                if(s.length() > 0 && s.length() < 8){
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     mPWDEditText.setError(getString(R.string.error_pwd_length));
+                }else{
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+
 
                 }
             }
