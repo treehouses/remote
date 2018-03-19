@@ -104,6 +104,12 @@ public class WifiDialogFragment extends DialogFragment {
 
     public void setTextChangeListener(final AlertDialog mDialog) {
 
+        ssidTextWatcher(mDialog);
+
+        pwdTextWatcher(mDialog);
+    }
+
+    private void ssidTextWatcher(final AlertDialog mDialog) {
         mSSIDEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -131,7 +137,9 @@ public class WifiDialogFragment extends DialogFragment {
 
             }
         });
+    }
 
+    private void pwdTextWatcher(final AlertDialog mDialog) {
         mPWDEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
