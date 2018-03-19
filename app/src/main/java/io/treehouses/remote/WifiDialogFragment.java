@@ -150,10 +150,12 @@ public class WifiDialogFragment extends DialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG,"s.length() = " + s.length());
                 if(s.length() > 0 && s.length() < 8){
+                    isValidInput = false;
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     mPWDEditText.setError(getString(R.string.error_pwd_length));
                 }else{
+                    isValidInput = true;
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
 
