@@ -66,8 +66,7 @@ public class WifiDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setClickable(false);
-                mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                dialogButtonTrueOrFalse(mDialog, true);
                 mSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
@@ -103,7 +102,6 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-
        textWatcher(mDialog,mSSIDEditText);
        textWatcher(mDialog,mPWDEditText);
     }
@@ -112,32 +110,37 @@ public class WifiDialogFragment extends DialogFragment {
     public void textWatcher(final AlertDialog mDialog, final EditText textWatcher) {
         textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
                     isValidInput = false;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    dialogButtonTrueOrFalse(mDialog, true);
                     mPWDEditText.setError(getString(R.string.error_pwd_length));
                 }else if(textWatcher.length() >= 0 && (textWatcher.getId() == mSSIDEditText.getId())) {
                     isValidInput = true;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    dialogButtonTrueOrFalse(mDialog, false);
                     if(textWatcher.length() == 0) {
                         mSSIDEditText.setError(getString(R.string.error_ssid_empty));
                     }
                 }else{
                     isValidInput = true;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    dialogButtonTrueOrFalse(mDialog, true);
                 }
             }
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
+        if (!button){
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        }else{
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        }
     }
 
     protected void initLayoutView(View mView) {
