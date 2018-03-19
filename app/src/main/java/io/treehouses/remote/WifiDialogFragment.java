@@ -104,13 +104,13 @@ public class WifiDialogFragment extends DialogFragment {
 
     public void setTextChangeListener(final AlertDialog mDialog) {
 
-        ssidTextWatcher(mDialog);
-
-        pwdTextWatcher(mDialog);
+       textWatcher(mDialog,mSSIDEditText);
+       textWatcher(mDialog,mPWDEditText);
     }
+    
 
-    private void ssidTextWatcher(final AlertDialog mDialog) {
-        mSSIDEditText.addTextChangedListener(new TextWatcher() {
+    public void textWatcher(final AlertDialog mDialog, final EditText textWatcher) {
+        textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -119,47 +119,22 @@ public class WifiDialogFragment extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG,"s.length() = " + s.length());
-                if(s.length() > 0){
-                    isValidInput = true;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }else{
-                    isValidInput = false;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-    }
-
-    private void pwdTextWatcher(final AlertDialog mDialog) {
-        mPWDEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG,"s.length() = " + s.length());
-                if(s.length() > 0 && s.length() < 8){
+                if(textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
                     isValidInput = false;
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     mPWDEditText.setError(getString(R.string.error_pwd_length));
+                }else if(textWatcher.length() >= 0 && (textWatcher.getId() == mSSIDEditText.getId())) {
+                    isValidInput = true;
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
+                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    if(textWatcher.length() == 0) {
+                        mSSIDEditText.setError(getString(R.string.error_ssid_empty));
+                    }
                 }else{
                     isValidInput = true;
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
                     mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-
-
                 }
             }
 
