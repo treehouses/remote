@@ -352,7 +352,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         public void onClick(DialogInterface dialog, int i) {
                             dialog.dismiss();
                             cpInput = input.getText().toString();
-                            String p = "Pi password changed to " + cpInput.toString();
+                            String p = "treehouses password " + cpInput.toString();
                             sendMessage(p);
                         }
                     })
