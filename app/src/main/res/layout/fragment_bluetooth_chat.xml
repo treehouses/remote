@@ -71,6 +71,14 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/CP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="@string/change_password"
+                    android:textColor="@android:color/background_light" />
+
+                <Button
                     android:id="@+id/TB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,6 +116,7 @@
                     android:textColor="@android:color/background_light" />
 
             </LinearLayout>
+
         </ScrollView>
 
     </LinearLayout>
