@@ -110,6 +110,14 @@ limitations under the License.
                     android:text="@string/DockerButton"
                     android:textColor="@android:color/background_light" />
 
+                <Button
+                    android:id="@+id/HN"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="Rename Hostname"
+                    android:textColor="@android:color/background_light" />
+
             </LinearLayout>
         </ScrollView>
 

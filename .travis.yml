@@ -51,10 +51,12 @@ notifications:
 deploy:
   provider: releases
   api_key:
-    secure: iy9swklBaimL81BHitMWkTVJ2Qg63J01i5aP8JLEylWXGnyR9xeJU+Nz6FWs6Rn6pUPrWdtCJIZFISJ9v9ilbnXbnyMu4+Tdaiitrv8e/+LgQqIXdPCQSSzHmDS6LvpJ9jvc5Y+3krDmn/oQzKC2HPj0YDHy1vvFIBVTjXdlmem2kr0h4Kiie/265zAJKPQtmU5iHx7/yNq9Vem40NQFnV22b6UYIdq8oF1b2XDeC3hbVTtINBdi+JCGzna67BwlV+4BV3sUUJywIKuZrIucnfgdSZRH5Jp2XSdmortXVikCO2zVZ5bqWmR2COMu58HdmUfqCE09f77lQ9XICU7h4sNN7SFbKkKvmSFye/RRExEHl0KXUJCIdUDICwYNjCHvnCYvlXEUump2ADlAE0FaygYjP5olK5ANXoBqxS6q05z3waCQuMcEZikGLO7W4bEPE6dTusqMniQxWmDiAm06i2FLH6cbj41TdocMqzL4+qGBDs6+3iYlds/VXz3g+tPnf2Y+VfBgt4pKsHS5GYZ8Evt8vVbbY216uWS7YBhVaONYKNiY97l0iMWvNyJI2aVSpj8iqtQbIoKfJXmNBuM/Vb2cncLFWsCqTaBm3cDhVDXsAGAgWF+QUdvywX+vsG9dYewXig8WBSZr6FosFqOAGQi+HEqs4HizWD+bxH9Cknc=
-    file_glob: true
-  file: app/build/outputs/apk/*
+    secure: F9Rs4BPHf1+O0paanM+I6+3b8NIwUZXvKiT8+SmLAHHXpxkIBYJwKlPROrLyYWKgl2LLpEgU4kZrDo8SORLucwN4kfF5RpyQahcd8eh9db9jdY+Rxad3vbwk3g2X+RNtlb7Y3b0ttaxzWHbCBH+B4stEQzv1rY5X5uS1HeOUW3ekEsqcIhQ3P14MIaNI99P12ycdePx6LAUQnqfEqvIrKgth4maYUGBtKyx9eAlxbMr3qBsXaCpDgqnRImwr+4EYnto+4U9iFc0z+cFa4y4axpi9tl21p4ufaEzy32a7AD3BGlhXaT4sznrjvoxIV9DGKuTczNEqECPNspC8rfJbGbvpHB44CA0jCZxlGo3y5bBFf4PdsxihG1d7SdD9JErWfx0qierj4ueXkdiGZxPO6fMX9o+1TETrR0QnvrD5JIDJggKWVuAr2E2ZybJdO+pFQKA++mxgYjyRaS4otQgc3a/q5ulfwVvEBys7MyIa310vK8X+sbSSp4kcjZTflSaohgczOMc3WAxJRykf0i/S1x8t5SoIrUQ560fj3KF40SPRIzHMQizTFVmA/9W7qEoTPGVkIKlJmmK7D1WEMn0WNHDW9HVeIqRNcEhuOJ0bYST+FYUVPgqvtcDDR8lNMZZMG+gm8nXUfX0E/sfSqP7qrqVhXc5ty5iQfQPSliBL/lE=
+  file_glob: true
+  file: app/build/outputs/apk/debug/*
   skip-cleanup: true
   on:
-    branch: master
     repo: treehouses/remote
+    branch: master
+after_success:
+- sh set_tags.sh

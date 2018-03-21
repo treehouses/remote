@@ -107,7 +107,14 @@ limitations under the License.
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
                     android:background="@android:color/holo_blue_dark"
-                    android:text="@string/PingWIFI"
+                    android:text="@string/PingWIFI" />
+
+                <Button
+                    android:id="@+id/HN"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="Rename Hostname"
                     android:textColor="@android:color/background_light" />
 
             </LinearLayout>
