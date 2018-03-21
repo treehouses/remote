@@ -53,7 +53,8 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Dashboard db = new Dashboard();
-            transaction.replace(R.id.sample_layout, db);
+           // transaction.replace(R.id.sample_layout, db);
+            transaction.add(R.id.sample_layout,db);
             transaction.commit();
 
 
@@ -64,11 +65,11 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bluetooth_chat, menu);
+        return true;
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {

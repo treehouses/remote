@@ -47,6 +47,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".pirateship"/>
+
         <activity
             android:name="io.treehouses.remote.DeviceListActivity"
             android:configChanges="orientation|keyboardHidden"
