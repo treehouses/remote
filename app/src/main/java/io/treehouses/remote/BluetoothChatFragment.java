@@ -345,7 +345,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         if(view.equals(view.findViewById(R.id.HN))) {
             return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ","Change hostname", input);
         }else{
-            return showAlertDialog("Change Password", "Please enter new password", "treehouses password","Change password", input);
+            return showAlertDialog("Change Password", "Please enter new password", "treehouses password ","Change password", input);
         }
     }
 
