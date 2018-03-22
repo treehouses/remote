@@ -23,11 +23,19 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
+<<<<<<< HEAD
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+||||||| merged common ancestors
+
+=======
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+>>>>>>> 841df16fcfacd33c44f58e92ef0da51959235899
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_round"
@@ -52,6 +60,7 @@
         </activity>
 
         <activity android:name=".pirateship"/>
+        <activity android:name=".docker"/>
 
         <activity
             android:name="io.treehouses.remote.DeviceListActivity"
