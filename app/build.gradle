@@ -6,7 +6,9 @@ android {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 26
-
+        versionCode 2
+        versionName "2.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
