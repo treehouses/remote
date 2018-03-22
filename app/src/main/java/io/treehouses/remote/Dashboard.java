@@ -73,7 +73,7 @@ public class Dashboard extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         pibutton = (Button) view.findViewById(R.id.pbutton);
-        dobutton = (Button) view.findViewById(R.id.dbutton);
+        dobutton = (Button) view.findViewById(R.id.docker_button);
         lview = (ListView)view.findViewById(R.id.mview);
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +81,14 @@ public class Dashboard extends Fragment {
 
                 Intent intent = new Intent(view.getContext(), pirateship.class);
                 startActivity(intent);
+            }
+        });
+
+        dobutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent  dintent = new Intent(view.getContext(),docker.class);
+                startActivity(dintent);
             }
         });
     }
