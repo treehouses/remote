@@ -230,7 +230,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Tbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String t = "pirateship";
+                String t = "pp";
                 sendMessage(t);
             }
         });
@@ -246,7 +246,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Vbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String v = "pirateship detectrpi";
+                String v = "pp detectrpi";
                 sendMessage(v);
             }
         });
