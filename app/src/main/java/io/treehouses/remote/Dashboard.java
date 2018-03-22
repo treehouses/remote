@@ -66,6 +66,7 @@ public class Dashboard extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.hope_layout, container, false);
     }
 
@@ -95,7 +96,8 @@ public class Dashboard extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.bluetooth_chat, menu);
+       // inflater.inflate(R.menu.bluetooth_chat, menu);
+
     }
 
     @Override
