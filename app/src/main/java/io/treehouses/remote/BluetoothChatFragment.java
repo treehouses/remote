@@ -318,51 +318,35 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         });
     }
 
+    private AlertDialog showAlertDialog(String title, String message, final String command, String buttonText, final EditText input){
+         return new AlertDialog.Builder(getActivity())
+                .setTitle(title)
+                .setMessage(message)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setView(input)
+                .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        hnInput = input.getText().toString();
+                        String h = command + hnInput.toString();
+                        sendMessage(h);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+
     private AlertDialog getAlertDialog(final EditText input, View view) {
         if(view.equals(view.findViewById(R.id.HN))) {
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle("Rename Hostname")
-                    .setMessage("Please enter new hostname")
-                    .setIcon(android.R.drawable.ic_dialog_info)
-                    .setView(input)
-                    .setPositiveButton("Change Hostname", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            hnInput = input.getText().toString();
-                            String h = "pirateship rename " + hnInput.toString();
-                            sendMessage(h);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .show();
+            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ","Change hostname", input);
         }else{
-            return new AlertDialog.Builder(getActivity())
-                    .setTitle("Change Password")
-                    .setMessage("Please enter new password")
-                    .setIcon(android.R.drawable.ic_dialog_info)
-                    .setView(input)
-                    .setPositiveButton("Change Password", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int i) {
-                            dialog.dismiss();
-                            cpInput = input.getText().toString();
-                            String p = "treehouses password " + cpInput.toString();
-                            sendMessage(p);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    })
-                    .show();
+            return showAlertDialog("Change Password", "Please enter new password", "treehouses password","Change password", input);
         }
     }
 
