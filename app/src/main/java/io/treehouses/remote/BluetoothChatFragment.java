@@ -91,7 +91,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button HNbutton;
     private Button CPbutton;
     private String hnInput;
-    private String cpInput;
     private Boolean isValidInput;
 
     /**
