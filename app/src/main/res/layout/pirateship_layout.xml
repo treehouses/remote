@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/mview"
+    <EditText
+        android:id="@+id/vieweditText"
         android:layout_width="match_parent"
-        android:layout_height="250dp">
-
-    </ListView>
+        android:layout_height="233dp"
+        android:ems="10"
+        android:inputType="textMultiLine" />
 
     <LinearLayout
         android:layout_width="match_parent"

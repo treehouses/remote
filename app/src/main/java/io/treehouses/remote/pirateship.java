@@ -33,7 +33,8 @@ public class pirateship extends Activity {
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String command = "pirateship detectrpi";
+                sendMessage(command);
             }
         });
     }
