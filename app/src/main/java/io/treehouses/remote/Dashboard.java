@@ -61,6 +61,7 @@ public class Dashboard extends Fragment {
     private BluetoothAdapter mBluetoothAdapter = null;
     private Button pibutton;
     private Button dobutton;
+    private ListView lview;
     private BluetoothChatService mChatService = null;
 
     @Override
@@ -73,6 +74,7 @@ public class Dashboard extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         pibutton = (Button) view.findViewById(R.id.pbutton);
         dobutton = (Button) view.findViewById(R.id.dbutton);
+        lview = (ListView)view.findViewById(R.id.mview);
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
