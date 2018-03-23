@@ -254,10 +254,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         HNbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                showDialog(view);
             }
 
         });
+
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
@@ -282,7 +283,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      * This block is to create a dialog box for creating a new name for the PI device
      * Sets the dialog button to be disabled if no text is in the EditText
      */
-    private void showDialog() {
+    private void showDialog(View view) {
         final EditText input = new EditText(getActivity());
         final AlertDialog alertDialog = getAlertDialog(input);
 
@@ -310,7 +311,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     private AlertDialog getAlertDialog(final EditText input) {
-        return new AlertDialog.Builder(getActivity())
+            return new AlertDialog.Builder(getActivity())
                     .setTitle("Rename Hostname")
                     .setMessage("Please enter new hostname")
                     .setIcon(android.R.drawable.ic_dialog_info)
@@ -331,7 +332,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         }
                     })
                     .show();
-    }
+        }
 
     /**
      * Makes this device discoverable for 300 seconds (5 minutes).

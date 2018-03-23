@@ -66,7 +66,7 @@ public class WifiDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                dialogButtonTrueOrFalse(mDialog, true);
+                dialogButtonTrueOrFalse(mDialog, false);
                 mSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
@@ -81,7 +81,6 @@ public class WifiDialogFragment extends DialogFragment {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
     //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                                    if(isValidInput){
                                         String SSID = mSSIDEditText.getText().toString();
                                         String PWD = mPWDEditText.getText().toString();
 
@@ -89,7 +88,6 @@ public class WifiDialogFragment extends DialogFragment {
                                         intent.putExtra("SSID", SSID);
                                         intent.putExtra("PWD", PWD);
                                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                                    }
                                 }
                             }
                     )
@@ -116,18 +114,13 @@ public class WifiDialogFragment extends DialogFragment {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
-                    isValidInput = false;
-                    dialogButtonTrueOrFalse(mDialog, true);
-                    mPWDEditText.setError(getString(R.string.error_pwd_length));
-                }else if(textWatcher.length() >= 0 && (textWatcher.getId() == mSSIDEditText.getId())) {
-                    isValidInput = true;
+                if (textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
                     dialogButtonTrueOrFalse(mDialog, false);
-                    if(textWatcher.length() == 0) {
-                        mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-                    }
-                }else{
-                    isValidInput = true;
+                    mPWDEditText.setError(getString(R.string.error_pwd_length));
+                } else if (textWatcher.length() == 0 && (textWatcher.getId() == mSSIDEditText.getId())) {
+                    dialogButtonTrueOrFalse(mDialog, false);
+                    mSSIDEditText.setError(getString(R.string.error_ssid_empty));
+                } else {
                     dialogButtonTrueOrFalse(mDialog, true);
                 }
             }
@@ -137,10 +130,10 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
-        if (!button){
+        if (button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }else{
+        }else if(!button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
         }
