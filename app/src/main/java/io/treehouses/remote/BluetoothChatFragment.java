@@ -317,13 +317,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         });
     }
 
-    private AlertDialog showAlertDialog(String title, String message, final String command, String buttonText, final EditText input){
+    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
          return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setView(input)
-                .setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -343,9 +343,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     private AlertDialog getAlertDialog(final EditText input, View view) {
         if(view.equals(view.findViewById(R.id.HN))) {
-            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ","Change hostname", input);
+            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ", input);
         }else{
-            return showAlertDialog("Change Password", "Please enter new password", "treehouses password ","Change password", input);
+            return showAlertDialog("Change Password", "Please enter new password", "treehouses password ", input);
         }
     }
 
