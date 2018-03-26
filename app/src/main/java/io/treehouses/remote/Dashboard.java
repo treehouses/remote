@@ -43,6 +43,7 @@ public class Dashboard extends Fragment {
 
     private static final String TAG = "BluetoothChatFragment";
 
+
     //current connection status
     static String currentStatus = "not connected";
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
