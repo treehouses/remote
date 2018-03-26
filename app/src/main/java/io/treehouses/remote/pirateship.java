@@ -31,7 +31,7 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class pirateship extends Activity {
+public class pirateship extends Activity  {
 
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
@@ -58,7 +58,7 @@ public class pirateship extends Activity {
         getActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.pirateship_layout);
         pibutton = (Button)findViewById(R.id.dpi);
-        mListView = (ListView)findViewById(R.id.mview);
+        mListView = (ListView)findViewById(R.id.pview);
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,7 +72,7 @@ public class pirateship extends Activity {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.mview);
+                TextView tView = (TextView) view.findViewById(R.id.pview);
                 if(isRead){
                     tView.setTextColor(Color.BLUE);
                 }else{

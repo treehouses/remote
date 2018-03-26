@@ -70,6 +70,7 @@ public class Dashboard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         return inflater.inflate(R.layout.hope_layout, container, false);
     }
 
@@ -78,7 +79,7 @@ public class Dashboard extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         pibutton = (Button) view.findViewById(R.id.pbutton);
         dobutton = (Button) view.findViewById(R.id.docker_button);
-        lview = (ListView)view.findViewById(R.id.mview);
+      //  lview = (ListView)view.findViewById(R.id.mview);
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,6 +108,13 @@ public class Dashboard extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else if (mChatService == null) {
+            setupChat();
+        }
     }
 
     @Override
@@ -257,6 +265,7 @@ public class Dashboard extends Fragment {
                 return view;
             }
         };
+        mChatService = new BluetoothChatService(getActivity(), mHandler);
     }
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
