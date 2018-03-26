@@ -58,9 +58,6 @@ public class MainActivity extends FragmentActivity {
             transaction.commit();
 
 
-         //   BluetoothChatFragment fragment = new BluetoothChatFragment();
-        //    transaction.replace(R.id.sample_content_fragment, fragment);
-        //    transaction.commit();
         }
 
     }

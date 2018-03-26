@@ -2,6 +2,7 @@ package io.treehouses.remote;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -62,6 +64,7 @@ public class Dashboard extends Fragment {
     private Button pibutton;
     private Button dobutton;
     private ListView lview;
+    private Button cmdButton;
     private BluetoothChatService mChatService = null;
 
     @Override
@@ -82,6 +85,7 @@ public class Dashboard extends Fragment {
 
                 Intent intent = new Intent(view.getContext(), pirateship.class);
                 startActivity(intent);
+
             }
         });
 
@@ -92,12 +96,22 @@ public class Dashboard extends Fragment {
                 startActivity(dintent);
             }
         });
+        cmdButton = (Button)view.findViewById(R.id.cmdbutton);
+        cmdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getFragmentManager();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                BluetoothChatFragment chatfrag = new BluetoothChatFragment();
+                fragmentTransaction.replace(R.id.sample_layout,chatfrag);
+                fragmentTransaction.commit();
+            }
+        });
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
        // inflater.inflate(R.menu.bluetooth_chat, menu);
-
     }
 
     @Override

@@ -41,6 +41,18 @@
             android:background="@android:color/holo_blue_light"
             android:text="@string/Docker"
             android:textColor="@android:color/background_light" />
+
+        <Button
+            android:id="@+id/cmdbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pbutton"
+            android:layout_marginTop="73dp"
+            android:layout_toEndOf="@+id/pbutton"
+            android:layout_toRightOf="@+id/pbutton"
+            android:background="@android:color/holo_blue_light"
+            android:text="cmd"
+            android:textColor="@android:color/background_light" />
     </RelativeLayout>
 
 </RelativeLayout>
