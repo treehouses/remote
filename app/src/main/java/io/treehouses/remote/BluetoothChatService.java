@@ -220,6 +220,18 @@ public class BluetoothChatService {
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
+
+        // Try to get SW/HW version
+        try {
+            Thread.sleep(500);
+            String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
+            for (int i = 0; i <= 3; i++) {
+                write(firstRun[i].getBytes());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
