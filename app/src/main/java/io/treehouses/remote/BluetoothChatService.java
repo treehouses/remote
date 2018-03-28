@@ -73,11 +73,9 @@ public class BluetoothChatService {
     private int mState;
     private int mNewState;
     private FragmentActivity mActivity;
-    private String SWver = "";
-    private boolean getSW = false;
     private String HWver = "";
-    private boolean getHW = false;
-    private boolean alreadyExecuted = false;
+    private String SWver = "";
+
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -508,6 +506,9 @@ public class BluetoothChatService {
             byte[] buffer = new byte[1024];
             int bytes = -1;
             String out = "";
+            boolean getSWString = false;
+            boolean getHWString = false;
+            boolean alreadyExecutedDisplay = false;
 
             while (true) {
                 try {
@@ -518,36 +519,37 @@ public class BluetoothChatService {
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
 
-                    if(out.contains("release-") && !getSW) {
+                    // Get the SW version once
+                    if(out.contains("release-") && !getSWString) {
                         SWver += "Version: " + out.substring(8, 10);
-                        getSW = true;
+                        getSWString = true;
                     }
 
-                    if(out.contains("RPI") && !getHW){
+                    // Get the HW version once
+                    if(out.contains("RPI") && !getHWString){
                         HWver += "; " + out;
-                        getHW = true;
+                        getHWString = true;
                     }
 
-                    if (!alreadyExecuted && SWver.length() > 1 && HWver.length() > 1) {
-
+                    // Display SW/HW version after getting all the String from above.
+                    if(!alreadyExecutedDisplay && getSWString && getHWString) {
                         mActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 final ActionBar actionBar = mActivity.getActionBar();
-                                if (null == actionBar) {
-                                    return;
-                                }
+                                if (null == actionBar) { return; }
                                 Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + SWver + HWver);
                                 actionBar.setSubtitle(SWver + HWver);
                             }
                         });
-
-                        //set alreadyExecuted to true so it only checks for "release-" once
-                        alreadyExecuted = true;
+                        //Set everything back to default state
+                        alreadyExecutedDisplay = true;
                     }
 
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
+                    HWver = "";
+                    SWver = "";
                     connectionLost();
                     break;
                 }
