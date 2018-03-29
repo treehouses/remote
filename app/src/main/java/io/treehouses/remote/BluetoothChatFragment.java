@@ -21,7 +21,6 @@ package io.treehouses.remote;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -37,7 +36,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -93,6 +91,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Vbutton;
     private Button Pbutton;
     private Button HNbutton;
+    private Button CPbutton;
+    private Button EFbutton;
     private String hnInput;
     private Boolean isValidInput;
 
@@ -199,6 +199,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Vbutton = (Button)view.findViewById(R.id.VB);
         Pbutton = (Button)view.findViewById(R.id.PING);
         HNbutton = (Button)view.findViewById(R.id.HN);
+        CPbutton = (Button) view.findViewById(R.id.CP);
+        EFbutton = (Button)view.findViewById(R.id.EF);
     }
 
     /**
@@ -268,10 +270,25 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         HNbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                showDialog(view);
             }
 
         });
+
+        CPbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(view);
+            }
+        });
+        EFbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String e = "pirateship expandfs";
+                sendMessage(e);
+            }
+        });
+
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
@@ -293,12 +310,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     /**
-     * This block is to create a dialog box for creating a new name for the PI device
+     * This block is to create a dialog box for creating a new name or changing the password for the PI device
      * Sets the dialog button to be disabled if no text is in the EditText
      */
-    private void showDialog() {
+    private void showDialog(View view) {
         final EditText input = new EditText(getActivity());
-        final AlertDialog alertDialog = getAlertDialog(input);
+        final AlertDialog alertDialog = getAlertDialog(input, view);
+
 
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -323,28 +341,36 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         });
     }
 
-    private AlertDialog getAlertDialog(final EditText input) {
-        return new AlertDialog.Builder(getActivity())
-                    .setTitle("Rename Hostname")
-                    .setMessage("Please enter new hostname")
-                    .setIcon(android.R.drawable.ic_dialog_info)
-                    .setView(input)
-                    .setPositiveButton("Change Hostname", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            hnInput = input.getText().toString();
-                            String h = "pirateship rename " + hnInput.toString();
-                            sendMessage(h);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .show();
+    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
+         return new AlertDialog.Builder(getActivity())
+                .setTitle(title)
+                .setMessage(message)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setView(input)
+                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        hnInput = input.getText().toString();
+                        String h = command + hnInput.toString();
+                        sendMessage(h);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+
+    private AlertDialog getAlertDialog(final EditText input, View view) {
+        if(view.equals(view.findViewById(R.id.HN))) {
+            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ", input);
+        }else{
+            return showAlertDialog("Change Password", "Please enter new password", "treehouses password ", input);
+        }
     }
 
     /**
