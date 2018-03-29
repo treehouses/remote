@@ -37,5 +37,5 @@ public interface Constants {
     // Key names received from the BluetoothChatService Handler
     String DEVICE_NAME = "device_name";
     String TOAST = "toast";
-
+    
 }

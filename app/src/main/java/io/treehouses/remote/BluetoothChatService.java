@@ -22,14 +22,15 @@ package io.treehouses.remote;
  * Created by yubo on 7/11/17.
  */
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import java.io.IOException;
@@ -71,6 +72,9 @@ public class BluetoothChatService {
     private ConnectedThread mConnectedThread;
     private int mState;
     private int mNewState;
+    private FragmentActivity mActivity;
+    private String HWver = "";
+    private String SWver = "";
 
 
     // Constants that indicate the current connection state
@@ -82,14 +86,15 @@ public class BluetoothChatService {
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
-     * @param context The UI Activity Context
+     * @param activity The BluetoothCharFragment Activity
      * @param handler A Handler to send messages back to the UI Activity
      */
-    public BluetoothChatService(Context context, Handler handler) {
+    public BluetoothChatService(FragmentActivity activity, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mNewState = mState;
         mHandler = handler;
+        mActivity = activity;
     }
 
     /**
@@ -501,47 +506,10 @@ public class BluetoothChatService {
             byte[] buffer = new byte[1024];
             int bytes = -1;
             String out = "";
-//            List<String>  tempOutputList = new ArrayList<String>();
-            // Keep listening to the InputStream while connected
-//            while (mState == STATE_CONNECTED) {
-//                try {
-//                    // Read from the InputStream
-//                    //bytes = mmInStream.read(buffer);
-//                    //Log.d(TAG, "bytes = " + bytes + ", buffer = " + buffer);
-//
-//                    while(true){
-//                        bytes = mmInStream.read(buffer);
-//                        out += new String(buffer, 0, bytes);
-//                        if(bytes < 1024){
-//                            break;
-//                        }
-//                    }
-//                    tempOutputList = getTokens("[a-zA-Z._]+", out);
-//                    HashSet<String> mSet = new HashSet<String>();
-//                    for(String s : tempOutputList){
-//                        if(!mSet.contains(s)){
-//                            mSet.add(s);
-//                        }
-//                    }
-//
-//                    System.out.println("mSet = " + mSet);
-//
-//
-//                    Log.d(TAG, "out = " + out + "size of out = " + out.length());
-//                    Log.d(TAG, "tempOutputList = " + mSet.iterator().next());
-//
-//
-//                    // Send the obtained bytes to the UI Activity
-//                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-//                            .sendToTarget();
-//                } catch (IOException e) {
-//                    Log.e(TAG, "disconnected", e);
-//                    connectionLost();
-//                    break;
-//                }
-//            }
+            boolean getSWString = false;
+            boolean getHWString = false;
+            boolean alreadyExecutedDisplay = false;
 
-            // Keep listening to the InputStream while connected
             while (true) {
                 try {
                     // Read from the InputStream
@@ -550,11 +518,38 @@ public class BluetoothChatService {
                     Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
-//                    mEmulatorView.write(buffer, bytes);
-                    // Send the obtained bytes to the UI Activity
-                    //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
+                    // Get the SW version once
+                    if(out.contains("release-") && !getSWString) {
+                        SWver += "Version: " + out.substring(8, 10);
+                        getSWString = true;
+                    }
+
+                    // Get the HW version once
+                    if(out.contains("RPI") && !getHWString){
+                        HWver += "; " + out;
+                        getHWString = true;
+                    }
+
+                    // Display SW/HW version after getting all the String from above.
+                    if(!alreadyExecutedDisplay && getSWString && getHWString) {
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final ActionBar actionBar = mActivity.getActionBar();
+                                if (null == actionBar) { return; }
+                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + SWver + HWver);
+                                actionBar.setSubtitle(SWver + HWver);
+                            }
+                        });
+                        //Set everything back to default state
+                        alreadyExecutedDisplay = true;
+                    }
+
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
+                    HWver = "";
+                    SWver = "";
                     connectionLost();
                     break;
                 }
