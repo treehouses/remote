@@ -137,7 +137,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         final int delay = 20000;
         h.postDelayed(new Runnable(){
             public void run(){
-                String ping = "ping -c 1 raspberrypi.org";
+                String ping = "ping -c 1 8.8.8.8";
                 sendPing(ping);
                 h.postDelayed(this, delay);
             }
@@ -546,7 +546,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    if(!writeMessage.contains("raspberrypi.org")) {
+                    if(!writeMessage.contains("8.8.8.8")) {
                         Log.d(TAG, "writeMessage = " + writeMessage);
                         mConversationArrayAdapter.add("Command:  " + writeMessage);
                     }
@@ -587,7 +587,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             mOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("raspberrypi.org") &&
+                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("8.8.8.8") &&
                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
                             mConversationArrayAdapter.add(readMessage);
                         }
