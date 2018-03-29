@@ -70,6 +70,7 @@ public class WifiDialogFragment extends DialogFragment {
                 mSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
+
     }
 
     protected AlertDialog getAlertDialog(View mView) {

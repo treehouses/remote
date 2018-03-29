@@ -502,77 +502,90 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         @Override
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
-                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mConversationArrayAdapter.clear();
-                            break;
-                        case BluetoothChatService.STATE_CONNECTING:
-                            setStatus(R.string.title_connecting);
-                            break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
-                            setStatus(R.string.title_not_connected);
-                            break;
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
-                    mConversationArrayAdapter.add("Command:  " + writeMessage);
+                switch (msg.what) {
+                    case Constants.MESSAGE_STATE_CHANGE:
+                        switch (msg.arg1) {
+                            case BluetoothChatService.STATE_CONNECTED:
+                                setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                                try {
+                                    Thread.sleep(500);
+                                    String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
+                                    for (int i = 0; i <= 3; i++) {
+                                        mChatService.write(firstRun[i].getBytes());
+                                    }
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                mConversationArrayAdapter.clear();
+                                mConversationArrayAdapter.notifyDataSetChanged();
+                                break;
+                            case BluetoothChatService.STATE_CONNECTING:
+                                setStatus(R.string.title_connecting);
+                                break;
+                            case BluetoothChatService.STATE_LISTEN:
+                            case BluetoothChatService.STATE_NONE:
+                                setStatus(R.string.title_not_connected);
+                                break;
+                        }
+                        break;
+                    case Constants.MESSAGE_WRITE:
+                        isRead = false;
+                        byte[] writeBuf = (byte[]) msg.obj;
+                        // construct a string from the buffer
+                        String writeMessage = new String(writeBuf);
+                        Log.d(TAG, "writeMessage = " + writeMessage);
+                        mConversationArrayAdapter.add("Command:  " + writeMessage);
 
-                    break;
-                case Constants.MESSAGE_READ:
-                    isRead = true;
+                        break;
+                    case Constants.MESSAGE_READ:
+                        isRead = true;
 //                    byte[] readBuf = (byte[]) msg.obj;
 //                     construct a string from the valid bytes in the buffer
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
-                    String readMessage = (String)msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
-                    //TODO: if message is json -> callback from RPi
-                    if(isJson(readMessage)){
-                        handleCallback(readMessage);
-                    }else{
-                        if(isCountdown){
-                            mHandler.removeCallbacks(watchDogTimeOut);
-                            isCountdown = false;
+                        String readMessage = (String) msg.obj;
+                        Log.d(TAG, "readMessage = " + readMessage);
+                        //TODO: if message is json -> callback from RPi
+                        if (isJson(readMessage)) {
+                            handleCallback(readMessage);
+                        } else {
+                            if (isCountdown) {
+                                mHandler.removeCallbacks(watchDogTimeOut);
+                                isCountdown = false;
+                            }
+                            if (mProgressDialog.isShowing()) {
+                                mProgressDialog.dismiss();
+                                Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                            }
+                            if (hProgressDialog.isShowing()) {
+                                hProgressDialog.dismiss();
+                                Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
+                            }
+                            //remove the space at the very end of the readMessage -> eliminate space between items
+                            readMessage = readMessage.substring(0, readMessage.length() - 1);
+                            //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                            mConversationArrayAdapter.add(readMessage);
                         }
-                        if(mProgressDialog.isShowing()){
-                            mProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
-                        }
-                        if(hProgressDialog.isShowing()){
-                            hProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
-                        }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0,readMessage.length()-1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        mConversationArrayAdapter.add(readMessage);
-                    }
 
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
+                        break;
+                    case Constants.MESSAGE_DEVICE_NAME:
+                        // save the connected device's name
+                        mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                        if (null != activity) {
+                            Toast.makeText(activity, "Connected to "
+                                    + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case Constants.MESSAGE_TOAST:
+                        if (null != activity) {
+                            Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                }
+            //} catch (InterruptedException e) {
+             //   e.printStackTrace();
+            //}
         }
     };
 
@@ -734,7 +747,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
-
     }
 
     public void showHotspotDialog(){
@@ -774,11 +786,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             if(!result.equals("SUCCESS")){
                 Toast.makeText(getActivity(), R.string.config_fail,
                             Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
+            }else{ Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show(); }
 
         }catch (JSONException e){
             // error handling
@@ -786,4 +794,5 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
 
     }
+
 }
