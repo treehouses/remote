@@ -32,7 +32,7 @@ We will need a few hardware and software components as follows:
 
 2. Once it's done burning, remount the microSD card if its unmounted by Etcher, so that you can view the contents in the `boot` partition. You will see a long list of files.
 
-3. Create a file named `autorunonce` and place it in the `boot` partition of the microSD card:
+3. Create a file named `autorunonce.txt` and place it in the `boot` partition of the microSD card:
 
     ```
     pirateship rename ole # rename the raspberry pi so we could easily distinguish the bluetooth device

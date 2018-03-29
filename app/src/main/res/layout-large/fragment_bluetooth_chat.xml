@@ -71,6 +71,14 @@ limitations under the License.
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/CP"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="@string/change_password"
+                    android:textColor="@android:color/background_light" />
+
+                <Button
                     android:id="@id/TB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -98,12 +106,21 @@ limitations under the License.
                     android:background="@android:color/holo_blue_dark"
                     android:text="@string/DockerButton"
                     android:textColor="@android:color/background_light" />
+
                 <Button
                     android:id="@+id/HN"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/holo_blue_dark"
                     android:text="Rename Hostname"
+                    android:textColor="@android:color/background_light" />
+
+                <Button
+                    android:id="@+id/EF"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="Expand File System"
                     android:textColor="@android:color/background_light" />
 
             </LinearLayout>

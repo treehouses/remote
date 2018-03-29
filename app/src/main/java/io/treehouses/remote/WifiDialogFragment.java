@@ -66,8 +66,7 @@ public class WifiDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setClickable(false);
-                mDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+                dialogButtonTrueOrFalse(mDialog, false);
                 mSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
@@ -83,7 +82,6 @@ public class WifiDialogFragment extends DialogFragment {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
     //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                                    if(isValidInput){
                                         String SSID = mSSIDEditText.getText().toString();
                                         String PWD = mPWDEditText.getText().toString();
 
@@ -91,7 +89,6 @@ public class WifiDialogFragment extends DialogFragment {
                                         intent.putExtra("SSID", SSID);
                                         intent.putExtra("PWD", PWD);
                                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                                    }
                                 }
                             }
                     )
@@ -104,34 +101,43 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
+       textWatcher(mDialog,mSSIDEditText);
+       textWatcher(mDialog,mPWDEditText);
+    }
 
-        mSSIDEditText.addTextChangedListener(new TextWatcher() {
+    /**
+     * This block checks for the input in the ssid textbox and the pwd textbox, and if requirements
+     *are met the positive button will be enabled.
+     */
+    public void textWatcher(final AlertDialog mDialog, final EditText textWatcher) {
+        textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG,"s.length() = " + s.length());
-                if(s.length() > 0){
-                    isValidInput = true;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }else{
-                    isValidInput = false;
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-                    mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                if (textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
+                    dialogButtonTrueOrFalse(mDialog, false);
+                    mPWDEditText.setError(getString(R.string.error_pwd_length));
+                } else if (textWatcher.length() == 0 && (textWatcher.getId() == mSSIDEditText.getId())) {
+                    dialogButtonTrueOrFalse(mDialog, false);
                     mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-
+                } else {
+                    dialogButtonTrueOrFalse(mDialog, true);
                 }
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
+    }
+
+    private void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
+        if (button){
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        }else if(!button){
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
+            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        }
     }
 
     protected void initLayoutView(View mView) {
