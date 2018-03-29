@@ -137,7 +137,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         final int delay = 20000;
         h.postDelayed(new Runnable(){
             public void run(){
-                String ping = "ping -c 1 8.8.8.8";
+                String ping = "ping -c 1 google.com";
                 sendPing(ping);
                 h.postDelayed(this, delay);
             }
@@ -180,6 +180,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
+                mIdle();
             }
         }
     }
@@ -546,7 +547,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    if(!writeMessage.contains("8.8.8.8")) {
+                    if(!writeMessage.contains("google.com")) {
                         Log.d(TAG, "writeMessage = " + writeMessage);
                         mConversationArrayAdapter.add("Command:  " + writeMessage);
                     }
@@ -583,11 +584,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         if(readMessage.contains("1 packets")){
                             mConnect();
                         }
-                        if(readMessage.contains("unreachable") || readMessage.contains("failure")){
+                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
                             mOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("8.8.8.8") &&
+                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
                             mConversationArrayAdapter.add(readMessage);
                         }

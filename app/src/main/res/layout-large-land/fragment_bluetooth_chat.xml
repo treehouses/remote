@@ -19,6 +19,12 @@ limitations under the License.
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <Button
+        android:id="@+id/PING"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/circle" />
+
     <ListView
         android:id="@id/in"
         android:layout_width="match_parent"
@@ -106,16 +112,6 @@ limitations under the License.
                     android:background="@android:color/holo_blue_dark"
                     android:text="@string/DockerButton"
                     android:textColor="@android:color/background_light" />
-
-                <Button
-                    android:id="@+id/PING"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:background="@android:color/holo_blue_dark"
-                    android:text="@string/PingWIFI" />
 
                 <Button
                     android:id="@+id/HN"
