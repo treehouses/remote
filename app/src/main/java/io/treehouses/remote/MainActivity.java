@@ -20,6 +20,7 @@
 package io.treehouses.remote;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -51,18 +52,21 @@ public class MainActivity extends FragmentActivity {
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            BluetoothChatFragment fragment = new BluetoothChatFragment();
-            transaction.replace(R.id.sample_content_fragment, fragment);
+            Dashboard db = new Dashboard();
+           // transaction.replace(R.id.sample_layout, db);
+            transaction.add(R.id.sample_layout,db);
             transaction.commit();
+
+
         }
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bluetooth_chat, menu);
+        return true;
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -74,5 +78,8 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    public void onBackPressed(){
+        setContentView(R.layout.hope_layout);
+    }
 }

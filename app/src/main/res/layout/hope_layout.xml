@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hopeful"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <RelativeLayout
+        android:id="@+id/sample_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/pbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="56dp"
+            android:layout_marginStart="56dp"
+            android:layout_marginTop="65dp"
+            android:background="@android:color/holo_blue_light"
+            android:text="@string/TestButton"
+            android:textColor="@android:color/background_light" />
+
+        <Button
+            android:id="@+id/docker_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/pbutton"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="53dp"
+            android:layout_marginRight="53dp"
+            android:background="@android:color/holo_blue_light"
+            android:text="@string/Docker"
+            android:textColor="@android:color/background_light" />
+
+        <Button
+            android:id="@+id/cmdbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pbutton"
+            android:layout_marginTop="73dp"
+            android:layout_toEndOf="@+id/pbutton"
+            android:layout_toRightOf="@+id/pbutton"
+            android:background="@android:color/holo_blue_light"
+            android:text="cmd"
+            android:textColor="@android:color/background_light" />
+    </RelativeLayout>
+
+</RelativeLayout>
