@@ -78,5 +78,8 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    public void onBackPressed(){
+        setContentView(R.layout.hope_layout);
+    }
 }
