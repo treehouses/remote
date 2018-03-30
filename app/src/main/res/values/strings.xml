@@ -26,6 +26,7 @@
     <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>
 
+
     <string name="TestButton">PIRATESHIP</string>
     <string name="DockerButton">DOCKER PS</string>
     <string name="VersionButton">PIRATESHIP DETECTRPI</string>
