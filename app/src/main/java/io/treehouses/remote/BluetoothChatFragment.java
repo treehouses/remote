@@ -84,6 +84,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Tbutton;
     private Button Dbutton;
     private Button Vbutton;
+    private Button HNbutton;
+    private String hnInput;
+    private Button EFbutton;
+    private Boolean isValidInput;
 
     /**
      * Name of the connected device
@@ -175,6 +179,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Tbutton = (Button) view.findViewById(R.id.TB);
         Dbutton = (Button)view.findViewById(R.id.DB);
         Vbutton = (Button)view.findViewById(R.id.VB);
+        HNbutton = (Button)view.findViewById(R.id.HN);
+        HNbutton = (Button)view.findViewById(R.id.HN);
+        EFbutton = (Button)view.findViewById(R.id.EF);
     }
 
     /**
@@ -240,6 +247,30 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 sendMessage(v);
             }
         });
+
+        HNbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+
+        });
+        HNbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+
+        });
+
+        EFbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String e = "pirateship expandfs";
+                sendMessage(e);
+            }
+        });
+
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
 
