@@ -35,6 +35,8 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static io.treehouses.remote.BluetoothChatFragment.REQUEST_DIALOG_FRAGMENT_HOTSPOT;
+
 /**
  * Created by Lalitha S Oruganty on 3/13/2018.
  */
@@ -128,21 +130,31 @@ public class Dashboard extends Fragment {
         switch (item.getItemId()) {
             case R.id.wifi_configuration: {
                 showNWifiDialog();
-                return true;
+                //return true;
+                break;
             }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-                return true;
+                //return true;
+                break;
             }
             case R.id.discoverable: {
                 // Ensure this device is discoverable by others
-                  ensureDiscoverable();
-                return true;
+                ensureDiscoverable();
+                //return true;
+                break;
             }
+            case R.id.hotspot_configuration: {
+                showHotspotDialog();
+                //return true;
+                break;
+            }
+            default:
+                return false;
         }
-        return false;
+        return true;
     }
 
 
@@ -172,6 +184,15 @@ public class Dashboard extends Fragment {
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
+
+    }
+
+    public void showHotspotDialog(){
+        //Reusing WifiDialogFragment code for Hotspot
+
+        DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
+        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
 
     }
 
