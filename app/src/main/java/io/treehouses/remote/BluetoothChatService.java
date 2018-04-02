@@ -67,7 +67,7 @@ public class BluetoothChatService implements Serializable{
 
     // Member fields
     private final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
+    private Handler mHandler;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
@@ -626,5 +626,7 @@ public class BluetoothChatService implements Serializable{
             }
         }
     }
+
+    public void setHandler(Handler handler) { mHandler = handler; }
 
 }

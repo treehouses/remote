@@ -129,7 +129,7 @@ public class Dashboard extends Fragment {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
-            setupChat();
+            mChatService = new BluetoothChatService(getActivity(), mHandler);
         }
     }
 
@@ -281,8 +281,7 @@ public class Dashboard extends Fragment {
         // Attempt to connect to the device
         mChatService.connect(device, secure);
     }
-
-
+    /*
     private void setupChat() {
         Log.d(TAG, "setupChat()");
 
@@ -302,7 +301,7 @@ public class Dashboard extends Fragment {
             }
         };
         mChatService = new BluetoothChatService(getActivity(), mHandler);
-    }
+    }*/
     /*
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
@@ -368,7 +367,7 @@ public class Dashboard extends Fragment {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mConversationArrayAdapter.clear();
+                            //mConversationArrayAdapter.clear();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -385,7 +384,7 @@ public class Dashboard extends Fragment {
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     Log.d(TAG, "writeMessage = " + writeMessage);
-                    mConversationArrayAdapter.add("Command:  " + writeMessage);
+                    //mConversationArrayAdapter.add("Command:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -409,8 +408,8 @@ public class Dashboard extends Fragment {
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
-                        mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        mConversationArrayAdapter.add(readMessage);
+                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        //mConversationArrayAdapter.add(readMessage);
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
