@@ -127,6 +127,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        mChatService = (BluetoothChatService) getArguments().getSerializable("mChatService");
+        Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
+
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
             FragmentActivity activity = getActivity();
@@ -145,8 +148,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mChatService == null) {
-            setupChat();
         }
     }
 
@@ -154,7 +155,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public void onDestroy() {
         super.onDestroy();
         if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
+            //mHandler.removeCallbacks(watchDogTimeOut);
         }
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
@@ -189,11 +190,17 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     /**
      * Set up the UI and background operations for chat.
      */
+
     private void setupChat() {
+
+        /*
         Log.d(TAG, "setupChat()");
 
+
+        String[] test = {"1", "2", "3"};
+
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, test){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -212,6 +219,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
+        */
 
         // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -273,7 +281,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
+        //mChatService = new BluetoothChatService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -373,6 +381,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      *
      * @param message A string of text to send.
      */
+
+
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
@@ -393,7 +403,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     }
 
-
+    /*
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
@@ -419,7 +429,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             mOutStringBuffer.setLength(0);
             mOutEditText.setText(mOutStringBuffer);
         }
-    }
+    }*/
 
     /**
      * The action listener for the EditText widget, to listen for the return key
@@ -471,7 +481,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         if (null == actionBar) {
             return;
         }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
+        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle);
         currentStatus = subTitle.toString();
         actionBar.setSubtitle(subTitle);
     }
@@ -495,6 +505,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+    /*
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -504,7 +515,17 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            try {
+                                Thread.sleep(500);
+                                String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
+                                for (int i = 0; i <= 3; i++) {
+                                    mChatService.write(firstRun[i].getBytes());
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             mConversationArrayAdapter.clear();
+                            mConversationArrayAdapter.notifyDataSetChanged();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -522,7 +543,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String writeMessage = new String(writeBuf);
                     Log.d(TAG, "writeMessage = " + writeMessage);
                     mConversationArrayAdapter.add("Command:  " + writeMessage);
-
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -572,6 +592,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         }
     };
+    */
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -600,6 +621,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
+            /*
             case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -667,7 +689,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
                 }else{
                     Log.d(TAG, "back from dialog_hotspot, fail");
-                }
+                }*/
         }
     }
 
@@ -696,25 +718,25 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.wifi_configuration: {
-                showNWifiDialog();
+                //showNWifiDialog();
                 //return true;
                 break;
             }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
-                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                //Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+                //startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
                 //return true;
                 break;
             }
             case R.id.discoverable: {
                 // Ensure this device is discoverable by others
-                ensureDiscoverable();
+                //ensureDiscoverable();
                 //return true;
                 break;
             }
             case R.id.hotspot_configuration: {
-                showHotspotDialog();
+                //showHotspotDialog();
                 //return true;
                 break;
             }
@@ -724,6 +746,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         return true;
     }
 
+    /*
     public void showNWifiDialog() {
         // Create an instance of the dialog fragment and show it
 
@@ -742,6 +765,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
 
     }
+    */
 
     public boolean isJson(String str) {
         try {
@@ -756,7 +780,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         String result;
         String ip;
         if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
+            //mHandler.removeCallbacks(watchDogTimeOut);
             isCountdown = false;
         }
 

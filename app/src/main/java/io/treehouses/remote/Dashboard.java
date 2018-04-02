@@ -80,9 +80,16 @@ public class Dashboard extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setTitle(R.string.progress_dialog_title);
+        mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
         pibutton = (Button) view.findViewById(R.id.pbutton);
         dobutton = (Button) view.findViewById(R.id.docker_button);
-      //  lview = (ListView)view.findViewById(R.id.mview);
+        cmdButton = (Button)view.findViewById(R.id.cmdbutton);
+        //  lview = (ListView)view.findViewById(R.id.mview);
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,17 +103,23 @@ public class Dashboard extends Fragment {
         dobutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent  dintent = new Intent(view.getContext(),docker.class);
-                startActivity(dintent);
+
+                Log.d(TAG, "mChatService's state: " + mChatService.getState());
+
+                //Intent  dintent = new Intent(view.getContext(),docker.class);
+                //startActivity(dintent);
             }
         });
-        cmdButton = (Button)view.findViewById(R.id.cmdbutton);
+
         cmdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getFragmentManager();
                 android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 BluetoothChatFragment chatfrag = new BluetoothChatFragment();
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("mChatService", mChatService);
+                chatfrag.setArguments(mBundle);
                 fragmentTransaction.replace(R.id.sample_layout,chatfrag);
                 fragmentTransaction.commit();
             }
@@ -122,7 +135,7 @@ public class Dashboard extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       // inflater.inflate(R.menu.bluetooth_chat, menu);
+        // inflater.inflate(R.menu.bluetooth_chat, menu);
     }
 
     @Override
@@ -215,7 +228,7 @@ public class Dashboard extends Fragment {
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
+                    mChatService = new BluetoothChatService(getActivity(), mHandler);
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d("dashboard", "BT not enabled");
@@ -234,10 +247,10 @@ public class Dashboard extends Fragment {
                     }
 
                     //show the progress bar, disable user interaction
-                       mProgressDialog.show();
+                    mProgressDialog.show();
                     //TODO: start watchdog
-                      isCountdown = true;
-                     // mHandler.postDelayed(watchDogTimeOut,30000);
+                    isCountdown = true;
+                    // mHandler.postDelayed(watchDogTimeOut,30000);
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
@@ -269,6 +282,7 @@ public class Dashboard extends Fragment {
         mChatService.connect(device, secure);
     }
 
+
     private void setupChat() {
         Log.d(TAG, "setupChat()");
 
@@ -289,6 +303,7 @@ public class Dashboard extends Fragment {
         };
         mChatService = new BluetoothChatService(getActivity(), mHandler);
     }
+    /*
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
@@ -307,7 +322,7 @@ public class Dashboard extends Fragment {
             mOutEditText.setText(mOutStringBuffer);
         }
 
-    }
+    }*/
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
@@ -331,8 +346,8 @@ public class Dashboard extends Fragment {
             mChatService.write(send);
 
             // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
+            //mOutStringBuffer.setLength(0);
+            //mOutEditText.setText(mOutStringBuffer);
         }
     }
     private void ensureDiscoverable() {
@@ -371,7 +386,6 @@ public class Dashboard extends Fragment {
                     String writeMessage = new String(writeBuf);
                     Log.d(TAG, "writeMessage = " + writeMessage);
                     mConversationArrayAdapter.add("Command:  " + writeMessage);
-
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -395,10 +409,9 @@ public class Dashboard extends Fragment {
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                         mConversationArrayAdapter.add(readMessage);
                     }
-
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
