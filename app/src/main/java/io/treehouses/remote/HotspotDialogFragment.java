@@ -63,21 +63,6 @@ public class HotspotDialogFragment extends WifiDialogFragment {
 
     }
 
-
-
-
-    private void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
-        if (button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }else if(!button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-        }
-    }
-
-
-
 }
 
 
