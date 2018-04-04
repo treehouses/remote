@@ -101,15 +101,15 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-       textWatcher(mDialog,mSSIDEditText);
-       textWatcher(mDialog,mPWDEditText);
+       wifiTextWatcher(mDialog,mSSIDEditText);
+       wifiTextWatcher(mDialog,mPWDEditText);
     }
 
     /**
      * This block checks for the input in the ssid textbox and the pwd textbox, and if requirements
      *are met the positive button will be enabled.
      */
-    public void textWatcher(final AlertDialog mDialog, final EditText textWatcher) {
+    public void wifiTextWatcher(final AlertDialog mDialog, final EditText textWatcher) {
         textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
