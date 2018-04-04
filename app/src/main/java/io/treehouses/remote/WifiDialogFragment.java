@@ -130,7 +130,7 @@ public class WifiDialogFragment extends DialogFragment {
         });
     }
 
-    private void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
+    public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
         if (button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);

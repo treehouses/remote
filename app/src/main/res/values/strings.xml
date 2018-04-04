@@ -73,6 +73,7 @@
     <string name="dialog_message">Configure RPi\'s Wi-Fi setting</string>
     <string name="ssid">SSID</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="error_ssid_empty">Type in the name of the network \nyou want to use </string>
     <string name="error_pwd_length">Password must have at least \neight characters.</string>
     <string name="config_configuring">Start configuring...</string>
