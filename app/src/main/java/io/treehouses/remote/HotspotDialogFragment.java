@@ -63,7 +63,7 @@ public class HotspotDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                dialogButtonTrueOrFalse(mDialog, false);
+                hDialogButtonTrueOrFalse(mDialog, false);
                 HSSIDEditText.setError("Name your Hotspot");
             }
         });
@@ -115,28 +115,28 @@ public class HotspotDialogFragment extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == HPWDEditText.getId())) {
-                    dialogButtonTrueOrFalse(mDialog, false);
+                    hDialogButtonTrueOrFalse(mDialog, false);
                     HPWDEditText.setError(getString(R.string.error_pwd_length));
                 }else if (textWatcher.length() == 0 && (textWatcher.getId() == HSSIDEditText.getId())) {
-                    dialogButtonTrueOrFalse(mDialog, false);
+                    hDialogButtonTrueOrFalse(mDialog, false);
                     HSSIDEditText.setError(getString(R.string.error_ssid_empty));
                 } else {
-                    dialogButtonTrueOrFalse(mDialog, true);
+                    hDialogButtonTrueOrFalse(mDialog, true);
                 }
             }
             @Override
             public void afterTextChanged(Editable s) {
                  if (HPWDEditText.getText().toString().equals(HCPWDEditText.getText().toString())) {
-                    dialogButtonTrueOrFalse(mDialog, true);
+                    hDialogButtonTrueOrFalse(mDialog, true);
                 }else {
-                     dialogButtonTrueOrFalse(mDialog, false);
+                     hDialogButtonTrueOrFalse(mDialog, false);
                      HCPWDEditText.setError(getString(R.string.error_pwd_confirm));
                  }
             }
         });
     }
 
-    public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
+    public void hDialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
         if (button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
