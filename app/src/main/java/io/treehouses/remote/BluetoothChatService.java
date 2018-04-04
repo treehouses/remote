@@ -556,19 +556,26 @@ public class BluetoothChatService implements Serializable{
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+                    String str = new String(buffer);
+
+                    Log.d("Test", str);
+                    //Log.d("Test", buffer.toString());
+                    //Log.d("Test", mmInStream.toString());
+
+
                     out = new String(buffer, 0, bytes);
                     Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
 
                     // Get the SW version once
-                    if(out.contains("release-") && !getSWString) {
+                    if(str.contains("release-") && !getSWString) {
                         SWver += "Version: " + out.substring(8, 10);
                         getSWString = true;
                     }
 
                     // Get the HW version once
-                    if(out.contains("RPI") && !getHWString){
+                    if(str.contains("RPI") && !getHWString){
                         HWver += "; " + out;
                         getHWString = true;
                     }

@@ -2,22 +2,18 @@ package io.treehouses.remote;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -53,15 +48,12 @@ public class Dashboard extends Fragment {
     private static final int REQUEST_ENABLE_BT = 3;
     public static final int REQUEST_DIALOG_FRAGMENT = 4;
 
-    private ListView mConversationView;
     private EditText mOutEditText;
-    private Button mSendButton;
     private ProgressDialog mProgressDialog;
     private String mConnectedDeviceName = null;
 
     private static boolean isCountdown = false;
     private static boolean isRead = false;
-    private ArrayAdapter<String> mConversationArrayAdapter;
     private StringBuffer mOutStringBuffer;
     private BluetoothAdapter mBluetoothAdapter = null;
     private Button pibutton;
@@ -89,7 +81,7 @@ public class Dashboard extends Fragment {
         pibutton = (Button) view.findViewById(R.id.pbutton);
         dobutton = (Button) view.findViewById(R.id.docker_button);
         cmdButton = (Button)view.findViewById(R.id.cmdbutton);
-        //  lview = (ListView)view.findViewById(R.id.mview);
+
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,6 +116,7 @@ public class Dashboard extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -143,25 +136,21 @@ public class Dashboard extends Fragment {
         switch (item.getItemId()) {
             case R.id.wifi_configuration: {
                 showNWifiDialog();
-                //return true;
                 break;
             }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-                //return true;
                 break;
             }
             case R.id.discoverable: {
                 // Ensure this device is discoverable by others
                 ensureDiscoverable();
-                //return true;
                 break;
             }
             case R.id.hotspot_configuration: {
                 showHotspotDialog();
-                //return true;
                 break;
             }
             default:
@@ -192,21 +181,16 @@ public class Dashboard extends Fragment {
 
     public void showNWifiDialog() {
         // Create an instance of the dialog fragment and show it
-
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-
-
     }
 
     public void showHotspotDialog(){
         //Reusing WifiDialogFragment code for Hotspot
-
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
         hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
-
     }
 
     @Override
@@ -281,47 +265,6 @@ public class Dashboard extends Fragment {
         // Attempt to connect to the device
         mChatService.connect(device, secure);
     }
-    /*
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
-                if (isRead) {
-                    tView.setTextColor(Color.BLUE);
-                } else {
-                    tView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
-    }*/
-    /*
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-
-    }*/
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
@@ -343,10 +286,6 @@ public class Dashboard extends Fragment {
 
             byte[] send = mJson.toString().getBytes();
             mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            //mOutStringBuffer.setLength(0);
-            //mOutEditText.setText(mOutStringBuffer);
         }
     }
     private void ensureDiscoverable() {
@@ -367,7 +306,15 @@ public class Dashboard extends Fragment {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            //mConversationArrayAdapter.clear();
+                            try {
+                                Thread.sleep(500);
+                                String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
+                                for (int i = 0; i <= 3; i++) {
+                                    mChatService.write(firstRun[i].getBytes());
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -384,14 +331,9 @@ public class Dashboard extends Fragment {
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     Log.d(TAG, "writeMessage = " + writeMessage);
-                    //mConversationArrayAdapter.add("Command:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
-//                    byte[] readBuf = (byte[]) msg.obj;
-//                     construct a string from the valid bytes in the buffer
-//                    String readMessage = new String(readBuf, 0, msg.arg1);
-//                    String readMessage = new String(readBuf);
                     String readMessage = (String)msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
                     //TODO: if message is json -> callback from RPi
@@ -406,10 +348,6 @@ public class Dashboard extends Fragment {
                             mProgressDialog.dismiss();
                             Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
                         }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0,readMessage.length()-1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        //mConversationArrayAdapter.add(readMessage);
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -498,14 +436,11 @@ public class Dashboard extends Fragment {
             JSONObject mJSON = new JSONObject(str);
             result = mJSON.getString("result") == null? "" : mJSON.getString("result");
             ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
             if(!result.equals("SUCCESS")){
                 Toast.makeText(getActivity(), R.string.config_fail,
                         Toast.LENGTH_LONG).show();
             }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
                 Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
             }
 
@@ -513,6 +448,5 @@ public class Dashboard extends Fragment {
             // error handling
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
-
     }
 }

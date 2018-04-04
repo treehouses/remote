@@ -19,23 +19,11 @@
 
 package io.treehouses.remote;
 
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 
@@ -49,17 +37,12 @@ public class MainActivity extends FragmentActivity {
         getActionBar().setLogo(R.mipmap.ic_launcher);
         getActionBar().setDisplayUseLogoEnabled(true);
 
-
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Dashboard db = new Dashboard();
-           // transaction.replace(R.id.sample_layout, db);
             transaction.add(R.id.sample_layout,db);
             transaction.commit();
-
-
         }
-
     }
 
     @Override
@@ -77,6 +60,8 @@ public class MainActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
-
-
+    @Override
+    public void onBackPressed(){
+        setContentView(R.layout.hope_layout);
+    }
 }
