@@ -11,7 +11,12 @@ import android.widget.EditText;
 
 public class TextBoxValidation extends DialogFragment{
 
-    public void textboxValidation(final AlertDialog mDialog, final EditText textWatcher, final EditText SSID, final EditText PWD, @Nullable final EditText confirm, final Context context) {
+    AlertDialog mDialog;
+    EditText textWatcher;
+    EditText SSID;
+    EditText PWD;
+
+    public void textboxValidation(@Nullable final EditText confirm, final Context context) {
             textWatcher.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

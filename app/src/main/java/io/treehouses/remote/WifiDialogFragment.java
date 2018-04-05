@@ -29,8 +29,6 @@ public class WifiDialogFragment extends DialogFragment {
     protected EditText mPWDEditText;
     TextBoxValidation TBV = new TextBoxValidation();
 
-    protected boolean isValidInput;
-
     public static WifiDialogFragment newInstance(int num){
 
         WifiDialogFragment dialogFragment = new WifiDialogFragment();
@@ -39,9 +37,7 @@ public class WifiDialogFragment extends DialogFragment {
 //        dialogFragment.setArguments(bundle);
 
         return dialogFragment;
-
     }
-
 
     @NonNull
     @Override
@@ -103,23 +99,20 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-        TBV.textboxValidation(mDialog, mSSIDEditText,mSSIDEditText, mPWDEditText, null, getContext());
-        TBV.textboxValidation(mDialog, mPWDEditText,mSSIDEditText, mPWDEditText, null, getContext());
+        
+        TBV.mDialog = mDialog;
+        TBV.textWatcher = mSSIDEditText;
+        TBV.SSID = mSSIDEditText;
+        TBV.PWD = mPWDEditText;
+        TBV.textboxValidation( null, getContext());
+
+        TBV.textWatcher = mPWDEditText;
+        TBV.textboxValidation( null, getContext());
     }
-
-    /**
-     * This block checks for the input in the ssid textbox and the pwd textbox, and if requirements
-     *are met the positive button will be enabled.
-     */
-
-
-
 
     protected void initLayoutView(View mView) {
         mSSIDEditText = (EditText)mView.findViewById(R.id.SSID);
         mPWDEditText = (EditText)mView.findViewById(R.id.password);
-
     }
-
 }
 

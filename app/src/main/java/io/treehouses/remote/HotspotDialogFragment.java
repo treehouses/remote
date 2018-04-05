@@ -100,18 +100,18 @@ public class HotspotDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-        TBV.textboxValidation(mDialog, hotspotSSIDEditText,hotspotSSIDEditText, hotspotPWDEditText, confirmPWDEditText, getContext());
-        TBV.textboxValidation(mDialog, hotspotPWDEditText,hotspotSSIDEditText, hotspotPWDEditText, confirmPWDEditText, getContext());
-        TBV.textboxValidation(mDialog, confirmPWDEditText,hotspotSSIDEditText, hotspotPWDEditText, confirmPWDEditText, getContext());
+        TBV.mDialog = mDialog;
+        TBV.textWatcher = hotspotSSIDEditText;
+        TBV.SSID = hotspotSSIDEditText;
+        TBV.PWD = hotspotPWDEditText;
+        TBV.textboxValidation( confirmPWDEditText, getContext());
+
+        TBV.textWatcher = hotspotPWDEditText;
+        TBV.textboxValidation(confirmPWDEditText, getContext());
+
+        TBV.textWatcher = confirmPWDEditText;
+        TBV.textboxValidation( confirmPWDEditText, getContext());
     }
-
-    /**
-     * This block checks for the input in the ssid textbox and the pwd textbox, and if requirements
-     *are met the positive button will be enabled.
-     */
-
-
-
 
     protected void initLayoutView(View mView) {
         hotspotSSIDEditText = (EditText)mView.findViewById(R.id.hotspotSSID);
