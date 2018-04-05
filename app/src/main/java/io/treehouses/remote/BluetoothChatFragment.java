@@ -824,7 +824,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     public void mOffline(){
-        //Pbutton.setBackgroundColor(Color.parseColor("#ff0000"));
         Pbutton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
         bgShape.setColor(Color.RED);
