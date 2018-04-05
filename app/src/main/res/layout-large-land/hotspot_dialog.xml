@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/HSSID"
+        android:id="@+id/hotspotSSID"
         android:inputType="textEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         android:hint="Hotspot Name" />
 
     <EditText
-        android:id="@+id/Hpassword"
+        android:id="@+id/hotspotPassword"
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:fontFamily="sans-serif"
         android:hint="@string/password"/>
     <EditText
-        android:id="@+id/HCpassword"
+        android:id="@+id/confirmPassword"
         android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

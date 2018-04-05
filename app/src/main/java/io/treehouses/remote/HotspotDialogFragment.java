@@ -24,9 +24,10 @@ public class HotspotDialogFragment extends DialogFragment {
 
     private static final String TAG = "HotspotDialogFragment";
 
-    protected EditText HSSIDEditText;
-    protected EditText HPWDEditText;
-    protected EditText HCPWDEditText;
+    protected EditText hotspotSSIDEditText;
+    protected EditText hotspotPWDEditText;
+    protected EditText confirmPWDEditText;
+    TextBoxValidation TBV = new TextBoxValidation();
 
 
     public static HotspotDialogFragment newInstance(int num) {
@@ -63,8 +64,8 @@ public class HotspotDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                hDialogButtonTrueOrFalse(mDialog, false);
-                HSSIDEditText.setError("Name your Hotspot");
+                TBV.dialogButtonTrueOrFalse(mDialog, false );
+                hotspotSSIDEditText.setError("Name your Hotspot");
             }
         });
 
@@ -79,9 +80,9 @@ public class HotspotDialogFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                                String SSID = HSSIDEditText.getText().toString();
-                                String PWD = HPWDEditText.getText().toString();
-                                String CPWD = HCPWDEditText.getText().toString();
+                                String SSID = hotspotSSIDEditText.getText().toString();
+                                String PWD = hotspotPWDEditText.getText().toString();
+                                String CPWD = confirmPWDEditText.getText().toString();
 
                                 Intent intent = new Intent();
                                 intent.putExtra("SSID", SSID);
@@ -99,57 +100,23 @@ public class HotspotDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-        hotspotTextWatcher(mDialog,HSSIDEditText);
-        hotspotTextWatcher(mDialog,HPWDEditText);
-        hotspotTextWatcher(mDialog,HCPWDEditText);
+        TBV.textboxValidation(mDialog, hotspotSSIDEditText,hotspotSSIDEditText, hotspotPWDEditText, confirmPWDEditText, getContext());
+        TBV.textboxValidation(mDialog, hotspotPWDEditText,hotspotSSIDEditText, hotspotPWDEditText, confirmPWDEditText, getContext());
+        TBV.textboxValidation(mDialog, confirmPWDEditText,hotspotSSIDEditText, hotspotPWDEditText, confirmPWDEditText, getContext());
     }
 
     /**
      * This block checks for the input in the ssid textbox and the pwd textbox, and if requirements
      *are met the positive button will be enabled.
      */
-    public void hotspotTextWatcher(final AlertDialog mDialog, final EditText textWatcher) {
-        textWatcher.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == HPWDEditText.getId())) {
-                    hDialogButtonTrueOrFalse(mDialog, false);
-                    HPWDEditText.setError(getString(R.string.error_pwd_length));
-                }else if (textWatcher.length() == 0 && (textWatcher.getId() == HSSIDEditText.getId())) {
-                    hDialogButtonTrueOrFalse(mDialog, false);
-                    HSSIDEditText.setError(getString(R.string.error_ssid_empty));
-                } else {
-                    hDialogButtonTrueOrFalse(mDialog, true);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                 if (HPWDEditText.getText().toString().equals(HCPWDEditText.getText().toString())) {
-                    hDialogButtonTrueOrFalse(mDialog, true);
-                }else {
-                     hDialogButtonTrueOrFalse(mDialog, false);
-                     HCPWDEditText.setError(getString(R.string.error_pwd_confirm));
-                 }
-            }
-        });
-    }
 
-    public void hDialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
-        if (button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }else if(!button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-        }
-    }
+
+
 
     protected void initLayoutView(View mView) {
-        HSSIDEditText = (EditText)mView.findViewById(R.id.HSSID);
-        HPWDEditText = (EditText)mView.findViewById(R.id.Hpassword);
-        HCPWDEditText = (EditText)mView.findViewById(R.id.HCpassword);
+        hotspotSSIDEditText = (EditText)mView.findViewById(R.id.hotspotSSID);
+        hotspotPWDEditText = (EditText)mView.findViewById(R.id.hotspotPassword);
+        confirmPWDEditText = (EditText)mView.findViewById(R.id.confirmPassword);
 
     }
 
