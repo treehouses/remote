@@ -24,6 +24,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -85,6 +86,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Tbutton;
     private Button Dbutton;
     private Button Vbutton;
+    private Button Pbutton;
     private Button HNbutton;
     private Button CPbutton;
     private Button EFbutton;
@@ -127,6 +129,17 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        //start pinging for wifi check
+        final Handler h = new Handler();
+        final int delay = 20000;
+        h.postDelayed(new Runnable(){
+            public void run(){
+                String ping = "ping -c 1 google.com";
+                sendPing(ping);
+                h.postDelayed(this, delay);
+            }
+        }, delay);
+
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
             FragmentActivity activity = getActivity();
@@ -164,6 +177,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
+                mIdle();
             }
         }
     }
@@ -181,6 +195,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Tbutton = (Button) view.findViewById(R.id.TB);
         Dbutton = (Button)view.findViewById(R.id.DB);
         Vbutton = (Button)view.findViewById(R.id.VB);
+        Pbutton = (Button)view.findViewById(R.id.PING);
         HNbutton = (Button)view.findViewById(R.id.HN);
         CPbutton = (Button) view.findViewById(R.id.CP);
         EFbutton = (Button)view.findViewById(R.id.EF);
@@ -377,6 +392,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            mIdle();
             return;
         }
 
@@ -393,6 +409,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     }
 
+    private void sendPing(String ping) {
+        // Get the message bytes and tell the BluetoothChatService to write
+        byte[] pSend = ping.getBytes();
+        mChatService.write(pSend);
+
+        mOutStringBuffer.setLength(0);
+    }
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
@@ -512,6 +535,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case BluetoothChatService.STATE_LISTEN:
                         case BluetoothChatService.STATE_NONE:
                             setStatus(R.string.title_not_connected);
+                            mIdle();
                             break;
                     }
                     break;
@@ -520,9 +544,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
-                    mConversationArrayAdapter.add("Command:  " + writeMessage);
-
+                    if(!writeMessage.contains("google.com")) {
+                        Log.d(TAG, "writeMessage = " + writeMessage);
+                        mConversationArrayAdapter.add("Command:  " + writeMessage);
+                    }
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -551,9 +576,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        mConversationArrayAdapter.add(readMessage);
-                    }
 
+                        //check if ping was successful
+                        if(readMessage.contains("1 packets")){
+                            mConnect();
+                        }
+                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
+                            mOffline();
+                        }
+                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
+                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                            mConversationArrayAdapter.add(readMessage);
+                        }
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -741,6 +777,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
 
+
     }
 
     public boolean isJson(String str) {
@@ -783,4 +820,24 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
 
     }
+
+    public void mOffline(){
+        Pbutton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.RED);
+    }
+
+    public void mIdle(){
+        Pbutton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.GRAY);
+    }
+
+    public void mConnect(){
+        Pbutton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.GREEN);
+    }
 }
+
+
