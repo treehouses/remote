@@ -23,7 +23,9 @@
     <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="title_not_connected">not connected</string>
     <string name="command_hint">commands</string>
+    <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>
+
 
     <string name="TestButton">PIRATESHIP</string>
     <string name="DockerButton">DOCKER PS</string>
@@ -72,6 +74,7 @@
     <string name="dialog_message">Configure RPi\'s Wi-Fi setting</string>
     <string name="ssid">SSID</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="error_ssid_empty">Type in the name of the network \nyou want to use </string>
     <string name="error_pwd_length">Password must have at least \neight characters.</string>
     <string name="config_configuring">Start configuring...</string>

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 
 /**
  * Created by Terrence on 3/12/2018.
@@ -36,7 +37,7 @@ public class HotspotDialogFragment extends WifiDialogFragment {
 
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.dialog_design,null);
+        View mView = inflater.inflate(R.layout.hotspot_dialog,null);
         initLayoutView(mView);
 
         final AlertDialog mDialog = getAlertDialog(mView);
@@ -48,6 +49,20 @@ public class HotspotDialogFragment extends WifiDialogFragment {
 
         return mDialog;
     }
+
+    @NonNull
+    @Override
+    protected void getListener(final AlertDialog mDialog) {
+        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                dialogButtonTrueOrFalse(mDialog, false);
+                mSSIDEditText.setError("Name your Hotspot");
+            }
+        });
+
+    }
+
 }
 
 

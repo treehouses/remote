@@ -70,6 +70,7 @@ public class WifiDialogFragment extends DialogFragment {
                 mSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
+
     }
 
     protected AlertDialog getAlertDialog(View mView) {
@@ -129,7 +130,7 @@ public class WifiDialogFragment extends DialogFragment {
         });
     }
 
-    private void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
+    public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
         if (button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);

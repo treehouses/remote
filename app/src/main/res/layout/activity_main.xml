@@ -25,7 +25,7 @@
         android:background="@android:color/darker_gray" />
 
     <FrameLayout
-        android:id="@+id/sample_content_fragment"
+        android:id="@+id/sample_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </FrameLayout>

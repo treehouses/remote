@@ -1,20 +1,17 @@
 /*
-* Copyright 2017 The Android Open Source Project, Inc.
-*
-* Licensed to the Apache Software Foundation (ASF) under one or more contributor
-* license agreements. See the NOTICE file distributed with this work for additional
-* information regarding copyright ownership. The ASF licenses this file to you under
-* the Apache License, Version 2.0 (the "License"); you may not use this file except
-* in compliance with the License. You may obtain a copy of the License at
-
-* http://www.apache.org/licenses/LICENSE-2.0
-
-* Unless required by applicable law or agreed to in writing, software distributed under
-* the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-* ANY KIND, either express or implied. See the License for the specific language
-* governing permissions and limitations under the License.
-
-*/
+ * Copyright 2017 The Android Open Source Project, Inc.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor
+ * license agreements. See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership. The ASF licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
 package io.treehouses.remote;
 
@@ -343,7 +340,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
-         return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -728,7 +725,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.bluetooth_chat, menu);
+        //inflater.inflate(R.menu.bluetooth_chat, menu);
     }
 
     @Override
@@ -780,6 +777,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
 
+
     }
 
     public boolean isJson(String str) {
@@ -809,7 +807,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
             if(!result.equals("SUCCESS")){
                 Toast.makeText(getActivity(), R.string.config_fail,
-                            Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG).show();
             }else{
 //                Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
@@ -841,3 +839,5 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         bgShape.setColor(Color.GREEN);
     }
 }
+
+
