@@ -29,11 +29,9 @@ public class TextBoxValidation extends DialogFragment{
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
-                    Log.e("Button", "Confirmed PWD");
                     if (confirm.getText().toString().equals(PWD.getText().toString())) {
                        dialogButtonTrueOrFalse(mDialog, true);
                     }else {
-                        Log.e("Button", "Not Confirmed PWD");
                         dialogButtonTrueOrFalse(mDialog, false);
                         confirm.setError(context.getString(R.string.error_pwd_confirm));
                     }
