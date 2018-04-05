@@ -41,11 +41,9 @@ public class TextBoxValidation extends DialogFragment{
 
     public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
         if (button){
-            Log.e("Button", "Enabled button");
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }else if(!button){
-            Log.e("Button", "Disabled button");
+        }else if (!button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
         }
