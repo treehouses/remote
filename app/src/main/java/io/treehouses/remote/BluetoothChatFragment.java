@@ -128,6 +128,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         setHasOptionsMenu(true);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mChatService = (BluetoothChatService) getArguments().getSerializable("mChatService");
+        Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
+        mChatService.setHandler(mHandler);
 
         //start pinging for wifi check
         final Handler h = new Handler();
@@ -158,9 +161,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mChatService == null) {
-            setupChat();
-        }
+        } else {setupChat();}
     }
 
     @Override
@@ -286,9 +287,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 sendMessage(e);
             }
         });
-
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");

@@ -391,7 +391,7 @@ public class pirateship extends Activity  {
         mListView.setAdapter(mviewArrayAdapter);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getApplicationContext(), mHandler);
+        //mChatService = new BluetoothChatService(getApplicationContext(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
