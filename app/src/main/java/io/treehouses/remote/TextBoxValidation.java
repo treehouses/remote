@@ -2,11 +2,13 @@ package io.treehouses.remote;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 /**
@@ -26,7 +28,7 @@ public class TextBoxValidation extends DialogFragment{
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                     if (textWatcher.length() == 0 && (textWatcher.getId() == SSID.getId())) {
+                     if (SSID.length() == 0 ) {
                          dialogButtonTrueOrFalse(mDialog, false);
                          SSID.setError(context.getString(R.string.error_ssid_empty));
                      }else if (PWD.length() > 0 && PWD.length() < 8) {
