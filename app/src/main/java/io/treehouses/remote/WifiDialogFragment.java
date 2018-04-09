@@ -27,7 +27,7 @@ public class WifiDialogFragment extends DialogFragment {
     // Layout Views
     protected EditText mSSIDEditText;
     protected EditText mPWDEditText;
-    TextBoxValidation TBV = new TextBoxValidation();
+    TextBoxValidation textboxValidation = new TextBoxValidation();
 
     public static WifiDialogFragment newInstance(int num){
 
@@ -64,7 +64,7 @@ public class WifiDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                TBV.dialogButtonTrueOrFalse(mDialog, false);
+                textboxValidation.dialogButtonTrueOrFalse(mDialog, false);
                 mSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
@@ -100,14 +100,14 @@ public class WifiDialogFragment extends DialogFragment {
 
     public void setTextChangeListener(final AlertDialog mDialog) {
         
-        TBV.mDialog = mDialog;
-        TBV.textWatcher = mSSIDEditText;
-        TBV.SSID = mSSIDEditText;
-        TBV.PWD = mPWDEditText;
-        TBV.textboxValidation( null, getContext());
+        textboxValidation.mDialog = mDialog;
+        textboxValidation.textWatcher = mSSIDEditText;
+        textboxValidation.SSID = mSSIDEditText;
+        textboxValidation.PWD = mPWDEditText;
+        textboxValidation.textboxValidation( null, getContext());
 
-        TBV.textWatcher = mPWDEditText;
-        TBV.textboxValidation( null, getContext());
+        textboxValidation.textWatcher = mPWDEditText;
+        textboxValidation.textboxValidation( null, getContext());
     }
 
     protected void initLayoutView(View mView) {

@@ -27,7 +27,7 @@ public class HotspotDialogFragment extends DialogFragment {
     protected EditText hotspotSSIDEditText;
     protected EditText hotspotPWDEditText;
     protected EditText confirmPWDEditText;
-    TextBoxValidation TBV = new TextBoxValidation();
+    TextBoxValidation textBoxValidation = new TextBoxValidation();
 
 
     public static HotspotDialogFragment newInstance(int num) {
@@ -64,8 +64,8 @@ public class HotspotDialogFragment extends DialogFragment {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                TBV.dialogButtonTrueOrFalse(mDialog, false );
-                hotspotSSIDEditText.setError("Name your Hotspot");
+                textBoxValidation.dialogButtonTrueOrFalse(mDialog, false );
+                hotspotSSIDEditText.setError(getString(R.string.error_ssid_empty));
             }
         });
 
@@ -100,17 +100,23 @@ public class HotspotDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-        TBV.mDialog = mDialog;
-        TBV.textWatcher = hotspotSSIDEditText;
-        TBV.SSID = hotspotSSIDEditText;
-        TBV.PWD = hotspotPWDEditText;
-        TBV.textboxValidation( confirmPWDEditText, getContext());
+        textBoxValidation.mDialog = mDialog;
+        textBoxValidation.textWatcher = hotspotSSIDEditText;
+        textBoxValidation.SSID = hotspotSSIDEditText;
+        textBoxValidation.PWD = hotspotPWDEditText;
+        textBoxValidation.textboxValidation( confirmPWDEditText, getContext());
 
-        TBV.textWatcher = hotspotPWDEditText;
-        TBV.textboxValidation(confirmPWDEditText, getContext());
+        textBoxValidation.mDialog = mDialog;
+        textBoxValidation.textWatcher = hotspotPWDEditText;
+        textBoxValidation.SSID = hotspotSSIDEditText;
+        textBoxValidation.PWD = hotspotPWDEditText;
+        textBoxValidation.textboxValidation(confirmPWDEditText, getContext());
 
-        TBV.textWatcher = confirmPWDEditText;
-        TBV.textboxValidation( confirmPWDEditText, getContext());
+        textBoxValidation.mDialog = mDialog;
+        textBoxValidation.textWatcher = confirmPWDEditText;
+        textBoxValidation.SSID = hotspotSSIDEditText;
+        textBoxValidation.PWD = hotspotPWDEditText;
+        textBoxValidation.textboxValidation( confirmPWDEditText, getContext());
     }
 
     protected void initLayoutView(View mView) {

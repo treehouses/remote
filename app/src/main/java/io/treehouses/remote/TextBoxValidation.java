@@ -9,6 +9,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
+/**
+ * This class is the SSID and Password validator for the hotspot dialog
+ */
+
 public class TextBoxValidation extends DialogFragment{
 
     AlertDialog mDialog;
@@ -22,24 +26,24 @@ public class TextBoxValidation extends DialogFragment{
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == PWD.getId())) {
-                        dialogButtonTrueOrFalse(mDialog, false);
-                        PWD.setError(context.getString(R.string.error_pwd_length));
-                    }else if (textWatcher.length() == 0 && (textWatcher.getId() == SSID.getId())) {
-                        dialogButtonTrueOrFalse(mDialog, false);
-                        SSID.setError(context.getString(R.string.error_ssid_empty));
-                    } else {
+                     if (textWatcher.length() == 0 && (textWatcher.getId() == SSID.getId())) {
+                         dialogButtonTrueOrFalse(mDialog, false);
+                         SSID.setError(context.getString(R.string.error_ssid_empty));
+                     }else if (PWD.length() > 0 && PWD.length() < 8) {
+                         dialogButtonTrueOrFalse(mDialog, false);
+                         PWD.setError(context.getString(R.string.error_pwd_length));
+                     }else if (PWD.length() >= 8 && confirm.getText().toString() == PWD.getText().toString()) {
                         dialogButtonTrueOrFalse(mDialog, true);
-                    }
+                     }else if (PWD.length() >=8 && !confirm.getText().toString().equals(PWD.getText().toString())) {
+                         dialogButtonTrueOrFalse(mDialog, false);
+                         confirm.setError(context.getString(R.string.error_pwd_confirm));
+                     }else
+                         dialogButtonTrueOrFalse(mDialog, true);
+
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (confirm.getText().toString().equals(PWD.getText().toString())) {
-                       dialogButtonTrueOrFalse(mDialog, true);
-                    }else {
-                        dialogButtonTrueOrFalse(mDialog, false);
-                        confirm.setError(context.getString(R.string.error_pwd_confirm));
-                    }
+
                 }
             });
         }
