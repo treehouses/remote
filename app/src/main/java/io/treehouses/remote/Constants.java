@@ -34,6 +34,14 @@ public interface Constants {
     int MESSAGE_DEVICE_NAME = 4;
     int MESSAGE_TOAST = 5;
 
+    // Intent request codes
+    // Used in pirateship, BluetoothChatFragment
+    int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    int REQUEST_ENABLE_BT = 3;
+    int REQUEST_DIALOG_FRAGMENT = 4;
+    int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
+
     // Key names received from the BluetoothChatService Handler
     String DEVICE_NAME = "device_name";
     String TOAST = "toast";

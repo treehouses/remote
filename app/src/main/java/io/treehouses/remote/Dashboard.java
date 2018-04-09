@@ -33,8 +33,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static io.treehouses.remote.BluetoothChatFragment.REQUEST_DIALOG_FRAGMENT_HOTSPOT;
-
 /**
  * Created by Lalitha S Oruganty on 3/13/2018.
  */
@@ -88,10 +86,11 @@ public class Dashboard extends Fragment {
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(view.getContext(), pirateship.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("mChatService", mChatService);
+                intent.putExtra("mBundle", mBundle);
                 startActivity(intent);
-
             }
         });
 
@@ -197,7 +196,7 @@ public class Dashboard extends Fragment {
         //Reusing WifiDialogFragment code for Hotspot
 
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
-        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        hDialogFragment.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
 
     }

@@ -15,8 +15,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,23 +35,44 @@ import org.json.JSONObject;
 
 public class pirateship extends Activity  {
 
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
     private static final String TAG ="pirateship" ;
-    private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothChatService mChatService = null;
-    private StringBuffer mOutStringBuffer;
-    private EditText mOutEditText;
-    private ListView mListView;
-    private Button pibutton;
-    private ArrayAdapter<String> mviewArrayAdapter;
     static String currentStatus = "not connected";
-    private static boolean isRead = false;
-    private String mConnectedDeviceName = null;
-    private static boolean isCountdown = false;
+
+    // Layout Views
+    private ListView mConversationView;
+    private EditText mOutEditText;
+    private Button pibutton;
     private ProgressDialog mProgressDialog;
+
+    /**
+     * Name of the connected device
+     */
+    private String mConnectedDeviceName = null;
+
+    /**
+     * Array adapter for the conversation thread
+     */
+    private ArrayAdapter<String> mConversationArrayAdapter;
+
+    /**
+     * String buffer for outgoing messages
+     */
+    private StringBuffer mOutStringBuffer;
+
+    /**
+     * Local Bluetooth adapter
+     */
+    private BluetoothAdapter mBluetoothAdapter = null;
+
+    /**
+     * Member object for the chat services
+     */
+    private BluetoothChatService mChatService = null;
+
+    private static boolean isRead = false;
+
+    private static boolean isCountdown = false;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +80,9 @@ public class pirateship extends Activity  {
         getActionBar().setLogo(R.mipmap.ic_launcher);
         getActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.pirateship_layout);
+
         pibutton = (Button)findViewById(R.id.dpi);
-        mListView = (ListView)findViewById(R.id.pview);
+        mConversationView = (ListView)findViewById(R.id.pview);
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,12 +91,65 @@ public class pirateship extends Activity  {
             }
         });
 
-        mviewArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.message){
+        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Bundle mBundle = new Bundle(getIntent().getBundleExtra("mBundle"));
+        mChatService = (BluetoothChatService) mBundle.getSerializable("mChatService");
+        Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
+        mChatService.setHandler(mHandler);
+
+        // If the adapter is null, then Bluetooth is not supported
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            this.finish();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else {setupChat();}
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+        }
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
+    }
+
+    /**
+     * Set up the UI and background operations for chat.
+     */
+    private void setupChat() {
+        Log.d(TAG, "setupChat()");
+
+        // Initialize the array adapter for the conversation thread
+        mConversationArrayAdapter = new ArrayAdapter<String>(this,R.layout.message){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.pview);
+                TextView tView = (TextView) view.findViewById(R.id.listItem);
                 if(isRead){
                     tView.setTextColor(Color.BLUE);
                 }else{
@@ -82,17 +159,30 @@ public class pirateship extends Activity  {
             }
         };
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else if (mChatService == null) {
-            setupChat();
-        }
+        mConversationView.setAdapter(mConversationArrayAdapter);
+
+        // Initialize the compose field with a listener for the return key
+        mOutEditText.setOnEditorActionListener(mWriteListener);
+
+        // Initialize the buffer for outgoing messages
+        mOutStringBuffer = new StringBuffer("");
+
+        //get spinner
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle(R.string.progress_dialog_title);
+        mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
     }
 
-
+    private void ensureDiscoverable() {
+        if (mBluetoothAdapter.getScanMode() !=
+                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+    }
 
     /**
      * Sends a message.
@@ -102,7 +192,7 @@ public class pirateship extends Activity  {
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,11 +209,11 @@ public class pirateship extends Activity  {
 
     }
 
-
+    /*
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -146,7 +236,75 @@ public class pirateship extends Activity  {
             mOutEditText.setText(mOutStringBuffer);
         }
     }
+    */
 
+    /**
+     * The action listener for the EditText widget, to listen for the return key
+     */
+    private TextView.OnEditorActionListener mWriteListener
+            = new TextView.OnEditorActionListener() {
+        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+            // If the action is a key-up event on the return key, send the message
+            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
+                String message = view.getText().toString();
+                sendMessage(message);
+            }
+            return true;
+        }
+    };
+
+    /**
+     * Updates the status on the action bar.
+     *
+     * @param resId a string resource ID
+     */
+    private void setStatus(int resId) {
+        if (null == this) {
+            return;
+        }
+        final ActionBar actionBar = this.getActionBar();
+        if (null == actionBar) {
+            return;
+        }
+        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
+        currentStatus = getString(resId);
+        actionBar.setSubtitle(resId);
+
+    }
+
+    /**
+     * Updates the status on the action bar.
+     *
+     * @param subTitle status
+     */
+    private void setStatus(CharSequence subTitle) {
+        if (null == this) {
+            return;
+        }
+        final ActionBar actionBar = this.getActionBar();
+        if (null == actionBar) {
+            return;
+        }
+        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
+        currentStatus = subTitle.toString();
+        actionBar.setSubtitle(subTitle);
+    }
+
+    private final Runnable watchDogTimeOut = new Runnable() {
+        @Override
+        public void run() {
+            isCountdown = false;
+            //time out
+            if(mProgressDialog.isShowing()){
+                mProgressDialog.dismiss();
+                Toast.makeText(getApplicationContext(),"No response from RPi",Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -156,7 +314,7 @@ public class pirateship extends Activity  {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mviewArrayAdapter.clear();
+                            mConversationArrayAdapter.clear();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -173,8 +331,7 @@ public class pirateship extends Activity  {
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     Log.d(TAG, "writeMessage = " + writeMessage);
-                    mviewArrayAdapter.add("Command:  " + writeMessage);
-
+                    mConversationArrayAdapter.add("Command:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -199,7 +356,7 @@ public class pirateship extends Activity  {
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        mviewArrayAdapter.add(readMessage);
+                        mConversationArrayAdapter.add(readMessage);
                     }
 
                     break;
@@ -220,89 +377,23 @@ public class pirateship extends Activity  {
             }
         }
     };
-    public void handleCallback(String str){
-        String result;
-        String ip;
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-            isCountdown = false;
-        }
-        //enable user interaction
-        mProgressDialog.dismiss();
-        try{
-            JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
-            if(!result.equals("SUCCESS")){
-                Toast.makeText(getApplication(), R.string.config_fail,
-                        Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getApplicationContext(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
-
-        }catch (JSONException e){
-            // error handling
-            Toast.makeText(getApplicationContext(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
-        }
-
-    }
-    private void setStatus(int resId) {
-        Activity activity = (Activity) getApplicationContext();
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
-        currentStatus = getString(resId);
-        actionBar.setSubtitle(resId);
-
-    }
-
-    private void setStatus(CharSequence subTitle) {
-        Activity activity = (Activity)getApplicationContext();
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
-        currentStatus = subTitle.toString();
-        actionBar.setSubtitle(subTitle);
-    }
-
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -310,16 +401,16 @@ public class pirateship extends Activity  {
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getApplicationContext(), R.string.bt_not_enabled_leaving,
+                    Toast.makeText(this, R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
                     //getApplication().finish();
                 }
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
                     if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
-                        Toast.makeText(getApplicationContext(), R.string.not_connected,
+                        Toast.makeText(this, R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -341,7 +432,7 @@ public class pirateship extends Activity  {
 //                    Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
 
-                    sendMessage(SSID,PWD);
+                    //sendMessage(SSID,PWD);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
@@ -349,6 +440,7 @@ public class pirateship extends Activity  {
                 }
         }
     }
+
     private void connectDevice(Intent data, boolean secure) {
         // Get the device MAC address
         String address = data.getExtras()
@@ -358,58 +450,44 @@ public class pirateship extends Activity  {
         // Attempt to connect to the device
         mChatService.connect(device, secure);
     }
-    private final Runnable watchDogTimeOut = new Runnable() {
-        @Override
-        public void run() {
+
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
             isCountdown = false;
-            //time out
-            if(mProgressDialog.isShowing()){
-                mProgressDialog.dismiss();
-                Toast.makeText(getApplicationContext(),"No response from RPi",Toast.LENGTH_LONG).show();
-            }
         }
-    };
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
+        //enable user interaction
+        mProgressDialog.dismiss();
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
-        // Initialize the array adapter for the conversation thread
-        mviewArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.message){
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
-                if(isRead){
-                    tView.setTextColor(Color.BLUE);
-                }else{
-                    tView.setTextColor(Color.RED);
-                }
-                return view;
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getApplication(), R.string.config_fail,
+                        Toast.LENGTH_LONG).show();
+            }else{
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
             }
-        };
 
-        mListView.setAdapter(mviewArrayAdapter);
-
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        //mChatService = new BluetoothChatService(getApplicationContext(), mHandler);
-
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
-
-        //get spinner
-        mProgressDialog = new ProgressDialog(getApplicationContext());
-        mProgressDialog.setTitle(R.string.progress_dialog_title);
-        mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
-        mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(this, "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
 
     }
-    private void ensureDiscoverable() {
-        if (mBluetoothAdapter.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
-    }
-
 }

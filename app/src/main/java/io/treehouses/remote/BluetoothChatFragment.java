@@ -69,14 +69,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     //current connection status
     static String currentStatus = "not connected";
 
-    // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
-    public static final int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
-
-
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
@@ -159,7 +151,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else {setupChat();}
     }
@@ -610,19 +602,19 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -634,7 +626,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
@@ -667,7 +659,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }else{
                     Log.d(TAG, "back from dialog, fail");
                 }
-            case REQUEST_DIALOG_FRAGMENT_HOTSPOT:
+            case Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT:
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
@@ -737,7 +729,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
                 //return true;
                 break;
             }
@@ -762,7 +754,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Create an instance of the dialog fragment and show it
 
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
 
 
@@ -772,7 +764,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         //Reusing WifiDialogFragment code for Hotspot
 
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
-        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        hDialogFragment.setTargetFragment(this,Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
 
 
