@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.EditText;
 
 public class TextBoxValidation extends DialogFragment{
@@ -34,9 +33,12 @@ public class TextBoxValidation extends DialogFragment{
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (confirm.getText().toString().equals(PWD.getText().toString())) {
+                    if (confirm.getText().toString().equals(PWD.getText().toString()) && (confirm.getText().length() == 0)) {
                        dialogButtonTrueOrFalse(mDialog, true);
-                    }else {
+                    }
+                    else if ((confirm.getText().toString().equals(PWD.getText().toString()) && (confirm.getText().length() >= 8))){
+                        dialogButtonTrueOrFalse(mDialog, true);
+                    } else {
                         dialogButtonTrueOrFalse(mDialog, false);
                         confirm.setError(context.getString(R.string.error_pwd_confirm));
                     }
