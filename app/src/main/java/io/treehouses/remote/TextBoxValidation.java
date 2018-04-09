@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.EditText;
 
 /**
@@ -39,11 +38,9 @@ public class TextBoxValidation extends DialogFragment{
                          confirm.setError(context.getString(R.string.error_pwd_confirm));
                      }else
                          dialogButtonTrueOrFalse(mDialog, true);
-
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
-
                 }
             });
         }
