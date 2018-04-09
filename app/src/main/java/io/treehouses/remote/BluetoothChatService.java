@@ -584,6 +584,8 @@ public class BluetoothChatService implements Serializable{
                                 actionBar.setSubtitle(SWver + HWver);
                             }
                         });
+                        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DISPLAY_DONE);
+                        mHandler.sendMessage(msg);
                         //Set everything back to default state
                         alreadyExecutedDisplay = true;
                     }

@@ -6,11 +6,9 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -18,16 +16,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -49,17 +41,15 @@ public class Dashboard extends Fragment {
     private static final int REQUEST_ENABLE_BT = 3;
     public static final int REQUEST_DIALOG_FRAGMENT = 4;
 
-    private EditText mOutEditText;
     private ProgressDialog mProgressDialog;
+    private ProgressDialog connectProgressDialog;
     private String mConnectedDeviceName = null;
 
     private static boolean isCountdown = false;
     private static boolean isRead = false;
-    private StringBuffer mOutStringBuffer;
     private BluetoothAdapter mBluetoothAdapter = null;
-    private Button pibutton;
-    private Button dobutton;
-    private ListView lview;
+    private Button piButton;
+    private Button dockerButton;
     private Button cmdButton;
     private BluetoothChatService mChatService = null;
 
@@ -79,14 +69,19 @@ public class Dashboard extends Fragment {
         mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
         mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
-        pibutton = (Button) view.findViewById(R.id.pbutton);
-        dobutton = (Button) view.findViewById(R.id.docker_button);
+        connectProgressDialog = new ProgressDialog(getActivity());
+        connectProgressDialog.setTitle(R.string.connect_progress_dialog__title);
+        connectProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        connectProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
+        piButton = (Button) view.findViewById(R.id.pbutton);
+        dockerButton = (Button) view.findViewById(R.id.docker_button);
         cmdButton = (Button)view.findViewById(R.id.cmdbutton);
 
-        pibutton.setOnClickListener(new View.OnClickListener() {
+        piButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), pirateship.class);
+                Intent intent = new Intent(view.getContext(), PirateshipActivity.class);
                 Bundle mBundle = new Bundle();
                 mBundle.putSerializable("mChatService", mChatService);
                 intent.putExtra("mBundle", mBundle);
@@ -94,10 +89,10 @@ public class Dashboard extends Fragment {
             }
         });
 
-        dobutton.setOnClickListener(new View.OnClickListener() {
+        dockerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent  dintent = new Intent(view.getContext(),docker.class);
+                Intent dintent = new Intent(view.getContext(),DockerActivity.class);
                 startActivity(dintent);
             }
         });
@@ -123,11 +118,6 @@ public class Dashboard extends Fragment {
         } else if (mChatService == null) {
             mChatService = new BluetoothChatService(getActivity(), mHandler);
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       // inflater.inflate(R.menu.bluetooth_chat, menu);
     }
 
     @Override
@@ -184,21 +174,16 @@ public class Dashboard extends Fragment {
 
     public void showNWifiDialog() {
         // Create an instance of the dialog fragment and show it
-
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-
-
     }
 
     public void showHotspotDialog(){
         //Reusing WifiDialogFragment code for Hotspot
-
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
         hDialogFragment.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
-
     }
 
     @Override
@@ -211,6 +196,7 @@ public class Dashboard extends Fragment {
                 }
                 break;
             case REQUEST_CONNECT_DEVICE_INSECURE:
+                connectProgressDialog.show();
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
@@ -246,18 +232,25 @@ public class Dashboard extends Fragment {
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null ? "" : data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null ? "" : data.getStringExtra("PWD");
+                    String SSID = data.getStringExtra
+                            ("SSID") == null ? "" : data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra
+                            ("PWD") == null ? "" : data.getStringExtra("PWD");
 
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
-                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-//                    Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-
+                    /**
+                     * TODO:
+                     * 1. check Validinput
+                     * 2. get the SSID and password from data object and send it to RPi through
+                     * sendMessage() method
+                     */
                     sendMessage(SSID, PWD);
-                    //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
-
+                    /**
+                     * TODO:
+                     * 1. lock the app when configuring.
+                     * 2. listen to configuration result and do the logic.
+                     */
                 } else {
                     Log.d(TAG, "back from dialog, fail");
                 }
@@ -280,7 +273,6 @@ public class Dashboard extends Fragment {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Check that there's actually something to send
         if (SSID.length() > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
@@ -294,10 +286,6 @@ public class Dashboard extends Fragment {
 
             byte[] send = mJson.toString().getBytes();
             mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
         }
     }
     private void ensureDiscoverable() {
@@ -319,8 +307,13 @@ public class Dashboard extends Fragment {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
                             try {
+                                // Sleep for 0.5 sec to make sure thread is ready
                                 Thread.sleep(500);
-                                String[] firstRun = {"cd boot\n", "cat version.txt\n", "pirateship detectrpi\n", "cd ..\n"};
+                                String[] firstRun = {
+                                        "cd boot\n",
+                                        "cat version.txt\n",
+                                        "pirateship detectrpi\n",
+                                        "cd ..\n"};
                                 for (int i = 0; i <= 3; i++) {
                                     mChatService.write(firstRun[i].getBytes());
                                 }
@@ -376,6 +369,9 @@ public class Dashboard extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
+                case Constants.MESSAGE_DISPLAY_DONE:
+                    connectProgressDialog.dismiss();
+                    break;
             }
         }
     };
@@ -425,6 +421,7 @@ public class Dashboard extends Fragment {
             }
         }
     };
+
     public boolean isJson(String str) {
         try {
             new JSONObject(str);
@@ -441,7 +438,6 @@ public class Dashboard extends Fragment {
             mHandler.removeCallbacks(watchDogTimeOut);
             isCountdown = false;
         }
-
         //enable user interaction
         mProgressDialog.dismiss();
         try{
@@ -463,6 +459,5 @@ public class Dashboard extends Fragment {
             // error handling
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
-
     }
 }

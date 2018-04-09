@@ -33,6 +33,7 @@ public interface Constants {
     int MESSAGE_WRITE = 3;
     int MESSAGE_DEVICE_NAME = 4;
     int MESSAGE_TOAST = 5;
+    int MESSAGE_DISPLAY_DONE = 6;
 
     // Intent request codes
     // Used in pirateship, BluetoothChatFragment

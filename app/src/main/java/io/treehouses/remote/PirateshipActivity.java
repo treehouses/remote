@@ -33,7 +33,7 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class pirateship extends Activity  {
+public class PirateshipActivity extends Activity  {
 
     private static final String TAG ="pirateship" ;
     static String currentStatus = "not connected";
@@ -357,15 +357,6 @@ public class pirateship extends Activity  {
                         readMessage = readMessage.substring(0,readMessage.length()-1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                         mConversationArrayAdapter.add(readMessage);
-                    }
-
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case Constants.MESSAGE_TOAST:

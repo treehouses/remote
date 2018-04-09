@@ -20,7 +20,7 @@
     <string name="not_connected">You are not connected to a device</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
     <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="title_connected_to">connected to %1$s</string>
     <string name="title_not_connected">not connected</string>
     <string name="command_hint">commands</string>
     <string name="Docker">DOCKER</string>
@@ -34,7 +34,8 @@
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
     <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>
-    <string name="progress_dialog_message">Wait while configuring...</string>
+    <string name="progress_dialog_message">Please wait while we are configuring...</string>
+    <string name="connect_progress_dialog__title">Setting up RPI\'s First Run</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">Scanning for devices...</string>
