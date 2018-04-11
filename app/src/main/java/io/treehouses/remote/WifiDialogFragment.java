@@ -58,7 +58,6 @@ public class WifiDialogFragment extends DialogFragment {
         return mDialog;
     }
 
-
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                     .setView(mView)
