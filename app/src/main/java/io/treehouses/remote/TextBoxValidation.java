@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * This class is the SSID and Password validator for the hotspot dialog
+ * This class is the hotspot and wifi dialog validator
  */
 
 public class TextBoxValidation extends DialogFragment{
@@ -26,6 +26,9 @@ public class TextBoxValidation extends DialogFragment{
     EditText SSID;
     EditText PWD;
 
+    /**
+     * Textwatcher method for the hotspot dialog
+     */
     public void hotspotTextboxValidation(@Nullable final EditText confirmPWD, final Context context) {
             textWatcher.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -39,6 +42,11 @@ public class TextBoxValidation extends DialogFragment{
                 }
             });
         }
+
+    /**
+     * Textwatcher for the WiFi dialog
+     *
+     */
     public void wifiTextboxValidation(final Context context) {
         textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
@@ -57,6 +65,10 @@ public class TextBoxValidation extends DialogFragment{
             }
         });
     }
+
+    /**
+     * Method that sets the dialog positive button to true or false
+     */
     public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
         if (button){
             mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
@@ -67,6 +79,10 @@ public class TextBoxValidation extends DialogFragment{
         }
     }
 
+    /**
+     * Hotspot dialog validator
+     *
+     */
     private void validateHotspot(final EditText confirmPWD, final Context context) {
         if (SSID.length() == 0) {
             dialogButtonTrueOrFalse(mDialog, false);
@@ -84,6 +100,10 @@ public class TextBoxValidation extends DialogFragment{
         }
     }
 
+    /**
+     * WiFi dialog validator
+     *
+     */
     private void validateWIFI(final Context context) {
         if (SSID.length() == 0 ) {
             dialogButtonTrueOrFalse(mDialog, false);
