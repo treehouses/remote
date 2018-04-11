@@ -53,22 +53,10 @@ public class HotspotDialogFragment extends DialogFragment {
         mDialog.setTitle(R.string.dialog_message_hotspot);
 
         //initially disable button click
-        getListener(mDialog);
+        textBoxValidation.getListener(mDialog);
         setTextChangeListener(mDialog);
 
         return mDialog;
-    }
-
-    @NonNull
-    protected void getListener(final AlertDialog mDialog) {
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                textBoxValidation.dialogButtonTrueOrFalse(mDialog, false );
-                hotspotSSIDEditText.setError(getString(R.string.error_ssid_empty));
-            }
-        });
-
     }
 
     protected AlertDialog getAlertDialog(View mView) {
@@ -104,19 +92,19 @@ public class HotspotDialogFragment extends DialogFragment {
         textBoxValidation.textWatcher = hotspotSSIDEditText;
         textBoxValidation.SSID = hotspotSSIDEditText;
         textBoxValidation.PWD = hotspotPWDEditText;
-        textBoxValidation.textboxValidation( confirmPWDEditText, getContext());
+        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
 
         textBoxValidation.mDialog = mDialog;
         textBoxValidation.textWatcher = hotspotPWDEditText;
         textBoxValidation.SSID = hotspotSSIDEditText;
         textBoxValidation.PWD = hotspotPWDEditText;
-        textBoxValidation.textboxValidation(confirmPWDEditText, getContext());
+        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
 
         textBoxValidation.mDialog = mDialog;
         textBoxValidation.textWatcher = confirmPWDEditText;
         textBoxValidation.SSID = hotspotSSIDEditText;
         textBoxValidation.PWD = hotspotPWDEditText;
-        textBoxValidation.textboxValidation( confirmPWDEditText, getContext());
+        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
     }
 
     protected void initLayoutView(View mView) {

@@ -52,24 +52,12 @@ public class WifiDialogFragment extends DialogFragment {
         final AlertDialog mDialog = getAlertDialog(mView);
 
         //initially disable button click
-        getListener(mDialog);
+        textboxValidation.getListener(mDialog);
         setTextChangeListener(mDialog);
 
         return mDialog;
-
-
     }
 
-    protected void getListener(final AlertDialog mDialog) {
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                textboxValidation.dialogButtonTrueOrFalse(mDialog, false);
-                mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-            }
-        });
-
-    }
 
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
@@ -104,10 +92,12 @@ public class WifiDialogFragment extends DialogFragment {
         textboxValidation.textWatcher = mSSIDEditText;
         textboxValidation.SSID = mSSIDEditText;
         textboxValidation.PWD = mPWDEditText;
-        textboxValidation.textboxValidation( null, getContext());
+        textboxValidation.wifiTextboxValidation(getContext());
 
         textboxValidation.textWatcher = mPWDEditText;
-        textboxValidation.textboxValidation( null, getContext());
+        textboxValidation.SSID = mSSIDEditText;
+        textboxValidation.PWD = mPWDEditText;
+        textboxValidation.wifiTextboxValidation(getContext());
     }
 
     protected void initLayoutView(View mView) {
