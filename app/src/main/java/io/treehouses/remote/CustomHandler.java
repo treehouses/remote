@@ -178,27 +178,7 @@ public class CustomHandler extends Handler {
         }
     };
 
-    private void setStatus(int resId) {
-        Activity activity = null;
-        if (determineActivity(application, fragmentActivity).equals("Application")) {
-            activity = (Activity) currentActivity;
-        } else if(determineActivity(application, fragmentActivity).equals("Fragment")){
-            activity = (FragmentActivity) currentActivity;
-        }
-
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId);
-        currentStatus = getString(resId);
-        actionBar.setSubtitle(resId);
-    }
-
-    private void setStatus(CharSequence subTitle) {
+    private void setStatus(Object arg) {
         Activity activity = null;
         if (determineActivity(application, fragmentActivity).equals("Application")) {
             activity = (Activity) currentActivity;
@@ -212,9 +192,15 @@ public class CustomHandler extends Handler {
         if (null == actionBar) {
             return;
         }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle);
-        currentStatus = subTitle.toString();
-        actionBar.setSubtitle(subTitle);
+        if(arg instanceof Integer){
+            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
+            currentStatus = getString((Integer) arg);
+            actionBar.setSubtitle((Integer) arg);
+        } else if(arg instanceof CharSequence){
+            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
+            currentStatus = arg.toString();
+            actionBar.setSubtitle((CharSequence) arg);
+        }
     }
 
     public boolean isJson(String str) {
