@@ -1,19 +1,17 @@
 package io.treehouses.remote;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +48,9 @@ public class pirateship extends Activity  {
     private String mConnectedDeviceName = null;
     private static boolean isCountdown = false;
     private ProgressDialog mProgressDialog;
+    private Application activity;
+    private Context applicationContext;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,8 @@ public class pirateship extends Activity  {
         setContentView(R.layout.pirateship_layout);
         pibutton = (Button)findViewById(R.id.dpi);
         mListView = (ListView)findViewById(R.id.pview);
+        activity = getApplication();
+        applicationContext = getApplicationContext();
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,8 +95,6 @@ public class pirateship extends Activity  {
         }
     }
 
-
-
     /**
      * Sends a message.
      *
@@ -118,7 +119,6 @@ public class pirateship extends Activity  {
         }
 
     }
-
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
@@ -147,146 +147,13 @@ public class pirateship extends Activity  {
         }
     }
 
-    private final Handler mHandler = new Handler() {
+    private final CustomHandler mHandler = new CustomHandler(activity, applicationContext) {
         @Override
         public void handleMessage(Message msg) {
-            Application activity = getApplication();
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
-                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mviewArrayAdapter.clear();
-                            break;
-                        case BluetoothChatService.STATE_CONNECTING:
-                            setStatus(R.string.title_connecting);
-                            break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
-                            setStatus(R.string.title_not_connected);
-                            break;
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
-                    mviewArrayAdapter.add("Command:  " + writeMessage);
-
-                    break;
-                case Constants.MESSAGE_READ:
-                    isRead = true;
-//                    byte[] readBuf = (byte[]) msg.obj;
-//                     construct a string from the valid bytes in the buffer
-//                    String readMessage = new String(readBuf, 0, msg.arg1);
-//                    String readMessage = new String(readBuf);
-                    String readMessage = (String)msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
-                    //TODO: if message is json -> callback from RPi
-                    if(isJson(readMessage)){
-                        handleCallback(readMessage);
-                    }else{
-                        if(isCountdown){
-                            mHandler.removeCallbacks(watchDogTimeOut);
-                            isCountdown = false;
-                        }
-                        if(mProgressDialog.isShowing()){
-                            mProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
-                        }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0,readMessage.length()-1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        mviewArrayAdapter.add(readMessage);
-                    }
-
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
+            super.handleMessage(msg);
         }
     };
-    public void handleCallback(String str){
-        String result;
-        String ip;
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-            isCountdown = false;
-        }
-        //enable user interaction
-        mProgressDialog.dismiss();
-        try{
-            JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
-            if(!result.equals("SUCCESS")){
-                Toast.makeText(getApplication(), R.string.config_fail,
-                        Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getApplicationContext(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
-
-        }catch (JSONException e){
-            // error handling
-            Toast.makeText(getApplicationContext(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
-        }
-
-    }
-    private void setStatus(int resId) {
-        Activity activity = (Activity) getApplicationContext();
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
-        currentStatus = getString(resId);
-        actionBar.setSubtitle(resId);
-
-    }
-
-    private void setStatus(CharSequence subTitle) {
-        Activity activity = (Activity)getApplicationContext();
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
-        currentStatus = subTitle.toString();
-        actionBar.setSubtitle(subTitle);
-    }
-
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
