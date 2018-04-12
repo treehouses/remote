@@ -1,13 +1,11 @@
 package io.treehouses.remote;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -34,7 +32,7 @@ public class Dashboard extends Fragment {
     private static final String TAG = "BluetoothChatFragment";
 
     //current connection status
-    static String currentStatus = "not connected";
+    //static String currentStatus = "not connected";
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
@@ -42,20 +40,22 @@ public class Dashboard extends Fragment {
 
     private ProgressDialog mProgressDialog;
     private ProgressDialog connectProgressDialog;
-    private String mConnectedDeviceName = null;
+    //private String mConnectedDeviceName = null;
 
     private static boolean isCountdown = false;
-    private static boolean isRead = false;
+    //private static boolean isRead = false;
     private BluetoothAdapter mBluetoothAdapter = null;
     private Button piButton;
     private Button dockerButton;
     private Button cmdButton;
     private BluetoothChatService mChatService = null;
+    private FragmentActivity mFragmentActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mFragmentActivity = getActivity();
         return inflater.inflate(R.layout.hope_layout, container, false);
     }
 
@@ -81,9 +81,7 @@ public class Dashboard extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), PirateshipActivity.class);
-                //Bundle mBundle = new Bundle();
                 intent.putExtra("mChatService", mChatService);
-                //intent.putExtra("mBundle", mBundle);
                 startActivity(intent);
             }
         });
@@ -91,8 +89,8 @@ public class Dashboard extends Fragment {
         dockerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent dintent = new Intent(view.getContext(),DockerActivity.class);
-                startActivity(dintent);
+                Intent dockerIntent = new Intent(view.getContext(),DockerActivity.class);
+                startActivity(dockerIntent);
             }
         });
 
@@ -150,8 +148,6 @@ public class Dashboard extends Fragment {
         }
         return true;
     }
-
-
 
     @Override
     public void onDestroy() {
@@ -296,118 +292,12 @@ public class Dashboard extends Fragment {
         }
     }
 
-    private final Handler mHandler = new Handler() {
+    private final CustomHandler mHandler = new CustomHandler(mFragmentActivity){
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
-                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            try {
-                                // Sleep for 0.5 sec to make sure thread is ready
-                                Thread.sleep(500);
-                                String[] firstRun = {
-                                        "cd boot\n",
-                                        "cat version.txt\n",
-                                        "pirateship detectrpi\n",
-                                        "cd ..\n"};
-                                for (int i = 0; i <= 3; i++) {
-                                    mChatService.write(firstRun[i].getBytes());
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        case BluetoothChatService.STATE_CONNECTING:
-                            setStatus(R.string.title_connecting);
-                            break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
-                            setStatus(R.string.title_not_connected);
-                            break;
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
-                    break;
-                case Constants.MESSAGE_READ:
-                    isRead = true;
-                    String readMessage = (String)msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
-                    //TODO: if message is json -> callback from RPi
-                    if(isJson(readMessage)){
-                        handleCallback(readMessage);
-                    }else{
-                        if(isCountdown){
-                            mHandler.removeCallbacks(watchDogTimeOut);
-                            isCountdown = false;
-                        }
-                        if(mProgressDialog.isShowing()){
-                            mProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case Constants.MESSAGE_DISPLAY_DONE:
-                    connectProgressDialog.dismiss();
-                    break;
-            }
+            super.handleMessage(msg);
         }
     };
-
-    private void setStatus(int resId) {
-        FragmentActivity activity = getActivity();
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
-        currentStatus = getString(resId);
-        actionBar.setSubtitle(resId);
-
-    }
-
-    /**
-     * Updates the status on the action bar.
-     *
-     * @param subTitle status
-     */
-    private void setStatus(CharSequence subTitle) {
-        FragmentActivity activity = getActivity();
-        if (null == activity) {
-            return;
-        }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
-        currentStatus = subTitle.toString();
-        actionBar.setSubtitle(subTitle);
-    }
 
     private final Runnable watchDogTimeOut = new Runnable() {
         @Override
@@ -421,42 +311,4 @@ public class Dashboard extends Fragment {
         }
     };
 
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    public void handleCallback(String str){
-        String result;
-        String ip;
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-            isCountdown = false;
-        }
-        //enable user interaction
-        mProgressDialog.dismiss();
-        try{
-            JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
-
-            if(!result.equals("SUCCESS")){
-                Toast.makeText(getActivity(), R.string.config_fail,
-                        Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
-
-        }catch (JSONException e){
-            // error handling
-            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
-        }
-    }
 }
