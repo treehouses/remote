@@ -33,7 +33,6 @@ public class Dashboard extends Fragment {
 
     private static final String TAG = "BluetoothChatFragment";
 
-
     //current connection status
     static String currentStatus = "not connected";
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
@@ -82,9 +81,9 @@ public class Dashboard extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), PirateshipActivity.class);
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("mChatService", mChatService);
-                intent.putExtra("mBundle", mBundle);
+                //Bundle mBundle = new Bundle();
+                intent.putExtra("mChatService", mChatService);
+                //intent.putExtra("mBundle", mBundle);
                 startActivity(intent);
             }
         });

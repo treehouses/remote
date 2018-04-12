@@ -67,7 +67,7 @@ public class PirateshipActivity extends Activity  {
     /**
      * Member object for the chat services
      */
-    private BluetoothChatService mChatService = null;
+    private BluetoothChatService mChatService;
 
     private static boolean isRead = false;
 
@@ -81,6 +81,12 @@ public class PirateshipActivity extends Activity  {
         getActionBar().setDisplayUseLogoEnabled(true);
         setContentView(R.layout.pirateship_layout);
 
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //Bundle mBundle = new Bundle(getIntent().getBundleExtra("mBundle"));
+        mChatService = (BluetoothChatService) getIntent().getSerializableExtra("mChatService");
+        Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
+        mChatService.setHandler(mHandler);
+
         pibutton = (Button)findViewById(R.id.dpi);
         mConversationView = (ListView)findViewById(R.id.pview);
         pibutton.setOnClickListener(new View.OnClickListener() {
@@ -92,12 +98,6 @@ public class PirateshipActivity extends Activity  {
         });
 
         mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Bundle mBundle = new Bundle(getIntent().getBundleExtra("mBundle"));
-        mChatService = (BluetoothChatService) mBundle.getSerializable("mChatService");
-        Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
-        mChatService.setHandler(mHandler);
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
