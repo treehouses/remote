@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,8 +27,7 @@ public class WifiDialogFragment extends DialogFragment {
     // Layout Views
     protected EditText mSSIDEditText;
     protected EditText mPWDEditText;
-
-    protected boolean isValidInput;
+    TextBoxValidation textboxValidation = new TextBoxValidation();
 
     public static WifiDialogFragment newInstance(int num){
 
@@ -37,9 +37,7 @@ public class WifiDialogFragment extends DialogFragment {
 //        dialogFragment.setArguments(bundle);
 
         return dialogFragment;
-
     }
-
 
     @NonNull
     @Override
@@ -54,23 +52,10 @@ public class WifiDialogFragment extends DialogFragment {
         final AlertDialog mDialog = getAlertDialog(mView);
 
         //initially disable button click
-        getListener(mDialog);
+        textboxValidation.getListener(mDialog);
         setTextChangeListener(mDialog);
 
         return mDialog;
-
-
-    }
-
-    protected void getListener(final AlertDialog mDialog) {
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                dialogButtonTrueOrFalse(mDialog, false);
-                mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-            }
-        });
-
     }
 
     protected AlertDialog getAlertDialog(View mView) {
@@ -101,50 +86,22 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-       textWatcher(mDialog,mSSIDEditText);
-       textWatcher(mDialog,mPWDEditText);
-    }
+        
+        textboxValidation.mDialog = mDialog;
+        textboxValidation.textWatcher = mSSIDEditText;
+        textboxValidation.SSID = mSSIDEditText;
+        textboxValidation.PWD = mPWDEditText;
+        textboxValidation.wifiTextboxValidation(getContext());
 
-    /**
-     * This block checks for the input in the ssid textbox and the pwd textbox, and if requirements
-     *are met the positive button will be enabled.
-     */
-    public void textWatcher(final AlertDialog mDialog, final EditText textWatcher) {
-        textWatcher.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (textWatcher.length() > 0 && textWatcher.length() < 8 && (textWatcher.getId() == mPWDEditText.getId())) {
-                    dialogButtonTrueOrFalse(mDialog, false);
-                    mPWDEditText.setError(getString(R.string.error_pwd_length));
-                } else if (textWatcher.length() == 0 && (textWatcher.getId() == mSSIDEditText.getId())) {
-                    dialogButtonTrueOrFalse(mDialog, false);
-                    mSSIDEditText.setError(getString(R.string.error_ssid_empty));
-                } else {
-                    dialogButtonTrueOrFalse(mDialog, true);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-    }
-
-    public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
-        if (button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }else if(!button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-        }
+        textboxValidation.textWatcher = mPWDEditText;
+        textboxValidation.SSID = mSSIDEditText;
+        textboxValidation.PWD = mPWDEditText;
+        textboxValidation.wifiTextboxValidation(getContext());
     }
 
     protected void initLayoutView(View mView) {
         mSSIDEditText = (EditText)mView.findViewById(R.id.SSID);
         mPWDEditText = (EditText)mView.findViewById(R.id.password);
-
     }
-
 }
 
