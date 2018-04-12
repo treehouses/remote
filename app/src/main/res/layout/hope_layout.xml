@@ -11,13 +11,13 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/background_light" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/sample_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@mipmap/ic_launcher_foreground">
+        android:background="@drawable/treehouse_image">
 
         <Button
             android:id="@+id/pbutton"
