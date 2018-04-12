@@ -116,8 +116,6 @@ public class TextBoxValidation extends DialogFragment{
         }
     }
 
-
-
     protected void getListener(final AlertDialog mDialog) {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
