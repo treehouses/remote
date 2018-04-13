@@ -17,7 +17,7 @@
         android:id="@+id/sample_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/treehouses_image">
+        android:background="@drawable/image_treehouses">
 
         <Button
             android:id="@+id/pbutton"
