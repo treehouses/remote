@@ -67,10 +67,9 @@ public class PirateshipActivity extends Activity  {
     /**
      * Member object for the chat services
      */
-    private BluetoothChatService mChatService;
+    private BluetoothChatService mChatService = null;
 
     private static boolean isRead = false;
-
     private static boolean isCountdown = false;
 
     @Override
@@ -82,8 +81,8 @@ public class PirateshipActivity extends Activity  {
         setContentView(R.layout.pirateship_layout);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        //Bundle mBundle = new Bundle(getIntent().getBundleExtra("mBundle"));
-        mChatService = (BluetoothChatService) getIntent().getSerializableExtra("mChatService");
+        Bundle mBundle = getIntent().getExtras();
+        mChatService = (BluetoothChatService) mBundle.getSerializable("mChatService");
         Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
         mChatService.setHandler(mHandler);
 

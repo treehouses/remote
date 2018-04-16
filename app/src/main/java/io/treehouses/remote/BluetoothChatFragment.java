@@ -65,7 +65,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button Tbutton;
     private Button Dbutton;
     private Button Vbutton;
-    public Button Pbutton;
+    private Button Pbutton;
     private Button HNbutton;
     private Button CPbutton;
     private Button EFbutton;
@@ -89,7 +89,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private static boolean isCountdown = false;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         getActivity().getActionBar().hide();
@@ -405,6 +405,77 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     };
 
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    if(!writeMessage.contains("google.com")) {
+                        Log.d(TAG, "writeMessage = " + writeMessage);
+                        mConversationArrayAdapter.add("Command:  " + writeMessage);
+                    }
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+//                   byte[] readBuf = (byte[]) msg.obj;
+//                   construct a string from the valid bytes in the buffer
+//                   String readMessage = new String(readBuf, 0, msg.arg1);
+//                   String readMessage = new String(readBuf);
+                    String readMessage = (String)msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+
+                    //TODO: if message is json -> callback from RPi
+                    if(isCountdown){
+                        mHandler.removeCallbacks(watchDogTimeOut);
+                        isCountdown = false;
+                    }
+                    if(mProgressDialog.isShowing()){
+                        mProgressDialog.dismiss();
+                        Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                    }
+                    if(hProgressDialog.isShowing()){
+                        hProgressDialog.dismiss();
+                        Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
+                    }
+                    //remove the space at the very end of the readMessage -> eliminate space between items
+                    readMessage = readMessage.substring(0,readMessage.length()-1);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+
+                    //check if ping was successful
+                    if(readMessage.contains("1 packets")){
+                        mConnect();
+                    }
+                    if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
+                        mOffline();
+                    }
+                    // Make it so text doesn't show on chat (need a better way to check multiple
+                    // strings since mConversationArrayAdapter only takes messages line by line)
+                    if (!readMessage.contains("1 packets")
+                            && !readMessage.contains("64 bytes")
+                            && !readMessage.contains("google.com")
+                            && !readMessage.contains("rtt")
+                            && !readMessage.trim().isEmpty()){
+                        mConversationArrayAdapter.add(readMessage);
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -423,12 +494,22 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(getActivity()){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-    };
-}
+    public void mOffline(){
+        Pbutton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.RED);
+    }
 
+    public void mIdle(){
+        Pbutton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.GRAY);
+    }
+
+    public void mConnect(){
+        Pbutton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        bgShape.setColor(Color.GREEN);
+    }
+}
 

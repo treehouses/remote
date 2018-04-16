@@ -33,9 +33,9 @@
     <string name="PingWIFI">PIRATESHIP PING</string>
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
+    <string name="connect_progress_dialog_title">Setting up First Run</string>
     <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>
-    <string name="progress_dialog_message">Please wait while we are configuring...</string>
-    <string name="connect_progress_dialog__title">Setting up RPI\'s First Run</string>
+    <string name="progress_dialog_message">Please wait while we configure your setting...</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">Scanning for devices...</string>
@@ -78,13 +78,14 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="error_ssid_empty">Type in the name of the network \nyou want to use </string>
     <string name="error_pwd_length">Password must have at least \neight characters.</string>
+    <string name="error_pwd_confirm">Passwords do not match </string>
     <string name="config_configuring">Start configuring...</string>
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
     <string name="config_alreadyConfig">You have already configured the wifi</string>
-        <!--Hotspot-->
-        <string name="create_hotspot">Create Hotspot</string>
-        <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
-        <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
+    <!--Hotspot-->
+    <string name="create_hotspot">Create Hotspot</string>
+    <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
+    <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
 </resources>

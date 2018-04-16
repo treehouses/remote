@@ -75,34 +75,34 @@ public class WifiDialogFragment extends DialogFragment {
 
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
-                    .setView(mView)
-                    .setTitle(R.string.dialog_message)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.start_configuration,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-    //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                                        String SSID = mSSIDEditText.getText().toString();
-                                        String PWD = mPWDEditText.getText().toString();
+                .setView(mView)
+                .setTitle(R.string.dialog_message)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.start_configuration,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
+                                String SSID = mSSIDEditText.getText().toString();
+                                String PWD = mPWDEditText.getText().toString();
 
-                                        Intent intent = new Intent();
-                                        intent.putExtra("SSID", SSID);
-                                        intent.putExtra("PWD", PWD);
-                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                                }
+                                Intent intent = new Intent();
+                                intent.putExtra("SSID", SSID);
+                                intent.putExtra("PWD", PWD);
+                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
-                    )
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
                         }
-                    })
-                    .create();
+                )
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                    }
+                })
+                .create();
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-       textWatcher(mDialog,mSSIDEditText);
-       textWatcher(mDialog,mPWDEditText);
+        textWatcher(mDialog,mSSIDEditText);
+        textWatcher(mDialog,mPWDEditText);
     }
 
     /**
@@ -147,4 +147,3 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
 }
-
