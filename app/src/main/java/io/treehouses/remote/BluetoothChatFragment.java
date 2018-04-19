@@ -636,6 +636,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
+                break;
             case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -669,6 +670,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }else{
                     Log.d(TAG, "back from dialog, fail");
                 }
+                break;
             case REQUEST_DIALOG_FRAGMENT_HOTSPOT:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -704,6 +706,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }else{
                     Log.d(TAG, "back from dialog_hotspot, fail");
                 }
+                break;
+
         }
     }
 
