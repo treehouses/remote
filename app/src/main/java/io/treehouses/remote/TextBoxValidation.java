@@ -67,6 +67,29 @@ public class TextBoxValidation extends DialogFragment{
     }
 
     /**
+     * Textwatcher for the change password dialog
+     *
+     */
+    public void changePWValidation(final EditText confirmPWD, final Context context) {
+        textWatcher.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                validateChangedPassword(confirmPWD, context);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    /**
      * Method that sets the dialog positive button to true or false
      */
     public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
@@ -113,6 +136,21 @@ public class TextBoxValidation extends DialogFragment{
             PWD.setError(context.getString(R.string.error_pwd_length));
         }else {
             dialogButtonTrueOrFalse(mDialog,true);
+        }
+    }
+
+    /**
+     * Change password validator
+     *
+     */
+    private void validateChangedPassword(final EditText confirmPWD, final Context context) {
+        if (confirmPWD.getText().toString() == PWD.getText().toString()) {
+            dialogButtonTrueOrFalse(mDialog, true);
+        } else if (!confirmPWD.getText().toString().equals(PWD.getText().toString())) {
+            dialogButtonTrueOrFalse(mDialog, false);
+            confirmPWD.setError(context.getString(R.string.error_pwd_confirm));
+        } else {
+            dialogButtonTrueOrFalse(mDialog, true);
         }
     }
 
