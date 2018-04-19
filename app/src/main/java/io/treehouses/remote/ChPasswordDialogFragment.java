@@ -12,6 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+/**
+ * Created by going-gone on 4/19/2018.
+ */
+
 public class ChPasswordDialogFragment extends android.support.v4.app.DialogFragment {
 
     private static String TAG = "ChPasswordDialogFragment";
@@ -44,7 +48,7 @@ public class ChPasswordDialogFragment extends android.support.v4.app.DialogFragm
 
         return mDialog;
     }
-
+    //creates the dialog for the change password dialog
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
@@ -69,13 +73,13 @@ public class ChPasswordDialogFragment extends android.support.v4.app.DialogFragm
                 })
                 .create();
     }
-
+    //initialize the view
     protected void initLayoutView(View mView) {
         passwordEditText = (EditText)mView.findViewById(R.id.changePassword);
         confirmPassEditText = (EditText)mView.findViewById(R.id.confirmPassword);
 
     }
-
+    //listener for text change within this dialog
     public void setTextChangeListener(final AlertDialog mDialog) {
         textBoxValidation.mDialog = mDialog;
         textBoxValidation.textWatcher = passwordEditText;
