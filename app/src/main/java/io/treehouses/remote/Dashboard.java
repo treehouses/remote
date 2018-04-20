@@ -32,6 +32,7 @@ import org.json.JSONObject;
 public class Dashboard extends Fragment {
 
     private static final String TAG = "BluetoothChatFragment";
+    private static final String BACK_STACK_ROOT_TAG = "root_fragment";
 
     //current connection status
     static String currentStatus = "not connected";
@@ -100,12 +101,14 @@ public class Dashboard extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 BluetoothChatFragment chatFrag = new BluetoothChatFragment();
                 Bundle mBundle = new Bundle();
                 mBundle.putSerializable("mChatService", mChatService);
                 chatFrag.setArguments(mBundle);
                 fragmentTransaction.replace(R.id.sample_layout, chatFrag);
+                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
                 fragmentTransaction.commit();
             }
         });

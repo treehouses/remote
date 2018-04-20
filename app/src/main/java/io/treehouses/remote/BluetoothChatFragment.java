@@ -89,10 +89,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private static boolean isCountdown = false;
 
     @Override
-    public void onCreate( Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        getActivity().getActionBar().hide();
+        //getActivity().getActionBar().hide();
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mChatService = (BluetoothChatService) getArguments().getSerializable("mChatService");
@@ -510,6 +510,19 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Pbutton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
         bgShape.setColor(Color.GREEN);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        getActivity().getActionBar().show();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(getActivity().getActionBar().isShowing())
+            getActivity().getActionBar().hide();
     }
 }
 
