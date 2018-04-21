@@ -351,7 +351,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         dialog.dismiss();
                         hnInput = input.getText().toString();
                         String h = command + hnInput.toString();
-                        sendMessage(h);
+                       // sendMessage(h);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -689,12 +689,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+                    String HSSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
+                    String HPWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
 
-                    String hotSpot = "pirateship hotspot " + SSID + " " + PWD + "";
+                    String hotSpot = "pirateship hotspot " + HSSID + " " + HPWD + "";
 
-                    Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + SSID + ", PWD = " + PWD);
+                    Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + HSSID + ", PWD = " + HPWD);
 
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Toast.makeText(getActivity(), R.string.config_success,
