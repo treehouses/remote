@@ -692,7 +692,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
                     String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
 
-                    String hotSpot = "pirateship hotspot " + SSID + " " + PWD;
+                    String hotSpot = "pirateship hotspot " + SSID + " " + PWD + "";
 
                     Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + SSID + ", PWD = " + PWD);
 
