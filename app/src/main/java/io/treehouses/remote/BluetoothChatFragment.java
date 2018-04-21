@@ -349,8 +349,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        hnInput = input.getText().toString();
-                        String h = command + hnInput.toString();
+                      //  hnInput = input.getText().toString();
+                     //   String h = command + hnInput.toString();
                        // sendMessage(h);
                     }
                 })
