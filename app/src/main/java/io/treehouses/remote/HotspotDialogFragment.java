@@ -70,11 +70,10 @@ public class HotspotDialogFragment extends DialogFragment {
                                 //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
                                 String SSID = hotspotSSIDEditText.getText().toString();
                                 String PWD = hotspotPWDEditText.getText().toString();
-                                String CPWD = confirmPWDEditText.getText().toString();
 
                                 Intent intent = new Intent();
-                                intent.putExtra("SSID", SSID);
-                                intent.putExtra("PWD", PWD);
+                                intent.putExtra("HSSID", SSID);
+                                intent.putExtra("HPWD", PWD);
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }

@@ -349,9 +349,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                      //  hnInput = input.getText().toString();
-                     //   String h = command + hnInput.toString();
-                       // sendMessage(h);
+                        hnInput = input.getText().toString();
+                        String h = command + hnInput.toString();
+                        sendMessage(h);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -658,13 +658,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
                     String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
 
+                    String wifi = "pirateship wifi " + SSID + " " + PWD;
+
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
 
-                    sendMessage(SSID,PWD);
+                    sendMessage(wifi);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
