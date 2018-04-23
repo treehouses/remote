@@ -160,12 +160,10 @@ public class Dashboard extends Fragment implements View.OnClickListener{
                 }
                 break;
             case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
-                connectProgressDialog.show();
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
+                    connectProgressDialog.show();
                     connectDevice(data, false);
-                } else {
-                    //connectProgressDialog.dismiss(5000);
                 }
                 break;
             case Constants.REQUEST_ENABLE_BT:

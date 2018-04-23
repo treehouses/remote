@@ -33,7 +33,7 @@
     <string name="PingWIFI">PIRATESHIP PING</string>
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
-    <string name="connect_progress_dialog_title">Setting up First Run</string>
+    <string name="connect_progress_dialog_title">Setting up</string>
     <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>
     <string name="progress_dialog_message">Please wait while we configure your setting...</string>
 
