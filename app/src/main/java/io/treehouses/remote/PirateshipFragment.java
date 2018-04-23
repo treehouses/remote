@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -33,15 +34,15 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class PirateshipActivity extends Activity  {
+public class PirateshipFragment extends android.support.v4.app.Fragment  {
 
-    private static final String TAG ="pirateship" ;
+    private static final String TAG ="PirateshipFragment" ;
     static String currentStatus = "not connected";
 
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
-    private Button pibutton;
+    private Button piButton;
     private ProgressDialog mProgressDialog;
 
     /**
@@ -71,37 +72,26 @@ public class PirateshipActivity extends Activity  {
 
     private static boolean isRead = false;
     private static boolean isCountdown = false;
+    private FragmentActivity parentActivity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setLogo(R.mipmap.ic_launcher);
-        getActionBar().setDisplayUseLogoEnabled(true);
-        setContentView(R.layout.pirateship_layout);
+
+        parentActivity = getActivity();
+        parentActivity.getActionBar().setDisplayShowHomeEnabled(true);
+        parentActivity.getActionBar().setLogo(R.mipmap.ic_launcher);
+        parentActivity.getActionBar().setDisplayUseLogoEnabled(true);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        Bundle mBundle = getIntent().getExtras();
-        mChatService = (BluetoothChatService) mBundle.getSerializable("mChatService");
+        mChatService = (BluetoothChatService) getArguments().getSerializable("mChatService");
         Log.d(TAG, "mChatService's state in ChatFragment: " + mChatService.getState());
         mChatService.setHandler(mHandler);
 
-        pibutton = (Button)findViewById(R.id.dpi);
-        mConversationView = (ListView)findViewById(R.id.pview);
-        pibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String command = "pirateship detectrpi";
-                sendMessage(command);
-            }
-        });
-
-        mOutEditText = (EditText) findViewById(R.id.edit_text_out);
-
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            this.finish();
+            Toast.makeText(parentActivity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            parentActivity.finish();
         }
     }
 
@@ -129,11 +119,23 @@ public class PirateshipActivity extends Activity  {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+            if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.pirateship_layout, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        piButton = (Button) view.findViewById(R.id.dpi);
+        mConversationView = (ListView) view.findViewById(R.id.pview);
+        mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
     }
 
     /**
@@ -143,7 +145,7 @@ public class PirateshipActivity extends Activity  {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(this,R.layout.message){
+        mConversationArrayAdapter = new ArrayAdapter<String>(parentActivity, R.layout.message){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -163,14 +165,23 @@ public class PirateshipActivity extends Activity  {
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
+        piButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String command = "pirateship detectrpi";
+                sendMessage(command);
+            }
+        });
+
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
 
         //get spinner
-        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog = new ProgressDialog(parentActivity);
         mProgressDialog.setTitle(R.string.progress_dialog_title);
         mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
         mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
 
     }
 
@@ -190,8 +201,8 @@ public class PirateshipActivity extends Activity  {
      */
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
+            Toast.makeText(parentActivity, R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -261,7 +272,7 @@ public class PirateshipActivity extends Activity  {
         if (null == this) {
             return;
         }
-        final ActionBar actionBar = this.getActionBar();
+        final ActionBar actionBar = parentActivity.getActionBar();
         if (null == actionBar) {
             return;
         }
@@ -280,7 +291,7 @@ public class PirateshipActivity extends Activity  {
         if (null == this) {
             return;
         }
-        final ActionBar actionBar = this.getActionBar();
+        final ActionBar actionBar = parentActivity.getActionBar();
         if (null == actionBar) {
             return;
         }
@@ -296,7 +307,7 @@ public class PirateshipActivity extends Activity  {
             //time out
             if(mProgressDialog.isShowing()){
                 mProgressDialog.dismiss();
-                Toast.makeText(getApplicationContext(),"No response from RPi",Toast.LENGTH_LONG).show();
+                Toast.makeText(parentActivity.getApplicationContext(),"No response from RPi",Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -307,19 +318,19 @@ public class PirateshipActivity extends Activity  {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Application activity = getApplication();
+            //Application activity = getApplication();
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
+                        case Constants.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
                             mConversationArrayAdapter.clear();
                             break;
-                        case BluetoothChatService.STATE_CONNECTING:
+                        case Constants.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
                             break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
                             setStatus(R.string.title_not_connected);
                             break;
                     }
@@ -350,7 +361,7 @@ public class PirateshipActivity extends Activity  {
                         }
                         if(mProgressDialog.isShowing()){
                             mProgressDialog.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(parentActivity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
@@ -359,8 +370,8 @@ public class PirateshipActivity extends Activity  {
                     }
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                    if (null != parentActivity) {
+                        Toast.makeText(parentActivity, msg.getData().getString(Constants.TOAST),
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -391,7 +402,7 @@ public class PirateshipActivity extends Activity  {
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(this, R.string.bt_not_enabled_leaving,
+                    Toast.makeText(parentActivity, R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
                     //getApplication().finish();
                 }
@@ -399,8 +410,8 @@ public class PirateshipActivity extends Activity  {
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
-                    if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
-                        Toast.makeText(this, R.string.not_connected,
+                    if(mChatService.getState() != Constants.STATE_CONNECTED){
+                        Toast.makeText(parentActivity, R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -466,17 +477,17 @@ public class PirateshipActivity extends Activity  {
             //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
             if(!result.equals("SUCCESS")){
-                Toast.makeText(getApplication(), R.string.config_fail,
+                Toast.makeText(parentActivity, R.string.config_fail,
                         Toast.LENGTH_LONG).show();
             }else{
 //                Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(this,getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+                Toast.makeText(parentActivity,getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
             }
 
         }catch (JSONException e){
             // error handling
-            Toast.makeText(this, "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+            Toast.makeText(parentActivity, "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
 
     }

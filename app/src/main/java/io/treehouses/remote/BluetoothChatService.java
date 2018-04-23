@@ -55,14 +55,12 @@ public class BluetoothChatService implements Serializable{
     private static final String NAME_SECURE = "BluetoothChatSecure";
     private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
-
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
     private static final UUID MY_UUID_SECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
 
     // Member fields
     private final BluetoothAdapter mAdapter;
@@ -77,13 +75,6 @@ public class BluetoothChatService implements Serializable{
     private String HWver = "";
     private String SWver = "";
 
-
-    // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
-
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
@@ -92,7 +83,7 @@ public class BluetoothChatService implements Serializable{
      */
     public BluetoothChatService(FragmentActivity activity, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         mNewState = mState;
         mHandler = handler;
         mActivity = activity;
@@ -159,7 +150,7 @@ public class BluetoothChatService implements Serializable{
         Log.d(TAG, "connect to: " + device);
 
         // Cancel any thread attempting to make a connection
-        if (mState == STATE_CONNECTING) {
+        if (mState == Constants.STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
                 mConnectThread = null;
@@ -250,7 +241,7 @@ public class BluetoothChatService implements Serializable{
             mInsecureAcceptThread.cancel();
             mInsecureAcceptThread = null;
         }
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
     }
@@ -267,7 +258,7 @@ public class BluetoothChatService implements Serializable{
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
-            if (mState != STATE_CONNECTED) return;
+            if (mState != Constants.STATE_CONNECTED) return;
             r = mConnectedThread;
         }
         // Perform the write unsynchronized
@@ -285,7 +276,7 @@ public class BluetoothChatService implements Serializable{
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
@@ -304,7 +295,7 @@ public class BluetoothChatService implements Serializable{
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
@@ -339,7 +330,7 @@ public class BluetoothChatService implements Serializable{
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
             mmServerSocket = tmp;
-            mState = STATE_LISTEN;
+            mState = Constants.STATE_LISTEN;
         }
 
         public void run() {
@@ -350,7 +341,7 @@ public class BluetoothChatService implements Serializable{
             BluetoothSocket socket = null;
 
             // Listen to the server socket if we're not connected
-            while (mState != STATE_CONNECTED) {
+            while (mState != Constants.STATE_CONNECTED) {
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
@@ -364,14 +355,14 @@ public class BluetoothChatService implements Serializable{
                 if (socket != null) {
                     synchronized (BluetoothChatService.this) {
                         switch (mState) {
-                            case STATE_LISTEN:
-                            case STATE_CONNECTING:
+                            case Constants.STATE_LISTEN:
+                            case Constants.STATE_CONNECTING:
                                 // Situation normal. Start the connected thread.
                                 connected(socket, socket.getRemoteDevice(),
                                         mSocketType);
                                 break;
-                            case STATE_NONE:
-                            case STATE_CONNECTED:
+                            case Constants.STATE_NONE:
+                            case Constants.STATE_CONNECTED:
                                 // Either not ready or already connected. Terminate new socket.
                                 try {
                                     socket.close();
@@ -427,7 +418,7 @@ public class BluetoothChatService implements Serializable{
                 Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
             }
             mmSocket = tmp;
-            mState = STATE_CONNECTING;
+            mState = Constants.STATE_CONNECTING;
         }
 
         public void run() {
@@ -499,7 +490,7 @@ public class BluetoothChatService implements Serializable{
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
-            mState = STATE_CONNECTED;
+            mState = Constants.STATE_CONNECTED;
         }
 
         public void run() {
@@ -628,6 +619,6 @@ public class BluetoothChatService implements Serializable{
         }
     }
 
-    public void setHandler(Handler handler) { mHandler = handler; }
+    public void setHandler(Handler newHandler) { mHandler = newHandler; }
 
 }

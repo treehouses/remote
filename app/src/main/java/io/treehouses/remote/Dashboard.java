@@ -29,17 +29,13 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/13/2018.
  */
 
-public class Dashboard extends Fragment {
+public class Dashboard extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "BluetoothChatFragment";
     private static final String BACK_STACK_ROOT_TAG = "root_fragment";
 
     //current connection status
     static String currentStatus = "not connected";
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
 
     private ProgressDialog mProgressDialog;
     private ProgressDialog connectProgressDialog;
@@ -75,47 +71,15 @@ public class Dashboard extends Fragment {
         connectProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
         piButton = (Button) view.findViewById(R.id.pbutton);
+        piButton.setOnClickListener(this);
         dockerButton = (Button) view.findViewById(R.id.docker_button);
+        dockerButton.setOnClickListener(this);
         cmdButton = (Button)view.findViewById(R.id.cmdbutton);
-
-        piButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), PirateshipActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("mChatService", mChatService);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-
-        dockerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent dockerIntent = new Intent(view.getContext(), DockerActivity.class);
-                startActivity(dockerIntent);
-            }
-        });
-
-        cmdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                BluetoothChatFragment chatFrag = new BluetoothChatFragment();
-                Bundle mBundle = new Bundle();
-                mBundle.putSerializable("mChatService", mChatService);
-                chatFrag.setArguments(mBundle);
-                fragmentTransaction.replace(R.id.sample_layout, chatFrag);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
+        cmdButton.setOnClickListener(this);
 
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             mChatService = new BluetoothChatService(getActivity(), mHandler);
@@ -133,7 +97,7 @@ public class Dashboard extends Fragment {
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
                 //return true;
                 break;
             }
@@ -154,8 +118,6 @@ public class Dashboard extends Fragment {
         return true;
     }
 
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -167,7 +129,7 @@ public class Dashboard extends Fragment {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+            if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -177,7 +139,7 @@ public class Dashboard extends Fragment {
     public void showNWifiDialog() {
         // Create an instance of the dialog fragment and show it
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
     }
 
@@ -191,20 +153,22 @@ public class Dashboard extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 connectProgressDialog.show();
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
+                } else {
+                    //connectProgressDialog.dismiss(5000);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -216,11 +180,11 @@ public class Dashboard extends Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
 
                     //check status
-                    if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
@@ -271,7 +235,7 @@ public class Dashboard extends Fragment {
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -306,7 +270,7 @@ public class Dashboard extends Fragment {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
+                        case Constants.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
                             try {
                                 // Sleep for 0.5 sec to make sure thread is ready
@@ -323,12 +287,13 @@ public class Dashboard extends Fragment {
                                 e.printStackTrace();
                             }
                             break;
-                        case BluetoothChatService.STATE_CONNECTING:
+                        case Constants.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
                             break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
                             setStatus(R.string.title_not_connected);
+                            connectProgressDialog.dismiss();
                             break;
                     }
                     break;
@@ -378,7 +343,7 @@ public class Dashboard extends Fragment {
         }
     };
 
-    private void setStatus(int resId) {
+    private void setStatus(Object arg) {
         FragmentActivity activity = getActivity();
         if (null == activity) {
             return;
@@ -387,29 +352,15 @@ public class Dashboard extends Fragment {
         if (null == actionBar) {
             return;
         }
-        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
-        currentStatus = getString(resId);
-        actionBar.setSubtitle(resId);
-
-    }
-
-    /**
-     * Updates the status on the action bar.
-     *
-     * @param subTitle status
-     */
-    private void setStatus(CharSequence subTitle) {
-        FragmentActivity activity = getActivity();
-        if (null == activity) {
-            return;
+        if(arg instanceof Integer){
+            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
+            currentStatus = getString((Integer) arg);
+            actionBar.setSubtitle((Integer) arg);
+        } else if(arg instanceof CharSequence){
+            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
+            currentStatus = arg.toString();
+            actionBar.setSubtitle((CharSequence) arg);
         }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
-        currentStatus = subTitle.toString();
-        actionBar.setSubtitle(subTitle);
     }
 
     private final Runnable watchDogTimeOut = new Runnable() {
@@ -460,6 +411,48 @@ public class Dashboard extends Fragment {
         }catch (JSONException e){
             // error handling
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setwatchDogTimeOut(long time, final ProgressDialog v) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                v.dismiss();
+            }
+        }, time);
+    }
+
+    @Override
+    public void onClick(View v){
+        int i = v.getId();
+        if(i == R.id.pbutton){
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            PirateshipFragment piFragment = new PirateshipFragment();
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("mChatService", mChatService);
+            piFragment.setArguments(mBundle);
+            fragmentTransaction.replace(R.id.sample_layout, piFragment);
+            fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+            fragmentTransaction.commit();
+        }
+        if(i == R.id.docker_button){
+            Intent dockerIntent = new Intent(v.getContext(), DockerActivity.class);
+            startActivity(dockerIntent);
+        }
+        if(i == R.id.cmdbutton){
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            BluetoothChatFragment chatFrag = new BluetoothChatFragment();
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("mChatService", mChatService);
+            chatFrag.setArguments(mBundle);
+            fragmentTransaction.replace(R.id.sample_layout, chatFrag);
+            fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+            fragmentTransaction.commit();
         }
     }
 }

@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -43,6 +44,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 /**
  * Created by yubo on 7/11/17.
@@ -52,13 +54,14 @@ import android.widget.Toast;
  * This fragment controls Bluetooth to communicate with other devices.
  */
 
-public class BluetoothChatFragment extends android.support.v4.app.Fragment {
+public class BluetoothChatFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "BluetoothChatFragment";
 
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
+    private TextView mTextView;
     private Button mSendButton;
     private ProgressDialog mProgressDialog;
     private ProgressDialog hProgressDialog;
@@ -70,7 +73,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button CPbutton;
     private Button EFbutton;
     private String hnInput;
-    private Boolean isValidInput;
 
     // Array adapter for the conversation thread
     private ArrayAdapter<String> mConversationArrayAdapter;
@@ -83,16 +85,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     // Member object for the chat services
     private BluetoothChatService mChatService = null;
-
     private static boolean isRead = false;
-
     private static boolean isCountdown = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        //getActivity().getActionBar().hide();
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mChatService = (BluetoothChatService) getArguments().getSerializable("mChatService");
@@ -142,7 +141,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+            if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
                 mIdle();
@@ -160,13 +159,22 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        mTextView = (TextView) view.findViewById(R.id.edit_text_out);
         Tbutton = (Button) view.findViewById(R.id.TB);
-        Dbutton = (Button)view.findViewById(R.id.DB);
-        Vbutton = (Button)view.findViewById(R.id.VB);
-        Pbutton = (Button)view.findViewById(R.id.PING);
-        HNbutton = (Button)view.findViewById(R.id.HN);
+        Dbutton = (Button) view.findViewById(R.id.DB);
+        Vbutton = (Button) view.findViewById(R.id.VB);
+        Pbutton = (Button) view.findViewById(R.id.PING);
+        HNbutton = (Button) view.findViewById(R.id.HN);
         CPbutton = (Button) view.findViewById(R.id.CP);
-        EFbutton = (Button)view.findViewById(R.id.EF);
+        EFbutton = (Button) view.findViewById(R.id.EF);
+
+        mSendButton.setOnClickListener(this);
+        Tbutton.setOnClickListener(this);
+        Dbutton.setOnClickListener(this);
+        Vbutton.setOnClickListener(this);
+        HNbutton.setOnClickListener(this);
+        CPbutton.setOnClickListener(this);
+        EFbutton.setOnClickListener(this);
     }
 
     /**
@@ -176,7 +184,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -195,65 +203,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
-
-        // Initialize the send button with a listener that for click events
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Send a message using content of the edit text widget
-                View view = getView();
-                if (null != view) {
-                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-                    String message = textView.getText().toString();
-                    sendMessage(message);
-                }
-            }
-        });
-
-        Tbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String t = "pirateship";
-                sendMessage(t);
-            }
-        });
-
-        Dbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String d = "docker ps";
-                sendMessage(d);
-            }
-        });
-
-        Vbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String v = "pirateship detectrpi";
-                sendMessage(v);
-            }
-        });
-
-        HNbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog(view);
-            }
-
-        });
-
-        CPbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog(view);
-            }
-        });
-        EFbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String e = "pirateship expandfs";
-                sendMessage(e);
-            }
-        });
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -279,7 +228,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private void showDialog(View view) {
         final EditText input = new EditText(getActivity());
         final AlertDialog alertDialog = getAlertDialog(input, view);
-
 
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -349,7 +297,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      */
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             mIdle();
             return;
@@ -523,6 +471,35 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         super.onResume();
         if(getActivity().getActionBar().isShowing())
             getActivity().getActionBar().hide();
+    }
+
+    @Override
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.button_send:
+                if (null != v) {
+                    sendMessage(mTextView.getText().toString());
+                }
+                break;
+            case R.id.TB:
+                sendMessage("pirateship");
+                break;
+            case R.id.DB:
+                sendMessage("docker ps");
+                break;
+            case R.id.VB:
+                sendMessage("pirateship detectrpi");
+                break;
+            case R.id.HN:
+                showDialog(v);
+                break;
+            case R.id.CP:
+                showDialog(v);
+                break;
+            case R.id.EF:
+                sendMessage("pirateship expandfs");
+                break;
+        }
     }
 }
 
