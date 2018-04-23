@@ -691,8 +691,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String HSSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
-                    String HPWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+                    String HSSID = data.getStringExtra("HSSID") == null? "":data.getStringExtra("HSSID");
+                    String HPWD = data.getStringExtra("HPWD") == null? "":data.getStringExtra("HPWD");
 
                     String hotSpot = "pirateship hotspot " + HSSID + " " + HPWD + "";
 
