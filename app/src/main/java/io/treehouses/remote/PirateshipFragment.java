@@ -163,7 +163,7 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        mOutEditText.setOnEditorActionListener(mWriteListener);
+        //mOutEditText.setOnEditorActionListener(mWriteListener);
 
         piButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,6 +251,7 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
     /**
      * The action listener for the EditText widget, to listen for the return key
      */
+    /*
     private TextView.OnEditorActionListener mWriteListener
             = new TextView.OnEditorActionListener() {
         public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
@@ -262,6 +263,7 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
             return true;
         }
     };
+    */
 
     /**
      * Updates the status on the action bar.

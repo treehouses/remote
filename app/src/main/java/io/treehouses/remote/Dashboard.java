@@ -163,6 +163,7 @@ public class Dashboard extends Fragment implements View.OnClickListener{
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectProgressDialog.show();
+                    setwatchDogTimeOut(40000, connectProgressDialog);
                     connectDevice(data, false);
                 }
                 break;
