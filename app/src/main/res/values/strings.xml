@@ -19,9 +19,9 @@
     <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
-    <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">connected to %1$s</string>
-    <string name="title_not_connected">not connected</string>
+    <string name="title_connecting">Connecting...</string>
+    <string name="title_connected_to">Connected to %1$s</string>
+    <string name="title_not_connected">Not connected</string>
     <string name="command_hint">commands</string>
     <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>

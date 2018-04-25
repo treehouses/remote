@@ -163,7 +163,7 @@ public class Dashboard extends Fragment implements View.OnClickListener{
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectProgressDialog.show();
-                    setwatchDogTimeOut(40000, connectProgressDialog);
+                    setWatchDogTimeOut(15000, connectProgressDialog);
                     connectDevice(data, false);
                 }
                 break;
@@ -413,7 +413,7 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void setwatchDogTimeOut(long time, final ProgressDialog v) {
+    private void setWatchDogTimeOut(long time, final ProgressDialog v) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {

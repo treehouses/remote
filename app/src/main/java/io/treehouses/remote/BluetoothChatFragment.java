@@ -44,7 +44,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 /**
  * Created by yubo on 7/11/17.
@@ -463,6 +462,7 @@ public class BluetoothChatFragment extends Fragment implements View.OnClickListe
     @Override
     public void onPause(){
         super.onPause();
+        // Show Actionbar when go back to Dashboard
         getActivity().getActionBar().show();
     }
 
@@ -477,9 +477,7 @@ public class BluetoothChatFragment extends Fragment implements View.OnClickListe
     public void onClick(View v){
         switch (v.getId()){
             case R.id.button_send:
-                if (null != v) {
-                    sendMessage(mTextView.getText().toString());
-                }
+                if (null != v) sendMessage(mTextView.getText().toString());
                 break;
             case R.id.TB:
                 sendMessage("pirateship");
