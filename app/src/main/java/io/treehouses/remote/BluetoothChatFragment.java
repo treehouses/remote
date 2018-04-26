@@ -75,6 +75,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private static final int REQUEST_ENABLE_BT = 3;
     public static final int REQUEST_DIALOG_FRAGMENT = 4;
     public static final int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
+    public static final int REQUEST_DIALOG_FRAGMENT_CHPASS= 6;
 
 
     // Layout Views
@@ -276,7 +277,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         CPbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog(view);
+                showChPasswordDialog();
             }
         });
         EFbutton.setOnClickListener(new View.OnClickListener() {
@@ -364,11 +365,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     private AlertDialog getAlertDialog(final EditText input, View view) {
-        if(view.equals(view.findViewById(R.id.HN))) {
-            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ", input);
-        }else{
-            return showAlertDialog("Change Password", "Please enter new password", "treehouses password ", input);
-        }
+
+            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ", input );
+
     }
 
     /**
@@ -704,6 +703,23 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }else{
                     Log.d(TAG, "back from dialog_hotspot, fail");
                 }
+            case REQUEST_DIALOG_FRAGMENT_CHPASS:
+                if(resultCode == Activity.RESULT_OK){
+
+                    //get password change request
+                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
+
+                    //store password and command
+                    String password = "pirateship password " + chPWD;
+
+                    Log.d(TAG, "back from change password");
+
+                    //send password to command line interface
+                    sendMessage(password);
+
+                }else{
+                    Log.d(TAG, "back from change password, fail");
+                }
         }
     }
 
@@ -771,11 +787,21 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     }
 
     public void showHotspotDialog(){
-        //Reusing WifiDialogFragment code for Hotspot
+        // Create an instance of the dialog fragment and show it
 
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
         hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
+
+
+    }
+
+    public void showChPasswordDialog(){
+        // Create an instance of the dialog fragment and show it
+
+        DialogFragment chPassDialogFragment = ChPasswordDialogFragment.newInstance(123);
+        chPassDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_CHPASS);
+        chPassDialogFragment.show(getFragmentManager().beginTransaction(),"ChangePassDialog");
 
 
     }
