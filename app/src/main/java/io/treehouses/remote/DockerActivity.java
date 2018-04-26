@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
  * Created by Lalitha S Oruganty on 3/22/2018.
  */
 
-public class docker extends Activity {
+public class DockerActivity extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

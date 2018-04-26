@@ -33,9 +33,25 @@ public interface Constants {
     int MESSAGE_WRITE = 3;
     int MESSAGE_DEVICE_NAME = 4;
     int MESSAGE_TOAST = 5;
+    int MESSAGE_DISPLAY_DONE = 6;
+
+    // Intent request codes
+    // Used in Dashboard, PirateshipFragment, BluetoothChatFragment
+    int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    int REQUEST_ENABLE_BT = 3;
+    int REQUEST_DIALOG_FRAGMENT = 4;
+    int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
+
+    // Current connection state (used in BluetoothChatService)
+    int STATE_NONE = 0;       // do nothing
+    int STATE_LISTEN = 1;     // listening for incoming connections
+    int STATE_CONNECTING = 2; // initiating an outgoing connection
+    int STATE_CONNECTED = 3;  // connected to a remote device
+
+
 
     // Key names received from the BluetoothChatService Handler
     String DEVICE_NAME = "device_name";
     String TOAST = "toast";
-    
 }

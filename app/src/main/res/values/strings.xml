@@ -19,9 +19,9 @@
     <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
-    <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="title_not_connected">not connected</string>
+    <string name="title_connecting">Connecting...</string>
+    <string name="title_connected_to">Connected to %1$s</string>
+    <string name="title_not_connected">Not connected</string>
     <string name="command_hint">commands</string>
     <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>
@@ -33,8 +33,9 @@
     <string name="PingWIFI">PIRATESHIP PING</string>
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
+    <string name="connect_progress_dialog_title">Setting up</string>
     <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>
-    <string name="progress_dialog_message">Wait while configuring...</string>
+    <string name="progress_dialog_message">Please wait while we configure your setting...</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">Scanning for devices...</string>
@@ -47,7 +48,7 @@
 
     <!-- Options Menu -->
     <string name="secure_connect">Connect a device - Secure</string>
-    <string name="insecure_connect">Connect a device - Insecure</string>
+    <string name="insecure_connect">Dis/Connect device (Insecure)</string>
     <string name="discoverable">Make discoverable</string>
 
     <string name="app_name">Treehouses Remote</string>
@@ -82,9 +83,9 @@
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
     <string name="config_alreadyConfig">You have already configured the wifi</string>
-        <!--Hotspot-->
-        <string name="create_hotspot">Create Hotspot</string>
-        <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
-        <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
+    <!--Hotspot-->
+    <string name="create_hotspot">Create Hotspot</string>
+    <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
+    <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
 </resources>

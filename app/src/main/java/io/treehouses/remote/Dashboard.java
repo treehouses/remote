@@ -1,14 +1,14 @@
 package io.treehouses.remote;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -16,114 +16,74 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static io.treehouses.remote.BluetoothChatFragment.REQUEST_DIALOG_FRAGMENT_HOTSPOT;
-
 /**
  * Created by Lalitha S Oruganty on 3/13/2018.
  */
 
-public class Dashboard extends Fragment {
+public class Dashboard extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "BluetoothChatFragment";
     private static final String BACK_STACK_ROOT_TAG = "root_fragment";
 
-
     //current connection status
     static String currentStatus = "not connected";
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
 
-    private ListView mConversationView;
-    private EditText mOutEditText;
-    private Button mSendButton;
     private ProgressDialog mProgressDialog;
+    private ProgressDialog connectProgressDialog;
     private String mConnectedDeviceName = null;
 
     private static boolean isCountdown = false;
     private static boolean isRead = false;
-    private ArrayAdapter<String> mConversationArrayAdapter;
-    private StringBuffer mOutStringBuffer;
     private BluetoothAdapter mBluetoothAdapter = null;
-    private Button pibutton;
-    private Button dobutton;
-    private ListView lview;
+    private Button piButton;
+    private Button dockerButton;
     private Button cmdButton;
     private BluetoothChatService mChatService = null;
-    private FragmentActivity fragmentActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        fragmentActivity = getActivity();
         return inflater.inflate(R.layout.hope_layout, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pibutton = (Button) view.findViewById(R.id.pbutton);
-        dobutton = (Button) view.findViewById(R.id.docker_button);
-      //lview = (ListView)view.findViewById(R.id.mview);
-        pibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Intent intent = new Intent(view.getContext(), pirateship.class);
-                startActivity(intent);
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setTitle(R.string.progress_dialog_title);
+        mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
-            }
-        });
+        connectProgressDialog = new ProgressDialog(getActivity());
+        connectProgressDialog.setTitle(R.string.connect_progress_dialog_title);
+        connectProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        connectProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
-        dobutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent  dintent = new Intent(view.getContext(),docker.class);
-                startActivity(dintent);
-            }
-        });
+        piButton = (Button) view.findViewById(R.id.pbutton);
+        piButton.setOnClickListener(this);
+        dockerButton = (Button) view.findViewById(R.id.docker_button);
+        dockerButton.setOnClickListener(this);
         cmdButton = (Button)view.findViewById(R.id.cmdbutton);
-        cmdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                BluetoothChatFragment chatfrag = new BluetoothChatFragment();
-                fragmentTransaction.replace(R.id.sample_layout,chatfrag);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
+        cmdButton.setOnClickListener(this);
+
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
-            setupChat();
+            mChatService = new BluetoothChatService(getActivity(), mHandler);
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       // inflater.inflate(R.menu.bluetooth_chat, menu);
     }
 
     @Override
@@ -137,7 +97,7 @@ public class Dashboard extends Fragment {
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
                 //return true;
                 break;
             }
@@ -169,7 +129,7 @@ public class Dashboard extends Fragment {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+            if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -178,43 +138,40 @@ public class Dashboard extends Fragment {
 
     public void showNWifiDialog() {
         // Create an instance of the dialog fragment and show it
-
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-
-
     }
 
     public void showHotspotDialog(){
         //Reusing WifiDialogFragment code for Hotspot
-
         DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
-        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        hDialogFragment.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
+                    connectProgressDialog.show();
+                    setWatchDogTimeOut(15000, connectProgressDialog);
                     connectDevice(data, false);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
+                    mChatService = new BluetoothChatService(getActivity(), mHandler);
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d("dashboard", "BT not enabled");
@@ -222,36 +179,43 @@ public class Dashboard extends Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
 
                     //check status
-                    if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     //show the progress bar, disable user interaction
-                       mProgressDialog.show();
+                    mProgressDialog.show();
                     //TODO: start watchdog
-                      isCountdown = true;
-                     // mHandler.postDelayed(watchDogTimeOut,30000);
+                    isCountdown = true;
+                    // mHandler.postDelayed(watchDogTimeOut,30000);
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null ? "" : data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null ? "" : data.getStringExtra("PWD");
+                    String SSID = data.getStringExtra
+                            ("SSID") == null ? "" : data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra
+                            ("PWD") == null ? "" : data.getStringExtra("PWD");
 
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
-                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-//                    Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-
+                    /**
+                     * TODO:
+                     * 1. check Validinput
+                     * 2. get the SSID and password from data object and send it to RPi through
+                     * sendMessage() method
+                     */
                     sendMessage(SSID, PWD);
-                    //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
-
+                    /**
+                     * TODO:
+                     * 1. lock the app when configuring.
+                     * 2. listen to configuration result and do the logic.
+                     */
                 } else {
                     Log.d(TAG, "back from dialog, fail");
                 }
@@ -268,54 +232,12 @@ public class Dashboard extends Fragment {
         mChatService.connect(device, secure);
     }
 
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
-                if (isRead) {
-                    tView.setTextColor(Color.BLUE);
-                } else {
-                    tView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
-    }
-
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-
-    }
-
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Check that there's actually something to send
         if (SSID.length() > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
@@ -329,13 +251,8 @@ public class Dashboard extends Fragment {
 
             byte[] send = mJson.toString().getBytes();
             mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
         }
     }
-
     private void ensureDiscoverable() {
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
@@ -345,12 +262,105 @@ public class Dashboard extends Fragment {
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(fragmentActivity){
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            try {
+                                // Sleep for 0.5 sec to make sure thread is ready
+                                Thread.sleep(500);
+                                String[] firstRun = {
+                                        "cd boot\n",
+                                        "cat version.txt\n",
+                                        "pirateship detectrpi\n",
+                                        "cd ..\n"};
+                                for (int i = 0; i <= 3; i++) {
+                                    mChatService.write(firstRun[i].getBytes());
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case Constants.STATE_CONNECTING:
+                            setStatus(R.string.title_connecting);
+                            break;
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
+                            setStatus(R.string.title_not_connected);
+                            connectProgressDialog.dismiss();
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+                    String readMessage = (String)msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if(isJson(readMessage)){
+                        handleCallback(readMessage);
+                    }else{
+                        if(isCountdown){
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        if(mProgressDialog.isShowing()){
+                            mProgressDialog.dismiss();
+                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_DISPLAY_DONE:
+                    connectProgressDialog.dismiss();
+                    break;
+            }
         }
     };
+
+    private void setStatus(Object arg) {
+        FragmentActivity activity = getActivity();
+        if (null == activity) {
+            return;
+        }
+        final ActionBar actionBar = activity.getActionBar();
+        if (null == actionBar) {
+            return;
+        }
+        if(arg instanceof Integer){
+            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
+            currentStatus = getString((Integer) arg);
+            actionBar.setSubtitle((Integer) arg);
+        } else if(arg instanceof CharSequence){
+            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
+            currentStatus = arg.toString();
+            actionBar.setSubtitle((CharSequence) arg);
+        }
+    }
 
     private final Runnable watchDogTimeOut = new Runnable() {
         @Override
@@ -364,4 +374,84 @@ public class Dashboard extends Fragment {
         }
     };
 
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+            isCountdown = false;
+        }
+        //enable user interaction
+        mProgressDialog.dismiss();
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getActivity(), R.string.config_fail,
+                        Toast.LENGTH_LONG).show();
+            }else{
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+            }
+
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setWatchDogTimeOut(long time, final ProgressDialog v) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                v.dismiss();
+            }
+        }, time);
+    }
+
+    @Override
+    public void onClick(View v){
+        int i = v.getId();
+        if(i == R.id.pbutton){
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            PirateshipFragment piFragment = new PirateshipFragment();
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("mChatService", mChatService);
+            piFragment.setArguments(mBundle);
+            fragmentTransaction.replace(R.id.sample_layout, piFragment);
+            fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+            fragmentTransaction.commit();
+        }
+        if(i == R.id.docker_button){
+            Intent dockerIntent = new Intent(v.getContext(), DockerActivity.class);
+            startActivity(dockerIntent);
+        }
+        if(i == R.id.cmdbutton){
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            BluetoothChatFragment chatFrag = new BluetoothChatFragment();
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("mChatService", mChatService);
+            chatFrag.setArguments(mBundle);
+            fragmentTransaction.replace(R.id.sample_layout, chatFrag);
+            fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+            fragmentTransaction.commit();
+        }
+    }
 }

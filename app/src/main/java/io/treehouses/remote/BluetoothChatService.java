@@ -1,20 +1,20 @@
 /*
-* Copyright 2017 The Android Open Source Project, Inc.
-*
-* Licensed to the Apache Software Foundation (ASF) under one or more contributor
-* license agreements. See the NOTICE file distributed with this work for additional
-* information regarding copyright ownership. The ASF licenses this file to you under
-* the Apache License, Version 2.0 (the "License"); you may not use this file except
-* in compliance with the License. You may obtain a copy of the License at
+ * Copyright 2017 The Android Open Source Project, Inc.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor
+ * license agreements. See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership. The ASF licenses this file to you under
+ * the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
 
-* http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
 
-* Unless required by applicable law or agreed to in writing, software distributed under
-* the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-* ANY KIND, either express or implied. See the License for the specific language
-* governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
 
-*/
+ */
 
 package io.treehouses.remote;
 
@@ -22,19 +22,21 @@ package io.treehouses.remote;
  * Created by yubo on 7/11/17.
  */
 
+import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -44,7 +46,7 @@ import java.util.UUID;
  * thread for performing data transmissions when connected.
  */
 
-public class BluetoothChatService {
+public class BluetoothChatService implements Serializable{
 
     // Debugging
     private static final String TAG = "BluetoothChatService";
@@ -53,7 +55,6 @@ public class BluetoothChatService {
     private static final String NAME_SECURE = "BluetoothChatSecure";
     private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
-
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
     private static final UUID MY_UUID_SECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -61,35 +62,31 @@ public class BluetoothChatService {
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-
     // Member fields
     private final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
+    private Handler mHandler;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
     private int mNewState;
-
-
-    // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+    private FragmentActivity mActivity;
+    private String HWver = "";
+    private String SWver = "";
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
-     * @param context The UI Activity Context
+     * @param activity The UI Activity Context
      * @param handler A Handler to send messages back to the UI Activity
      */
-    public BluetoothChatService(Context context, Handler handler) {
+    public BluetoothChatService(FragmentActivity activity, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         mNewState = mState;
         mHandler = handler;
+        mActivity = activity;
     }
 
     /**
@@ -153,7 +150,7 @@ public class BluetoothChatService {
         Log.d(TAG, "connect to: " + device);
 
         // Cancel any thread attempting to make a connection
-        if (mState == STATE_CONNECTING) {
+        if (mState == Constants.STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
                 mConnectThread = null;
@@ -244,7 +241,7 @@ public class BluetoothChatService {
             mInsecureAcceptThread.cancel();
             mInsecureAcceptThread = null;
         }
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
     }
@@ -261,7 +258,7 @@ public class BluetoothChatService {
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
-            if (mState != STATE_CONNECTED) return;
+            if (mState != Constants.STATE_CONNECTED) return;
             r = mConnectedThread;
         }
         // Perform the write unsynchronized
@@ -279,7 +276,7 @@ public class BluetoothChatService {
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
@@ -298,7 +295,7 @@ public class BluetoothChatService {
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
-        mState = STATE_NONE;
+        mState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
@@ -333,7 +330,7 @@ public class BluetoothChatService {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
             mmServerSocket = tmp;
-            mState = STATE_LISTEN;
+            mState = Constants.STATE_LISTEN;
         }
 
         public void run() {
@@ -344,7 +341,7 @@ public class BluetoothChatService {
             BluetoothSocket socket = null;
 
             // Listen to the server socket if we're not connected
-            while (mState != STATE_CONNECTED) {
+            while (mState != Constants.STATE_CONNECTED) {
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
@@ -358,14 +355,14 @@ public class BluetoothChatService {
                 if (socket != null) {
                     synchronized (BluetoothChatService.this) {
                         switch (mState) {
-                            case STATE_LISTEN:
-                            case STATE_CONNECTING:
+                            case Constants.STATE_LISTEN:
+                            case Constants.STATE_CONNECTING:
                                 // Situation normal. Start the connected thread.
                                 connected(socket, socket.getRemoteDevice(),
                                         mSocketType);
                                 break;
-                            case STATE_NONE:
-                            case STATE_CONNECTED:
+                            case Constants.STATE_NONE:
+                            case Constants.STATE_CONNECTED:
                                 // Either not ready or already connected. Terminate new socket.
                                 try {
                                     socket.close();
@@ -421,7 +418,7 @@ public class BluetoothChatService {
                 Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e);
             }
             mmSocket = tmp;
-            mState = STATE_CONNECTING;
+            mState = Constants.STATE_CONNECTING;
         }
 
         public void run() {
@@ -493,7 +490,7 @@ public class BluetoothChatService {
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
-            mState = STATE_CONNECTED;
+            mState = Constants.STATE_CONNECTED;
         }
 
         public void run() {
@@ -501,6 +498,9 @@ public class BluetoothChatService {
             byte[] buffer = new byte[1024];
             int bytes = -1;
             String out = "";
+            boolean getSWString = false;
+            boolean getHWString = false;
+            boolean alreadyExecutedDisplay = false;
 //            List<String>  tempOutputList = new ArrayList<String>();
             // Keep listening to the InputStream while connected
 //            while (mState == STATE_CONNECTED) {
@@ -546,15 +546,44 @@ public class BluetoothChatService {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
+                    String str = new String(buffer);
                     out = new String(buffer, 0, bytes);
                     Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
                             .sendToTarget();
-//                    mEmulatorView.write(buffer, bytes);
-                    // Send the obtained bytes to the UI Activity
-                    //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
+                    // Get the SW version once
+                    if(str.contains("release-") && !getSWString) {
+                        SWver += "Version: " + out.substring(8, 10);
+                        getSWString = true;
+                    }
+
+                    // Get the HW version once
+                    if(str.contains("RPI") && !getHWString){
+                        HWver += "; " + out;
+                        getHWString = true;
+                    }
+
+                    // Display SW/HW version after getting all the String from above.
+                    if(!alreadyExecutedDisplay && getSWString && getHWString) {
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final ActionBar actionBar = mActivity.getActionBar();
+                                if (null == actionBar) { return; }
+                                Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + SWver + HWver);
+                                actionBar.setSubtitle(SWver + HWver);
+                            }
+                        });
+                        Message msg = mHandler.obtainMessage(Constants.MESSAGE_DISPLAY_DONE);
+                        mHandler.sendMessage(msg);
+                        //Set everything back to default state
+                        alreadyExecutedDisplay = true;
+                    }
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
+                    HWver = "";
+                    SWver = "";
                     connectionLost();
                     break;
                 }
@@ -590,5 +619,6 @@ public class BluetoothChatService {
         }
     }
 
-    
+    public void setHandler(Handler newHandler) { mHandler = newHandler; }
+
 }
