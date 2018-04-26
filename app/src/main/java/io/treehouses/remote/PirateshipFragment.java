@@ -6,7 +6,6 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -75,10 +74,6 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
     private static boolean isCountdown = false;
     private FragmentActivity parentActivity;
 
-    private ProgressDialog mProgressDialog;
-    private Application activity;
-    private Context applicationContext;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,30 +122,6 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
             if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setLogo(R.mipmap.ic_launcher);
-        getActionBar().setDisplayUseLogoEnabled(true);
-        setContentView(R.layout.pirateship_layout);
-        pibutton = (Button)findViewById(R.id.dpi);
-        mListView = (ListView)findViewById(R.id.pview);
-        pibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String command = "pirateship detectrpi";
-                sendMessage(command);
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setLogo(R.mipmap.ic_launcher);
-        getActionBar().setDisplayUseLogoEnabled(true);
-        setContentView(R.layout.pirateship_layout);
-        pibutton = (Button)findViewById(R.id.dpi);
-        mListView = (ListView)findViewById(R.id.pview);
-        activity = getApplication();
-        applicationContext = getApplicationContext();
-        pibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String command = "pirateship detectrpi";
-                sendMessage(command);
             }
         }
     }
@@ -223,8 +194,6 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
         }
     }
 
-
-
     /**
      * Sends a message.
      *
@@ -251,10 +220,6 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
     }
 
     /*
-||||||| merged common ancestors
-
-=======
->>>>>>> origin/master:app/src/main/java/io/treehouses/remote/pirateship.java
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
@@ -352,16 +317,69 @@ public class PirateshipFragment extends android.support.v4.app.Fragment  {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private final CustomHandler mHandler = new CustomHandler(activity, applicationContext) {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            //Application activity = getApplication();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            mConversationArrayAdapter.clear();
+                            break;
+                        case Constants.STATE_CONNECTING:
+                            setStatus(R.string.title_connecting);
+                            break;
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
+                            setStatus(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    mConversationArrayAdapter.add("Command:  " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+//                    byte[] readBuf = (byte[]) msg.obj;
+//                     construct a string from the valid bytes in the buffer
+//                    String readMessage = new String(readBuf, 0, msg.arg1);
+//                    String readMessage = new String(readBuf);
+                    String readMessage = (String)msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if(isJson(readMessage)){
+                        handleCallback(readMessage);
+                    }else{
+                        if(isCountdown){
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        if(mProgressDialog.isShowing()){
+                            mProgressDialog.dismiss();
+                            Toast.makeText(parentActivity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                        //remove the space at the very end of the readMessage -> eliminate space between items
+                        readMessage = readMessage.substring(0,readMessage.length()-1);
+                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        mConversationArrayAdapter.add(readMessage);
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != parentActivity) {
+                        Toast.makeText(parentActivity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
         }
     };
-
-
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -6,11 +6,9 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,9 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -37,7 +33,6 @@ public class Dashboard extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "BluetoothChatFragment";
     private static final String BACK_STACK_ROOT_TAG = "root_fragment";
-
 
     //current connection status
     static String currentStatus = "not connected";
@@ -53,25 +48,17 @@ public class Dashboard extends Fragment implements View.OnClickListener{
     private Button dockerButton;
     private Button cmdButton;
     private BluetoothChatService mChatService = null;
-    private FragmentActivity fragmentActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        fragmentActivity = getActivity();
         return inflater.inflate(R.layout.hope_layout, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pibutton = (Button) view.findViewById(R.id.pbutton);
-        dobutton = (Button) view.findViewById(R.id.docker_button);
-      //  lview = (ListView)view.findViewById(R.id.mview);
-        pibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle(R.string.progress_dialog_title);
@@ -90,28 +77,6 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         cmdButton = (Button)view.findViewById(R.id.cmdbutton);
         cmdButton.setOnClickListener(this);
 
-        cmdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                BluetoothChatFragment chatfrag = new BluetoothChatFragment();
-                fragmentTransaction.replace(R.id.sample_layout,chatfrag);
-                fragmentTransaction.commit();
-            }
-        });
-        cmdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                BluetoothChatFragment chatfrag = new BluetoothChatFragment();
-                fragmentTransaction.replace(R.id.sample_layout,chatfrag);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
@@ -267,87 +232,6 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         mChatService.connect(device, secure);
     }
 
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
-                if (isRead) {
-                    tView.setTextColor(Color.BLUE);
-                } else {
-                    tView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
-    }
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-
-    }
-
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
-                if (isRead) {
-                    tView.setTextColor(Color.BLUE);
-                } else {
-                    tView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
-    }
-
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-
-    }
-
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
@@ -369,7 +253,6 @@ public class Dashboard extends Fragment implements View.OnClickListener{
             mChatService.write(send);
         }
     }
-
     private void ensureDiscoverable() {
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
@@ -379,10 +262,83 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(fragmentActivity){
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            try {
+                                // Sleep for 0.5 sec to make sure thread is ready
+                                Thread.sleep(500);
+                                String[] firstRun = {
+                                        "cd boot\n",
+                                        "cat version.txt\n",
+                                        "pirateship detectrpi\n",
+                                        "cd ..\n"};
+                                for (int i = 0; i <= 3; i++) {
+                                    mChatService.write(firstRun[i].getBytes());
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case Constants.STATE_CONNECTING:
+                            setStatus(R.string.title_connecting);
+                            break;
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
+                            setStatus(R.string.title_not_connected);
+                            connectProgressDialog.dismiss();
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+                    String readMessage = (String)msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if(isJson(readMessage)){
+                        handleCallback(readMessage);
+                    }else{
+                        if(isCountdown){
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        if(mProgressDialog.isShowing()){
+                            mProgressDialog.dismiss();
+                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_DISPLAY_DONE:
+                    connectProgressDialog.dismiss();
+                    break;
+            }
         }
     };
 
@@ -418,7 +374,44 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         }
     };
 
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
 
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+            isCountdown = false;
+        }
+        //enable user interaction
+        mProgressDialog.dismiss();
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getActivity(), R.string.config_fail,
+                        Toast.LENGTH_LONG).show();
+            }else{
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+            }
+
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
+    }
 
     private void setWatchDogTimeOut(long time, final ProgressDialog v) {
         Handler handler = new Handler();
@@ -461,38 +454,4 @@ public class Dashboard extends Fragment implements View.OnClickListener{
             fragmentTransaction.commit();
         }
     }
-}
-||||||| merged common ancestors
-    public void handleCallback(String str){
-        String result;
-        String ip;
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-            isCountdown = false;
-        }
-
-        //enable user interaction
-        mProgressDialog.dismiss();
-        try{
-            JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
-
-            if(!result.equals("SUCCESS")){
-                Toast.makeText(getActivity(), R.string.config_fail,
-                        Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
-
-        }catch (JSONException e){
-            // error handling
-            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
-        }
-
-    }
-}
 }
