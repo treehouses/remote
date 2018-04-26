@@ -635,6 +635,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
+                break;
             case REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -656,18 +657,21 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
                     String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
 
+                    String wifi = "pirateship wifi " + SSID + " " + PWD;
+
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-//                    Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), R.string.config_success,
+                    //Toast.LENGTH_SHORT).show();
 
-                    sendMessage(SSID,PWD);
+                    sendMessage(wifi);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
                 }else{
                     Log.d(TAG, "back from dialog, fail");
                 }
+                break;
             case REQUEST_DIALOG_FRAGMENT_HOTSPOT:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -686,12 +690,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+                    String HSSID = data.getStringExtra("HSSID") == null? "":data.getStringExtra("HSSID");
+                    String HPWD = data.getStringExtra("HPWD") == null? "":data.getStringExtra("HPWD");
 
-                    String hotSpot = "pirateship hotspot " + SSID + " " + PWD;
+                    String hotSpot = "pirateship hotspot " + HSSID + " " + HPWD + "";
 
-                    Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + SSID + ", PWD = " + PWD);
+                    Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + HSSID + ", PWD = " + HPWD);
 
                     //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
 //                    Toast.makeText(getActivity(), R.string.config_success,
@@ -703,6 +707,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }else{
                     Log.d(TAG, "back from dialog_hotspot, fail");
                 }
+                break;
+
             case REQUEST_DIALOG_FRAGMENT_CHPASS:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -720,6 +726,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }else{
                     Log.d(TAG, "back from change password, fail");
                 }
+                break;
         }
     }
 
