@@ -40,6 +40,7 @@ import static io.treehouses.remote.BluetoothChatFragment.REQUEST_DIALOG_FRAGMENT
 public class Dashboard extends Fragment {
 
     private static final String TAG = "BluetoothChatFragment";
+    private static final String BACK_STACK_ROOT_TAG = "root_fragment";
 
 
     //current connection status
@@ -103,9 +104,11 @@ public class Dashboard extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 BluetoothChatFragment chatfrag = new BluetoothChatFragment();
                 fragmentTransaction.replace(R.id.sample_layout,chatfrag);
+                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
                 fragmentTransaction.commit();
             }
         });
