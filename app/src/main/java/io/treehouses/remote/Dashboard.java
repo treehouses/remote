@@ -31,8 +31,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static io.treehouses.remote.BluetoothChatFragment.REQUEST_DIALOG_FRAGMENT_HOTSPOT;
-
 /**
  * Created by Lalitha S Oruganty on 3/13/2018.
  */
@@ -42,13 +40,8 @@ public class Dashboard extends Fragment {
     private static final String TAG = "BluetoothChatFragment";
     private static final String BACK_STACK_ROOT_TAG = "root_fragment";
 
-
     //current connection status
     static String currentStatus = "not connected";
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
 
     private ListView mConversationView;
     private EditText mOutEditText;
@@ -61,8 +54,8 @@ public class Dashboard extends Fragment {
     private ArrayAdapter<String> mConversationArrayAdapter;
     private StringBuffer mOutStringBuffer;
     private BluetoothAdapter mBluetoothAdapter = null;
-    private Button pibutton;
-    private Button dobutton;
+    private Button piButton;
+    private Button dockerButton;
     private ListView lview;
     private Button cmdButton;
     private BluetoothChatService mChatService = null;
@@ -79,26 +72,25 @@ public class Dashboard extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pibutton = (Button) view.findViewById(R.id.pbutton);
-        dobutton = (Button) view.findViewById(R.id.docker_button);
-      //lview = (ListView)view.findViewById(R.id.mview);
-        pibutton.setOnClickListener(new View.OnClickListener() {
+        piButton = (Button) view.findViewById(R.id.pbutton);
+        dockerButton = (Button) view.findViewById(R.id.docker_button);
+        //lview = (ListView)view.findViewById(R.id.mview);
+        piButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent intent = new Intent(view.getContext(), pirateship.class);
+                Intent intent = new Intent(view.getContext(), PirateshipFragment.class);
                 startActivity(intent);
-
             }
         });
 
-        dobutton.setOnClickListener(new View.OnClickListener() {
+        dockerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent  dintent = new Intent(view.getContext(),docker.class);
-                startActivity(dintent);
+                Intent intent = new Intent(view.getContext(), DockerFragment.class);
+                startActivity(intent);
             }
         });
+
         cmdButton = (Button)view.findViewById(R.id.cmdbutton);
         cmdButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,13 +106,14 @@ public class Dashboard extends Fragment {
         });
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
         }
     }
 
+    // This is unused right? Can we remove this to make this file shorter???
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
        // inflater.inflate(R.menu.bluetooth_chat, menu);
@@ -130,14 +123,14 @@ public class Dashboard extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.wifi_configuration: {
-                showNWifiDialog();
+                showWifiDialog();
                 //return true;
                 break;
             }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
                 //return true;
                 break;
             }
@@ -169,48 +162,43 @@ public class Dashboard extends Fragment {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+            if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
         }
     }
 
-    public void showNWifiDialog() {
+    public void showWifiDialog() {
         // Create an instance of the dialog fragment and show it
-
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-
-
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     public void showHotspotDialog(){
-        //Reusing WifiDialogFragment code for Hotspot
-
-        DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
-        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
-
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -222,11 +210,11 @@ public class Dashboard extends Fragment {
                             Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
 
                     //check status
-                    if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
@@ -277,11 +265,11 @@ public class Dashboard extends Fragment {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
+                TextView consoleView = (TextView) view.findViewById(R.id.listItem);
                 if (isRead) {
-                    tView.setTextColor(Color.BLUE);
+                    consoleView.setTextColor(Color.BLUE);
                 } else {
-                    tView.setTextColor(Color.RED);
+                    consoleView.setTextColor(Color.RED);
                 }
                 return view;
             }
@@ -291,7 +279,7 @@ public class Dashboard extends Fragment {
 
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -311,7 +299,7 @@ public class Dashboard extends Fragment {
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }

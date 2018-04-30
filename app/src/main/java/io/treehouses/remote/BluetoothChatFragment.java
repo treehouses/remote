@@ -55,44 +55,30 @@ import org.json.JSONObject;
 
 /**
  * Created by yubo on 7/11/17.
- */
-
-/**
+ * 
  * This fragment controls Bluetooth to communicate with other devices.
  */
 
 public class BluetoothChatFragment extends android.support.v4.app.Fragment {
-
 
     private static final String TAG = "BluetoothChatFragment";
 
     //current connection status
     static String currentStatus = "not connected";
 
-    // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
-    public static final int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
-    public static final int REQUEST_DIALOG_FRAGMENT_CHPASS= 6;
-
-
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
-    private ProgressDialog mProgressDialog;
-    private ProgressDialog hProgressDialog;
-    private Button Tbutton;
-    private Button Dbutton;
-    private Button Vbutton;
-    private Button Pbutton;
-    private Button HNbutton;
-    private Button CPbutton;
-    private Button EFbutton;
-    private String hnInput;
-    private Boolean isValidInput;
+    private ProgressDialog wifiPD;
+    private ProgressDialog hotspotPD;
+    private Button pirateshipButton;
+    private Button dockerButton;
+    private Button RPI_HW_Button;
+    private Button pingStatusButton;
+    private Button hostnameButton;
+    private Button changePasswordButton;
+    private Button expandButton;
 
     /**
      * Name of the connected device
@@ -118,9 +104,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
-
     private static boolean isRead = false;
-
     private static boolean isCountdown = false;
 
     @Override
@@ -152,12 +136,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
@@ -175,7 +158,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothChatService.STATE_NONE) {
+            if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
                 mIdle();
@@ -193,13 +176,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
-        Tbutton = (Button) view.findViewById(R.id.TB);
-        Dbutton = (Button)view.findViewById(R.id.DB);
-        Vbutton = (Button)view.findViewById(R.id.VB);
-        Pbutton = (Button)view.findViewById(R.id.PING);
-        HNbutton = (Button)view.findViewById(R.id.HN);
-        CPbutton = (Button) view.findViewById(R.id.CP);
-        EFbutton = (Button)view.findViewById(R.id.EF);
+        pirateshipButton = (Button) view.findViewById(R.id.TB);
+        dockerButton = (Button)view.findViewById(R.id.DB);
+        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
+        pingStatusButton = (Button)view.findViewById(R.id.PING);
+        hostnameButton = (Button)view.findViewById(R.id.HN);
+        changePasswordButton = (Button) view.findViewById(R.id.CP);
+        expandButton = (Button)view.findViewById(R.id.EF);
     }
 
     /**
@@ -214,11 +197,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.listItem);
+                TextView consoleView = (TextView) view.findViewById(R.id.listItem);
                 if(isRead){
-                    tView.setTextColor(Color.BLUE);
+                    consoleView.setTextColor(Color.BLUE);
                 }else{
-                    tView.setTextColor(Color.RED);
+                    consoleView.setTextColor(Color.RED);
                 }
                 return view;
             }
@@ -235,14 +218,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 // Send a message using content of the edit text widget
                 View view = getView();
                 if (null != view) {
-                    TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-                    String message = textView.getText().toString();
+                    TextView consoleInput = (TextView) view.findViewById(R.id.edit_text_out);
+                    String message = consoleInput.getText().toString();
                     sendMessage(message);
                 }
             }
         });
 
-        Tbutton.setOnClickListener(new View.OnClickListener() {
+        pirateshipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String t = "pirateship";
@@ -250,7 +233,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        Dbutton.setOnClickListener(new View.OnClickListener() {
+        dockerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String d = "docker ps";
@@ -258,7 +241,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        Vbutton.setOnClickListener(new View.OnClickListener() {
+        RPI_HW_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String v = "pirateship detectrpi";
@@ -266,21 +249,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        HNbutton.setOnClickListener(new View.OnClickListener() {
+        hostnameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDialog(view);
             }
-
         });
 
-        CPbutton.setOnClickListener(new View.OnClickListener() {
+        changePasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showChPasswordDialog();
             }
         });
-        EFbutton.setOnClickListener(new View.OnClickListener() {
+        expandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String e = "pirateship expandfs";
@@ -290,22 +272,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
-
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
 
-        //get spinner
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setTitle(R.string.progress_dialog_title);
-        mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
-        mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        // Create spinner for Wifi
+        wifiPD = new ProgressDialog(getActivity());
+        wifiPD.setTitle(R.string.progress_dialog_title);
+        wifiPD.setMessage(getString(R.string.progress_dialog_message));
+        wifiPD.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
-        //get spinner for hotspot
-        hProgressDialog = new ProgressDialog(getActivity());
-        hProgressDialog.setTitle(R.string.progress_dialog_title_hotspot);
-        hProgressDialog.setMessage(getString(R.string.progress_dialog_message));
-        hProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
-
+        // Create spinner for Hotspot
+        hotspotPD = new ProgressDialog(getActivity());
+        hotspotPD.setTitle(R.string.progress_dialog_title_hotspot);
+        hotspotPD.setMessage(getString(R.string.progress_dialog_message));
+        hotspotPD.setCancelable(false); // disable dismiss by tapping outside of the dialog
     }
 
     /**
@@ -314,8 +294,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      */
     private void showDialog(View view) {
         final EditText input = new EditText(getActivity());
-        final AlertDialog alertDialog = getAlertDialog(input, view);
-
+        final AlertDialog alertDialog = showAlertDialog(
+                "Rename Hostname",
+                "Please enter new hostname",
+                "pirateship rename ", input);
 
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -350,8 +332,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        hnInput = input.getText().toString();
-                        String h = command + hnInput.toString();
+                        String hostnameInput = input.getText().toString();
+                        String h = command + hostnameInput.toString();
                         sendMessage(h);
                     }
                 })
@@ -362,12 +344,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     }
                 })
                 .show();
-    }
-
-    private AlertDialog getAlertDialog(final EditText input, View view) {
-
-            return showAlertDialog("Rename Hostname", "Please enter new hostname", "pirateship rename ", input );
-
     }
 
     /**
@@ -389,7 +365,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
      */
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             mIdle();
             return;
@@ -405,20 +381,18 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             mOutStringBuffer.setLength(0);
             mOutEditText.setText(mOutStringBuffer);
         }
-
     }
 
     private void sendPing(String ping) {
         // Get the message bytes and tell the BluetoothChatService to write
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
-
         mOutStringBuffer.setLength(0);
     }
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -458,13 +432,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     };
 
-
     /**
      * Updates the status on the action bar.
      *
-     * @param resId a string resource ID
+     * @param
+     * arg: can be either a string resource ID or subTitle status
      */
-    private void setStatus(int resId) {
+
+    private void setStatus(Object arg) {
         FragmentActivity activity = getActivity();
         if (null == activity) {
             return;
@@ -473,29 +448,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         if (null == actionBar) {
             return;
         }
-        Log.d(TAG, "actionBar.setSubtitle(resId) = " + resId );
-        currentStatus = getString(resId);
-        actionBar.setSubtitle(resId);
-
-    }
-
-    /**
-     * Updates the status on the action bar.
-     *
-     * @param subTitle status
-     */
-    private void setStatus(CharSequence subTitle) {
-        FragmentActivity activity = getActivity();
-        if (null == activity) {
-            return;
+        if(arg instanceof Integer){
+            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
+            currentStatus = getString((Integer) arg);
+            actionBar.setSubtitle((Integer) arg);
+        } else if(arg instanceof CharSequence){
+            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
+            currentStatus = arg.toString();
+            actionBar.setSubtitle((CharSequence) arg);
         }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + subTitle );
-        currentStatus = subTitle.toString();
-        actionBar.setSubtitle(subTitle);
     }
 
     private final Runnable watchDogTimeOut = new Runnable() {
@@ -503,13 +464,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         public void run() {
             isCountdown = false;
             //time out
-            if(mProgressDialog.isShowing()){
-                mProgressDialog.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
+            if(wifiPD.isShowing()){
+                wifiPD.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
             }
-            if(hProgressDialog.isShowing()){
-                hProgressDialog.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
+            if(hotspotPD.isShowing()){
+                hotspotPD.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -524,15 +485,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothChatService.STATE_CONNECTED:
+                        case Constants.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
                             mConversationArrayAdapter.clear();
                             break;
-                        case BluetoothChatService.STATE_CONNECTING:
+                        case Constants.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
                             break;
-                        case BluetoothChatService.STATE_LISTEN:
-                        case BluetoothChatService.STATE_NONE:
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
                             setStatus(R.string.title_not_connected);
                             mIdle();
                             break;
@@ -564,12 +525,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
                         }
-                        if(mProgressDialog.isShowing()){
-                            mProgressDialog.dismiss();
+                        if(wifiPD.isShowing()){
+                            wifiPD.dismiss();
                             Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
                         }
-                        if(hProgressDialog.isShowing()){
-                            hProgressDialog.dismiss();
+                        if(hotspotPD.isShowing()){
+                            hotspotPD.dismiss();
                             Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
@@ -611,19 +572,19 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -636,18 +597,18 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     getActivity().finish();
                 }
                 break;
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
-                    if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
+                    if(mChatService.getState() != Constants.STATE_CONNECTED){
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     //show the progress bar, disable user interaction
-                    mProgressDialog.show();
+                    wifiPD.show();
                     //TODO: start watchdog
                     isCountdown = true;
                     mHandler.postDelayed(watchDogTimeOut,30000);
@@ -672,18 +633,18 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     Log.d(TAG, "back from dialog, fail");
                 }
                 break;
-            case REQUEST_DIALOG_FRAGMENT_HOTSPOT:
+            case Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT:
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
-                    if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
+                    if(mChatService.getState() != Constants.STATE_CONNECTED){
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     //show the progress bar, disable user interaction
-                    hProgressDialog.show();
+                    hotspotPD.show();
                     //TODO: start watchdog
                     isCountdown = true;
                     mHandler.postDelayed(watchDogTimeOut,30000);
@@ -709,7 +670,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }
                 break;
 
-            case REQUEST_DIALOG_FRAGMENT_CHPASS:
+            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
                 if(resultCode == Activity.RESULT_OK){
 
                     //get password change request
@@ -746,6 +707,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mChatService.connect(device, secure);
     }
 
+    // Is this unused? Can we remove this????
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflater.inflate(R.menu.bluetooth_chat, menu);
@@ -755,14 +717,14 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.wifi_configuration: {
-                showNWifiDialog();
+                showWifiDialog();
                 //return true;
                 break;
             }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
                 //return true;
                 break;
             }
@@ -783,34 +745,25 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         return true;
     }
 
-    public void showNWifiDialog() {
+    public void showWifiDialog() {
         // Create an instance of the dialog fragment and show it
-
         DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-
-
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     public void showHotspotDialog(){
         // Create an instance of the dialog fragment and show it
-
-        DialogFragment hDialogFragment = HotspotDialogFragment.newInstance(123);
-        hDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        hDialogFragment.show(getFragmentManager().beginTransaction(),"hDialog");
-
-
+        DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
     }
 
-    public void showChPasswordDialog(){
+    public void showChPasswordDialog() {
         // Create an instance of the dialog fragment and show it
-
-        DialogFragment chPassDialogFragment = ChPasswordDialogFragment.newInstance(123);
-        chPassDialogFragment.setTargetFragment(this,REQUEST_DIALOG_FRAGMENT_CHPASS);
-        chPassDialogFragment.show(getFragmentManager().beginTransaction(),"ChangePassDialog");
-
-
+        DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
     }
 
     public boolean isJson(String str) {
@@ -831,7 +784,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
 
         //enable user interaction
-        mProgressDialog.dismiss();
+        wifiPD.dismiss();
         try{
             JSONObject mJSON = new JSONObject(str);
             result = mJSON.getString("result") == null? "" : mJSON.getString("result");
@@ -851,24 +804,23 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             // error handling
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
-
     }
 
     public void mOffline(){
-        Pbutton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        pingStatusButton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
     public void mIdle(){
-        Pbutton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        pingStatusButton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.GRAY);
     }
 
     public void mConnect(){
-        Pbutton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)Pbutton.getBackground();
+        pingStatusButton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);
     }
 }
