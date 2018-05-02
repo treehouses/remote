@@ -49,8 +49,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".pirateship"/>
-        <activity android:name=".docker"/>
+        <activity android:name=".PirateshipFragment"/>
+        <activity android:name=".DockerFragment"/>
 
         <activity
             android:name="io.treehouses.remote.DeviceListActivity"

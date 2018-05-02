@@ -110,7 +110,6 @@ public class HotspotDialogFragment extends DialogFragment {
         hotspotSSIDEditText = (EditText)mView.findViewById(R.id.hotspotSSID);
         hotspotPWDEditText = (EditText)mView.findViewById(R.id.hotspotPassword);
         confirmPWDEditText = (EditText)mView.findViewById(R.id.confirmPassword);
-
     }
 
 }

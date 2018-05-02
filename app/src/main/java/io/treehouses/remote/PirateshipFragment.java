@@ -29,12 +29,8 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class pirateship extends Activity  {
+public class PirateshipFragment extends Activity  {
 
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
-    public static final int REQUEST_DIALOG_FRAGMENT = 4;
     private static final String TAG ="pirateship" ;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
@@ -88,7 +84,7 @@ public class pirateship extends Activity  {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
@@ -102,7 +98,7 @@ public class pirateship extends Activity  {
      */
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -122,7 +118,7 @@ public class pirateship extends Activity  {
 
     private void sendMessage(String SSID, String PWD) {
         // Check that we're actually connected before trying anything
-        if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -157,19 +153,19 @@ public class pirateship extends Activity  {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, true);
                 }
                 break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
+            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                 }
                 break;
-            case REQUEST_ENABLE_BT:
+            case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
@@ -181,11 +177,11 @@ public class pirateship extends Activity  {
                             Toast.LENGTH_SHORT).show();
                     //getApplication().finish();
                 }
-            case REQUEST_DIALOG_FRAGMENT:
+            case Constants.REQUEST_DIALOG_FRAGMENT:
                 if(resultCode == Activity.RESULT_OK){
 
                     //check status
-                    if(mChatService.getState() != BluetoothChatService.STATE_CONNECTED){
+                    if(mChatService.getState() != Constants.STATE_CONNECTED){
                         Toast.makeText(getApplicationContext(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
