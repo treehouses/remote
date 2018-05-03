@@ -68,7 +68,7 @@ In the android device, once you come across `Treehouses` icon, please click that
 
 8. Alternatively, we can connect to raspberry pi with the help of wifi. Click the wifi icon present in the action bar to open up the dialog fragment.
 
-9. Enter `SSID` and `password` to conenct to raspberry pi via wifi.
+9. Enter `SSID` and `password` to connect to raspberry pi via wifi.
 
 10. Click on the back button present at the bottom to go back to the dashboard.
 
