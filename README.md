@@ -35,20 +35,20 @@ We will need a few hardware and software components as follows:
 3. Create a file named `autorunonce.txt` and place it in the `boot` partition of the microSD card:
 
     ```
-    pirateship rename ole # rename the raspberry pi so we could easily distinguish the bluetooth device
+    pirateship rename treehouses # rename the raspberry pi so we could easily distinguish the bluetooth device
     pirateship bluetooth on # enable bluetooth and our bluetooth-server on the Raspberry Pi
     # pirateship wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
     ```
 
 4. Unmount and remove the microSD card from the card reader and place it into the RPi.
 
-5. Connect a RJ45 network cable to the Ethernet port on the RPi. (Skip this step if you have Wi-Fi configured in step 3)
+5. Connect a RJ45 network cable to the Ethernet port on the RPi (skip this step if you have Wi-Fi configured in step 3.)
 
 6. Connect the RPi to power.
 
-7. Wait for a minute or two and look for `Treehouses` in your Android device's Bluetooth setting
+7. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
 
-## Setting Up The Android Device
+## Setting Up the Android Device
 
 The basic requirements of setting an android environment up is firstly, download [Android Studio](https://open-learning-exchange.github.io/#!./pages/robots/rbts-takehome-android-studio-setup.md) and later go through the basic requirements of [Android Device](https://open-learning-exchange.github.io/#!./pages/robots/rbts-takehome-device-setup.md)
 
