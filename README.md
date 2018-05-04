@@ -58,6 +58,7 @@ Launch `Treehouses Remote` app, you'll see a dashboard with `pirateship`, `docke
 
 ### Connect to Raspsberry Pi via Bluetooth
 
+1.In the android bluetooth settings, scan and pair with the PI device.
 1. Click on the three dots (menu icon) at the upper right corner of the app. 
 1. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
 1. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
