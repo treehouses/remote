@@ -35,9 +35,9 @@ We will need a few hardware and software components as follows:
 3. Create a file named `autorunonce.txt` and place it in the `boot` partition of the microSD card:
 
     ```
-    pirateship rename treehouses # rename the raspberry pi so we could easily distinguish the bluetooth device
-    pirateship bluetooth on # enable bluetooth and our bluetooth-server on the Raspberry Pi
-    # pirateship wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
+    treehouses rename treehouses # rename the raspberry pi so we could easily distinguish the bluetooth device
+    treehouses bluetooth on # enable bluetooth and our bluetooth-server on the Raspberry Pi
+    # treehouses wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
     ```
 
 4. Unmount and remove the microSD card from the card reader and place it into the RPi.
@@ -50,31 +50,30 @@ We will need a few hardware and software components as follows:
 
 ## Setting Up the Android Device
 
-The basic requirements of setting an android environment up is firstly, download [Android Studio](https://open-learning-exchange.github.io/#!./pages/robots/rbts-takehome-android-studio-setup.md) and later go through the basic requirements of [Android Device](https://open-learning-exchange.github.io/#!./pages/robots/rbts-takehome-device-setup.md)
+We assume you've already installed [Android Studio](https://developer.android.com/studio/install) on your machine and [enabled USB debugging](https://developer.android.com/studio/command-line/adb#Enabling) on your Android device.
 
-After you set up the above steps. Please go through the following inorder to run the `remote` application in your mobile device
+## Usage
 
-In the android device, once you come across `Treehouses` icon, please click that to open the application
+Launch `Treehouses Remote` app, you'll see a dashboard with `pirateship`, `docker`, and `cmd` button.
 
-1. After the application is opened, you will get to the dashboard where pirateship, docker and cmd buttons will be displayed. 
+### Connect to Raspsberry Pi via Bluetooth
 
-2. Inorder to connect with raspsberry pi with bluetooth. Please click the three vertical dots or menu icon visible at the right handside of the application. 
+1. Click on the three dots (menu icon) at the upper right corner of the app. 
+1. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
+1. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
+1. If it does not work, please click on `cmd` button and repeat steps 1 through 3.
 
-3. Please click on the three vertical dots visible to display a drop down list of `insecure-connect`. Please click on that to display the devices that are on bluetooth around you. 
+### Features
 
-4. Please select `raspberry pi` or whatever name that is given to your raspberry pi device (raspberry pi being default) to connect to the raspberry pi via bluetooth.
+- The connection status is shown on the action bar.
+- In `cmd`
+  - Use the Wi-Fi icon on the action bar to comfigure the Raspberry Pi to connect to a Wi-Fi network.
+  - Use buttons on the lower part of the screen to performe various commands.
+  - The circle on the upper left corner shows the Raspberry Pi's internet connectivity status using color green and red.
+  - To return to dashboard, click on the back button at the bottom of the device.
 
-5. If it does not work out, please click on cmd button and repeat steps 3 & 4.
+## Tools
 
-6. Click on the buttons present in cmd activity to check the functionality of raspberry pi and for testing.
+#### Vysor
 
-7. We can check the connectivity status by the circle present on the left hand side of the screen below action bar where `green` indicates successful connection and `red` indicates not connected to raspberry pi. The connection status can also be seen on the action bar messages.
-
-8. Alternatively, we can connect to raspberry pi with the help of wifi. Click the wifi icon present in the action bar to open up the dialog fragment.
-
-9. Enter `SSID` and `password` to connect to raspberry pi via wifi.
-
-10. Click on the back button present at the bottom to go back to the dashboard.
-
-11. Additionally, we can use [Vysor](https://www.vysor.io/) to display the working/ testing of an issue or the whole app. This helps in explaining the issues or discussing further about a particular subject.
-
+[Vysor](https://www.vysor.io/) lets us view and control your Android on our computerto. It might help us exlpain issues better or discuss further about a particular subject when we remotely work together.
