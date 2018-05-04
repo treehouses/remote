@@ -58,7 +58,7 @@ In the android device, once you come across `Treehouses` icon, please click that
 
 1. After the application is opened, you will get to the dashboard where pirateship, docker and cmd buttons will be displayed. 
 
-2. Inorder to connect with raspsberry pi wiith bluetooth. Please click the three vertical dots or menu icon visible at the right handside of the application. 
+2. Inorder to connect with raspsberry pi with bluetooth. Please click the three vertical dots or menu icon visible at the right handside of the application. 
 
 3. Please click on the three vertical dots visible to display a drop down list of `insecure-connect`. Please click on that to display the devices that are on bluetooth around you. 
 
@@ -76,5 +76,5 @@ In the android device, once you come across `Treehouses` icon, please click that
 
 10. Click on the back button present at the bottom to go back to the dashboard.
 
-11. Additionally, we can use [Vysor](https://www.vysor.io/) to display the working/ testing of an issue or the whole app. This helps in explaning the issues or discussing further about a particular subject.
+11. Additionally, we can use [Vysor](https://www.vysor.io/) to display the working/ testing of an issue or the whole app. This helps in explaining the issues or discussing further about a particular subject.
 
