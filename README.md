@@ -50,6 +50,10 @@ We will need a few hardware and software components as follows:
 
 ## Setting Up The Android Device
 
+The basic requirements of setting an android environment up is firstly, download [Android Studio](https://open-learning-exchange.github.io/#!./pages/robots/rbts-takehome-android-studio-setup.md) and later go through the basic requirements of [Android Device](https://open-learning-exchange.github.io/#!./pages/robots/rbts-takehome-device-setup.md)
+
+After you set up the above steps. Please go through the following inorder to run the `remote` application in your mobile device
+
 In the android device, once you come across `Treehouses` icon, please click that to open the application
 
 1. After the application is opened, you will get to the dashboard where pirateship, docker and cmd buttons will be displayed. 
@@ -72,5 +76,5 @@ In the android device, once you come across `Treehouses` icon, please click that
 
 10. Click on the back button present at the bottom to go back to the dashboard.
 
-* Any new changes can be updated here
+11. Additionally, we can use [Vysor](https://www.vysor.io/) to display the working/ testing of an issue or the whole app. This helps in explaning the issues or discussing further about a particular subject.
 
