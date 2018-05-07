@@ -73,4 +73,4 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 #### Vysor
 
-[Vysor](https://www.vysor.io/) lets us view and control your Android on our computerto. It might help us exlpain issues better or discuss further about a particular subject when we remotely work together.
+[Vysor](https://www.vysor.io/) A software that helps display your Android screen into your computer. You will find this software very helpful as it helps you explain the issue more in detail. Plus, everybody in the team can see what is happening on your screen, therfore we can help each other in debugging.
