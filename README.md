@@ -35,9 +35,9 @@ We will need a few hardware and software components as follows:
 3. Create a file named `autorunonce.txt` and place it in the `boot` partition of the microSD card:
 
     ```
-    pirateship rename ole # rename the raspberry pi so we could easily distinguish the bluetooth device
-    pirateship bluetooth on # enable bluetooth and our bluetooth-server on the Rasoberry Pi
-    # pirateship wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
+    treehouses rename ole # rename the raspberry pi so we could easily distinguish the bluetooth device
+    treehouses bluetooth on # enable bluetooth and our bluetooth-server on the Rasoberry Pi
+    # treehouses wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
     ```
 
 4. Unmount and remove the microSD card from the card reader and place it into the RPi.

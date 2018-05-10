@@ -29,9 +29,9 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class PirateshipFragment extends Activity  {
+public class TreehousesFragment extends Activity  {
 
-    private static final String TAG ="pirateship" ;
+    private static final String TAG ="treehouses" ;
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
     private StringBuffer mOutStringBuffer;
@@ -53,7 +53,7 @@ public class PirateshipFragment extends Activity  {
         getActionBar().setDisplayShowHomeEnabled(true);
         getActionBar().setLogo(R.mipmap.ic_launcher);
         getActionBar().setDisplayUseLogoEnabled(true);
-        setContentView(R.layout.pirateship_layout);
+        setContentView(R.layout.treehouses_layout);
         pibutton = (Button)findViewById(R.id.dpi);
         mListView = (ListView)findViewById(R.id.pview);
         activity = getApplication();
@@ -61,7 +61,7 @@ public class PirateshipFragment extends Activity  {
         pibutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String command = "pirateship detectrpi";
+                String command = "treehouses detectrpi";
                 sendMessage(command);
             }
         });
