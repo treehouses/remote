@@ -21,8 +21,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -107,12 +110,18 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private static boolean isRead = false;
     private static boolean isCountdown = false;
 
+    private BluetoothSignal mBTSignal = new BluetoothSignal();
+
     @Override
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        IntentFilter intFilter = new IntentFilter();
+        intFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        getActivity().getApplicationContext().registerReceiver(mBTSignal, intFilter);
 
         //start pinging for wifi check
         final Handler h = new Handler();
