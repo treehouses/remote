@@ -78,7 +78,7 @@ public class Dashboard extends Fragment {
         piButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), PirateshipFragment.class);
+                Intent intent = new Intent(view.getContext(), TreehousesFragment.class);
                 startActivity(intent);
             }
         });
