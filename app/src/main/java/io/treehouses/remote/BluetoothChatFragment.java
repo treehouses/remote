@@ -27,6 +27,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -110,29 +112,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private static boolean isRead = false;
     private static boolean isCountdown = false;
 
-    private BluetoothSignal mBTSignal = new BluetoothSignal();
-
     @Override
-    public void onCreate( Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        IntentFilter intFilter = new IntentFilter();
-        intFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        getActivity().getApplicationContext().registerReceiver(mBTSignal, intFilter);
-
-        //start pinging for wifi check
-        final Handler h = new Handler();
-        final int delay = 20000;
-        h.postDelayed(new Runnable(){
-            public void run(){
-                String ping = "ping -c 1 google.com";
-                sendPing(ping);
-                h.postDelayed(this, delay);
-            }
-        }, delay);
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
@@ -140,6 +126,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
+
+        //start looking for when bluetooth is paired, and then implement wifiReceiver
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        getActivity().registerReceiver(wifiReceiver, filter);
     }
 
     @Override
@@ -159,7 +149,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(isCountdown){
+        if (isCountdown) {
             mHandler.removeCallbacks(watchDogTimeOut);
         }
         // Performing this check in onResume() covers the case in which BT was
@@ -173,6 +163,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 mIdle();
             }
         }
+        getActivity().unregisterReceiver(wifiReceiver);
     }
 
     @Override
@@ -186,12 +177,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
         pirateshipButton = (Button) view.findViewById(R.id.TB);
-        dockerButton = (Button)view.findViewById(R.id.DB);
-        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
-        pingStatusButton = (Button)view.findViewById(R.id.PING);
-        hostnameButton = (Button)view.findViewById(R.id.HN);
+        dockerButton = (Button) view.findViewById(R.id.DB);
+        RPI_HW_Button = (Button) view.findViewById(R.id.VB);
+        pingStatusButton = (Button) view.findViewById(R.id.PING);
+        hostnameButton = (Button) view.findViewById(R.id.HN);
         changePasswordButton = (Button) view.findViewById(R.id.CP);
-        expandButton = (Button)view.findViewById(R.id.EF);
+        expandButton = (Button) view.findViewById(R.id.EF);
     }
 
     /**
@@ -201,15 +192,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView consoleView = (TextView) view.findViewById(R.id.listItem);
-                if(isRead){
+                if (isRead) {
                     consoleView.setTextColor(Color.BLUE);
-                }else{
+                } else {
                     consoleView.setTextColor(Color.RED);
                 }
                 return view;
@@ -315,23 +306,25 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 0) {
+                if (s.length() > 0) {
                     alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
                     alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }else{
+                } else {
                     alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
                     alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
     }
 
-    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
+    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input) {
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setMessage(message)
@@ -392,7 +385,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private void sendPing(String ping) {
+    public void sendPing(String ping) {
         // Get the message bytes and tell the BluetoothChatService to write
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
@@ -411,8 +404,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             // Get the message bytes and tell the BluetoothChatService to write
             JSONObject mJson = new JSONObject();
             try {
-                mJson.put("SSID",SSID);
-                mJson.put("PWD",PWD);
+                mJson.put("SSID", SSID);
+                mJson.put("PWD", PWD);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -444,8 +437,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     /**
      * Updates the status on the action bar.
      *
-     * @param
-     * arg: can be either a string resource ID or subTitle status
+     * @param arg: can be either a string resource ID or subTitle status
      */
 
     private void setStatus(Object arg) {
@@ -457,11 +449,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         if (null == actionBar) {
             return;
         }
-        if(arg instanceof Integer){
+        if (arg instanceof Integer) {
             Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
             currentStatus = getString((Integer) arg);
             actionBar.setSubtitle((Integer) arg);
-        } else if(arg instanceof CharSequence){
+        } else if (arg instanceof CharSequence) {
             Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
             currentStatus = arg.toString();
             actionBar.setSubtitle((CharSequence) arg);
@@ -473,13 +465,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         public void run() {
             isCountdown = false;
             //time out
-            if(wifiPD.isShowing()){
+            if (wifiPD.isShowing()) {
                 wifiPD.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "No response from RPi", Toast.LENGTH_LONG).show();
             }
-            if(hotspotPD.isShowing()){
+            if (hotspotPD.isShowing()) {
                 hotspotPD.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "No response from RPi", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -513,7 +505,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    if(!writeMessage.contains("google.com")) {
+                    if (!writeMessage.contains("google.com") && !writeMessage.contains("treehouses checksignal")) {
                         Log.d(TAG, "writeMessage = " + writeMessage);
                         mConversationArrayAdapter.add("Command:  " + writeMessage);
                     }
@@ -524,38 +516,62 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 //                     construct a string from the valid bytes in the buffer
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
-                    String readMessage = (String)msg.obj;
+                    String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
                     //TODO: if message is json -> callback from RPi
-                    if(isJson(readMessage)){
+                    if (isJson(readMessage)) {
                         handleCallback(readMessage);
-                    }else{
-                        if(isCountdown){
+                    } else {
+                        if (isCountdown) {
                             mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
                         }
-                        if(wifiPD.isShowing()){
+                        if (wifiPD.isShowing()) {
                             wifiPD.dismiss();
                             Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
                         }
-                        if(hotspotPD.isShowing()){
+                        if (hotspotPD.isShowing()) {
                             hotspotPD.dismiss();
                             Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0,readMessage.length()-1);
+                        readMessage = readMessage.substring(0, readMessage.length() - 1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
 
                         //check if ping was successful
-                        if(readMessage.contains("1 packets")){
+                        if (readMessage.contains("1 packets")) {
                             mConnect();
                         }
-                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
+                        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
                             mOffline();
                         }
+
+                        //check the signal
+                        if (readMessage.contains("Signal level=")) {
+                            String last = readMessage;
+                            last = last.substring(13, 17);
+                            int level = Integer.parseInt(last.trim());
+                            Log.i(TAG,"dBm = " + level);
+                            ActionBar actionBar = activity.getActionBar();
+
+                                if (level > -75){
+                                    Drawable signal = getResources().getDrawable(R.drawable.wifi_configuration);
+                                    signal.setColorFilter(getResources().getColor(R.color.green), PorterDuff.Mode.SRC_ATOP);
+                                    actionBar.setIcon(signal);
+                                }
+                                if (level < -75) {
+                                    Drawable signal = getResources().getDrawable(R.drawable.wifi_configuration);
+                                    signal.setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.SRC_ATOP);
+                                    actionBar.setIcon(signal);
+                                }
+                            }
+
+
+
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty() && !readMessage.contains("not connected to") &&
+                                !readMessage.contains("IEEE") && !readMessage.contains("Signal level")) {
                             mConversationArrayAdapter.add(readMessage);
                         }
                     }
@@ -607,10 +623,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 }
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
 
                     //check status
-                    if(mChatService.getState() != Constants.STATE_CONNECTED){
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
@@ -620,12 +636,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     wifiPD.show();
                     //TODO: start watchdog
                     isCountdown = true;
-                    mHandler.postDelayed(watchDogTimeOut,30000);
+                    mHandler.postDelayed(watchDogTimeOut, 30000);
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
+                    String SSID = data.getStringExtra("SSID") == null ? "" : data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra("PWD") == null ? "" : data.getStringExtra("PWD");
 
                     String wifi = "pirateship wifi " + SSID + " " + PWD;
 
@@ -638,15 +654,15 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     sendMessage(wifi);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
-                }else{
+                } else {
                     Log.d(TAG, "back from dialog, fail");
                 }
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
 
                     //check status
-                    if(mChatService.getState() != Constants.STATE_CONNECTED){
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
@@ -656,12 +672,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     hotspotPD.show();
                     //TODO: start watchdog
                     isCountdown = true;
-                    mHandler.postDelayed(watchDogTimeOut,30000);
+                    mHandler.postDelayed(watchDogTimeOut, 30000);
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String HSSID = data.getStringExtra("HSSID") == null? "":data.getStringExtra("HSSID");
-                    String HPWD = data.getStringExtra("HPWD") == null? "":data.getStringExtra("HPWD");
+                    String HSSID = data.getStringExtra("HSSID") == null ? "" : data.getStringExtra("HSSID");
+                    String HPWD = data.getStringExtra("HPWD") == null ? "" : data.getStringExtra("HPWD");
 
                     String hotSpot = "pirateship hotspot " + HSSID + " " + HPWD + "";
 
@@ -674,16 +690,16 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     sendMessage(hotSpot);
                     //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
 
-                }else{
+                } else {
                     Log.d(TAG, "back from dialog_hotspot, fail");
                 }
                 break;
 
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
 
                     //get password change request
-                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
+                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
 
                     //store password and command
                     String password = "pirateship password " + chPWD;
@@ -693,7 +709,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     //send password to command line interface
                     sendMessage(password);
 
-                }else{
+                } else {
                     Log.d(TAG, "back from change password, fail");
                 }
                 break;
@@ -761,11 +777,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
     }
 
-    public void showHotspotDialog(){
+    public void showHotspotDialog() {
         // Create an instance of the dialog fragment and show it
         DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "hotspotDialog");
     }
 
     public void showChPasswordDialog() {
@@ -784,54 +800,91 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         return true;
     }
 
-    public void handleCallback(String str){
+    public void handleCallback(String str) {
         String result;
         String ip;
-        if(isCountdown){
+        if (isCountdown) {
             mHandler.removeCallbacks(watchDogTimeOut);
             isCountdown = false;
         }
 
         //enable user interaction
         wifiPD.dismiss();
-        try{
+        try {
             JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            result = mJSON.getString("result") == null ? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null ? "" : mJSON.getString("IP");
             //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
 
-            if(!result.equals("SUCCESS")){
+            if (!result.equals("SUCCESS")) {
                 Toast.makeText(getActivity(), R.string.config_fail,
                         Toast.LENGTH_LONG).show();
-            }else{
+            } else {
 //                Toast.makeText(getActivity(), R.string.config_success,
 //                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.config_success) + ip, Toast.LENGTH_LONG).show();
             }
 
-        }catch (JSONException e){
+        } catch (JSONException e) {
             // error handling
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void mOffline(){
+    public void mOffline() {
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
-    public void mIdle(){
+    public void mIdle() {
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.GRAY);
     }
 
-    public void mConnect(){
+    public void mConnect() {
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);
     }
+
+    private final BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        public void onReceive(final Context context, final Intent intent) {
+            final String mIntentAction = intent.getAction();
+            final Handler handler = new Handler();
+            final int startTest = 22000;
+            final int startWifi = 27000;
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
+                        Log.i(TAG, "starting ping");
+                        String ping = "ping -c 1 google.com";
+                        sendPing(ping);
+                        handler.postDelayed(this, startTest);
+                    }
+                }
+            }, startTest);
+
+            handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
+                        Log.i(TAG, "starting signal");
+                        String signal = "treehouses checksignal";
+                        sendPing(signal);
+                        handler.postDelayed(this, startTest);
+                    }
+                }
+            }, startWifi);
+        }
+    };
 }
+
+
 
 
