@@ -58,6 +58,10 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+
+import static java.lang.System.in;
+
 /**
  * Created by yubo on 7/11/17.
  * 
@@ -560,16 +564,13 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                                 }
                             }
 
-
-
+                        String[] check = {"1 packets", "64 bytes", "google.com", "rtt", "not connected to", "Signal level"};
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty() && !readMessage.contains("not connected to") &&
-                                !readMessage.contains("IEEE") && !readMessage.contains("Signal level")) {
+                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level|IEEE|/n).*$")) {
                             mConversationArrayAdapter.add(readMessage);
-                        }
                     }
                     break;
+                    }
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
@@ -845,34 +846,34 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         public void onReceive(final Context context, final Intent intent) {
             final String mIntentAction = intent.getAction();
             final Handler handler = new Handler();
-            final int startTest = 22000;
+            final int startTest = 9000;
             final int startWifi = 27000;
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
             handler.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
                     if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
-                        Log.i(TAG, "starting ping");
+                        String signal = "treehouses checksignal";
+                        sendPing(signal);
+                        handler.postDelayed(this, startWifi);
+                    }
+                }
+            }, startWifi);
+        }
+
+        private boolean ping(final String mIntentAction, final Handler handler, final int startTest) {
+            return handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
                         String ping = "ping -c 1 google.com";
                         sendPing(ping);
                         handler.postDelayed(this, startTest);
                     }
                 }
             }, startTest);
-
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
-                        Log.i(TAG, "starting signal");
-                        String signal = "treehouses checksignal";
-                        sendPing(signal);
-                        handler.postDelayed(this, startTest);
-                    }
-                }
-            }, startWifi);
         }
     };
 }
