@@ -160,7 +160,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
-                mIdle();
             }
         }
         getActivity().unregisterReceiver(wifiReceiver);
@@ -369,7 +368,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            mIdle();
             return;
         }
 
@@ -496,7 +494,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
                             setStatus(R.string.title_not_connected);
-                            mIdle();
+                            mConnect(R.color.grey);
+                            //if not connected to rpi, don't show data
+                            wConnect(R.color.grey);
                             break;
                     }
                     break;
@@ -540,10 +540,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
                         //check if ping was successful
                         if (readMessage.contains("1 packets")) {
-                            mConnect();
+                            mConnect(R.color.green);
                         }
                         if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                            mOffline();
+                            mConnect(R.color.red);
                         }
 
                         //check the signal
@@ -551,18 +551,12 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             String last = readMessage;
                             last = last.substring(13, 17);
                             int level = Integer.parseInt(last.trim());
-                            Log.i(TAG,"dBm = " + level);
-                            ActionBar actionBar = activity.getActionBar();
 
                                 if (level > -75){
-                                    Drawable signal = getResources().getDrawable(R.drawable.wifi_configuration);
-                                    signal.setColorFilter(getResources().getColor(R.color.green), PorterDuff.Mode.SRC_ATOP);
-                                    actionBar.setIcon(signal);
+                                    wConnect(R.color.green); //good connection
                                 }
                                 if (level < -75) {
-                                    Drawable signal = getResources().getDrawable(R.drawable.wifi_configuration);
-                                    signal.setColorFilter(getResources().getColor(R.color.red), PorterDuff.Mode.SRC_ATOP);
-                                    actionBar.setIcon(signal);
+                                    wConnect(R.color.red); //bad connection
                                 }
                             }
 
@@ -831,22 +825,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void mOffline() {
+    //can you connect to internet?
+    private void mConnect(int color) {
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.RED);
+        int type = getResources().getColor(color);
+        bgShape.setColor(type);
     }
 
-    public void mIdle() {
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.GRAY);
-    }
-
-    public void mConnect() {
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.GREEN);
+    //showing wifi signal
+    private void wConnect(int color) {
+        getActivity().invalidateOptionsMenu();
+        Drawable signal = getResources().getDrawable(R.drawable.wifi_configuration);
+        signal.setColorFilter(getResources().getColor(color), PorterDuff.Mode.SRC_ATOP);
+        getActivity().getActionBar().setIcon(signal);
     }
 
     private final BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
