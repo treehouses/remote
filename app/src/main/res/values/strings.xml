@@ -27,10 +27,10 @@
     <string name="change_password">Change pi user password</string>
 
 
-    <string name="TestButton">PIRATESHIP</string>
+    <string name="TestButton">TREEHOUSES</string>
     <string name="DockerButton">DOCKER PS</string>
-    <string name="VersionButton">PIRATESHIP DETECTRPI</string>
-    <string name="PingWIFI">PIRATESHIP PING</string>
+    <string name="VersionButton">TREEHOUSES DETECTRPI</string>
+    <string name="PingWIFI">TREEHOUSES PING</string>
     <!-- ProgressDialog -->
     <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
     <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>

@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PirateshipFragment"/>
+        <activity android:name=".TreehousesFragment"/>
         <activity android:name=".DockerFragment"/>
 
         <activity

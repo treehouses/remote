@@ -77,7 +77,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button mSendButton;
     private ProgressDialog wifiPD;
     private ProgressDialog hotspotPD;
-    private Button pirateshipButton;
+    private Button treehousesButton;
     private Button dockerButton;
     private Button RPI_HW_Button;
     private Button pingStatusButton;
@@ -175,11 +175,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
-        pirateshipButton = (Button) view.findViewById(R.id.TB);
-        dockerButton = (Button) view.findViewById(R.id.DB);
-        RPI_HW_Button = (Button) view.findViewById(R.id.VB);
-        pingStatusButton = (Button) view.findViewById(R.id.PING);
-        hostnameButton = (Button) view.findViewById(R.id.HN);
+        treehousesButton = (Button) view.findViewById(R.id.TB);
+        dockerButton = (Button)view.findViewById(R.id.DB);
+        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
+        pingStatusButton = (Button)view.findViewById(R.id.PING);
+        hostnameButton = (Button)view.findViewById(R.id.HN);
         changePasswordButton = (Button) view.findViewById(R.id.CP);
         expandButton = (Button) view.findViewById(R.id.EF);
     }
@@ -224,10 +224,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        pirateshipButton.setOnClickListener(new View.OnClickListener() {
+        treehousesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String t = "pirateship";
+                String t = "treehouses";
                 sendMessage(t);
             }
         });
@@ -243,7 +243,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         RPI_HW_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String v = "pirateship detectrpi";
+                String v = "treehouses detectrpi";
                 sendMessage(v);
             }
         });
@@ -264,7 +264,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         expandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String e = "pirateship expandfs";
+                String e = "treehouses expandfs";
                 sendMessage(e);
             }
         });
@@ -296,7 +296,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         final AlertDialog alertDialog = showAlertDialog(
                 "Rename Hostname",
                 "Please enter new hostname",
-                "pirateship rename ", input);
+                "treehouses rename ", input);
 
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
         alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -637,7 +637,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String SSID = data.getStringExtra("SSID") == null ? "" : data.getStringExtra("SSID");
                     String PWD = data.getStringExtra("PWD") == null ? "" : data.getStringExtra("PWD");
 
-                    String wifi = "pirateship wifi " + SSID + " " + PWD;
+                    String wifi = "treehouses wifi " + SSID + " " + PWD;
 
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
@@ -673,7 +673,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String HSSID = data.getStringExtra("HSSID") == null ? "" : data.getStringExtra("HSSID");
                     String HPWD = data.getStringExtra("HPWD") == null ? "" : data.getStringExtra("HPWD");
 
-                    String hotSpot = "pirateship hotspot " + HSSID + " " + HPWD + "";
+                    String hotSpot = "treehouses hotspot " + HSSID + " " + HPWD + "";
 
                     Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + HSSID + ", PWD = " + HPWD);
 
@@ -696,7 +696,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
 
                     //store password and command
-                    String password = "pirateship password " + chPWD;
+                    String password = "treehouses password " + chPWD;
 
                     Log.d(TAG, "back from change password");
 
