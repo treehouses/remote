@@ -1,7 +1,6 @@
 package io.treehouses.remote;
 
 import android.app.Activity;
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,10 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -29,59 +31,53 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class TreehousesFragment extends Activity  {
+public class TreehousesFragment extends android.support.v4.app.Fragment implements View.OnClickListener{
 
-    private static final String TAG ="treehouses" ;
+    private static final String TAG = "treehouses" ;
+
+    private FragmentActivity activity = getActivity();
+
+    // System variables
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
     private StringBuffer mOutStringBuffer;
+    private ArrayAdapter<String> outputArrayAdapter;
+
+    // Layout variables
+    private ListView consoleOutput;
+    private Button detectRpiVersion;
     private EditText mOutEditText;
-    private ListView mListView;
-    private Button pibutton;
-    private ArrayAdapter<String> mviewArrayAdapter;
+    private ProgressDialog mProgressDialog;
+
+
     static String currentStatus = "not connected";
     private static boolean isRead = false;
     private String mConnectedDeviceName = null;
     private static boolean isCountdown = false;
-    private ProgressDialog mProgressDialog;
-    private Application activity;
-    private Context applicationContext;
+
+    //private FragmentActivity fragmentActivity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setLogo(R.mipmap.ic_launcher);
-        getActionBar().setDisplayUseLogoEnabled(true);
-        setContentView(R.layout.treehouses_layout);
-        pibutton = (Button)findViewById(R.id.dpi);
-        mListView = (ListView)findViewById(R.id.pview);
-        activity = getApplication();
-        applicationContext = getApplicationContext();
-        pibutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String command = "treehouses detectrpi";
-                sendMessage(command);
-            }
-        });
-
-        mviewArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.message){
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tView = (TextView) view.findViewById(R.id.pview);
-                if(isRead){
-                    tView.setTextColor(Color.BLUE);
-                }else{
-                    tView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
+        //activity.getActionBar().setDisplayShowHomeEnabled(true);
+        //activity.getActionBar().setLogo(R.mipmap.ic_launcher);
+        //activity.getActionBar().setDisplayUseLogoEnabled(true);
+        //fragmentActivity = getActivity();
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            //FragmentActivity activity = getActivity();
+            Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            activity.finish();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
@@ -91,64 +87,44 @@ public class TreehousesFragment extends Activity  {
         }
     }
 
-    /**
-     * Sends a message.
-     *
-     * @param message A string of text to send.
-     */
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-            Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.treehouses_layout, container, false);
     }
 
-    private void sendMessage(String SSID, String PWD) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-            Toast.makeText(getApplicationContext(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        detectRpiVersion = (Button) view.findViewById(R.id.btn_detect_rpi_version);
+        consoleOutput = (ListView) view.findViewById(R.id.lv_console_output);
+        detectRpiVersion.setOnClickListener(this);
+    }
 
-        // Check that there's actually something to send
-        if (SSID.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            JSONObject mJson = new JSONObject();
-            try {
-                mJson.put("SSID",SSID);
-                mJson.put("PWD",PWD);
-            } catch (JSONException e) {
-                e.printStackTrace();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+        }
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == Constants.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
             }
-
-            byte[] send = mJson.toString().getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(activity, applicationContext) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+    @Override
+    public void onClick(View v){
+        switch (v.getId()) {
+            case R.id.btn_detect_rpi_version:
+                sendMessage("treehouses detectrpi");
+                break;
         }
-    };
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,7 +149,7 @@ public class TreehousesFragment extends Activity  {
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getApplicationContext(), R.string.bt_not_enabled_leaving,
+                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
                     //getApplication().finish();
                 }
@@ -182,7 +158,7 @@ public class TreehousesFragment extends Activity  {
 
                     //check status
                     if(mChatService.getState() != Constants.STATE_CONNECTED){
-                        Toast.makeText(getApplicationContext(), R.string.not_connected,
+                        Toast.makeText(getActivity(), R.string.not_connected,
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -212,31 +188,12 @@ public class TreehousesFragment extends Activity  {
                 }
         }
     }
-    private void connectDevice(Intent data, boolean secure) {
-        // Get the device MAC address
-        String address = data.getExtras()
-                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
-        mChatService.connect(device, secure);
-    }
-    private final Runnable watchDogTimeOut = new Runnable() {
-        @Override
-        public void run() {
-            isCountdown = false;
-            //time out
-            if(mProgressDialog.isShowing()){
-                mProgressDialog.dismiss();
-                Toast.makeText(getApplicationContext(),"No response from RPi",Toast.LENGTH_LONG).show();
-            }
-        }
-    };
+
     private void setupChat() {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mviewArrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.message){
+        outputArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -251,27 +208,194 @@ public class TreehousesFragment extends Activity  {
             }
         };
 
-        mListView.setAdapter(mviewArrayAdapter);
+        consoleOutput.setAdapter(outputArrayAdapter);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getApplicationContext(), mHandler);
+        mChatService = new BluetoothChatService(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
 
         //get spinner
-        mProgressDialog = new ProgressDialog(getApplicationContext());
+        mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle(R.string.progress_dialog_title);
         mProgressDialog.setMessage(getString(R.string.progress_dialog_message));
         mProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
     }
-    private void ensureDiscoverable() {
-        if (mBluetoothAdapter.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
+
+    /**
+     * Sends a message.
+     *
+     * @param message A string of text to send.
+     */
+    private void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
+            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            mChatService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+            mOutEditText.setText(mOutStringBuffer);
+        }
+
+    }
+
+    private void sendMessage(String SSID, String PWD) {
+        // Check that we're actually connected before trying anything
+        if (mChatService.getState() != Constants.STATE_CONNECTED) {
+            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check that there's actually something to send
+        if (SSID.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            JSONObject mJson = new JSONObject();
+            try {
+                mJson.put("SSID",SSID);
+                mJson.put("PWD",PWD);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            byte[] send = mJson.toString().getBytes();
+            mChatService.write(send);
+
+            // Reset out string buffer to zero and clear the edit text field
+            mOutStringBuffer.setLength(0);
+            mOutEditText.setText(mOutStringBuffer);
+        }
+    }
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_LISTEN:
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    outputArrayAdapter.add("Command:  " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+                    //                    byte[] readBuf = (byte[]) msg.obj;
+                    //                     construct a string from the valid bytes in the buffer
+                    //                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //                    String readMessage = new String(readBuf);
+                    String readMessage = (String) msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if (isJson(readMessage)) {
+                        handleCallback(readMessage);
+                    } else {
+                        if (isCountdown) {
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        if (mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                            Toast.makeText((Context) activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                        //remove the space at the very end of the readMessage -> eliminate space between items
+                        readMessage = readMessage.substring(0, readMessage.length() - 1);
+                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        outputArrayAdapter.add(readMessage);
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
+
+    private void connectDevice(Intent data, boolean secure) {
+        // Get the device MAC address
+        String address = data.getExtras()
+                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        mChatService.connect(device, secure);
+    }
+
+    private final Runnable watchDogTimeOut = new Runnable() {
+        @Override
+        public void run() {
+            isCountdown = false;
+            //time out
+            if(mProgressDialog.isShowing()){
+                mProgressDialog.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+            isCountdown = false;
+        }
+
+        //enable user interaction
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getActivity(), R.string.config_fail,
+                        Toast.LENGTH_LONG).show();
+            }else{
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+            }
+
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
     }
 
