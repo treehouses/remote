@@ -368,6 +368,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            wConnect(R.color.grey);
+            mConnect(R.color.grey);
             return;
         }
 
