@@ -841,32 +841,29 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         public void onReceive(final Context context, final Intent intent) {
             final String mIntentAction = intent.getAction();
             final Handler handlerPing = new Handler();
-            final Handler handlerWifi = new Handler();
             final int startTest = 22000;
             final int startWifi = 27000;
-            handlerPing.postDelayed(new Runnable() {
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
+                handlerPing.postDelayed(new Runnable() {
 
-                @Override
-                public void run() {
-                    if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
+                    @Override
+                    public void run() {
                         String ping = "ping -c 1 google.com";
                         sendPing(ping);
                         handlerPing.postDelayed(this, startTest);
                     }
-                }
-            }, startTest);
+                }, startTest);
 
-            handlerWifi.postDelayed(new Runnable() {
+                handlerPing.postDelayed(new Runnable() {
 
-                @Override
-                public void run() {
-                    if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
-                        String signal = "treehouses checksignal";
-                        sendPing(signal);
-                        handlerWifi.postDelayed(this, startWifi);
+                    @Override
+                    public void run() {
+                            String signal = "treehouses checksignal";
+                            sendPing(signal);
+                            handlerPing.postDelayed(this, startWifi);
                     }
-                }
-            }, startWifi);
+                }, startWifi);
+            }
         }
     };
 }
