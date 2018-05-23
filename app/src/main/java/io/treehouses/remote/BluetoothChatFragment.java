@@ -29,7 +29,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -70,6 +69,8 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
     //current connection status
     static String currentStatus = "not connected";
+    private static boolean connected = false;
+    private static boolean attempt = false;
 
     // Layout Views
     private ListView mConversationView;
@@ -80,7 +81,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private Button treehousesButton;
     private Button dockerButton;
     private Button RPI_HW_Button;
-    private Button pingStatusButton;
     private Button hostnameButton;
     private Button changePasswordButton;
     private Button expandButton;
@@ -178,7 +178,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         treehousesButton = (Button) view.findViewById(R.id.TB);
         dockerButton = (Button)view.findViewById(R.id.DB);
         RPI_HW_Button = (Button)view.findViewById(R.id.VB);
-        pingStatusButton = (Button)view.findViewById(R.id.PING);
         hostnameButton = (Button)view.findViewById(R.id.HN);
         changePasswordButton = (Button) view.findViewById(R.id.CP);
         expandButton = (Button) view.findViewById(R.id.EF);
@@ -369,7 +368,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             wConnect(R.color.grey);
-            mConnect(R.color.grey);
             return;
         }
 
@@ -496,7 +494,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
                             setStatus(R.string.title_not_connected);
-                            mConnect(R.color.grey);
                             //if not connected to rpi, don't show data
                             wConnect(R.color.grey);
                             break;
@@ -541,11 +538,16 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
 
                         //check if ping was successful
-                        if (readMessage.contains("1 packets")) {
-                            mConnect(R.color.green);
+                        if(readMessage.contains("1 packets") && !attempt){
+                            wConnect(R.color.green); //for ethernet users
+                            attempt = true;
+                            connected = true;
                         }
-                        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                            mConnect(R.color.red);
+
+                        if ((readMessage.contains("Unreachable") || readMessage.contains("failure")) && !attempt) {
+                            wConnect(R.color.red);
+                            attempt = true;
+                            connected = false;
                         }
 
                         //check the signal
@@ -554,16 +556,20 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                             last = last.substring(13, 17);
                             int level = Integer.parseInt(last.trim());
 
-                                if (level > -75){
+
+                                if (level >= -50 && connected){
                                     wConnect(R.color.green); //good connection
                                 }
-                                if (level < -75) {
-                                    wConnect(R.color.red); //bad connection
+                                if ((level < -50 && level > -100)  && connected){
+                                    wConnect(R.color.yellow); //decent connection
+                                }
+                                if (level <= -100 && connected) {
+                                    wConnect(R.color.purple); //bad connection
                                 }
                             }
 
-                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level|IEEE|/n).*$")) {
+                        //make it so text doesn't show on chat (need a better way to check multiple strings since bluetooth server only sends messages line by line)
+                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level|IEEE).*$") && !readMessage.trim().isEmpty()) {
                             mConversationArrayAdapter.add(readMessage);
                     }
                     break;
@@ -823,14 +829,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    //can you connect to internet?
-    private void mConnect(int color) {
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        int type = getResources().getColor(color);
-        bgShape.setColor(type);
-    }
-
     //showing wifi signal
     private void wConnect(int color) {
         getActivity().invalidateOptionsMenu();
@@ -842,29 +840,30 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private final BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         public void onReceive(final Context context, final Intent intent) {
             final String mIntentAction = intent.getAction();
-            final Handler handler = new Handler();
+            final Handler handlerPing = new Handler();
+            final Handler handlerWifi = new Handler();
             final int startTest = 22000;
             final int startWifi = 27000;
-            handler.postDelayed(new Runnable() {
+            handlerPing.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
                     if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
                         String ping = "ping -c 1 google.com";
                         sendPing(ping);
-                        handler.postDelayed(this, startTest);
+                        handlerPing.postDelayed(this, startTest);
                     }
                 }
             }, startTest);
 
-            handler.postDelayed(new Runnable() {
+            handlerWifi.postDelayed(new Runnable() {
 
                 @Override
                 public void run() {
                     if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(mIntentAction)) {
                         String signal = "treehouses checksignal";
                         sendPing(signal);
-                        handler.postDelayed(this, startWifi);
+                        handlerWifi.postDelayed(this, startWifi);
                     }
                 }
             }, startWifi);

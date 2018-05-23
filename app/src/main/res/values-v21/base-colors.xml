@@ -18,5 +18,7 @@
 <resources>
     <color name="red">#ff0000 </color>
     <color name="green">#00f000  </color>
+    <color name="yellow">#ffff00  </color>
+    <color name="purple">#A020F0  </color>
     <color name="grey">#909090 </color>
 </resources>
