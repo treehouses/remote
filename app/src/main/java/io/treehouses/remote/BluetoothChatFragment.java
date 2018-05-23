@@ -383,7 +383,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void sendPing(String ping) {
+    private void sendPing(String ping) {
         // Get the message bytes and tell the BluetoothChatService to write
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
