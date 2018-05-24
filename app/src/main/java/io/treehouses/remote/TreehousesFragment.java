@@ -92,24 +92,6 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-        }
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == Constants.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mChatService.start();
-            }
-        }
-    }
-
-    @Override
     public void onClick(View v){
         switch (v.getId()) {
             case R.id.btn_detect_rpi_version:
