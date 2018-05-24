@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,9 +32,9 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/14/2018.
  */
 
-public class TreehousesFragment extends android.support.v4.app.Fragment implements View.OnClickListener{
+public class TreehousesFragment extends Fragment implements View.OnClickListener{
 
-    private static final String TAG = "treehouses" ;
+    private static final String TAG = "TreehousesFragment" ;
 
     private FragmentActivity activity = getActivity();
 
@@ -48,7 +49,6 @@ public class TreehousesFragment extends android.support.v4.app.Fragment implemen
     private Button detectRpiVersion;
     private EditText mOutEditText;
     private ProgressDialog mProgressDialog;
-
 
     static String currentStatus = "not connected";
     private static boolean isRead = false;

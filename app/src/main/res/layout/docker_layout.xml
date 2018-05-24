@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/dlistview"
+        android:id="@+id/lv_console_output"
         android:layout_width="match_parent"
         android:layout_height="250dp" />
 
@@ -24,7 +24,7 @@
                 android:orientation="vertical" >
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btn_docker_ps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/DockerButton" />
