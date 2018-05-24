@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,27 +34,20 @@ import org.json.JSONObject;
 public class TreehousesFragment extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "TreehousesFragment" ;
-
     private FragmentActivity activity = getActivity();
 
-    // System variables
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
     private StringBuffer mOutStringBuffer;
     private ArrayAdapter<String> outputArrayAdapter;
-
-    // Layout variables
     private ListView consoleOutput;
     private Button detectRpiVersion;
     private EditText mOutEditText;
     private ProgressDialog mProgressDialog;
-
     static String currentStatus = "not connected";
     private static boolean isRead = false;
     private String mConnectedDeviceName = null;
     private static boolean isCountdown = false;
-
-    //private FragmentActivity fragmentActivity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -276,65 +268,10 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private final Handler mHandler = new Handler() {
+    private final CustomHandler mHandler = new CustomHandler(activity) {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case Constants.STATE_LISTEN:
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
-                    outputArrayAdapter.add("Command:  " + writeMessage);
-                    break;
-                case Constants.MESSAGE_READ:
-                    isRead = true;
-                    //                    byte[] readBuf = (byte[]) msg.obj;
-                    //                     construct a string from the valid bytes in the buffer
-                    //                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    //                    String readMessage = new String(readBuf);
-                    String readMessage = (String) msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
-                    //TODO: if message is json -> callback from RPi
-                    if (isJson(readMessage)) {
-                        handleCallback(readMessage);
-                    } else {
-                        if (isCountdown) {
-                            mHandler.removeCallbacks(watchDogTimeOut);
-                            isCountdown = false;
-                        }
-                        if (mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
-                            Toast.makeText((Context) activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
-                        }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0, readMessage.length() - 1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                        outputArrayAdapter.add(readMessage);
-                    }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
+            super.handleMessage(msg);
         }
     };
 
@@ -359,44 +296,5 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
             }
         }
     };
-
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    public void handleCallback(String str){
-        String result;
-        String ip;
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-            isCountdown = false;
-        }
-
-        //enable user interaction
-        try{
-            JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
-
-            if(!result.equals("SUCCESS")){
-                Toast.makeText(getActivity(), R.string.config_fail,
-                        Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
-
-        }catch (JSONException e){
-            // error handling
-            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
-        }
-    }
 
 }

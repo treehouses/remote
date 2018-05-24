@@ -78,44 +78,10 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         dockerButton = (Button) view.findViewById(R.id.btn_docker_commands);
         cmdButton = (Button)view.findViewById(R.id.btn_cmd_commands);
 
-        piButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                TreehousesFragment treehousesFragment = new TreehousesFragment();
-                fragmentTransaction.replace(R.id.sample_layout, treehousesFragment);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
+        piButton.setOnClickListener(this);
+        dockerButton.setOnClickListener(this);
+        cmdButton.setOnClickListener(this);
 
-        dockerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                DockerFragment dockerFragment = new DockerFragment();
-                fragmentTransaction.replace(R.id.sample_layout, dockerFragment);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
-
-        cmdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                BluetoothChatFragment chatFragment = new BluetoothChatFragment();
-                fragmentTransaction.replace(R.id.sample_layout, chatFragment);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
