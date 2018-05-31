@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/pview"
+        android:id="@+id/lv_console_output"
         android:layout_width="match_parent"
         android:layout_height="250dp">
 
@@ -27,7 +27,7 @@
                 android:orientation="vertical" >
 
                 <Button
-                    android:id="@+id/dpi"
+                    android:id="@+id/btn_detect_rpi_version"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/VersionButton" />

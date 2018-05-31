@@ -14,6 +14,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,12 +36,12 @@ import org.json.JSONObject;
  * Created by Lalitha S Oruganty on 3/13/2018.
  */
 
-public class Dashboard extends Fragment {
+public class Dashboard extends Fragment implements View.OnClickListener{
 
     private static final String TAG = "BluetoothChatFragment";
     private static final String BACK_STACK_ROOT_TAG = "root_fragment";
 
-    //current connection status
+    // current connection status
     static String currentStatus = "not connected";
 
     private ListView mConversationView;
@@ -59,57 +60,64 @@ public class Dashboard extends Fragment {
     private ListView lview;
     private Button cmdButton;
     private BluetoothChatService mChatService = null;
-    private FragmentActivity fragmentActivity;
+    private FragmentActivity mFragmentActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        fragmentActivity = getActivity();
+        mFragmentActivity = getActivity();
         return inflater.inflate(R.layout.hope_layout, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        piButton = (Button) view.findViewById(R.id.pbutton);
-        dockerButton = (Button) view.findViewById(R.id.docker_button);
-        //lview = (ListView)view.findViewById(R.id.mview);
-        piButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), TreehousesFragment.class);
-                startActivity(intent);
-            }
-        });
 
-        dockerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), DockerFragment.class);
-                startActivity(intent);
-            }
-        });
+        piButton = (Button) view.findViewById(R.id.btn_treehouses_commands);
+        dockerButton = (Button) view.findViewById(R.id.btn_docker_commands);
+        cmdButton = (Button)view.findViewById(R.id.btn_cmd_commands);
 
-        cmdButton = (Button)view.findViewById(R.id.cmdbutton);
-        cmdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                BluetoothChatFragment chatfrag = new BluetoothChatFragment();
-                fragmentTransaction.replace(R.id.sample_layout,chatfrag);
-                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
-                fragmentTransaction.commit();
-            }
-        });
+        piButton.setOnClickListener(this);
+        dockerButton.setOnClickListener(this);
+        cmdButton.setOnClickListener(this);
+
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
+        }
+    }
+
+    @Override
+    public void onClick(View v){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        switch (v.getId()) {
+            case R.id.btn_treehouses_commands:
+                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                TreehousesFragment treehousesFragment = new TreehousesFragment();
+                fragmentTransaction.replace(R.id.sample_layout, treehousesFragment);
+                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+                fragmentTransaction.commit();
+                break;
+            case R.id.btn_docker_commands:
+                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                DockerFragment dockerFragment = new DockerFragment();
+                fragmentTransaction.replace(R.id.sample_layout, dockerFragment);
+                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+                fragmentTransaction.commit();
+                break;
+            case R.id.btn_cmd_commands:
+                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                BluetoothChatFragment chatFragment = new BluetoothChatFragment();
+                fragmentTransaction.replace(R.id.sample_layout, chatFragment);
+                fragmentTransaction.addToBackStack(BACK_STACK_ROOT_TAG);
+                fragmentTransaction.commit();
+                break;
         }
     }
 
@@ -333,7 +341,7 @@ public class Dashboard extends Fragment {
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(fragmentActivity){
+    private final CustomHandler mHandler = new CustomHandler(mFragmentActivity){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
