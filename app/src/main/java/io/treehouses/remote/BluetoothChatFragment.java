@@ -59,7 +59,6 @@ import org.json.JSONObject;
 
 /**
  * Created by yubo on 7/11/17.
- * 
  * This fragment controls Bluetooth to communicate with other devices.
  */
 
@@ -119,7 +118,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
             FragmentActivity activity = getActivity();
@@ -176,9 +174,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
         treehousesButton = (Button) view.findViewById(R.id.TB);
-        dockerButton = (Button)view.findViewById(R.id.DB);
-        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
-        hostnameButton = (Button)view.findViewById(R.id.HN);
+        dockerButton = (Button) view.findViewById(R.id.DB);
+        RPI_HW_Button = (Button) view.findViewById(R.id.VB);
+        hostnameButton = (Button) view.findViewById(R.id.HN);
         changePasswordButton = (Button) view.findViewById(R.id.CP);
         expandButton = (Button) view.findViewById(R.id.EF);
     }
@@ -538,7 +536,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
 
                         //check if ping was successful
-                        if(readMessage.contains("1 packets") && !attempt){
+                        if (readMessage.contains("1 packets") && !attempt) {
                             wConnect(R.color.green); //for ethernet users
                             attempt = true;
                             connected = true;
@@ -551,28 +549,27 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         }
 
                         //check the signal
-                        if (readMessage.contains("Signal level=")) {
+                        if (readMessage.contains("Signal level=") && connected) {
                             String last = readMessage;
-                            last = last.substring(13, 17);
-                            int level = Integer.parseInt(last.trim());
+                            last = last.replaceAll("[^\\d-]", "");
+                            int level = Integer.parseInt(last);
 
-
-                                if (level >= -50 && connected){
-                                    wConnect(R.color.green); //good connection
-                                }
-                                if ((level < -50 && level > -100)  && connected){
-                                    wConnect(R.color.yellow); //decent connection
-                                }
-                                if (level <= -100 && connected) {
-                                    wConnect(R.color.purple); //bad connection
-                                }
+                            if (level >= -50) {
+                                wConnect(R.color.green); //good connection
                             }
+                            if ((level < -50) && (level > -100)) {
+                                wConnect(R.color.yellow); //decent connection
+                            }
+                            if (level <= -100) {
+                                wConnect(R.color.purple); //bad connection
+                            }
+                        }
 
                         //make it so text doesn't show on chat (need a better way to check multiple strings since bluetooth server only sends messages line by line)
-                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level|IEEE).*$") && !readMessage.trim().isEmpty()) {
+                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level).*$") && !readMessage.trim().isEmpty()) {
                             mConversationArrayAdapter.add(readMessage);
-                    }
-                    break;
+                        }
+                        break;
                     }
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -858,9 +855,9 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
 
                     @Override
                     public void run() {
-                            String signal = "treehouses checksignal";
-                            sendPing(signal);
-                            handlerPing.postDelayed(this, startWifi);
+                        String signal = "treehouses checksignal";
+                        sendPing(signal);
+                        handlerPing.postDelayed(this, startWifi);
                     }
                 }, startWifi);
             }
