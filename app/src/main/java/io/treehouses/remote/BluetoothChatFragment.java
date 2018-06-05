@@ -566,7 +566,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                         }
 
                         //make it so text doesn't show on chat (need a better way to check multiple strings since bluetooth server only sends messages line by line)
-                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level).*$") && !readMessage.trim().isEmpty()) {
+                        if (!readMessage.matches("^.*?(1 packets|64 bytes|google.com|rtt|not connected to|Signal level|you are not on a wireless connection).*$") && !readMessage.trim().isEmpty()) {
                             mConversationArrayAdapter.add(readMessage);
                         }
                         break;
