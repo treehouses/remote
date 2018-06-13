@@ -1,5 +1,6 @@
 package io.treehouses.remote;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -7,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +49,9 @@ public class Dashboard extends Fragment implements View.OnClickListener{
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
-    private ProgressDialog mProgressDialog;
+    private ProgressDialog wifiProgressDialog;
+    private ProgressDialog hotspotProgressDialog;
+    private ProgressDialog piConnectionProgressDialog;
     private String mConnectedDeviceName = null;
 
     private static boolean isCountdown = false;
@@ -74,6 +78,21 @@ public class Dashboard extends Fragment implements View.OnClickListener{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        wifiProgressDialog = new ProgressDialog(getActivity());
+        wifiProgressDialog.setTitle(R.string.progress_dialog_title);
+        wifiProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        wifiProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
+        hotspotProgressDialog = new ProgressDialog(getActivity());
+        hotspotProgressDialog.setTitle(R.string.progress_dialog_title);
+        hotspotProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        hotspotProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
+        piConnectionProgressDialog = new ProgressDialog(getActivity());
+        piConnectionProgressDialog.setTitle(R.string.connect_progress_dialog_title);
+        piConnectionProgressDialog.setMessage(getString(R.string.progress_dialog_message));
+        piConnectionProgressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
         piButton = (Button) view.findViewById(R.id.btn_treehouses_commands);
         dockerButton = (Button) view.findViewById(R.id.btn_docker_commands);
         cmdButton = (Button)view.findViewById(R.id.btn_cmd_commands);
@@ -87,7 +106,7 @@ public class Dashboard extends Fragment implements View.OnClickListener{
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
-            setupChat();
+            mChatService = new BluetoothChatService(getActivity(), mHandler);
         }
     }
 
@@ -210,7 +229,7 @@ public class Dashboard extends Fragment implements View.OnClickListener{
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
+                    mChatService = new BluetoothChatService(getActivity(), mHandler);
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d("dashboard", "BT not enabled");
@@ -229,15 +248,17 @@ public class Dashboard extends Fragment implements View.OnClickListener{
                     }
 
                     //show the progress bar, disable user interaction
-                       mProgressDialog.show();
+                    wifiProgressDialog.show();
                     //TODO: start watchdog
-                      isCountdown = true;
-                     // mHandler.postDelayed(watchDogTimeOut,30000);
+                    isCountdown = true;
+                    mHandler.postDelayed(watchDogTimeOut,10000);
                     Log.d(TAG, "watchDog start");
 
                     //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null ? "" : data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null ? "" : data.getStringExtra("PWD");
+                    String SSID = data.getStringExtra
+                            ("SSID") == null ? "" : data.getStringExtra("SSID");
+                    String PWD = data.getStringExtra
+                            ("PWD") == null ? "" : data.getStringExtra("PWD");
 
                     Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
 
@@ -254,6 +275,76 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         }
     }
 
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            break;
+                        case Constants.STATE_CONNECTING:
+                            setStatus(R.string.title_connecting);
+                            break;
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
+                            setStatus(R.string.title_not_connected);
+                            piConnectionProgressDialog.dismiss();
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+                    String readMessage = (String)msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if(isJson(readMessage)){
+                        handleCallback(readMessage);
+                    } else {
+                        if(isCountdown){
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        if(wifiProgressDialog.isShowing()){
+                            wifiProgressDialog.dismiss();
+                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                        if(hotspotProgressDialog.isShowing()) {
+                            hotspotProgressDialog.dismiss();
+                            Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_DISPLAY_DONE:
+                    piConnectionProgressDialog.dismiss();
+                    break;
+            }
+        }
+    };
+
     private void connectDevice(Intent data, boolean secure) {
         // Get the device MAC address
         String address = data.getExtras()
@@ -264,45 +355,24 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         mChatService.connect(device, secure);
     }
 
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView consoleView = (TextView) view.findViewById(R.id.listItem);
-                if (isRead) {
-                    consoleView.setTextColor(Color.BLUE);
-                } else {
-                    consoleView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
-    }
-
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+    private void setStatus(Object arg) {
+        FragmentActivity activity = getActivity();
+        if (null == activity) {
             return;
         }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
+        final ActionBar actionBar = activity.getActionBar();
+        if (null == actionBar) {
+            return;
         }
-
+        if(arg instanceof Integer){
+            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
+            currentStatus = getString((Integer) arg);
+            actionBar.setSubtitle((Integer) arg);
+        } else if(arg instanceof CharSequence){
+            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
+            currentStatus = arg.toString();
+            actionBar.setSubtitle((CharSequence) arg);
+        }
     }
 
     private void sendMessage(String SSID, String PWD) {
@@ -325,10 +395,6 @@ public class Dashboard extends Fragment implements View.OnClickListener{
 
             byte[] send = mJson.toString().getBytes();
             mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
         }
     }
 
@@ -341,21 +407,57 @@ public class Dashboard extends Fragment implements View.OnClickListener{
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(mFragmentActivity){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
         }
-    };
+        return true;
+    }
+
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+            isCountdown = false;
+        }
+        //enable user interaction
+        wifiProgressDialog.dismiss();
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getActivity(), R.string.config_fail,
+                        Toast.LENGTH_LONG).show();
+            }else{
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+            }
+
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
+    }
 
     private final Runnable watchDogTimeOut = new Runnable() {
         @Override
         public void run() {
             isCountdown = false;
             //time out
-            if(mProgressDialog.isShowing()){
-                mProgressDialog.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi",Toast.LENGTH_LONG).show();
+            if(wifiProgressDialog.isShowing()){
+                wifiProgressDialog.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
+            }
+            if(hotspotProgressDialog.isShowing()){
+                hotspotProgressDialog.dismiss();
+                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
             }
         }
     };

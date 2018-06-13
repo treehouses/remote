@@ -34,6 +34,7 @@ public interface Constants {
     int REQUEST_DIALOG_FRAGMENT = 4;
     int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
     int REQUEST_DIALOG_FRAGMENT_CHPASS = 6;
+    int MESSAGE_DISPLAY_DONE = 7;
 
     // Constants that indicate the current connection state (use in BluetoothChatService)
     int STATE_NONE = 0;       // we're doing nothing
