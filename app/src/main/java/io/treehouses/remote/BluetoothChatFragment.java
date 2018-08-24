@@ -70,8 +70,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
-    private ProgressDialog wifiPD;
-    private ProgressDialog hotspotPD;
     private Button treehousesButton;
     private Button dockerButton;
     private Button RPI_HW_Button;
@@ -142,17 +140,33 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mChatService == null) {
+        } else {
             setupChat();
         }
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        if(getActivity().getActionBar().isShowing())
+            getActivity().getActionBar().hide();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        // Show Actionbar when go back to Dashboard
+        getActivity().getActionBar().show();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
+        /*
         if(isCountdown){
             mHandler.removeCallbacks(watchDogTimeOut);
         }
+        */
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
@@ -274,18 +288,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mChatService = new BluetoothChatService(getActivity(), mHandler);
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
-
-        // Create spinner for Wifi
-        wifiPD = new ProgressDialog(getActivity());
-        wifiPD.setTitle(R.string.progress_dialog_title);
-        wifiPD.setMessage(getString(R.string.progress_dialog_message));
-        wifiPD.setCancelable(false); // disable dismiss by tapping outside of the dialog
-
-        // Create spinner for Hotspot
-        hotspotPD = new ProgressDialog(getActivity());
-        hotspotPD.setTitle(R.string.progress_dialog_title_hotspot);
-        hotspotPD.setMessage(getString(R.string.progress_dialog_message));
-        hotspotPD.setCancelable(false); // disable dismiss by tapping outside of the dialog
     }
 
     /**
@@ -390,33 +392,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         mOutStringBuffer.setLength(0);
     }
 
-    private void sendMessage(String SSID, String PWD) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (SSID.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            JSONObject mJson = new JSONObject();
-            try {
-                mJson.put("SSID",SSID);
-                mJson.put("PWD",PWD);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            byte[] send = mJson.toString().getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-    }
-
     /**
      * The action listener for the EditText widget, to listen for the return key
      */
@@ -459,22 +434,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private final Runnable watchDogTimeOut = new Runnable() {
-        @Override
-        public void run() {
-            isCountdown = false;
-            //time out
-            if(wifiPD.isShowing()){
-                wifiPD.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
-            }
-            if(hotspotPD.isShowing()){
-                hotspotPD.dismiss();
-                Toast.makeText(getActivity(),"No response from RPi", Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -485,13 +444,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case Constants.STATE_CONNECTED:
-                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mConversationArrayAdapter.clear();
-                            break;
-                        case Constants.STATE_CONNECTING:
-                            setStatus(R.string.title_connecting);
-                            break;
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
                             setStatus(R.string.title_not_connected);
@@ -519,19 +471,11 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     Log.d(TAG, "readMessage = " + readMessage);
                     //TODO: if message is json -> callback from RPi
                     if(isJson(readMessage)){
-                        handleCallback(readMessage);
+                        //handleCallback(readMessage);
                     }else{
                         if(isCountdown){
-                            mHandler.removeCallbacks(watchDogTimeOut);
+                            //mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
-                        }
-                        if(wifiPD.isShowing()){
-                            wifiPD.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
-                        }
-                        if(hotspotPD.isShowing()){
-                            hotspotPD.dismiss();
-                            Toast.makeText(activity, R.string.config_alreadyConfig_hotspot, Toast.LENGTH_SHORT).show();
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0,readMessage.length()-1);
@@ -572,18 +516,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case Constants.REQUEST_CONNECT_DEVICE_SECURE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, true);
-                }
-                break;
-            case Constants.REQUEST_CONNECT_DEVICE_INSECURE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, false);
-                }
-                break;
             case Constants.REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
@@ -597,79 +529,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                     getActivity().finish();
                 }
                 break;
-            case Constants.REQUEST_DIALOG_FRAGMENT:
-                if(resultCode == Activity.RESULT_OK){
-
-                    //check status
-                    if(mChatService.getState() != Constants.STATE_CONNECTED){
-                        Toast.makeText(getActivity(), R.string.not_connected,
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    //show the progress bar, disable user interaction
-                    wifiPD.show();
-                    //TODO: start watchdog
-                    isCountdown = true;
-                    mHandler.postDelayed(watchDogTimeOut,30000);
-                    Log.d(TAG, "watchDog start");
-
-                    //get SSID & PWD from user input
-                    String SSID = data.getStringExtra("SSID") == null? "":data.getStringExtra("SSID");
-                    String PWD = data.getStringExtra("PWD") == null? "":data.getStringExtra("PWD");
-
-                    String wifi = "treehouses wifi " + SSID + " " + PWD;
-
-                    Log.d(TAG, "back from dialog: ok, SSID = " + SSID + ", PWD = " + PWD);
-
-                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-                    //Toast.makeText(getActivity(), R.string.config_success,
-                    //Toast.LENGTH_SHORT).show();
-
-                    sendMessage(wifi);
-                    //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
-
-                }else{
-                    Log.d(TAG, "back from dialog, fail");
-                }
-                break;
-            case Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT:
-                if(resultCode == Activity.RESULT_OK){
-
-                    //check status
-                    if(mChatService.getState() != Constants.STATE_CONNECTED){
-                        Toast.makeText(getActivity(), R.string.not_connected,
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    //show the progress bar, disable user interaction
-                    hotspotPD.show();
-                    //TODO: start watchdog
-                    isCountdown = true;
-                    mHandler.postDelayed(watchDogTimeOut,30000);
-                    Log.d(TAG, "watchDog start");
-
-                    //get SSID & PWD from user input
-                    String HSSID = data.getStringExtra("HSSID") == null? "":data.getStringExtra("HSSID");
-                    String HPWD = data.getStringExtra("HPWD") == null? "":data.getStringExtra("HPWD");
-
-                    String hotSpot = "treehouses hotspot " + HSSID + " " + HPWD + "";
-
-                    Log.d(TAG, "back from dialog_hotspot: ok, SSID = " + HSSID + ", PWD = " + HPWD);
-
-                    //TODO: 1. check Valid input  2. get the SSID and password from data object and send it to RPi through sendMessage() method
-//                    Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-
-                    sendMessage(hotSpot);
-                    //TODO:1. lock the app when configuring. 2. listen to configuration result and do the logic
-
-                }else{
-                    Log.d(TAG, "back from dialog_hotspot, fail");
-                }
-                break;
-
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
                 if(resultCode == Activity.RESULT_OK){
 
@@ -716,11 +575,6 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.wifi_configuration: {
-                showWifiDialog();
-                //return true;
-                break;
-            }
             case R.id.insecure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
@@ -734,29 +588,10 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
                 //return true;
                 break;
             }
-            case R.id.hotspot_configuration: {
-                showHotspotDialog();
-                //return true;
-                break;
-            }
             default:
                 return false;
         }
         return true;
-    }
-
-    public void showWifiDialog() {
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
-    }
-
-    public void showHotspotDialog(){
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
     }
 
     public void showChPasswordDialog() {
@@ -775,6 +610,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
         return true;
     }
 
+    /*
     public void handleCallback(String str){
         String result;
         String ip;
@@ -805,6 +641,7 @@ public class BluetoothChatFragment extends android.support.v4.app.Fragment {
             Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
         }
     }
+    */
 
     public void mOffline(){
         pingStatusButton.setBackgroundResource((R.drawable.circle));
