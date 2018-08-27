@@ -3,8 +3,11 @@ package io.treehouses.remote;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -14,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+
+import java.lang.reflect.Method;
 
 
 /**
@@ -71,10 +76,41 @@ public class HotspotDialogFragment extends DialogFragment {
                                 String SSID = hotspotSSIDEditText.getText().toString();
                                 String PWD = hotspotPWDEditText.getText().toString();
 
-                                Intent intent = new Intent();
-                                intent.putExtra("HSSID", SSID);
-                                intent.putExtra("HPWD", PWD);
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                                if(wifiManager.isWifiEnabled())
+                                {
+                                    wifiManager.setWifiEnabled(false);
+                                }
+
+                                WifiConfiguration netConfig = new WifiConfiguration();
+
+                                netConfig.SSID = SSID;
+                                netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                                netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                                netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+                                netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                                netConfig.preSharedKey = PWD;
+
+                                try{
+                                    Method setWifiApMethod = wifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+                                    boolean apstatus=(Boolean) setWifiApMethod.invoke(wifiManager, netConfig,true);
+
+                                    Method isWifiApEnabledmethod = wifiManager.getClass().getMethod("isWifiApEnabled");
+                                    while(!(Boolean)isWifiApEnabledmethod.invoke(wifiManager)){};
+                                    Method getWifiApStateMethod = wifiManager.getClass().getMethod("getWifiApState");
+                                    int apstate=(Integer)getWifiApStateMethod.invoke(wifiManager);
+                                    Method getWifiApConfigurationMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
+                                    netConfig=(WifiConfiguration)getWifiApConfigurationMethod.invoke(wifiManager);
+                                    Log.e("CLIENT", "\nSSID:"+netConfig.SSID+"\nPassword:"+netConfig.preSharedKey+"\n");
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra("HSSID", SSID);
+                                    intent.putExtra("HPWD", PWD);
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+
+                                } catch (Exception e) {
+                                    Log.e(this.getClass().toString(), "", e);
+                                }
                             }
                         }
                 )
