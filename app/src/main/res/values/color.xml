@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2196f3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorPrimaryLight">#42A5F5</color>
+    <color name="colorAccent">@color/md_red_500</color>
+    <color name="textColorPrimary">#ffffff</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+
+
+    <color name="black_overlay">#66000000</color>
+    <color name="bg_white">#ffffff</color>
+    <color name="red">#66ff0000</color>
+
+    <color name="dialog_sync_labels">#000000</color>
+
+    <color name="material_drawer_selected_text">@color/colorPrimary</color>
+    <color name="material_drawer_dark_selected_text">@color/colorPrimary</color>
+    <color name="offwhite">#fafafa</color>
+
+    <!-- changes logout button area background from white to whatever the background color for the drawer is.
+    Without it, the drawer and logout button area are different colors -->
+    <color name="material_drawer_background">@color/colorPrimary</color>
+    <color name="color_course_dark">#6A2915</color>
+    <color name="color_course">#D5562E</color>
+</resources>

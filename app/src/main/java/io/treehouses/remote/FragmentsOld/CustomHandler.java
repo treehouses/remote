@@ -1,4 +1,4 @@
-package io.treehouses.remote;
+package io.treehouses.remote.FragmentsOld;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -17,6 +17,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+
+import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.NetworkOld.BluetoothChatService;
+import io.treehouses.remote.R;
 
 /**
  * Created by Nick on 4/9/2018.

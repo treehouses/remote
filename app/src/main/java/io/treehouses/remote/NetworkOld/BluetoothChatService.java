@@ -16,7 +16,7 @@
 
 */
 
-package io.treehouses.remote;
+package io.treehouses.remote.NetworkOld;
 
 /**
  * Created by yubo on 7/11/17.
@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+
+import io.treehouses.remote.MiscOld.Constants;
 
 /**
  * This class does all the work for setting up and managing Bluetooth

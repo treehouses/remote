@@ -1,4 +1,4 @@
-package io.treehouses.remote;
+package io.treehouses.remote.FragmentsOld;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,23 +28,33 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.NetworkOld.BluetoothChatService;
+import io.treehouses.remote.NetworkOld.DeviceListActivity;
+import io.treehouses.remote.R;
+
 /**
- * Created by Lalitha S Oruganty on 3/14/2018.
+ * Created by Lalitha S Oruganty on 3/22/2018.
  */
 
-public class TreehousesFragment extends Fragment implements View.OnClickListener{
+public class DockerFragment extends Fragment implements View.OnClickListener{
 
-    private static final String TAG = "TreehousesFragment" ;
+    private static final String TAG = "DockerFragment" ;
+
     private FragmentActivity activity = getActivity();
 
+    // System variables
     private BluetoothAdapter mBluetoothAdapter = null;
     private BluetoothChatService mChatService = null;
     private StringBuffer mOutStringBuffer;
     private ArrayAdapter<String> outputArrayAdapter;
+
+    // Layout variables
     private ListView consoleOutput;
-    private Button detectRpiVersion;
+    private Button dockerPs;
     private EditText mOutEditText;
     private ProgressDialog mProgressDialog;
+
     static String currentStatus = "not connected";
     private static boolean isRead = false;
     private String mConnectedDeviceName = null;
@@ -52,11 +63,6 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //activity.getActionBar().setDisplayShowHomeEnabled(true);
-        //activity.getActionBar().setLogo(R.mipmap.ic_launcher);
-        //activity.getActionBar().setDisplayUseLogoEnabled(true);
-        //fragmentActivity = getActivity();
-
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             //FragmentActivity activity = getActivity();
@@ -81,21 +87,21 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.treehouses_layout, container, false);
+        return inflater.inflate(R.layout.docker_layout, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        detectRpiVersion = (Button) view.findViewById(R.id.btn_detect_rpi_version);
+        dockerPs = (Button) view.findViewById(R.id.btn_docker_ps);
         consoleOutput = (ListView) view.findViewById(R.id.lv_console_output);
-        detectRpiVersion.setOnClickListener(this);
+        dockerPs.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v){
         switch (v.getId()) {
-            case R.id.btn_detect_rpi_version:
-                sendMessage("treehouses detectrpi");
+            case R.id.btn_docker_ps:
+                sendMessage("docker ps");
                 break;
         }
     }
@@ -250,10 +256,65 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private final CustomHandler mHandler = new CustomHandler(activity) {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_LISTEN:
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    outputArrayAdapter.add("Command:  " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+                    //                    byte[] readBuf = (byte[]) msg.obj;
+                    //                     construct a string from the valid bytes in the buffer
+                    //                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //                    String readMessage = new String(readBuf);
+                    String readMessage = (String) msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if (isJson(readMessage)) {
+                        handleCallback(readMessage);
+                    } else {
+                        if (isCountdown) {
+                            mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        if (mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                            Toast.makeText((Context) activity, R.string.config_alreadyConfig, Toast.LENGTH_SHORT).show();
+                        }
+                        //remove the space at the very end of the readMessage -> eliminate space between items
+                        readMessage = readMessage.substring(0, readMessage.length() - 1);
+                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        outputArrayAdapter.add(readMessage);
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != activity) {
+                        Toast.makeText(activity, "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != activity) {
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
         }
     };
 
@@ -279,4 +340,42 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
         }
     };
 
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public void handleCallback(String str){
+        String result;
+        String ip;
+        if(isCountdown){
+            mHandler.removeCallbacks(watchDogTimeOut);
+            isCountdown = false;
+        }
+
+        //enable user interaction
+        try{
+            JSONObject mJSON = new JSONObject(str);
+            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
+            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
+            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
+
+            if(!result.equals("SUCCESS")){
+                Toast.makeText(getActivity(), R.string.config_fail,
+                        Toast.LENGTH_LONG).show();
+            }else{
+//                Toast.makeText(getActivity(), R.string.config_success,
+//                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
+            }
+
+        }catch (JSONException e){
+            // error handling
+            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
+        }
+    }
 }

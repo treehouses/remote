@@ -1,4 +1,4 @@
-package io.treehouses.remote;
+package io.treehouses.remote.FragmentsOld;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -31,6 +31,14 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.NetworkOld.BluetoothChatFragment;
+import io.treehouses.remote.NetworkOld.BluetoothChatService;
+import io.treehouses.remote.NetworkOld.DeviceListActivity;
+import io.treehouses.remote.NetworkOld.HotspotDialogFragment;
+import io.treehouses.remote.NetworkOld.WifiDialogFragment;
+import io.treehouses.remote.R;
 
 /**
  * Created by Lalitha S Oruganty on 3/13/2018.

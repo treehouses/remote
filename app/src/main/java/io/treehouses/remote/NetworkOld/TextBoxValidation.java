@@ -1,4 +1,4 @@
-package io.treehouses.remote;
+package io.treehouses.remote.NetworkOld;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import io.treehouses.remote.R;
 
 /**
  * This class is the hotspot and wifi dialog validator

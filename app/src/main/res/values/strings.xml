@@ -82,9 +82,9 @@
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
     <string name="config_alreadyConfig">You have already configured the wifi</string>
-        <!--Hotspot-->
-        <string name="create_hotspot">Create Hotspot</string>
-        <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
-        <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
+    <!--Hotspot-->
+    <string name="create_hotspot">Create Hotspot</string>
+    <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
+    <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
 </resources>

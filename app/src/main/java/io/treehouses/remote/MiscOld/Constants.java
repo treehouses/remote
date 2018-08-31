@@ -16,11 +16,13 @@
 
 */
 
-package io.treehouses.remote;
+package io.treehouses.remote.MiscOld;
 
 /**
  * Created by yubo on 7/11/17.
  */
+
+import io.treehouses.remote.NetworkOld.BluetoothChatService;
 
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.

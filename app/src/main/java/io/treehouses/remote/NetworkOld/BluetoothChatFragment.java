@@ -13,12 +13,11 @@
  * governing permissions and limitations under the License.
  */
 
-package io.treehouses.remote;
+package io.treehouses.remote.NetworkOld;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -52,6 +51,9 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.R;
 
 /**
  * Created by yubo on 7/11/17.

@@ -16,7 +16,7 @@
 
 */
 
-package io.treehouses.remote;
+package io.treehouses.remote.NetworkOld;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -36,6 +36,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Set;
+
+import io.treehouses.remote.R;
 
 /**
  * Created by yubo on 7/11/17.
