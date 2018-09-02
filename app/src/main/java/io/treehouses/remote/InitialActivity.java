@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +44,7 @@ public class InitialActivity extends AppCompatActivity {
         createDrawer();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setTitle(R.string.app_project_name);
+        openCallFragment(new AboutFragment());
     }
 
     private AccountHeader getAccountHeader() {
@@ -86,10 +89,10 @@ public class InitialActivity extends AppCompatActivity {
                 .build();
     }
     private void menuAction(int selectedMenuId) {
-//        switch (selectedMenuId) {
-//            case R.string.menu_myplanet:
-//                openCallFragment(new DashboardFragment());
-//                break;
+        switch (selectedMenuId) {
+            case R.string.menu_network:
+                openCallFragment(new NetworkFragment());
+                break;
 //            case R.string.menu_library:
 //                openCallFragment(new MyLibraryFragment());
 //                break;
@@ -107,10 +110,10 @@ public class InitialActivity extends AppCompatActivity {
 //            case R.string.menu_logout:
 //                logout();
 //                break;
-//            default:
-//                openCallFragment(new DashboardFragment());
-//                break;
-//        }
+            default:
+                openCallFragment(new AboutFragment());
+                break;
+        }
     }
     @NonNull
     private IDrawerItem[] getDrawerItems() {
@@ -150,5 +153,12 @@ public class InitialActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void openCallFragment(Fragment newfragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, newfragment);
+        fragmentTransaction.addToBackStack("");
+        fragmentTransaction.commit();
     }
 }
