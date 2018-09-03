@@ -1,4 +1,4 @@
-package io.treehouses.remote.Network;
+package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -91,6 +91,7 @@ public class WifiDialogFragment extends DialogFragment {
         textboxValidation.PWD = mPWDEditText;
         textboxValidation.wifiTextboxValidation(getContext());
 
+        textboxValidation.mDialog = mDialog;
         textboxValidation.textWatcher = mPWDEditText;
         textboxValidation.SSID = mSSIDEditText;
         textboxValidation.PWD = mPWDEditText;

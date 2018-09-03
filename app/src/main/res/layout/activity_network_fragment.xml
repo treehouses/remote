@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_white"
-    tools:context=".NetworkFragment">
+    tools:context=".Fragments.NetworkFragment">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout"

@@ -13,7 +13,7 @@
  * governing permissions and limitations under the License.
  */
 
-package io.treehouses.remote.Network;
+package io.treehouses.remote.Fragments;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -53,6 +53,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.Network.DeviceListActivity;
 import io.treehouses.remote.R;
 
 /**

@@ -2,17 +2,13 @@ package io.treehouses.remote;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -24,6 +20,9 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import java.util.ArrayList;
+
+import io.treehouses.remote.Fragments.AboutFragment;
+import io.treehouses.remote.Fragments.NetworkFragment;
 
 public class InitialActivity extends AppCompatActivity {
 

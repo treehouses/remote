@@ -43,8 +43,8 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".NetworkFragment" />
-        <activity android:name=".AboutFragment"></activity>
+        <activity android:name=".Fragments.NetworkFragment" />
+        <activity android:name=".Fragments.AboutFragment"></activity>
     </application>
 
 </manifest>

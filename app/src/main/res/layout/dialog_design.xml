@@ -99,7 +99,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.TextInputEditText
-        android:id="@+id/hotspotPassword"
+        android:id="@+id/password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
