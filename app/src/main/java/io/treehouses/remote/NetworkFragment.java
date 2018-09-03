@@ -23,6 +23,7 @@ import java.util.Map;
 
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.HotspotDialogFragment;
+import io.treehouses.remote.Network.WifiDialogFragment;
 
 public class NetworkFragment extends Fragment {
 
@@ -55,6 +56,9 @@ public class NetworkFragment extends Fragment {
 
     public void getListFragment(int position){
         switch (position){
+            case 1:
+                showWifiDialog();
+                break;
             case 2:
                 showHotspotDialog();
                 break;
@@ -67,6 +71,12 @@ public class NetworkFragment extends Fragment {
         DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
+    }
+    public void showWifiDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
     }
 
 //    private Fragment getCurrentFragment(){

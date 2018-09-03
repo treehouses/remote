@@ -61,7 +61,7 @@ public class WifiDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                     .setView(mView)
                     .setTitle(R.string.dialog_message)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setIcon(R.drawable.dialog_icon)
                     .setPositiveButton(R.string.start_configuration,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {

@@ -1,28 +1,121 @@
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content">
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--android:orientation="vertical"-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content">-->
 
-<EditText
-    android:id="@+id/SSID"
-    android:inputType="textEmailAddress"
-    android:layout_width="match_parent"
+<!--<EditText-->
+    <!--android:id="@+id/SSID"-->
+    <!--android:inputType="textEmailAddress"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="16dp"-->
+    <!--android:layout_marginLeft="4dp"-->
+    <!--android:layout_marginRight="4dp"-->
+    <!--android:layout_marginBottom="4dp"-->
+    <!--android:hint="@string/ssid" />-->
+<!--<EditText-->
+    <!--android:id="@+id/password"-->
+    <!--android:inputType="textPassword"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="4dp"-->
+    <!--android:layout_marginLeft="4dp"-->
+    <!--android:layout_marginRight="4dp"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!--android:fontFamily="sans-serif"-->
+    <!--android:hint="@string/password"/>-->
+<!--</LinearLayout>-->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginBottom="4dp"
-    android:hint="@string/ssid" />
-<EditText
-    android:id="@+id/password"
-    android:inputType="textPassword"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
-    android:layout_marginBottom="16dp"
-    android:fontFamily="sans-serif"
-    android:hint="@string/password"/>
-</LinearLayout>
+    android:orientation="vertical">
+
+    <!--<EditText-->
+    <!--android:id="@+id/hotspotSSID"-->
+    <!--android:inputType="textEmailAddress"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="16dp"-->
+    <!--android:layout_marginLeft="4dp"-->
+    <!--android:layout_marginRight="4dp"-->
+    <!--android:layout_marginBottom="4dp"-->
+    <!--android:hint="Hotspot Name" />-->
+
+    <!--<EditText-->
+    <!--android:id="@+id/hotspotPassword"-->
+    <!--android:inputType="textPassword"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="4dp"-->
+    <!--android:layout_marginLeft="4dp"-->
+    <!--android:layout_marginRight="4dp"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!--android:fontFamily="sans-serif"-->
+    <!--android:hint="@string/password"/>-->
+    <!--<EditText-->
+    <!--android:id="@+id/confirmPassword"-->
+    <!--android:inputType="textPassword"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="4dp"-->
+    <!--android:layout_marginLeft="4dp"-->
+    <!--android:layout_marginRight="4dp"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!--android:fontFamily="sans-serif"-->
+    <!--android:hint="@string/confirm_password"/>-->
+
+    <!--<android.support.design.card.MaterialCardView-->
+    <!--style="@style/Widget.MaterialComponents.CardView"-->
+    <!--android:layout_width="257dp"-->
+    <!--android:layout_height="355dp"-->
+    <!--android:minHeight="200dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/SSID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:hint="SSID"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/hotspotPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:editable="true"
+        android:fontFamily="sans-serif"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SSID" />
+
+
+</android.support.constraint.ConstraintLayout>
