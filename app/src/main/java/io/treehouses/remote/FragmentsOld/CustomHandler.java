@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 
 import io.treehouses.remote.MiscOld.Constants;
-import io.treehouses.remote.NetworkOld.BluetoothChatService;
+import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 /**

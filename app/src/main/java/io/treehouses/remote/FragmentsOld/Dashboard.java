@@ -33,11 +33,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.treehouses.remote.MiscOld.Constants;
-import io.treehouses.remote.NetworkOld.BluetoothChatFragment;
-import io.treehouses.remote.NetworkOld.BluetoothChatService;
-import io.treehouses.remote.NetworkOld.DeviceListActivity;
-import io.treehouses.remote.NetworkOld.HotspotDialogFragment;
-import io.treehouses.remote.NetworkOld.WifiDialogFragment;
+import io.treehouses.remote.Network.BluetoothChatFragment;
+import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.Network.DeviceListActivity;
+import io.treehouses.remote.Network.HotspotDialogFragment;
+import io.treehouses.remote.Network.WifiDialogFragment;
 import io.treehouses.remote.R;
 
 /**

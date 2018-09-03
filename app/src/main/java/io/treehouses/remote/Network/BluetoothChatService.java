@@ -16,7 +16,7 @@
 
 */
 
-package io.treehouses.remote.NetworkOld;
+package io.treehouses.remote.Network;
 
 /**
  * Created by yubo on 7/11/17.

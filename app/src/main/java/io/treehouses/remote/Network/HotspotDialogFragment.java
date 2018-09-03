@@ -1,4 +1,4 @@
-package io.treehouses.remote.NetworkOld;
+package io.treehouses.remote.Network;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -63,7 +63,7 @@ public class HotspotDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
                 .setTitle(R.string.dialog_message)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.dialog_icon)
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -111,7 +111,6 @@ public class HotspotDialogFragment extends DialogFragment {
         hotspotPWDEditText = (EditText)mView.findViewById(R.id.hotspotPassword);
         confirmPWDEditText = (EditText)mView.findViewById(R.id.confirmPassword);
     }
-
 }
 
 

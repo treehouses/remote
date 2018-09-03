@@ -13,7 +13,7 @@
  * governing permissions and limitations under the License.
  */
 
-package io.treehouses.remote.NetworkOld;
+package io.treehouses.remote.Network;
 
 import android.app.ActionBar;
 import android.app.Activity;

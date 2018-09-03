@@ -1,19 +1,13 @@
-package io.treehouses.remote.NetworkOld;
+package io.treehouses.remote.Network;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
-import android.content.ContentProvider;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.Nullable;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import io.treehouses.remote.R;
 

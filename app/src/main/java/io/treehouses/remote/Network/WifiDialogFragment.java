@@ -1,4 +1,4 @@
-package io.treehouses.remote.NetworkOld;
+package io.treehouses.remote.Network;
 
 import android.app.Activity;
 import android.app.AlertDialog;
