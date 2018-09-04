@@ -1,12 +1,8 @@
 package io.treehouses.remote.Fragments;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,22 +16,24 @@ import java.util.ArrayList;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.R;
 
-public class NetworkFragment extends Fragment {
+public class SystemFragment extends Fragment{
 
     View view;
 
-    public NetworkFragment(){}
+    public SystemFragment(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_network_fragment, container, false);
+        view = inflater.inflate(R.layout.activity_system_fragment, container, false);
+
         ArrayList<String> list = new ArrayList<String>();
-        list.add("Ethernet");
-        list.add("Wi-Fi");
-        list.add("Hotspot");
-        list.add("Bridge");
-        list.add("Reset");
+        list.add("Reboot");
+        list.add("Expand File System");
+        list.add("Rename Hostname");
+        list.add("RPI Password Settings");
+        list.add("Container");
+        list.add("Upgrade CLI");
 
         ListView listView = (ListView) view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);

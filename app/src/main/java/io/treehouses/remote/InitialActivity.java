@@ -22,7 +22,10 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import java.util.ArrayList;
 
 import io.treehouses.remote.Fragments.AboutFragment;
+import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
+import io.treehouses.remote.Fragments.ServicesFragment;
+import io.treehouses.remote.Fragments.SystemFragment;
 
 public class InitialActivity extends AppCompatActivity {
 
@@ -92,15 +95,15 @@ public class InitialActivity extends AppCompatActivity {
             case R.string.menu_network:
                 openCallFragment(new NetworkFragment());
                 break;
-//            case R.string.menu_library:
-//                openCallFragment(new MyLibraryFragment());
-//                break;
-//            case R.string.menu_meetups:
-//                openCallFragment(new MyMeetUpsFragment());
-//                break;
-//            case R.string.menu_surveys:
-//                openCallFragment(new SurveyFragment());
-//                break;
+            case R.string.menu_home:
+                openCallFragment(new HomeFragment());
+                break;
+            case R.string.menu_services:
+                openCallFragment(new ServicesFragment());
+                break;
+            case R.string.menu_system:
+                openCallFragment(new SystemFragment());
+                break;
 //            case R.string.menu_courses:
 //                openCallFragment(new MyCourseFragment());
 //                break;

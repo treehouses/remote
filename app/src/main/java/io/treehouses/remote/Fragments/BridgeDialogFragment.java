@@ -86,36 +86,20 @@ public class BridgeDialogFragment extends DialogFragment{
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = hotspotSSIDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
-//
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = hotspotPWDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
-//
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = confirmPWDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
+        addingTextChange(mDialog, ESSIDEditText);
+        addingTextChange(mDialog, HotspotESSIDEditText);
+        addingTextChange(mDialog, PasswordEditText);
+        addingTextChange(mDialog, HotspotPasswordEditText);
+    }
 
-//        textboxValidation.mDialog = mDialog;
-//        textboxValidation.textWatcher = hotspotSSIDEditText;
-//        textboxValidation.SSID = hotspotSSIDEditText;
-//        textboxValidation.PWD = hotspotPWDEditText;
-//        textboxValidation.wifiTextboxValidation(getContext());
-
-//        textboxValidation.mDialog = mDialog;
-//        textboxValidation.textWatcher = hotspotPWDEditText;
-//        textboxValidation.SSID = hotspotSSIDEditText;
-//        textboxValidation.PWD = hotspotPWDEditText;
-//        textboxValidation.wifiTextboxValidation(getContext());
-
+    public void addingTextChange(final AlertDialog mDialog, EditText editText){
+        textboxValidation.mDialog = mDialog;
+        textboxValidation.textWatcher = editText;
+        textboxValidation.ESSIDEditText = ESSIDEditText;
+        textboxValidation.HotspotESSIDEditText = HotspotESSIDEditText;
+        textboxValidation.PasswordEditText = PasswordEditText;
+        textboxValidation.HotspotPasswordEditText = HotspotPasswordEditText;
+        textboxValidation.textboxValidation(getContext(), "bridge");
     }
 
     protected void initLayoutView(View mView) {

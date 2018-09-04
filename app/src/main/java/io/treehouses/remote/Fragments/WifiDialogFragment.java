@@ -89,13 +89,13 @@ public class WifiDialogFragment extends DialogFragment {
         textboxValidation.textWatcher = mSSIDEditText;
         textboxValidation.SSID = mSSIDEditText;
         textboxValidation.PWD = mPWDEditText;
-        textboxValidation.wifiTextboxValidation(getContext());
+        textboxValidation.textboxValidation(getContext(), "wifi");
 
         textboxValidation.mDialog = mDialog;
         textboxValidation.textWatcher = mPWDEditText;
         textboxValidation.SSID = mSSIDEditText;
         textboxValidation.PWD = mPWDEditText;
-        textboxValidation.wifiTextboxValidation(getContext());
+        textboxValidation.textboxValidation(getContext(), "wifi");
     }
 
     protected void initLayoutView(View mView) {

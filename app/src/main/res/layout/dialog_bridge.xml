@@ -15,7 +15,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:hint="ESSID"
-        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,14 +32,13 @@
         android:editable="true"
         android:fontFamily="sans-serif"
         android:hint="Hotspot ESSID"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/passwod"
+        app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ESSID" />
 
     <android.support.design.widget.TextInputEditText
-        android:id="@+id/passwod"
+        android:id="@+id/password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

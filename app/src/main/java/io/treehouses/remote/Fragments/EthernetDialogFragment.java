@@ -87,36 +87,20 @@ public class EthernetDialogFragment extends DialogFragment{
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = hotspotSSIDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
-//
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = hotspotPWDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
-//
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = confirmPWDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
+        addingTextChange(mDialog, IpAddressEditText);
+        addingTextChange(mDialog, MaskEditText);
+        addingTextChange(mDialog, GateWayEditText);
+        addingTextChange(mDialog, DNSEditText);
+    }
 
-//        textboxValidation.mDialog = mDialog;
-//        textboxValidation.textWatcher = hotspotSSIDEditText;
-//        textboxValidation.SSID = hotspotSSIDEditText;
-//        textboxValidation.PWD = hotspotPWDEditText;
-//        textboxValidation.wifiTextboxValidation(getContext());
-
-//        textboxValidation.mDialog = mDialog;
-//        textboxValidation.textWatcher = hotspotPWDEditText;
-//        textboxValidation.SSID = hotspotSSIDEditText;
-//        textboxValidation.PWD = hotspotPWDEditText;
-//        textboxValidation.wifiTextboxValidation(getContext());
-
+    public void addingTextChange(final AlertDialog mDialog, EditText editText){
+        textboxValidation.mDialog = mDialog;
+        textboxValidation.textWatcher = editText;
+        textboxValidation.IpAddressEditText = IpAddressEditText;
+        textboxValidation.MaskEditText = MaskEditText;
+        textboxValidation.GateWayEditText = GateWayEditText;
+        textboxValidation.DNSEditText = DNSEditText;
+        textboxValidation.textboxValidation(getContext(), "ethernet");
     }
 
     protected void initLayoutView(View mView) {

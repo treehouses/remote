@@ -87,42 +87,24 @@ public class HotspotDialogFragment extends DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = hotspotSSIDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
-//
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = hotspotPWDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
-//
-//        textBoxValidation.mDialog = mDialog;
-//        textBoxValidation.textWatcher = confirmPWDEditText;
-//        textBoxValidation.SSID = hotspotSSIDEditText;
-//        textBoxValidation.PWD = hotspotPWDEditText;
-//        textBoxValidation.hotspotTextboxValidation(confirmPWDEditText, getContext());
 
         textboxValidation.mDialog = mDialog;
         textboxValidation.textWatcher = hotspotSSIDEditText;
         textboxValidation.SSID = hotspotSSIDEditText;
         textboxValidation.PWD = hotspotPWDEditText;
-        textboxValidation.wifiTextboxValidation(getContext());
+        textboxValidation.textboxValidation(getContext(), "wifi");
 
         textboxValidation.mDialog = mDialog;
         textboxValidation.textWatcher = hotspotPWDEditText;
         textboxValidation.SSID = hotspotSSIDEditText;
         textboxValidation.PWD = hotspotPWDEditText;
-        textboxValidation.wifiTextboxValidation(getContext());
+        textboxValidation.textboxValidation(getContext(), "wifi");
 
     }
 
     protected void initLayoutView(View mView) {
         hotspotSSIDEditText = (EditText)mView.findViewById(R.id.hotspotSSID);
         hotspotPWDEditText = (EditText)mView.findViewById(R.id.hotspotPassword);
-//        confirmPWDEditText = (EditText)mView.findViewById(R.id.confirmPassword);
     }
 }
 
