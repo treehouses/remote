@@ -26,8 +26,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -64,6 +67,18 @@ public class DeviceListActivity extends Activity {
      * Newly discovered devices
      */
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+
+//    View view;
+//
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        view = inflater.inflate(R.layout.activity_network_fragment, container, false);
+//
+//
+//
+//        return view;
+//    }
 
     @Override
     protected void onCreate( Bundle savedInstanceState) {

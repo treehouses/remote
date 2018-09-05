@@ -72,8 +72,11 @@ public class EthernetDialogFragment extends DialogFragment{
                                 String dns = DNSEditText.getText().toString();
 
                                 Intent intent = new Intent();
-//                                intent.putExtra("HSSID", SSID);
-//                                intent.putExtra("HPWD", PWD);
+                                intent.putExtra("type","ethernet");
+                                intent.putExtra("ip", ip);
+                                intent.putExtra("mask", mask);
+                                intent.putExtra("gateway", gateway);
+                                intent.putExtra("dns", dns);
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }

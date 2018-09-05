@@ -97,4 +97,13 @@ public class NetworkFragment extends Fragment {
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "resetDialog");
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Bundle bundle = data.getExtras();
+        String type = bundle.getString("type");
+        Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+type);
+    }
 }
