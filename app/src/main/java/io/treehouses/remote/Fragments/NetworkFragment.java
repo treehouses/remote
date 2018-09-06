@@ -102,8 +102,12 @@ public class NetworkFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bundle bundle = data.getExtras();
-        String type = bundle.getString("type");
-        Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+type);
+        if(resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            String type = bundle.getString("type");
+            Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
+
+
+        }
     }
 }

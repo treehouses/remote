@@ -72,6 +72,7 @@ public class WifiDialogFragment extends DialogFragment {
                                         Intent intent = new Intent();
                                         intent.putExtra("SSID", SSID);
                                         intent.putExtra("PWD", PWD);
+                                        intent.putExtra("type", "wifi");
                                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                                 }
                             }

@@ -74,6 +74,7 @@ public class HotspotDialogFragment extends DialogFragment {
                                 Intent intent = new Intent();
                                 intent.putExtra("HSSID", SSID);
                                 intent.putExtra("HPWD", PWD);
+                                intent.putExtra("type", "hotspot");
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }
