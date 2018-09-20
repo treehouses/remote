@@ -32,6 +32,7 @@ public class RPIDialogFragment extends DialogFragment{
 
     TextBoxValidation textboxValidation = new TextBoxValidation();
     ListView listView;
+    BluetoothAdapter mBluetoothAdapter;
     Bluetooth bluetooth;
     List<String> s = new ArrayList<String>();
 
@@ -51,23 +52,34 @@ public class RPIDialogFragment extends DialogFragment{
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
+//        mBluetoothAdapter.startDiscovery();
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter.startDiscovery();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        getContext().registerReceiver(mReceiver, filter);
+
+        final AlertDialog mDialog = getAlertDialog(mView);
+        listView = mView.findViewById(R.id.listView);
 
         initLayoutView(mView);
 
-        final AlertDialog mDialog = getAlertDialog(mView);
         return mDialog;
     }
+
     @Override
     public void onStart() {
         super.onStart();
-        bluetooth.onStart();
-        bluetooth.enable();
+
+//        mBluetoothAdapter.star
+//        bluetooth.enable();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        bluetooth.onStop();
+//        bluetooth.onStop();
+
     }
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
@@ -77,9 +89,26 @@ public class RPIDialogFragment extends DialogFragment{
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+//                                listView = dialog.
+//                                listView = dialog.findViewById(R.id.listView);
+//                                mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//                                if(mBluetoothAdapter == null){
+//                                    Log.i("Bluetooth Adapter", "Bluetooth not supported");
+//                                }else{
+//                                    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//                                    getContext().registerReceiver(mReceiver, filter);
+//                                    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+//
+//                                    List<String> s = new ArrayList<String>();
+//                                    for(BluetoothDevice bt : pairedDevices) {
+//                                        s.add(bt.getName());
+//                                        Log.e("BT", bt.getName() + "\n");
+//                                    }
+//                                    listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
+//                                }
+//                                Intent intent = new Intent();
+//                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
 
-                                Intent intent = new Intent();
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }
                 )
@@ -91,27 +120,34 @@ public class RPIDialogFragment extends DialogFragment{
                 .create();
     }
     protected void initLayoutView(View mView) {
-        listView = mView.findViewById(R.id.listView);
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        listView = .findViewById(R.id.listView);
         if(mBluetoothAdapter == null){
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
         }else{
-            mBluetoothAdapter.startDiscovery();
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            getContext().registerReceiver(mReceiver, filter);
+
+//            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+//
+//            for(BluetoothDevice bt : pairedDevices) {
+////                s.add(bt.getName());
+//                Log.e("BT", bt.getName() + "\n");
+//            }
+//            listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
+
         }
     }
 
+    // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent
-                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                s.add(device.getName() + "\n" + device.getAddress());
-                Log.i("BT", device.getName() + "\n" + device.getAddress());
-                listView.setAdapter(new ArrayAdapter<String>(context,
-                        android.R.layout.simple_list_item_1, s));
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                s.add(deviceName+ "\n" + deviceHardwareAddress);
+                Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
         }
     };
