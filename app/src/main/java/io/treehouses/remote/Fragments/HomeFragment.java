@@ -1,10 +1,17 @@
 package io.treehouses.remote.Fragments;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +39,6 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
 
         Button connectRpi = view.findViewById(R.id.button);
-
         connectRpi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
