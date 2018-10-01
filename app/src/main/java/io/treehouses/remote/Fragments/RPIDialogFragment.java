@@ -77,6 +77,8 @@ public class RPIDialogFragment extends DialogFragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mChatService.connect(devices.get(position), true);
+                int status = mChatService.getState();
+                Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
             }
         });
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
