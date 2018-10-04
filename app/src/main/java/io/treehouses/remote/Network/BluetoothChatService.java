@@ -35,6 +35,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.UUID;
 
 import io.treehouses.remote.MiscOld.Constants;
@@ -46,7 +47,7 @@ import io.treehouses.remote.MiscOld.Constants;
  * thread for performing data transmissions when connected.
  */
 
-public class BluetoothChatService {
+public class BluetoothChatService implements Serializable{
 
     // Debugging
     private static final String TAG = "BluetoothChatService";
@@ -63,7 +64,7 @@ public class BluetoothChatService {
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     // Member fields
-    private final BluetoothAdapter mAdapter;
+     final BluetoothAdapter mAdapter;
     private final Handler mHandler;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;

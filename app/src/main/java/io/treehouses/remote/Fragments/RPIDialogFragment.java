@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.treehouses.remote.FragmentsOld.CustomHandler;
+import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.DeviceListActivity;
@@ -70,14 +71,20 @@ public class RPIDialogFragment extends DialogFragment{
 
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
+        final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
 
         listView = mView.findViewById(R.id.listView);
+        final AlertDialog mDialog = getAlertDialog(mView);
+        mDialog.setTitle(R.string.dialog_message);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mChatService.connect(devices.get(position), true);
                 int status = mChatService.getState();
+                mDialog.cancel();
+                InitialActivity initialActivity = new InitialActivity();
+                initialActivity.setChatService(mChatService);
+                finish(status, mView);
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
             }
         });
@@ -90,13 +97,24 @@ public class RPIDialogFragment extends DialogFragment{
         if(mChatService == null){
             setupBluetoothService();
         }
-        final AlertDialog mDialog = getAlertDialog(mView);
 
 
 
 
 
         return mDialog;
+    }
+    public void finish(int status, View mView){
+        final AlertDialog mDialog = getAlertDialog(mView);
+        if(status == 3){
+            mDialog.setTitle("BLUETOOTH IS CONNECTED");
+        }else if(status == 2){
+            mDialog.setTitle("BLUETOOTH IS CONNECTING...");
+        }else{
+            mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
+        }
+        List<String> empty = new ArrayList<>();
+        listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, empty));
     }
 
     private void connectDevice(Intent data) {
@@ -121,7 +139,7 @@ public class RPIDialogFragment extends DialogFragment{
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
-                .setTitle(R.string.dialog_message)
+//                .setTitle(R.string.dialog_message)
                 .setIcon(R.drawable.dialog_icon)
 //                .setPositiveButton(R.string.start_configuration, new DialogInterface.OnClickListener() {
 //                    @Override
@@ -130,9 +148,13 @@ public class RPIDialogFragment extends DialogFragment{
 //                        String item = s.get(selected);
 //                    }
 //                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.material_drawer_close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                        Intent intent = new Intent();
+                        Bundle bundle = new Bundle();
+                        intent.putExtra("mChatService", mChatService);
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+//                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
                         getActivity().unregisterReceiver(mReceiver);
                     }
                 })

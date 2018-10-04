@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.DeviceListActivity;
@@ -143,6 +144,10 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        InitialActivity initialActivity = new InitialActivity();
+        mChatService = initialActivity.getChatService();
+        Log.e("TERMINAL mChatService", ""+mChatService.getState());
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
