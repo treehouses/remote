@@ -290,7 +290,7 @@ public class Dashboard extends Fragment implements View.OnClickListener{
                 return view;
             }
         };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
+        mChatService = new BluetoothChatService( mHandler);
     }
 
     private void sendMessage(String message) {

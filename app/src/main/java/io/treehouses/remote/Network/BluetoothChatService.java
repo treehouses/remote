@@ -65,7 +65,7 @@ public class BluetoothChatService implements Serializable{
 
     // Member fields
      final BluetoothAdapter mAdapter;
-    private final Handler mHandler;
+    private static Handler mHandler;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
@@ -76,16 +76,19 @@ public class BluetoothChatService implements Serializable{
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
-     * @param context The UI Activity Context
+     *  The UI Activity Context
      * @param handler A Handler to send messages back to the UI Activity
      */
-    public BluetoothChatService(Context context, Handler handler) {
+    public BluetoothChatService(Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mCurrentState = Constants.STATE_NONE;
         mNewState = mCurrentState;
         mHandler = handler;
     }
 
+    public void updateHandler(Handler handler){
+        mHandler = handler;
+    }
     /**
      * Update UI title according to the current state of the chat connection
      */

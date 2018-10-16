@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -43,18 +44,20 @@ import me.aflak.bluetooth.Bluetooth;
 
 public class RPIDialogFragment extends DialogFragment{
 
-    private BluetoothChatService mChatService = null;
+    private static BluetoothChatService mChatService = null;
 
     private static final String TAG = "RaspberryDialogFragment";
     private static boolean isRead = false;
 
-
+    AlertDialog mDialog;
     private ArrayAdapter<String> mConversationArrayAdapter;
     ListView listView;
     BluetoothAdapter mBluetoothAdapter;
     Bluetooth bluetooth;
     List<String> s = new ArrayList<String>();
     List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+    static BluetoothDevice mainDevice = null;
+    ProgressDialog dialog = new ProgressDialog(getContext(), ProgressDialog.THEME_HOLO_DARK);
 
     public static RPIDialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
@@ -74,18 +77,24 @@ public class RPIDialogFragment extends DialogFragment{
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
 
         listView = mView.findViewById(R.id.listView);
-        final AlertDialog mDialog = getAlertDialog(mView);
-        mDialog.setTitle(R.string.dialog_message);
+        mDialog = getAlertDialog(mView);
+        mDialog.setTitle(R.string.select_device);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mainDevice = devices.get(position);
                 mChatService.connect(devices.get(position), true);
                 int status = mChatService.getState();
-                mDialog.cancel();
+//                mDialog.cancel();
                 InitialActivity initialActivity = new InitialActivity();
                 initialActivity.setChatService(mChatService);
                 finish(status, mView);
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setTitle("Connecting...");
+                dialog.setMessage("Device Name: "+mainDevice.getName().toString()+"\nDevice Address: "+mainDevice.getAddress().toString());
+                dialog.show();
+
             }
         });
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -104,6 +113,10 @@ public class RPIDialogFragment extends DialogFragment{
 
         return mDialog;
     }
+
+    public BluetoothDevice getMainDevice(){return mainDevice;}
+    public BluetoothChatService getChatService(){return mChatService;}
+
     public void finish(int status, View mView){
         final AlertDialog mDialog = getAlertDialog(mView);
         if(status == 3){
@@ -122,9 +135,9 @@ public class RPIDialogFragment extends DialogFragment{
         String address = data.getExtras()
                 .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
         // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        mainDevice = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        mChatService.connect(device, true);
+        mChatService.connect(mainDevice, true);
     }
 
     @Override
@@ -150,12 +163,12 @@ public class RPIDialogFragment extends DialogFragment{
 //                })
                 .setNegativeButton(R.string.material_drawer_close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        getActivity().unregisterReceiver(mReceiver);
                         Intent intent = new Intent();
                         Bundle bundle = new Bundle();
                         intent.putExtra("mChatService", mChatService);
                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
 //                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
-                        getActivity().unregisterReceiver(mReceiver);
                     }
                 })
                 .create();
@@ -194,27 +207,16 @@ public class RPIDialogFragment extends DialogFragment{
     private void setupBluetoothService() {
         Log.d(TAG, "setupChat()");
 
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView consoleView = (TextView) view.findViewById(R.id.listItem);
-                if (isRead) {
-                    consoleView.setTextColor(Color.BLUE);
-                } else {
-                    consoleView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
+        mChatService = new BluetoothChatService(mHandler);
     }
     private final CustomHandler mHandler = new CustomHandler(getActivity()){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(msg.what == Constants.MESSAGE_DEVICE_NAME){
+                dialog.dismiss();
+                mDialog.cancel();
+            }
         }
     };
 }

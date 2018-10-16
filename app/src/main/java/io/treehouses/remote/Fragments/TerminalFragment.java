@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -19,6 +20,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.LoginFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -39,6 +41,7 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -113,6 +116,8 @@ public class TerminalFragment extends Fragment {
     private Button hostnameButton;
     private Button changePasswordButton;
     private Button expandButton;
+    private Button mCheckButton;
+    private TextView mPingStatus;
 
     /**
      * Name of the connected device
@@ -145,8 +150,18 @@ public class TerminalFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+//        if((new RPIDialogFragment()).equals(null)){
+//            Log.e("TERMINAL", "NULL");
+//        }
         InitialActivity initialActivity = new InitialActivity();
+//        RPIDialogFragment initialActivity = new RPIDialogFragment();
+//        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
+        if(mChatService == null){
+            showRPIDialog();
+        }
+        mChatService.updateHandler(mHandler);
+//        Log.e("DEVICE ", ""+device.getName());
         Log.e("TERMINAL mChatService", ""+mChatService.getState());
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
@@ -156,6 +171,7 @@ public class TerminalFragment extends Fragment {
             // Otherwise, setup the chat session
         } else {
             setupChat();
+//            mChatService.connect(device,true);
         }
     }
 
@@ -172,6 +188,11 @@ public class TerminalFragment extends Fragment {
 //        // Show Actionbar when go back to Dashboard
 //        getActivity().getActionBar().show();
 //    }
+    public void showRPIDialog(){
+        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
+    }
 
     @Override
     public void onDestroy() {
@@ -199,7 +220,9 @@ public class TerminalFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.autoCompleteTextView);
+        mCheckButton = (Button) view.findViewById(R.id.check);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        mPingStatus = (TextView) view.findViewById(R.id.pingStatus);
 //        treehousesButton = (Button) view.findViewById(R.id.TB);
 //        dockerButton = (Button)view.findViewById(R.id.DB);
 //        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
@@ -270,6 +293,21 @@ public class TerminalFragment extends Fragment {
             }
         });
 
+        mCheckButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("CHECK STATUS",""+mChatService.getState());
+                if(mChatService.getState() == Constants.STATE_CONNECTED){
+                    mConnect();
+
+                }else if(mChatService.getState() == Constants.STATE_NONE){
+                    mOffline();
+                }else{
+                    mIdle();
+                }
+            }
+        });
+
 //        treehousesButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -316,7 +354,9 @@ public class TerminalFragment extends Fragment {
 //        });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
+        if(mChatService.getState() == Constants.STATE_NONE){
+            mChatService = new BluetoothChatService( mHandler);
+        }
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
     }
@@ -468,7 +508,7 @@ public class TerminalFragment extends Fragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private final Handler mHandler = new Handler() {
+    public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
@@ -675,18 +715,21 @@ public class TerminalFragment extends Fragment {
     */
 
     public void mOffline(){
+        mPingStatus.setText("Bluetooth Status: Offline");
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
     public void mIdle(){
+        mPingStatus.setText("Bluetooth Status: Idle (not Connected or trying to Connect)");
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
-        bgShape.setColor(Color.GRAY);
+        bgShape.setColor(Color.YELLOW);
     }
 
     public void mConnect(){
+        mPingStatus.setText("Bluetooth Status: Connected");
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);

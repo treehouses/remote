@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toTopOf="@+id/autoCompleteTextView"
         app:layout_constraintEnd_toStartOf="@+id/listView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PING" />
+        app:layout_constraintTop_toBottomOf="@+id/check" />
 
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView"
@@ -55,26 +55,53 @@
 
     <Button
         android:id="@+id/PING"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Button"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/circle"
+        app:layout_constraintStart_toEndOf="@+id/check"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/pingStatus"
         android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_height="30dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
         android:text="Bluetooth Status"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button3"
         app:layout_constraintStart_toEndOf="@+id/PING"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/check"
+        android:layout_width="75dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/colorPrimary"
+        android:text="Check Status"
+        android:textSize="7sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="75dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/colorPrimary"
+        android:text="Connect RPI"
+        android:textSize="7sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

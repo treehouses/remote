@@ -189,7 +189,7 @@ public class TreehousesFragment extends Fragment implements View.OnClickListener
         consoleOutput.setAdapter(outputArrayAdapter);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
+        mChatService = new BluetoothChatService( mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");

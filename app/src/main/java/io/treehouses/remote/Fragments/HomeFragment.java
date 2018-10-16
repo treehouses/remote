@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -53,5 +54,18 @@ public class HomeFragment extends Fragment {
         DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            String type = bundle.getString("type");
+            Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
+
+
+        }
     }
 }
