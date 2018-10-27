@@ -12,15 +12,8 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.LoginFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,6 +38,12 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -157,22 +156,24 @@ public class TerminalFragment extends Fragment {
 //        RPIDialogFragment initialActivity = new RPIDialogFragment();
 //        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
-        if(mChatService == null){
+//        if(mChatService == null){
             showRPIDialog();
-        }
-        mChatService.updateHandler(mHandler);
+//        }else{
+//            mChatService.updateHandler(mHandler);
+//            Log.e("TERMINAL mChatService", ""+mChatService.getState());
+//        }
 //        Log.e("DEVICE ", ""+device.getName());
-        Log.e("TERMINAL mChatService", ""+mChatService.getState());
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else {
-            setupChat();
-//            mChatService.connect(device,true);
-        }
+//        if (!mBluetoothAdapter.isEnabled()) {
+//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
+//            // Otherwise, setup the chat session
+//        }
+//        else {
+//            setupChat();
+////            mChatService.connect(device,true);
+//        }
     }
 
 //    @Override

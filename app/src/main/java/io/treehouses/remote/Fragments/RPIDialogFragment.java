@@ -15,10 +15,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +29,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
@@ -57,13 +58,13 @@ public class RPIDialogFragment extends DialogFragment{
     List<String> s = new ArrayList<String>();
     List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
     static BluetoothDevice mainDevice = null;
-    ProgressDialog dialog = new ProgressDialog(getContext(), ProgressDialog.THEME_HOLO_DARK);
+    ProgressDialog dialog;
 
     public static RPIDialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("num", num);
-//        dialogFragment.setArguments(bundle);
+        Bundle bundle = new Bundle();
+        bundle.putInt("num", num);
+        rpiDialogFragment.setArguments(bundle);
 
         return rpiDialogFragment;
     }
@@ -75,7 +76,7 @@ public class RPIDialogFragment extends DialogFragment{
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
-
+        dialog = new ProgressDialog(getContext(), ProgressDialog.THEME_HOLO_DARK);
         listView = mView.findViewById(R.id.listView);
         mDialog = getAlertDialog(mView);
         mDialog.setTitle(R.string.select_device);
