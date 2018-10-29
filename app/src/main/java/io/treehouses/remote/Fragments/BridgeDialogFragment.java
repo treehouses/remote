@@ -71,8 +71,10 @@ public class BridgeDialogFragment extends DialogFragment{
                                 String hotspotpassword = HotspotPasswordEditText.getText().toString();
 
                                 Intent intent = new Intent();
-//                                intent.putExtra("HSSID", SSID);
-//                                intent.putExtra("HPWD", PWD);
+                                intent.putExtra("essid", essid);
+                                intent.putExtra("hssid", hotspotessid);
+                                intent.putExtra("password",password);
+                                intent.putExtra("hpassword",hotspotpassword);
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }

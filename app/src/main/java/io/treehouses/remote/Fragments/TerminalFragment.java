@@ -156,12 +156,13 @@ public class TerminalFragment extends Fragment {
 //        RPIDialogFragment initialActivity = new RPIDialogFragment();
 //        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
-//        if(mChatService == null){
+
+        if(mChatService == null){
             showRPIDialog();
-//        }else{
-//            mChatService.updateHandler(mHandler);
-//            Log.e("TERMINAL mChatService", ""+mChatService.getState());
-//        }
+        }else{
+            mChatService.updateHandler(mHandler);
+            Log.e("TERMINAL mChatService", ""+mChatService.getState());
+        }
 //        Log.e("DEVICE ", ""+device.getName());
         // If BT is not on, request that it be enabled.
         // setupChat() will then be called during onActivityResult

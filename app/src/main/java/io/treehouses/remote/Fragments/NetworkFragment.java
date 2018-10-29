@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.DialogFragment;
+
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +20,8 @@ import java.util.ArrayList;
 
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.R;
+
+import static android.content.Context.WIFI_SERVICE;
 
 public class NetworkFragment extends Fragment {
 
@@ -104,8 +109,61 @@ public class NetworkFragment extends Fragment {
             Bundle bundle = data.getExtras();
             String type = bundle.getString("type");
             Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
-
+            switch (type){
+                case "wifi":
+                    wifiOn(bundle);
+                    return;
+                case "hotspot":
+                    hotspotOn(bundle);
+                    return;
+                case "ethernet":
+                    ethernetOn(bundle);
+                    return;
+                case "bridge":
+                    bridgeOn(bundle);
+                    return;
+                default:
+                    return;
+            }
 
         }
+    }
+
+    private void wifiOn(Bundle bundle){
+        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiConfiguration wc = new WifiConfiguration();
+        wc.SSID = "\""+bundle.getString("SSID")+"\""; //IMP! This should be in Quotes!!
+        wc.hiddenSSID = true;
+        wc.status = WifiConfiguration.Status.DISABLED;
+        wc.priority = 40;
+        wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+        wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+        wc.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+        wc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+        wc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+        wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+
+        wc.wepKeys[0] = "\""+bundle.getString("PWD")+"\""; //This is the WEP Password
+        wc.wepTxKeyIndex = 0;
+
+        boolean res1 = wifi.setWifiEnabled(true);
+        int res = wifi.addNetwork(wc);
+        Log.d("WifiPreference", "add Network returned " + res );
+        boolean es = wifi.saveConfiguration();
+        Log.d("WifiPreference", "saveConfiguration returned " + es );
+        boolean b = wifi.enableNetwork(res, true);
+        Log.d("WifiPreference", "enableNetwork returned " + b );
+    }
+    private void hotspotOn(Bundle bundle){
+
+    }
+    private void ethernetOn(Bundle bundle){
+
+    }
+    private void bridgeOn(Bundle bundle){
+
     }
 }

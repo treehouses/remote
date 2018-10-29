@@ -91,10 +91,10 @@ public class RPIDialogFragment extends DialogFragment{
                 initialActivity.setChatService(mChatService);
                 finish(status, mView);
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
-                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                dialog.setTitle("Connecting...");
-                dialog.setMessage("Device Name: "+mainDevice.getName().toString()+"\nDevice Address: "+mainDevice.getAddress().toString());
-                dialog.show();
+//                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                dialog.setTitle("Connecting...");
+//                dialog.setMessage("Device Name: "+mainDevice.getName().toString()+"\nDevice Address: "+mainDevice.getAddress().toString());
+//                dialog.show();
 
             }
         });

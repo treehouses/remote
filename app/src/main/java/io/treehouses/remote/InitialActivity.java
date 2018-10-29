@@ -29,7 +29,6 @@ import io.treehouses.remote.Fragments.ServicesFragment;
 import io.treehouses.remote.Fragments.SystemFragment;
 import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 public class InitialActivity extends AppCompatActivity {
 
@@ -37,7 +36,7 @@ public class InitialActivity extends AppCompatActivity {
     AccountHeader headerResult;
     private Drawer result = null;
     int REQUEST_COARSE_LOCATION = 99;
-    private BluetoothChatService mChatService;
+    private static BluetoothChatService mChatService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +56,7 @@ public class InitialActivity extends AppCompatActivity {
         openCallFragment(new AboutFragment());
     }
 
+    private String name = null;
     public InitialActivity(){}
     public void setChatService(BluetoothChatService chatService){mChatService = chatService;}
     public BluetoothChatService getChatService(){return mChatService; }
