@@ -86,15 +86,15 @@ public class RPIDialogFragment extends DialogFragment{
                 mainDevice = devices.get(position);
                 mChatService.connect(devices.get(position), true);
                 int status = mChatService.getState();
-//                mDialog.cancel();
+                mDialog.cancel();
                 InitialActivity initialActivity = new InitialActivity();
                 initialActivity.setChatService(mChatService);
                 finish(status, mView);
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
-//                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//                dialog.setTitle("Connecting...");
-//                dialog.setMessage("Device Name: "+mainDevice.getName().toString()+"\nDevice Address: "+mainDevice.getAddress().toString());
-//                dialog.show();
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setTitle("Connecting...");
+                dialog.setMessage("Device Name: "+mainDevice.getName().toString()+"\nDevice Address: "+mainDevice.getAddress().toString());
+                dialog.show();
 
             }
         });
@@ -108,7 +108,18 @@ public class RPIDialogFragment extends DialogFragment{
             setupBluetoothService();
         }
 
-
+//        Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
+//        if(pairedDevice.size()>0)
+//        {
+//            for(BluetoothDevice device : pairedDevice)
+//            {
+//                devices.add(device);
+//                String deviceName = device.getName();
+//                String deviceHardwareAddress = device.getAddress(); // MAC address
+//                s.add(deviceName+ "\n" + deviceHardwareAddress);
+////                listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
+//            }
+//        }
 
 
 
@@ -201,6 +212,7 @@ public class RPIDialogFragment extends DialogFragment{
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
                     listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
                 }
+
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
         }

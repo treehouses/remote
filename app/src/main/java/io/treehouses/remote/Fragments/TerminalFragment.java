@@ -1,9 +1,7 @@
 package io.treehouses.remote.Fragments;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -31,16 +29,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
@@ -67,6 +60,18 @@ public class TerminalFragment extends Fragment {
         list.add("Docker ps");
         list.add("Rename Hostname");
         list.add("Expand File System");
+
+        InitialActivity initialActivity = new InitialActivity();
+//        RPIDialogFragment initialActivity = new RPIDialogFragment();
+//        BluetoothDevice device = initialActivity.getMainDevice();
+        mChatService = initialActivity.getChatService();
+
+//        if(mChatService == null){
+//            showRPIDialog();
+//        }else{
+        mChatService.updateHandler(mHandler);
+        Log.e("TERMINAL mChatService", ""+mChatService.getState());
+//        }
 
         listView = (ListView) view.findViewById(R.id.listView);
         listView.setDivider(null);
@@ -157,24 +162,25 @@ public class TerminalFragment extends Fragment {
 //        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
 
-        if(mChatService == null){
-            showRPIDialog();
-        }else{
+//        if(mChatService == null){
+//            showRPIDialog();
+//        }else{
             mChatService.updateHandler(mHandler);
             Log.e("TERMINAL mChatService", ""+mChatService.getState());
-        }
+            checkStatusNow();
+//        }
 //        Log.e("DEVICE ", ""+device.getName());
-        // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
-//        if (!mBluetoothAdapter.isEnabled()) {
-//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-//            // Otherwise, setup the chat session
-//        }
-//        else {
-//            setupChat();
-////            mChatService.connect(device,true);
-//        }
+//         If BT is not on, request that it be enabled.
+//         setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        }
+        else {
+            setupChat();
+//            mChatService.connect(device,true);
+        }
     }
 
 //    @Override
@@ -221,7 +227,7 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mConversationView = (ListView) view.findViewById(R.id.in);
-        mOutEditText = (EditText) view.findViewById(R.id.autoCompleteTextView);
+        mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mCheckButton = (Button) view.findViewById(R.id.check);
         mSendButton = (Button) view.findViewById(R.id.button_send);
         mPingStatus = (TextView) view.findViewById(R.id.pingStatus);
@@ -299,14 +305,7 @@ public class TerminalFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e("CHECK STATUS",""+mChatService.getState());
-                if(mChatService.getState() == Constants.STATE_CONNECTED){
-                    mConnect();
-
-                }else if(mChatService.getState() == Constants.STATE_NONE){
-                    mOffline();
-                }else{
-                    mIdle();
-                }
+                checkStatusNow();
             }
         });
 
@@ -363,6 +362,16 @@ public class TerminalFragment extends Fragment {
         mOutStringBuffer = new StringBuffer("");
     }
 
+    private void checkStatusNow(){
+        if(mChatService.getState() == Constants.STATE_CONNECTED){
+            mConnect();
+
+        }else if(mChatService.getState() == Constants.STATE_NONE){
+            mOffline();
+        }else{
+            mIdle();
+        }
+    }
     /**
      * This block is to create a dialog box for creating a new name or changing the password for the PI device
      * Sets the dialog button to be disabled if no text is in the EditText
@@ -717,21 +726,21 @@ public class TerminalFragment extends Fragment {
     */
 
     public void mOffline(){
-        mPingStatus.setText("Bluetooth Status: Offline");
+        mPingStatus.setText(R.string.bStatusOffline);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
     public void mIdle(){
-        mPingStatus.setText("Bluetooth Status: Idle (not Connected or trying to Connect)");
+        mPingStatus.setText(R.string.bStatusIdle);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.YELLOW);
     }
 
     public void mConnect(){
-        mPingStatus.setText("Bluetooth Status: Connected");
+        mPingStatus.setText(R.string.bStatusConnected);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);

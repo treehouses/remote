@@ -104,5 +104,8 @@
     <string name="rights_reserved">All Right Reserved</string>
     <string name="contributors">Contributors</string>
     <string name="version_text">Version</string>
+    <string name="bStatusOffline">Bluetooth Status: Offline</string>
+    <string name="bStatusIdle">Bluetooth Status: Idle (not Connected or trying to Connect)</string>
+    <string name="bStatusConnected">Bluetooth Status: Connected</string>
 
 </resources>
