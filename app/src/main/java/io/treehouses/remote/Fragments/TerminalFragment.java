@@ -47,6 +47,7 @@ public class TerminalFragment extends Fragment {
 
     View view;
     ListView listView;
+    InitialActivity initialActivity;
     public TerminalFragment(){}
 
     @Override
@@ -61,7 +62,7 @@ public class TerminalFragment extends Fragment {
         list.add("Rename Hostname");
         list.add("Expand File System");
 
-        InitialActivity initialActivity = new InitialActivity();
+        initialActivity = new InitialActivity();
 //        RPIDialogFragment initialActivity = new RPIDialogFragment();
 //        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
@@ -83,16 +84,7 @@ public class TerminalFragment extends Fragment {
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        //start pinging for wifi check
-        final Handler h = new Handler();
-        final int delay = 20000;
-        h.postDelayed(new Runnable(){
-            public void run(){
-                String ping = "ping -c 1 google.com";
-                sendPing(ping);
-                h.postDelayed(this, delay);
-            }
-        }, delay);
+
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
@@ -157,7 +149,7 @@ public class TerminalFragment extends Fragment {
 //        if((new RPIDialogFragment()).equals(null)){
 //            Log.e("TERMINAL", "NULL");
 //        }
-        InitialActivity initialActivity = new InitialActivity();
+        initialActivity = new InitialActivity();
 //        RPIDialogFragment initialActivity = new RPIDialogFragment();
 //        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
@@ -270,17 +262,17 @@ public class TerminalFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(position == 1){
-                    sendMessage("treehouses");
+                    initialActivity.sendMessage("treehouses");
                 }else if(position == 3){
-                    sendMessage("docker ps");
+                    initialActivity.sendMessage("docker ps");
                 }else if(position == 2){
-                    sendMessage("treehouses detectrpi");
+                    initialActivity.sendMessage("treehouses detectrpi");
                 }else if(position == 4){
-                    showDialog(view);
+//                    initialActivity.showDialog(view);
                 }else if(position == 0){
                     showChPasswordDialog();
                 }else if(position == 5){
-                    sendMessage("treehouses expandfs");
+                    initialActivity.sendMessage("treehouses expandfs");
                 }
 
             }
@@ -296,7 +288,7 @@ public class TerminalFragment extends Fragment {
                 if (null != view) {
                     TextView consoleInput = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = consoleInput.getText().toString();
-                    sendMessage(message);
+                    initialActivity.sendMessage(message);
                 }
             }
         });
@@ -372,107 +364,6 @@ public class TerminalFragment extends Fragment {
             mIdle();
         }
     }
-    /**
-     * This block is to create a dialog box for creating a new name or changing the password for the PI device
-     * Sets the dialog button to be disabled if no text is in the EditText
-     */
-    private void showDialog(View view) {
-        final EditText input = new EditText(getActivity());
-        final AlertDialog alertDialog = showAlertDialog(
-                "Rename Hostname",
-                "Please enter new hostname",
-                "treehouses rename ", input);
-
-        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
-        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-
-        input.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 0) {
-                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
-                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }else{
-                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
-                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-    }
-
-    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
-        return new AlertDialog.Builder(getActivity())
-                .setTitle(title)
-                .setMessage(message)
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setView(input)
-                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        String hostnameInput = input.getText().toString();
-                        String h = command + hostnameInput.toString();
-                        sendMessage(h);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .show();
-    }
-
-    /**
-     * Makes this device discoverable for 300 seconds (5 minutes).
-     */
-    private void ensureDiscoverable() {
-        if (mBluetoothAdapter.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
-    }
-
-    /**
-     * Sends a message.
-     *
-     * @param message A string of text to send.
-     */
-    private void sendMessage(String message) {
-        // Check that we're actually connected before trying anything
-        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            mIdle();
-            return;
-        }
-
-        // Check that there's actually something to send
-        if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
-            mOutEditText.setText(mOutStringBuffer);
-        }
-    }
-
-    private void sendPing(String ping) {
-        // Get the message bytes and tell the BluetoothChatService to write
-        byte[] pSend = ping.getBytes();
-        mChatService.write(pSend);
-        mOutStringBuffer.setLength(0);
-    }
 
     /**
      * The action listener for the EditText widget, to listen for the return key
@@ -483,11 +374,103 @@ public class TerminalFragment extends Fragment {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
-                sendMessage(message);
+                initialActivity.sendMessage(message);
             }
             return true;
         }
     };
+
+
+//    /**
+//     * This block is to create a dialog box for creating a new name or changing the password for the PI device
+//     * Sets the dialog button to be disabled if no text is in the EditText
+//     */
+//    private void showDialog(View view) {
+//        final EditText input = new EditText(getActivity());
+//        final AlertDialog alertDialog = showAlertDialog(
+//                "Rename Hostname",
+//                "Please enter new hostname",
+//                "treehouses rename ", input);
+//
+//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
+//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+//
+//        input.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if(s.length() > 0) {
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+//                }else{
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+//                }
+//            }
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//        });
+//    }
+//
+//    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
+//        return new AlertDialog.Builder(getActivity())
+//                .setTitle(title)
+//                .setMessage(message)
+//                .setIcon(android.R.drawable.ic_dialog_info)
+//                .setView(input)
+//                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                        String hostnameInput = input.getText().toString();
+//                        String h = command + hostnameInput.toString();
+//                        sendMessage(h);
+//                    }
+//                })
+//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                })
+//                .show();
+//    }
+//
+
+
+
+
+//    /**
+//     * Makes this device discoverable for 300 seconds (5 minutes).
+//     */
+//    private void ensureDiscoverable() {
+//        if (mBluetoothAdapter.getScanMode() !=
+//                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+//            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+//            startActivity(discoverableIntent);
+//        }
+//    }
+//
+//
+//
+//    /**
+//     * The action listener for the EditText widget, to listen for the return key
+//     */
+//    private TextView.OnEditorActionListener mWriteListener
+//            = new TextView.OnEditorActionListener() {
+//        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+//            // If the action is a key-up event on the return key, send the message
+//            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
+//                String message = view.getText().toString();
+//                sendMessage(message);
+//            }
+//            return true;
+//        }
+//    };
 
     /**
      * Updates the status on the action bar.
@@ -595,86 +578,86 @@ public class TerminalFragment extends Fragment {
         }
     };
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case Constants.REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
-                } else {
-                    // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-                            Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-                break;
-            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if(resultCode == Activity.RESULT_OK){
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        switch (requestCode) {
+//            case Constants.REQUEST_ENABLE_BT:
+//                // When the request to enable Bluetooth returns
+//                if (resultCode == Activity.RESULT_OK) {
+//                    // Bluetooth is now enabled, so set up a chat session
+//                    setupChat();
+//                } else {
+//                    // User did not enable Bluetooth or an error occurred
+//                    Log.d(TAG, "BT not enabled");
+//                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
+//                            Toast.LENGTH_SHORT).show();
+//                    getActivity().finish();
+//                }
+//                break;
+//            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
+//                if(resultCode == Activity.RESULT_OK){
+//
+//                    //get password change request
+//                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
+//
+//                    //store password and command
+//                    String password = "treehouses password " + chPWD;
+//
+//                    Log.d(TAG, "back from change password");
+//
+//                    //send password to command line interface
+//                    sendMessage(password);
+//
+//                }else{
+//                    Log.d(TAG, "back from change password, fail");
+//                }
+//                break;
+//        }
+//    }
 
-                    //get password change request
-                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
-
-                    //store password and command
-                    String password = "treehouses password " + chPWD;
-
-                    Log.d(TAG, "back from change password");
-
-                    //send password to command line interface
-                    sendMessage(password);
-
-                }else{
-                    Log.d(TAG, "back from change password, fail");
-                }
-                break;
-        }
-    }
-
-    /**
-     * Establish connection with other device
-     *
-     * @param data   An {@link Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
-     * @param secure Socket Security type - Secure (true) , Insecure (false)
-     */
-    private void connectDevice(Intent data, boolean secure) {
-        // Get the device MAC address
-        String address = data.getExtras()
-                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
-        mChatService.connect(device, secure);
-    }
+//    /**
+//     * Establish connection with other device
+//     *
+//     * @param data   An {@link Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
+//     * @param secure Socket Security type - Secure (true) , Insecure (false)
+//     */
+//    private void connectDevice(Intent data, boolean secure) {
+//        // Get the device MAC address
+//        String address = data.getExtras()
+//                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+//        // Get the BluetoothDevice object
+//        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+//        // Attempt to connect to the device
+//        mChatService.connect(device, secure);
+//    }
 
     // Is this unused? Can we remove this????
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflater.inflate(R.menu.bluetooth_chat, menu);
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.insecure_connect_scan: {
-                // Launch the DeviceListActivity to see devices and do scan
-                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
-                //return true;
-                break;
-            }
-            case R.id.discoverable: {
-                // Ensure this device is discoverable by others
-                ensureDiscoverable();
-                //return true;
-                break;
-            }
-            default:
-                return false;
-        }
-        return true;
-    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.insecure_connect_scan: {
+//                // Launch the DeviceListActivity to see devices and do scan
+//                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+//                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
+//                //return true;
+//                break;
+//            }
+//            case R.id.discoverable: {
+//                // Ensure this device is discoverable by others
+//                ensureDiscoverable();
+//                //return true;
+//                break;
+//            }
+//            default:
+//                return false;
+//        }
+//        return true;
+//    }
 
     public void showChPasswordDialog() {
         // Create an instance of the dialog fragment and show it

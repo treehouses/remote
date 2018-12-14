@@ -62,7 +62,7 @@ public class BluetoothChatService implements Serializable{
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+    private static String connectedDeviceName = "NULL";
     // Member fields
      final BluetoothAdapter mAdapter;
     private static Handler mHandler;
@@ -108,6 +108,7 @@ public class BluetoothChatService implements Serializable{
         return mCurrentState;
     }
 
+    public String getConnectedDeviceName(){return connectedDeviceName;}
     /**
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
@@ -179,7 +180,7 @@ public class BluetoothChatService implements Serializable{
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice
             device, final String socketType) {
         Log.d(TAG, "connected, Socket Type:" + socketType);
-
+        connectedDeviceName = device.getName();
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
             mConnectThread.cancel();

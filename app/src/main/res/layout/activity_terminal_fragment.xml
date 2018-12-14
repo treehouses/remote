@@ -55,11 +55,11 @@
 
     <Button
         android:id="@+id/PING"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/circle"
         app:layout_constraintStart_toEndOf="@+id/check"
         app:layout_constraintTop_toTopOf="parent" />
@@ -67,12 +67,12 @@
     <TextView
         android:id="@+id/pingStatus"
         android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_height="15dp"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:gravity="center_vertical"
         android:text="Bluetooth Status"
         app:layout_constraintEnd_toStartOf="@+id/button3"

@@ -108,21 +108,18 @@ public class RPIDialogFragment extends DialogFragment{
             setupBluetoothService();
         }
 
-//        Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
-//        if(pairedDevice.size()>0)
-//        {
-//            for(BluetoothDevice device : pairedDevice)
-//            {
-//                devices.add(device);
-//                String deviceName = device.getName();
-//                String deviceHardwareAddress = device.getAddress(); // MAC address
-//                s.add(deviceName+ "\n" + deviceHardwareAddress);
-////                listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
-//            }
-//        }
-
-
-
+        Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
+        if(pairedDevice.size()>0)
+        {
+            for(BluetoothDevice device : pairedDevice)
+            {
+                devices.add(device);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                s.add(deviceName+ "\n" + deviceHardwareAddress);
+//                listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
+            }
+        }
         return mDialog;
     }
 
