@@ -99,6 +99,7 @@
     <string name="menu_services">Services</string>
     <string name="menu_ssh">SSH</string>
     <string name="menu_about">About</string>
+    <string name="menu_status">Status</string>
     <string name="initial_textview">Treehouses Remote is an Android App that communicates with headless Rasberry Pi Mobile Server running Treehouses image via Bluetooth.</string>
     <string name="copyright">&#169; 2018 Open Learning Exchange</string>
     <string name="rights_reserved">All Right Reserved</string>

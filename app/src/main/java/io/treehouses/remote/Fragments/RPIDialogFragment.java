@@ -74,6 +74,10 @@ public class RPIDialogFragment extends DialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         // Build the dialog and set up the button click handlers
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothCheck();
+        if(mBluetoothAdapter.isDiscovering()) { mBluetoothAdapter.cancelDiscovery(); }
+        mBluetoothAdapter.startDiscovery();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
         dialog = new ProgressDialog(getContext(), ProgressDialog.THEME_HOLO_DARK);
@@ -98,10 +102,11 @@ public class RPIDialogFragment extends DialogFragment{
 
             }
         });
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothCheck();
-        mBluetoothAdapter.startDiscovery();
+
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         getActivity().registerReceiver(mReceiver, filter);
 
         if(mChatService == null){
@@ -202,15 +207,19 @@ public class RPIDialogFragment extends DialogFragment{
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-                if(deviceName!=null){
+//                if(deviceName!=null){
 //                    deviceNames.add(deviceName);
 //                    deviceId.add(deviceHardwareAddress);
                     devices.add(device);
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
                     listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
-                }
+//                }
 
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
+            }
+            else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                dialog.dismiss();
+                mDialog.cancel();
             }
         }
     };

@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
@@ -47,7 +48,8 @@
         <activity android:name=".Fragments.NetworkFragment" />
         <activity android:name=".Network.DeviceListActivity" />
         <activity android:name=".Fragments.AboutFragment" />
-        <activity android:name=".Fragments.TerminalFragment"></activity>
+        <activity android:name=".Fragments.TerminalFragment" />
+        <activity android:name=".Fragments.StatusFragment"></activity>
     </application>
 
 </manifest>

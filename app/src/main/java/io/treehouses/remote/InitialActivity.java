@@ -45,6 +45,7 @@ import androidx.fragment.app.FragmentTransaction;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.Fragments.ServicesFragment;
+import io.treehouses.remote.Fragments.StatusFragment;
 import io.treehouses.remote.Fragments.SystemFragment;
 import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.MiscOld.Constants;
@@ -68,6 +69,9 @@ public class InitialActivity extends AppCompatActivity {
 
         checkLocationPermission();
 
+        mChatService = new BluetoothChatService(mHandler);
+        checkStatusNow();
+
         mTopToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(mTopToolbar);
         mTopToolbar.setTitleTextColor(Color.WHITE);
@@ -78,13 +82,12 @@ public class InitialActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.app_project_name);
         openCallFragment(new HomeFragment());
 
-        mChatService = new BluetoothChatService(mHandler);
 //        if(mChatService == null){
 //            showRPIDialog();
 //        }else{
 //        Log.e("TERMINAL mChatService", ""+mChatService.getState());
-        mOutStringBuffer = new StringBuffer("");
-        checkStatusNow();
+//        mOutStringBuffer = new StringBuffer("");
+
 //        }
 //        Log.e("DEVICE ", ""+device.getName());
 //         If BT is not on, request that it be enabled.
@@ -103,6 +106,12 @@ public class InitialActivity extends AppCompatActivity {
     private String name = null;
 
     private AccountHeader getAccountHeader() {
+        String val = "";
+        if(validBluetoothConnection){
+            val = "Raspberry Pi 3B+";
+        }else{
+            val = "Not Connected";
+        }
         //Create User profile header
         return new AccountHeaderBuilder()
                 .withActivity(InitialActivity.this)
@@ -111,7 +120,7 @@ public class InitialActivity extends AppCompatActivity {
                 .withSelectionListEnabled(false)
                 .addProfiles(
 //                        new ProfileDrawerItem().withIcon(R.drawable.circle),
-                        new ProfileDrawerItem().withName("You are conected to:").withEmail("N/A").withIcon(R.drawable.wifiicon).withIdentifier(0)
+                        new ProfileDrawerItem().withName("You are conected to:").withEmail(val).withIcon(R.drawable.wifiicon).withIdentifier(0)
                 )
                 .withCompactStyle(true)
                 .withDividerBelowHeader(true)
@@ -178,6 +187,13 @@ public class InitialActivity extends AppCompatActivity {
                     showAlertDialog();
                 }
                 break;
+            case R.string.menu_status:
+                if(validBluetoothConnection){
+                    openCallFragment(new StatusFragment());
+                }else{
+                    showAlertDialog();
+                }
+                break;
 //            case R.string.menu_courses:
 //                openCallFragment(new MyCourseFragment());
 //                break;
@@ -201,6 +217,7 @@ public class InitialActivity extends AppCompatActivity {
         menuImageList.add(getResources().getDrawable(R.drawable.circle));
         menuImageList.add(getResources().getDrawable(R.drawable.ssh));
         menuImageList.add(getResources().getDrawable(R.drawable.about));
+        menuImageList.add(getResources().getDrawable(R.drawable.about));
 
         return new IDrawerItem[]{
                 changeUX(R.string.menu_home, menuImageList.get(0)).withIdentifier(0),
@@ -210,6 +227,7 @@ public class InitialActivity extends AppCompatActivity {
                 changeUX(R.string.menu_services, menuImageList.get(4)).withIdentifier(4),
                 changeUX(R.string.menu_ssh, menuImageList.get(5)).withIdentifier(5),
                 changeUX(R.string.menu_about, menuImageList.get(6)).withIdentifier(6),
+                changeUX(R.string.menu_status, menuImageList.get(7)).withIdentifier(7),
         };
     }
 
@@ -277,7 +295,7 @@ public class InitialActivity extends AppCompatActivity {
     /**
      * String buffer for outgoing messages
      */
-    private StringBuffer mOutStringBuffer;
+//    private StringBuffer mOutStringBuffer;
 
     public InitialActivity(){}
     public void setChatService(BluetoothChatService chatService){
@@ -397,7 +415,7 @@ public class InitialActivity extends AppCompatActivity {
             mChatService.write(send);
 
             // Reset out string buffer to zero and clear the edit text field
-            mOutStringBuffer.setLength(0);
+//            mOutStringBuffer.setLength(0);
         }
     }
 
@@ -405,7 +423,7 @@ public class InitialActivity extends AppCompatActivity {
         // Get the message bytes and tell the BluetoothChatService to write
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
-        mOutStringBuffer.setLength(0);
+//        mOutStringBuffer.setLength(0);
     }
 
     /**
@@ -500,10 +518,11 @@ public class InitialActivity extends AppCompatActivity {
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
+                    Log.e("DEVICE",""+mConnectedDeviceName);
+//                    if (null != activity) {
+//                        Toast.makeText(activity, "Connected to "
+//                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+//                    }
                     break;
                 case Constants.MESSAGE_TOAST:
                     if (null != activity) {
@@ -526,17 +545,20 @@ public class InitialActivity extends AppCompatActivity {
     }
 
     public void mOffline(){
-        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
-        headerResult.updateProfile(iProfile);
+//        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
+//        headerResult.updateProfile(iProfile);
+        Log.e("STATUS","OFFLINE");
     }
 
     public void mIdle(){
-        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
-        headerResult.updateProfile(iProfile);
+//        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
+//        headerResult.updateProfile(iProfile);
+        Log.e("STATUS","IDLE");
     }
 
     public void mConnect(){
-        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail(mConnectedDeviceName).withIcon(R.drawable.wifiicon).withIdentifier(0);
-        headerResult.updateProfile(iProfile);
+//        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail(mConnectedDeviceName).withIcon(R.drawable.wifiicon).withIdentifier(0);
+//        headerResult.updateProfile(iProfile);
+        Log.e("STATUS","CONNECTED");
     }
 }

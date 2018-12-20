@@ -75,7 +75,7 @@
         android:layout_marginRight="8dp"
         android:gravity="center_vertical"
         android:text="Bluetooth Status"
-        app:layout_constraintEnd_toStartOf="@+id/button3"
+        app:layout_constraintEnd_toStartOf="@+id/rpiName"
         app:layout_constraintStart_toEndOf="@+id/PING"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,7 +93,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/rpiName"
         android:layout_width="75dp"
         android:layout_height="30dp"
         android:layout_marginEnd="8dp"
