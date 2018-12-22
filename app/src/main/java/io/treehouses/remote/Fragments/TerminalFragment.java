@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.Network.DeviceListActivity;
 import io.treehouses.remote.R;
 
 public class TerminalFragment extends androidx.fragment.app.Fragment {

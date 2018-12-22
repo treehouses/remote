@@ -28,7 +28,6 @@ import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.Network.DeviceListActivity;
 import io.treehouses.remote.R;
 
 public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
@@ -130,15 +129,15 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, empty));
     }
 
-    private void connectDevice(Intent data) {
-        // Get the device MAC address
-        String address = data.getExtras()
-                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        mainDevice = mBluetoothAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
-        mChatService.connect(mainDevice, true);
-    }
+//    private void connectDevice(Intent data) {
+//        // Get the device MAC address
+//        String address = data.getExtras()
+//                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+//        // Get the BluetoothDevice object
+//        mainDevice = mBluetoothAdapter.getRemoteDevice(address);
+//        // Attempt to connect to the device
+//        mChatService.connect(mainDevice, true);
+//    }
 
     @Override
     public void onStart() {
