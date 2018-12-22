@@ -15,52 +15,54 @@
 * governing permissions and limitations under the License.
 
 */
-
-
-package io.treehouses.remote;
-
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
-
-public class MainActivity extends FragmentActivity {
-
-    public static final String TAG = "MainActivity";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setLogo(R.mipmap.ic_launcher);
-        getActionBar().setDisplayUseLogoEnabled(true);
-
-
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            Dashboard db = new Dashboard();
-            //transaction.replace(R.id.sample_layout, db);
-            transaction.add(R.id.sample_layout,db);
-            transaction.commit();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bluetooth_chat, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-}
+//
+//
+//package io.treehouses.remote;
+//
+//import android.os.Bundle;
+//import android.view.Menu;
+//import android.view.MenuItem;
+//
+//import androidx.fragment.app.FragmentActivity;
+//import androidx.fragment.app.FragmentTransaction;
+//import io.treehouses.remote.FragmentsOld.Dashboard;
+//
+//public class MainActivity extends FragmentActivity {
+//
+//    public static final String TAG = "MainActivity";
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//        getActionBar().setDisplayShowHomeEnabled(true);
+//        getActionBar().setLogo(R.mipmap.ic_launcher);
+//        getActionBar().setDisplayUseLogoEnabled(true);
+//
+//
+//        if (savedInstanceState == null) {
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            Dashboard db = new Dashboard();
+//            //transaction.replace(R.id.sample_layout, db);
+//            transaction.add(R.id.sample_layout,db);
+//            transaction.commit();
+//        }
+//    }
+//
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.bluetooth_chat, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        return super.onPrepareOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//}
