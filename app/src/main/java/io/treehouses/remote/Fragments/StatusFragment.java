@@ -65,10 +65,10 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
                              Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.activity_status_fragment, container, false);
 
-        btStatus = (Button) view.findViewById(R.id.btStatus);
-        wifiStatus = (Button) view.findViewById(R.id.wifiStatus);
-        btRPIName = (Button) view.findViewById(R.id.rpiName);
-        rpiType = (Button) view.findViewById(R.id.rpiType);
+        btStatus = view.findViewById(R.id.btStatus);
+        wifiStatus = view.findViewById(R.id.wifiStatus);
+        btRPIName = view.findViewById(R.id.rpiName);
+        rpiType = view.findViewById(R.id.rpiType);
 
 //        allButtons.add(btStatus);
 //        allButtons.add(wifiStatus);

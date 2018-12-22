@@ -21,10 +21,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.util.ArrayList;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -43,13 +40,13 @@ import io.treehouses.remote.Network.BluetoothChatService;
 public class InitialActivity extends AppCompatActivity {
 
     private Boolean validBluetoothConnection = false;
-    private Boolean validWifiConnection = false;
+//    private Boolean validWifiConnection = false;
     private Toolbar mTopToolbar;
     AccountHeader headerResult;
     private Drawer result = null;
     int REQUEST_COARSE_LOCATION = 99;
     private static BluetoothChatService mChatService;
-    ProfileDrawerItem[] profileDrawerItem;
+//    ProfileDrawerItem[] profileDrawerItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,15 +89,12 @@ public class InitialActivity extends AppCompatActivity {
 //        }
     }
 
-    private String name = null;
+//    private String name = null;
 
     private AccountHeader getAccountHeader() {
         String val = "";
-        if(validBluetoothConnection){
-            val = "Raspberry Pi 3B+";
-        }else{
-            val = "Not Connected";
-        }
+        if(validBluetoothConnection){val = "Raspberry Pi 3B+"; }
+        else{ val = "Not Connected"; }
         //Create User profile header
         return new AccountHeaderBuilder()
                 .withActivity(InitialActivity.this)
@@ -146,42 +140,27 @@ public class InitialActivity extends AppCompatActivity {
         checkStatusNow();
         switch (selectedMenuId) {
             case R.string.menu_network:
-                if(validBluetoothConnection){
-                    openCallFragment((new NetworkFragment()));
-                }else{
-                    showAlertDialog();
-                }
+                if(validBluetoothConnection){ openCallFragment((new NetworkFragment())); }
+                else{showAlertDialog();}
                 break;
             case R.string.menu_home:
                 openCallFragment(new HomeFragment());
                 break;
             case R.string.menu_services:
-                if(validBluetoothConnection){
-                    openCallFragment(new ServicesFragment());
-                }else{
-                    showAlertDialog();
-                }
+                if(validBluetoothConnection){openCallFragment(new ServicesFragment()); }
+                else{showAlertDialog(); }
                 break;
             case R.string.menu_system:
-                if(validBluetoothConnection){
-                    openCallFragment(new SystemFragment());
-                }else{
-                    showAlertDialog();
-                }
+                if(validBluetoothConnection){ openCallFragment(new SystemFragment()); }
+                else{ showAlertDialog(); }
                 break;
             case R.string.menu_terminal:
-                if(validBluetoothConnection){
-                    openCallFragment(new TerminalFragment());
-                }else{
-                    showAlertDialog();
-                }
+                if(validBluetoothConnection){ openCallFragment(new TerminalFragment());}
+                else{ showAlertDialog(); }
                 break;
             case R.string.menu_status:
-                if(validBluetoothConnection){
-                    openCallFragment(new StatusFragment());
-                }else{
-                    showAlertDialog();
-                }
+                if(validBluetoothConnection){ openCallFragment(new StatusFragment()); }
+                else{ showAlertDialog(); }
                 break;
 //            case R.string.menu_courses:
 //                openCallFragment(new MyCourseFragment());
@@ -295,7 +274,7 @@ public class InitialActivity extends AppCompatActivity {
     public void setChatService(BluetoothChatService chatService){
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
-        checkStatusNow();;
+        checkStatusNow();
     }
     public BluetoothChatService getChatService(){return mChatService; }
 
@@ -370,9 +349,7 @@ public class InitialActivity extends AppCompatActivity {
                 .setIcon(R.drawable.bluetooth)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
+                    public void onClick(DialogInterface dialog, int which) { dialog.cancel(); }
                 })
                 .show();
     }
@@ -412,13 +389,13 @@ public class InitialActivity extends AppCompatActivity {
 //            mOutStringBuffer.setLength(0);
         }
     }
-
-    public void sendPing(String ping) {
-        // Get the message bytes and tell the BluetoothChatService to write
-        byte[] pSend = ping.getBytes();
-        mChatService.write(pSend);
-//        mOutStringBuffer.setLength(0);
-    }
+//
+//    public void sendPing(String ping) {
+//        // Get the message bytes and tell the BluetoothChatService to write
+//        byte[] pSend = ping.getBytes();
+//        mChatService.write(pSend);
+////        mOutStringBuffer.setLength(0);
+//    }
 
     /**
      * Updates the status on the action bar.
@@ -529,16 +506,16 @@ public class InitialActivity extends AppCompatActivity {
         }
     };
 
-
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
-
+//
+//    public boolean isJson(String str) {
+//        try {
+//            new JSONObject(str);
+//        } catch (JSONException ex) {
+//            return false;
+//        }
+//        return true;
+//    }
+//
     public void mOffline(){
 //        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
 //        headerResult.updateProfile(iProfile);

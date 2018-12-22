@@ -101,8 +101,8 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
     }
 
     protected void initLayoutView(View mView) {
-        hotspotSSIDEditText = (EditText)mView.findViewById(R.id.hotspotSSID);
-        hotspotPWDEditText = (EditText)mView.findViewById(R.id.hotspotPassword);
+        hotspotSSIDEditText = mView.findViewById(R.id.hotspotSSID);
+        hotspotPWDEditText = mView.findViewById(R.id.hotspotPassword);
     }
 }
 

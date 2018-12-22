@@ -39,7 +39,7 @@ public class SystemFragment extends androidx.fragment.app.Fragment {
         list.add("Container");
         list.add("Upgrade CLI");
 
-        ListView listView = (ListView) view.findViewById(R.id.listView);
+        ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 

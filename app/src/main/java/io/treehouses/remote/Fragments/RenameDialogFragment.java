@@ -83,6 +83,6 @@ public class RenameDialogFragment extends DialogFragment {
     }
 
     protected void initLayoutView(View mView) {
-        mHostNameEditText = (EditText)mView.findViewById(R.id.hostname);
+        mHostNameEditText = mView.findViewById(R.id.hostname);
     }
 }

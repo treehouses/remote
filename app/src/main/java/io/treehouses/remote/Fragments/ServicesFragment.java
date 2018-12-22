@@ -38,10 +38,10 @@ public class ServicesFragment extends androidx.fragment.app.Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_services_fragment, container, false);
 
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
+        ViewPager viewPager = view.findViewById(R.id.pager);
 
         // Create an adapter that knows which fragment should be shown on each page
         SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getContext(), getChildFragmentManager());

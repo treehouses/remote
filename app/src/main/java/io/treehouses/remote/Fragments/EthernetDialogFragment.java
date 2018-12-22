@@ -103,10 +103,10 @@ public class EthernetDialogFragment extends androidx.fragment.app.DialogFragment
     }
 
     protected void initLayoutView(View mView) {
-        IpAddressEditText = (EditText)mView.findViewById(R.id.ip);
-        MaskEditText = (EditText)mView.findViewById(R.id.mask);
-        GateWayEditText = (EditText)mView.findViewById(R.id.gateway);
-        DNSEditText = (EditText)mView.findViewById(R.id.dns);
+        IpAddressEditText = mView.findViewById(R.id.ip);
+        MaskEditText = mView.findViewById(R.id.mask);
+        GateWayEditText = mView.findViewById(R.id.gateway);
+        DNSEditText = mView.findViewById(R.id.dns);
     }
 
 }

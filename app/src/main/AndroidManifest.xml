@@ -46,7 +46,6 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".Fragments.NetworkFragment" />
-        <activity android:name=".Network.DeviceListActivity" />
         <activity android:name=".Fragments.AboutFragment" />
         <activity android:name=".Fragments.TerminalFragment" />
         <activity android:name=".Fragments.StatusFragment"></activity>

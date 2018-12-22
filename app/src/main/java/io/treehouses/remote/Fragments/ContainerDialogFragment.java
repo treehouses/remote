@@ -81,6 +81,6 @@ public class ContainerDialogFragment extends DialogFragment {
                 .create();
     }
     protected void initLayoutView(View mView) {
-        mSpinner = (Spinner)mView.findViewById(R.id.spinner);
+        mSpinner = mView.findViewById(R.id.spinner);
     }
 }

@@ -82,7 +82,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setTitle("Connecting...");
-                dialog.setMessage("Device Name: "+mainDevice.getName().toString()+"\nDevice Address: "+mainDevice.getAddress().toString());
+                dialog.setMessage("Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
                 dialog.show();
 
             }

@@ -92,8 +92,8 @@ public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
     }
 
     protected void initLayoutView(View mView) {
-        mSSIDEditText = (EditText)mView.findViewById(R.id.SSID);
-        mPWDEditText = (EditText)mView.findViewById(R.id.password);
+        mSSIDEditText = mView.findViewById(R.id.SSID);
+        mPWDEditText = mView.findViewById(R.id.password);
     }
 }
 

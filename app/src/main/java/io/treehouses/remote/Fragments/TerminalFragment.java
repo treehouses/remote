@@ -70,7 +70,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         Log.e("TERMINAL mChatService", ""+mChatService.getState());
 //        }
 
-        listView = (ListView) view.findViewById(R.id.listView);
+        listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
         listView.setDividerHeight(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, list);
@@ -93,20 +93,20 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 
     private static final String TAG = "BluetoothChatFragment";
 
-    //current connection status
-    static String currentStatus = "not connected";
+//    //current connection status
+//    static String currentStatus = "not connected";
 
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
-    private Button treehousesButton;
-    private Button dockerButton;
-    private Button RPI_HW_Button;
+//    private Button treehousesButton;
+//    private Button dockerButton;
+//    private Button RPI_HW_Button;
     private Button pingStatusButton;
-    private Button hostnameButton;
-    private Button changePasswordButton;
-    private Button expandButton;
+//    private Button hostnameButton;
+//    private Button changePasswordButton;
+//    private Button expandButton;
     private Button mCheckButton;
     private TextView mPingStatus;
 
@@ -213,15 +213,15 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mConversationView = (ListView) view.findViewById(R.id.in);
-        mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
-        mCheckButton = (Button) view.findViewById(R.id.check);
-        mSendButton = (Button) view.findViewById(R.id.button_send);
-        mPingStatus = (TextView) view.findViewById(R.id.pingStatus);
+        mConversationView = view.findViewById(R.id.in);
+        mOutEditText = view.findViewById(R.id.edit_text_out);
+        mCheckButton = view.findViewById(R.id.check);
+        mSendButton = view.findViewById(R.id.button_send);
+        mPingStatus = view.findViewById(R.id.pingStatus);
 //        treehousesButton = (Button) view.findViewById(R.id.TB);
 //        dockerButton = (Button)view.findViewById(R.id.DB);
 //        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
-        pingStatusButton = (Button)view.findViewById(R.id.PING);
+        pingStatusButton = view.findViewById(R.id.PING);
 //        hostnameButton = (Button)view.findViewById(R.id.HN);
 //        changePasswordButton = (Button) view.findViewById(R.id.CP);
 //        expandButton = (Button)view.findViewById(R.id.EF);
@@ -238,7 +238,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView consoleView = (TextView) view.findViewById(R.id.listItem);
+                TextView consoleView = view.findViewById(R.id.listItem);
                 if(isRead){
                     consoleView.setTextColor(Color.BLUE);
                 }else{
@@ -280,7 +280,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 // Send a message using content of the edit text widget
                 View view = getView();
                 if (null != view) {
-                    TextView consoleInput = (TextView) view.findViewById(R.id.edit_text_out);
+                    TextView consoleInput = view.findViewById(R.id.edit_text_out);
                     String message = consoleInput.getText().toString();
                     initialActivity.sendMessage(message);
                 }
@@ -345,7 +345,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             mChatService = new BluetoothChatService( mHandler);
         }
         // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
+        mOutStringBuffer = new StringBuffer();
     }
 
     private void checkStatusNow(){
@@ -625,10 +625,10 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //    }
 
     // Is this unused? Can we remove this????
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //inflater.inflate(R.menu.bluetooth_chat, menu);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        //inflater.inflate(R.menu.bluetooth_chat, menu);
+//    }
 //
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {

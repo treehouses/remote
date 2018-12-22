@@ -44,7 +44,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         list.add("Bridge");
         list.add("Reset");
 
-        ListView listView = (ListView) view.findViewById(R.id.listView);
+        ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 
@@ -116,18 +116,18 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
             switch (type){
                 case "wifi":
                     wifiOn(bundle);
-                    return;
+                    break;
                 case "hotspot":
                     hotspotOn(bundle);
-                    return;
+                    break;
                 case "ethernet":
                     ethernetOn(bundle);
-                    return;
+                    break;
                 case "bridge":
                     bridgeOn(bundle);
-                    return;
+                    break;
                 default:
-                    return;
+                    break;
             }
 
         }

@@ -76,8 +76,8 @@ public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragme
     }
     //initialize the view
     protected void initLayoutView(View mView) {
-        passwordEditText = (EditText)mView.findViewById(R.id.changePassword);
-        confirmPassEditText = (EditText)mView.findViewById(R.id.confirmPassword);
+        passwordEditText = mView.findViewById(R.id.changePassword);
+        confirmPassEditText = mView.findViewById(R.id.confirmPassword);
 
     }
     //listener for text change within this dialog

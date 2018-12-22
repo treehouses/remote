@@ -34,7 +34,7 @@ public class ServicesTabFragment extends Fragment {
         list.add("Khan Academy Lite");
         list.add("Kolibri");
 
-        ListView listView = (ListView) view.findViewById(R.id.listView);
+        ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 

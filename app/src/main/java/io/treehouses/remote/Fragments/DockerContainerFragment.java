@@ -30,7 +30,7 @@ public class DockerContainerFragment extends Fragment{
         list.add("housing_django_1");
         list.add("housing_postgres_1");
 
-        ListView listView = (ListView) view.findViewById(R.id.listView);
+        ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 
