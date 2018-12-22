@@ -47,7 +47,7 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
 
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.hotspot_dialog,null);
+        View mView = inflater.inflate(R.layout.dialog_hotspot,null);
         initLayoutView(mView);
 
         ArrayList<String> list = new ArrayList<String>();
