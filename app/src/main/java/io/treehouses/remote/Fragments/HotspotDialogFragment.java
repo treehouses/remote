@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 import io.treehouses.remote.R;
 
@@ -27,7 +31,7 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
 //    protected EditText confirmPWDEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
 
-
+    Spinner spinner;
     public static HotspotDialogFragment newInstance(int num) {
         HotspotDialogFragment hDialogFragment = new HotspotDialogFragment();
 //        Bundle bundle = new Bundle();
@@ -45,6 +49,14 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mView = inflater.inflate(R.layout.hotspot_dialog,null);
         initLayoutView(mView);
+
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("local");
+        list.add("internet");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         final AlertDialog mDialog = getAlertDialog(mView);
         mDialog.setTitle(R.string.dialog_message_hotspot);
@@ -66,11 +78,20 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
                                 String SSID = hotspotSSIDEditText.getText().toString();
+                                String hotspotType = spinner.getSelectedItem().toString();
+                                if(hotspotPWDEditText.getText().toString() == null){
+                                    Intent intent = new Intent();
+                                    intent.putExtra("HSSID", SSID);
+                                    intent.putExtra("HPWD", "");
+                                    intent.putExtra("hotspotType",hotspotType);
+                                    intent.putExtra("type", "hotspot");
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                }
                                 String PWD = hotspotPWDEditText.getText().toString();
-
                                 Intent intent = new Intent();
                                 intent.putExtra("HSSID", SSID);
                                 intent.putExtra("HPWD", PWD);
+                                intent.putExtra("hotspotType",hotspotType);
                                 intent.putExtra("type", "hotspot");
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
@@ -101,6 +122,7 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
     }
 
     protected void initLayoutView(View mView) {
+        spinner = mView.findViewById(R.id.hostspotType);
         hotspotSSIDEditText = mView.findViewById(R.id.hotspotSSID);
         hotspotPWDEditText = mView.findViewById(R.id.hotspotPassword);
     }

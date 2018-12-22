@@ -73,7 +73,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 showBridgeDialog();
                 break;
             case 4:
-                showResetFragment();
+                initialActivity.sendMessage("treehouses default");
                 break;
             default:
                 Log.e("Default Network Switch", "Nothing...");
@@ -99,11 +99,11 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
     }
-    public void showResetFragment(){
-        androidx.fragment.app.DialogFragment dialogFrag = ResetFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "resetDialog");
-    }
+//    public void showResetFragment(){
+//        androidx.fragment.app.DialogFragment dialogFrag = ResetFragment.newInstance(123);
+//        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
+//        dialogFrag.show(getFragmentManager().beginTransaction(), "resetDialog");
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -165,7 +165,11 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 //        Log.d("WifiPreference", "enableNetwork returned " + b );
     }
     private void hotspotOn(Bundle bundle){
-
+        if(bundle.getString("HPWD").equals("")){
+            initialActivity.sendMessage("treehouses ap "+bundle.getString("hotspotType")+" "+bundle.getString("HSSID"));
+        }else{
+            initialActivity.sendMessage("treehouses ap "+bundle.getString("hotspotType")+" "+bundle.getString("HSSID")+" "+bundle.getString("HPWD"));
+        }
     }
     private void ethernetOn(Bundle bundle){
         initialActivity.sendMessage("treehouses ethernet "+bundle.getString("ip")+" "+bundle.getString("mask")+" "+bundle.getString("gateway")+" "+bundle.getString("dns"));
