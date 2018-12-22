@@ -3,6 +3,7 @@ package io.treehouses.remote;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -23,6 +24,8 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -265,7 +268,13 @@ public class InitialActivity extends AppCompatActivity {
         }
     }
 
-/**
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mChatService.updateHandler(mHandler);
+    }
+
+    /**
  *
  *
  *  START OF COMMON BLUETOOTH COMMUNICATION FEATURES
@@ -504,17 +513,18 @@ public class InitialActivity extends AppCompatActivity {
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     Log.e("DEVICE",""+mConnectedDeviceName);
+//                    Toast.makeText(InitialActivity.this, "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
 //                    if (null != activity) {
 //                        Toast.makeText(activity, "Connected to "
 //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
 //                    }
                     break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
+//                case Constants.MESSAGE_TOAST:
+//                    if (null != activity) {
+//                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//                    break;
             }
         }
     };

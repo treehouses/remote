@@ -219,6 +219,8 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if(msg.what == Constants.MESSAGE_DEVICE_NAME){
+                String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                Toast.makeText(getContext(), "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
                 dialog.dismiss();
                 mDialog.cancel();
             }
