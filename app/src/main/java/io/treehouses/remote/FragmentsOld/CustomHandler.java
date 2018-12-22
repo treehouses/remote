@@ -48,7 +48,7 @@ public class CustomHandler extends Handler {
 
     }
 
-    public CustomHandler(FragmentActivity fragmentActivity) {
+    public CustomHandler(Activity fragmentActivity) {
         this.currentActivity = fragmentActivity;
     }
 

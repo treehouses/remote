@@ -14,7 +14,7 @@ import io.treehouses.remote.R;
  * This class is the hotspot and wifi dialog validator
  */
 
-public class TextBoxValidation extends DialogFragment{
+public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
 
     AlertDialog mDialog;
     EditText textWatcher;

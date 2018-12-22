@@ -10,16 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import io.treehouses.remote.R;
 
-/**
- * Created by yubo on 7/19/17.
- */
-
-public class WifiDialogFragment extends DialogFragment {
+public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static final String TAG = "WifiDialogFragment";
 
@@ -38,7 +31,6 @@ public class WifiDialogFragment extends DialogFragment {
         return dialogFragment;
     }
 
-    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG,"In onCreateDialog()");
@@ -90,13 +82,13 @@ public class WifiDialogFragment extends DialogFragment {
         textboxValidation.textWatcher = mSSIDEditText;
         textboxValidation.SSID = mSSIDEditText;
         textboxValidation.PWD = mPWDEditText;
-        textboxValidation.textboxValidation(getContext(), "wifi");
+        textboxValidation.textboxValidation(getActivity(), "wifi");
 
         textboxValidation.mDialog = mDialog;
         textboxValidation.textWatcher = mPWDEditText;
         textboxValidation.SSID = mSSIDEditText;
         textboxValidation.PWD = mPWDEditText;
-        textboxValidation.textboxValidation(getContext(), "wifi");
+        textboxValidation.textboxValidation(getActivity(), "wifi");
     }
 
     protected void initLayoutView(View mView) {

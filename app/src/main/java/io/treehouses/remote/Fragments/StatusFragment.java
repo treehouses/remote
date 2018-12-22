@@ -1,12 +1,11 @@
 package io.treehouses.remote.Fragments;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -20,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class StatusFragment extends Fragment {
+public class StatusFragment extends androidx.fragment.app.Fragment {
 
     public StatusFragment(){}
 

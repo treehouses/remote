@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +17,7 @@ import io.treehouses.remote.R;
  * Created by going-gone on 4/19/2018.
  */
 
-public class ChPasswordDialogFragment extends DialogFragment {
+public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static String TAG = "ChPasswordDialogFragment";
 
@@ -32,7 +30,6 @@ public class ChPasswordDialogFragment extends DialogFragment {
         return chPassDialogFragment;
     }
 
-    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG,"In onCreateDialog()");
@@ -64,6 +61,7 @@ public class ChPasswordDialogFragment extends DialogFragment {
                                 String chPass = passwordEditText.getText().toString();
 
                                 Intent i = new Intent();
+                                i.putExtra("type","chPass");
                                 i.putExtra("password", chPass);
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, i);
                             }
@@ -87,12 +85,12 @@ public class ChPasswordDialogFragment extends DialogFragment {
         textBoxValidation.mDialog = mDialog;
         textBoxValidation.textWatcher = passwordEditText;
         textBoxValidation.PWD = passwordEditText;
-        textBoxValidation.changePWValidation(confirmPassEditText, getContext());
+        textBoxValidation.changePWValidation(confirmPassEditText, getActivity());
 
         textBoxValidation.mDialog = mDialog;
         textBoxValidation.textWatcher = confirmPassEditText;
         textBoxValidation.PWD = passwordEditText;
-        textBoxValidation.changePWValidation(confirmPassEditText, getContext());
+        textBoxValidation.changePWValidation(confirmPassEditText, getActivity());
 
     }
 }

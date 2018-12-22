@@ -11,28 +11,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.fragment.app.DialogFragment;
 import io.treehouses.remote.R;
 
-public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
+public class RenameDialogFragment extends DialogFragment {
+    private static final String TAG = "RenameDialogFragment";
 
-    private static final String TAG = "HotspotDialogFragment";
-
-    protected EditText ESSIDEditText;
-    protected EditText HotspotESSIDEditText;
-    protected EditText PasswordEditText;
-    protected EditText HotspotPasswordEditText;
-
-    //    protected EditText confirmPWDEditText;
+    // Layout Views
+    protected EditText mHostNameEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
 
+    public static RenameDialogFragment newInstance(int num){
 
-    public static BridgeDialogFragment newInstance(int num) {
-        BridgeDialogFragment bridgeDialogFragment = new BridgeDialogFragment();
+        RenameDialogFragment dialogFragment = new RenameDialogFragment();
 //        Bundle bundle = new Bundle();
 //        bundle.putInt("num", num);
 //        dialogFragment.setArguments(bundle);
 
-        return bridgeDialogFragment;
+        return dialogFragment;
     }
 
     @Override
@@ -41,7 +37,7 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
 
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.dialog_bridge,null);
+        View mView = inflater.inflate(R.layout.dialog_rename,null);
         initLayoutView(mView);
 
         final AlertDialog mDialog = getAlertDialog(mView);
@@ -62,16 +58,11 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                                String essid = ESSIDEditText.getText().toString();
-                                String hotspotessid = HotspotESSIDEditText.getText().toString();
-                                String password = PasswordEditText.getText().toString();
-                                String hotspotpassword = HotspotPasswordEditText.getText().toString();
+                                String hostname = mHostNameEditText.getText().toString();
 
                                 Intent intent = new Intent();
-                                intent.putExtra("essid", essid);
-                                intent.putExtra("hssid", hotspotessid);
-                                intent.putExtra("password",password);
-                                intent.putExtra("hpassword",hotspotpassword);
+                                intent.putExtra("hostname", hostname);
+                                intent.putExtra("type", "rename");
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }
@@ -85,27 +76,13 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
     }
 
     public void setTextChangeListener(final AlertDialog mDialog) {
-        addingTextChange(mDialog, ESSIDEditText);
-        addingTextChange(mDialog, HotspotESSIDEditText);
-        addingTextChange(mDialog, PasswordEditText);
-        addingTextChange(mDialog, HotspotPasswordEditText);
-    }
-
-    public void addingTextChange(final AlertDialog mDialog, EditText editText){
         textboxValidation.mDialog = mDialog;
-        textboxValidation.textWatcher = editText;
-        textboxValidation.ESSIDEditText = ESSIDEditText;
-        textboxValidation.HotspotESSIDEditText = HotspotESSIDEditText;
-        textboxValidation.PasswordEditText = PasswordEditText;
-        textboxValidation.HotspotPasswordEditText = HotspotPasswordEditText;
-        textboxValidation.textboxValidation(getContext(), "bridge");
+        textboxValidation.textWatcher = mHostNameEditText;
+        textboxValidation.SSID = mHostNameEditText;
+        textboxValidation.textboxValidation(getActivity(), "rename");
     }
 
     protected void initLayoutView(View mView) {
-        ESSIDEditText = (EditText)mView.findViewById(R.id.ESSID);
-        HotspotESSIDEditText = (EditText)mView.findViewById(R.id.hotspotESSID);
-        PasswordEditText = (EditText)mView.findViewById(R.id.password);
-        HotspotPasswordEditText = (EditText)mView.findViewById(R.id.hotspotPassword);
+        mHostNameEditText = (EditText)mView.findViewById(R.id.hostname);
     }
-
 }

@@ -1,10 +1,10 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +13,7 @@ import android.widget.Button;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.R;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends androidx.fragment.app.Fragment {
 
     View view;
 
@@ -36,7 +36,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void showRPIDialog(){
-        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
+        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
     }

@@ -2,26 +2,15 @@ package io.treehouses.remote;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -30,17 +19,14 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
@@ -158,7 +144,7 @@ public class InitialActivity extends AppCompatActivity {
         switch (selectedMenuId) {
             case R.string.menu_network:
                 if(validBluetoothConnection){
-                    openCallFragment(new NetworkFragment());
+                    openCallFragment((new NetworkFragment()));
                 }else{
                     showAlertDialog();
                 }
@@ -207,7 +193,6 @@ public class InitialActivity extends AppCompatActivity {
                 break;
         }
     }
-    @NonNull
     private IDrawerItem[] getDrawerItems() {
         ArrayList<Drawable> menuImageList = new ArrayList<>();
         menuImageList.add(getResources().getDrawable(R.drawable.home));
@@ -249,7 +234,7 @@ public class InitialActivity extends AppCompatActivity {
         }
     }
 
-    public void openCallFragment(Fragment newfragment) {
+    public void openCallFragment(androidx.fragment.app.Fragment newfragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, newfragment);
         fragmentTransaction.addToBackStack("");

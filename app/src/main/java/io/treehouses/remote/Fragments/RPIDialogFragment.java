@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,39 +12,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.DeviceListActivity;
 import io.treehouses.remote.R;
-import me.aflak.bluetooth.Bluetooth;
 
-public class RPIDialogFragment extends DialogFragment{
+public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static BluetoothChatService mChatService = null;
 
@@ -54,13 +42,12 @@ public class RPIDialogFragment extends DialogFragment{
     private ArrayAdapter<String> mConversationArrayAdapter;
     ListView listView;
     BluetoothAdapter mBluetoothAdapter;
-    Bluetooth bluetooth;
     List<String> s = new ArrayList<String>();
     List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
     static BluetoothDevice mainDevice = null;
     ProgressDialog dialog;
 
-    public static RPIDialogFragment newInstance(int num) {
+    public static androidx.fragment.app.DialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("num", num);
@@ -69,7 +56,6 @@ public class RPIDialogFragment extends DialogFragment{
         return rpiDialogFragment;
     }
 
-    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -80,7 +66,7 @@ public class RPIDialogFragment extends DialogFragment{
         mBluetoothAdapter.startDiscovery();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
-        dialog = new ProgressDialog(getContext(), ProgressDialog.THEME_HOLO_DARK);
+        dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_HOLO_DARK);
         listView = mView.findViewById(R.id.listView);
         mDialog = getAlertDialog(mView);
         mDialog.setTitle(R.string.select_device);
@@ -141,7 +127,7 @@ public class RPIDialogFragment extends DialogFragment{
             mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         }
         List<String> empty = new ArrayList<>();
-        listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, empty));
+        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, empty));
     }
 
     private void connectDevice(Intent data) {
@@ -190,7 +176,7 @@ public class RPIDialogFragment extends DialogFragment{
     protected void bluetoothCheck() {
         if(mBluetoothAdapter == null){
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
-            Toast.makeText(getContext(), "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show();
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
             getActivity().unregisterReceiver(mReceiver);
         }
@@ -212,7 +198,7 @@ public class RPIDialogFragment extends DialogFragment{
 //                    deviceId.add(deviceHardwareAddress);
                     devices.add(device);
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
-                    listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
+                    listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
 //                }
 
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());

@@ -1,5 +1,7 @@
 package io.treehouses.remote.Fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,17 +10,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
+import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.R;
 
-public class SystemFragment extends Fragment {
+public class SystemFragment extends androidx.fragment.app.Fragment {
 
     View view;
+
+    InitialActivity initialActivity;
 
     public SystemFragment(){}
 
@@ -26,6 +28,8 @@ public class SystemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_system_fragment, container, false);
+
+        initialActivity = new InitialActivity();
 
         ArrayList<String> list = new ArrayList<String>();
         list.add("Reboot");
@@ -52,47 +56,58 @@ public class SystemFragment extends Fragment {
     public void getListFragment(int position){
         switch (position){
             case 0:
-                showEthernetDialog();
+//                showEthernetDialog();
                 break;
             case 1:
-                showWifiDialog();
+                initialActivity.sendMessage("treehouses expandfs");
                 break;
             case 2:
-                showHotspotDialog();
+                showRenameDialog();
                 break;
             case 3:
-                showBridgeDialog();
+                showChPasswordDialog();
                 break;
             case 4:
-                showResetFragment();
+                showContainerDialog();
+                break;
+            case 5:
+                initialActivity.sendMessage("treehouses upgrade");
                 break;
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
     }
-    public void showBridgeDialog(){
-        DialogFragment dialogFrag = BridgeDialogFragment.newInstance(123);
+    public void showRenameDialog(){
+        androidx.fragment.app.DialogFragment dialogFrag = RenameDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"bridgeDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(),"renameDialog");
     }
-    public void showEthernetDialog(){
-        DialogFragment dialogFrag = EthernetDialogFragment.newInstance(123);
+    public void showContainerDialog(){
+        androidx.fragment.app.DialogFragment dialogFrag = ContainerDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"ethernetDialog");
     }
-    public void showHotspotDialog(){
-        DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
+    public void showChPasswordDialog() {
+        // Create an instance of the dialog fragment and show it
+        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
+        dialogFrag.show(getFragmentManager().beginTransaction(),"ChangePassDialog");
     }
-    public void showWifiDialog() {
-        DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
-    }
-    public void showResetFragment(){
-        DialogFragment dialogFrag = ResetFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "resetDialog");
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            String type = bundle.getString("type");
+            if(type.equals("rename")){
+                initialActivity.sendMessage("treehouses rename "+bundle.getString("hostname"));
+            }else if(type.equals("container")){
+                initialActivity.sendMessage("treehouses container "+bundle.getString("container"));
+            }else if(type.equals("chPass")){
+                initialActivity.sendMessage("treehouses password "+bundle.getString("password"));
+            }
+        }
     }
 }

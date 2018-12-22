@@ -2,6 +2,8 @@ package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -32,18 +34,13 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.DeviceListActivity;
 import io.treehouses.remote.R;
 
-public class TerminalFragment extends Fragment {
+public class TerminalFragment extends androidx.fragment.app.Fragment {
 
     View view;
     ListView listView;
@@ -88,9 +85,8 @@ public class TerminalFragment extends Fragment {
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
-            FragmentActivity activity = getActivity();
-            Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            activity.finish();
+            Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            getActivity().finish();
         }
 
         return view;
@@ -188,11 +184,11 @@ public class TerminalFragment extends Fragment {
 //        // Show Actionbar when go back to Dashboard
 //        getActivity().getActionBar().show();
 //    }
-    public void showRPIDialog(){
-        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
-    }
+//    public void showRPIDialog(){
+//        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
+//        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+//        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
+//    }
 
     @Override
     public void onDestroy() {
@@ -217,7 +213,7 @@ public class TerminalFragment extends Fragment {
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mCheckButton = (Button) view.findViewById(R.id.check);
@@ -240,9 +236,8 @@ public class TerminalFragment extends Fragment {
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
-            @NonNull
             @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView consoleView = (TextView) view.findViewById(R.id.listItem);
                 if(isRead){
@@ -505,7 +500,6 @@ public class TerminalFragment extends Fragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
@@ -563,14 +557,14 @@ public class TerminalFragment extends Fragment {
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
+                    if (null != getActivity()) {
+                        Toast.makeText(getActivity(), "Connected to "
                                 + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                    if (null != getActivity()) {
+                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST),
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -578,42 +572,42 @@ public class TerminalFragment extends Fragment {
         }
     };
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        switch (requestCode) {
-//            case Constants.REQUEST_ENABLE_BT:
-//                // When the request to enable Bluetooth returns
-//                if (resultCode == Activity.RESULT_OK) {
-//                    // Bluetooth is now enabled, so set up a chat session
-//                    setupChat();
-//                } else {
-//                    // User did not enable Bluetooth or an error occurred
-//                    Log.d(TAG, "BT not enabled");
-//                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-//                            Toast.LENGTH_SHORT).show();
-//                    getActivity().finish();
-//                }
-//                break;
-//            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-//                if(resultCode == Activity.RESULT_OK){
-//
-//                    //get password change request
-//                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
-//
-//                    //store password and command
-//                    String password = "treehouses password " + chPWD;
-//
-//                    Log.d(TAG, "back from change password");
-//
-//                    //send password to command line interface
-//                    sendMessage(password);
-//
-//                }else{
-//                    Log.d(TAG, "back from change password, fail");
-//                }
-//                break;
-//        }
-//    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case Constants.REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK) {
+                    // Bluetooth is now enabled, so set up a chat session
+                    setupChat();
+                } else {
+                    // User did not enable Bluetooth or an error occurred
+                    Log.d(TAG, "BT not enabled");
+                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
+                            Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                }
+                break;
+            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
+                if(resultCode == Activity.RESULT_OK){
+
+                    //get password change request
+                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
+
+                    //store password and command
+                    String password = "treehouses password " + chPWD;
+
+                    Log.d(TAG, "back from change password");
+
+                    //send password to command line interface
+                    initialActivity.sendMessage(password);
+
+                }else{
+                    Log.d(TAG, "back from change password, fail");
+                }
+                break;
+        }
+    }
 
 //    /**
 //     * Establish connection with other device
@@ -661,9 +655,9 @@ public class TerminalFragment extends Fragment {
 
     public void showChPasswordDialog() {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
+        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(),"ChangePassDialog");
     }
 
     public boolean isJson(String str) {

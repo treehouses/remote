@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,7 @@ import io.treehouses.remote.R;
  * Created by Terrence on 3/12/2018.
  */
 
-public class HotspotDialogFragment extends DialogFragment {
+public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static final String TAG = "HotspotDialogFragment";
 
@@ -39,7 +37,6 @@ public class HotspotDialogFragment extends DialogFragment {
         return hDialogFragment;
     }
 
-    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG,"In onCreateDialog()");
@@ -93,13 +90,13 @@ public class HotspotDialogFragment extends DialogFragment {
         textboxValidation.textWatcher = hotspotSSIDEditText;
         textboxValidation.SSID = hotspotSSIDEditText;
         textboxValidation.PWD = hotspotPWDEditText;
-        textboxValidation.textboxValidation(getContext(), "wifi");
+        textboxValidation.textboxValidation(getActivity(), "wifi");
 
         textboxValidation.mDialog = mDialog;
         textboxValidation.textWatcher = hotspotPWDEditText;
         textboxValidation.SSID = hotspotSSIDEditText;
         textboxValidation.PWD = hotspotPWDEditText;
-        textboxValidation.textboxValidation(getContext(), "wifi");
+        textboxValidation.textboxValidation(getActivity(), "wifi");
 
     }
 

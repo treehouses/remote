@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.viewpager.widget.ViewPager;
@@ -10,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import io.treehouses.remote.R;
 
-public class ServicesFragment extends Fragment {
+public class ServicesFragment extends androidx.fragment.app.Fragment {
 
     private FragmentActivity myContext;
 

@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +13,7 @@ import android.widget.EditText;
 
 import io.treehouses.remote.R;
 
-public class EthernetDialogFragment extends DialogFragment{
+public class EthernetDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static final String TAG = "HotspotDialogFragment";
 
@@ -37,7 +35,6 @@ public class EthernetDialogFragment extends DialogFragment{
         return ethernetDialogFragment;
     }
 
-    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG,"In onCreateDialog()");
@@ -102,7 +99,7 @@ public class EthernetDialogFragment extends DialogFragment{
         textboxValidation.MaskEditText = MaskEditText;
         textboxValidation.GateWayEditText = GateWayEditText;
         textboxValidation.DNSEditText = DNSEditText;
-        textboxValidation.textboxValidation(getContext(), "ethernet");
+        textboxValidation.textboxValidation(getActivity(), "ethernet");
     }
 
     protected void initLayoutView(View mView) {
