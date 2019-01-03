@@ -192,12 +192,18 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-//                if(deviceName!=null){
-//                    deviceNames.add(deviceName);
-//                    deviceId.add(deviceHardwareAddress);
+                boolean alreadyExist = false;
+                for(BluetoothDevice checkDevices : devices){
+                    if(checkDevices == device){
+                        alreadyExist = true;
+                    }
+                }
+                if(!alreadyExist){
                     devices.add(device);
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
                     listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
+                }
+//                if(deviceName!=null){
 //                }
 
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
