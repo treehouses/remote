@@ -116,4 +116,8 @@
         <item name="colorControlHighlight">@color/colorAccent</item>
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
+
+    <style name="MyMaterialTheme.Base.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="MyMaterialTheme.Base.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

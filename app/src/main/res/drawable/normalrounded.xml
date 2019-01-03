@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" android:padding="10dp">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle"
+    android:padding="10dp">
+    <solid android:color="@color/md_white_1000"/>
     <corners
-        android:bottomRightRadius="40dp"
-        android:bottomLeftRadius="40dp"
-        android:topLeftRadius="40dp"
-        android:topRightRadius="40dp"/>
+        android:bottomRightRadius="60dp"
+        android:bottomLeftRadius="60dp"
+        android:topLeftRadius="60dp"
+        android:topRightRadius="60dp"/>
 </shape>
