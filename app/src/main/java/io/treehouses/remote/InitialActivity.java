@@ -92,9 +92,10 @@ public class InitialActivity extends AppCompatActivity {
 //    private String name = null;
 
     private AccountHeader getAccountHeader() {
-        String val = "";
-        if(validBluetoothConnection){val = "Raspberry Pi 3B+"; }
-        else{ val = "Not Connected"; }
+//        String val = "";
+//        if(validBluetoothConnection){val = "Raspberry Pi 3B+"; }
+//        else{ val = "Not Connected"; }
+
         //Create User profile header
         return new AccountHeaderBuilder()
                 .withActivity(InitialActivity.this)
@@ -103,7 +104,7 @@ public class InitialActivity extends AppCompatActivity {
                 .withSelectionListEnabled(false)
                 .addProfiles(
 //                        new ProfileDrawerItem().withIcon(R.drawable.circle),
-                        new ProfileDrawerItem().withName("You are conected to:").withEmail(val).withIcon(R.drawable.wifiicon).withIdentifier(0)
+                        new ProfileDrawerItem().withName("Treehouses").withEmail("Remote").withIcon(R.drawable.treehouse_web).withIdentifier(0)
                 )
                 .withCompactStyle(true)
                 .withDividerBelowHeader(true)
