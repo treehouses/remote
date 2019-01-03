@@ -25,6 +25,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import io.treehouses.remote.Fragments.AboutFragment;
@@ -124,38 +125,24 @@ public class InitialActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         checkStatusNow();
-        Log.e("BOOLEAN1",""+validBluetoothConnection);
-        if (id == R.id.menu_home) {
-            openCallFragment(new HomeFragment());
-        } else if (id == R.id.menu_network) {
-            if(validBluetoothConnection){ openCallFragment((new NetworkFragment())); }
-            else{showAlertDialog();}
-        } else if (id == R.id.menu_system) {
-            if(validBluetoothConnection){ openCallFragment(new SystemFragment()); }
-            else{ showAlertDialog(); }
-        } else if (id == R.id.menu_terminal) {
-            if(validBluetoothConnection){ openCallFragment(new TerminalFragment());}
-            else{ showAlertDialog(); }
-        } else if (id == R.id.menu_services) {
-            if(validBluetoothConnection){openCallFragment(new ServicesFragment()); }
-            else{showAlertDialog(); }
-        }
-//        else if (id == R.id.menu_ssh) {
-//
-//        }
-        else if (id == R.id.menu_about) {
-            openCallFragment((new AboutFragment()));
-        } else if (id == R.id.menu_status) {
-            if(validBluetoothConnection){ openCallFragment(new StatusFragment()); }
-            else{ showAlertDialog(); }
+        if(validBluetoothConnection){
+            if (id == R.id.menu_home)          { openCallFragment(new HomeFragment());      }
+            else if (id == R.id.menu_network)  { openCallFragment((new NetworkFragment())); }
+            else if (id == R.id.menu_system)   { openCallFragment(new SystemFragment());    }
+            else if (id == R.id.menu_terminal) { openCallFragment(new TerminalFragment());  }
+            else if (id == R.id.menu_services) { openCallFragment(new ServicesFragment());  }
+//            else if (id == R.id.menu_ssh)      { }
+            else if (id == R.id.menu_about)    { openCallFragment((new AboutFragment()));   }
+            else if (id == R.id.menu_status)   { openCallFragment(new StatusFragment());    }
+            else                               { openCallFragment(new HomeFragment());      }
         }else{
-            openCallFragment(new HomeFragment());
+            if (id == R.id.menu_about)         { openCallFragment((new AboutFragment()));   }
+            else                               { showAlertDialog(); }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
