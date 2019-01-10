@@ -308,6 +308,8 @@ public class InitialActivity extends AppCompatActivity {
 //        }, delay);
 
     }
+
+    public String getDeviceName(){ return mConnectedDeviceName; }
 //    /**
 //     * This block is to create a dialog box for creating a new name or changing the password for the PI device
 //     * Sets the dialog button to be disabled if no text is in the EditText

@@ -30,7 +30,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 
     String readMessage = "";
 
-    private static final String TAG = "BluetoothChatFragment";
+    private static final String TAG = "StatusFragment";
 
     //current connection status
     static String currentStatus = "not connected";
@@ -81,17 +81,23 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
 
-
+        String deviceName = initialActivity.getDeviceName();
+        Log.e("STATUS","device name: "+deviceName);
         checkStatusNow(view);
-        String ping = "ping -c 1 google.com";
+//        String ping = "ping -c 1 google.com";
 //        byte[] pSend = ping.getBytes();
 //        mChatService.write(pSend);
 
 
 
-        ping = "treehouses detectrpi";
+        String ping = "treehouses detectrpi";
         byte[] pSend1 = ping.getBytes();
         mChatService.write(pSend1);
+
+//        String ping1 = "treehouses internet";
+//        byte[] pSend2 = ping1.getBytes();
+//        mChatService.write(pSend2);
+
 //        initialActivity.sendMessage("treehouses detectrpi");
 
 
@@ -139,6 +145,17 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     checkStatusNow(view);
+                    break;
+                case Constants.MESSAGE_WRITE:
+//                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+//                    if(!writeMessage.contains("google.com")) {
+//                        Log.d(TAG, "writeMessage = " + writeMessage);
+//                        mConversationArrayAdapter.add("Command:  " + writeMessage);
+//                    }
+                    Log.d(TAG, "writeMessage = " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
 //                    isRead = true;
