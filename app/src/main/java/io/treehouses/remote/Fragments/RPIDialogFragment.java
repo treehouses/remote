@@ -218,10 +218,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
-            else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                dialog.dismiss();
-                mDialog.cancel();
-            }
         }
     };
     private void setupBluetoothService() {
