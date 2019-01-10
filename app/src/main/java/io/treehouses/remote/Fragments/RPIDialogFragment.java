@@ -24,6 +24,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
@@ -36,7 +39,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static final String TAG = "RaspberryDialogFragment";
     private static boolean isRead = false;
-
     AlertDialog mDialog;
     private ArrayAdapter<String> mConversationArrayAdapter;
     ListView listView;
@@ -126,7 +128,11 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
             mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         }
         List<String> empty = new ArrayList<>();
-        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, empty));
+        if(getActivity() == null){
+            Log.e("RPI DIALOG ACTIVITY", "null");
+        }else{
+            listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, empty));
+        }
     }
 
 //    private void connectDevice(Intent data) {
@@ -201,7 +207,11 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 if(!alreadyExist){
                     devices.add(device);
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
-                    listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
+                    if(getActivity() == null){
+                        Log.e("RPI DIALOG ACTIVITY", "null");
+                    }else{
+                        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
+                    }
                 }
 //                if(deviceName!=null){
 //                }
