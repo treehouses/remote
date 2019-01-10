@@ -88,12 +88,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
             }
         });
 
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        getActivity().registerReceiver(mReceiver, filter);
-
         if(mChatService == null){
             setupBluetoothService();
         }
@@ -110,6 +104,13 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 //                listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
             }
         }
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        getActivity().registerReceiver(mReceiver, filter);
+
         return mDialog;
     }
 
@@ -194,7 +195,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 boolean alreadyExist = false;
                 for(BluetoothDevice checkDevices : devices){
-                    if(checkDevices == device){
+                    if(checkDevices.equals(device)){
                         alreadyExist = true;
                     }
                 }
@@ -203,9 +204,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
                     listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
                 }
-//                if(deviceName!=null){
-//                }
-
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
             else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
