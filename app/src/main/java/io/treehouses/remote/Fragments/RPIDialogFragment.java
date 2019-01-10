@@ -128,11 +128,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
             mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         }
         List<String> empty = new ArrayList<>();
-        if(getActivity() == null){
-            Log.e("RPI DIALOG ACTIVITY", "null");
-        }else{
-            listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, empty));
-        }
+        setAdapterNotNull(empty);
     }
 
 //    private void connectDevice(Intent data) {
@@ -187,6 +183,14 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         }
     }
 
+    public void setAdapterNotNull(List<String> listVal){
+        if(getActivity() == null){
+            Log.e("RPI DIALOG ACTIVITY", "null");
+        }else{
+            listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listVal));
+        }
+    }
+
     // Create a BroadcastReceiver for ACTION_FOUND.
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -207,11 +211,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 if(!alreadyExist){
                     devices.add(device);
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
-                    if(getActivity() == null){
-                        Log.e("RPI DIALOG ACTIVITY", "null");
-                    }else{
-                        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
-                    }
+                    setAdapterNotNull(s);
                 }
 //                if(deviceName!=null){
 //                }
