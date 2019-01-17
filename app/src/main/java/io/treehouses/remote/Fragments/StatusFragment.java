@@ -9,6 +9,7 @@ import io.treehouses.remote.R;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,8 +18,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,29 +69,52 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 
     ImageView  wifiStatus, btRPIName, rpiType;
 
-    ImageView btStatus;
+    ImageView btStatus, ivUpgrad;
 
-    TextView tvStatus, tvStatus1, tvStatus2, tvStatus3;
+    TextView tvStatus, tvStatus1, tvStatus2, tvStatus3, tvUpgrade;
 
     ArrayList<Button> allButtons;
 
     List<String> outs = new ArrayList<String>();
+
+    Boolean wifiStatusVal = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.activity_status_fragment, container, false);
 
+//        ArrayList<String> list = new ArrayList<String>();
+//        list.add("Bluetooth RPI Connection");
+//        list.add("RPI Wifi Connection:");
+//        list.add("Connected RPI Name:");
+//        list.add("RPI Type:");
+//        list.add("Upgrade Status:");
+//
+//        ArrayList<Drawable> list1 = new ArrayList<Drawable>();
+//        list1.add(getResources().getDrawable(R.drawable.tick));
+//        list1.add("RPI Wifi Connection:");
+//        list1.add("Connected RPI Name:");
+//        list1.add("RPI Type:");
+//        list1.add("Upgrade Status:");
+//
+//        ListView listView = view.findViewById(R.id.listView);
+////        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.cardlist, R.id.tvStatus, list, R.id.ivStatus, list1);
+//        listView.setAdapter(adapter);
+
         btStatus = view.findViewById(R.id.btStatus);
         wifiStatus = view.findViewById(R.id.wifiStatus);
         btRPIName = view.findViewById(R.id.rpiName);
         rpiType = view.findViewById(R.id.rpiType);
+        ivUpgrad = view.findViewById(R.id.upgradeCheck);
 
 
         tvStatus = view.findViewById(R.id.tvStatus);
         tvStatus1 = view.findViewById(R.id.tvStatus1);
         tvStatus2 = view.findViewById(R.id.tvStatus2);
         tvStatus3 = view.findViewById(R.id.tvStatus3);
+        tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
 
 //        allButtons.add(btStatus);
 //        allButtons.add(wifiStatus);
@@ -139,11 +166,9 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 //        Log.e("PROCESSING", ""+processing);
 ////        while(processing){System.out.print("-");}
 ////        Log.e("PROCESSING", ""+processing);
-        for(int i = 0; i < 1000; i++){System.out.print("-");}
+//        for(int i = 0; i < 1000; i++){System.out.print("-");}
 //        Log.e("INCOMING MESSAGE", ""+processedMessage);
-        String ping1 = "treehouses internet";
-        byte[] pSend2 = ping1.getBytes();
-        mChatService.write(pSend2);
+
 
 //        for(int i = 0; i < 1000; i++){System.out.print("-");}
 //        String ping2 = "treehouses rebootneeded";
@@ -194,12 +219,24 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         if(outs.size() == 1){
             tvStatus3.setText("RPI Type: "+outs.get(0));
             rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+            String ping1 = "treehouses internet";
+            byte[] pSend2 = ping1.getBytes();
+            mChatService.write(pSend2);
         }
         if(outs.size() == 2){
             tvStatus1.setText("RPI Wifi Connection: "+outs.get(1));
             if(outs.get(1).equals("true")){
+                wifiStatusVal = true;
                 wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             }
+            if(wifiStatusVal){
+                String ping1 = "treehouses upgrade --check";
+                byte[] pSend2 = ping1.getBytes();
+                mChatService.write(pSend2);
+            }
+        }
+        if(outs.size() == 3){
+
         }
 //        for(String out : outs){
 //
