@@ -33,6 +33,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
 
         initialActivity = new InitialActivity();
@@ -164,7 +165,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 //        boolean b = wifi.enableNetwork(res, true);
 //        Log.d("WifiPreference", "enableNetwork returned " + b );
     }
-    private void hotspotOn(Bundle bundle){
+    private void hotspotOn (Bundle bundle){
         if(bundle.getString("HPWD").equals("")){
             initialActivity.sendMessage("treehouses ap "+bundle.getString("hotspotType")+" "+bundle.getString("HSSID"));
         }else{
@@ -174,6 +175,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     private void ethernetOn(Bundle bundle){
         initialActivity.sendMessage("treehouses ethernet "+bundle.getString("ip")+" "+bundle.getString("mask")+" "+bundle.getString("gateway")+" "+bundle.getString("dns"));
     }
+
     private void bridgeOn(Bundle bundle){
         initialActivity.sendMessage("treehouses bridge "+bundle.getString("essid")+" "+bundle.getString("hssid")+" "+bundle.getString("password")+" "+bundle.getString("hpassword"));
     }
