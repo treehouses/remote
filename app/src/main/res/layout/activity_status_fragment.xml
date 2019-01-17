@@ -270,7 +270,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
-            android:text="Upgrade:" />
+            android:text="Upgrade Status:" />
 
         <ImageView
             android:id="@+id/upgradeCheck"

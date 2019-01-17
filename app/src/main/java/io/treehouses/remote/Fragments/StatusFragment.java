@@ -233,9 +233,17 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
                 String ping1 = "treehouses upgrade --check";
                 byte[] pSend2 = ping1.getBytes();
                 mChatService.write(pSend2);
+            }else{
+                tvUpgrade.setText("Upgrade Status: NO INTERNET");
             }
         }
         if(outs.size() == 3){
+            if(outs.get(2).equals("false")){
+                tvUpgrade.setText("Upgrade Status: Latest Version");
+            }else{
+                ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
+                tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
+            }
 
         }
 //        for(String out : outs){
