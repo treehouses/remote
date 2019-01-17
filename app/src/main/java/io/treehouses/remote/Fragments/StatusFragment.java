@@ -18,9 +18,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class StatusFragment extends androidx.fragment.app.Fragment {
 
@@ -29,6 +32,9 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
     View view;
 
     String readMessage = "";
+
+    static boolean processing = false;
+    static String processedMessage = "";
 
     private static final String TAG = "StatusFragment";
 
@@ -40,6 +46,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
      * Name of the connected device
      */
     private String mConnectedDeviceName = null;
+    private String deviceName = "";
 
     /**
      * String buffer for outgoing messages
@@ -56,9 +63,15 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
      */
     private static boolean isCountdown = false;
 
-    Button btStatus, wifiStatus, btRPIName, rpiType;
+    ImageView  wifiStatus, btRPIName, rpiType;
+
+    ImageView btStatus;
+
+    TextView tvStatus, tvStatus1, tvStatus2, tvStatus3;
 
     ArrayList<Button> allButtons;
+
+    List<String> outs = new ArrayList<String>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +82,12 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         wifiStatus = view.findViewById(R.id.wifiStatus);
         btRPIName = view.findViewById(R.id.rpiName);
         rpiType = view.findViewById(R.id.rpiType);
+
+
+        tvStatus = view.findViewById(R.id.tvStatus);
+        tvStatus1 = view.findViewById(R.id.tvStatus1);
+        tvStatus2 = view.findViewById(R.id.tvStatus2);
+        tvStatus3 = view.findViewById(R.id.tvStatus3);
 
 //        allButtons.add(btStatus);
 //        allButtons.add(wifiStatus);
@@ -81,8 +100,11 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
 
-        String deviceName = initialActivity.getDeviceName();
+        deviceName = initialActivity.getDeviceName();
         Log.e("STATUS","device name: "+deviceName);
+        if(mChatService.getState() == Constants.STATE_CONNECTED){
+            btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        }
         checkStatusNow(view);
 //        String ping = "ping -c 1 google.com";
 //        byte[] pSend = ping.getBytes();
@@ -90,13 +112,43 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 
 
 
-        String ping = "treehouses detectrpi";
-        byte[] pSend1 = ping.getBytes();
-        mChatService.write(pSend1);
 
-//        String ping1 = "treehouses internet";
-//        byte[] pSend2 = ping1.getBytes();
-//        mChatService.write(pSend2);
+
+//        final Handler h = new Handler();
+//        final int delay = 20000;
+//        h.postDelayed(new Runnable(){
+//            public void run(){
+                String ping = "treehouses detectrpi";
+                byte[] pSend1 = ping.getBytes();
+                mChatService.write(pSend1);
+////                h.postDelayed(this, delay);
+//            }
+//        }, delay);
+
+//        final Handler h1 = new Handler();
+//        final int delay1 = 20000;
+//        h1.postDelayed(new Runnable(){
+//            public void run(){
+//                String ping1 = "treehouses internet";
+//                byte[] pSend2 = ping1.getBytes();
+//                mChatService.write(pSend2);
+//                h1.postDelayed(this, delay1);
+//            }
+//        }, delay1);
+
+//        Log.e("PROCESSING", ""+processing);
+////        while(processing){System.out.print("-");}
+////        Log.e("PROCESSING", ""+processing);
+        for(int i = 0; i < 1000; i++){System.out.print("-");}
+//        Log.e("INCOMING MESSAGE", ""+processedMessage);
+        String ping1 = "treehouses internet";
+        byte[] pSend2 = ping1.getBytes();
+        mChatService.write(pSend2);
+
+//        for(int i = 0; i < 1000; i++){System.out.print("-");}
+//        String ping2 = "treehouses rebootneeded";
+//        byte[] pSend3 = ping2.getBytes();
+//        mChatService.write(pSend3);
 
 //        initialActivity.sendMessage("treehouses detectrpi");
 
@@ -105,34 +157,53 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
     }
 
     private void checkStatusNow(View view){
-        if(mChatService.getState() == Constants.STATE_CONNECTED){
-            btStatus.setBackgroundResource((R.drawable.circle));
-            GradientDrawable bgShape = (GradientDrawable)btStatus.getBackground();
-            bgShape.setColor(Color.GREEN);
-            wifiStatus.setBackgroundResource((R.drawable.circle));
-            bgShape = (GradientDrawable)wifiStatus.getBackground();
-            bgShape.setColor(Color.GREEN);
-            btRPIName.setBackgroundResource((R.drawable.circle));
-            bgShape = (GradientDrawable)btRPIName.getBackground();
-            bgShape.setColor(Color.GREEN);
-            rpiType.setBackgroundResource((R.drawable.circle));
-            bgShape = (GradientDrawable)rpiType.getBackground();
-            bgShape.setColor(Color.GREEN);
-        }else{
-            btStatus.setBackgroundResource((R.drawable.circle));
-            GradientDrawable bgShape = (GradientDrawable)btStatus.getBackground();
-            bgShape.setColor(Color.RED);
-            wifiStatus.setBackgroundResource((R.drawable.circle));
-            bgShape = (GradientDrawable)wifiStatus.getBackground();
-            bgShape.setColor(Color.RED);
-            btRPIName.setBackgroundResource((R.drawable.circle));
-            bgShape = (GradientDrawable)btRPIName.getBackground();
-            bgShape.setColor(Color.RED);
-            rpiType.setBackgroundResource((R.drawable.circle));
-            bgShape = (GradientDrawable)rpiType.getBackground();
-            bgShape.setColor(Color.RED);
-        }
+//        if(mChatService.getState() == Constants.STATE_CONNECTED){
+//            btStatus.setBackgroundResource((R.drawable.circle));
+//            GradientDrawable bgShape = (GradientDrawable)btStatus.getBackground();
+//            bgShape.setColor(Color.GREEN);
+//            wifiStatus.setBackgroundResource((R.drawable.circle));
+//            bgShape = (GradientDrawable)wifiStatus.getBackground();
+//            bgShape.setColor(Color.GREEN);
+//            btRPIName.setBackgroundResource((R.drawable.circle));
+//            bgShape = (GradientDrawable)btRPIName.getBackground();
+//            bgShape.setColor(Color.GREEN);
+//            rpiType.setBackgroundResource((R.drawable.circle));
+//            bgShape = (GradientDrawable)rpiType.getBackground();
+//            bgShape.setColor(Color.GREEN);
+//        }else{
+//            btStatus.setBackgroundResource((R.drawable.circle));
+//            GradientDrawable bgShape = (GradientDrawable)btStatus.getBackground();
+//            bgShape.setColor(Color.RED);
+//            wifiStatus.setBackgroundResource((R.drawable.circle));
+//            bgShape = (GradientDrawable)wifiStatus.getBackground();
+//            bgShape.setColor(Color.RED);
+//            btRPIName.setBackgroundResource((R.drawable.circle));
+//            bgShape = (GradientDrawable)btRPIName.getBackground();
+//            bgShape.setColor(Color.RED);
+//            rpiType.setBackgroundResource((R.drawable.circle));
+//            bgShape = (GradientDrawable)rpiType.getBackground();
+//            bgShape.setColor(Color.RED);
+//        }
         Log.e("DEVICE",""+mConnectedDeviceName);
+    }
+
+    public void updateStatus(){
+        int index = 0;
+        tvStatus2.setText("Connected RPI Name: "+deviceName);
+        btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        if(outs.size() == 1){
+            tvStatus3.setText("RPI Type: "+outs.get(0));
+            rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        }
+        if(outs.size() == 2){
+            tvStatus1.setText("RPI Wifi Connection: "+outs.get(1));
+            if(outs.get(1).equals("true")){
+                wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+            }
+        }
+//        for(String out : outs){
+//
+//        }
     }
 
 //    /**
@@ -147,6 +218,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
                     checkStatusNow(view);
                     break;
                 case Constants.MESSAGE_WRITE:
+                    Log.e("StatusFragment", "WRITE");
 //                    isRead = false;
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
@@ -156,8 +228,10 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 //                        mConversationArrayAdapter.add("Command:  " + writeMessage);
 //                    }
                     Log.d(TAG, "writeMessage = " + writeMessage);
+                    processing = true;
                     break;
                 case Constants.MESSAGE_READ:
+                    Log.e("StatusFragment", "READ");
 //                    isRead = true;
 //                    byte[] readBuf = (byte[]) msg.obj;
 //                     construct a string from the valid bytes in the buffer
@@ -165,6 +239,13 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 //                    String readMessage = new String(readBuf);
                     readMessage = (String)msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
+//                    processedMessage = readMessage;
+                    outs.add(readMessage);
+//                    for(String out : outs){
+//                        Log.e("OUT", out);
+//                    }
+                    updateStatus();
+                    processing = false;
                     //TODO: if message is json -> callback from RPi
 //                    if(isJson(readMessage)){
 //                        //handleCallback(readMessage);

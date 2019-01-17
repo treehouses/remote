@@ -28,7 +28,7 @@
             android:layout_height="60dp"
             android:paddingLeft="70dp"
             android:paddingTop="15dp"
-            android:text="Connection Statuses:"
+            android:text="Connection Status:"
             android:textSize="22sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
@@ -48,22 +48,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView1">
 
-        <Button
-            android:id="@+id/btStatus"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+            <!--android:id="@+id/btStatus"-->
+            <!--android:layout_width="57dp"-->
+            <!--android:layout_height="61dp"-->
+            <!--android:background="@drawable/circle"-->
+            <!--android:text="Button"-->
+            <!--tools:layout_editor_absoluteX="136dp"-->
+            <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="Bluetooth RPI Connection" />
+
+        <ImageView
+            android:id="@+id/btStatus"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -82,22 +88,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <Button
-            android:id="@+id/wifiStatus"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+            <!--android:id="@+id/wifiStatus"-->
+            <!--android:layout_width="57dp"-->
+            <!--android:layout_height="61dp"-->
+            <!--android:background="@drawable/circle"-->
+            <!--android:text="Button"-->
+            <!--tools:layout_editor_absoluteX="136dp"-->
+            <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tvStatus1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="RPI Wifi Connection" />
+
+        <ImageView
+            android:id="@+id/wifiStatus"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -116,22 +128,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView4">
 
-        <Button
-            android:id="@+id/rpiName"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+            <!--android:id="@+id/rpiName"-->
+            <!--android:layout_width="57dp"-->
+            <!--android:layout_height="61dp"-->
+            <!--android:background="@drawable/circle"-->
+            <!--android:text="Button"-->
+            <!--tools:layout_editor_absoluteX="136dp"-->
+            <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tvStatus2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="Connected RPI Name:" />
+
+        <ImageView
+            android:id="@+id/rpiName"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -149,22 +167,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-        <Button
-            android:id="@+id/rpiType"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+            <!--android:id="@+id/rpiType"-->
+            <!--android:layout_width="57dp"-->
+            <!--android:layout_height="61dp"-->
+            <!--android:background="@drawable/circle"-->
+            <!--android:text="Button"-->
+            <!--tools:layout_editor_absoluteX="136dp"-->
+            <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/tvStatus3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="RPI Type:" />
+
+        <ImageView
+            android:id="@+id/rpiType"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

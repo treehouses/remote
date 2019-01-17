@@ -263,7 +263,7 @@ public class InitialActivity extends AppCompatActivity {
     /**
      * Name of the connected device
      */
-    private String mConnectedDeviceName = null;
+    private static String mConnectedDeviceName = "";
 
     /**
      * String buffer for outgoing messages
