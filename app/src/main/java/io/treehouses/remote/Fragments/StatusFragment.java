@@ -213,44 +213,55 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
     }
 
     public void updateStatus(){
-        int index = 0;
-        tvStatus2.setText("Connected RPI Name: "+deviceName);
-        btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         if(outs.size() == 1){
-            tvStatus3.setText("RPI Type: "+outs.get(0));
-            rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-            String ping1 = "treehouses internet";
-            byte[] pSend2 = ping1.getBytes();
-            mChatService.write(pSend2);
+            setRPIType();
         }
         if(outs.size() == 2){
-            tvStatus1.setText("RPI Wifi Connection: "+outs.get(1));
-            if(outs.get(1).equals("true")){
-                wifiStatusVal = true;
-                wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-            }
-            if(wifiStatusVal){
-                String ping1 = "treehouses upgrade --check";
-                byte[] pSend2 = ping1.getBytes();
-                mChatService.write(pSend2);
-            }else{
-                tvUpgrade.setText("Upgrade Status: NO INTERNET");
-            }
+            checkWifiStatus();
         }
         if(outs.size() == 3){
-            if(outs.get(2).equals("false")){
-                tvUpgrade.setText("Upgrade Status: Latest Version");
-            }else{
-                ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-                tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
-            }
-
+            checkUpgradeStatus();
         }
-//        for(String out : outs){
-//
-//        }
     }
 
+    void writeToRPI(String ping){
+        byte[] pSend = ping.getBytes();
+        mChatService.write(pSend);
+    }
+
+    void setRPIDeviceName(){
+        tvStatus2.setText("Connected RPI Name: "+deviceName);
+        btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+    }
+
+    void setRPIType(){
+        tvStatus3.setText("RPI Type: "+outs.get(0));
+        rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        writeToRPI("treehouses internet");
+    }
+
+    void checkWifiStatus(){
+        tvStatus1.setText("RPI Wifi Connection: "+outs.get(1));
+        if(outs.get(1).equals("true")){
+            wifiStatusVal = true;
+            wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        }
+        if(wifiStatusVal){
+            writeToRPI("treehouses upgrade --check");
+        }else{
+            tvUpgrade.setText("Upgrade Status: NO INTERNET");
+        }
+    }
+
+    void checkUpgradeStatus(){
+        if(outs.get(2).equals("false")){
+            ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+            tvUpgrade.setText("Upgrade Status: Latest Version");
+        }else{
+            ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
+            tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
+        }
+    }
 //    /**
 //     * The Handler that gets information back from the BluetoothChatService
 //     */
