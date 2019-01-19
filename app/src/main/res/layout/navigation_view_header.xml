@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="115dp"
-        android:layout_height="115dp"
+        android:layout_width="100dp"
+        android:layout_height="105dp"
         android:layout_marginStart="17dp"
         android:layout_marginLeft="17dp"
         android:layout_marginTop="45dp"
@@ -47,7 +47,7 @@
         android:layout_marginRight="8dp"
         android:text="Treehouses"
         android:textColor="@color/md_grey_900"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:typeface="serif"
         app:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,8 +72,8 @@
         app:fontFamily="@font/roboto_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.39"
+        app:layout_constraintHorizontal_bias="0.359"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/textView6"
-        app:layout_constraintVertical_bias="0.169" />
+        app:layout_constraintVertical_bias="0.215" />
 </androidx.constraintlayout.widget.ConstraintLayout>
