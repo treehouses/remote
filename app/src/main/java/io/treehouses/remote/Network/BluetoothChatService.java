@@ -98,7 +98,7 @@ public class BluetoothChatService implements Serializable{
         mNewState = mCurrentState;
 
         // Give the new state to the Handler so the UI Activity can update
-        mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, mNewState, -1).sendToTarget();
+        mHandler.sendMessage(mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, mNewState, -1));
     }
 
     /**
@@ -208,13 +208,16 @@ public class BluetoothChatService implements Serializable{
         mConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
+
+        updateUserInterfaceTitle();
+
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEVICE_NAME, device.getName());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         // Update UI title
-        updateUserInterfaceTitle();
+        Log.e(TAG,"Connected");
     }
 
     /**

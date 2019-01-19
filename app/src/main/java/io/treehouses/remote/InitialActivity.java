@@ -433,15 +433,15 @@ public class InitialActivity extends AppCompatActivity {
 //            FragmentActivity activity = getActivity();
             InitialActivity activity = InitialActivity.this;
             switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case Constants.STATE_LISTEN:
-                        case Constants.STATE_NONE:
-//                            setStatus(R.string.title_not_connected);
-                            mIdle();
-                            break;
-                    }
-                    break;
+//                case Constants.MESSAGE_STATE_CHANGE:
+//                    switch (msg.arg1) {
+//                        case Constants.STATE_LISTEN:
+//                        case Constants.STATE_NONE:
+////                            setStatus(R.string.title_not_connected);
+//                            mIdle();
+//                            break;
+//                    }
+//                    break;
 //                case Constants.MESSAGE_WRITE:
 //                    isRead = false;
 //                    byte[] writeBuf = (byte[]) msg.obj;

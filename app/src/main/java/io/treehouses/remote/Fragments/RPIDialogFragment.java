@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
@@ -78,8 +80,8 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 mChatService.connect(devices.get(position), true);
                 int status = mChatService.getState();
                 mDialog.cancel();
-                InitialActivity initialActivity = new InitialActivity();
-                initialActivity.setChatService(mChatService);
+//                InitialActivity initialActivity = new InitialActivity();
+//                initialActivity.setChatService(mChatService);
                 finish(status, mView);
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -223,15 +225,81 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 
         mChatService = new BluetoothChatService(mHandler);
     }
-    private final CustomHandler mHandler = new CustomHandler(getActivity()){
+//    private final CustomHandler mHandler = new CustomHandler(getActivity()){
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            if(msg.what == Constants.MESSAGE_DEVICE_NAME){
+//                String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+//                Toast.makeText(getContext(), "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
+//                dialog.dismiss();
+//                mDialog.cancel();
+//            }
+//        }
+//    };
+    public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == Constants.MESSAGE_DEVICE_NAME){
-                String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                Toast.makeText(getContext(), "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
-                dialog.dismiss();
-                mDialog.cancel();
+            Log.e("RPIDialogFragment",""+msg.what);
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    Log.e("RPIDialogFragment","TEST STATE CHANGE "+msg.arg1);
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");
+                            dialog.dismiss();
+                            InitialActivity initialActivity = new InitialActivity();
+                            initialActivity.setChatService(mChatService);
+                            break;
+                        case Constants.STATE_NONE:
+                            Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
+                            break;
+                    }
+                    break;
+//                case Constants.MESSAGE_READ:
+//    //                    isRead = true;
+//    //                    byte[] readBuf = (byte[]) msg.obj;
+//    //                     construct a string from the valid bytes in the buffer
+//    //                    String readMessage = new String(readBuf, 0, msg.arg1);
+//    //                    String readMessage = new String(readBuf);
+//                    readMessage = (String)msg.obj;
+//                    Log.d(TAG, "readMessage = " + readMessage);
+//                    //TODO: if message is json -> callback from RPi
+//    //                    if(isJson(readMessage)){
+//    //                        //handleCallback(readMessage);
+//    //                    }else{
+//    //                        if(isCountdown){
+//    //                            //mHandler.removeCallbacks(watchDogTimeOut);
+//    //                            isCountdown = false;
+//    //                        }
+//    //                        //remove the space at the very end of the readMessage -> eliminate space between items
+//    //                        readMessage = readMessage.substring(0,readMessage.length()-1);
+//    //                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+//    //
+//    //                        //check if ping was successful
+//    //                        if(readMessage.contains("1 packets")){
+//    //                            mConnect();
+//    //                        }
+//    //                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
+//    //                            mOffline();
+//    //                        }
+//    //                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
+//    //                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+//    //                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+//    //                            mConversationArrayAdapter.add(readMessage);
+//    //                        }
+//    //                    }
+//                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    Log.e("RPIDialogFragment","Device Name "+msg.getData().getString(Constants.DEVICE_NAME));
+//                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+    //                    if (null != activity) {
+    //                        Toast.makeText(activity, "Connected to "
+    //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+    //                    }
+                    break;
             }
         }
     };
