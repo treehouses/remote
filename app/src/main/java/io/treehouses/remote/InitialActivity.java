@@ -65,7 +65,6 @@ public class InitialActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         checkLocationPermission();
-
         mChatService = new BluetoothChatService(mHandler);
         checkStatusNow();
 
