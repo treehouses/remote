@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import java.util.ArrayList;
 
@@ -27,6 +28,9 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     View view;
 
     InitialActivity initialActivity;
+
+    EditText HotspotPasswordEditText;
+    EditText PasswordEditText;
 
     public NetworkFragment(){}
 
@@ -177,6 +181,14 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     }
 
     private void bridgeOn(Bundle bundle){
-        initialActivity.sendMessage("treehouses bridge "+bundle.getString("essid")+" "+bundle.getString("hssid")+" "+bundle.getString("password")+" "+bundle.getString("hpassword"));
+        PasswordEditText = view.findViewById(R.id.password);
+        HotspotPasswordEditText = view.findViewById(R.id.hotspotPassword);
+
+        initialActivity.sendMessage("treehouses bridge "+bundle.getString("essid")+" "+bundle.getString("hssid")+" ");
+
+        if (!HotspotPasswordEditText.getText().toString().isEmpty() || !PasswordEditText.getText().toString().isEmpty()) {
+            initialActivity.sendMessage(bundle.getString("password")+" "+bundle.getString("hpassword"));
+        }
+
     }
 }
