@@ -387,14 +387,14 @@ public class InitialActivity extends AppCompatActivity
     };
 
 
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
+//    public boolean isJson(String str) {
+//        try {
+//            new JSONObject(str);
+//        } catch (JSONException ex) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     public void mOffline(){
         Log.e("STATUS","OFFLINE");
