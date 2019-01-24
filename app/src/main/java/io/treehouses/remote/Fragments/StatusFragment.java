@@ -213,6 +213,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
     }
 
     public void updateStatus(){
+        setRPIDeviceName();
         if(outs.size() == 1){
             setRPIType();
         }
@@ -242,7 +243,9 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 
     void checkWifiStatus(){
         tvStatus1.setText("RPI Wifi Connection: "+outs.get(1));
-        if(outs.get(1).equals("true")){
+        Log.e("StatusFragment","**"+outs.get(1)+"**"+outs.get(1).equals("true "));
+        if(outs.get(1).equals("true ")){
+            Log.e("StatusFragment","TRUE");
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         }
