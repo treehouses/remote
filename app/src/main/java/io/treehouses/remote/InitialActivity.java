@@ -189,25 +189,7 @@ public class InitialActivity extends AppCompatActivity
         mChatService.updateHandler(mHandler);
     }
 
-    /**
- *
- *
- *  START OF COMMON BLUETOOTH COMMUNICATION FEATURES
- *
- * **/
-
-    /**
-     * Name of the connected device
-     */
-    private static String mConnectedDeviceName = "";
-
-    /**
-     * String buffer for outgoing messages
-     */
-//    private StringBuffer mOutStringBuffer;
-
-    public InitialActivity(){}
-
+ 
     public void setChatService(BluetoothChatService chatService){
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
