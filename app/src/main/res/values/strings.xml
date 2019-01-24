@@ -87,7 +87,7 @@
     <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
     <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
-    <string name="app_project_name">Treehouse Remote</string>
+    <string name="app_project_name">Treehouses Remote</string>
     <string name="action_settings">Settings</string>
     <string name="title_sync_settings">Sync Settings</string>
     <string name="btn_sync">Sync</string>

@@ -73,7 +73,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 showBridgeDialog();
                 break;
             case 4:
-                initialActivity.sendMessage("treehouses default");
+                initialActivity.sendMessage("treehouses default network");
                 break;
             default:
                 Log.e("Default Network Switch", "Nothing...");

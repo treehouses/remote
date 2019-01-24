@@ -24,6 +24,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
@@ -36,7 +39,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 
     private static final String TAG = "RaspberryDialogFragment";
     private static boolean isRead = false;
-
     AlertDialog mDialog;
     private ArrayAdapter<String> mConversationArrayAdapter;
     ListView listView;
@@ -88,12 +90,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
             }
         });
 
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        getActivity().registerReceiver(mReceiver, filter);
-
         if(mChatService == null){
             setupBluetoothService();
         }
@@ -110,6 +106,13 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 //                listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
             }
         }
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        getActivity().registerReceiver(mReceiver, filter);
+
         return mDialog;
     }
 
@@ -126,7 +129,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
             mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         }
         List<String> empty = new ArrayList<>();
-        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, empty));
+        setAdapterNotNull(empty);
     }
 
 //    private void connectDevice(Intent data) {
@@ -181,6 +184,14 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         }
     }
 
+    public void setAdapterNotNull(List<String> listVal){
+        if(getActivity() == null){
+            Log.e("RPI DIALOG ACTIVITY", "null");
+        }else{
+            listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listVal));
+        }
+    }
+
     // Create a BroadcastReceiver for ACTION_FOUND.
     public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -189,19 +200,18 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-//                if(deviceName!=null){
-//                    deviceNames.add(deviceName);
-//                    deviceId.add(deviceHardwareAddress);
+                boolean alreadyExist = false;
+                for(BluetoothDevice checkDevices : devices){
+                    if(checkDevices.equals(device)){
+                        alreadyExist = true;
+                    }
+                }
+                if(!alreadyExist){
                     devices.add(device);
                     s.add(deviceName+ "\n" + deviceHardwareAddress);
-                    listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, s));
-//                }
-
+                    setAdapterNotNull(s);
+                }
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
-            }
-            else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-                dialog.dismiss();
-                mDialog.cancel();
             }
         }
     };
