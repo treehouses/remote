@@ -127,7 +127,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
 
-        deviceName = initialActivity.getDeviceName();
+        deviceName = mChatService.getConnectedDeviceName();
         Log.e("STATUS","device name: "+deviceName);
         if(mChatService.getState() == Constants.STATE_CONNECTED){
             btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
