@@ -5,29 +5,30 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import java.util.ArrayList;
+
+import com.google.android.material.navigation.NavigationView;
+
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.Fragments.ServicesFragment;
@@ -37,183 +38,115 @@ import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 
-public class InitialActivity extends AppCompatActivity {
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class InitialActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
 
     private Boolean validBluetoothConnection = false;
-//    private Boolean validWifiConnection = false;
-    private Toolbar mTopToolbar;
-    AccountHeader headerResult;
-    private Drawer result = null;
     int REQUEST_COARSE_LOCATION = 99;
     private static BluetoothChatService mChatService;
-//    ProfileDrawerItem[] profileDrawerItem;
+    private String mConnectedDeviceName = null;
+    DrawerLayout drawer;
+
+    public InitialActivity(){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_initial);
+        setContentView(R.layout.activity_initial2);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         checkLocationPermission();
-
         mChatService = new BluetoothChatService(mHandler);
         checkStatusNow();
 
-        mTopToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(mTopToolbar);
-        mTopToolbar.setTitleTextColor(Color.WHITE);
-        mTopToolbar.setSubtitleTextColor(Color.WHITE);
-        headerResult = getAccountHeader();
-        createDrawer();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setTitle(R.string.app_project_name);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//        getSupportActionBar().setTitle(R.string.app_project_name);
         openCallFragment(new HomeFragment());
+//
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//            }
+//        });
 
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
-//        Log.e("TERMINAL mChatService", ""+mChatService.getState());
-//        mOutStringBuffer = new StringBuffer("");
+         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-//        }
-//        Log.e("DEVICE ", ""+device.getName());
-//         If BT is not on, request that it be enabled.
-//         setupChat() will then be called during onActivityResult
-//        if (!mBluetoothAdapter.isEnabled()) {
-//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-//            // Otherwise, setup the chat session
-//        }
-//        else {
-//            setupChat();
-////            mChatService.connect(device,true);
-//        }
-    }
-
-//    private String name = null;
-
-    private AccountHeader getAccountHeader() {
-        String val = "";
-        if(validBluetoothConnection){val = "Raspberry Pi 3B+"; }
-        else{ val = "Not Connected"; }
-        //Create User profile header
-        return new AccountHeaderBuilder()
-                .withActivity(InitialActivity.this)
-                .withTextColor(getResources().getColor(R.color.md_black_1000))
-                .withCloseDrawerOnProfileListClick(false)
-                .withSelectionListEnabled(false)
-                .addProfiles(
-//                        new ProfileDrawerItem().withIcon(R.drawable.circle),
-                        new ProfileDrawerItem().withName("You are conected to:").withEmail(val).withIcon(R.drawable.wifiicon).withIdentifier(0)
-                )
-                .withCompactStyle(true)
-                .withDividerBelowHeader(true)
-                .build();
-
-    }
-
-    private void createDrawer() {
-        com.mikepenz.materialdrawer.holder.DimenHolder dimenHolder = com.mikepenz.materialdrawer.holder.DimenHolder.fromDp(110);
-        result = new DrawerBuilder()
-                .withActivity(this)
-                .withFullscreen(true)
-                .withSliderBackgroundColor(getResources().getColor(R.color.colorPrimary))
-                .withToolbar(mTopToolbar)
-                .withAccountHeader(headerResult)
-                .withHeaderHeight(dimenHolder)
-                .addDrawerItems(getDrawerItems())
-                .withDrawerWidthDp(R.dimen.drawer_width)
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem != null) {
-                            if (drawerItem instanceof Nameable) {
-                                menuAction(((Nameable) drawerItem).getName().getTextRes());
-                            }
-                        }
-                        return false;
-                    }
-                })
-                .withDrawerWidthDp(300)
-                .build();
-    }
-    private void menuAction(int selectedMenuId) {
-        checkStatusNow();
-        switch (selectedMenuId) {
-            case R.string.menu_network:
-                if(validBluetoothConnection){ openCallFragment((new NetworkFragment())); }
-                else{showAlertDialog();}
-                break;
-            case R.string.menu_home:
-                openCallFragment(new HomeFragment());
-                break;
-            case R.string.menu_services:
-                if(validBluetoothConnection){openCallFragment(new ServicesFragment()); }
-                else{showAlertDialog(); }
-                break;
-            case R.string.menu_system:
-                if(validBluetoothConnection){ openCallFragment(new SystemFragment()); }
-                else{ showAlertDialog(); }
-                break;
-            case R.string.menu_terminal:
-                if(validBluetoothConnection){ openCallFragment(new TerminalFragment());}
-                else{ showAlertDialog(); }
-                break;
-            case R.string.menu_status:
-                if(validBluetoothConnection){ openCallFragment(new StatusFragment()); }
-                else{ showAlertDialog(); }
-                break;
-//            case R.string.menu_courses:
-//                openCallFragment(new MyCourseFragment());
-//                break;
-//            case R.string.menu_feedback:
-//                feedbackDialog();
-//            case R.string.menu_logout:
-//                logout();
-//                break;
-            default:
-                openCallFragment(new HomeFragment());
-                break;
-        }
-    }
-    private IDrawerItem[] getDrawerItems() {
-        ArrayList<Drawable> menuImageList = new ArrayList<>();
-        menuImageList.add(getResources().getDrawable(R.drawable.home));
-        menuImageList.add(getResources().getDrawable(R.drawable.network));
-        menuImageList.add(getResources().getDrawable(R.drawable.system));
-        menuImageList.add(getResources().getDrawable(R.drawable.terminal));
-        menuImageList.add(getResources().getDrawable(R.drawable.circle));
-        menuImageList.add(getResources().getDrawable(R.drawable.ssh));
-        menuImageList.add(getResources().getDrawable(R.drawable.about));
-        menuImageList.add(getResources().getDrawable(R.drawable.about));
-
-        return new IDrawerItem[]{
-                changeUX(R.string.menu_home, menuImageList.get(0)).withIdentifier(0),
-                changeUX(R.string.menu_network, menuImageList.get(1)).withIdentifier(1),
-                changeUX(R.string.menu_system, menuImageList.get(2)).withIdentifier(2),
-                changeUX(R.string.menu_terminal, menuImageList.get(3)).withIdentifier(3),
-                changeUX(R.string.menu_services, menuImageList.get(4)).withIdentifier(4),
-                changeUX(R.string.menu_ssh, menuImageList.get(5)).withIdentifier(5),
-                changeUX(R.string.menu_about, menuImageList.get(6)).withIdentifier(6),
-                changeUX(R.string.menu_status, menuImageList.get(7)).withIdentifier(7),
-        };
-    }
-
-    public PrimaryDrawerItem changeUX(int iconText, Drawable drawable) {
-        return new PrimaryDrawerItem().withName(iconText)
-                .withIcon(drawable).withTextColor(getResources().getColor(R.color.textColorPrimary))
-                .withIconColor(getResources().getColor(R.color.textColorPrimary))
-                .withSelectedIconColor(getResources().getColor(R.color.primary_dark))
-                .withIconTintingEnabled(true);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+//        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
     }
 
     @Override
     public void onBackPressed() {
-        //handle the back press :D close the drawer first and if the drawer is closed close the activity
-        if (result != null && result.isDrawerOpen()) {
-            result.closeDrawer();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.initial, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        checkStatusNow();
+        if(validBluetoothConnection){
+            if (id == R.id.menu_home)          { openCallFragment(new HomeFragment());      }
+            else if (id == R.id.menu_network)  { openCallFragment((new NetworkFragment())); }
+            else if (id == R.id.menu_system)   { openCallFragment(new SystemFragment());    }
+            else if (id == R.id.menu_terminal) { openCallFragment(new TerminalFragment());  }
+            else if (id == R.id.menu_services) { openCallFragment(new ServicesFragment());  }
+//            else if (id == R.id.menu_ssh)      { }
+            else if (id == R.id.menu_about)    { openCallFragment((new AboutFragment()));   }
+            else if (id == R.id.menu_status)   { openCallFragment(new StatusFragment());    }
+            else                               { openCallFragment(new HomeFragment());      }
+        }else{
+            if (id == R.id.menu_about)         { openCallFragment((new AboutFragment()));   }
+            else                               { showAlertDialog(); }
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     public void openCallFragment(androidx.fragment.app.Fragment newfragment) {
@@ -221,6 +154,10 @@ public class InitialActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fragment_container, newfragment);
         fragmentTransaction.addToBackStack("");
         fragmentTransaction.commit();
+//        menuItem.setChecked(true);
+        setTitle("Treehouses Remote");
+//        drawer.closeDrawers();
+
     }
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -231,7 +168,6 @@ public class InitialActivity extends AppCompatActivity {
                     REQUEST_COARSE_LOCATION);
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -253,24 +189,7 @@ public class InitialActivity extends AppCompatActivity {
         mChatService.updateHandler(mHandler);
     }
 
-    /**
- *
- *
- *  START OF COMMON BLUETOOTH COMMUNICATION FEATURES
- *
- * **/
-
-    /**
-     * Name of the connected device
-     */
-    private static String mConnectedDeviceName = "";
-
-    /**
-     * String buffer for outgoing messages
-     */
-//    private StringBuffer mOutStringBuffer;
-
-    public InitialActivity(){}
+ 
     public void setChatService(BluetoothChatService chatService){
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
@@ -290,6 +209,8 @@ public class InitialActivity extends AppCompatActivity {
             mIdle();
             validBluetoothConnection = false;
         }
+        Log.e("BOOLEAN",""+validBluetoothConnection);
+
         //start pinging for wifi check
 //        final Handler h = new Handler();
 //        final int delay = 20000;
@@ -343,7 +264,7 @@ public class InitialActivity extends AppCompatActivity {
 //            }
 //        });
 //    }
-//
+
     private AlertDialog showAlertDialog(){
         return new AlertDialog.Builder(InitialActivity.this)
                 .setTitle("ALERT:")
@@ -355,18 +276,6 @@ public class InitialActivity extends AppCompatActivity {
                 })
                 .show();
     }
-//
-//    /**
-//     * Makes this device discoverable for 300 seconds (5 minutes).
-//     */
-//    private void ensureDiscoverable() {
-//        if (mBluetoothAdapter.getScanMode() !=
-//                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-//            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-//            startActivity(discoverableIntent);
-//        }
-//    }
 
     /**
      * Sends a message.
@@ -391,40 +300,6 @@ public class InitialActivity extends AppCompatActivity {
 //            mOutStringBuffer.setLength(0);
         }
     }
-//
-//    public void sendPing(String ping) {
-//        // Get the message bytes and tell the BluetoothChatService to write
-//        byte[] pSend = ping.getBytes();
-//        mChatService.write(pSend);
-////        mOutStringBuffer.setLength(0);
-//    }
-
-    /**
-     * Updates the status on the action bar.
-     *
-     * @param
-     * arg: can be either a string resource ID or subTitle status
-     */
-
-//    private void setStatus(Object arg) {
-//        FragmentActivity activity = getActivity();
-//        if (null == activity) {
-//            return;
-//        }
-//        final ActionBar actionBar = activity.getActionBar();
-//        if (null == actionBar) {
-//            return;
-//        }
-//        if(arg instanceof Integer){
-//            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
-//            currentStatus = getString((Integer) arg);
-//            actionBar.setSubtitle((Integer) arg);
-//        } else if(arg instanceof CharSequence){
-//            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
-//            currentStatus = arg.toString();
-//            actionBar.setSubtitle((CharSequence) arg);
-//        }
-//    }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -491,8 +366,11 @@ public class InitialActivity extends AppCompatActivity {
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    Log.e("DEVICE",""+mConnectedDeviceName);
-//                    Toast.makeText(InitialActivity.this, "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
+                    if(mConnectedDeviceName != "" || mConnectedDeviceName != null){
+                        Log.e("DEVICE",""+mConnectedDeviceName);
+                        checkStatusNow();
+//                        Toast.makeText(InitialActivity.this, "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
+                    }
 //                    if (null != activity) {
 //                        Toast.makeText(activity, "Connected to "
 //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -508,31 +386,25 @@ public class InitialActivity extends AppCompatActivity {
         }
     };
 
-//
-//    public boolean isJson(String str) {
-//        try {
-//            new JSONObject(str);
-//        } catch (JSONException ex) {
-//            return false;
-//        }
-//        return true;
-//    }
-//
+
+    public boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
+
     public void mOffline(){
-//        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
-//        headerResult.updateProfile(iProfile);
         Log.e("STATUS","OFFLINE");
     }
 
     public void mIdle(){
-//        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail("NOTHING").withIcon(R.drawable.wifiicon).withIdentifier(0);
-//        headerResult.updateProfile(iProfile);
         Log.e("STATUS","IDLE");
     }
 
     public void mConnect(){
-//        IProfile iProfile = new ProfileDrawerItem().withName("You are conected to:").withEmail(mConnectedDeviceName).withIcon(R.drawable.wifiicon).withIdentifier(0);
-//        headerResult.updateProfile(iProfile);
         Log.e("STATUS","CONNECTED");
     }
 }
