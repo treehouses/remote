@@ -108,5 +108,11 @@
     <string name="bStatusOffline">Bluetooth Status: Offline</string>
     <string name="bStatusIdle">Bluetooth Status: Idle (not Connected or trying to Connect)</string>
     <string name="bStatusConnected">Bluetooth Status: Connected</string>
+    <string name="title_activity_initial">InitialActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
 
 </resources>

@@ -33,7 +33,10 @@
         android:logo="@mipmap/ic_launcher_round"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/MyMaterialTheme.Base">
-        <activity android:name=".InitialActivity">
+        <activity
+            android:name=".InitialActivity"
+            android:label="@string/app_name"
+            android:theme="@style/MyMaterialTheme.Base">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,7 +51,7 @@
         <activity android:name=".Fragments.NetworkFragment" />
         <activity android:name=".Fragments.AboutFragment" />
         <activity android:name=".Fragments.TerminalFragment" />
-        <activity android:name=".Fragments.StatusFragment"></activity>
+        <activity android:name=".Fragments.StatusFragment" />
     </application>
 
 </manifest>
