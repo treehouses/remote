@@ -7,17 +7,57 @@
     android:animateLayoutChanges="true"
     android:background="#FFF">
 
+    <!--<androidx.cardview.widget.CardView-->
+        <!--android:id="@+id/cardView5"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="44dp"-->
+        <!--android:layout_marginStart="-1dp"-->
+        <!--android:layout_marginLeft="-1dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginBottom="76dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="1.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/5">-->
+
+        <!--&lt;!&ndash;<Button&ndash;&gt;-->
+        <!--&lt;!&ndash;android:id="@+id/rpiType"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_width="57dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:layout_height="61dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:background="@drawable/circle"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:text="Button"&ndash;&gt;-->
+        <!--&lt;!&ndash;tools:layout_editor_absoluteX="136dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;tools:layout_editor_absoluteY="16dp" />&ndash;&gt;-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/tvStatus3"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:paddingLeft="80dp"-->
+            <!--android:paddingTop="20dp"-->
+            <!--android:text="RPI Type:" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/rpiType"-->
+            <!--android:layout_width="49dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--app:srcCompat="@drawable/tick_png" />-->
+    <!--</androidx.cardview.widget.CardView>-->
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView1"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="65dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="35dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView2"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/listView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,15 +69,28 @@
             android:layout_height="60dp"
             android:paddingLeft="70dp"
             android:paddingTop="15dp"
-            android:text="Connection Statuses:"
+            android:text="Connection Status:"
             android:textSize="22sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
 
+    <!--<ListView-->
+        <!--android:id="@+id/listView"-->
+        <!--android:layout_width="368dp"-->
+        <!--android:layout_height="484dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent" />-->
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="54dp"
@@ -49,28 +102,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView1">
 
-        <Button
-            android:id="@+id/btStatus"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+        <!--android:id="@+id/btStatus"-->
+        <!--android:layout_width="57dp"-->
+        <!--android:layout_height="61dp"-->
+        <!--android:background="@drawable/circle"-->
+        <!--android:text="Button"-->
+        <!--tools:layout_editor_absoluteX="136dp"-->
+        <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="Bluetooth RPI Connection" />
+
+        <ImageView
+            android:id="@+id/btStatus"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView4"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -83,89 +142,142 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <Button
-            android:id="@+id/wifiStatus"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+        <!--android:id="@+id/wifiStatus"-->
+        <!--android:layout_width="57dp"-->
+        <!--android:layout_height="61dp"-->
+        <!--android:background="@drawable/circle"-->
+        <!--android:text="Button"-->
+        <!--tools:layout_editor_absoluteX="136dp"-->
+        <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tvStatus1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="RPI Wifi Connection" />
+
+        <ImageView
+            android:id="@+id/wifiStatus"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView4">
 
-        <Button
-            android:id="@+id/rpiName"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+        <!--android:id="@+id/rpiName"-->
+        <!--android:layout_width="57dp"-->
+        <!--android:layout_height="61dp"-->
+        <!--android:background="@drawable/circle"-->
+        <!--android:text="Button"-->
+        <!--tools:layout_editor_absoluteX="136dp"-->
+        <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tvStatus2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="Connected RPI Name:" />
+
+        <ImageView
+            android:id="@+id/rpiName"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="170dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-        <Button
-            android:id="@+id/rpiType"
-            android:layout_width="57dp"
-            android:layout_height="61dp"
-            android:background="@drawable/circle"
-            android:text="Button"
-            tools:layout_editor_absoluteX="136dp"
-            tools:layout_editor_absoluteY="16dp" />
+        <!--<Button-->
+        <!--android:id="@+id/rpiType"-->
+        <!--android:layout_width="57dp"-->
+        <!--android:layout_height="61dp"-->
+        <!--android:background="@drawable/circle"-->
+        <!--android:text="Button"-->
+        <!--tools:layout_editor_absoluteX="136dp"-->
+        <!--tools:layout_editor_absoluteY="16dp" />-->
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/tvStatus3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="80dp"
             android:paddingTop="20dp"
             android:text="RPI Type:" />
+
+        <ImageView
+            android:id="@+id/rpiType"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView5"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="94dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3">
+
+        <!--<Button-->
+        <!--android:id="@+id/rpiType"-->
+        <!--android:layout_width="57dp"-->
+        <!--android:layout_height="61dp"-->
+        <!--android:background="@drawable/circle"-->
+        <!--android:text="Button"-->
+        <!--tools:layout_editor_absoluteX="136dp"-->
+        <!--tools:layout_editor_absoluteY="16dp" />-->
+
+        <TextView
+            android:id="@+id/tvUpgradeCheck"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="80dp"
+            android:paddingTop="20dp"
+            android:text="Upgrade Status:" />
+
+        <ImageView
+            android:id="@+id/upgradeCheck"
+            android:layout_width="49dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/tick_png" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

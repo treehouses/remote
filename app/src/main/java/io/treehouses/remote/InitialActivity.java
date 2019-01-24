@@ -189,6 +189,7 @@ public class InitialActivity extends AppCompatActivity
         mChatService.updateHandler(mHandler);
     }
 
+ 
     public void setChatService(BluetoothChatService chatService){
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
@@ -228,6 +229,42 @@ public class InitialActivity extends AppCompatActivity
 //        }, delay);
 
     }
+
+    public String getDeviceName(){ return mConnectedDeviceName; }
+//    /**
+//     * This block is to create a dialog box for creating a new name or changing the password for the PI device
+//     * Sets the dialog button to be disabled if no text is in the EditText
+//     */
+//    private void showDialog(View view) {
+//        final EditText input = new EditText(InitialActivity.this);
+//        final AlertDialog alertDialog = showAlertDialog(
+//                "Rename Hostname",
+//                "Please enter new hostname",
+//                "treehouses rename ", input);
+//
+//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
+//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+//
+//        input.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if(s.length() > 0) {
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
+//                }else{
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
+//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
+//                }
+//            }
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//        });
+//    }
+
     private AlertDialog showAlertDialog(){
         return new AlertDialog.Builder(InitialActivity.this)
                 .setTitle("ALERT:")
@@ -350,14 +387,14 @@ public class InitialActivity extends AppCompatActivity
     };
 
 
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
+//    public boolean isJson(String str) {
+//        try {
+//            new JSONObject(str);
+//        } catch (JSONException ex) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     public void mOffline(){
         Log.e("STATUS","OFFLINE");
