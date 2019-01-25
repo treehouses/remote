@@ -15,6 +15,18 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+//                outputFileName = applicationId;
+//                outputFileName += "-v" + android.defaultConfig.versionName;
+//                if (variant.buildType.name == "release") {
+//                    outputFileName += ".apk";
+//                } else {
+//                    outputFileName += "-SNAPSHOT.apk";
+//                }
+                outputFileName = "remote.apk"
+            }
+        }
     }
     lintOptions {
         abortOnError false
