@@ -61,7 +61,6 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
                                 String essid = ESSIDEditText.getText().toString();
                                 String hotspotessid = HotspotESSIDEditText.getText().toString();
                                 String password = PasswordEditText.getText().toString();
@@ -70,8 +69,18 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
                                 Intent intent = new Intent();
                                 intent.putExtra("essid", essid);
                                 intent.putExtra("hssid", hotspotessid);
-                                intent.putExtra("password",password);
-                                intent.putExtra("hpassword",hotspotpassword);
+                                intent.putExtra("type","bridge");
+
+                                if(password.equals("")){
+                                    intent.putExtra("password","");
+                                }else{
+                                    intent.putExtra("password",password);
+                                }
+                                if(hotspotpassword.equals("")){
+                                    intent.putExtra("hpassword","");
+                                }else{
+                                    intent.putExtra("hpassword",hotspotpassword);
+                                }
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }

@@ -1,12 +1,16 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +21,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import java.util.ArrayList;
 
+import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -29,8 +35,8 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 
     InitialActivity initialActivity;
 
-    EditText HotspotPasswordEditText;
-    EditText PasswordEditText;
+//    EditText HotspotPasswordEditText;
+//    EditText PasswordEditText;
 
     public NetworkFragment(){}
 
@@ -41,6 +47,8 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
 
         initialActivity = new InitialActivity();
+        BluetoothChatService chatService = initialActivity.getChatService();
+        chatService.updateHandler(mHandler);
 
         ArrayList<String> list = new ArrayList<String>();
         list.add("Ethernet");
@@ -181,14 +189,54 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     }
 
     private void bridgeOn(Bundle bundle){
-        PasswordEditText = view.findViewById(R.id.password);
-        HotspotPasswordEditText = view.findViewById(R.id.hotspotPassword);
+//        PasswordEditText = view.findViewById(R.id.password);
+//        HotspotPasswordEditText = view.findViewById(R.id.hotspotPassword);
 
-        initialActivity.sendMessage("treehouses bridge "+bundle.getString("essid")+" "+bundle.getString("hssid")+" ");
+        String overallMessage = "treehouses bridge "+(bundle.getString("essid"))+" "+bundle.getString("hssid")+" ";
 
-        if (!HotspotPasswordEditText.getText().toString().isEmpty() || !PasswordEditText.getText().toString().isEmpty()) {
-            initialActivity.sendMessage(bundle.getString("password")+" "+bundle.getString("hpassword"));
+        if(bundle.getString("password").equals("")){
+            overallMessage+="\"\"";
+        }else{
+            overallMessage+=bundle.getString("password");
         }
+        overallMessage+=" ";
+        if(!bundle.getString("hpassword").equals("")){
+            overallMessage+=bundle.getString("hpassword");
+        }
+        Log.e("NetworkFragment","Bridge RPI Message = "+overallMessage);
+        initialActivity.sendMessage(overallMessage);
+
+//        if (!HotspotPasswordEditText.getText().toString().isEmpty() || !PasswordEditText.getText().toString().isEmpty()) {
+//            initialActivity.sendMessage(bundle.getString("password")+" "+bundle.getString("hpassword"));
+//        }
 
     }
+
+    private AlertDialog showAlertDialog(String message){
+        return new AlertDialog.Builder(getContext())
+                .setTitle("OUTPUT:")
+                .setMessage(message)
+                .setIcon(R.drawable.wificon)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { dialog.cancel(); }
+                })
+                .show();
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    public final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    String readMessage = (String)msg.obj;
+                    showAlertDialog(readMessage);
+                    break;
+            }
+        }
+    };
 }
