@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import io.treehouses.remote.R;
 
-public class AboutFragment extends Fragment {
+public class AboutFragment extends androidx.fragment.app.Fragment {
 
     public AboutFragment(){}
 

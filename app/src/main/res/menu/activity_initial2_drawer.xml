@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_home"
+            android:icon="@drawable/home"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/menu_network"
+            android:icon="@drawable/network"
+            android:title="@string/menu_network" />
+        <item
+            android:id="@+id/menu_system"
+            android:icon="@drawable/system"
+            android:title="@string/menu_system" />
+        <item
+            android:id="@+id/menu_terminal"
+            android:icon="@drawable/terminal"
+            android:title="@string/menu_terminal" />
+        <item
+            android:id="@+id/menu_services"
+            android:icon="@drawable/circle"
+            android:title="@string/menu_services" />
+        <item
+            android:id="@+id/menu_ssh"
+            android:icon="@drawable/ssh"
+            android:title="@string/menu_ssh" />
+        <item
+            android:id="@+id/menu_about"
+            android:icon="@drawable/about"
+            android:title="@string/menu_about" />
+        <item
+            android:id="@+id/menu_status"
+            android:icon="@drawable/about"
+            android:title="@string/menu_status" />
+    </group>
+
+    <!--<item android:title="Communicate">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="Send" />-->
+        <!--</menu>-->
+    <!--</item>-->
+
+</menu>
