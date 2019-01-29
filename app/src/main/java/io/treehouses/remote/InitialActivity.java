@@ -51,9 +51,10 @@ public class InitialActivity extends AppCompatActivity
 
     private Boolean validBluetoothConnection = false;
     int REQUEST_COARSE_LOCATION = 99;
-    private static BluetoothChatService mChatService;
+    private static BluetoothChatService mChatService = null;
     private String mConnectedDeviceName = null;
     DrawerLayout drawer;
+    private String TAG = "InitialActivity";
 
     public InitialActivity(){}
 
@@ -61,11 +62,22 @@ public class InitialActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial2);
+
+        Log.e(TAG, "onCreate(Bundle) called");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         checkLocationPermission();
-        mChatService = new BluetoothChatService(mHandler);
+
+        if(mChatService == (null)){
+            Log.e(TAG, "mChatService Status: NULL");
+            mChatService = new BluetoothChatService(mHandler);
+        }else{
+            Log.e(TAG, "mChatService Status: "+mChatService.getState());
+            mChatService.updateHandler(mHandler);
+        }
+
         checkStatusNow();
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -90,6 +102,36 @@ public class InitialActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e(TAG, "onStart() called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG, "onPause() called");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG, "onResume() called");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(TAG, "onStop() called");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "onDestroy() called");
     }
 
     @Override
