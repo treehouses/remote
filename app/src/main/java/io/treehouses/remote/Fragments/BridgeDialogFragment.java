@@ -70,17 +70,8 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
                                 intent.putExtra("essid", essid);
                                 intent.putExtra("hssid", hotspotessid);
                                 intent.putExtra("type","bridge");
-
-                                if(password.equals("")){
-                                    intent.putExtra("password","");
-                                }else{
-                                    intent.putExtra("password",password);
-                                }
-                                if(hotspotpassword.equals("")){
-                                    intent.putExtra("hpassword","");
-                                }else{
-                                    intent.putExtra("hpassword",hotspotpassword);
-                                }
+                                intent.putExtra("password",password);
+                                intent.putExtra("hpassword",hotspotpassword);
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }

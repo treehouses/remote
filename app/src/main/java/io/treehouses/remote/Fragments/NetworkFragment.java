@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -189,27 +190,19 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     }
 
     private void bridgeOn(Bundle bundle){
-//        PasswordEditText = view.findViewById(R.id.password);
-//        HotspotPasswordEditText = view.findViewById(R.id.hotspotPassword);
-
         String overallMessage = "treehouses bridge "+(bundle.getString("essid"))+" "+bundle.getString("hssid")+" ";
 
-        if(bundle.getString("password").equals("")){
+        if(TextUtils.isEmpty(bundle.getString("password"))){
             overallMessage+="\"\"";
         }else{
             overallMessage+=bundle.getString("password");
         }
         overallMessage+=" ";
-        if(!bundle.getString("hpassword").equals("")){
+        if(!TextUtils.isEmpty(bundle.getString("hpassword"))){
             overallMessage+=bundle.getString("hpassword");
         }
         Log.e("NetworkFragment","Bridge RPI Message = "+overallMessage);
         initialActivity.sendMessage(overallMessage);
-
-//        if (!HotspotPasswordEditText.getText().toString().isEmpty() || !PasswordEditText.getText().toString().isEmpty()) {
-//            initialActivity.sendMessage(bundle.getString("password")+" "+bundle.getString("hpassword"));
-//        }
-
     }
 
     private AlertDialog showAlertDialog(String message){
