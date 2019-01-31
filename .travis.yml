@@ -49,6 +49,9 @@ android:
   - google-gdk-license-.+
 after_success:
 - sh set_tags.sh
+before_deploy:
+- mv app/build/outputs/apk/debug/remote.apk app/build/outputs/apk/debug/remote-$TRAVIS_BUILD_NUMBER.apk
+- sync;sync;sync
 deploy:
   provider: releases
   api_key:
