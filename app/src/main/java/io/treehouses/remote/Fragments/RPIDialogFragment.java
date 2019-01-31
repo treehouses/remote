@@ -153,6 +153,12 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
     public void onStop() {
         super.onStop();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     protected AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
@@ -241,7 +247,6 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
             FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    Log.e("RPIDialogFragment","TEST STATE CHANGE "+msg.arg1);
                     switch (msg.arg1) {
                         case Constants.STATE_CONNECTED:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");

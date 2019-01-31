@@ -51,9 +51,10 @@ public class InitialActivity extends AppCompatActivity
 
     private Boolean validBluetoothConnection = false;
     int REQUEST_COARSE_LOCATION = 99;
-    private static BluetoothChatService mChatService;
+    private static BluetoothChatService mChatService = null;
     private String mConnectedDeviceName = null;
     DrawerLayout drawer;
+    private String TAG = "InitialActivity";
 
     public InitialActivity(){}
 
@@ -61,11 +62,22 @@ public class InitialActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial2);
+
+        Log.e(TAG, "onCreate(Bundle) called");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         checkLocationPermission();
-        mChatService = new BluetoothChatService(mHandler);
+
+        if(mChatService == (null)){
+            Log.e(TAG, "mChatService Status: NULL");
+            mChatService = new BluetoothChatService(mHandler);
+        }else{
+            Log.e(TAG, "mChatService Status: "+mChatService.getState());
+            mChatService.updateHandler(mHandler);
+        }
+
         checkStatusNow();
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
