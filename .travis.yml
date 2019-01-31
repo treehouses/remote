@@ -1,14 +1,15 @@
 language: android
 sudo: false
 jdk: oraclejdk8
+env:
+  global:
+  - ANDROID_API=25
+  - EMULATOR_API=21
+  - ANDROID_BUILD_TOOLS=25.0.2
+  - ADB_INSTALL_TIMEOUT=5
 before_install:
 - chmod +x gradlew
 - yes | sdkmanager "platforms;android-28"
-before_script:
-- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-- emulator -avd test -no-skin -no-audio -no-window &
-- android-wait-for-emulator
-- adb shell input keyevent 82 &
 install:
 - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
 - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
@@ -18,12 +19,11 @@ install:
 - echo y | android update sdk -u -a -t android-25
 - echo y | android update sdk -u -a -t extra-google-m2repository
 - echo y | android update sdk -u -a -t extra-android-m2repository
-env:
-  global:
-  - ANDROID_API=25
-  - EMULATOR_API=21
-  - ANDROID_BUILD_TOOLS=25.0.2
-  - ADB_INSTALL_TIMEOUT=5
+before_script:
+- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+- emulator -avd test -no-skin -no-audio -no-window &
+- android-wait-for-emulator
+- adb shell input keyevent 82 &
 android:
   components:
   - tools
@@ -47,8 +47,8 @@ android:
   - android-sdk-preview-license-.+
   - android-sdk-license-.+
   - google-gdk-license-.+
-notifications:
-  email: false
+after_success:
+- sh set_tags.sh
 deploy:
   provider: releases
   api_key:
@@ -59,5 +59,5 @@ deploy:
   on:
     repo: treehouses/remote
     branch: master
-after_success:
-- sh set_tags.sh
+notifications:
+  email: false
