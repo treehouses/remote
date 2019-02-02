@@ -153,6 +153,7 @@ public class InitialActivity extends AppCompatActivity
             else                               { openCallFragment(new HomeFragment());      }
         }else{
             if (id == R.id.menu_about)         { openCallFragment((new AboutFragment()));   }
+            else if (id == R.id.menu_home)     { openCallFragment(new HomeFragment());      }
             else                               { showAlertDialog(); }
         }
 
