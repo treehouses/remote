@@ -1,23 +1,31 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import java.util.ArrayList;
 
+import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -28,14 +36,20 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 
     InitialActivity initialActivity;
 
+//    EditText HotspotPasswordEditText;
+//    EditText PasswordEditText;
+
     public NetworkFragment(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
 
         initialActivity = new InitialActivity();
+        BluetoothChatService chatService = initialActivity.getChatService();
+        chatService.updateHandler(mHandler);
 
         ArrayList<String> list = new ArrayList<String>();
         list.add("Ethernet");
@@ -164,7 +178,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 //        boolean b = wifi.enableNetwork(res, true);
 //        Log.d("WifiPreference", "enableNetwork returned " + b );
     }
-    private void hotspotOn(Bundle bundle){
+    private void hotspotOn (Bundle bundle){
         if(bundle.getString("HPWD").equals("")){
             initialActivity.sendMessage("treehouses ap "+bundle.getString("hotspotType")+" "+bundle.getString("HSSID"));
         }else{
@@ -174,7 +188,48 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     private void ethernetOn(Bundle bundle){
         initialActivity.sendMessage("treehouses ethernet "+bundle.getString("ip")+" "+bundle.getString("mask")+" "+bundle.getString("gateway")+" "+bundle.getString("dns"));
     }
+
     private void bridgeOn(Bundle bundle){
-        initialActivity.sendMessage("treehouses bridge "+bundle.getString("essid")+" "+bundle.getString("hssid")+" "+bundle.getString("password")+" "+bundle.getString("hpassword"));
+        String overallMessage = "treehouses bridge "+(bundle.getString("essid"))+" "+bundle.getString("hssid")+" ";
+
+        if(TextUtils.isEmpty(bundle.getString("password"))){
+            overallMessage+="\"\"";
+        }else{
+            overallMessage+=bundle.getString("password");
+        }
+        overallMessage+=" ";
+        if(!TextUtils.isEmpty(bundle.getString("hpassword"))){
+            overallMessage+=bundle.getString("hpassword");
+        }
+        Log.e("NetworkFragment","Bridge RPI Message = "+overallMessage);
+        initialActivity.sendMessage(overallMessage);
     }
+
+    private AlertDialog showAlertDialog(String message){
+        return new AlertDialog.Builder(getContext())
+                .setTitle("OUTPUT:")
+                .setMessage(message)
+                .setIcon(R.drawable.wificon)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { dialog.cancel(); }
+                })
+                .show();
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    public final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentActivity activity = getActivity();
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    String readMessage = (String)msg.obj;
+                    showAlertDialog(readMessage);
+                    break;
+            }
+        }
+    };
 }

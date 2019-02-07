@@ -127,10 +127,11 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
      *
      */
     private void validateBridge(final Context context) {
-        if (ESSIDEditText.length() == 0 || HotspotESSIDEditText.length() == 0 || PasswordEditText.length() == 0 || HotspotPasswordEditText.length() == 0) {
+        if (ESSIDEditText.length() == 0 || HotspotESSIDEditText.length() == 0) {
+
             dialogButtonTrueOrFalse(mDialog, false);
-            PasswordEditText.setError(context.getString(R.string.error_pwd_length));
-            HotspotPasswordEditText.setError(context.getString(R.string.error_pwd_length));
+            //PasswordEditText.setError(context.getString(R.string.error_pwd_length));
+            //HotspotPasswordEditText.setError(context.getString(R.string.error_pwd_length));
         }else {
             dialogButtonTrueOrFalse(mDialog,true);
         }
