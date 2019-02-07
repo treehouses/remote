@@ -1,5 +1,7 @@
 # Treehouse Remote
 
+[![Build Status](https://travis-ci.org/treehouses/remote.svg?branch=master)](https://travis-ci.org/treehouses/remote) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/treehouses/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 An Android app that communicates with headless Raspberry Pi mobile server running [treehouses image](https://github.com/treehouses/builder) via Bluetooth.
 - Get detailed software and hardware information of a Raspberry Pi.
 - Configure a Raspberry Pi through user-friendly interface.
