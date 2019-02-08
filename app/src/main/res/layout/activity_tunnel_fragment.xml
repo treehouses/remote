@@ -34,8 +34,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="200dp"
-        android:text="treehouses tor: "
+        android:text="Address: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -47,8 +48,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:text="treehouses tor add 80: "
+        android:text="Add port 80: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_command_tor" />
@@ -60,8 +62,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:text="treehouses tor add 2200: "
+        android:text="Add port 2200: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_command_add_80" />
@@ -73,76 +76,86 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:text="treehouses tor add 22: "
+        android:text="Add port 22: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_command_add_2200" />
 
     <TextView
-        android:id="@+id/tv_command_start"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_command_notice"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
-        android:text="treehouses tor start: "
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Notification: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/switch1"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_add_22" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_start1" />
 
     <TextView
-        android:id="@+id/tv_command_notice_on"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="treehouses tor notice: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_start" />
-
-    <TextView
-        android:id="@+id/tv_command_notice_on2"
+        android:id="@+id/tv_command_start2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="112dp"
-        android:text="treehouses tor start: "
+        android:text="Start Service: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/button4"
         app:layout_constraintTop_toBottomOf="@+id/btn_start_config" />
 
     <TextView
-        android:id="@+id/tv_command_notice_on3"
+        android:id="@+id/tv_command_start1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:text="treehouses tor stop: "
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Start Service: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/button5"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_notice_on2" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_add_22" />
 
     <TextView
-        android:id="@+id/tv_command_notice_on4"
+        android:id="@+id/tv_command_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:text="treehouses tor destroy: "
+        android:text="Stop Service:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/button5"
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_start2" />
+
+    <TextView
+        android:id="@+id/tv_command_destroy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Destroy Service: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/button6"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_notice_on3" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_stop" />
 
     <Button
         android:id="@+id/btn_start_config"
@@ -159,7 +172,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_notice_on" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_command_notice" />
 
     <TextView
         android:id="@+id/textView16"
@@ -174,21 +187,6 @@
         app:layout_constraintStart_toEndOf="@+id/tv_command_tor"
         app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="44dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="24dp"
-        android:spinnerMode="dropdown"
-        app:layout_constraintBottom_toTopOf="@+id/btn_start_config"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/tv_command_notice_on" />
-
     <Button
         android:id="@+id/button4"
         android:layout_width="74dp"
@@ -199,7 +197,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_notice_on2"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_start2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -212,7 +210,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_notice_on3"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_stop"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -225,6 +223,18 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_notice_on4"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_destroy"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="86dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="200dp"
+        android:layout_marginRight="200dp"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat"
+        android:text="On/Off"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_notice"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
