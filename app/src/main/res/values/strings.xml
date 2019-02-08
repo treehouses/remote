@@ -97,6 +97,7 @@
     <string name="menu_system">System</string>
     <string name="menu_terminal">Terminal</string>
     <string name="menu_services">Services</string>
+    <string name="menu_tunnel">Tunnel</string>
     <string name="menu_ssh">SSH</string>
     <string name="menu_about">About</string>
     <string name="menu_status">Status</string>
@@ -114,5 +115,11 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+
+    <!--spinner-->
+    <string-array name="command_notice">
+        <item>on</item>
+        <item>off</item>
+    </string-array>
 
 </resources>

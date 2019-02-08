@@ -35,6 +35,7 @@ import io.treehouses.remote.Fragments.ServicesFragment;
 import io.treehouses.remote.Fragments.StatusFragment;
 import io.treehouses.remote.Fragments.SystemFragment;
 import io.treehouses.remote.Fragments.TerminalFragment;
+import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 
@@ -148,6 +149,7 @@ public class InitialActivity extends AppCompatActivity
             else if (id == R.id.menu_terminal) { openCallFragment(new TerminalFragment());  }
             else if (id == R.id.menu_services) { openCallFragment(new ServicesFragment());  }
 //            else if (id == R.id.menu_ssh)      { }
+            else if (id == R.id.menu_tunnel) {openCallFragment(new TunnelFragment());}
             else if (id == R.id.menu_about)    { openCallFragment((new AboutFragment()));   }
             else if (id == R.id.menu_status)   { openCallFragment(new StatusFragment());    }
             else                               { openCallFragment(new HomeFragment());      }
