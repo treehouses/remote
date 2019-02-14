@@ -7,234 +7,276 @@
     android:animateLayoutChanges="true"
     android:background="#FFF">
 
+    <Button
+        android:id="@+id/PING"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/circle"
+        app:layout_constraintStart_toEndOf="@+id/btn_status"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_tunnel_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="32dp"
         android:text="Tor Service Tunnel"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_command_tor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintHorizontal_bias="0.542"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/pingStatus" />
 
-    <TextView
-        android:id="@+id/tv_command_tor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="200dp"
-        android:text="Address: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!--<TextView-->
+    <!--android:id="@+id/tv_command_tor"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginTop="200dp"-->
+    <!--android:text="Address: "-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
 
-    <TextView
-        android:id="@+id/tv_command_add_80"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Add port 80: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_tor" />
+    <!--<TextView-->
+    <!--android:id="@+id/tv_command_add_80"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="Add port 80: "-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_tor" />-->
 
-    <TextView
-        android:id="@+id/tv_command_add_2200"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Add port 2200: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_add_80" />
+    <!--<TextView-->
+    <!--android:id="@+id/tv_command_add_2200"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="Add port 2200: "-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_80" />-->
 
-    <TextView
-        android:id="@+id/tv_command_add_22"
-        android:layout_width="wrap_content"
-        android:layout_height="26dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Add port 22: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_add_2200" />
+    <!--<TextView-->
+    <!--android:id="@+id/tv_command_add_22"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="26dp"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="Add port 22: "-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_2200" />-->
 
-    <TextView
-        android:id="@+id/tv_command_notice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Notification: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
-        app:layout_constraintHorizontal_bias="0.571"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_start1" />
+    <!--<TextView-->
+    <!--android:id="@+id/tv_command_start1"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="Start Service: "-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textStyle="bold"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_22" /> -->
 
     <TextView
         android:id="@+id/tv_command_start2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="112dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginEnd="189dp"
+        android:layout_marginRight="189dp"
+        android:layout_marginBottom="16dp"
         android:text="Start Service: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/button4"
-        app:layout_constraintTop_toBottomOf="@+id/btn_start_config" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_command_stop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/button4" />
 
-    <TextView
-        android:id="@+id/tv_command_start1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Start Service: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_add_22" />
 
     <TextView
         android:id="@+id/tv_command_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginEnd="196dp"
+        android:layout_marginRight="196dp"
+        android:layout_marginBottom="12dp"
         android:text="Stop Service:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/button5"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_start2" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_command_destroy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/button5" />
 
     <TextView
         android:id="@+id/tv_command_destroy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="182dp"
+        android:layout_marginRight="182dp"
+        android:layout_marginBottom="16dp"
         android:text="Destroy Service: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/button6"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_stop" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button6" />
 
     <Button
         android:id="@+id/btn_start_config"
         android:layout_width="186dp"
         android:layout_height="45dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="138dp"
+        android:layout_marginLeft="138dp"
+        android:layout_marginEnd="87dp"
+        android:layout_marginRight="87dp"
+        android:layout_marginBottom="20dp"
         android:background="?attr/colorPrimary"
         android:text="Start Configuration"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+        app:layout_constraintBottom_toTopOf="@+id/tv_command_start2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.507"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_command_notice" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView16"
+        android:id="@+id/textView_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="152dp"
-        android:layout_marginLeft="152dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginRight="76dp"
         android:text="Status"
         android:textAppearance="@android:style/TextAppearance.Holo.Widget.EditText"
         android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_command_tor"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="74dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:text="Execute"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_start2"
+        app:layout_constraintBottom_toTopOf="@+id/button5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button5"
         android:layout_width="74dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:text="Execute"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_stop"
+        app:layout_constraintBottom_toTopOf="@+id/button6"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button6"
         android:layout_width="74dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginBottom="16dp"
         android:text="Execute"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_destroy"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Switch
         android:id="@+id/switch1"
-        android:layout_width="86dp"
+        android:layout_width="149dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="200dp"
-        android:layout_marginRight="200dp"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat"
-        android:text="On/Off"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_command_notice"
+        android:layout_marginEnd="256dp"
+        android:layout_marginRight="256dp"
+        android:layout_marginBottom="12dp"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="Notification: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btn_start_config"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ListView
+        android:id="@+id/list_command"
+        android:layout_width="246dp"
+        android:layout_height="395dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
+
+    <Button
+        android:id="@+id/btn_status"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:layout_width="87dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/colorPrimary"
+        android:text="Check Status"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pingStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="179dp"
+        android:layout_marginRight="179dp"
+        android:text="Bluetooth Status:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
