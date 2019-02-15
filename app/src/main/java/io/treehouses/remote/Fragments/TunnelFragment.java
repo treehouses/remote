@@ -42,6 +42,9 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     View terminal;
     Context context;
     Button btn_start;
+    Button btn_execute_start;
+    Button btn_execute_stop;
+    Button btn_execute_destroy;
     String output;
     InitialActivity initialActivity;
     TerminalFragment terminalFragment;
@@ -72,11 +75,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         initialActivity = new InitialActivity();
 
         ArrayList<String> listview = new ArrayList<String>();
-        listview.add("Address");
-        listview.add("Add port 80");
-        listview.add("Add port 2200");
-        listview.add("Add port 22");
-        listview.add("Start Service");
 
         list = view.findViewById(R.id.list_command);
         list.setDivider(null);
@@ -91,37 +89,27 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             getActivity().finish();
         }
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String msg = "treehouses tor";
-                initialActivity.sendMessage(msg);
-            }
-        });
-
-        btn_start = view.findViewById(R.id.btn_start_config);
-        btn_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String msg = "treehouses tor";
-                initialActivity.sendMessage(msg);
-            }
-        });
-
+//        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String msg = "treehouses tor";
+//                initialActivity.sendMessage(msg);
+//            }
+//        });
         sendMessage();
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.list_command);
-
         btn_status = view.findViewById(R.id.btn_status);
-
         mPingStatus = view.findViewById(R.id.pingStatus);
-
         pingStatusButton = view.findViewById(R.id.PING);
-
+        btn_execute_start = view.findViewById(R.id.btn_execute_start);
+        btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
+        btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
     }
 
     @Override
@@ -183,8 +171,31 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                 }else{
                     consoleView.setTextColor(Color.RED);
                 }
-//                String output = consoleView.getText().toString();
-//                status.setText(output);
+                String output = consoleView.getText().toString();
+
+                String msg = "Success: the tor service has been started";
+
+                if (output == "Error: the tor service has not been configured. Run 'treehouses tor start' to configure it." +
+                        "Or 'treehouses add [localPort]' to add a port and be able to use the service") {
+                    Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+                }
+
+                //Toast.makeText(getContext(), output, Toast.LENGTH_SHORT).show();
+
+                Log.e("tag","LOG: This is the output"+output);
+//                for (String line : output) {
+//                    if (line == ) {
+//                        Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+//                    }
+//                    int i = 0;
+//                    if (i == 0) {
+
+//                    }
+//                    i++;
+//                }
+                //Toast.makeText(getContext(), line, Toast.LENGTH_SHORT).show();
+
+                //Toast.makeText(getContext(), "test", Toast.LENGTH_LONG).show();
                 return view;
             }
         };
@@ -210,17 +221,47 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     }
 
     public void sendMessage() {
-    btn_start.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        btn_start = view.findViewById(R.id.btn_start_config);
+        btn_execute_start = view.findViewById(R.id.btn_execute_start);
+        btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
+        btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
 
-            String msg = "treehouses tor";
-            initialActivity.sendMessage(msg);
-            output = view.toString();
-            Toast.makeText(getContext(), "test", Toast.LENGTH_LONG).show();
-        }
-    });
-}
+        btn_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initialActivity.sendMessage("treehouses tor");
+                Log.e("log", "this is the message");
+
+//                initialActivity.sendMessage("treehouses tor");
+//                initialActivity.sendMessage("treehouses tor add 80");
+//                initialActivity.sendMessage("treehouses tor add 22");
+//                initialActivity.sendMessage("treehouses tor add 2200");
+
+                //Toast.makeText(getContext(), output, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        btn_execute_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initialActivity.sendMessage("treehouses tor start");
+            }
+        });
+
+        btn_execute_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initialActivity.sendMessage("treehouses tor stop");
+            }
+        });
+
+        btn_execute_destroy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initialActivity.sendMessage("treehouses tor destroy");
+            }
+        });
+    }
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {

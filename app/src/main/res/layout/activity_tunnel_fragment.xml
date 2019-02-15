@@ -106,14 +106,14 @@
     <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_22" /> -->
 
     <TextView
-        android:id="@+id/tv_command_start2"
+        android:id="@+id/tv_command_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
         android:layout_marginEnd="189dp"
         android:layout_marginRight="189dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="20dp"
         android:text="Start Service: "
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black"
@@ -121,7 +121,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tv_command_stop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button4" />
+        app:layout_constraintStart_toEndOf="@+id/btn_execute_start" />
 
 
     <TextView
@@ -140,7 +140,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tv_command_destroy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/button5" />
+        app:layout_constraintStart_toEndOf="@+id/btn_execute_stop" />
 
     <TextView
         android:id="@+id/tv_command_destroy"
@@ -155,32 +155,33 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button6" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/btn_execute_destroy" />
 
     <Button
         android:id="@+id/btn_start_config"
-        android:layout_width="186dp"
+        android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_marginStart="138dp"
         android:layout_marginLeft="138dp"
         android:layout_marginEnd="87dp"
         android:layout_marginRight="87dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="48dp"
         android:background="?attr/colorPrimary"
         android:text="Start Configuration"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        app:layout_constraintBottom_toTopOf="@+id/tv_command_start2"
+        app:layout_constraintBottom_toTopOf="@+id/tv_command_start"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="76dp"
-        android:layout_marginRight="76dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
         android:text="Status"
         android:textAppearance="@android:style/TextAppearance.Holo.Widget.EditText"
         android:textSize="20sp"
@@ -188,7 +189,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/btn_execute_start"
         android:layout_width="74dp"
         android:layout_height="38dp"
         android:layout_marginStart="4dp"
@@ -197,11 +198,11 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintBottom_toTopOf="@+id/btn_execute_stop"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/btn_execute_stop"
         android:layout_width="74dp"
         android:layout_height="38dp"
         android:layout_marginStart="4dp"
@@ -210,11 +211,11 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button6"
+        app:layout_constraintBottom_toTopOf="@+id/btn_execute_destroy"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/btn_execute_destroy"
         android:layout_width="74dp"
         android:layout_height="38dp"
         android:layout_marginStart="4dp"
@@ -244,7 +245,7 @@
 
     <ListView
         android:id="@+id/list_command"
-        android:layout_width="246dp"
+        android:layout_width="305dp"
         android:layout_height="395dp"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
@@ -272,11 +273,11 @@
         android:id="@+id/pingStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="19dp"
-        android:layout_marginEnd="179dp"
-        android:layout_marginRight="179dp"
         android:text="Bluetooth Status:"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/PING"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
