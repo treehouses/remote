@@ -29,7 +29,11 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
@@ -51,6 +55,12 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     ListView list;
     Button btn_status;
     TextView status;
+    Boolean message = false;
+    String[] split = {};
+    String message_output;
+    Boolean _output = false;
+    ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
+    int i;
 
     private StringBuffer mOutStringBuffer;
     private String mConnectedDeviceName = null;
@@ -171,34 +181,50 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                 }else{
                     consoleView.setTextColor(Color.RED);
                 }
-                String output = consoleView.getText().toString();
+
+                if (message) {
+                    message_output = consoleView.getText().toString();
+                    message_output += ";";
+
+//                    message = false;
+
+//                    Log.e("tag","LOG: This is the output: "+ message_output);
+
+                }
 
                 String msg = "Success: the tor service has been started";
 
-                if (output == "Error: the tor service has not been configured. Run 'treehouses tor start' to configure it." +
-                        "Or 'treehouses add [localPort]' to add a port and be able to use the service") {
-                    Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+//                if (output == "Error: the tor service has not been configured. Run 'treehouses tor start' to configure it." +
+//                        "Or 'treehouses add [localPort]' to add a port and be able to use the service") {
+//                    Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
+//                }
+                ++i;
+                split = message_output.split(";");
+                message_array_list.addAll(Arrays.asList(split));
+
+//                final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+//                executorService.scheduleAtFixedRate(this::processOutput, 0, 1, TimeUnit.SECONDS);
+
+                try
+                {
+                    Thread.sleep(50);
+                    processOutput();
+                }
+                catch(InterruptedException ex)
+                {
+                    Thread.currentThread().interrupt();
                 }
 
-                //Toast.makeText(getContext(), output, Toast.LENGTH_SHORT).show();
 
-                Log.e("tag","LOG: This is the output"+output);
-//                for (String line : output) {
-//                    if (line == ) {
-//                        Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
-//                    }
-//                    int i = 0;
-//                    if (i == 0) {
-
-//                    }
-//                    i++;
+//                for(int t = 0; t < message_array_list.size(); t++) {
+//                    String message_string = message_array_list.toString().split("command:");
 //                }
-                //Toast.makeText(getContext(), line, Toast.LENGTH_SHORT).show();
-
-                //Toast.makeText(getContext(), "test", Toast.LENGTH_LONG).show();
+//
                 return view;
             }
         };
+
+
 
 
         mConversationView.setAdapter(mConversationArrayAdapter);
@@ -220,6 +246,26 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         mOutStringBuffer = new StringBuffer();
     }
 
+    private void processOutput() {
+        if (_output && i == 7) {
+            for(int j = 0; j < message_array_list.size(); j++) {
+                String array_elements = message_array_list.get(j).toString().trim();
+                Log.e("tag","LOG: Found index: "+ j + " - " + message_array_list.get(j));
+
+                if (array_elements.contains("Command") || array_elements.contains("Command:") || array_elements.contains(" Command:")) {
+                    Log.e("tag","LOG: Found: " + j + " " + message_array_list.get(j));
+
+                    message_array_list.remove(j);
+
+
+                }
+
+            }
+            message_array_list.remove(0);
+            Log.e("tag","LOG: Found all: "+ message_array_list);
+        }
+    }
+
     public void sendMessage() {
         btn_start = view.findViewById(R.id.btn_start_config);
         btn_execute_start = view.findViewById(R.id.btn_execute_start);
@@ -230,7 +276,10 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             @Override
             public void onClick(View v) {
                 initialActivity.sendMessage("treehouses tor");
-                Log.e("log", "this is the message");
+                Log.e("log", "after message was sent");
+                message = true;
+                _output = true;
+
 
 //                initialActivity.sendMessage("treehouses tor");
 //                initialActivity.sendMessage("treehouses tor add 80");
@@ -262,6 +311,8 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             }
         });
     }
+
+
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {

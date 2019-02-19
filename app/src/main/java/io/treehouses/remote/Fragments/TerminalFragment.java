@@ -44,7 +44,9 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     View view;
     ListView listView;
     InitialActivity initialActivity;
-    public TerminalFragment(){}
+    public TerminalFragment(){
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -88,6 +90,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             getActivity().finish();
         }
 
+
         return view;
     }
 
@@ -118,6 +121,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     /**
      * Array adapter for the conversation thread
      */
+
     private ArrayAdapter<String> mConversationArrayAdapter;
 
     /**
@@ -189,6 +193,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
 //    }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -230,8 +235,9 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     /**
      * Set up the UI and background operations for chat.
      */
-    private void setupChat() {
+    public void setupChat(String ... msg) {
         Log.d(TAG, "setupChat()");
+        LayoutInflater inflater = getLayoutInflater();
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
@@ -247,8 +253,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 return view;
             }
         };
-
-
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
@@ -271,6 +275,10 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 
             }
         });
+
+//        String message = msg.toString();
+//        initialActivity.sendMessage(message);
+
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
