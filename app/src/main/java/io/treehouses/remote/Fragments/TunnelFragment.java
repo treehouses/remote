@@ -1,12 +1,10 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-
-import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -16,24 +14,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
@@ -42,6 +33,9 @@ import io.treehouses.remote.R;
 
 public class TunnelFragment extends androidx.fragment.app.Fragment {
 
+    private static final String TAG = "BluetoothChatFragment";
+    private static boolean isRead = false;
+    private static boolean isCountdown = false;
     View view;
     View terminal;
     Context context;
@@ -59,23 +53,95 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     String[] split = {};
     String message_output;
     Boolean _output = false;
+    int printedLineCount = 0;
     ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
+    ArrayList<String> message_array_listMaster = new ArrayList<String>(Arrays.asList(split));
     int i;
-
     private StringBuffer mOutStringBuffer;
     private String mConnectedDeviceName = null;
     private TextView mPingStatus;
     private Button pingStatusButton;
     private BluetoothAdapter mBluetoothAdapter = null;
     private ArrayAdapter<String> mConversationArrayAdapter;
+    public final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case Constants.STATE_LISTEN:
+                        case Constants.STATE_NONE:
+//                            setStatus(R.string.title_not_connected);
+                            mIdle();
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    isRead = false;
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    if (!writeMessage.contains("google.com")) {
+                        Log.d(TAG, "writeMessage = " + writeMessage);
+                        mConversationArrayAdapter.add("Command:  " + writeMessage);
+                    }
+                    break;
+                case Constants.MESSAGE_READ:
+                    isRead = true;
+//                    byte[] readBuf = (byte[]) msg.obj;
+//                     construct a string from the valid bytes in the buffer
+//                    String readMessage = new String(readBuf, 0, msg.arg1);
+//                    String readMessage = new String(readBuf);
+                    String readMessage = (String) msg.obj;
+                    Log.d(TAG, "readMessage = " + readMessage);
+                    //TODO: if message is json -> callback from RPi
+                    if (isJson(readMessage)) {
+                        //handleCallback(readMessage);
+                    } else {
+                        if (isCountdown) {
+                            //mHandler.removeCallbacks(watchDogTimeOut);
+                            isCountdown = false;
+                        }
+                        //remove the space at the very end of the readMessage -> eliminate space between items
+                        readMessage = readMessage.substring(0, readMessage.length() - 1);
+                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+
+                        //check if ping was successful
+                        if (readMessage.contains("1 packets")) {
+                            mConnect();
+                        }
+                        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
+                            mOffline();
+                        }
+                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
+                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
+                            mConversationArrayAdapter.add(readMessage);
+                        }
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    if (null != getActivity()) {
+                        Toast.makeText(getActivity(), "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    if (null != getActivity()) {
+                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
     private BluetoothChatService mChatService = null;
     private ListView mConversationView = null;
-    private static boolean isRead = false;
-    private static boolean isCountdown = false;
-    private static final String TAG = "BluetoothChatFragment";
 
-
-    public TunnelFragment(){}
+    public TunnelFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -138,7 +204,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
 //            showRPIDialog();
 //        }else{
         mChatService.updateHandler(mHandler);
-        Log.e("TERMINAL mChatService", ""+mChatService.getState());
+        Log.e("TERMINAL mChatService", "" + mChatService.getState());
         checkStatusNow();
 //        }
 //        Log.e("DEVICE ", ""+device.getName());
@@ -148,122 +214,95 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        }
-        else {
+        } else {
             setupChat();
 //            mChatService.connect(device,true);
         }
     }
 
-    private void checkStatusNow(){
-        if(mChatService.getState() == Constants.STATE_CONNECTED){
+    private void checkStatusNow() {
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
 
-        }else if(mChatService.getState() == Constants.STATE_NONE){
+        } else if (mChatService.getState() == Constants.STATE_NONE) {
             mOffline();
-        }else{
+        } else {
             mIdle();
         }
     }
 
-    public void setupChat(String ... msg) {
-        Log.d(TAG, "setupChat()");
+    public void setupChat(String... msg) {
+        Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
-
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView consoleView = view.findViewById(R.id.listItem);
-                if(isRead){
+                if (isRead) {
                     consoleView.setTextColor(Color.BLUE);
-                }else{
+                } else {
                     consoleView.setTextColor(Color.RED);
                 }
 
                 if (message) {
                     message_output = consoleView.getText().toString();
-                    message_output += ";";
 
+                    //message_output += "_+_";
+                    //message_array_list.add(message_output);
 //                    message = false;
-
-//                    Log.e("tag","LOG: This is the output: "+ message_output);
+                    // Log.e("tag", "LOG Message  " + message_output);
 
                 }
-
                 String msg = "Success: the tor service has been started";
-
-//                if (output == "Error: the tor service has not been configured. Run 'treehouses tor start' to configure it." +
-//                        "Or 'treehouses add [localPort]' to add a port and be able to use the service") {
-//                    Toast.makeText(getContext(), "Error occurred", Toast.LENGTH_SHORT).show();
-//                }
-                ++i;
-                split = message_output.split(";");
-                message_array_list.addAll(Arrays.asList(split));
-
-//                final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//                executorService.scheduleAtFixedRate(this::processOutput, 0, 1, TimeUnit.SECONDS);
-
-                try
-                {
-                    Thread.sleep(50);
-                    processOutput();
-                }
-                catch(InterruptedException ex)
-                {
-                    Thread.currentThread().interrupt();
-                }
-
-
-//                for(int t = 0; t < message_array_list.size(); t++) {
-//                    String message_string = message_array_list.toString().split("command:");
-//                }
-//
                 return view;
             }
+
         };
 
+        mConversationArrayAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                for (int x = printedLineCount; x < mConversationArrayAdapter.getCount(); x++) {
+                    message_array_listMaster.add(mConversationArrayAdapter.getItem(x));
+                    printedLineCount++;
+                }
+            }
+        });
 
+        mConversationView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                for (int j = 0; j < message_array_listMaster.size(); j++) {
+                    String array_elements = message_array_listMaster.get(j).toString().trim();
+                    if (array_elements.contains("Command") || array_elements.contains("Command:") || array_elements.contains(" Command:")) {
+                        message_array_listMaster.remove(j);
+                    } else {
+                        //Log.e("tag", "LOG leo Out " + message_array_listMaster.get(j));
+                    }
+                }
+                Log.e("tag", "LOG leo  Items " + message_array_listMaster);
+            }
+        });
 
-
+        mConversationArrayAdapter.notifyDataSetChanged();
         mConversationView.setAdapter(mConversationArrayAdapter);
-
 
         btn_status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("CHECK STATUS",""+mChatService.getState());
+                Log.e("CHECK STATUS", "" + mChatService.getState());
                 checkStatusNow();
             }
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        if(mChatService.getState() == Constants.STATE_NONE){
-            mChatService = new BluetoothChatService( mHandler);
+        if (mChatService.getState() == Constants.STATE_NONE) {
+            mChatService = new BluetoothChatService(mHandler);
         }
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer();
-    }
-
-    private void processOutput() {
-        if (_output && i == 7) {
-            for(int j = 0; j < message_array_list.size(); j++) {
-                String array_elements = message_array_list.get(j).toString().trim();
-                Log.e("tag","LOG: Found index: "+ j + " - " + message_array_list.get(j));
-
-                if (array_elements.contains("Command") || array_elements.contains("Command:") || array_elements.contains(" Command:")) {
-                    Log.e("tag","LOG: Found: " + j + " " + message_array_list.get(j));
-
-                    message_array_list.remove(j);
-
-
-                }
-
-            }
-            message_array_list.remove(0);
-            Log.e("tag","LOG: Found all: "+ message_array_list);
-        }
     }
 
     public void sendMessage() {
@@ -312,82 +351,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         });
     }
 
-
-    public final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case Constants.STATE_LISTEN:
-                        case Constants.STATE_NONE:
-//                            setStatus(R.string.title_not_connected);
-                            mIdle();
-                            break;
-                    }
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    if(!writeMessage.contains("google.com")) {
-                        Log.d(TAG, "writeMessage = " + writeMessage);
-                        mConversationArrayAdapter.add("Command:  " + writeMessage);
-                    }
-                    break;
-                case Constants.MESSAGE_READ:
-                    isRead = true;
-//                    byte[] readBuf = (byte[]) msg.obj;
-//                     construct a string from the valid bytes in the buffer
-//                    String readMessage = new String(readBuf, 0, msg.arg1);
-//                    String readMessage = new String(readBuf);
-                    String readMessage = (String)msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
-                    //TODO: if message is json -> callback from RPi
-                    if(isJson(readMessage)){
-                        //handleCallback(readMessage);
-                    }else{
-                        if(isCountdown){
-                            //mHandler.removeCallbacks(watchDogTimeOut);
-                            isCountdown = false;
-                        }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0,readMessage.length()-1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-
-                        //check if ping was successful
-                        if(readMessage.contains("1 packets")){
-                            mConnect();
-                        }
-                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
-                            mOffline();
-                        }
-                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-                            mConversationArrayAdapter.add(readMessage);
-                        }
-                    }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }
-    };
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -405,10 +368,10 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                 }
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
 
                     //get password change request
-                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
+                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
 
                     //store password and command
                     String password = "treehouses password " + chPWD;
@@ -418,7 +381,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                     //send password to command line interface
                     initialActivity.sendMessage(password);
 
-                }else{
+                } else {
                     Log.d(TAG, "back from change password, fail");
                 }
                 break;
@@ -429,7 +392,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         // Create an instance of the dialog fragment and show it
         androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"ChangePassDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
     }
 
     public boolean isJson(String str) {
@@ -441,24 +404,24 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         return true;
     }
 
-    public void mOffline(){
+    public void mOffline() {
         mPingStatus.setText(R.string.bStatusOffline);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
-    public void mIdle(){
+    public void mIdle() {
         mPingStatus.setText(R.string.bStatusIdle);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.YELLOW);
     }
 
-    public void mConnect(){
+    public void mConnect() {
         mPingStatus.setText(R.string.bStatusConnected);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);
     }
 

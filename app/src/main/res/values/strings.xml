@@ -16,57 +16,22 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!--  BluetoothChat -->
-    <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
     <string name="title_connecting">connecting...</string>
     <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="title_not_connected">not connected</string>
-    <string name="command_hint">commands</string>
-    <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>
 
 
-    <string name="TestButton">TREEHOUSES</string>
-    <string name="DockerButton">DOCKER PS</string>
-    <string name="VersionButton">TREEHOUSES DETECTRPI</string>
-    <string name="PingWIFI">TREEHOUSES PING</string>
     <!-- ProgressDialog -->
-    <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
-    <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>
-    <string name="progress_dialog_message">Wait while configuring...</string>
 
     <!--  DeviceListActivity -->
-    <string name="scanning">Scanning for devices...</string>
     <string name="select_device">Select a device to connect</string>
-    <string name="none_paired">No devices have been paired</string>
-    <string name="none_found">No devices found</string>
-    <string name="title_paired_devices">Paired Devices</string>
-    <string name="title_other_devices">Other Available Devices</string>
-    <string name="button_scan">Scan for devices</string>
 
     <!-- Options Menu -->
-    <string name="secure_connect">Connect a device - Secure</string>
-    <string name="insecure_connect">Connect a device - Insecure</string>
-    <string name="discoverable">Make discoverable</string>
 
     <string name="app_name">Treehouses Remote</string>
-
-    <string name="intro_message">
-        <![CDATA[
-
-
-            This application allows two Android devices to carry out two-way text chat over
-            Bluetooth. It demonstrates all the fundamental Bluetooth API capabilities, such as:
-              (1) Scanning for other Bluetooth devices
-              (2) Querying the local Bluetooth adapter for paired Bluetooth devices
-              (3) Establishing RFCOMM channels/sockets
-              (4) Connecting to a remote device
-              (5) Transferring data over Bluetooth
-
-
-        ]]>
-    </string>
 
     <!-- WifiDialogFragment -->
     <string name="cancel">Cancel</string>
@@ -78,19 +43,13 @@
     <string name="error_ssid_empty">Type in the name of the network \nyou want to use </string>
     <string name="error_pwd_length">Password must have at least \neight characters.</string>
     <string name="error_pwd_confirm">Passwords do not match </string>
-    <string name="config_configuring">Start configuring...</string>
     <string name="config_success">Configure Wifi successfully, IP: </string>
     <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
     <string name="config_alreadyConfig">You have already configured the wifi</string>
     <!--Hotspot-->
-    <string name="create_hotspot">Create Hotspot</string>
     <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
-    <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
-    <string name="app_project_name">Treehouses Remote</string>
     <string name="action_settings">Settings</string>
-    <string name="title_sync_settings">Sync Settings</string>
-    <string name="btn_sync">Sync</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_network">Network</string>
@@ -98,7 +57,6 @@
     <string name="menu_terminal">Terminal</string>
     <string name="menu_services">Services</string>
     <string name="menu_tunnel">Tunnel</string>
-    <string name="menu_ssh">SSH</string>
     <string name="menu_about">About</string>
     <string name="menu_status">Status</string>
     <string name="initial_textview">Treehouses Remote is an Android App that communicates with headless Rasberry Pi Mobile Server running Treehouses image via Bluetooth.</string>
@@ -109,17 +67,9 @@
     <string name="bStatusOffline">Bluetooth Status: Offline</string>
     <string name="bStatusIdle">Bluetooth Status: Idle (not Connected or trying to Connect)</string>
     <string name="bStatusConnected">Bluetooth Status: Connected</string>
-    <string name="title_activity_initial">InitialActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
 
     <!--spinner-->
-    <string-array name="command_notice">
-        <item>on</item>
-        <item>off</item>
-    </string-array>
 
 </resources>
