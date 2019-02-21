@@ -103,11 +103,11 @@ public class SystemFragment extends androidx.fragment.app.Fragment {
             Bundle bundle = data.getExtras();
             String type = bundle.getString("type");
             if(type.equals("rename")){
-                initialActivity.sendMessage("treehouses rename "+bundle.getString("hostname"));
+                initialActivity.sendMessage("treehouses rename \""+bundle.getString("hostname")+"\"");
             }else if(type.equals("container")){
-                initialActivity.sendMessage("treehouses container "+bundle.getString("container"));
+                initialActivity.sendMessage("treehouses container \""+bundle.getString("container")+"\"");
             }else if(type.equals("chPass")){
-                initialActivity.sendMessage("treehouses password "+bundle.getString("password"));
+                initialActivity.sendMessage("treehouses password \""+bundle.getString("password")+"\"");
             }
         }
     }
