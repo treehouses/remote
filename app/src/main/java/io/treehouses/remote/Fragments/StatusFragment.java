@@ -79,6 +79,8 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 
     Boolean wifiStatusVal = false;
 
+    Button upgrade;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,7 +117,8 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         tvStatus2 = view.findViewById(R.id.tvStatus2);
         tvStatus3 = view.findViewById(R.id.tvStatus3);
         tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
-
+        upgrade = view.findViewById(R.id.upgrade);
+        upgrade.setVisibility(View.GONE);
 //        allButtons.add(btStatus);
 //        allButtons.add(wifiStatus);
 //        allButtons.add(btRPIName);
@@ -263,6 +266,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         }else{
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
+            upgrade.setVisibility(View.GONE);
         }
     }
 //    /**

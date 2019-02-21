@@ -47,6 +47,17 @@
             <!--app:srcCompat="@drawable/tick_png" />-->
     <!--</androidx.cardview.widget.CardView>-->
 
+    <Button
+        android:id="@+id/upgrade"
+        android:layout_width="wrap_content"
+        android:layout_height="51dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView1"
         android:layout_width="0dp"
@@ -250,9 +261,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="94dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView3">
 
@@ -278,6 +287,7 @@
             android:layout_width="49dp"
             android:layout_height="match_parent"
             app:srcCompat="@drawable/tick_png" />
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
