@@ -36,33 +36,37 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     private static final String TAG = "BluetoothChatFragment";
     private static boolean isRead = false;
     private static boolean isCountdown = false;
-    View view;
-    View terminal;
-    Context context;
-    Button btn_start;
-    Button btn_execute_start;
-    Button btn_execute_stop;
-    Button btn_execute_destroy;
-    String output;
-    InitialActivity initialActivity;
-    TerminalFragment terminalFragment;
-    ListView list;
-    Button btn_status;
-    TextView status;
-    Boolean message = false;
-    String[] split = {};
-    String message_output;
-    Boolean _output = false;
-    int printedLineCount = 0;
-    ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
-    ArrayList<String> message_array_listMaster = new ArrayList<String>(Arrays.asList(split));
-    int i;
+    private int printedLineCount = 0;
     private StringBuffer mOutStringBuffer;
     private String mConnectedDeviceName = null;
     private TextView mPingStatus;
     private Button pingStatusButton;
     private BluetoothAdapter mBluetoothAdapter = null;
     private ArrayAdapter<String> mConversationArrayAdapter;
+    private BluetoothChatService mChatService = null;
+    private ListView mConversationView = null;
+
+    View view;
+    View terminal;
+    Context context;
+    TextView status;
+    String output;
+    InitialActivity initialActivity;
+    TerminalFragment terminalFragment;
+    ListView list;
+
+    Button btn_status;
+    Button btn_start;
+    Button btn_execute_start;
+    Button btn_execute_stop;
+    Button btn_execute_destroy;
+
+    String[] split = {};
+    ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
+    ArrayList<String> message_array_listMaster = new ArrayList<String>(Arrays.asList(split));
+
+
+
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -137,12 +141,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             }
         }
     };
-    private BluetoothChatService mChatService = null;
-    private ListView mConversationView = null;
-
-    public TunnelFragment() {
-    }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -165,15 +164,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             getActivity().finish();
         }
 
-//        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String msg = "treehouses tor";
-//                initialActivity.sendMessage(msg);
-//            }
-//        });
-        sendMessage();
-
         return view;
     }
 
@@ -183,9 +173,12 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         btn_status = view.findViewById(R.id.btn_status);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
+        btn_start = view.findViewById(R.id.btn_start_config);
         btn_execute_start = view.findViewById(R.id.btn_execute_start);
         btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
         btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
+
+        sendMessage(btn_start, btn_execute_start, btn_execute_stop, btn_execute_destroy);
     }
 
     @Override
@@ -246,16 +239,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                     consoleView.setTextColor(Color.RED);
                 }
 
-                if (message) {
-                    message_output = consoleView.getText().toString();
-
-                    //message_output += "_+_";
-                    //message_array_list.add(message_output);
-//                    message = false;
-                    // Log.e("tag", "LOG Message  " + message_output);
-
-                }
-                String msg = "Success: the tor service has been started";
                 return view;
             }
 
@@ -305,27 +288,20 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         mOutStringBuffer = new StringBuffer();
     }
 
-    public void sendMessage() {
-        btn_start = view.findViewById(R.id.btn_start_config);
-        btn_execute_start = view.findViewById(R.id.btn_execute_start);
-        btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
-        btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
+    public void sendMessage(Button btn_start, Button btn_execute_start, Button btn_execute_stop, Button btn_execute_destroy) {
 
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 initialActivity.sendMessage("treehouses tor");
-                Log.e("log", "after message was sent");
-                message = true;
-                _output = true;
 
+                Log.e("log", "after message was sent");
 
 //                initialActivity.sendMessage("treehouses tor");
 //                initialActivity.sendMessage("treehouses tor add 80");
 //                initialActivity.sendMessage("treehouses tor add 22");
 //                initialActivity.sendMessage("treehouses tor add 2200");
 
-                //Toast.makeText(getContext(), output, Toast.LENGTH_LONG).show();
             }
         });
 
