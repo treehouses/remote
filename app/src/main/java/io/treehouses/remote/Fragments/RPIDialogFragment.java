@@ -105,7 +105,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 s.add(deviceName+ "\n" + deviceHardwareAddress);
-//                listView.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, s));
+                setAdapterNotNull(s);
             }
         }
 
