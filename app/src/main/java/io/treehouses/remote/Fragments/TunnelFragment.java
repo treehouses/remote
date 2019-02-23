@@ -60,6 +60,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     Button btn_execute_start;
     Button btn_execute_stop;
     Button btn_execute_destroy;
+    Button btn_execute_address;
 
     String[] split = {};
     ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
@@ -141,7 +142,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             }
         }
     };
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -177,8 +178,9 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         btn_execute_start = view.findViewById(R.id.btn_execute_start);
         btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
         btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
+        btn_execute_address = view.findViewById(R.id.btn_execute_address);
 
-        sendMessage(btn_start, btn_execute_start, btn_execute_stop, btn_execute_destroy);
+        sendMessage(btn_start, btn_execute_start, btn_execute_stop, btn_execute_destroy, btn_execute_address);
     }
 
     @Override
@@ -265,7 +267,35 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                         //Log.e("tag", "LOG leo Out " + message_array_listMaster.get(j));
                     }
                 }
-                Log.e("tag", "LOG leo  Items " + message_array_listMaster);
+                if (message_array_listMaster.toArray().length > 0) {
+                    Log.e("tag", "LOG leo Items: " + message_array_listMaster.toArray()[0]);
+
+                    if (message_array_listMaster.toArray()[0].toString().trim().contains("Error")) {
+
+                        Log.e("tag", "LOG Before list is cleared: " + message_array_listMaster.toArray().length);
+
+                        message_array_listMaster.clear();
+
+                        Log.e("tag", "LOG After list was cleared: " + message_array_listMaster.toArray().length);
+
+                        try {
+                            initialActivity.sendMessage("treehouses tor start");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor add 80");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor add 22");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor add 2200");
+                        }
+                        catch (InterruptedException e){
+                            e.printStackTrace();
+                        }
+                        if (message_array_listMaster.toArray().length > 0) {
+                            Log.e("tag", "LOG After all commands: " + message_array_listMaster.toArray()[0]);
+                        }
+
+                    }
+                }
             }
         });
 
@@ -288,20 +318,22 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         mOutStringBuffer = new StringBuffer();
     }
 
-    public void sendMessage(Button btn_start, Button btn_execute_start, Button btn_execute_stop, Button btn_execute_destroy) {
+    public void sendMessage(Button btn_start, Button btn_execute_start, Button btn_execute_stop, Button btn_execute_destroy, Button btn_execute_address) {
 
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                message_array_listMaster.clear();
                 initialActivity.sendMessage("treehouses tor");
 
                 Log.e("log", "after message was sent");
+            }
+        });
 
-//                initialActivity.sendMessage("treehouses tor");
-//                initialActivity.sendMessage("treehouses tor add 80");
-//                initialActivity.sendMessage("treehouses tor add 22");
-//                initialActivity.sendMessage("treehouses tor add 2200");
-
+        btn_execute_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initialActivity.sendMessage("treehouses tor");
             }
         });
 
@@ -325,6 +357,8 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                 initialActivity.sendMessage("treehouses tor destroy");
             }
         });
+
+
     }
 
     @Override
