@@ -1,15 +1,20 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -38,6 +43,8 @@ import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class TerminalFragment extends androidx.fragment.app.Fragment {
 
@@ -239,6 +246,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView consoleView = view.findViewById(R.id.listItem);
+
                 if(isRead){
                     consoleView.setTextColor(Color.BLUE);
                 }else{
@@ -247,6 +255,18 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 return view;
             }
         };
+
+        mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String clickdData=(String) mConversationView.getItemAtPosition(position);
+                ClipboardManager clipboard = (ClipboardManager)
+                        getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("label", clickdData);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getActivity(), "Copied to clipboard: " + clickdData, Toast.LENGTH_LONG).show();
+            }
+        });
 
 
 
@@ -268,9 +288,9 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 }else if(position == 5){
                     initialActivity.sendMessage("treehouses expandfs");
                 }
-
             }
         });
+
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
