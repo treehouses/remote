@@ -86,25 +86,29 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
                              Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.activity_status_fragment, container, false);
 
-//        ArrayList<String> list = new ArrayList<String>();
-//        list.add("Bluetooth RPI Connection");
-//        list.add("RPI Wifi Connection:");
-//        list.add("Connected RPI Name:");
-//        list.add("RPI Type:");
-//        list.add("Upgrade Status:");
-//
-//        ArrayList<Drawable> list1 = new ArrayList<Drawable>();
-//        list1.add(getResources().getDrawable(R.drawable.tick));
-//        list1.add("RPI Wifi Connection:");
-//        list1.add("Connected RPI Name:");
-//        list1.add("RPI Type:");
-//        list1.add("Upgrade Status:");
-//
-//        ListView listView = view.findViewById(R.id.listView);
-////        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.cardlist, R.id.tvStatus, list, R.id.ivStatus, list1);
-//        listView.setAdapter(adapter);
+        initializeUIElements(view);
 
+        InitialActivity initialActivity = new InitialActivity();
+        BluetoothChatService chatService = initialActivity.getChatService();
+
+        mChatService = chatService;
+        mChatService.updateHandler(mHandler);
+
+        deviceName = mChatService.getConnectedDeviceName();
+        Log.e("STATUS","device name: "+deviceName);
+        if(mChatService.getState() == Constants.STATE_CONNECTED){
+            btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        }
+        checkStatusNow(view);
+
+        String ping = "treehouses detectrpi";
+        byte[] pSend1 = ping.getBytes();
+        mChatService.write(pSend1);
+
+        return view;
+    }
+
+    public void initializeUIElements(View view){
         btStatus = view.findViewById(R.id.btStatus);
         wifiStatus = view.findViewById(R.id.wifiStatus);
         btRPIName = view.findViewById(R.id.rpiName);
@@ -126,99 +130,9 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
                 writeToRPI("treehouses upgrade");
             }
         });
-//        allButtons.add(btStatus);
-//        allButtons.add(wifiStatus);
-//        allButtons.add(btRPIName);
-//        allButtons.add(rpiType);
-
-        InitialActivity initialActivity = new InitialActivity();
-        BluetoothChatService chatService = initialActivity.getChatService();
-
-        mChatService = chatService;
-        mChatService.updateHandler(mHandler);
-
-        deviceName = mChatService.getConnectedDeviceName();
-        Log.e("STATUS","device name: "+deviceName);
-        if(mChatService.getState() == Constants.STATE_CONNECTED){
-            btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        }
-        checkStatusNow(view);
-//        String ping = "ping -c 1 google.com";
-//        byte[] pSend = ping.getBytes();
-//        mChatService.write(pSend);
-
-
-
-
-
-//        final Handler h = new Handler();
-//        final int delay = 20000;
-//        h.postDelayed(new Runnable(){
-//            public void run(){
-                String ping = "treehouses detectrpi";
-                byte[] pSend1 = ping.getBytes();
-                mChatService.write(pSend1);
-////                h.postDelayed(this, delay);
-//            }
-//        }, delay);
-
-//        final Handler h1 = new Handler();
-//        final int delay1 = 20000;
-//        h1.postDelayed(new Runnable(){
-//            public void run(){
-//                String ping1 = "treehouses internet";
-//                byte[] pSend2 = ping1.getBytes();
-//                mChatService.write(pSend2);
-//                h1.postDelayed(this, delay1);
-//            }
-//        }, delay1);
-
-//        Log.e("PROCESSING", ""+processing);
-////        while(processing){System.out.print("-");}
-////        Log.e("PROCESSING", ""+processing);
-//        for(int i = 0; i < 1000; i++){System.out.print("-");}
-//        Log.e("INCOMING MESSAGE", ""+processedMessage);
-
-
-//        for(int i = 0; i < 1000; i++){System.out.print("-");}
-//        String ping2 = "treehouses rebootneeded";
-//        byte[] pSend3 = ping2.getBytes();
-//        mChatService.write(pSend3);
-
-//        initialActivity.sendMessage("treehouses detectrpi");
-
-
-        return view;
     }
 
     private void checkStatusNow(View view){
-//        if(mChatService.getState() == Constants.STATE_CONNECTED){
-//            btStatus.setBackgroundResource((R.drawable.circle));
-//            GradientDrawable bgShape = (GradientDrawable)btStatus.getBackground();
-//            bgShape.setColor(Color.GREEN);
-//            wifiStatus.setBackgroundResource((R.drawable.circle));
-//            bgShape = (GradientDrawable)wifiStatus.getBackground();
-//            bgShape.setColor(Color.GREEN);
-//            btRPIName.setBackgroundResource((R.drawable.circle));
-//            bgShape = (GradientDrawable)btRPIName.getBackground();
-//            bgShape.setColor(Color.GREEN);
-//            rpiType.setBackgroundResource((R.drawable.circle));
-//            bgShape = (GradientDrawable)rpiType.getBackground();
-//            bgShape.setColor(Color.GREEN);
-//        }else{
-//            btStatus.setBackgroundResource((R.drawable.circle));
-//            GradientDrawable bgShape = (GradientDrawable)btStatus.getBackground();
-//            bgShape.setColor(Color.RED);
-//            wifiStatus.setBackgroundResource((R.drawable.circle));
-//            bgShape = (GradientDrawable)wifiStatus.getBackground();
-//            bgShape.setColor(Color.RED);
-//            btRPIName.setBackgroundResource((R.drawable.circle));
-//            bgShape = (GradientDrawable)btRPIName.getBackground();
-//            bgShape.setColor(Color.RED);
-//            rpiType.setBackgroundResource((R.drawable.circle));
-//            bgShape = (GradientDrawable)rpiType.getBackground();
-//            bgShape.setColor(Color.RED);
-//        }
         Log.e("DEVICE",""+mConnectedDeviceName);
     }
 
