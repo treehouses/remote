@@ -7,6 +7,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -81,6 +82,10 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 
     Button upgrade;
 
+    ProgressDialog pd;
+
+    Boolean updateRightNow = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,6 +133,8 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
             @Override
             public void onClick(View v) {
                 writeToRPI("treehouses upgrade");
+                updateRightNow = true;
+                pd = ProgressDialog.show(getActivity(), "Updating...", "Please wait a few seconds...");
             }
         });
     }
@@ -146,6 +153,11 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         }
         if(outs.size() == 3){
             checkUpgradeStatus();
+        }
+        if(outs.size() == 4){
+            outs.remove(2);
+            outs.remove(2);
+            checkWifiStatus();
         }
     }
 
@@ -177,13 +189,19 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
             writeToRPI("treehouses upgrade --check");
         }else{
             tvUpgrade.setText("Upgrade Status: NO INTERNET");
+            upgrade.setVisibility(View.GONE);
         }
     }
 
     void checkUpgradeStatus(){
-        if(outs.get(2).equals("false")){
+        if(updateRightNow){
+            updateRightNow = false;
+            pd.dismiss();
+        }
+        if(outs.get(2).equals("false ")){
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version");
+            upgrade.setVisibility(View.GONE);
         }else{
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
