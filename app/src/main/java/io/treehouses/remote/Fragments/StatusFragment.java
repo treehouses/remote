@@ -119,6 +119,13 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
         upgrade = view.findViewById(R.id.upgrade);
         upgrade.setVisibility(View.GONE);
+
+        upgrade.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeToRPI("treehouses upgrade");
+            }
+        });
 //        allButtons.add(btStatus);
 //        allButtons.add(wifiStatus);
 //        allButtons.add(btRPIName);
@@ -266,7 +273,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         }else{
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
-            upgrade.setVisibility(View.GONE);
+            upgrade.setVisibility(View.VISIBLE);
         }
     }
 //    /**
