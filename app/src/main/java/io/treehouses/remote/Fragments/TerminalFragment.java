@@ -260,6 +260,11 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String clickdData=(String) mConversationView.getItemAtPosition(position);
+
+                if (clickdData.contains("Command: ") || clickdData.contains(" Command:") || clickdData.contains("Command:")) {
+                    clickdData = clickdData.substring(10, clickdData.length());
+                }
+
                 ClipboardManager clipboard = (ClipboardManager)
                         getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("label", clickdData);
