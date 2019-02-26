@@ -143,13 +143,12 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 default:
                     break;
             }
-
         }
     }
 
     private void wifiOn(Bundle bundle){
 
-        initialActivity.sendMessage("treehouses wifi "+bundle.getString("SSID")+" "+bundle.getString("PWD"));
+        initialActivity.sendMessage("treehouses wifi \""+bundle.getString("SSID")+"\" \""+bundle.getString("PWD")+"\"");
 
 //        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
 //        WifiConfiguration wc = new WifiConfiguration();
@@ -180,26 +179,26 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     }
     private void hotspotOn (Bundle bundle){
         if(bundle.getString("HPWD").equals("")){
-            initialActivity.sendMessage("treehouses ap "+bundle.getString("hotspotType")+" "+bundle.getString("HSSID"));
+            initialActivity.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\"");
         }else{
-            initialActivity.sendMessage("treehouses ap "+bundle.getString("hotspotType")+" "+bundle.getString("HSSID")+" "+bundle.getString("HPWD"));
+            initialActivity.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\" \""+bundle.getString("HPWD")+"\"");
         }
     }
     private void ethernetOn(Bundle bundle){
-        initialActivity.sendMessage("treehouses ethernet "+bundle.getString("ip")+" "+bundle.getString("mask")+" "+bundle.getString("gateway")+" "+bundle.getString("dns"));
+        initialActivity.sendMessage("treehouses ethernet \""+bundle.getString("ip")+"\" \""+bundle.getString("mask")+"\" \""+bundle.getString("gateway")+"\" \""+bundle.getString("dns")+"\"");
     }
 
     private void bridgeOn(Bundle bundle){
-        String overallMessage = "treehouses bridge "+(bundle.getString("essid"))+" "+bundle.getString("hssid")+" ";
+        String overallMessage = "treehouses bridge \""+(bundle.getString("essid"))+"\" \""+bundle.getString("hssid")+"\" ";
 
         if(TextUtils.isEmpty(bundle.getString("password"))){
             overallMessage+="\"\"";
         }else{
-            overallMessage+=bundle.getString("password");
+            overallMessage+="\""+bundle.getString("password")+"\"";
         }
         overallMessage+=" ";
         if(!TextUtils.isEmpty(bundle.getString("hpassword"))){
-            overallMessage+=bundle.getString("hpassword");
+            overallMessage+="\""+bundle.getString("hpassword")+"\"";
         }
         Log.e("NetworkFragment","Bridge RPI Message = "+overallMessage);
         initialActivity.sendMessage(overallMessage);
