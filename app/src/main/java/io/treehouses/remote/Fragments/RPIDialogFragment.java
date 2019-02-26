@@ -69,7 +69,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         mBluetoothAdapter.startDiscovery();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
-        dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_HOLO_DARK);
+//        dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_HOLO_DARK);
         listView = mView.findViewById(R.id.listView);
         mDialog = getAlertDialog(mView);
         mDialog.setTitle(R.string.select_device);
@@ -84,10 +84,11 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 //                initialActivity.setChatService(mChatService);
                 finish(status, mView);
                 Log.e("Connecting Bluetooth","Position: "+position+" ;; Status: "+status);
-                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                dialog.setTitle("Connecting...");
-                dialog.setMessage("Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
-                dialog.show();
+//                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                dialog.setTitle("Connecting...");
+//                dialog.setMessage("Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
+//                dialog.show();
+                dialog = ProgressDialog.show(getActivity(), "Connecting...", "Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
 
             }
         });
