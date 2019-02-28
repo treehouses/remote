@@ -6,15 +6,19 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
+import androidx.core.content.ContextCompat;
 import io.treehouses.remote.R;
 
 
@@ -30,6 +34,8 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
     protected EditText hotspotPWDEditText;
 //    protected EditText confirmPWDEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
+
+    ToggleButton show;
 
     Spinner spinner;
     public static HotspotDialogFragment newInstance(int num) {
@@ -125,6 +131,27 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
         spinner = mView.findViewById(R.id.hostspotType);
         hotspotSSIDEditText = mView.findViewById(R.id.hotspotSSID);
         hotspotPWDEditText = mView.findViewById(R.id.hotspotPassword);
+
+        show = mView.findViewById(R.id.show);
+        show.setText(null);
+        show.setTextOn(null);
+        show.setTextOff(null);
+
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(show.isChecked()){
+                    hotspotPWDEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                    hotspotPWDEditText.setSelection(hotspotPWDEditText.getText().length());
+                    show.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.showing));
+                }
+                else{
+                    hotspotPWDEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    hotspotPWDEditText.setSelection(hotspotPWDEditText.getText().length());
+                    show.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.show_password));
+                }
+            }
+        });
     }
 }
 

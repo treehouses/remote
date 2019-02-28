@@ -6,10 +6,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ToggleButton;
+
+import androidx.core.content.ContextCompat;
 import io.treehouses.remote.R;
 
 public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
@@ -20,6 +24,8 @@ public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
     protected EditText mSSIDEditText;
     protected EditText mPWDEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
+
+    ToggleButton show_wifi;
 
     public static WifiDialogFragment newInstance(int num){
 
@@ -37,7 +43,7 @@ public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
 
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.dialog_design,null);
+        View mView = inflater.inflate(R.layout.dialog_wifi,null);
         initLayoutView(mView);
 
         final AlertDialog mDialog = getAlertDialog(mView);
@@ -94,6 +100,28 @@ public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
     protected void initLayoutView(View mView) {
         mSSIDEditText = mView.findViewById(R.id.SSID);
         mPWDEditText = mView.findViewById(R.id.password);
+
+        show_wifi = mView.findViewById(R.id.show_wifi_password);
+
+        show_wifi.setText(null);
+        show_wifi.setTextOn(null);
+        show_wifi.setTextOff(null);
+
+        show_wifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(show_wifi.isChecked()){
+                    mPWDEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                    mPWDEditText.setSelection(mPWDEditText.getText().length());
+                    show_wifi.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.showing));
+                }
+                else{
+                    mPWDEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    mPWDEditText.setSelection(mPWDEditText.getText().length());
+                    show_wifi.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.show_password));
+                }
+            }
+        });
     }
 }
 
