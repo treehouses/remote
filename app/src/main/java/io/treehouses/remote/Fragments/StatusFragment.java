@@ -198,7 +198,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         if(updateRightNow){
             updateRightNow = false;
             pd.dismiss();
-            Toast.makeText(getContext(),"Your Treehouses Cli has been updated!!!",Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),"Treehouses Cli has been updated!!!",Toast.LENGTH_LONG).show();
         }
         if(outs.get(2).equals("false ")){
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
