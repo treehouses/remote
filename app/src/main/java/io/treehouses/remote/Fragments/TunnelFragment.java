@@ -252,12 +252,11 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickdData=(String) mConversationView.getItemAtPosition(position);
-                ClipboardManager clipboard = (ClipboardManager)
-                        getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("label", clickdData);
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(getActivity(), "Copied to clipboard: " + clickdData, Toast.LENGTH_LONG).show();
+
+                String clickedData=(String) mConversationView.getItemAtPosition(position);
+
+                context = getContext();
+                Utils.copyToClipboard(context , clickedData);
             }
         });
 
