@@ -135,6 +135,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
                 writeToRPI("treehouses upgrade");
                 updateRightNow = true;
                 pd = ProgressDialog.show(getActivity(), "Updating...", "Please wait a few seconds...");
+                pd.setCanceledOnTouchOutside(true);
             }
         });
     }
@@ -197,6 +198,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         if(updateRightNow){
             updateRightNow = false;
             pd.dismiss();
+            Toast.makeText(getContext(),"Your Treehouses Cli has been updated!!!",Toast.LENGTH_LONG).show();
         }
         if(outs.get(2).equals("false ")){
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
