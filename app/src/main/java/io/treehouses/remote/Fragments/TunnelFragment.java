@@ -252,9 +252,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 String clickedData=(String) mConversationView.getItemAtPosition(position);
-
                 context = getContext();
                 Utils.copyToClipboard(context , clickedData);
             }
