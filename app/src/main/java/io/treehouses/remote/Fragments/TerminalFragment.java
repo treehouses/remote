@@ -304,6 +304,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                     TextView consoleInput = view.findViewById(R.id.edit_text_out);
                     String message = consoleInput.getText().toString();
                     initialActivity.sendMessage(message);
+                    consoleInput.setText("");
                 }
             }
         });
@@ -390,6 +391,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 initialActivity.sendMessage(message);
+                mOutEditText.setText("");
             }
             return true;
         }
