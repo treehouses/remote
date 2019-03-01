@@ -16,6 +16,8 @@ import android.widget.Toast;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.R;
 
+import static io.treehouses.remote.MiscOld.Constants.REQUEST_ENABLE_BT;
+
 public class HomeFragment extends androidx.fragment.app.Fragment {
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     View view;
@@ -33,10 +35,13 @@ public class HomeFragment extends androidx.fragment.app.Fragment {
             @Override
             public void onClick(View v) {
                 if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
-                    Toast.makeText(getContext(), "Bluetooth is disabled, please enable bluetooth in the bluetooth settings", Toast.LENGTH_LONG).show();
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
                     return;
+                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                    showRPIDialog();
                 }
-                showRPIDialog();
             }
         });
 
@@ -54,9 +59,9 @@ public class HomeFragment extends androidx.fragment.app.Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == Activity.RESULT_OK){
-            Bundle bundle = data.getExtras();
-            String type = bundle.getString("type");
-            Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
+            //Bundle bundle = data.getExtras();
+            //String type = bundle.getString("type");
+            //Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
 
 
         }
