@@ -115,5 +115,8 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="menu_tunnel">Tunnel</string>
+    <string name="hotspot_password">Hotspot Password</string>
+    <string name="hotspot_essid">Hotspot ESSID</string>
+    <string name="essid">ESSID</string>
 
 </resources>

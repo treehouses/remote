@@ -101,27 +101,6 @@ public class WifiDialogFragment extends androidx.fragment.app.DialogFragment {
         mSSIDEditText = mView.findViewById(R.id.SSID);
         mPWDEditText = mView.findViewById(R.id.password);
 
-        show_wifi = mView.findViewById(R.id.show_wifi_password);
-
-        show_wifi.setText(null);
-        show_wifi.setTextOn(null);
-        show_wifi.setTextOff(null);
-
-        show_wifi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(show_wifi.isChecked()){
-                    mPWDEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-                    mPWDEditText.setSelection(mPWDEditText.getText().length());
-                    show_wifi.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.showing));
-                }
-                else{
-                    mPWDEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    mPWDEditText.setSelection(mPWDEditText.getText().length());
-                    show_wifi.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.show_password));
-                }
-            }
-        });
     }
 }
 
