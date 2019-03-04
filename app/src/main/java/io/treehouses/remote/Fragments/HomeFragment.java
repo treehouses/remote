@@ -24,7 +24,6 @@ public class HomeFragment extends androidx.fragment.app.Fragment {
 
     public HomeFragment(){}
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
