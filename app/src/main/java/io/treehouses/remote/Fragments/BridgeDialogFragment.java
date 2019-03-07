@@ -24,12 +24,7 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
     protected EditText HotspotESSIDEditText;
     protected EditText PasswordEditText;
     protected EditText HotspotPasswordEditText;
-
-    //    protected EditText confirmPWDEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
-
-    ToggleButton hotspot_password,essid_password;
-
 
     public static BridgeDialogFragment newInstance(int num) {
         BridgeDialogFragment bridgeDialogFragment = new BridgeDialogFragment();
@@ -111,49 +106,6 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
         HotspotESSIDEditText = mView.findViewById(R.id.hotspotESSID);
         PasswordEditText = mView.findViewById(R.id.password);
         HotspotPasswordEditText = mView.findViewById(R.id.hotspotPassword);
-
-        hotspot_password = mView.findViewById(R.id.show_hotspot);
-        essid_password = mView.findViewById(R.id.show_essid_password);
-
-        hotspot_password.setText(null);
-        hotspot_password.setTextOn(null);
-        hotspot_password.setTextOff(null);
-
-        essid_password.setText(null);
-        essid_password.setTextOn(null);
-        essid_password.setTextOff(null);
-
-        hotspot_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(hotspot_password.isChecked()){
-                    HotspotPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-                    HotspotPasswordEditText.setSelection(HotspotPasswordEditText.getText().length());
-                    hotspot_password.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.showing));
-                }
-                else{
-                    HotspotPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    HotspotPasswordEditText.setSelection(HotspotPasswordEditText.getText().length());
-                    hotspot_password.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.show_password));
-                }
-            }
-        });
-
-        essid_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(essid_password.isChecked()){
-                    PasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-                    PasswordEditText.setSelection(PasswordEditText.getText().length());
-                    essid_password.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.showing));
-                }
-                else{
-                    PasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    PasswordEditText.setSelection(PasswordEditText.getText().length());
-                    essid_password.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.show_password));
-                }
-            }
-        });
     }
 
 }
