@@ -89,6 +89,8 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 //                dialog.setMessage("Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
 //                dialog.show();
                 dialog = ProgressDialog.show(getActivity(), "Connecting...", "Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
+                dialog.setCanceledOnTouchOutside(true);
+
 
             }
         });
