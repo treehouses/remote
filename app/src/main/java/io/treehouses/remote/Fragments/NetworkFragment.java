@@ -57,6 +57,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         list.add("Hotspot");
         list.add("Bridge");
         list.add("Reset");
+        list.add("Reboot");
 
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
@@ -88,6 +89,9 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 break;
             case 4:
                 initialActivity.sendMessage("treehouses default network");
+                break;
+            case 5:
+                initialActivity.sendMessage("reboot");
                 break;
             default:
                 Log.e("Default Network Switch", "Nothing...");

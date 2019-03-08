@@ -56,8 +56,7 @@ public class SystemFragment extends androidx.fragment.app.Fragment {
     public void getListFragment(int position){
         switch (position){
             case 0:
-//                showEthernetDialog();
-
+                initialActivity.sendMessage("reboot");
                 break;
             case 1:
                 initialActivity.sendMessage("treehouses expandfs");
