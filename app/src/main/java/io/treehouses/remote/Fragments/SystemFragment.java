@@ -10,17 +10,21 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 public class SystemFragment extends androidx.fragment.app.Fragment {
 
     View view;
-
     InitialActivity initialActivity;
+    private BluetoothChatService mChatService = null;
+
 
     public SystemFragment(){}
 
@@ -50,6 +54,9 @@ public class SystemFragment extends androidx.fragment.app.Fragment {
             }
         });
 
+        BluetoothChatService chatService = initialActivity.getChatService();
+        mChatService = chatService;
+
         return view;
     }
 
@@ -57,6 +64,19 @@ public class SystemFragment extends androidx.fragment.app.Fragment {
         switch (position){
             case 0:
                 initialActivity.sendMessage("reboot");
+                try {
+                    Thread.sleep(1000);
+
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
+                        Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+                    }
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+
                 break;
             case 1:
                 initialActivity.sendMessage("treehouses expandfs");
