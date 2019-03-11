@@ -50,8 +50,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--app:passwordToggleDrawable="@drawable/toggle_password"-->
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout3"
         android:layout_width="0dp"
@@ -64,7 +62,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
-        app:passwordToggleEnabled="true"
+        app:passwordToggleDrawable="@drawable/toggle_password"
+        app:passwordToggleEnabled="false"
         app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +90,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3"
-        app:passwordToggleEnabled="true"
+        app:passwordToggleDrawable="@drawable/toggle_password"
+        app:passwordToggleEnabled="false"
         app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
