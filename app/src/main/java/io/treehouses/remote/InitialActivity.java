@@ -38,6 +38,7 @@ import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.callback.HomeInteractListener;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class InitialActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
 
 
     private Boolean validBluetoothConnection = false;
@@ -57,7 +58,6 @@ public class InitialActivity extends AppCompatActivity
     DrawerLayout drawer;
     private String TAG = "InitialActivity";
 
-    public InitialActivity(){}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +66,17 @@ public class InitialActivity extends AppCompatActivity
 
         Log.e(TAG, "onCreate(Bundle) called");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        drawer = findViewById(R.id.drawer_layout);
 
         checkLocationPermission();
 
-        if(mChatService == (null)){
+        if (mChatService == (null)) {
             Log.e(TAG, "mChatService Status: NULL");
             mChatService = new BluetoothChatService(mHandler);
-        }else{
-            Log.e(TAG, "mChatService Status: "+mChatService.getState());
+        } else {
+            Log.e(TAG, "mChatService Status: " + mChatService.getState());
             mChatService.updateHandler(mHandler);
         }
 
@@ -94,20 +95,18 @@ public class InitialActivity extends AppCompatActivity
 //            }
 //        });
 
-         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -117,24 +116,8 @@ public class InitialActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.initial, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -142,27 +125,41 @@ public class InitialActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         checkStatusNow();
-        if(validBluetoothConnection){
-            if (id == R.id.menu_home)          { openCallFragment(new HomeFragment());      }
-            else if (id == R.id.menu_network)  { openCallFragment((new NetworkFragment())); }
-            else if (id == R.id.menu_system)   { openCallFragment(new SystemFragment());    }
-            else if (id == R.id.menu_terminal) { openCallFragment(new TerminalFragment());  }
-            else if (id == R.id.menu_services) { openCallFragment(new ServicesFragment());  }
-            else if (id == R.id.menu_tunnel)   { openCallFragment(new TunnelFragment());    }
-            else if (id == R.id.menu_about)    { openCallFragment((new AboutFragment()));   }
-            else if (id == R.id.menu_status)   { openCallFragment(new StatusFragment());    }
-            else                               { openCallFragment(new HomeFragment());      }
-        }else{
-            if (id == R.id.menu_about)         { openCallFragment((new AboutFragment()));   }
-            else if (id == R.id.menu_home)     { openCallFragment(new HomeFragment());      }
-            else                               { showAlertDialog(); }
+        if (validBluetoothConnection) {
+            if (id == R.id.menu_home) {
+                openCallFragment(new HomeFragment());
+            } else if (id == R.id.menu_network) {
+                openCallFragment((new NetworkFragment()));
+            } else if (id == R.id.menu_system) {
+                openCallFragment(new SystemFragment());
+            } else if (id == R.id.menu_terminal) {
+                openCallFragment(new TerminalFragment());
+            } else if (id == R.id.menu_services) {
+                openCallFragment(new ServicesFragment());
+            } else if (id == R.id.menu_tunnel) {
+                openCallFragment(new TunnelFragment());
+            } else if (id == R.id.menu_about) {
+                openCallFragment((new AboutFragment()));
+            } else if (id == R.id.menu_status) {
+                openCallFragment(new StatusFragment());
+            } else {
+                openCallFragment(new HomeFragment());
+            }
+        } else {
+            if (id == R.id.menu_about) {
+                openCallFragment((new AboutFragment()));
+            } else if (id == R.id.menu_home) {
+                openCallFragment(new HomeFragment());
+            } else {
+                showAlertDialog();
+            }
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    @Override
     public void openCallFragment(androidx.fragment.app.Fragment newfragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, newfragment);
@@ -173,6 +170,13 @@ public class InitialActivity extends AppCompatActivity
 //        drawer.closeDrawers();
 
     }
+
+    @Override
+    public void updateHandler(Handler handler) {
+        if (mChatService != null)
+            mChatService.updateHandler(mHandler);
+    }
+
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -182,6 +186,7 @@ public class InitialActivity extends AppCompatActivity
                     REQUEST_COARSE_LOCATION);
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -203,27 +208,31 @@ public class InitialActivity extends AppCompatActivity
         mChatService.updateHandler(mHandler);
     }
 
- 
-    public void setChatService(BluetoothChatService chatService){
+
+    @Override
+    public void setChatService(BluetoothChatService chatService) {
         mChatService = chatService;
         mChatService.updateHandler(mHandler);
         checkStatusNow();
     }
-    public BluetoothChatService getChatService(){return mChatService; }
 
+    @Override
+    public BluetoothChatService getChatService() {
+        return mChatService;
+    }
 
-    private void checkStatusNow(){
-        if(mChatService.getState() == Constants.STATE_CONNECTED){
+    private void checkStatusNow() {
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
             validBluetoothConnection = true;
-        }else if(mChatService.getState() == Constants.STATE_NONE){
+        } else if (mChatService.getState() == Constants.STATE_NONE) {
             mOffline();
             validBluetoothConnection = false;
-        }else{
+        } else {
             mIdle();
             validBluetoothConnection = false;
         }
-        Log.e("BOOLEAN",""+validBluetoothConnection);
+        Log.e("BOOLEAN", "" + validBluetoothConnection);
 
         //start pinging for wifi check
 //        final Handler h = new Handler();
@@ -243,8 +252,6 @@ public class InitialActivity extends AppCompatActivity
 //        }, delay);
 
     }
-
-    public String getDeviceName(){ return mConnectedDeviceName; }
 //    /**
 //     * This block is to create a dialog box for creating a new name or changing the password for the PI device
 //     * Sets the dialog button to be disabled if no text is in the EditText
@@ -279,14 +286,16 @@ public class InitialActivity extends AppCompatActivity
 //        });
 //    }
 
-    private AlertDialog showAlertDialog(){
+    private AlertDialog showAlertDialog() {
         return new AlertDialog.Builder(InitialActivity.this)
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
                 .setIcon(R.drawable.bluetooth)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) { dialog.cancel(); }
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
                 })
                 .show();
     }
@@ -296,6 +305,7 @@ public class InitialActivity extends AppCompatActivity
      *
      * @param message A string of text to send.
      */
+    @Override
     public void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
@@ -380,8 +390,8 @@ public class InitialActivity extends AppCompatActivity
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if(mConnectedDeviceName != "" || mConnectedDeviceName != null){
-                        Log.e("DEVICE",""+mConnectedDeviceName);
+                    if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
+                        Log.e("DEVICE", "" + mConnectedDeviceName);
                         checkStatusNow();
 //                        Toast.makeText(InitialActivity.this, "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
                     }
@@ -410,15 +420,15 @@ public class InitialActivity extends AppCompatActivity
 //        return true;
 //    }
 
-    public void mOffline(){
-        Log.e("STATUS","OFFLINE");
+    public void mOffline() {
+        Log.e("STATUS", "OFFLINE");
     }
 
-    public void mIdle(){
-        Log.e("STATUS","IDLE");
+    public void mIdle() {
+        Log.e("STATUS", "IDLE");
     }
 
-    public void mConnect(){
-        Log.e("STATUS","CONNECTED");
+    public void mConnect() {
+        Log.e("STATUS", "CONNECTED");
     }
 }

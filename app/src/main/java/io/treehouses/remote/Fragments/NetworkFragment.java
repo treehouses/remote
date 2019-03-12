@@ -2,12 +2,8 @@ package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,22 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.fragment.app.FragmentActivity;
-import io.treehouses.remote.InitialActivity;
+import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
-public class NetworkFragment extends androidx.fragment.app.Fragment {
+public class NetworkFragment extends BaseFragment {
 
     View view;
-    InitialActivity initialActivity;
     private BluetoothChatService mChatService = null;
 
 //    EditText HotspotPasswordEditText;
@@ -46,11 +40,8 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
-
-        initialActivity = new InitialActivity();
-        BluetoothChatService chatService = initialActivity.getChatService();
-        mChatService = chatService;
-        chatService.updateHandler(mHandler);
+        mChatService = listener.getChatService();
+        listener.updateHandler(mHandler);
 
         ArrayList<String> list = new ArrayList<String>();
         list.add("Ethernet");
@@ -91,10 +82,10 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 showBridgeDialog();
                 break;
             case 4:
-                initialActivity.sendMessage("treehouses default network");
+                listener.sendMessage("treehouses default network");
                 break;
             case 5:
-                initialActivity.sendMessage("reboot");
+                listener.sendMessage("reboot");
                 try {
                     Thread.sleep(1000);
 
@@ -167,7 +158,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 
     private void wifiOn(Bundle bundle){
 
-        initialActivity.sendMessage("treehouses wifi \""+bundle.getString("SSID")+"\" \""+bundle.getString("PWD")+"\"");
+        listener.sendMessage("treehouses wifi \""+bundle.getString("SSID")+"\" \""+bundle.getString("PWD")+"\"");
 
 //        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
 //        WifiConfiguration wc = new WifiConfiguration();
@@ -198,13 +189,13 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     }
     private void hotspotOn (Bundle bundle){
         if(bundle.getString("HPWD").equals("")){
-            initialActivity.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\"");
+            listener.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\"");
         }else{
-            initialActivity.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\" \""+bundle.getString("HPWD")+"\"");
+            listener.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\" \""+bundle.getString("HPWD")+"\"");
         }
     }
     private void ethernetOn(Bundle bundle){
-        initialActivity.sendMessage("treehouses ethernet \""+bundle.getString("ip")+"\" \""+bundle.getString("mask")+"\" \""+bundle.getString("gateway")+"\" \""+bundle.getString("dns")+"\"");
+        listener.sendMessage("treehouses ethernet \""+bundle.getString("ip")+"\" \""+bundle.getString("mask")+"\" \""+bundle.getString("gateway")+"\" \""+bundle.getString("dns")+"\"");
     }
 
     private void bridgeOn(Bundle bundle){
@@ -220,7 +211,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
             overallMessage+="\""+bundle.getString("hpassword")+"\"";
         }
         Log.e("NetworkFragment","Bridge RPI Message = "+overallMessage);
-        initialActivity.sendMessage(overallMessage);
+        listener.sendMessage(overallMessage);
     }
 
     private AlertDialog showAlertDialog(String message){
