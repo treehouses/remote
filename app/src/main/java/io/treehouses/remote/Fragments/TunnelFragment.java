@@ -45,9 +45,7 @@ public class TunnelFragment extends BaseFragment {
     private String mConnectedDeviceName = null;
     private TextView mPingStatus;
     private Button pingStatusButton;
-    private BluetoothAdapter mBluetoothAdapter = null;
     private ArrayAdapter<String> mConversationArrayAdapter;
-    private BluetoothChatService mChatService = null;
     private ListView mConversationView = null;
 
     View view;
@@ -68,7 +66,6 @@ public class TunnelFragment extends BaseFragment {
     String[] split = {};
     ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
     ArrayList<String> message_array_listMaster = new ArrayList<String>(Arrays.asList(split));
-
 
 
     public final Handler mHandler = new Handler() {
@@ -150,8 +147,6 @@ public class TunnelFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_tunnel_fragment, container, false);
-
-
         ArrayList<String> listview = new ArrayList<String>();
 
         list = view.findViewById(R.id.list_command);
@@ -159,14 +154,6 @@ public class TunnelFragment extends BaseFragment {
         list.setDividerHeight(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.tunnel_commands_list, R.id.command_textView, listview);
         list.setAdapter(adapter);
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            getActivity().finish();
-        }
-
         return view;
     }
 
@@ -188,35 +175,11 @@ public class TunnelFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-//        if((new RPIDialogFragment()).equals(null)){
-//            Log.e("TERMINAL", "NULL");
-//        }
-//        RPIDialogFragment listener = new RPIDialogFragment();
-//        BluetoothDevice device = listener.getMainDevice();
-        mChatService = listener.getChatService();
-
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
-        mChatService.updateHandler(mHandler);
-        Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        checkStatusNow();
-//        }
-//        Log.e("DEVICE ", ""+device.getName());
-//         If BT is not on, request that it be enabled.
-//         setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else {
-            setupChat();
-//            mChatService.connect(device,true);
-        }
+        onLoad(mHandler);
     }
 
-    private void checkStatusNow() {
+    @Override
+    public void checkStatusNow() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
 
@@ -227,7 +190,8 @@ public class TunnelFragment extends BaseFragment {
         }
     }
 
-    public void setupChat(String... msg) {
+    @Override
+    public void setupChat() {
         Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
         // Initialize the array adapter for the conversation thread
@@ -250,9 +214,9 @@ public class TunnelFragment extends BaseFragment {
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickedData=(String) mConversationView.getItemAtPosition(position);
+                String clickedData = (String) mConversationView.getItemAtPosition(position);
                 context = getContext();
-                Utils.copyToClipboard(context , clickedData);
+                Utils.copyToClipboard(context, clickedData);
             }
         });
 
@@ -296,8 +260,7 @@ public class TunnelFragment extends BaseFragment {
                             listener.sendMessage("treehouses tor add 22");
                             Thread.sleep(300);
                             listener.sendMessage("treehouses tor add 2200");
-                        }
-                        catch (InterruptedException e){
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         if (message_array_listMaster.toArray().length > 0) {

@@ -13,7 +13,5 @@ public class BaseDialogFragment extends DialogFragment {
         super.onAttach(context);
         if (context instanceof HomeInteractListener)
             listener = (HomeInteractListener) context;
-        else
-            throw new RuntimeException("Implement interface first");
     }
 }

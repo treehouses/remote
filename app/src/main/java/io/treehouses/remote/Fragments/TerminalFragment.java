@@ -90,14 +90,7 @@ public class TerminalFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
         // Get local Bluetooth adapter
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-
-        // If the adapter is null, then Bluetooth is not supported
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            getActivity().finish();
-        }
 
         return view;
     }
@@ -151,32 +144,7 @@ public class TerminalFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-//        if((new RPIDialogFragment()).equals(null)){
-//            Log.e("TERMINAL", "NULL");
-//        }
-//        RPIDialogFragment listener = new RPIDialogFragment();
-//        BluetoothDevice device = listener.getMainDevice();
-        mChatService = listener.getChatService();
-
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
-        mChatService.updateHandler(mHandler);
-        Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        checkStatusNow();
-//        }
-//        Log.e("DEVICE ", ""+device.getName());
-//         If BT is not on, request that it be enabled.
-//         setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else {
-            setupChat();
-//            mChatService.connect(device,true);
-        }
+        onLoad(mHandler);
     }
 
 //    @Override
@@ -239,7 +207,7 @@ public class TerminalFragment extends BaseFragment {
     /**
      * Set up the UI and background operations for chat.
      */
-    private void setupChat() {
+    public void setupChat() {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
@@ -369,7 +337,7 @@ public class TerminalFragment extends BaseFragment {
         mOutStringBuffer = new StringBuffer();
     }
 
-    private void checkStatusNow() {
+    public void checkStatusNow() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
 
