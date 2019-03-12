@@ -63,7 +63,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
         app:passwordToggleDrawable="@drawable/toggle_password"
-        app:passwordToggleEnabled="false"
+        app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +91,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3"
         app:passwordToggleDrawable="@drawable/toggle_password"
-        app:passwordToggleEnabled="false"
+        app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
