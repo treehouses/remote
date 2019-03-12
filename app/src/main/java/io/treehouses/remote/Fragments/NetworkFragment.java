@@ -91,6 +91,7 @@ public class NetworkFragment extends BaseFragment {
 
                     if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                        listener.openCallFragment(new HomeFragment());
                     } else {
                         Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
                     }

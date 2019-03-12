@@ -126,25 +126,7 @@ public class InitialActivity extends AppCompatActivity
         int id = item.getItemId();
         checkStatusNow();
         if (validBluetoothConnection) {
-            if (id == R.id.menu_home) {
-                openCallFragment(new HomeFragment());
-            } else if (id == R.id.menu_network) {
-                openCallFragment((new NetworkFragment()));
-            } else if (id == R.id.menu_system) {
-                openCallFragment(new SystemFragment());
-            } else if (id == R.id.menu_terminal) {
-                openCallFragment(new TerminalFragment());
-            } else if (id == R.id.menu_services) {
-                openCallFragment(new ServicesFragment());
-            } else if (id == R.id.menu_tunnel) {
-                openCallFragment(new TunnelFragment());
-            } else if (id == R.id.menu_about) {
-                openCallFragment((new AboutFragment()));
-            } else if (id == R.id.menu_status) {
-                openCallFragment(new StatusFragment());
-            } else {
-                openCallFragment(new HomeFragment());
-            }
+            onNavigationItemClicked(id);
         } else {
             if (id == R.id.menu_about) {
                 openCallFragment((new AboutFragment()));
@@ -157,6 +139,28 @@ public class InitialActivity extends AppCompatActivity
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void onNavigationItemClicked(int id) {
+        if (id == R.id.menu_home) {
+            openCallFragment(new HomeFragment());
+        } else if (id == R.id.menu_network) {
+            openCallFragment((new NetworkFragment()));
+        } else if (id == R.id.menu_system) {
+            openCallFragment(new SystemFragment());
+        } else if (id == R.id.menu_terminal) {
+            openCallFragment(new TerminalFragment());
+        } else if (id == R.id.menu_services) {
+            openCallFragment(new ServicesFragment());
+        } else if (id == R.id.menu_tunnel) {
+            openCallFragment(new TunnelFragment());
+        } else if (id == R.id.menu_about) {
+            openCallFragment((new AboutFragment()));
+        } else if (id == R.id.menu_status) {
+            openCallFragment(new StatusFragment());
+        } else {
+            openCallFragment(new HomeFragment());
+        }
     }
 
     @Override
