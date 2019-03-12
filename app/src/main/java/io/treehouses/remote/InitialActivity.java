@@ -142,34 +142,30 @@ public class InitialActivity extends AppCompatActivity
     }
 
     private void onNavigationItemClicked(int id) {
-        switch (id) {
-            case R.id.menu_home:
-                openCallFragment(new HomeFragment());
-                break;
-            case R.id.menu_network:
-                openCallFragment((new NetworkFragment()));
-                break;
-            case R.id.menu_system:
-                openCallFragment(new SystemFragment());
-                break;
-            case R.id.menu_terminal:
-                openCallFragment(new TerminalFragment());
-                break;
-            case R.id.menu_services:
-                openCallFragment(new ServicesFragment());
-                break;
-            case R.id.menu_tunnel:
-                openCallFragment(new TunnelFragment());
-                break;
-            case R.id.menu_about:
-                openCallFragment((new AboutFragment()));
-                break;
-            case R.id.menu_status:
-                openCallFragment(new StatusFragment());
-                break;
-            default:
-                openCallFragment(new HomeFragment());
-                break;
+        if (id == R.id.menu_home) {
+            openCallFragment(new HomeFragment());
+        } else if (id == R.id.menu_network) {
+            openCallFragment((new NetworkFragment()));
+        } else if (id == R.id.menu_system) {
+            openCallFragment(new SystemFragment());
+        } else if (id == R.id.menu_terminal) {
+            openCallFragment(new TerminalFragment());
+        } else {
+            checkMore(id);
+        }
+    }
+
+    private void checkMore(int id) {
+        if (id == R.id.menu_services) {
+            openCallFragment(new ServicesFragment());
+        } else if (id == R.id.menu_tunnel) {
+            openCallFragment(new TunnelFragment());
+        } else if (id == R.id.menu_about) {
+            openCallFragment((new AboutFragment()));
+        } else if (id == R.id.menu_status) {
+            openCallFragment(new StatusFragment());
+        } else {
+            openCallFragment(new HomeFragment());
         }
     }
 

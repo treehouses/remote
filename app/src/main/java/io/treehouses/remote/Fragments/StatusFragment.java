@@ -87,7 +87,7 @@ public class StatusFragment extends BaseFragment {
 
         initializeUIElements(view);
 
-
+        mChatService = listener.getChatService();
         listener.updateHandler(mHandler);
 
         deviceName = mChatService.getConnectedDeviceName();
