@@ -1,9 +1,6 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -29,11 +26,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.utils.Utils;
 
 public class TunnelFragment extends BaseFragment {
 

@@ -39,6 +39,7 @@ import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.callback.HomeInteractListener;
+import io.treehouses.remote.utils.LogUtils;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -233,13 +234,13 @@ public class InitialActivity extends AppCompatActivity
 
     private void checkStatusNow() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            mConnect();
+            LogUtils.mConnect();
             validBluetoothConnection = true;
         } else if (mChatService.getState() == Constants.STATE_NONE) {
-            mOffline();
+            LogUtils.mOffline();
             validBluetoothConnection = false;
         } else {
-            mIdle();
+            LogUtils.mIdle();
             validBluetoothConnection = false;
         }
         Log.e("BOOLEAN", "" + validBluetoothConnection);
@@ -320,7 +321,7 @@ public class InitialActivity extends AppCompatActivity
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(InitialActivity.this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-            mIdle();
+            LogUtils.mIdle();
             return;
         }
 
@@ -430,15 +431,5 @@ public class InitialActivity extends AppCompatActivity
 //        return true;
 //    }
 
-    public void mOffline() {
-        Log.e("STATUS", "OFFLINE");
-    }
 
-    public void mIdle() {
-        Log.e("STATUS", "IDLE");
-    }
-
-    public void mConnect() {
-        Log.e("STATUS", "CONNECTED");
-    }
 }
