@@ -38,7 +38,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.ArrayList;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -58,14 +57,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
 
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("Change Pi Password");
-        list.add("Treehouses");
-        list.add("Treehouses Detectrpi");
-        list.add("Docker ps");
-        list.add("Rename Hostname");
-        list.add("Expand File System");
-
         initialActivity = new InitialActivity();
 //        RPIDialogFragment initialActivity = new RPIDialogFragment();
 //        BluetoothDevice device = initialActivity.getMainDevice();
@@ -81,7 +72,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.list);
         listView.setAdapter(adapter);
 
         setHasOptionsMenu(true);
