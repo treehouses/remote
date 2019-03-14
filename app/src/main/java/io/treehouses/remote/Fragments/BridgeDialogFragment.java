@@ -6,11 +6,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ToggleButton;
 
+import androidx.core.content.ContextCompat;
 import io.treehouses.remote.R;
 
 public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
@@ -21,10 +24,7 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
     protected EditText HotspotESSIDEditText;
     protected EditText PasswordEditText;
     protected EditText HotspotPasswordEditText;
-
-    //    protected EditText confirmPWDEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
-
 
     public static BridgeDialogFragment newInstance(int num) {
         BridgeDialogFragment bridgeDialogFragment = new BridgeDialogFragment();
