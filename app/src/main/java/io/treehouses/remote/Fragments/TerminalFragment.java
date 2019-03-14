@@ -39,7 +39,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 import io.treehouses.remote.InitialActivity;
-import io.treehouses.remote.Lists;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -52,7 +51,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     ListView listView;
     InitialActivity initialActivity;
     Context context;
-    Lists list;
     public TerminalFragment(){}
 
     @Override
@@ -64,8 +62,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
 
-        list = new Lists();
-
 //        if(mChatService == null){
 //            showRPIDialog();
 //        }else{
@@ -76,7 +72,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, list.TerminalList());
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.list);
         listView.setAdapter(adapter);
 
         setHasOptionsMenu(true);
