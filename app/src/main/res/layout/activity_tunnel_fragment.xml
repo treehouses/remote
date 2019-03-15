@@ -262,7 +262,9 @@
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toTopOf="@+id/switch1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll" />
 
     <Button
         android:id="@+id/btn_status"
