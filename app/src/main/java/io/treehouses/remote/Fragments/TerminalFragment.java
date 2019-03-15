@@ -304,51 +304,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             }
         });
 
-//        treehousesButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String t = "treehouses";
-//                sendMessage(t);
-//            }
-//        });
-//
-//        dockerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String d = "docker ps";
-//                sendMessage(d);
-//            }
-//        });
-//
-//        RPI_HW_Button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String v = "treehouses detectrpi";
-//                sendMessage(v);
-//            }
-//        });
-//
-//        hostnameButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showDialog(view);
-//            }
-//        });
-//
-//        changePasswordButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showChPasswordDialog();
-//            }
-//        });
-//        expandButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String e = "treehouses expandfs";
-//                sendMessage(e);
-//            }
-//        });
-
         // Initialize the BluetoothChatService to perform bluetooth connections
         if(mChatService.getState() == Constants.STATE_NONE){
             mChatService = new BluetoothChatService( mHandler);
