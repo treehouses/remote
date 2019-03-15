@@ -248,8 +248,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             }
         };
 
-
-
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -259,8 +257,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 Utils.copyToClipboard(context , clickedData);
             }
         });
-
-
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
