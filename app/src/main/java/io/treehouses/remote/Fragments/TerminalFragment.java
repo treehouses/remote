@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.LauncherActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ClipData;
@@ -12,13 +13,16 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -52,6 +56,8 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     ListView listView;
     InitialActivity initialActivity;
     Context context;
+    TextView output;
+    ArrayList<String> repopulate;
     public TerminalFragment(){}
 
     @Override
@@ -88,6 +94,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        repopulate = new ArrayList<>();
 
 
         // If the adapter is null, then Bluetooth is not supported
@@ -235,6 +242,32 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //        expandButton = (Button)view.findViewById(R.id.EF);
     }
 
+    @Override
+    public void onResume(){
+        Log.e("tag", "LOG inside onResume method ");
+        super.onResume();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String previousText = preferences.getString("label", "");
+        if(TextUtils.isEmpty(previousText) == false){
+            Log.e("tag", "LOG inside if statement");
+            if (repopulate.equals(null)) {
+                repopulate.add(output.toString());
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, repopulate);
+            mConversationView.setAdapter(adapter);
+            mConversationArrayAdapter.notifyDataSetChanged();
+        }
+    }
+
+    //saves the output of the terminal
+    private void saveStringToPreferences(String str){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("label", str);
+        editor.apply();
+    }
+
     /**
      * Set up the UI and background operations for chat.
      */
@@ -246,12 +279,12 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView consoleView = view.findViewById(R.id.listItem);
+                output = view.findViewById(R.id.listItem);
 
                 if(isRead){
-                    consoleView.setTextColor(Color.BLUE);
+                    output.setTextColor(Color.BLUE);
                 }else{
-                    consoleView.setTextColor(Color.RED);
+                    output.setTextColor(Color.RED);
                 }
                 return view;
             }
@@ -289,7 +322,19 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 }else if(position == 5){
                     initialActivity.sendMessage("treehouses expandfs");
                 }
+
+                try {
+                    Thread.sleep(3000);
+                    Log.e("tag", "output = " + output);
+                    repopulate.add(output.toString());
+                    Log.e("tag", "LOG repopulate list after add: = " + repopulate);
+                    mConversationArrayAdapter.notifyDataSetChanged();
+                    saveStringToPreferences(output.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
         });
 
         // Initialize the compose field with a listener for the return key
