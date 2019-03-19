@@ -22,15 +22,30 @@ package io.treehouses.remote.MiscOld;
  * Created by yubo on 7/11/17.
  */
 
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
-public class Constants {
+public class Constants extends FragmentActivity {
+
+    static String value = "";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        value = getIntent().getExtras().getString("output");
+    }
 
     // Intent request code (use in BluetoothChatFragment)
     public static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
@@ -65,6 +80,11 @@ public class Constants {
         list.add("Docker ps");
         list.add("Rename Hostname");
         list.add("Expand File System");
+    }
+
+    public static final List<String> repopulate = new ArrayList<>();
+    static {
+        repopulate.add(value);
     }
 }
 

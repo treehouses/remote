@@ -42,6 +42,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -56,12 +59,13 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     InitialActivity initialActivity;
     Context context;
     TextView output;
-    ArrayList<String> repopulate;
-    public TerminalFragment(){}
+    public TerminalFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
+
+
 
         initialActivity = new InitialActivity();
 //        RPIDialogFragment initialActivity = new RPIDialogFragment();
@@ -84,9 +88,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         setHasOptionsMenu(true);
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        repopulate = new ArrayList<>();
-
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
@@ -237,26 +238,8 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     public void onResume(){
         Log.e("tag", "LOG inside onResume method ");
         super.onResume();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String previousText = preferences.getString("label", "");
-        if(TextUtils.isEmpty(previousText) == false){
-            Log.e("tag", "LOG inside if statement");
-            if (repopulate.equals(null)) {
-                repopulate.add(output.toString());
-            }
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, repopulate);
-            mConversationView.setAdapter(adapter);
-            mConversationArrayAdapter.notifyDataSetChanged();
-        }
-    }
-
-    //saves the output of the terminal
-    private void saveStringToPreferences(String str){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("label", str);
-        editor.apply();
+       // ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.repopulate);
+       // mConversationArrayAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -271,6 +254,11 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 output = view.findViewById(R.id.listItem);
+
+                Log.e("tag", "Var output before intent = " + output.getText().toString());
+                Intent intent = new Intent(getActivity(), Constants.class);
+                intent.putExtra("output", output.getText().toString());
+                Log.e("tag", "Var output after intent = " + Constants.repopulate.size());
 
                 if(isRead){
                     output.setTextColor(Color.BLUE);
@@ -313,17 +301,16 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 }else if(position == 5){
                     initialActivity.sendMessage("treehouses expandfs");
                 }
+               // Log.e("tag", "Var This will be the output:" + "\n");
+             // Log.e("tag", "output is " + output.getText().toString());
 
-                try {
-                    Thread.sleep(3000);
-                    Log.e("tag", "output = " + output);
-                    repopulate.add(output.toString());
-                    Log.e("tag", "LOG repopulate list after add: = " + repopulate);
-                    mConversationArrayAdapter.notifyDataSetChanged();
-                    saveStringToPreferences(output.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(2000);
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+
             }
 
         });
