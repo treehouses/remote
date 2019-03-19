@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 import androidx.fragment.app.FragmentActivity;
@@ -28,13 +30,11 @@ import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
-import static android.content.Context.WIFI_SERVICE;
-
 public class NetworkFragment extends androidx.fragment.app.Fragment {
 
     View view;
-
     InitialActivity initialActivity;
+    private BluetoothChatService mChatService = null;
 
 //    EditText HotspotPasswordEditText;
 //    EditText PasswordEditText;
@@ -49,6 +49,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 
         initialActivity = new InitialActivity();
         BluetoothChatService chatService = initialActivity.getChatService();
+        mChatService = chatService;
         chatService.updateHandler(mHandler);
 
         ArrayList<String> list = new ArrayList<String>();
@@ -57,6 +58,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         list.add("Hotspot");
         list.add("Bridge");
         list.add("Reset");
+        list.add("Reboot");
 
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
@@ -68,6 +70,8 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 getListFragment(position);
             }
         });
+
+
 
         return view;
     }
@@ -88,6 +92,21 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 break;
             case 4:
                 initialActivity.sendMessage("treehouses default network");
+                break;
+            case 5:
+                initialActivity.sendMessage("reboot");
+                try {
+                    Thread.sleep(1000);
+
+                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
+                        Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+                    }
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
                 break;
             default:
                 Log.e("Default Network Switch", "Nothing...");
