@@ -200,8 +200,6 @@ public class TerminalFragment extends BaseFragment {
                 return view;
             }
         };
-
-
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -211,7 +209,6 @@ public class TerminalFragment extends BaseFragment {
                 Utils.copyToClipboard(context, clickedData);
             }
         });
-
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
@@ -258,51 +255,6 @@ public class TerminalFragment extends BaseFragment {
                 checkStatusNow();
             }
         });
-
-//        treehousesButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String t = "treehouses";
-//                sendMessage(t);
-//            }
-//        });
-//
-//        dockerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String d = "docker ps";
-//                sendMessage(d);
-//            }
-//        });
-//
-//        RPI_HW_Button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String v = "treehouses detectrpi";
-//                sendMessage(v);
-//            }
-//        });
-//
-//        hostnameButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showDialog(view);
-//            }
-//        });
-//
-//        changePasswordButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showChPasswordDialog();
-//            }
-//        });
-//        expandButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String e = "treehouses expandfs";
-//                sendMessage(e);
-//            }
-//        });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
