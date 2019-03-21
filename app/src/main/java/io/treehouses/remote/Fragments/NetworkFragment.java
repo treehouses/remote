@@ -52,16 +52,10 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         mChatService = chatService;
         chatService.updateHandler(mHandler);
 
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("Ethernet");
-        list.add("Wi-Fi");
-        list.add("Hotspot");
-        list.add("Bridge");
-        list.add("Reset");
-        list.add("Reboot");
+
 
         ListView listView = view.findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, Constants.networklist);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

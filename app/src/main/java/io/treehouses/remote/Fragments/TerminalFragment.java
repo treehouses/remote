@@ -72,7 +72,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.terminallist);
         listView.setAdapter(adapter);
 
         setHasOptionsMenu(true);
