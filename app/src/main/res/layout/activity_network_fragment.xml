@@ -53,6 +53,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
+    <TextView
+        android:id="@+id/tvNetworkMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="176dp"
+        android:layout_marginRight="176dp"
+        android:layout_marginBottom="143dp"
+        android:textColor="@color/md_dark_background"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/listView"
+        app:layout_constraintEnd_toEndOf="@+id/listView" />
+
     <!--<Button-->
         <!--android:id="@+id/material_icon_button2"-->
         <!--android:layout_width="match_parent"-->

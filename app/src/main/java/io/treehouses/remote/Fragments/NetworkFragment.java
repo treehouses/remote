@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -35,22 +36,24 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     View view;
     InitialActivity initialActivity;
     private BluetoothChatService mChatService = null;
-
-//    EditText HotspotPasswordEditText;
-//    EditText PasswordEditText;
+    String readMessage;
+    Boolean alert = true;
+    Boolean networkStatus = false;
+    TextView networkmode;
 
     public NetworkFragment(){}
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
-
         initialActivity = new InitialActivity();
         BluetoothChatService chatService = initialActivity.getChatService();
         mChatService = chatService;
         chatService.updateHandler(mHandler);
+        networkmode = view.findViewById(R.id.tvNetworkMode);
+
+        updateNetworkMode();
 
         ArrayList<String> list = new ArrayList<String>();
         list.add("Ethernet");
@@ -59,6 +62,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         list.add("Bridge");
         list.add("Reset");
         list.add("Reboot");
+        list.add("Networkmode: ");
 
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
@@ -71,10 +75,15 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
             }
         });
 
-
-
         return view;
     }
+
+    public void updateNetworkMode() {
+        alert = false;
+        networkStatus = true;
+        initialActivity.sendMessage("treehouses networkmode");
+    }
+
 
     public void getListFragment(int position){
         switch (position){
@@ -91,9 +100,13 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 showBridgeDialog();
                 break;
             case 4:
+                alert = true;
                 initialActivity.sendMessage("treehouses default network");
                 break;
+
             case 5:
+                alert = false;
+
                 initialActivity.sendMessage("reboot");
                 try {
                     Thread.sleep(1000);
@@ -108,6 +121,9 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                     e.printStackTrace();
                 }
                 break;
+            case 6:
+                updateNetworkMode();
+                Toast.makeText(getContext(), "Networkmode updated", Toast.LENGTH_LONG).show();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
@@ -166,7 +182,7 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     }
 
     private void wifiOn(Bundle bundle){
-
+        alert = true;
         initialActivity.sendMessage("treehouses wifi \""+bundle.getString("SSID")+"\" \""+bundle.getString("PWD")+"\"");
 
 //        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -244,8 +260,20 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
             FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
-                    String readMessage = (String)msg.obj;
-                    showAlertDialog(readMessage);
+                    readMessage = (String)msg.obj;
+                    Log.d("TAG", "readMessage = " + readMessage);
+
+                    if (networkStatus) {
+                        networkmode.setText(readMessage);
+                        networkStatus = false;
+                    }
+
+                    if (alert) {
+                        showAlertDialog(readMessage);
+                    } else {
+                        alert = true;
+                    }
+
                     break;
             }
         }
