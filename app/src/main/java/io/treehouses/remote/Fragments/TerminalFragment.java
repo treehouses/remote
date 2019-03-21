@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import io.treehouses.remote.InitialActivity;
+import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -59,6 +60,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     InitialActivity initialActivity;
     Context context;
     TextView output;
+    ArrayList<String> terminalList;
     public TerminalFragment() {}
 
     @Override
@@ -242,6 +244,11 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
        // mConversationArrayAdapter.notifyDataSetChanged();
     }
 
+    public String getTerminalOutput() {
+
+        return output.getText().toString();
+    }
+
     /**
      * Set up the UI and background operations for chat.
      */
@@ -255,14 +262,13 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 View view = super.getView(position, convertView, parent);
                 output = view.findViewById(R.id.listItem);
 
-                Log.e("tag", "Var output before intent = " + output.getText().toString());
-                Intent intent = new Intent(getActivity(), Constants.class);
-                intent.putExtra("output", output.getText().toString());
-                Log.e("tag", "Var output after intent = " + Constants.repopulate.size());
+                Log.e("tag", "Var output before intent = " + getTerminalOutput());
+                terminalList = MainApplication.getTerminalList();
+                Log.e("tag", "Var output after intent = " + terminalList);
 
-                if(isRead){
+                if (isRead){
                     output.setTextColor(Color.BLUE);
-                }else{
+                }else {
                     output.setTextColor(Color.RED);
                 }
                 return view;
