@@ -44,7 +44,6 @@ public class Constants extends FragmentActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        value = getIntent().getExtras().getString("output");
     }
 
     // Intent request code (use in BluetoothChatFragment)
@@ -80,11 +79,6 @@ public class Constants extends FragmentActivity {
         list.add("Docker ps");
         list.add("Rename Hostname");
         list.add("Expand File System");
-    }
-
-    public static final List<String> repopulate = new ArrayList<>();
-    static {
-        repopulate.add(value);
     }
 }
 

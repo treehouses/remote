@@ -52,7 +52,9 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
+import static io.treehouses.remote.MainApplication.getOnResume;
 import static io.treehouses.remote.MainApplication.getTerminalList;
+import static io.treehouses.remote.MainApplication.setOnResume;
 
 public class TerminalFragment extends androidx.fragment.app.Fragment {
 
@@ -149,6 +151,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Log.e("tag", " LOG check onStart method is called");
 
 //        if((new RPIDialogFragment()).equals(null)){
 //            Log.e("TERMINAL", "NULL");
@@ -168,23 +171,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //        Log.e("DEVICE ", ""+device.getName());
 //         If BT is not on, request that it be enabled.
 //         setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        }
-        else {
-            setupChat();
-//            mChatService.connect(device,true);
-        }
     }
-
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//        if(getActivity().getActionBar().isShowing())
-//            getActivity().getActionBar().hide();
-//    }
 
 //    @Override
 //    public void onPause(){
@@ -219,7 +206,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         }
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
@@ -238,27 +224,34 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 
     @Override
     public void onResume(){
-        Log.e("tag", "LOG inside onResume method ");
+        Log.e("tag", "LOG check onResume method ");
         super.onResume();
-       // ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.repopulate);
-       // mConversationArrayAdapter.notifyDataSetChanged();
+
+        if (getTerminalList().size() > 1) {
+            initializeArrayAdapter(getTerminalList());
+            setupChat();
+            setOnResume();
+        } else if (!getOnResume()) {
+            initializeArrayAdapter();
+
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
+            } else {
+                Log.e("tag", " LOG check setupChat method is called");
+                setupChat();
+            }
+        }
     }
 
-    /**
-     * Set up the UI and background operations for chat.
-     */
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
+    public void initializeArrayAdapter() {
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 output = view.findViewById(R.id.listItem);
 
-               // Log.e("tag", "Var output = " + output.getText().toString());
-
+                Log.e("tag", " LOG check getView method is called");
 
                 if (isRead){
                     output.setTextColor(Color.BLUE);
@@ -268,7 +261,33 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 return view;
             }
         };
+    }
 
+    public void initializeArrayAdapter(ArrayList list) {
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, list){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                output = view.findViewById(R.id.listItem);
+
+                Log.e("tag", " LOG check list getView method is called");
+                if (isRead){
+                    output.setTextColor(Color.BLUE);
+                }else {
+                    output.setTextColor(Color.RED);
+                }
+                return view;
+            }
+
+        };
+        mConversationView.setAdapter(mConversationArrayAdapter);
+    }
+
+    /**
+     * Set up the UI and background operations for chat.
+     */
+    private void setupChat() {
+        Log.d(TAG, "setupChat()");
 
 
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -575,7 +594,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                     Log.d(TAG, "readMessage = " + readMessage);
 
                     getTerminalList().add(readMessage);
-                    Log.e("tag", "Var list output = " + getTerminalList());
+                    Log.e("tag", "LOG check List output = " + getTerminalList());
 
                     //TODO: if message is json -> callback from RPi
                     if(isJson(readMessage)){
@@ -599,7 +618,13 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-                            mConversationArrayAdapter.add(readMessage);
+
+                            if (!getOnResume()) {
+                                mConversationArrayAdapter.add(readMessage);
+                            } else {
+                                mConversationArrayAdapter.notifyDataSetChanged();
+                            }
+
                         }
                     }
                     break;
