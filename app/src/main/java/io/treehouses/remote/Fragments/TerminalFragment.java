@@ -52,6 +52,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
+import static io.treehouses.remote.MainApplication.getTerminalList;
 
 public class TerminalFragment extends androidx.fragment.app.Fragment {
 
@@ -60,7 +61,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     InitialActivity initialActivity;
     Context context;
     TextView output;
-    ArrayList<String> terminalList;
     public TerminalFragment() {}
 
     @Override
@@ -244,11 +244,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
        // mConversationArrayAdapter.notifyDataSetChanged();
     }
 
-    public String getTerminalOutput() {
-
-        return output.getText().toString();
-    }
-
     /**
      * Set up the UI and background operations for chat.
      */
@@ -262,9 +257,8 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 View view = super.getView(position, convertView, parent);
                 output = view.findViewById(R.id.listItem);
 
-                Log.e("tag", "Var output before intent = " + getTerminalOutput());
-                terminalList = MainApplication.getTerminalList();
-                Log.e("tag", "Var output after intent = " + terminalList);
+               // Log.e("tag", "Var output = " + output.getText().toString());
+
 
                 if (isRead){
                     output.setTextColor(Color.BLUE);
@@ -579,6 +573,10 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //                    String readMessage = new String(readBuf);
                     String readMessage = (String)msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
+
+                    getTerminalList().add(readMessage);
+                    Log.e("tag", "Var list output = " + getTerminalList());
+
                     //TODO: if message is json -> callback from RPi
                     if(isJson(readMessage)){
                         //handleCallback(readMessage);
