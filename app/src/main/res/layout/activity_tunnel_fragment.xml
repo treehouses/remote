@@ -35,76 +35,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pingStatus" />
 
-    <!--<TextView-->
-    <!--android:id="@+id/tv_command_tor"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="200dp"-->
-    <!--android:text="Address: "-->
-    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textStyle="bold"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_command_add_80"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="Add port 80: "-->
-    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textStyle="bold"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_tor" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_command_add_2200"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="Add port 2200: "-->
-    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textStyle="bold"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_80" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_command_add_22"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="26dp"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="Add port 22: "-->
-    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textStyle="bold"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_2200" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_command_start1"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="Start Service: "-->
-    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-    <!--android:textColor="@android:color/black"-->
-    <!--android:textStyle="bold"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/tv_command_add_22" /> -->
-
     <TextView
         android:id="@+id/tv_command_start"
         android:layout_width="wrap_content"
@@ -262,7 +192,9 @@
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toTopOf="@+id/switch1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll" />
 
     <Button
         android:id="@+id/btn_status"
