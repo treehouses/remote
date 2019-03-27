@@ -39,36 +39,18 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     private static final String TAG = "BluetoothChatFragment";
     private static boolean isRead = false;
     private static boolean isCountdown = false;
-    private int printedLineCount = 0;
-    private StringBuffer mOutStringBuffer;
-    private String mConnectedDeviceName = null;
     private TextView mPingStatus;
     private Button pingStatusButton;
     private BluetoothAdapter mBluetoothAdapter = null;
     private ArrayAdapter<String> mConversationArrayAdapter;
     private BluetoothChatService mChatService = null;
     private ListView mConversationView = null;
+    private Context context;
+    private Button btn_status;
+    private InitialActivity initialActivity;
+    private ListView terminallist;
 
     View view;
-    View terminal;
-    Context context;
-    TextView status;
-    String output;
-    InitialActivity initialActivity;
-    TerminalFragment terminalFragment;
-    ListView list;
-
-    Button btn_status;
-    Button btn_start;
-    Button btn_execute_start;
-    Button btn_execute_stop;
-    Button btn_execute_destroy;
-    Button btn_execute_address;
-
-    String[] split = {};
-    ArrayList<String> message_array_list = new ArrayList<String>(Arrays.asList(split));
-    ArrayList<String> message_array_listMaster = new ArrayList<String>(Arrays.asList(split));
-
 
 
     public final Handler mHandler = new Handler() {
@@ -102,6 +84,23 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
 //                    String readMessage = new String(readBuf);
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
+
+                    if (readMessage.contains("Error")) {
+                        try {
+                            initialActivity.sendMessage("treehouses tor start");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor add 80");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor add 22");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor add 2200");
+                            Thread.sleep(300);
+                            initialActivity.sendMessage("treehouses tor");
+                        }
+                        catch (InterruptedException e){
+                            e.printStackTrace();
+                        }
+                    }
                     //TODO: if message is json -> callback from RPi
                     if (isJson(readMessage)) {
                         //handleCallback(readMessage);
@@ -130,7 +129,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     if (null != getActivity()) {
                         Toast.makeText(getActivity(), "Connected to "
                                 + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -150,24 +149,19 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_tunnel_fragment, container, false);
-
         initialActivity = new InitialActivity();
-
         ArrayList<String> listview = new ArrayList<String>();
-
-        list = view.findViewById(R.id.list_command);
-        list.setDivider(null);
-        list.setDividerHeight(0);
+        terminallist = view.findViewById(R.id.list_command);
+        terminallist.setDivider(null);
+        terminallist.setDividerHeight(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.tunnel_commands_list, R.id.command_textView, listview);
-        list.setAdapter(adapter);
-
+        terminallist.setAdapter(adapter);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (mBluetoothAdapter == null) {
             Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
             getActivity().finish();
         }
-
         return view;
     }
 
@@ -177,51 +171,34 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         btn_status = view.findViewById(R.id.btn_status);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
-        btn_start = view.findViewById(R.id.btn_start_config);
-        btn_execute_start = view.findViewById(R.id.btn_execute_start);
-        btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
-        btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
-        btn_execute_address = view.findViewById(R.id.btn_execute_address);
-
+        Button btn_start = view.findViewById(R.id.btn_start_config);
+        Button btn_execute_start = view.findViewById(R.id.btn_execute_start);
+        Button btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
+        Button btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
+        Button btn_execute_address = view.findViewById(R.id.btn_execute_address);
         sendMessage(btn_start, btn_execute_start, btn_execute_stop, btn_execute_destroy, btn_execute_address);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-//        if((new RPIDialogFragment()).equals(null)){
-//            Log.e("TERMINAL", "NULL");
-//        }
         initialActivity = new InitialActivity();
-//        RPIDialogFragment initialActivity = new RPIDialogFragment();
-//        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
-
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
         mChatService.updateHandler(mHandler);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
         checkStatusNow();
-//        }
-//        Log.e("DEVICE ", ""+device.getName());
-//         If BT is not on, request that it be enabled.
-//         setupChat() will then be called during onActivityResult
+
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
         } else {
             setupChat();
-//            mChatService.connect(device,true);
         }
     }
 
     private void checkStatusNow() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
-
         } else if (mChatService.getState() == Constants.STATE_NONE) {
             mOffline();
         } else {
@@ -243,10 +220,8 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                 } else {
                     consoleView.setTextColor(Color.RED);
                 }
-
                 return view;
             }
-
         };
 
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -258,60 +233,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             }
         });
 
-        mConversationArrayAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                for (int x = printedLineCount; x < mConversationArrayAdapter.getCount(); x++) {
-                    message_array_listMaster.add(mConversationArrayAdapter.getItem(x));
-                    printedLineCount++;
-                }
-            }
-        });
-
-        mConversationView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                for (int j = 0; j < message_array_listMaster.size(); j++) {
-                    String array_elements = message_array_listMaster.get(j).toString().trim();
-                    if (array_elements.contains("Command") || array_elements.contains("Command:") || array_elements.contains(" Command:")) {
-                        message_array_listMaster.remove(j);
-                    } else {
-                        //Log.e("tag", "LOG leo Out " + message_array_listMaster.get(j));
-                    }
-                }
-                if (message_array_listMaster.toArray().length > 0) {
-                    Log.e("tag", "LOG leo Items: " + message_array_listMaster.toArray()[0]);
-
-                    if (message_array_listMaster.toArray()[0].toString().trim().contains("Error")) {
-
-                        Log.e("tag", "LOG Before list is cleared: " + message_array_listMaster.toArray().length);
-
-                        message_array_listMaster.clear();
-
-                        Log.e("tag", "LOG After list was cleared: " + message_array_listMaster.toArray().length);
-
-                        try {
-                            initialActivity.sendMessage("treehouses tor start");
-                            Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor add 80");
-                            Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor add 22");
-                            Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor add 2200");
-                        }
-                        catch (InterruptedException e){
-                            e.printStackTrace();
-                        }
-                        if (message_array_listMaster.toArray().length > 0) {
-                            Log.e("tag", "LOG After all commands: " + message_array_listMaster.toArray()[0]);
-                        }
-
-                    }
-                }
-            }
-        });
-
-        mConversationArrayAdapter.notifyDataSetChanged();
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         btn_status.setOnClickListener(new View.OnClickListener() {
@@ -327,7 +248,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
             mChatService = new BluetoothChatService(mHandler);
         }
         // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer();
+        StringBuffer mOutStringBuffer = new StringBuffer();
     }
 
     public void sendMessage(Button btn_start, Button btn_execute_start, Button btn_execute_stop, Button btn_execute_destroy, Button btn_execute_address) {
@@ -335,10 +256,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                message_array_listMaster.clear();
                 initialActivity.sendMessage("treehouses tor");
-
-                Log.e("log", "after message was sent");
             }
         });
 
@@ -369,8 +287,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                 initialActivity.sendMessage("treehouses tor destroy");
             }
         });
-
-
     }
 
     @Override
@@ -407,17 +323,12 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                     Log.d(TAG, "back from change password, fail");
                 }
                 break;
+            default:
+                break;
         }
     }
 
-    public void showChPasswordDialog() {
-        // Create an instance of the dialog fragment and show it
-        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
-    }
-
-    public boolean isJson(String str) {
+    private boolean isJson(String str) {
         try {
             new JSONObject(str);
         } catch (JSONException ex) {
@@ -426,21 +337,21 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         return true;
     }
 
-    public void mOffline() {
+    private void mOffline() {
         mPingStatus.setText(R.string.bStatusOffline);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
-    public void mIdle() {
+    private void mIdle() {
         mPingStatus.setText(R.string.bStatusIdle);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.YELLOW);
     }
 
-    public void mConnect() {
+    private void mConnect() {
         mPingStatus.setText(R.string.bStatusConnected);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
