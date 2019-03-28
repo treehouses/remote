@@ -72,7 +72,7 @@ public class NetworkFragment extends BaseFragment {
     public void updateNetworkMode() {
         alert = false;
         networkStatus = true;
-        initialActivity.sendMessage("treehouses networkmode");
+        listener.sendMessage("treehouses networkmode");
     }
 
 
