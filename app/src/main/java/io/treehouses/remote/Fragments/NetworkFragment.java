@@ -41,8 +41,8 @@ public class NetworkFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);      
-        //mChatService = listener.getChatService();
-        //listener.updateHandler(mHandler);
+        mChatService = listener.getChatService();
+        listener.updateHandler(mHandler);
       
         updateNetworkMode();
 
