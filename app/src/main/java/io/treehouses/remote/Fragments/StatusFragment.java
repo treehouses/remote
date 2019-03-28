@@ -1,17 +1,13 @@
 package io.treehouses.remote.Fragments;
 
 import androidx.fragment.app.FragmentActivity;
-import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseFragment;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,20 +15,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatusFragment extends androidx.fragment.app.Fragment {
+public class StatusFragment extends BaseFragment {
 
-    public StatusFragment(){}
+    public StatusFragment() {
+    }
 
     View view;
 
@@ -68,7 +62,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
      */
     private static boolean isCountdown = false;
 
-    ImageView  wifiStatus, btRPIName, rpiType;
+    ImageView wifiStatus, btRPIName, rpiType;
 
     ImageView btStatus, ivUpgrad;
 
@@ -89,19 +83,16 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.activity_status_fragment, container, false);
+        view = inflater.inflate(R.layout.activity_status_fragment, container, false);
 
         initializeUIElements(view);
 
-        InitialActivity initialActivity = new InitialActivity();
-        BluetoothChatService chatService = initialActivity.getChatService();
-
-        mChatService = chatService;
-        mChatService.updateHandler(mHandler);
+        mChatService = listener.getChatService();
+        listener.updateHandler(mHandler);
 
         deviceName = mChatService.getConnectedDeviceName();
-        Log.e("STATUS","device name: "+deviceName);
-        if(mChatService.getState() == Constants.STATE_CONNECTED){
+        Log.e("STATUS", "device name: " + deviceName);
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
             btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         }
         checkStatusNow(view);
@@ -113,7 +104,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         return view;
     }
 
-    public void initializeUIElements(View view){
+    public void initializeUIElements(View view) {
         btStatus = view.findViewById(R.id.btStatus);
         wifiStatus = view.findViewById(R.id.wifiStatus);
         btRPIName = view.findViewById(R.id.rpiName);
@@ -140,77 +131,78 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
         });
     }
 
-    private void checkStatusNow(View view){
-        Log.e("DEVICE",""+mConnectedDeviceName);
+    private void checkStatusNow(View view) {
+        Log.e("DEVICE", "" + mConnectedDeviceName);
     }
 
-    public void updateStatus(){
+    public void updateStatus() {
         setRPIDeviceName();
-        if(outs.size() == 1){
+        if (outs.size() == 1) {
             setRPIType();
         }
-        if(outs.size() == 2){
+        if (outs.size() == 2) {
             checkWifiStatus();
         }
-        if(outs.size() == 3){
+        if (outs.size() == 3) {
             checkUpgradeStatus();
         }
-        if(outs.size() == 4){
+        if (outs.size() == 4) {
             outs.remove(2);
             outs.remove(2);
             checkWifiStatus();
         }
     }
 
-    void writeToRPI(String ping){
+    void writeToRPI(String ping) {
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
     }
 
-    void setRPIDeviceName(){
-        tvStatus2.setText("Connected RPI Name: "+deviceName);
+    void setRPIDeviceName() {
+        tvStatus2.setText("Connected RPI Name: " + deviceName);
         btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
     }
 
-    void setRPIType(){
-        tvStatus3.setText("RPI Type: "+outs.get(0));
+    void setRPIType() {
+        tvStatus3.setText("RPI Type: " + outs.get(0));
         rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         writeToRPI("treehouses internet");
     }
 
-    void checkWifiStatus(){
-        tvStatus1.setText("RPI Wifi Connection: "+outs.get(1));
-        Log.e("StatusFragment","**"+outs.get(1)+"**"+outs.get(1).equals("true "));
-        if(outs.get(1).equals("true ")){
-            Log.e("StatusFragment","TRUE");
+    void checkWifiStatus() {
+        tvStatus1.setText("RPI Wifi Connection: " + outs.get(1));
+        Log.e("StatusFragment", "**" + outs.get(1) + "**" + outs.get(1).equals("true "));
+        if (outs.get(1).equals("true ")) {
+            Log.e("StatusFragment", "TRUE");
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         }
-        if(wifiStatusVal){
+        if (wifiStatusVal) {
             writeToRPI("treehouses upgrade --check");
-        }else{
+        } else {
             tvUpgrade.setText("Upgrade Status: NO INTERNET");
             upgrade.setVisibility(View.GONE);
         }
     }
 
-    void checkUpgradeStatus(){
-        if(updateRightNow){
+    void checkUpgradeStatus() {
+        if (updateRightNow) {
             updateRightNow = false;
             pd.dismiss();
-            Toast.makeText(getContext(),"Treehouses Cli has been updated!!!",Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
         }
-        if(outs.get(2).equals("false ")){
+        if (outs.get(2).equals("false ")) {
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version");
             upgrade.setVisibility(View.GONE);
-        }else{
+        } else {
             ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            tvUpgrade.setText("Upgrade Status: Required for Version: "+outs.get(2).substring(4));
+            tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(2).substring(4));
             upgrade.setVisibility(View.VISIBLE);
         }
     }
-//    /**
+
+    //    /**
 //     * The Handler that gets information back from the BluetoothChatService
 //     */
     public final Handler mHandler = new Handler() {
@@ -241,7 +233,7 @@ public class StatusFragment extends androidx.fragment.app.Fragment {
 //                     construct a string from the valid bytes in the buffer
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
-                    readMessage = (String)msg.obj;
+                    readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
 //                    processedMessage = readMessage;
                     outs.add(readMessage);

@@ -1,11 +1,11 @@
-package io.treehouses.remote.Fragments;
+package io.treehouses.remote.utils;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.widget.Toast;
 
-class Utils {
+public class Utils {
     public static void copyToClipboard(Context context, String clickedData) {
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
             clickedData = clickedData.substring(10, clickedData.length());
