@@ -40,6 +40,7 @@ import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.utils.LogUtils;
+import io.treehouses.remote.utils.Utils;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -181,12 +182,12 @@ public class InitialActivity extends AppCompatActivity
 //        drawer.closeDrawers();
 
     }
-
-    @Override
-    public void updateHandler(Handler handler) {
-        if (mChatService != null)
-            mChatService.updateHandler(mHandler);
-    }
+//
+//    @Override
+//    public void updateHandler(Handler handler) {
+//        if (mChatService != null)
+//            mChatService.updateHandler(mHandler);
+//    }
 
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -319,6 +320,7 @@ public class InitialActivity extends AppCompatActivity
     @Override
     public void sendMessage(String message) {
         // Check that we're actually connected before trying anything
+        LogUtils.log(message);
         if (mChatService.getState() != Constants.STATE_CONNECTED) {
             Toast.makeText(InitialActivity.this, R.string.not_connected, Toast.LENGTH_SHORT).show();
             LogUtils.mIdle();
@@ -343,7 +345,7 @@ public class InitialActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg) {
 //            FragmentActivity activity = getActivity();
-            InitialActivity activity = InitialActivity.this;
+            //InitialActivity activity = InitialActivity.this;
             switch (msg.what) {
 //                case Constants.MESSAGE_STATE_CHANGE:
 //                    switch (msg.arg1) {

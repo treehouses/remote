@@ -14,4 +14,8 @@ public class LogUtils {
     public static void mConnect() {
         Log.e("STATUS", "CONNECTED");
     }
+
+    public static void log(String message){
+        Log.d("TREEHOUSES ", message);
+    }
 }
