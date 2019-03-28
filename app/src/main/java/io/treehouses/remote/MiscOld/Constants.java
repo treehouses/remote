@@ -57,14 +57,14 @@ public class Constants {
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
 
-    public static final List<String> list = new ArrayList();
+    public static final List<String> terminalList = new ArrayList();
     static {
-        list.add("Change Pi Password");
-        list.add("Treehouses");
-        list.add("Treehouses Detectrpi");
-        list.add("Docker ps");
-        list.add("Rename Hostname");
-        list.add("Expand File System");
+        terminalList.add("Change Pi Password");
+        terminalList.add("Treehouses");
+        terminalList.add("Treehouses Detectrpi");
+        terminalList.add("Docker ps");
+        terminalList.add("Rename Hostname");
+        terminalList.add("Expand File System");
     }
 }
 
