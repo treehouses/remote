@@ -53,7 +53,7 @@ public class TerminalFragment extends BaseFragment {
 //        if(mChatService == null){
 //            showRPIDialog();
 //        }else{
-        listener.updateHandler(mHandler);
+        mChatService.updateHandler(mHandler);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
 //        }
 
