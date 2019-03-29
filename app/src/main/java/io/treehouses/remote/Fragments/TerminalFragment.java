@@ -418,9 +418,6 @@ public class TerminalFragment extends BaseFragment {
                     String readMessage = (String)msg.obj;
                     Log.d("tag", "readMessage = " + readMessage);
 
-                    MainApplication.getTerminalList().add(readMessage);
-                    mConversationArrayAdapter.notifyDataSetChanged();
-
                     //TODO: if message is json -> callback from RPi
                     if (isJson(readMessage)) {
                         //handleCallback(readMessage);
@@ -441,9 +438,11 @@ public class TerminalFragment extends BaseFragment {
                             mOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-//                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-//                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-//                         }
+                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                             MainApplication.getTerminalList().add(readMessage);
+                             mConversationArrayAdapter.notifyDataSetChanged();
+                         }
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
