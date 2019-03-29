@@ -2,12 +2,8 @@ package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,50 +14,51 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.fragment.app.FragmentActivity;
-import io.treehouses.remote.InitialActivity;
+import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
-public class NetworkFragment extends androidx.fragment.app.Fragment {
+public class NetworkFragment extends BaseFragment {
 
     View view;
-    InitialActivity initialActivity;
     private BluetoothChatService mChatService = null;
-
-//    EditText HotspotPasswordEditText;
-//    EditText PasswordEditText;
-
-    public NetworkFragment(){}
+    String readMessage;
+    Boolean alert = true;
+    Boolean networkStatus = false;
+    //   TextView networkmode;
+    ArrayList<String> list;
+    ArrayAdapter<String> adapter;
+    public NetworkFragment() {
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
+        mChatService = listener.getChatService();
+        mChatService.updateHandler(mHandler);
 
-        initialActivity = new InitialActivity();
-        BluetoothChatService chatService = initialActivity.getChatService();
-        mChatService = chatService;
-        chatService.updateHandler(mHandler);
+        updateNetworkMode();
 
-        ArrayList<String> list = new ArrayList<String>();
+        list = new ArrayList<String>();
         list.add("Ethernet");
         list.add("Wi-Fi");
         list.add("Hotspot");
         list.add("Bridge");
         list.add("Reset");
         list.add("Reboot");
+        list.add("Networkmode: ");
 
         ListView listView = view.findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -71,13 +68,18 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
             }
         });
 
-
-
         return view;
     }
 
-    public void getListFragment(int position){
-        switch (position){
+    public void updateNetworkMode() {
+        alert = false;
+        networkStatus = true;
+        listener.sendMessage("treehouses networkmode");
+    }
+
+
+    public void getListFragment(int position) {
+        switch (position) {
             case 0:
                 showEthernetDialog();
                 break;
@@ -91,42 +93,50 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
                 showBridgeDialog();
                 break;
             case 4:
-                initialActivity.sendMessage("treehouses default network");
+                alert = true;
+                listener.sendMessage("treehouses default network");
                 break;
             case 5:
-                initialActivity.sendMessage("reboot");
+                alert = false;
+                listener.sendMessage("reboot");
                 try {
                     Thread.sleep(1000);
-
                     if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                        listener.openCallFragment(new HomeFragment());
                     } else {
                         Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
                     }
-                }
-                catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 break;
+            case 6:
+                updateNetworkMode();
+                Toast.makeText(getContext(), "Networkmode updated", Toast.LENGTH_LONG).show();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
     }
-    public void showBridgeDialog(){
+
+    public void showBridgeDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = BridgeDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"bridgeDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "bridgeDialog");
     }
-    public void showEthernetDialog(){
+
+    public void showEthernetDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = EthernetDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"ethernetDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "ethernetDialog");
     }
-    public void showHotspotDialog(){
+
+    public void showHotspotDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"hotspotDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "hotspotDialog");
     }
+
     public void showWifiDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
@@ -142,11 +152,11 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == Activity.RESULT_OK){
+        if (resultCode == Activity.RESULT_OK) {
             Bundle bundle = data.getExtras();
             String type = bundle.getString("type");
-            Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
-            switch (type){
+            Log.e("ON ACTIVITY RESULT", "Request Code: " + requestCode + " ;; Result Code: " + resultCode + " ;; Intent: " + bundle + " ;; Type: " + bundle.getString("type"));
+            switch (type) {
                 case "wifi":
                     wifiOn(bundle);
                     break;
@@ -165,9 +175,9 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
         }
     }
 
-    private void wifiOn(Bundle bundle){
-
-        initialActivity.sendMessage("treehouses wifi \""+bundle.getString("SSID")+"\" \""+bundle.getString("PWD")+"\"");
+    private void wifiOn(Bundle bundle) {
+        alert = true;
+        listener.sendMessage("treehouses wifi \"" + bundle.getString("SSID") + "\" \"" + bundle.getString("PWD") + "\"");
 
 //        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
 //        WifiConfiguration wc = new WifiConfiguration();
@@ -196,41 +206,45 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
 //        boolean b = wifi.enableNetwork(res, true);
 //        Log.d("WifiPreference", "enableNetwork returned " + b );
     }
-    private void hotspotOn (Bundle bundle){
-        if(bundle.getString("HPWD").equals("")){
-            initialActivity.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\"");
-        }else{
-            initialActivity.sendMessage("treehouses ap \""+bundle.getString("hotspotType")+"\" \""+bundle.getString("HSSID")+"\" \""+bundle.getString("HPWD")+"\"");
+
+    private void hotspotOn(Bundle bundle) {
+        if (bundle.getString("HPWD").equals("")) {
+            listener.sendMessage("treehouses ap \"" + bundle.getString("hotspotType") + "\" \"" + bundle.getString("HSSID") + "\"");
+        } else {
+            listener.sendMessage("treehouses ap \"" + bundle.getString("hotspotType") + "\" \"" + bundle.getString("HSSID") + "\" \"" + bundle.getString("HPWD") + "\"");
         }
     }
-    private void ethernetOn(Bundle bundle){
-        initialActivity.sendMessage("treehouses ethernet \""+bundle.getString("ip")+"\" \""+bundle.getString("mask")+"\" \""+bundle.getString("gateway")+"\" \""+bundle.getString("dns")+"\"");
+
+    private void ethernetOn(Bundle bundle) {
+        listener.sendMessage("treehouses ethernet \"" + bundle.getString("ip") + "\" \"" + bundle.getString("mask") + "\" \"" + bundle.getString("gateway") + "\" \"" + bundle.getString("dns") + "\"");
     }
 
-    private void bridgeOn(Bundle bundle){
-        String overallMessage = "treehouses bridge \""+(bundle.getString("essid"))+"\" \""+bundle.getString("hssid")+"\" ";
+    private void bridgeOn(Bundle bundle) {
+        String overallMessage = "treehouses bridge \"" + (bundle.getString("essid")) + "\" \"" + bundle.getString("hssid") + "\" ";
 
-        if(TextUtils.isEmpty(bundle.getString("password"))){
-            overallMessage+="\"\"";
-        }else{
-            overallMessage+="\""+bundle.getString("password")+"\"";
+        if (TextUtils.isEmpty(bundle.getString("password"))) {
+            overallMessage += "\"\"";
+        } else {
+            overallMessage += "\"" + bundle.getString("password") + "\"";
         }
-        overallMessage+=" ";
-        if(!TextUtils.isEmpty(bundle.getString("hpassword"))){
-            overallMessage+="\""+bundle.getString("hpassword")+"\"";
+        overallMessage += " ";
+        if (!TextUtils.isEmpty(bundle.getString("hpassword"))) {
+            overallMessage += "\"" + bundle.getString("hpassword") + "\"";
         }
-        Log.e("NetworkFragment","Bridge RPI Message = "+overallMessage);
-        initialActivity.sendMessage(overallMessage);
+        Log.e("NetworkFragment", "Bridge RPI Message = " + overallMessage);
+        listener.sendMessage(overallMessage);
     }
 
-    private AlertDialog showAlertDialog(String message){
+    private AlertDialog showAlertDialog(String message) {
         return new AlertDialog.Builder(getContext())
                 .setTitle("OUTPUT:")
                 .setMessage(message)
                 .setIcon(R.drawable.wificon)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) { dialog.cancel(); }
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
                 })
                 .show();
     }
@@ -244,10 +258,31 @@ public class NetworkFragment extends androidx.fragment.app.Fragment {
             FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
-                    String readMessage = (String)msg.obj;
-                    showAlertDialog(readMessage);
+                    readMessage = (String) msg.obj;
+                    Log.d("TAG", "readMessage = " + readMessage);
+
+                    if (networkStatus) {
+                       changeList(readMessage);
+                        networkStatus = false;
+                    }
+
+                    if (alert) {
+                        showAlertDialog(readMessage);
+                    } else {
+                        alert = true;
+                    }
+
                     break;
             }
         }
     };
+
+    private void changeList(String readMessage) {
+        if (list != null && list.size() >= 6) {
+            list.remove(6);
+            list.add(6,"Network Mode : "+ readMessage);
+            if (adapter!=null)
+            adapter.notifyDataSetChanged();
+        }
+    }
 }

@@ -1,9 +1,6 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -29,21 +26,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.utils.Utils;
 
-public class TunnelFragment extends androidx.fragment.app.Fragment {
+public class TunnelFragment extends BaseFragment {
 
     private static final String TAG = "BluetoothChatFragment";
     private static boolean isRead = false;
     private static boolean isCountdown = false;
     private TextView mPingStatus;
     private Button pingStatusButton;
-    private BluetoothAdapter mBluetoothAdapter = null;
     private ArrayAdapter<String> mConversationArrayAdapter;
-    private BluetoothChatService mChatService = null;
     private ListView mConversationView = null;
     private Context context;
     private Button btn_status;
@@ -51,7 +47,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     private ListView terminallist;
 
     View view;
-
 
     public final Handler mHandler = new Handler() {
         @Override
@@ -78,26 +73,19 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
-//                    byte[] readBuf = (byte[]) msg.obj;
-//                     construct a string from the valid bytes in the buffer
-//                    String readMessage = new String(readBuf, 0, msg.arg1);
-//                    String readMessage = new String(readBuf);
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
 
                     if (readMessage.contains("Error")) {
                         try {
-                            initialActivity.sendMessage("treehouses tor start");
+                            listener.sendMessage("treehouses tor start");
                             Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor add 80");
+                            listener.sendMessage("treehouses tor add 80");
                             Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor add 22");
+                            listener.sendMessage("treehouses tor add 22");
                             Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor add 2200");
-                            Thread.sleep(300);
-                            initialActivity.sendMessage("treehouses tor");
-                        }
-                        catch (InterruptedException e){
+                            listener.sendMessage("treehouses tor add 2200");
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
@@ -149,7 +137,6 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_tunnel_fragment, container, false);
-        initialActivity = new InitialActivity();
         ArrayList<String> listview = new ArrayList<String>();
         terminallist = view.findViewById(R.id.list_command);
         terminallist.setDivider(null);
@@ -182,21 +169,11 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        initialActivity = new InitialActivity();
-        mChatService = initialActivity.getChatService();
-        mChatService.updateHandler(mHandler);
-        Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        checkStatusNow();
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-        } else {
-            setupChat();
-        }
+        onLoad(mHandler);
     }
 
-    private void checkStatusNow() {
+    @Override
+    public void checkStatusNow() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
         } else if (mChatService.getState() == Constants.STATE_NONE) {
@@ -206,7 +183,8 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         }
     }
 
-    public void setupChat(String... msg) {
+    @Override
+    public void setupChat() {
         Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
         // Initialize the array adapter for the conversation thread
@@ -227,9 +205,9 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickedData=(String) mConversationView.getItemAtPosition(position);
+                String clickedData = (String) mConversationView.getItemAtPosition(position);
                 context = getContext();
-                Utils.copyToClipboard(context , clickedData);
+                Utils.copyToClipboard(context, clickedData);
             }
         });
 
@@ -256,35 +234,37 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialActivity.sendMessage("treehouses tor");
+                message_array_listMaster.clear();
+                listener.sendMessage("treehouses tor");f
+                Log.e("log", "after message was sent");
             }
         });
 
         btn_execute_address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialActivity.sendMessage("treehouses tor");
+                listener.sendMessage("treehouses tor");
             }
         });
 
         btn_execute_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialActivity.sendMessage("treehouses tor start");
+                listener.sendMessage("treehouses tor start");
             }
         });
 
         btn_execute_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialActivity.sendMessage("treehouses tor stop");
+                listener.sendMessage("treehouses tor stop");
             }
         });
 
         btn_execute_destroy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialActivity.sendMessage("treehouses tor destroy");
+                listener.sendMessage("treehouses tor destroy");
             }
         });
     }
@@ -317,7 +297,7 @@ public class TunnelFragment extends androidx.fragment.app.Fragment {
                     Log.d(TAG, "back from change password");
 
                     //send password to command line interface
-                    initialActivity.sendMessage(password);
+                    listener.sendMessage(password);
 
                 } else {
                     Log.d(TAG, "back from change password, fail");
