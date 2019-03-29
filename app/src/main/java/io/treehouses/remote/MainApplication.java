@@ -29,11 +29,11 @@ public class MainApplication extends Application {
         return onResume;
     }
 
-    public static boolean setOnResume() {
+    public static void setOnResume() {
         if (onResume) {
-            return onResume = false;
+            onResume = false;
         } else {
-            return onResume = true;
+            onResume = true;
         }
     }
 }

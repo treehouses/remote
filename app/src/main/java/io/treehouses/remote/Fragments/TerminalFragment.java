@@ -148,37 +148,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     private static boolean isRead = false;
     private static boolean isCountdown = false;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.e("tag", " LOG check onStart method is called");
-
-//        if((new RPIDialogFragment()).equals(null)){
-//            Log.e("TERMINAL", "NULL");
-//        }
-        initialActivity = new InitialActivity();
-//        RPIDialogFragment initialActivity = new RPIDialogFragment();
-//        BluetoothDevice device = initialActivity.getMainDevice();
-        mChatService = initialActivity.getChatService();
-
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
-            mChatService.updateHandler(mHandler);
-            Log.e("TERMINAL mChatService", ""+mChatService.getState());
-            checkStatusNow();
-//        }
-//        Log.e("DEVICE ", ""+device.getName());
-//         If BT is not on, request that it be enabled.
-//         setupChat() will then be called during onActivityResult
-    }
-
-//    @Override
-//    public void onPause(){
-//        super.onPause();
-//        // Show Actionbar when go back to Dashboard
-//        getActivity().getActionBar().show();
-//    }
 //    public void showRPIDialog(){
 //        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
 //        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
@@ -228,59 +197,43 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         super.onResume();
 
         if (getTerminalList().size() > 1) {
-            initializeArrayAdapter(getTerminalList());
+            mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, getTerminalList()){
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    output = view.findViewById(R.id.listItem);
+
+                    Log.e("tag", " LOG check list getView method is called");
+                    if (isRead){
+                        output.setTextColor(Color.BLUE);
+                    }else {
+                        output.setTextColor(Color.RED);
+                    }
+                    return view;
+                }
+            };
+
             setupChat();
             setOnResume();
         } else if (!getOnResume()) {
-            initializeArrayAdapter();
+            mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
+                    output = view.findViewById(R.id.listItem);
 
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-            } else {
-                Log.e("tag", " LOG check setupChat method is called");
-                setupChat();
-            }
+                    Log.e("tag", " LOG check getView method is called");
+
+                    if (isRead){
+                        output.setTextColor(Color.BLUE);
+                    }else {
+                        output.setTextColor(Color.RED);
+                    }
+                    return view;
+                }
+            };
+            setupChat();
         }
-    }
-
-    public void initializeArrayAdapter() {
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                output = view.findViewById(R.id.listItem);
-
-                Log.e("tag", " LOG check getView method is called");
-
-                if (isRead){
-                    output.setTextColor(Color.BLUE);
-                }else {
-                    output.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
-    }
-
-    public void initializeArrayAdapter(ArrayList list) {
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, list){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                output = view.findViewById(R.id.listItem);
-
-                Log.e("tag", " LOG check list getView method is called");
-                if (isRead){
-                    output.setTextColor(Color.BLUE);
-                }else {
-                    output.setTextColor(Color.RED);
-                }
-                return view;
-            }
-
-        };
-        mConversationView.setAdapter(mConversationArrayAdapter);
     }
 
     /**
@@ -317,16 +270,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 }else if(position == 5){
                     initialActivity.sendMessage("treehouses expandfs");
                 }
-               // Log.e("tag", "Var This will be the output:" + "\n");
-             // Log.e("tag", "output is " + output.getText().toString());
-
-//                try {
-//                    Thread.sleep(2000);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
             }
 
         });
