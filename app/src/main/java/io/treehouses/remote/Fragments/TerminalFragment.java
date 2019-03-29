@@ -1,35 +1,18 @@
 package io.treehouses.remote.Fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.LauncherActivity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -42,50 +25,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.utils.Utils;
 
-import static android.content.Context.CLIPBOARD_SERVICE;
-import static io.treehouses.remote.MainApplication.getTerminalList;
-
-public class TerminalFragment extends androidx.fragment.app.Fragment {
+public class TerminalFragment extends BaseFragment {
 
     View view;
     ListView listView;
-    InitialActivity initialActivity;
     Context context;
-    TextView output;
-    public TerminalFragment() {}
-
+  
+    public TerminalFragment() {
+    }
+  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
-        initialActivity = new InitialActivity();
-        mChatService = initialActivity.getChatService();
+
+        mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        Log.e("TERMINAL mChatService", ""+mChatService.getState());
+        Log.e("TERMINAL mChatService", "" + mChatService.getState());
 
         listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.terminalList);
         listView.setAdapter(adapter);
 
         setHasOptionsMenu(true);
-        // Get local Bluetooth adapter
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        // If the adapter is null, then Bluetooth is not supported
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            getActivity().finish();
-        }
         return view;
     }
     private static final String TAG = "BluetoothChatFragment";
@@ -94,11 +66,11 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
-//    private Button treehousesButton;
+    //    private Button treehousesButton;
 //    private Button dockerButton;
 //    private Button RPI_HW_Button;
     private Button pingStatusButton;
-//    private Button hostnameButton;
+    //    private Button hostnameButton;
 //    private Button changePasswordButton;
 //    private Button expandButton;
     private Button mCheckButton;
@@ -184,16 +156,16 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     /**
      * Set up the UI and background operations for chat.
      */
-    private void setupChat() {
+    public void setupChat() {
         Log.d(TAG, "setupChat()");
-
+      
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickedData=(String) mConversationView.getItemAtPosition(position);
+                String clickedData = (String) mConversationView.getItemAtPosition(position);
 
                 context = getContext();
-                Utils.copyToClipboard(context , clickedData);
+                Utils.copyToClipboard(context, clickedData);
             }
         });
 
@@ -217,18 +189,18 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 1){
-                    initialActivity.sendMessage("treehouses");
-                }else if(position == 3){
-                    initialActivity.sendMessage("docker ps");
-                }else if(position == 2){
-                    initialActivity.sendMessage("treehouses detectrpi");
-                }else if(position == 4){
-//                    initialActivity.showDialog(view);
-                }else if(position == 0){
+                if (position == 1) {
+                    listener.sendMessage("treehouses");
+                } else if (position == 3) {
+                    listener.sendMessage("docker ps");
+                } else if (position == 2) {
+                    listener.sendMessage("treehouses detectrpi");
+                } else if (position == 4) {
+//                    listener.showDialog(view);
+                } else if (position == 0) {
                     showChPasswordDialog();
-                }else if(position == 5){
-                    initialActivity.sendMessage("treehouses expandfs");
+                } else if (position == 5) {
+                    listener.sendMessage("treehouses expandfs");
                 }
             }
 
@@ -245,7 +217,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 if (null != view) {
                     TextView consoleInput = view.findViewById(R.id.edit_text_out);
                     String message = consoleInput.getText().toString();
-                    initialActivity.sendMessage(message);
+                    listener.sendMessage(message);
                     consoleInput.setText("");
                 }
             }
@@ -254,26 +226,26 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         mCheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("CHECK STATUS",""+mChatService.getState());
+                Log.e("CHECK STATUS", "" + mChatService.getState());
                 checkStatusNow();
             }
         });
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        if(mChatService.getState() == Constants.STATE_NONE){
-            mChatService = new BluetoothChatService( mHandler);
+        if (mChatService.getState() == Constants.STATE_NONE) {
+            mChatService = new BluetoothChatService(mHandler);
         }
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer();
     }
 
-    private void checkStatusNow(){
-        if(mChatService.getState() == Constants.STATE_CONNECTED){
+    public void checkStatusNow() {
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
 
-        }else if(mChatService.getState() == Constants.STATE_NONE){
+        } else if (mChatService.getState() == Constants.STATE_NONE) {
             mOffline();
-        }else{
+        } else {
             mIdle();
         }
     }
@@ -287,7 +259,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
-                initialActivity.sendMessage(message);
+                listener.sendMessage(message);
                 mOutEditText.setText("");
             }
             return true;
@@ -355,8 +327,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //
 
 
-
-
 //    /**
 //     * Makes this device discoverable for 300 seconds (5 minutes).
 //     */
@@ -413,7 +383,6 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //        }
 //    }
 
-    int counter = 0;
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -435,7 +404,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    if(!writeMessage.contains("google.com")) {
+                    if (!writeMessage.contains("google.com")) {
                         Log.d(TAG, "writeMessage = " + writeMessage);
                         mConversationArrayAdapter.add("Command:  " + writeMessage);
                     }
@@ -451,40 +420,30 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 
                     getTerminalList().add(readMessage);
                     mConversationArrayAdapter.notifyDataSetChanged();
-                    counter++;
-                    Log.d("tag", "output added to list " + counter);
-                    Log.e("tag", "LOG check List output = " + getTerminalList());
 
                     //TODO: if message is json -> callback from RPi
-                    if(isJson(readMessage)){
+                    if (isJson(readMessage)) {
                         //handleCallback(readMessage);
-                    }else{
-                        if(isCountdown){
+                    } else {
+                        if (isCountdown) {
                             //mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0,readMessage.length()-1);
+                        readMessage = readMessage.substring(0, readMessage.length() - 1);
                         //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
 
                         //check if ping was successful
-                        if(readMessage.contains("1 packets")){
+                        if (readMessage.contains("1 packets")) {
                             mConnect();
                         }
-                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
+                        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
                             mOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-
-//                            if (!getOnResume()) {
-//                                mConversationArrayAdapter.add(readMessage);
-//                            } else {
-//                                mConversationArrayAdapter.notifyDataSetChanged();
-//                            }
-
-                        }
+//                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+//                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+//                         }
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -522,10 +481,10 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                 }
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
 
                     //get password change request
-                    String chPWD = data.getStringExtra("password") == null? "":data.getStringExtra("password");
+                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
 
                     //store password and command
                     String password = "treehouses password " + chPWD;
@@ -533,9 +492,9 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                     Log.d(TAG, "back from change password");
 
                     //send password to command line interface
-                    initialActivity.sendMessage(password);
+                    listener.sendMessage(password);
 
-                }else{
+                } else {
                     Log.d(TAG, "back from change password, fail");
                 }
                 break;
@@ -590,7 +549,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
         // Create an instance of the dialog fragment and show it
         androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"ChangePassDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
     }
 
     public boolean isJson(String str) {
@@ -635,24 +594,24 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     }
     */
 
-    public void mOffline(){
+    public void mOffline() {
         mPingStatus.setText(R.string.bStatusOffline);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.RED);
     }
 
-    public void mIdle(){
+    public void mIdle() {
         mPingStatus.setText(R.string.bStatusIdle);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.YELLOW);
     }
 
-    public void mConnect(){
+    public void mConnect() {
         mPingStatus.setText(R.string.bStatusConnected);
         pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable)pingStatusButton.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);
     }
 }
