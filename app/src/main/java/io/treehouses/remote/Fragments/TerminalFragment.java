@@ -169,11 +169,11 @@ public class TerminalFragment extends BaseFragment {
             }
         });
 
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, getTerminalList()){
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, MainApplication.getTerminalList()){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                output = view.findViewById(R.id.listItem);
+                TextView output = view.findViewById(R.id.listItem);
 
                 Log.e("tag", " LOG check list getView method is called");
                 if (isRead){
@@ -418,7 +418,7 @@ public class TerminalFragment extends BaseFragment {
                     String readMessage = (String)msg.obj;
                     Log.d("tag", "readMessage = " + readMessage);
 
-                    getTerminalList().add(readMessage);
+                    MainApplication.getTerminalList().add(readMessage);
                     mConversationArrayAdapter.notifyDataSetChanged();
 
                     //TODO: if message is json -> callback from RPi
