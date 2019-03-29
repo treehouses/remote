@@ -43,7 +43,6 @@ public class TunnelFragment extends BaseFragment {
     private ListView mConversationView = null;
     private Context context;
     private Button btn_status;
-    private InitialActivity initialActivity;
     private ListView terminallist;
 
     View view;
@@ -143,12 +142,7 @@ public class TunnelFragment extends BaseFragment {
         terminallist.setDividerHeight(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.tunnel_commands_list, R.id.command_textView, listview);
         terminallist.setAdapter(adapter);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (mBluetoothAdapter == null) {
-            Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
-            getActivity().finish();
-        }
         return view;
     }
 
@@ -234,8 +228,7 @@ public class TunnelFragment extends BaseFragment {
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                message_array_listMaster.clear();
-                listener.sendMessage("treehouses tor");f
+                listener.sendMessage("treehouses tor");
                 Log.e("log", "after message was sent");
             }
         });
