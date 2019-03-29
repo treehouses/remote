@@ -52,9 +52,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static io.treehouses.remote.MainApplication.getOnResume;
 import static io.treehouses.remote.MainApplication.getTerminalList;
-import static io.treehouses.remote.MainApplication.setOnResume;
 
 public class TerminalFragment extends androidx.fragment.app.Fragment {
 
@@ -68,20 +66,10 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
-
-
-
         initialActivity = new InitialActivity();
-//        RPIDialogFragment initialActivity = new RPIDialogFragment();
-//        BluetoothDevice device = initialActivity.getMainDevice();
         mChatService = initialActivity.getChatService();
-
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
         mChatService.updateHandler(mHandler);
         Log.e("TERMINAL mChatService", ""+mChatService.getState());
-//        }
 
         listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
@@ -98,14 +86,9 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
             getActivity().finish();
         }
-
         return view;
     }
-
     private static final String TAG = "BluetoothChatFragment";
-
-//    //current connection status
-//    static String currentStatus = "not connected";
 
     // Layout Views
     private ListView mConversationView;
@@ -195,45 +178,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
     public void onResume(){
         Log.e("tag", "LOG check onResume method ");
         super.onResume();
-
-        if (getTerminalList().size() > 1) {
-            mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, getTerminalList()){
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-                    output = view.findViewById(R.id.listItem);
-
-                    Log.e("tag", " LOG check list getView method is called");
-                    if (isRead){
-                        output.setTextColor(Color.BLUE);
-                    }else {
-                        output.setTextColor(Color.RED);
-                    }
-                    return view;
-                }
-            };
-
-            setupChat();
-            setOnResume();
-        } else if (!getOnResume()) {
-            mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message){
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-                    output = view.findViewById(R.id.listItem);
-
-                    Log.e("tag", " LOG check getView method is called");
-
-                    if (isRead){
-                        output.setTextColor(Color.BLUE);
-                    }else {
-                        output.setTextColor(Color.RED);
-                    }
-                    return view;
-                }
-            };
-            setupChat();
-        }
+        setupChat();
     }
 
     /**
@@ -252,6 +197,21 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
             }
         });
 
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, getTerminalList()){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                output = view.findViewById(R.id.listItem);
+
+                Log.e("tag", " LOG check list getView method is called");
+                if (isRead){
+                    output.setTextColor(Color.BLUE);
+                }else {
+                    output.setTextColor(Color.RED);
+                }
+                return view;
+            }
+        };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -453,6 +413,7 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //        }
 //    }
 
+    int counter = 0;
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -486,9 +447,12 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
                     String readMessage = (String)msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
+                    Log.d("tag", "readMessage = " + readMessage);
 
                     getTerminalList().add(readMessage);
+                    mConversationArrayAdapter.notifyDataSetChanged();
+                    counter++;
+                    Log.d("tag", "output added to list " + counter);
                     Log.e("tag", "LOG check List output = " + getTerminalList());
 
                     //TODO: if message is json -> callback from RPi
@@ -514,11 +478,11 @@ public class TerminalFragment extends androidx.fragment.app.Fragment {
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
 
-                            if (!getOnResume()) {
-                                mConversationArrayAdapter.add(readMessage);
-                            } else {
-                                mConversationArrayAdapter.notifyDataSetChanged();
-                            }
+//                            if (!getOnResume()) {
+//                                mConversationArrayAdapter.add(readMessage);
+//                            } else {
+//                                mConversationArrayAdapter.notifyDataSetChanged();
+//                            }
 
                         }
                     }
