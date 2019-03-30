@@ -37,14 +37,9 @@ import io.treehouses.remote.Network.BluetoothChatService;
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
-public class Constants extends FragmentActivity {
+public class Constants {
 
     static String value = "";
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
 
     // Intent request code (use in BluetoothChatFragment)
     public static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
