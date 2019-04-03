@@ -32,6 +32,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.utils.Utils;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class TunnelFragment extends BaseFragment {
 
     private static final String TAG = "BluetoothChatFragment";
@@ -262,45 +263,6 @@ public class TunnelFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case Constants.REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
-                } else {
-                    // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-                            Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-                break;
-            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if (resultCode == Activity.RESULT_OK) {
-
-                    //get password change request
-                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-
-                    //store password and command
-                    String password = "treehouses password " + chPWD;
-
-                    Log.d(TAG, "back from change password");
-
-                    //send password to command line interface
-                    listener.sendMessage(password);
-
-                } else {
-                    Log.d(TAG, "back from change password, fail");
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     private boolean isJson(String str) {
         try {
             new JSONObject(str);
@@ -330,6 +292,4 @@ public class TunnelFragment extends BaseFragment {
         GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(Color.GREEN);
     }
-
-
 }
