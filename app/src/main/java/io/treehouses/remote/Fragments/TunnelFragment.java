@@ -85,7 +85,7 @@ public class TunnelFragment extends BaseFragment {
                     String writeMessage = new String(writeBuf);
                     if (!writeMessage.contains("google.com")) {
                         Log.d(TAG, "writeMessage = " + writeMessage);
-                        mConversationArrayAdapter.add("Command:  " + writeMessage);
+                        mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
                     }
                     break;
                 case Constants.MESSAGE_READ:
