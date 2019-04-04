@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -22,13 +23,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 import io.treehouses.remote.InitialActivity;
+import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -40,22 +39,17 @@ public class TerminalFragment extends BaseFragment {
     View view;
     ListView listView;
     Context context;
-
+  
     public TerminalFragment() {
     }
-
+  
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
-//        RPIDialogFragment listener = new RPIDialogFragment();
-//        BluetoothDevice device = listener.getMainDevice();
+
         mChatService = listener.getChatService();
-//        if(mChatService == null){
-//            showRPIDialog();
-//        }else{
         mChatService.updateHandler(mHandler);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
-//        }
 
         listView = view.findViewById(R.id.listView);
         listView.setDivider(null);
@@ -64,16 +58,9 @@ public class TerminalFragment extends BaseFragment {
         listView.setAdapter(adapter);
 
         setHasOptionsMenu(true);
-        // Get local Bluetooth adapter
-
-
         return view;
     }
-
     private static final String TAG = "BluetoothChatFragment";
-
-//    //current connection status
-//    static String currentStatus = "not connected";
 
     // Layout Views
     private ListView mConversationView;
@@ -116,25 +103,6 @@ public class TerminalFragment extends BaseFragment {
     private static boolean isRead = false;
     private static boolean isCountdown = false;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        onLoad(mHandler);
-    }
-
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//        if(getActivity().getActionBar().isShowing())
-//            getActivity().getActionBar().hide();
-//    }
-
-//    @Override
-//    public void onPause(){
-//        super.onPause();
-//        // Show Actionbar when go back to Dashboard
-//        getActivity().getActionBar().show();
-//    }
 //    public void showRPIDialog(){
 //        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
 //        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
@@ -162,7 +130,6 @@ public class TerminalFragment extends BaseFragment {
         }
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
@@ -179,27 +146,19 @@ public class TerminalFragment extends BaseFragment {
 //        expandButton = (Button)view.findViewById(R.id.EF);
     }
 
+    @Override
+    public void onResume(){
+        Log.e("tag", "LOG check onResume method ");
+        super.onResume();
+        setupChat();
+    }
+
     /**
      * Set up the UI and background operations for chat.
      */
     public void setupChat() {
         Log.d(TAG, "setupChat()");
-
-        // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView consoleView = view.findViewById(R.id.listItem);
-
-                if (isRead) {
-                    consoleView.setTextColor(Color.BLUE);
-                } else {
-                    consoleView.setTextColor(Color.RED);
-                }
-                return view;
-            }
-        };
+      
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -210,6 +169,21 @@ public class TerminalFragment extends BaseFragment {
             }
         });
 
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, MainApplication.getTerminalList()){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView output = view.findViewById(R.id.listItem);
+
+                Log.e("tag", " LOG check list getView method is called");
+                if (isRead){
+                    output.setTextColor(Color.BLUE);
+                }else {
+                    output.setTextColor(Color.RED);
+                }
+                return view;
+            }
+        };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -229,6 +203,7 @@ public class TerminalFragment extends BaseFragment {
                     listener.sendMessage("treehouses expandfs");
                 }
             }
+
         });
 
         // Initialize the compose field with a listener for the return key
@@ -440,8 +415,9 @@ public class TerminalFragment extends BaseFragment {
 //                     construct a string from the valid bytes in the buffer
 //                    String readMessage = new String(readBuf, 0, msg.arg1);
 //                    String readMessage = new String(readBuf);
-                    String readMessage = (String) msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
+                    String readMessage = (String)msg.obj;
+                    Log.d("tag", "readMessage = " + readMessage);
+
                     //TODO: if message is json -> callback from RPi
                     if (isJson(readMessage)) {
                         //handleCallback(readMessage);
@@ -462,10 +438,11 @@ public class TerminalFragment extends BaseFragment {
                             mOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
-                            mConversationArrayAdapter.add(readMessage);
-                        }
+                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                             MainApplication.getTerminalList().add(readMessage);
+                             mConversationArrayAdapter.notifyDataSetChanged();
+                         }
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
