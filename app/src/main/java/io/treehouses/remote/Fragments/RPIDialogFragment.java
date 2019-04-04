@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -34,8 +35,9 @@ import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseDialogFragment;
 
-public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
+public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
 
@@ -65,7 +67,9 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         // Build the dialog and set up the button click handlers
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothCheck();
-        if(mBluetoothAdapter.isDiscovering()) { mBluetoothAdapter.cancelDiscovery(); }
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
         mBluetoothAdapter.startDiscovery();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment,null);
@@ -91,23 +95,20 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 dialog = ProgressDialog.show(getActivity(), "Connecting...", "Device Name: "+ mainDevice.getName() +"\nDevice Address: "+ mainDevice.getAddress());
                 dialog.setCanceledOnTouchOutside(true);
 
-
             }
         });
 
-        if(mChatService == null){
+        if (mChatService == null) {
             setupBluetoothService();
         }
 
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
-        if(pairedDevice.size()>0)
-        {
-            for(BluetoothDevice device : pairedDevice)
-            {
+        if (pairedDevice.size() > 0) {
+            for (BluetoothDevice device : pairedDevice) {
                 devices.add(device);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-                s.add(deviceName+ "\n" + deviceHardwareAddress);
+                s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
             }
         }
@@ -121,16 +122,21 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         return mDialog;
     }
 
-    public BluetoothDevice getMainDevice(){return mainDevice;}
-    public BluetoothChatService getChatService(){return mChatService;}
+    public BluetoothDevice getMainDevice() {
+        return mainDevice;
+    }
 
-    public void finish(int status, View mView){
+    public BluetoothChatService getChatService() {
+        return mChatService;
+    }
+
+    public void finish(int status, View mView) {
         final AlertDialog mDialog = getAlertDialog(mView);
-        if(status == 3){
+        if (status == 3) {
             mDialog.setTitle("BLUETOOTH IS CONNECTED");
-        }else if(status == 2){
+        } else if (status == 2) {
             mDialog.setTitle("BLUETOOTH IS CONNECTING...");
-        }else{
+        } else {
             mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         }
         List<String> empty = new ArrayList<>();
@@ -186,8 +192,9 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 })
                 .create();
     }
+
     protected void bluetoothCheck() {
-        if(mBluetoothAdapter == null){
+        if (mBluetoothAdapter == null) {
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
             Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show();
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
@@ -195,10 +202,10 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
         }
     }
 
-    public void setAdapterNotNull(List<String> listVal){
-        if(getActivity() == null){
+    public void setAdapterNotNull(List<String> listVal) {
+        if (getActivity() == null) {
             Log.e("RPI DIALOG ACTIVITY", "null");
-        }else{
+        } else {
             listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listVal));
         }
     }
@@ -212,26 +219,28 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 boolean alreadyExist = false;
-                for(BluetoothDevice checkDevices : devices){
-                    if(checkDevices.equals(device)){
+                for (BluetoothDevice checkDevices : devices) {
+                    if (checkDevices.equals(device)) {
                         alreadyExist = true;
                     }
                 }
-                if(!alreadyExist){
+                if (!alreadyExist) {
                     devices.add(device);
-                    s.add(deviceName+ "\n" + deviceHardwareAddress);
+                    s.add(deviceName + "\n" + deviceHardwareAddress);
                     setAdapterNotNull(s);
                 }
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
         }
     };
+
     private void setupBluetoothService() {
         Log.d(TAG, "setupChat()");
 
         mChatService = new BluetoothChatService(mHandler);
     }
-//    private final CustomHandler mHandler = new CustomHandler(getActivity()){
+
+    //    private final CustomHandler mHandler = new CustomHandler(getActivity()){
 //        @Override
 //        public void handleMessage(Message msg) {
 //            super.handleMessage(msg);
@@ -246,7 +255,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Log.e("RPIDialogFragment",""+msg.what);
+            Log.e("RPIDialogFragment", "" + msg.what);
             FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
@@ -254,8 +263,7 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
                         case Constants.STATE_CONNECTED:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");
                             dialog.dismiss();
-                            InitialActivity initialActivity = new InitialActivity();
-                            initialActivity.setChatService(mChatService);
+                            listener.setChatService(mChatService);
                             break;
                         case Constants.STATE_NONE:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
@@ -298,12 +306,12 @@ public class RPIDialogFragment extends androidx.fragment.app.DialogFragment {
 //                    break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    Log.e("RPIDialogFragment","Device Name "+msg.getData().getString(Constants.DEVICE_NAME));
+                    Log.e("RPIDialogFragment", "Device Name " + msg.getData().getString(Constants.DEVICE_NAME));
 //                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-    //                    if (null != activity) {
-    //                        Toast.makeText(activity, "Connected to "
-    //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-    //                    }
+                    //                    if (null != activity) {
+                    //                        Toast.makeText(activity, "Connected to "
+                    //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    //                    }
                     break;
             }
         }

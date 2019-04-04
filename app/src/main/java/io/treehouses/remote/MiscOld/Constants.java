@@ -22,36 +22,58 @@ package io.treehouses.remote.MiscOld;
  * Created by yubo on 7/11/17.
  */
 
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 
 /**
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
-public interface Constants {
+public class Constants {
+
+    static String value = "";
 
     // Intent request code (use in BluetoothChatFragment)
-    int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    int REQUEST_ENABLE_BT = 3;
-    int REQUEST_DIALOG_FRAGMENT = 4;
-    int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
-    int REQUEST_DIALOG_FRAGMENT_CHPASS = 6;
+    public static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    public static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    public static final int REQUEST_ENABLE_BT = 3;
+    public static final int REQUEST_DIALOG_FRAGMENT = 4;
+    public static final int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
+    public static final int REQUEST_DIALOG_FRAGMENT_CHPASS = 6;
 
     // Constants that indicate the current connection state (use in BluetoothChatService)
-    int STATE_NONE = 0;       // we're doing nothing
-    int STATE_LISTEN = 1;     // now listening for incoming connections
-    int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    int STATE_CONNECTED = 3;  // now connected to a remote device
+    public static final int STATE_NONE = 0;       // we're doing nothing
+    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     // Message types sent from the BluetoothChatService Handler
-    int MESSAGE_STATE_CHANGE = 1;
-    int MESSAGE_READ = 2;
-    int MESSAGE_WRITE = 3;
-    int MESSAGE_DEVICE_NAME = 4;
-    int MESSAGE_TOAST = 5;
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
 
     // Key names received from the BluetoothChatService Handler
-    String DEVICE_NAME = "device_name";
-    String TOAST = "toast";
-    
+    public static final String DEVICE_NAME = "device_name";
+    public static final String TOAST = "toast";
+
+    public static final List<String> terminalList = new ArrayList();
+    static {
+        terminalList.add("Change Pi Password");
+        terminalList.add("Treehouses");
+        terminalList.add("Treehouses Detectrpi");
+        terminalList.add("Docker ps");
+        terminalList.add("Rename Hostname");
+        terminalList.add("Expand File System");
+    }
 }
+

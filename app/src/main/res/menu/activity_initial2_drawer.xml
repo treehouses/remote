@@ -25,9 +25,9 @@
             android:icon="@drawable/circle"
             android:title="@string/menu_services" />
         <item
-            android:id="@+id/menu_ssh"
+            android:id="@+id/menu_tunnel"
             android:icon="@drawable/ssh"
-            android:title="@string/menu_ssh" />
+            android:title="@string/menu_tunnel" />
         <item
             android:id="@+id/menu_about"
             android:icon="@drawable/about"
