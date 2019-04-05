@@ -211,6 +211,7 @@ public class NetworkFragment extends BaseFragment {
     }
 
     private void hotspotOn(Bundle bundle) {
+        alert = false;
         if (bundle.getString("HPWD").equals("")) {
             listener.sendMessage("treehouses ap \"" + bundle.getString("hotspotType") + "\" \"" + bundle.getString("HSSID") + "\"");
         } else {
@@ -264,8 +265,7 @@ public class NetworkFragment extends BaseFragment {
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
 
-                    if (readMessage.trim().equals("password network")) {
-                        Log.e("tag", "inside if statement");
+                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has")) {
                         updateNetworkMode();
                         if (networkStatus) {
                             return;
