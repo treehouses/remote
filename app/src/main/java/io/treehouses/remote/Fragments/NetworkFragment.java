@@ -33,6 +33,7 @@ public class NetworkFragment extends BaseFragment {
     String readMessage;
     Boolean alert = true;
     Boolean networkStatus = false;
+    boolean wifiDialog = false;
     //   TextView networkmode;
     ArrayList<String> list;
     ArrayAdapter<String> adapter;
@@ -75,6 +76,7 @@ public class NetworkFragment extends BaseFragment {
         alert = false;
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
+        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
     }
 
 
@@ -113,7 +115,6 @@ public class NetworkFragment extends BaseFragment {
                 break;
             case 6:
                 updateNetworkMode();
-                Toast.makeText(getContext(), "Networkmode updated", Toast.LENGTH_LONG).show();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
@@ -138,6 +139,7 @@ public class NetworkFragment extends BaseFragment {
     }
 
     public void showWifiDialog() {
+        wifiDialog = true;
         androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
@@ -176,8 +178,9 @@ public class NetworkFragment extends BaseFragment {
     }
 
     private void wifiOn(Bundle bundle) {
-        alert = true;
+        alert = false;
         listener.sendMessage("treehouses wifi \"" + bundle.getString("SSID") + "\" \"" + bundle.getString("PWD") + "\"");
+        Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
 
 //        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
 //        WifiConfiguration wc = new WifiConfiguration();
@@ -261,6 +264,14 @@ public class NetworkFragment extends BaseFragment {
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
 
+                    if (readMessage.trim().equals("password network")) {
+                        Log.e("tag", "inside if statement");
+                        updateNetworkMode();
+                        if (networkStatus) {
+                            return;
+                        }
+                    }
+
                     if (networkStatus) {
                        changeList(readMessage);
                         networkStatus = false;
@@ -268,6 +279,7 @@ public class NetworkFragment extends BaseFragment {
 
                     if (alert) {
                         showAlertDialog(readMessage);
+                        alert = false;
                     } else {
                         alert = true;
                     }
