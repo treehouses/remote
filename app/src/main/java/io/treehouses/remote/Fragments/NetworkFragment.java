@@ -34,6 +34,7 @@ public class NetworkFragment extends BaseFragment {
     Boolean alert = true;
     Boolean networkStatus = false;
     boolean wifiDialog = false;
+    boolean bridge = false;
     //   TextView networkmode;
     ArrayList<String> list;
     ArrayAdapter<String> adapter;
@@ -73,7 +74,12 @@ public class NetworkFragment extends BaseFragment {
     }
 
     public void updateNetworkMode() {
-        alert = false;
+        if (bridge) {
+            alert = false;
+        } else {
+            alert = false;
+        }
+
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
@@ -264,8 +270,8 @@ public class NetworkFragment extends BaseFragment {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
-
-                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
+                    boolean bridge = readMessage.trim().contains("the bridge has been built");
+                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || bridge) {
                         updateNetworkMode();
                         if (networkStatus) {
                             return;
