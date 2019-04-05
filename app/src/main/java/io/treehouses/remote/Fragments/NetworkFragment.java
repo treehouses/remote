@@ -261,7 +261,6 @@ public class NetworkFragment extends BaseFragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
@@ -273,9 +272,7 @@ public class NetworkFragment extends BaseFragment {
                         } else {
                             alert = true;
                         }
-                        if (networkStatus && !bridge) {
-                            return;
-                        }
+                        if (networkStatus && !bridge) { return; }
                     }
 
                     if (networkStatus) {
@@ -285,13 +282,9 @@ public class NetworkFragment extends BaseFragment {
 
                     if (alert) {
                         showAlertDialog(readMessage);
-                        if (bridge) {
-                            updateNetworkMode();
-                        }
+                        if (bridge) { updateNetworkMode(); }
                         alert = false;
-                    } else {
-                        alert = true;
-                    }
+                    } else { alert = true; }
 
                     break;
             }
