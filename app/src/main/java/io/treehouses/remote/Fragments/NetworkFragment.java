@@ -74,11 +74,7 @@ public class NetworkFragment extends BaseFragment {
     }
 
     public void updateNetworkMode() {
-        if (bridge) {
-            alert = false;
-        } else {
-            alert = false;
-        }
+        alert = false;
 
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
@@ -270,10 +266,14 @@ public class NetworkFragment extends BaseFragment {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
-                    boolean bridge = readMessage.trim().contains("the bridge has been built");
-                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || bridge) {
-                        updateNetworkMode();
-                        if (networkStatus) {
+                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
+                        bridge = readMessage.trim().contains("the bridge has been built");
+                        if (!bridge) {
+                            updateNetworkMode();
+                        } else {
+                            alert = true;
+                        }
+                        if (networkStatus && !bridge) {
                             return;
                         }
                     }
@@ -285,6 +285,9 @@ public class NetworkFragment extends BaseFragment {
 
                     if (alert) {
                         showAlertDialog(readMessage);
+                        if (bridge) {
+                            updateNetworkMode();
+                        }
                         alert = false;
                     } else {
                         alert = true;
