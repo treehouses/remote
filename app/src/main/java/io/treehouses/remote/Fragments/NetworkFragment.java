@@ -265,7 +265,7 @@ public class NetworkFragment extends BaseFragment {
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
 
-                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has")) {
+                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
                         updateNetworkMode();
                         if (networkStatus) {
                             return;
