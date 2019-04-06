@@ -14,17 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.ExpandableListAdapter;
 
 public class NetworkFragment extends BaseFragment {
 
@@ -34,8 +37,14 @@ public class NetworkFragment extends BaseFragment {
     Boolean alert = true;
     Boolean networkStatus = false;
     //   TextView networkmode;
-    ArrayList<String> list;
-    ArrayAdapter<String> adapter;
+//    ArrayList<String> list;
+//    ArrayAdapter<String> adapter;
+
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    List<String> listFolder;
+    HashMap<String, List<String>> listChild;
+
     public NetworkFragment() {
     }
 
@@ -46,30 +55,38 @@ public class NetworkFragment extends BaseFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
+        expListView = view.findViewById(R.id.lvExp);
+
+        listFolder = new ArrayList<>();
+        listChild = new HashMap<>();
+
+        //headers
+        listFolder.add("Ethernet");
+        listFolder.add("Wi-Fi");
+        listFolder.add("Hotspot");
+        listFolder.add("Bridge");
+        listFolder.add("Reset");
+        listFolder.add("Reboot");
+        listFolder.add("Networkmode: ");
+
+        //child data
+        List<String> Ethernet = new ArrayList<>();
+        Ethernet.add("Gateway");
+        Ethernet.add("DNS");
+        Ethernet.add("Subnet");
+
+        listChild.put(listFolder.get(0), Ethernet);
+
+        listAdapter = new ExpandableListAdapter(getContext(), listFolder, listChild);
+
+        expListView.setAdapter(listAdapter);
+
+
         updateNetworkMode();
-
-        list = new ArrayList<String>();
-        list.add("Ethernet");
-        list.add("Wi-Fi");
-        list.add("Hotspot");
-        list.add("Bridge");
-        list.add("Reset");
-        list.add("Reboot");
-        list.add("Networkmode: ");
-
-        ListView listView = view.findViewById(R.id.listView);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getListFragment(position);
-            }
-        });
 
         return view;
     }
+
 
     public void updateNetworkMode() {
         alert = false;
@@ -278,11 +295,11 @@ public class NetworkFragment extends BaseFragment {
     };
 
     private void changeList(String readMessage) {
-        if (list != null && list.size() >= 6) {
-            list.remove(6);
-            list.add(6,"Network Mode : "+ readMessage);
-            if (adapter!=null)
-            adapter.notifyDataSetChanged();
-        }
+//        if (list != null && list.size() >= 6) {
+//            list.remove(6);
+//            list.add(6,"Network Mode : "+ readMessage);
+//            if (adapter!=null)
+//            adapter.notifyDataSetChanged();
+//        }
     }
 }
