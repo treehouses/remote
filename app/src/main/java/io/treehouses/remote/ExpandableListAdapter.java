@@ -1,55 +1,42 @@
 package io.treehouses.remote;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import java.util.HashMap;
-import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
-    private Context context;
-    private List<String> listFolder;
-    private HashMap<String, List<String>> listChild;
+    private final LayoutInflater inf;
+    private String[] groups;
+    private String[][] children;
 
-    public ExpandableListAdapter(Context context, List<String> listFolder, HashMap<String, List<String>> listChild) {
-        this.context = context;
-        this.listChild = listChild;
-        this.listFolder = listFolder;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
+    public ExpandableListAdapter(Context context, String[] groups, String[][] children) {
+        this.groups = groups;
+        this.children = children;
+        inf = LayoutInflater.from(context);
     }
 
     @Override
     public int getGroupCount() {
-        return 0;
+        return groups.length;
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.listChild.get(this.listFolder.get(groupPosition)).size();
+        return children[groupPosition].length;
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return this.listFolder.get(groupPosition);
+        return groups[groupPosition];
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.listChild.get(this.listFolder.get(groupPosition)).get(childPosition);
+        return children[groupPosition][childPosition];
     }
 
     @Override
@@ -64,35 +51,43 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            String headerTitle = (String) getGroup(groupPosition);
-            if (convertView == null) {
-                LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = infalInflater.inflate(R.layout.list_folder, null);
-            }
+        ViewHolder holder;
 
-            TextView lblListHeader = convertView.findViewById(R.id.listFolder);
-            lblListHeader.setTypeface(null, Typeface.BOLD);
-            lblListHeader.setText(headerTitle);
+        if (convertView == null) {
+            convertView = inf.inflate(R.layout.list_group, parent, false);
 
-            return convertView;
+            holder = new ViewHolder();
+            holder.text = (TextView) convertView.findViewById(R.id.lblListHeader);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.text.setText(getGroup(groupPosition).toString());
+
+        return convertView;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final String childText = (String) getChild(groupPosition, childPosition);
-
+        ViewHolder holder;
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.list_item, null);
+            convertView = inf.inflate(R.layout.list_item, parent, false);
+            holder = new ViewHolder();
+
+            holder.text = (TextView) convertView.findViewById(R.id.lblListItem);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        TextView txtListChild = convertView.findViewById(R.id.lblListItem);
-        txtListChild.setText(childText);
+        holder.text.setText(getChild(groupPosition, childPosition).toString());
+
         return convertView;
     }
 
@@ -101,33 +96,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    @Override
-    public boolean areAllItemsEnabled() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public void onGroupExpanded(int groupPosition) {
-
-    }
-
-    @Override
-    public void onGroupCollapsed(int groupPosition) {
-
-    }
-
-    @Override
-    public long getCombinedChildId(long groupId, long childId) {
-        return 0;
-    }
-
-    @Override
-    public long getCombinedGroupId(long groupId) {
-        return 0;
+    private class ViewHolder {
+        TextView text;
     }
 }
+
+

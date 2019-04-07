@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
@@ -40,13 +44,28 @@ public class NetworkFragment extends BaseFragment {
 //    ArrayList<String> list;
 //    ArrayAdapter<String> adapter;
 
-    ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listFolder;
-    HashMap<String, List<String>> listChild;
+    private String[] groups;
+    private String[][] children;
 
-    public NetworkFragment() {
+    public NetworkFragment() {}
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        groups = new String[] { "Ethernet: 192.168.0.100 - Automatic", "WiFi", "Hotspot", "Bridge", "Reset", "Reboot", "Network Mode: " };
+
+        children = new String [][] {
+                {"DNS", "Gateway", "Subnet"},
+                {"ESSID", "Password"},
+                {"ESSID", "Password"},
+                {"ESSID", "Password", "Hotspot ESSID", "Hotspot Password"},
+                {""},
+                {""},
+                {""}
+        };
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,38 +74,18 @@ public class NetworkFragment extends BaseFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        expListView = view.findViewById(R.id.lvExp);
-
-        listFolder = new ArrayList<>();
-        listChild = new HashMap<>();
-
-        //headers
-        listFolder.add("Ethernet");
-        listFolder.add("Wi-Fi");
-        listFolder.add("Hotspot");
-        listFolder.add("Bridge");
-        listFolder.add("Reset");
-        listFolder.add("Reboot");
-        listFolder.add("Networkmode: ");
-
-        //child data
-        List<String> Ethernet = new ArrayList<>();
-        Ethernet.add("Gateway");
-        Ethernet.add("DNS");
-        Ethernet.add("Subnet");
-
-        listChild.put(listFolder.get(0), Ethernet);
-
-        listAdapter = new ExpandableListAdapter(getContext(), listFolder, listChild);
-
-        expListView.setAdapter(listAdapter);
-
-
         updateNetworkMode();
 
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        expListView = view.findViewById(R.id.lvExp);
+        expListView.setAdapter(new ExpandableListAdapter(getContext(), groups, children));
+        expListView.setGroupIndicator(null);
+    }
 
     public void updateNetworkMode() {
         alert = false;

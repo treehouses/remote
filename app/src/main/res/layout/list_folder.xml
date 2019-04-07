@@ -4,14 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#000000">
+    android:background="@color/bg_white">
 
     <TextView
         android:id="@+id/listFolder"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:textColor="#f9f93d"
         android:textSize="17dp"
-        android:textColor="#f9f93d" />
+        android:textStyle="bold" />
 
 </LinearLayout>
