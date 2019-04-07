@@ -57,8 +57,8 @@ public class HotspotDialogFragment extends androidx.fragment.app.DialogFragment 
         initLayoutView(mView);
 
         ArrayList<String> list = new ArrayList<String>();
-        list.add("local");
         list.add("internet");
+        list.add("local");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
