@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final LayoutInflater inf;
-    private String[] groups;
+    private ArrayList<String> groups;
     private String[][] children;
 
-    public ExpandableListAdapter(Context context, String[] groups, String[][] children) {
+    public ExpandableListAdapter(Context context, ArrayList<String> groups, String[][] children) {
         this.groups = groups;
         this.children = children;
         inf = LayoutInflater.from(context);
@@ -21,7 +23,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return groups.length;
+        return groups.size();
     }
 
     @Override
@@ -31,7 +33,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
-        return groups[groupPosition];
+        return groups.get(groupPosition);
     }
 
     @Override

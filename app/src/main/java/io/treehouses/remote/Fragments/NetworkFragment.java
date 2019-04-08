@@ -12,18 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.net.ssl.HostnameVerifier;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -45,31 +36,39 @@ public class NetworkFragment extends BaseFragment {
 //    ArrayAdapter<String> adapter;
 
     ExpandableListView expListView;
-    private String[] groups;
+    android.widget.ExpandableListAdapter adapter;
+//    private String[] groups;
+    private ArrayList<String> groups;
     private String[][] children;
 
     public NetworkFragment() {}
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        groups = new String[] { "Ethernet: 192.168.0.100 - Automatic", "WiFi", "Hotspot", "Bridge", "Reset", "Reboot", "Network Mode: " };
+//        groups = new String[] { "Ethernet: 192.168.0.100 - Automatic", "WiFi", "Hotspot", "Bridge", "Reset", "Reboot", "Network Mode: " };
 
         children = new String [][] {
-                {"DNS", "Gateway", "Subnet"},
-                {"ESSID", "Password"},
-                {"ESSID", "Password"},
-                {"ESSID", "Password", "Hotspot ESSID", "Hotspot Password"},
-                {""},
-                {""},
+                {"\tDNS", "\tGateway", "\tSubnet"},
+                {"\tESSID", "\tPassword"},
+                {"\tESSID", "\tPassword"},
+                {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password"},
+                {"\tReset now"},
+                {"\tReboot now"},
                 {""}
         };
-    }
 
+        groups = new ArrayList<>();
+        groups.add("Ethernet: 192.168.0.100 - Automatic");
+        groups.add("WiFi");
+        groups.add("Hotspot");
+        groups.add("Bridge");
+        groups.add("Reset");
+        groups.add("Reboot");
+        groups.add("Network Mode: ");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
@@ -82,17 +81,28 @@ public class NetworkFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        adapter = new ExpandableListAdapter(getContext(), groups, children);
         expListView = view.findViewById(R.id.lvExp);
-        expListView.setAdapter(new ExpandableListAdapter(getContext(), groups, children));
+
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Toast.makeText(getContext(),groups.get(groupPosition) + " Expanded", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
     }
+
+
 
     public void updateNetworkMode() {
         alert = false;
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
     }
-
 
     public void getListFragment(int position) {
         switch (position) {
@@ -294,11 +304,9 @@ public class NetworkFragment extends BaseFragment {
     };
 
     private void changeList(String readMessage) {
-//        if (list != null && list.size() >= 6) {
-//            list.remove(6);
-//            list.add(6,"Network Mode : "+ readMessage);
-//            if (adapter!=null)
-//            adapter.notifyDataSetChanged();
-//        }
+        if (groups != null && groups.size() >= 6) {
+            groups.remove(6);
+            groups.add(6,"Network Mode : "+ readMessage);
+        }
     }
 }
