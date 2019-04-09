@@ -82,10 +82,19 @@ public class NetworkFragment extends BaseFragment {
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                //Toast.makeText(getContext(),groups.get(groupPosition) + " Expanded", Toast.LENGTH_SHORT).show();
-                if (groups.get(groupPosition).contains("ap local")) {
+                String group = groups.get(groupPosition);
+                if (group.contains("Network Mode")) {
                     updateNetworkMode();
-                    expListView.expandGroup(2);
+                    if (group.contains("ethernet")) {
+                        expListView.expandGroup(0);
+                    } else if (group.contains("wifi")) {
+                        expListView.expandGroup(1);
+                    } else if (group.contains("ap local")) {
+                        expListView.expandGroup(2);
+                    } else if (group.contains("bridge")) {
+                        expListView.expandGroup(3);
+                    }
+
                     expListView.collapseGroup(groupPosition);
                     alert = false;
                 }
@@ -319,7 +328,7 @@ public class NetworkFragment extends BaseFragment {
     private void changeList(String readMessage) {
         if (groups != null && groups.size() >= 6) {
             groups.remove(6);
-            groups.add(6,"Network Mode : "+ readMessage);
+            groups.add(6,"Network Mode: "+ readMessage);
             expListView.performItemClick(null, 6, expListView.getItemIdAtPosition(6));
             alert = false;
         }
