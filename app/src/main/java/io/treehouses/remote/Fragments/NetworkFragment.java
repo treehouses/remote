@@ -31,13 +31,8 @@ public class NetworkFragment extends BaseFragment {
     String readMessage;
     Boolean alert = true;
     Boolean networkStatus = false;
-    //   TextView networkmode;
-//    ArrayList<String> list;
-//    ArrayAdapter<String> adapter;
-
     ExpandableListView expListView;
     android.widget.ExpandableListAdapter adapter;
-//    private String[] groups;
     private ArrayList<String> groups;
     private String[][] children;
 
@@ -87,21 +82,38 @@ public class NetworkFragment extends BaseFragment {
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getContext(),groups.get(groupPosition) + " Expanded", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(),groups.get(groupPosition) + " Expanded", Toast.LENGTH_SHORT).show();
+                if (groups.get(groupPosition).contains("ap local")) {
+                    updateNetworkMode();
+                    expListView.expandGroup(2);
+                    expListView.collapseGroup(groupPosition);
+                    alert = false;
+                }
 
             }
         });
 
+//        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//            @Override
+//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+//                if (groupPosition == 6) {
+//                    updateNetworkMode();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
+
     }
-
-
 
     public void updateNetworkMode() {
         alert = false;
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
+        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
     }
 
     public void getListFragment(int position) {
@@ -137,11 +149,9 @@ public class NetworkFragment extends BaseFragment {
                     e.printStackTrace();
                 }
                 break;
-            case 6:
-                updateNetworkMode();
-                Toast.makeText(getContext(), "Networkmode updated", Toast.LENGTH_LONG).show();
             default:
                 Log.e("Default Network Switch", "Nothing...");
+                break;
         }
     }
 
@@ -242,10 +252,12 @@ public class NetworkFragment extends BaseFragment {
     }
 
     private void ethernetOn(Bundle bundle) {
+        alert = true;
         listener.sendMessage("treehouses ethernet \"" + bundle.getString("ip") + "\" \"" + bundle.getString("mask") + "\" \"" + bundle.getString("gateway") + "\" \"" + bundle.getString("dns") + "\"");
     }
 
     private void bridgeOn(Bundle bundle) {
+        alert = true;
         String overallMessage = "treehouses bridge \"" + (bundle.getString("essid")) + "\" \"" + bundle.getString("hssid") + "\" ";
 
         if (TextUtils.isEmpty(bundle.getString("password"))) {
@@ -288,14 +300,15 @@ public class NetworkFragment extends BaseFragment {
                     Log.d("TAG", "readMessage = " + readMessage);
 
                     if (networkStatus) {
-                       changeList(readMessage);
+                        changeList(readMessage);
                         networkStatus = false;
+                        alert = false;
                     }
 
                     if (alert) {
                         showAlertDialog(readMessage);
                     } else {
-                        alert = true;
+                        alert = false;
                     }
 
                     break;
@@ -307,6 +320,8 @@ public class NetworkFragment extends BaseFragment {
         if (groups != null && groups.size() >= 6) {
             groups.remove(6);
             groups.add(6,"Network Mode : "+ readMessage);
+            expListView.performItemClick(null, 6, expListView.getItemIdAtPosition(6));
+            alert = false;
         }
     }
 }
