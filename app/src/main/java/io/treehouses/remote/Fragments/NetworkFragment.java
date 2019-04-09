@@ -40,7 +40,6 @@ public class NetworkFragment extends BaseFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        groups = new String[] { "Ethernet: 192.168.0.100 - Automatic", "WiFi", "Hotspot", "Bridge", "Reset", "Reboot", "Network Mode: " };
 
         children = new String [][] {
                 {"\tDNS", "\tGateway", "\tSubnet"},
@@ -51,7 +50,6 @@ public class NetworkFragment extends BaseFragment {
                 {"\tReboot now"},
                 {""}
         };
-
         groups = new ArrayList<>();
         groups.add("Ethernet: 192.168.0.100 - Automatic");
         groups.add("WiFi");
@@ -67,7 +65,6 @@ public class NetworkFragment extends BaseFragment {
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-
         updateNetworkMode();
 
         return view;
@@ -98,21 +95,8 @@ public class NetworkFragment extends BaseFragment {
                     expListView.collapseGroup(groupPosition);
                     alert = false;
                 }
-
             }
         });
-
-//        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-//                if (groupPosition == 6) {
-//                    updateNetworkMode();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
-
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
 
@@ -125,72 +109,21 @@ public class NetworkFragment extends BaseFragment {
         Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
     }
 
-    public void getListFragment(int position) {
-        switch (position) {
-            case 0:
-                showEthernetDialog();
-                break;
-            case 1:
-                showWifiDialog();
-                break;
-            case 2:
-                showHotspotDialog();
-                break;
-            case 3:
-                showBridgeDialog();
-                break;
-            case 4:
-                alert = true;
-                listener.sendMessage("treehouses default network");
-                break;
-            case 5:
-                alert = false;
-                listener.sendMessage("reboot");
-                try {
-                    Thread.sleep(1000);
-                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
-                        Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-                        listener.openCallFragment(new HomeFragment());
-                    } else {
-                        Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                Log.e("Default Network Switch", "Nothing...");
-                break;
-        }
-    }
+    //reset function
+//     listener.sendMessage("treehouses default network");
 
-    public void showBridgeDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = BridgeDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "bridgeDialog");
-    }
-
-    public void showEthernetDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = EthernetDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ethernetDialog");
-    }
-
-    public void showHotspotDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = HotspotDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "hotspotDialog");
-    }
-
-    public void showWifiDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "wifiDialog");
-    }
-//    public void showResetFragment(){
-//        androidx.fragment.app.DialogFragment dialogFrag = ResetFragment.newInstance(123);
-//        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
-//        dialogFrag.show(getFragmentManager().beginTransaction(), "resetDialog");
+//    alert = false;
+//    listener.sendMessage("reboot");
+//    try {
+//        Thread.sleep(1000);
+//        if (mChatService.getState() != Constants.STATE_CONNECTED) {
+//            Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+//            listener.openCallFragment(new HomeFragment());
+//        } else {
+//            Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+//        }
+//    } catch (InterruptedException e) {
+//        e.printStackTrace();
 //    }
 
     @Override
@@ -223,33 +156,6 @@ public class NetworkFragment extends BaseFragment {
     private void wifiOn(Bundle bundle) {
         alert = true;
         listener.sendMessage("treehouses wifi \"" + bundle.getString("SSID") + "\" \"" + bundle.getString("PWD") + "\"");
-
-//        WifiManager wifi = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
-//        WifiConfiguration wc = new WifiConfiguration();
-//        wc.SSID = "\""+bundle.getString("SSID")+"\""; //IMP! This should be in Quotes!!
-//        wc.hiddenSSID = true;
-//        wc.status = WifiConfiguration.Status.DISABLED;
-//        wc.priority = 40;
-//        wc.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-//        wc.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-//        wc.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-//        wc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-//        wc.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
-//        wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-//        wc.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-//        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
-//        wc.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
-//
-//        wc.wepKeys[0] = "\""+bundle.getString("PWD")+"\""; //This is the WEP Password
-//        wc.wepTxKeyIndex = 0;
-//
-//        boolean res1 = wifi.setWifiEnabled(true);
-//        int res = wifi.addNetwork(wc);
-//        Log.d("WifiPreference", "add Network returned " + res );
-//        boolean es = wifi.saveConfiguration();
-//        Log.d("WifiPreference", "saveConfiguration returned " + es );
-//        boolean b = wifi.enableNetwork(res, true);
-//        Log.d("WifiPreference", "enableNetwork returned " + b );
     }
 
     private void hotspotOn(Bundle bundle) {
@@ -307,19 +213,16 @@ public class NetworkFragment extends BaseFragment {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
-
                     if (networkStatus) {
                         changeList(readMessage);
                         networkStatus = false;
                         alert = false;
                     }
-
                     if (alert) {
                         showAlertDialog(readMessage);
                     } else {
                         alert = false;
                     }
-
                     break;
             }
         }
