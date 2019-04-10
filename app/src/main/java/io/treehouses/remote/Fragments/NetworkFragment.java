@@ -35,6 +35,11 @@ public class NetworkFragment extends BaseFragment {
     android.widget.ExpandableListAdapter adapter;
     private ArrayList<String> groups;
     private String[][] children;
+    private int count = 0;
+    private boolean first;
+    private int CurrentExpandedGroup = 0;
+    private int i = 0;
+    private int j = 0;
 
     public NetworkFragment() {}
 
@@ -81,7 +86,7 @@ public class NetworkFragment extends BaseFragment {
             public void onGroupExpand(int groupPosition) {
                 String group = groups.get(groupPosition);
                 if (group.contains("Network Mode")) {
-                    updateNetworkMode();
+                    expListView.collapseGroup(groupPosition);
                     if (group.contains("ethernet")) {
                         expListView.expandGroup(0);
                     } else if (group.contains("wifi")) {
@@ -91,15 +96,44 @@ public class NetworkFragment extends BaseFragment {
                     } else if (group.contains("bridge")) {
                         expListView.expandGroup(3);
                     }
-
-                    expListView.collapseGroup(groupPosition);
                     alert = false;
                 }
+
+                if (count == 0) {
+                    first = true;
+                } else {
+                    first = false;
+                }
+                ++count;
+                expandOneGroup();
             }
         });
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
 
+    }
+
+//makes sure that only on group is expanded at once
+    public void expandOneGroup() {
+        for (;i < groups.size(); i++) {
+            if (expListView.isGroupExpanded(i)) {
+                CurrentExpandedGroup = i;
+                break;
+            }
+        }
+        if (i == CurrentExpandedGroup) {
+            for (; j < groups.size(); j++) {
+                if (expListView.isGroupExpanded(j) && j != i) {
+                    if (!first) {
+                        expListView.collapseGroup(i);
+                    }
+                    i = j;
+                }
+            }
+        }
+        if (j == 7 && i != j) {
+            j = 0;
+        }
     }
 
     public void updateNetworkMode() {
