@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import androidx.annotation.NonNull;
@@ -51,10 +53,11 @@ public class NetworkFragment extends BaseFragment {
                 {"\tESSID", "\tPassword"},
                 {"\tESSID", "\tPassword"},
                 {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password"},
-                {"\tReset now"},
-                {"\tReboot now"},
+                {"\t\t\t  Reset network mode"},
+                {"\t\t\t  Reboot raspberry pi" },
                 {""}
         };
+
         groups = new ArrayList<>();
         groups.add("Ethernet: 192.168.0.100 - Automatic");
         groups.add("WiFi");

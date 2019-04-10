@@ -2,11 +2,15 @@ package io.treehouses.remote;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.method.KeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
@@ -62,15 +66,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             convertView = inf.inflate(R.layout.list_group, parent, false);
-
             holder = new ViewHolder();
-            holder.text = (TextView) convertView.findViewById(R.id.lblListHeader);
+            holder.textView = (TextView) convertView.findViewById(R.id.lblListHeader);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.text.setText(getGroup(groupPosition).toString());
+        holder.textView.setText(getGroup(groupPosition).toString());
 
         return convertView;
     }
@@ -78,18 +81,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if (convertView == null) {
-            convertView = inf.inflate(R.layout.list_item, parent, false);
+        String child = getChild(groupPosition, childPosition).toString();
+        String group = groups.get(groupPosition).trim();
+
+        if (child.trim().contains("Reset") || child.trim().contains("Reboot")) {
+            convertView = inf.inflate(R.layout.list_item2, parent, false);
             holder = new ViewHolder();
-
-            holder.text = (TextView) convertView.findViewById(R.id.lblListItem);
+            holder.textView = convertView.findViewById(R.id.listItemStatic);
             convertView.setTag(holder);
+
+            holder.textView.setText(getChild(groupPosition, childPosition).toString());
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            if (convertView == null || group.contains("Bridge") || group.contains("Hotspot") || group.contains("Ethernet")) {
+                convertView = inf.inflate(R.layout.list_item, parent, false);
+                holder = new ViewHolder();
+                holder.editText = convertView.findViewById(R.id.lblListItem);
+                convertView.setTag(holder);
+                holder.editText.setHint(getChild(groupPosition, childPosition).toString());
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+                holder.editText.setHint(getChild(groupPosition, childPosition).toString());
+            }
         }
-
-        holder.text.setText(getChild(groupPosition, childPosition).toString());
-
         return convertView;
     }
 
@@ -99,7 +112,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     private class ViewHolder {
-        TextView text;
+        TextInputEditText editText;
+        TextView textView;
     }
 }
 

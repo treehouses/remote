@@ -7,12 +7,9 @@
     android:background="@color/bg_white">
 
     <TextView
-        android:id="@+id/listFolder"
+        android:id="@+id/listItemStatic"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textColor="#f9f93d"
-        android:textSize="17dp"
-        android:textStyle="bold" />
+        android:textSize="17dp" />
 
 </LinearLayout>
