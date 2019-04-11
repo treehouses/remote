@@ -255,11 +255,14 @@ public class NetworkFragment extends BaseFragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
+
+                    if (readMessage.trim().equals("false")) {
+                        return;
+                    }
 
                     if (networkStatus) {
                        changeList(readMessage);
