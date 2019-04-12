@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -49,10 +50,10 @@ public class NetworkFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         children = new String [][] {
-                {"\tDNS", "\tGateway", "\tSubnet"},
-                {"\tESSID", "\tPassword"},
-                {"\tESSID", "\tPassword"},
-                {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password"},
+                {"\tDNS", "\tGateway", "\tSubnet", "Start Configuration"},
+                {"\tESSID", "\tPassword", "Start Configuration"},
+                {"\tESSID", "\tPassword", "Start Configuration"},
+                {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password", "Start Configuration"},
                 {"\t\t\t  Reset network mode"},
                 {"\t\t\t  Reboot raspberry pi" },
                 {""}

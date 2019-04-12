@@ -1,13 +1,12 @@
 package io.treehouses.remote;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -83,6 +82,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ViewHolder holder;
         String child = getChild(groupPosition, childPosition).toString();
         String group = groups.get(groupPosition).trim();
+        Log.e("TAG", "getChildView was called");
 
         if (child.trim().contains("Reset") || child.trim().contains("Reboot")) {
             convertView = inf.inflate(R.layout.list_item2, parent, false);
@@ -90,20 +90,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.textView = convertView.findViewById(R.id.listItemStatic);
             convertView.setTag(holder);
 
-            holder.textView.setText(getChild(groupPosition, childPosition).toString());
+            holder.textView.setText(child);
         } else {
-            if (convertView == null || group.contains("Bridge") || group.contains("Hotspot") || group.contains("Ethernet")) {
-                convertView = inf.inflate(R.layout.list_item, parent, false);
-                holder = new ViewHolder();
-                holder.editText = convertView.findViewById(R.id.lblListItem);
-                convertView.setTag(holder);
-                holder.editText.setHint(getChild(groupPosition, childPosition).toString());
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-                holder.editText.setHint(getChild(groupPosition, childPosition).toString());
-            }
+            convertView = inf.inflate(R.layout.list_item, parent, false);
+            holder = new ViewHolder();
+            holder.editText = convertView.findViewById(R.id.lblListItem);
+            convertView.setTag(holder);
+            holder.editText.setHint(child);
         }
+
+        if (child.trim().equals("Start Configuration")) {
+            convertView = inf.inflate(R.layout.list_button, parent, false);
+            buttonLayout(convertView, parent, child);
+        }
+
         return convertView;
+    }
+
+    private void buttonLayout(View convertView, ViewGroup parent, String child) {
+        ViewHolder holder = new ViewHolder();
+        holder.button = convertView.findViewById(R.id.listButton);
+        convertView.setTag(holder);
+        holder.button.setText(child);
     }
 
     @Override
@@ -114,6 +122,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private class ViewHolder {
         TextInputEditText editText;
         TextView textView;
+        Button button;
     }
 }
 
