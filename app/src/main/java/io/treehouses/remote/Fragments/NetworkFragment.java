@@ -40,6 +40,8 @@ public class NetworkFragment extends BaseFragment {
     String readMessage;
     Boolean alert = true;
     Boolean networkStatus = false;
+    Boolean wifiDialog = false;
+    Boolean bridge = false;
     ExpandableListView expListView;
     android.widget.ExpandableListAdapter adapter;
     private ArrayList<String> groups;
@@ -154,6 +156,11 @@ public class NetworkFragment extends BaseFragment {
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
 
+    public void updateNetworkMode() {
+        alert = false;
+        networkStatus = true;
+        listener.sendMessage("treehouses networkmode");
+        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
     }
 
     //makes sure that only one group is expanded at once
@@ -186,32 +193,15 @@ public class NetworkFragment extends BaseFragment {
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_SHORT).show();
     }
-
-    //reset function
-//     listener.sendMessage("treehouses default network");
-
-//    alert = false;
-//    listener.sendMessage("reboot");
-//    try {
-//        Thread.sleep(1000);
-//        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-//            Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-//            listener.openCallFragment(new HomeFragment());
-//        } else {
-//            Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-//        }
-//    } catch (InterruptedException e) {
-//        e.printStackTrace();
-//    }
-
-
-
+      
     private void wifiOn(Bundle bundle) {
-        alert = true;
+        alert = false;
         listener.sendMessage("treehouses wifi \"" + bundle.getString("SSID") + "\" \"" + bundle.getString("PWD") + "\"");
+        Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
     }
 
     private void hotspotOn(Bundle bundle) {
+        alert = false;
         if (bundle.getString("HPWD").equals("")) {
             listener.sendMessage("treehouses ap \"" + bundle.getString("hotspotType") + "\" \"" + bundle.getString("HSSID") + "\"");
         } else {
@@ -261,11 +251,19 @@ public class NetworkFragment extends BaseFragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
-
+                    Log.d("TAG", "readMessage = " + readMessage);
+                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
+                        bridge = readMessage.trim().contains("the bridge has been built");
+                        if (!bridge) {
+                            updateNetworkMode();
+                        } else {
+                            alert = true;
+                        }
+                        if (networkStatus && !bridge) { return; }
+                    }
                     if (readMessage.contains("please reboot your device")) {
                         alert = true;
                     }
@@ -277,9 +275,13 @@ public class NetworkFragment extends BaseFragment {
                     }
                     if (alert) {
                         showAlertDialog(readMessage);
+
                     } else {
                         alert = false;
                     }
+                    if (bridge) { updateNetworkMode(); }
+                        alert = false;
+                    } else { alert = true; }
                     break;
             }
         }
