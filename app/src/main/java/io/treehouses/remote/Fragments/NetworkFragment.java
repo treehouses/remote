@@ -2,16 +2,20 @@ package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -21,6 +25,8 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import io.treehouses.remote.ViewHolder;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -44,18 +50,19 @@ public class NetworkFragment extends BaseFragment {
     private int i = 0;
     private int j = 0;
 
-    public NetworkFragment() {}
+    public NetworkFragment() {
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        children = new String [][] {
+        children = new String[][]{
                 {"\tDNS", "\tGateway", "\tSubnet", "Start Configuration"},
                 {"\tESSID", "\tPassword", "Start Configuration"},
                 {"\tESSID", "\tPassword", "Start Configuration"},
                 {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password", "Start Configuration"},
-                {"\t\t\t  Reset network mode"},
-                {"\t\t\t  Reboot raspberry pi" },
+                {"Reset network mode"},
+                {"Reboot raspberry pi"},
                 {""}
         };
 
@@ -82,7 +89,7 @@ public class NetworkFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter = new ExpandableListAdapter(getContext(), groups, children);
+        adapter = new ExpandableListAdapter(getContext(), groups, children, mChatService);
         expListView = view.findViewById(R.id.lvExp);
 
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -91,7 +98,7 @@ public class NetworkFragment extends BaseFragment {
                 String group = groups.get(groupPosition);
                 if (group.contains("Network Mode")) {
                     expListView.collapseGroup(groupPosition);
-                    if (group.contains("ethernet")) {
+                    if (group.contains("default")) {
                         expListView.expandGroup(0);
                     } else if (group.contains("wifi")) {
                         expListView.expandGroup(1);
@@ -101,6 +108,7 @@ public class NetworkFragment extends BaseFragment {
                         expListView.expandGroup(3);
                     }
                     alert = false;
+                    Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
                 }
 
                 if (count == 0) {
@@ -112,14 +120,45 @@ public class NetworkFragment extends BaseFragment {
                 expandOneGroup();
             }
         });
+//        ViewGroup parent = new ViewGroup(getContext()) {
+//            @Override
+//            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+//
+//            }
+//        };
+//
+//        LayoutInflater inf = LayoutInflater.from(getContext());
+//        View convertView = inf.inflate(R.layout.list_child2, parent, false);
+//        ViewHolder holder = new ViewHolder();
+//
+//        holder.editText = convertView.findViewById(R.id.lblListItem);
+//        view.setTag(holder);
+//
+//        holder.editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//              //  Log.e("TAG", "Testing");
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Toast.makeText(getContext(), "this is a toast:", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
 
     }
 
-//makes sure that only on group is expanded at once
+    //makes sure that only one group is expanded at once
     public void expandOneGroup() {
-        for (;i < groups.size(); i++) {
+        for (; i < groups.size(); i++) {
             if (expListView.isGroupExpanded(i)) {
                 CurrentExpandedGroup = i;
                 break;
@@ -140,11 +179,12 @@ public class NetworkFragment extends BaseFragment {
         }
     }
 
+
     public void updateNetworkMode() {
         alert = false;
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
-        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_SHORT).show();
     }
 
     //reset function
@@ -164,32 +204,7 @@ public class NetworkFragment extends BaseFragment {
 //        e.printStackTrace();
 //    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            String type = bundle.getString("type");
-            Log.e("ON ACTIVITY RESULT", "Request Code: " + requestCode + " ;; Result Code: " + resultCode + " ;; Intent: " + bundle + " ;; Type: " + bundle.getString("type"));
-            switch (type) {
-                case "wifi":
-                    wifiOn(bundle);
-                    break;
-                case "hotspot":
-                    hotspotOn(bundle);
-                    break;
-                case "ethernet":
-                    ethernetOn(bundle);
-                    break;
-                case "bridge":
-                    bridgeOn(bundle);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
 
     private void wifiOn(Bundle bundle) {
         alert = true;
@@ -250,6 +265,10 @@ public class NetworkFragment extends BaseFragment {
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     readMessage = (String) msg.obj;
+
+                    if (readMessage.contains("please reboot your device")) {
+                        alert = true;
+                    }
                     Log.d("TAG", "readMessage = " + readMessage);
                     if (networkStatus) {
                         changeList(readMessage);
