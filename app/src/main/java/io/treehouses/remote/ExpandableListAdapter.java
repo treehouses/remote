@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -114,19 +115,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = group1(child, convertView, parent, groupPosition, childPosition);
 
             if (child1) {
-                child1(childPosition);
+                child(childPosition, holder.getEditText1());
                 child1 = false;
             }
             if (child2) {
-                child2(childPosition);
+                child(childPosition, holder.getEditText2());
                 child2 = false;
             }
             if (child3) {
-                child3(childPosition);
+                child(childPosition, holder.getEditText3());
                 child3 = false;
             }
             if (child4) {
-                child4(childPosition);
+                child(childPosition, holder.getEditText4());
                 child4 = false;
             }
 
@@ -159,11 +160,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.getEditText3().setHint(child);
             child3 = true;
         } else if (child.equals("Hotspot Password")) {
-            convertView = inf.inflate(R.layout.list_child3, parent, false);
-            holder.setListChild3(convertView);
-            holder.setEditText3((TextInputEditText) convertView.findViewById(R.id.lblListItem3));
+            convertView = inf.inflate(R.layout.list_child4, parent, false);
+            holder.setListChild4(convertView);
+            holder.setEditText4((TextInputEditText) convertView.findViewById(R.id.lblListItem4));
             convertView.setTag(holder);
-            holder.getEditText3().setHint(child);
+            holder.getEditText4().setHint(child);
             child4 = true;
         } else if (child.contains("Start")) {
             convertView = buttonLayout(parent, child, groupPosition, childPosition);
@@ -209,8 +210,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    public void child1(final int childPosition) {
-        holder.getEditText1().addTextChangedListener(new TextWatcher() {
+    public void child(final int childPosition, EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
@@ -220,52 +221,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 if (childPosition == 0) {
                     String essid = s.toString();
                     Toast.makeText(context, "ESSID: "+ essid, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    public void child2(final int childPosition) {
-        holder.getEditText2().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (childPosition == 1) {
+                } else if (childPosition == 1) {
                     String pw = s.toString();
                     Toast.makeText(context, "Password: " + pw, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    public void child3(final int childPosition) {
-        holder.getEditText3().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (childPosition == 2) {
+                } else if (childPosition == 2) {
                     String test = s.toString();
                     Toast.makeText(context, "IDK: "+ test, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    public void child4(final int childPosition) {
-        holder.getEditText3().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (childPosition == 3) {
+                } else if (childPosition == 3) {
                     String test = s.toString();
                     Toast.makeText(context, "IDK: "+ test, Toast.LENGTH_SHORT).show();
                 }

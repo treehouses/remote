@@ -13,14 +13,32 @@ public class ViewHolder {
     private View listChild1;
     private View listChild2;
     private View listChild3;
+    private View listChild4;
     private TextInputEditText editText1;
     private TextInputEditText editText2;
     private TextInputEditText editText3;
+    private TextInputEditText editText4;
     private TextView textView;
     private TextView textViewGroup;
     private Button button;
 
     public ViewHolder() { }
+
+    public TextInputEditText getEditText4() {
+        return editText4;
+    }
+
+    public View getListChild4() {
+        return listChild4;
+    }
+
+    public void setListChild4(View listChild4) {
+        this.listChild4 = listChild4;
+    }
+
+    public void setEditText4(TextInputEditText editText4) {
+        this.editText4 = editText4;
+    }
 
     public View getListButton() {
         return listButton;
