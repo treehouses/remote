@@ -122,45 +122,9 @@ public class NetworkFragment extends BaseFragment {
                 expandOneGroup();
             }
         });
-//        ViewGroup parent = new ViewGroup(getContext()) {
-//            @Override
-//            protected void onLayout(boolean changed, int l, int t, int r, int b) {
-//
-//            }
-//        };
-//
-//        LayoutInflater inf = LayoutInflater.from(getContext());
-//        View convertView = inf.inflate(R.layout.list_child2, parent, false);
-//        ViewHolder holder = new ViewHolder();
-//
-//        holder.editText = convertView.findViewById(R.id.lblListItem);
-//        view.setTag(holder);
-//
-//        holder.editText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//              //  Log.e("TAG", "Testing");
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                Toast.makeText(getContext(), "this is a toast:", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
-
-    public void updateNetworkMode() {
-        alert = false;
-        networkStatus = true;
-        listener.sendMessage("treehouses networkmode");
-        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_LONG).show();
     }
 
     //makes sure that only one group is expanded at once
@@ -191,7 +155,7 @@ public class NetworkFragment extends BaseFragment {
         alert = false;
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
-        Toast.makeText(getContext(), "Network mode updated", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
       
     private void wifiOn(Bundle bundle) {
@@ -262,7 +226,9 @@ public class NetworkFragment extends BaseFragment {
                         } else {
                             alert = true;
                         }
-                        if (networkStatus && !bridge) { return; }
+                        if (networkStatus && !bridge) {
+                            return;
+                        }
                     }
                     if (readMessage.contains("please reboot your device")) {
                         alert = true;
@@ -279,13 +245,16 @@ public class NetworkFragment extends BaseFragment {
                     } else {
                         alert = false;
                     }
-                    if (bridge) { updateNetworkMode(); }
-                        alert = false;
-                    } else { alert = true; }
+                    if (bridge) {
+                        updateNetworkMode();
+                    } else{
+                        alert = true;
+                    }
                     break;
             }
         }
     };
+
 
     private void changeList(String readMessage) {
         if (groups != null && groups.size() >= 6) {
