@@ -1,25 +1,15 @@
 package io.treehouses.remote;
 
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Spinner;
 import com.google.android.material.textfield.TextInputEditText;
 
-
 public class ViewHolder {
-    private View listButton;
-    private View listGroup;
-    private View listItem;
-    private View listChild1;
-    private View listChild2;
-    private View listChild3;
-    private View listChild4;
+    private Spinner listSpinner;
     private TextInputEditText editText1;
     private TextInputEditText editText2;
     private TextInputEditText editText3;
     private TextInputEditText editText4;
-    private TextView textView;
-    private TextView textViewGroup;
     private Button button;
 
     public ViewHolder() { }
@@ -28,64 +18,8 @@ public class ViewHolder {
         return editText4;
     }
 
-    public View getListChild4() {
-        return listChild4;
-    }
-
-    public void setListChild4(View listChild4) {
-        this.listChild4 = listChild4;
-    }
-
     public void setEditText4(TextInputEditText editText4) {
         this.editText4 = editText4;
-    }
-
-    public View getListButton() {
-        return listButton;
-    }
-
-    public void setListButton(View listButton) {
-        this.listButton = listButton;
-    }
-
-    public View getListItem() {
-        return listItem;
-    }
-
-    public void setListItem(View listItem) {
-        this.listItem = listItem;
-    }
-
-    public View getListGroup() {
-        return listGroup;
-    }
-
-    public void setListGroup(View convertViewGroup) {
-        this.listGroup = convertViewGroup;
-    }
-
-    public View getListChild1() {
-        return listChild1;
-    }
-
-    public void setListChild1(View convertView1) {
-        this.listChild1 = convertView1;
-    }
-
-    public View getListChild2() {
-        return listChild2;
-    }
-
-    public void setListChild2(View convertView2) {
-        this.listChild2 = convertView2;
-    }
-
-    public View getListChild3() {
-        return listChild3;
-    }
-
-    public void setListChild3(View convertView3) {
-        this.listChild3 = convertView3;
     }
 
     public TextInputEditText getEditText1() {
@@ -110,22 +44,6 @@ public class ViewHolder {
 
     public void setEditText3(TextInputEditText editText3) {
         this.editText3 = editText3;
-    }
-
-    public TextView getTextView() {
-        return textView;
-    }
-
-    public void setTextView(TextView textView) {
-        this.textView = textView;
-    }
-
-    public TextView getTextViewGroup() {
-        return textViewGroup;
-    }
-
-    public void setTextViewGroup(TextView group) {
-        this.textViewGroup = group;
     }
 
     public Button getButton() {
