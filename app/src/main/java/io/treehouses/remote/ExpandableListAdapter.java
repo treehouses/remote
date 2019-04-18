@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.BaseFragment;

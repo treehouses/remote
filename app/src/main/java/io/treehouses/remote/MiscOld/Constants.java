@@ -24,6 +24,7 @@ package io.treehouses.remote.MiscOld;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 public class Constants {
 
     static String value = "";
+    private static ArrayList<String> groups = new ArrayList<>();
 
     // Intent request code (use in BluetoothChatFragment)
     public static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
@@ -76,9 +78,11 @@ public class Constants {
         terminalList.add("Expand File System");
     }
 
-
-    public static ArrayList<String> getGroups() {
-        ArrayList<String> groups = new ArrayList<>();
+    public static void setGroups() {
+        if (groups.size() > 0) {
+            groups = null;
+            groups = new ArrayList<>();
+        }
         groups.add("Ethernet: Automatic");
         groups.add("WiFi");
         groups.add("Hotspot");
@@ -86,6 +90,16 @@ public class Constants {
         groups.add("Reset");
         groups.add("Reboot");
         groups.add("Network Mode: ");
+    }
+    public static ArrayList<String> getGroups() {
+        return groups;
+    }
+
+    public static ArrayList<String> changeGroup(String readMessage) {
+        groups.remove(6);
+        Log.e("TAG", "Group size after remove: " + getGroups().size());
+        groups.add("Network Mode: " + readMessage);
+        Log.e("TAG", "Group size after add: " + getGroups().size());
         return groups;
     }
 

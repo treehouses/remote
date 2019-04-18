@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
-import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.treehouses.remote.bases.BaseFragment;
@@ -26,10 +25,8 @@ public class NetworkFragment extends BaseFragment {
 
     View view;
     private BluetoothChatService mChatService = null;
-    private String readMessage;
     private Boolean alert = true;
     private Boolean networkStatus = false;
-    private Boolean wifiDialog = false;
     private Boolean bridge = false;
     private ExpandableListView expListView;
     ExpandableListAdapter adapter;
@@ -54,6 +51,7 @@ public class NetworkFragment extends BaseFragment {
                 {"Reboot RPI"},
                 {""}
         };
+        Constants.setGroups();
     }
 
     @Override
@@ -81,7 +79,7 @@ public class NetworkFragment extends BaseFragment {
                         expListView.expandGroup(0);
                     } else if (group.contains("wifi")) {
                         expListView.expandGroup(1);
-                    } else if (group.contains("ap local")) {
+                    } else if (group.contains("ap local") || group.contains("ap internet")) {
                         expListView.expandGroup(2);
                     } else if (group.contains("bridge")) {
                         expListView.expandGroup(3);
@@ -90,11 +88,8 @@ public class NetworkFragment extends BaseFragment {
                     Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
                 }
 
-                if (count == 0) {
-                    first = true;
-                } else {
-                    first = false;
-                }
+                if (count == 0) { first = true;
+                } else { first = false; }
                 ++count;
                 expandOneGroup();
             }
@@ -105,7 +100,7 @@ public class NetworkFragment extends BaseFragment {
     }
 
     //makes sure that only one group is expanded at once
-    public void expandOneGroup() {
+    private void expandOneGroup() {
         for (; i < getGroups().size(); i++) {
             if (expListView.isGroupExpanded(i)) {
                 CurrentExpandedGroup = i;
@@ -127,8 +122,7 @@ public class NetworkFragment extends BaseFragment {
         }
     }
 
-
-    public void updateNetworkMode() {
+    private void updateNetworkMode() {
         alert = false;
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
@@ -157,38 +151,31 @@ public class NetworkFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
-                    readMessage = (String) msg.obj;
+                    String readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
                     if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
                         bridge = readMessage.trim().contains("the bridge has been built");
                         if (!bridge) {
                             updateNetworkMode();
-                        } else {
-                            alert = true;
-                        }
-                        if (networkStatus && !bridge) {
-                            return;
-                        }
+                        } else { alert = true; }
+                        if (networkStatus && !bridge) { return; }
                     }
                     if (readMessage.contains("please reboot your device")) {
                         alert = true;
                     }
                     Log.d("TAG", "readMessage = " + readMessage);
+
+                    if (readMessage.trim().contains("default network")) { networkStatus = true; }
+
                     if (networkStatus) {
                         changeList(readMessage);
                         networkStatus = false;
                         alert = false;
                     }
-                    if (alert) {
-                        showAlertDialog(readMessage);
-                    } else {
-                        alert = false;
-                    }
-                    if (bridge) {
-                        updateNetworkMode();
-                    } else{
-                        alert = true;
-                    }
+                    if (alert) { showAlertDialog(readMessage);
+                    } else { alert = false; }
+                    if (bridge) { updateNetworkMode();
+                    } else{ alert = true; }
                     break;
             }
         }
@@ -196,8 +183,7 @@ public class NetworkFragment extends BaseFragment {
 
     private void changeList(String readMessage) {
         if (getGroups() != null && getGroups().size() >= 6) {
-            getGroups().remove(6);
-            getGroups().add(6,"Network Mode: "+ readMessage);
+            Constants.changeGroup(readMessage);
             expListView.performItemClick(null, 6, expListView.getItemIdAtPosition(6));
             alert = false;
         }
