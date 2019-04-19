@@ -5,7 +5,7 @@ import android.widget.Spinner;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class ViewHolder {
-    private Spinner listSpinner;
+    private String listSpinner;
     private TextInputEditText editText1;
     private TextInputEditText editText2;
     private TextInputEditText editText3;
@@ -13,6 +13,10 @@ public class ViewHolder {
     private Button button;
 
     public ViewHolder() { }
+
+    public void setListSpinner(String listSpinner) {
+        this.listSpinner = listSpinner;
+    }
 
     public TextInputEditText getEditText4() {
         return editText4;

@@ -45,7 +45,7 @@ public class NetworkFragment extends BaseFragment {
         children = new String[][]{
                 {"\tIP Address", "\tDNS", "\tGateway", "\tMask", "Start Configuration"},
                 {"\tESSID", "\tPassword", "Start Configuration"},
-                {"\tESSID", "\tPassword", "Start Configuration"},
+                {"\tESSID", "\tPassword", "Spinner", "Start Configuration"},
                 {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password", "Start Configuration"},
                 {"Reset Network"},
                 {"Reboot RPI"},

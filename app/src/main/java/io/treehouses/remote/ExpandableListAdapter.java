@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +34,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Boolean child2 = false;
     private Boolean child3 = false;
     private Boolean child4 = false;
+    private Boolean spinner = false;
     private String child_first;
     private String child_second;
     private String child_third;
@@ -111,7 +114,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = buttonLayout(parent, child, groupPosition, childPosition);
         } else {
             convertView = group(child, convertView, parent, groupPosition, childPosition);
-
             if (child1) {
                 child(childPosition, holder.getEditText1());
                 child1 = false;
@@ -155,10 +157,43 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView.setTag(holder);
             holder.getEditText4().setHint(child);
             child4 = true;
-        } else if (child.contains("Start")) {
-            convertView = buttonLayout(parent, child, groupPosition, childPosition);
-        }
+        } else if (child.equals("Spinner")) {
+            convertView = inf.inflate(R.layout.list_spinner, parent, false);
+            Spinner spinnerValue = populateSpinner(convertView);
+            holder.setListSpinner(spinnerValue.getSelectedItem().toString());
+            convertView.setTag(holder);
+            spinner = true;
+        } else if (child.contains("Start")) { convertView = buttonLayout(parent, child, groupPosition, childPosition); }
+
         return convertView;
+    }
+
+    private Spinner populateSpinner(View convertView) {
+        ArrayList<String> spinnerArray =  new ArrayList<>();
+        spinnerArray.add("internet");
+        spinnerArray.add("local");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner sItems = convertView.findViewById(R.id.ListSpinner);
+
+        sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String value = sItems.getSelectedItem().toString();
+                bundle.putString("spinner", value);
+                Log.e("TAG", "Spinner: " + value);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        sItems.setAdapter(adapter);
+        return sItems;
     }
 
     private View buttonLayout(final ViewGroup parent, final String child, final int groupPosition, final int childPosition) {
@@ -171,7 +206,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             public void onClick(View v) {
                 BaseFragment baseFragment = new BaseFragment();
                 baseFragment.listener = (HomeInteractListener) context;
-
                 if (groupPosition == 4 && childPosition == 0) {
                     baseFragment.listener.sendMessage("treehouses default network");
                 } else if (groupPosition == 5 && childPosition == 0) {
@@ -255,10 +289,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
                 break;
             case "Hotspot":
-                if (bundle.getString("HPWD").equals("")) {
-                    baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("hotspotType") + "\" \"" + bundle.getString("HSSID") + "\"");
+                if (bundle.getString("second").equals("")) {
+                    baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("spinner") + "\" \"" + bundle.getString("first") + "\"");
                 } else {
-                    baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("hotspotType") + "\" \"" + bundle.getString("HSSID") + "\" \"" + bundle.getString("HPWD") + "\"");
+                    baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("spinner") + "\" \"" + bundle.getString("first") + "\" \"" + bundle.getString("second") + "\"");
                 }
                 break;
             case "Ethernet: Automatic":
