@@ -275,6 +275,8 @@ public class NetworkFragment extends BaseFragment {
                         if (networkStatus && !bridge) { return; }
                     }
 
+                    if (readMessage.trim().equals("false") || readMessage.trim().contains("true")) { return; }
+
                     if (networkStatus) {
                        changeList(readMessage);
                         networkStatus = false;
