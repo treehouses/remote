@@ -260,9 +260,7 @@ public class NetworkFragment extends BaseFragment {
                     readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
 
-                    if (readMessage.trim().equals("false")) {
-                        return;
-                    }
+                    if (readMessage.trim().equals("false") || readMessage.trim().contains("true")) { return; }
 
                     if (networkStatus) {
                        changeList(readMessage);
