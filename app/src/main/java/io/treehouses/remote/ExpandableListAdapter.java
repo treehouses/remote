@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,19 +17,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.HomeInteractListener;
-
 import static io.treehouses.remote.MiscOld.Constants.getGroups;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
-
     private Boolean child1 = false;
     private Boolean child2 = false;
     private Boolean child3 = false;
@@ -43,7 +38,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Bundle bundle = new Bundle();
     private ViewHolder holder = new ViewHolder();
     private BaseFragment baseFragment = new BaseFragment();
+    int layout;
+    int layout2;
+    int layout3;
+    int layout4;
 
+    int item;
+    int item2;
+    int item3;
+    int item4;
 
     public ExpandableListAdapter(Context context, ArrayList<String> groups, String[][] children, BluetoothChatService mChatService) {
         this.groups = groups;
@@ -52,7 +55,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this.mChatService = mChatService;
         this.context = context;
     }
-
     public Context getContext() { return context; }
     @Override
     public int getGroupCount() { return groups.size(); }
@@ -77,11 +79,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         listHeader.setText(getGroup(groupPosition).toString());
         return convertView;
     }
-
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String child = getChild(groupPosition, childPosition).toString().trim();
-
         if (child.contains("Reset") || child.contains("Reboot")) {
             convertView = buttonLayout(parent, child, groupPosition, childPosition);
         } else {
@@ -104,26 +104,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     private View group(String child, View convertView, ViewGroup parent, int groupPosition, int childPosition) {
+        setVariables();
         if (child.equals("ESSID") || child.equals("IP Address")) {
-            int layout = R.layout.list_child;
-            int item = R.id.lblListItem;
             child1 = true;
             convertView = getConvertView(layout, parent, child, item);
         } else if (child.equals("Password") || child.equals("DNS")) {
-            int layout = R.layout.list_child2;
-            int item = R.id.lblListItem2;
             child2 = true;
-            convertView = getConvertView(layout, parent, child, item);
+            convertView = getConvertView(layout2, parent, child, item2);
         } else if (child.equals("Hotspot ESSID") || child.equals("Gateway")) {
-            int layout = R.layout.list_child3;
-            int item = R.id.lblListItem3;
             child3 = true;
-            convertView = getConvertView(layout, parent, child, item);
+            convertView = getConvertView(layout3, parent, child, item3);
         } else if (child.equals("Hotspot Password") || child.equals("Mask")) {
-            int layout = R.layout.list_child4;
-            int item = R.id.lblListItem4;
             child4 = true;
-            convertView = getConvertView(layout, parent, child, item);
+            convertView = getConvertView(layout4, parent, child, item4);
         } else if (child.equals("Spinner")) {
             convertView = inf.inflate(R.layout.list_spinner, parent, false);
             Spinner spinnerValue = populateSpinner(convertView);
@@ -132,31 +125,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         } else if (child.contains("Start")) { convertView = buttonLayout(parent, child, groupPosition, childPosition); }
         return convertView;
     }
+    private void setVariables() {
+        layout = R.layout.list_child;
+        layout2 = R.layout.list_child2;
+        layout3 = R.layout.list_child3;
+        layout4 = R.layout.list_child4;
+        item = R.id.lblListItem;
+        item2 = R.id.lblListItem2;
+        item3 = R.id.lblListItem3;
+        item4 = R.id.lblListItem4;
+    }
 
     private View getConvertView(int layout, ViewGroup parent, String child, int item) {
         View convertView = inf.inflate(layout, parent, false);
         TextInputEditText itemView = convertView.findViewById(item);
-
         if (child1) {
             holder.setEditText1(itemView);
-            convertView.setTag(holder);
-            holder.getEditText1().setHint(child);
-        }
+            holder.getEditText1().setHint(child); }
         else if (child2) {
             holder.setEditText2(itemView);
-            convertView.setTag(holder);
-            holder.getEditText2().setHint(child);
-        }
+            holder.getEditText2().setHint(child); }
         else if (child3) {
             holder.setEditText3(itemView);
-            convertView.setTag(holder);
-            holder.getEditText3().setHint(child);
-        }
+            holder.getEditText3().setHint(child); }
         else if (child4) {
             holder.setEditText4(itemView);
-            convertView.setTag(holder);
-            holder.getEditText4().setHint(child);
-        }
+            holder.getEditText4().setHint(child); }
         return convertView;
     }
 
@@ -252,5 +246,3 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 }
-
-
