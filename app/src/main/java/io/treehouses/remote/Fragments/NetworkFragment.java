@@ -75,19 +75,13 @@ public class NetworkFragment extends BaseFragment {
                 String group = getGroups().get(groupPosition);
                 if (group.contains("Network Mode")) {
                     expListView.collapseGroup(groupPosition);
-                    if (group.contains("default")) {
-                        expListView.expandGroup(0);
-                    } else if (group.contains("wifi")) {
-                        expListView.expandGroup(1);
-                    } else if (group.contains("ap local") || group.contains("ap internet")) {
-                        expListView.expandGroup(2);
-                    } else if (group.contains("bridge")) {
-                        expListView.expandGroup(3);
-                    }
+                    if (group.contains("default")) { expListView.expandGroup(0); }
+                    else if (group.contains("wifi")) { expListView.expandGroup(1); }
+                    else if (group.contains("ap local") || group.contains("ap internet")) { expListView.expandGroup(2); }
+                    else if (group.contains("bridge")) { expListView.expandGroup(3); }
                     alert = false;
                     Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
                 }
-
                 if (count == 0) { first = true;
                 } else { first = false; }
                 ++count;
@@ -101,24 +95,33 @@ public class NetworkFragment extends BaseFragment {
 
     //makes sure that only one group is expanded at once
     private void expandOneGroup() {
+        currentExpandedGroup();
+
+        if (i == CurrentExpandedGroup) {
+            otherExpandedGroup();
+        }
+        if (j == 7 && i != j) {
+            j = 0;
+        }
+    }
+
+    private void currentExpandedGroup() {
         for (; i < getGroups().size(); i++) {
             if (expListView.isGroupExpanded(i)) {
                 CurrentExpandedGroup = i;
                 break;
             }
         }
-        if (i == CurrentExpandedGroup) {
-            for (; j < getGroups().size(); j++) {
-                if (expListView.isGroupExpanded(j) && j != i) {
-                    if (!first) {
-                        expListView.collapseGroup(i);
-                    }
-                    i = j;
+    }
+
+    private void otherExpandedGroup() {
+        for (; j < getGroups().size(); j++) {
+            if (expListView.isGroupExpanded(j) && j != i) {
+                if (!first) {
+                    expListView.collapseGroup(i);
                 }
+                i = j;
             }
-        }
-        if (j == 7 && i != j) {
-            j = 0;
         }
     }
 
@@ -155,18 +158,13 @@ public class NetworkFragment extends BaseFragment {
                     Log.d("TAG", "readMessage = " + readMessage);
                     if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
                         bridge = readMessage.trim().contains("the bridge has been built");
-                        if (!bridge) {
-                            updateNetworkMode();
-                        } else { alert = true; }
+                        if (!bridge) { updateNetworkMode(); }
+                        else { alert = true; }
                         if (networkStatus && !bridge) { return; }
                     }
-                    if (readMessage.contains("please reboot your device")) {
-                        alert = true;
-                    }
+                    if (readMessage.contains("please reboot your device")) { alert = true; }
                     Log.d("TAG", "readMessage = " + readMessage);
-
                     if (readMessage.trim().contains("default network")) { networkStatus = true; }
-
                     if (networkStatus) {
                         changeList(readMessage);
                         networkStatus = false;

@@ -18,9 +18,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import io.treehouses.remote.Fragments.HomeFragment;
-import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.BaseFragment;
@@ -34,11 +35,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Boolean child2 = false;
     private Boolean child3 = false;
     private Boolean child4 = false;
-    private Boolean spinner = false;
-    private String child_first;
-    private String child_second;
-    private String child_third;
-    private String child_forth;
     private final LayoutInflater inf;
     private ArrayList<String> groups;
     private String[][] children;
@@ -57,45 +53,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this.context = context;
     }
 
-    public Context getContext() {
-        return context;
-    }
-
+    public Context getContext() { return context; }
     @Override
-    public int getGroupCount() {
-        return groups.size();
-    }
-
+    public int getGroupCount() { return groups.size(); }
     @Override
-    public int getChildrenCount(int groupPosition) {
-        return children[groupPosition].length;
-    }
-
+    public int getChildrenCount(int groupPosition) { return children[groupPosition].length; }
     @Override
-    public Object getGroup(int groupPosition) {
-        return groups.get(groupPosition);
-    }
-
+    public Object getGroup(int groupPosition) { return groups.get(groupPosition); }
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return children[groupPosition][childPosition];
-    }
-
+    public Object getChild(int groupPosition, int childPosition) { return children[groupPosition][childPosition]; }
     @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
+    public long getGroupId(int groupPosition) { return groupPosition; }
     @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
+    public long getChildId(int groupPosition, int childPosition) { return childPosition; }
     @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
+    public boolean hasStableIds() { return true; }
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         convertView = inf.inflate(R.layout.list_group, parent, false);
@@ -132,39 +104,59 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     private View group(String child, View convertView, ViewGroup parent, int groupPosition, int childPosition) {
-
         if (child.equals("ESSID") || child.equals("IP Address")) {
-            convertView = inf.inflate(R.layout.list_child, parent, false);
-            holder.setEditText1((TextInputEditText) convertView.findViewById(R.id.lblListItem));
-            convertView.setTag(holder);
-            holder.getEditText1().setHint(child);
+            int layout = R.layout.list_child;
+            int item = R.id.lblListItem;
             child1 = true;
+            convertView = getConvertView(layout, parent, child, item);
         } else if (child.equals("Password") || child.equals("DNS")) {
-            convertView = inf.inflate(R.layout.list_child2, parent, false);
-            holder.setEditText2((TextInputEditText) convertView.findViewById(R.id.lblListItem2));
-            convertView.setTag(holder);
-            holder.getEditText2().setHint(child);
+            int layout = R.layout.list_child2;
+            int item = R.id.lblListItem2;
             child2 = true;
+            convertView = getConvertView(layout, parent, child, item);
         } else if (child.equals("Hotspot ESSID") || child.equals("Gateway")) {
-            convertView = inf.inflate(R.layout.list_child3, parent, false);
-            holder.setEditText3((TextInputEditText) convertView.findViewById(R.id.lblListItem3));
-            convertView.setTag(holder);
-            holder.getEditText3().setHint(child);
+            int layout = R.layout.list_child3;
+            int item = R.id.lblListItem3;
             child3 = true;
+            convertView = getConvertView(layout, parent, child, item);
         } else if (child.equals("Hotspot Password") || child.equals("Mask")) {
-            convertView = inf.inflate(R.layout.list_child4, parent, false);
-            holder.setEditText4((TextInputEditText) convertView.findViewById(R.id.lblListItem4));
-            convertView.setTag(holder);
-            holder.getEditText4().setHint(child);
+            int layout = R.layout.list_child4;
+            int item = R.id.lblListItem4;
             child4 = true;
+            convertView = getConvertView(layout, parent, child, item);
         } else if (child.equals("Spinner")) {
             convertView = inf.inflate(R.layout.list_spinner, parent, false);
             Spinner spinnerValue = populateSpinner(convertView);
             holder.setListSpinner(spinnerValue.getSelectedItem().toString());
             convertView.setTag(holder);
-            spinner = true;
         } else if (child.contains("Start")) { convertView = buttonLayout(parent, child, groupPosition, childPosition); }
+        return convertView;
+    }
 
+    private View getConvertView(int layout, ViewGroup parent, String child, int item) {
+        View convertView = inf.inflate(layout, parent, false);
+        TextInputEditText itemView = convertView.findViewById(item);
+
+        if (child1) {
+            holder.setEditText1(itemView);
+            convertView.setTag(holder);
+            holder.getEditText1().setHint(child);
+        }
+        else if (child2) {
+            holder.setEditText2(itemView);
+            convertView.setTag(holder);
+            holder.getEditText2().setHint(child);
+        }
+        else if (child3) {
+            holder.setEditText3(itemView);
+            convertView.setTag(holder);
+            holder.getEditText3().setHint(child);
+        }
+        else if (child4) {
+            holder.setEditText4(itemView);
+            convertView.setTag(holder);
+            holder.getEditText4().setHint(child);
+        }
         return convertView;
     }
 
@@ -172,31 +164,24 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ArrayList<String> spinnerArray =  new ArrayList<>();
         spinnerArray.add("internet");
         spinnerArray.add("local");
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, spinnerArray);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         final Spinner sItems = convertView.findViewById(R.id.ListSpinner);
 
         sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String value = sItems.getSelectedItem().toString();
-                bundle.putString("spinner", value);
-                Log.e("TAG", "Spinner: " + value);
+                bundle.putString("spinner", sItems.getSelectedItem().toString());
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
-
         sItems.setAdapter(adapter);
         return sItems;
     }
 
     private View buttonLayout(final ViewGroup parent, final String child, final int groupPosition, final int childPosition) {
+        final String type = getGroups().get(groupPosition);
         View convertView = inf.inflate(R.layout.list_button, parent, false);
         holder.setButton((Button) convertView.findViewById(R.id.listButton));
         convertView.setTag(holder);
@@ -204,16 +189,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         holder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseFragment baseFragment = new BaseFragment();
                 baseFragment.listener = (HomeInteractListener) context;
-                if (groupPosition == 4 && childPosition == 0) {
-                    baseFragment.listener.sendMessage("treehouses default network");
-                } else if (groupPosition == 5 && childPosition == 0) {
-                   reboot(baseFragment);
-                }
-                if (!bundle.equals("")) {
-                   childData(groupPosition);
-                }
+                if (groupPosition == 4 && childPosition == 0) { baseFragment.listener.sendMessage("treehouses default network"); }
+                else if (groupPosition == 5 && childPosition == 0) { reboot(baseFragment); }
+                if (!bundle.equals("")) { childData(type); }
             }
         });
         return convertView;
@@ -226,74 +205,37 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             if (mChatService.getState() != Constants.STATE_CONNECTED) {
                 Toast.makeText(context, "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
                 baseFragment.listener.openCallFragment(new HomeFragment());
-            } else {
-                Toast.makeText(context, "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            } else { Toast.makeText(context, "Reboot Unsuccessful", Toast.LENGTH_LONG).show(); }
+        } catch (InterruptedException e) { e.printStackTrace(); }
     }
 
     private void child(final int childPosition, EditText editText) {
-
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
             @Override
             public void afterTextChanged(Editable s) {
-                if (childPosition == 0) {
-                    child_first = s.toString();
-                    storeData(childPosition, child_first);
-                } else if (childPosition == 1) {
-                    child_second = s.toString();
-                    storeData(childPosition, child_second);
-                } else if (childPosition == 2) {
-                    child_third = s.toString();
-                    storeData(childPosition, child_third);
-                } else if (childPosition == 3) {
-                    child_forth = s.toString();
-                    storeData(childPosition, child_forth);
-                }
+                if (childPosition == 0) { bundle.putString("first", s.toString()); }
+                else if (childPosition == 1) { bundle.putString("second", s.toString()); }
+                else if (childPosition == 2) { bundle.putString("third", s.toString()); }
+                else if (childPosition == 3) { bundle.putString("forth", s.toString()); }
             }
         });
     }
-
-    private void storeData(int childPosition, String child) {
-        if (childPosition == 0) {
-            bundle.putString("first", child);
-        } else if (childPosition == 1) {
-            bundle.putString("second", child);
-        } else if (childPosition == 2) {
-            bundle.putString("third", child);
-        } else if (childPosition == 3) {
-            bundle.putString("forth", child);
-        }
-    }
-
     @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
-    }
+    public boolean isChildSelectable(int groupPosition, int childPosition) { return true; }
 
-    private void childData(int groupPosition) {
-        String type = getGroups().get(groupPosition);
-        baseFragment.listener = (HomeInteractListener) context;
-
+    private void childData(String type) {
         switch (type) {
             case "WiFi":
                 baseFragment.listener.sendMessage("treehouses wifi \"" + bundle.getString("first") + "\" \"" + bundle.getString("second") + "\"");
                 Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
                 break;
             case "Hotspot":
-                if (bundle.getString("second").equals("")) {
-                    baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("spinner") + "\" \"" + bundle.getString("first") + "\"");
-                } else {
-                    baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("spinner") + "\" \"" + bundle.getString("first") + "\" \"" + bundle.getString("second") + "\"");
-                }
+                if (bundle.getString("second").equals("")) { baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("spinner") + "\" \"" + bundle.getString("first") + "\""); }
+                else { baseFragment.listener.sendMessage("treehouses ap \"" + bundle.getString("spinner") + "\" \"" + bundle.getString("first") + "\" \"" + bundle.getString("second") + "\""); }
                 break;
             case "Ethernet: Automatic":
                 baseFragment.listener.sendMessage("treehouses ethernet \"" + bundle.getString("first") + "\" \"" + bundle.getString("forth") + "\" \"" + bundle.getString("third") + "\" \"" + bundle.getString("second") + "\"");
@@ -302,9 +244,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 String temp = "treehouses bridge \"" + (bundle.getString("first")) + "\" \"" + bundle.getString("third") + "\" ";
                 String overallMessage = TextUtils.isEmpty(bundle.getString("second")) ? (temp += "\"\"") : (temp += "\"") + bundle.getString("second") + "\"";
                 overallMessage += " ";
-                if (!TextUtils.isEmpty(bundle.getString("forth"))) {
-                    overallMessage += "\"" + bundle.getString("forth") + "\"";
-                }
+                if (!TextUtils.isEmpty(bundle.getString("forth"))) { overallMessage += "\"" + bundle.getString("forth") + "\""; }
                 baseFragment.listener.sendMessage(overallMessage);
                 break;
             default:
