@@ -165,6 +165,8 @@ public class NetworkFragment extends BaseFragment {
                     if (readMessage.contains("please reboot your device")) { alert = true; }
                     Log.d("TAG", "readMessage = " + readMessage);
                     if (readMessage.trim().contains("default network")) { networkStatus = true; }
+                    if (readMessage.trim().equals("false") || readMessage.trim().contains("true")) { return; }
+
                     if (networkStatus) {
                         changeList(readMessage);
                         networkStatus = false;
