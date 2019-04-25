@@ -81,17 +81,18 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         convertView = inflater.inflate(R.layout.list_group, parent, false);
         TextView listHeader = convertView.findViewById(R.id.lblListHeader);
         listHeader.setText(getGroup(i).toString());
-
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (i == 4) {
-                    listener.sendMessage("treehouses default network");
-                } else if (i == 5) {
-                    reboot();
+        if (i>3) {
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (i == 4) {
+                        listener.sendMessage("treehouses default network");
+                    } else if (i == 5) {
+                        reboot();
+                    }
                 }
-            }
-        });
+            });
+        }
 
         return convertView;
     }
