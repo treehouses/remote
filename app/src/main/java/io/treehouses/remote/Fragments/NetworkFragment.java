@@ -18,10 +18,8 @@ import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
-import io.treehouses.remote.ExpandableListAdapter;
 import io.treehouses.remote.pojo.NetworkListItem;
 
-import static io.treehouses.remote.MiscOld.Constants.getGroups;
 
 public class NetworkFragment extends BaseFragment {
 
