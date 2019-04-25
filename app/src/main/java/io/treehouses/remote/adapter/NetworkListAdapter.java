@@ -1,17 +1,21 @@
 package io.treehouses.remote.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
-import io.treehouses.remote.ViewHolder;
+import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkListItem;
 
@@ -21,7 +25,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     private List<NetworkListItem> list;
     private LayoutInflater inflater;
     private HomeInteractListener listener;
-
+    private BluetoothChatService chatService;
 
     public void setListener(HomeInteractListener listener) {
         this.listener = listener;
@@ -32,6 +36,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
 
     public NetworkListAdapter(Context context, List<NetworkListItem> list, BluetoothChatService mChatService) {
         this.context = context;
+        this.chatService = mChatService;
         inflater = LayoutInflater.from(context);
         this.list = list;
     }
@@ -72,10 +77,22 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int i, boolean b, View convertView, ViewGroup parent) {
+    public View getGroupView(final int i, boolean b, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(R.layout.list_group, parent, false);
         TextView listHeader = convertView.findViewById(R.id.lblListHeader);
         listHeader.setText(getGroup(i).toString());
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (i == 4) {
+                    listener.sendMessage("treehouses default network");
+                } else if (i == 5) {
+                    reboot();
+                }
+            }
+        });
+
         return convertView;
     }
 
@@ -90,21 +107,39 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
                 new ViewHolderWifi(convertView, listener);
                 break;
             case 2:
+                new ViewHolderHotspot(convertView, listener);
                 break;
             case 3:
+                new ViewHolderBridge(convertView, listener);
                 break;
-            case 4:
-                break;
-            case 5:
-                break;
-            default:
-
         }
         return convertView;
+    }
+
+
+    private void reboot() {
+        try {
+            Log.d("", "reboot: ");
+            listener.sendMessage("reboot");
+            Thread.sleep(1000);
+            if (chatService.getState() != Constants.STATE_CONNECTED) {
+                Toast.makeText(context, "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                listener.openCallFragment(new HomeFragment());
+            } else {
+                Toast.makeText(context, "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return false;
+    }
+
+    public void setNetworkMode(String s) {
+        list.get(6).setTitle(s);
+        notifyDataSetChanged();
     }
 }

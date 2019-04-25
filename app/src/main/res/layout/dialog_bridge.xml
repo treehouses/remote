@@ -21,12 +21,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/rt_hotspot_essid"
+        android:id="@+id/tl_hotspot_essid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hotspotESSID"
+            android:id="@+id/et_hotspot_essid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:editable="true"

@@ -13,7 +13,7 @@
         android:padding="@dimen/padding_normal">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hotspotSSID"
+            android:id="@+id/et_hotspot_ssid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="sans-serif"
@@ -33,7 +33,7 @@
         app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hotspotPassword"
+            android:id="@+id/et_hotspot_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:editable="true"
@@ -47,7 +47,8 @@
         android:id="@+id/spn_hotspot_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="100dp"
+        android:minWidth="200dp"
+        android:entries="@array/spinner_hotspot"
         android:padding="@dimen/padding_normal" />
 
     <include layout="@layout/layout_btn_configuration" />

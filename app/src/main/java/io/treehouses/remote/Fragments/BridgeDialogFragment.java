@@ -103,7 +103,7 @@ public class BridgeDialogFragment extends androidx.fragment.app.DialogFragment {
 
     protected void initLayoutView(View mView) {
         ESSIDEditText = mView.findViewById(R.id.et_essid);
-        HotspotESSIDEditText = mView.findViewById(R.id.hotspotESSID);
+        HotspotESSIDEditText = mView.findViewById(R.id.et_hotspot_essid);
         PasswordEditText = mView.findViewById(R.id.password);
         HotspotPasswordEditText = mView.findViewById(R.id.hotspotPassword);
     }

@@ -32,29 +32,8 @@ public class NetworkFragment extends BaseFragment {
     private Boolean bridge = false;
     private ExpandableListView expListView;
     NetworkListAdapter adapter;
-    private String[][] children;
-    private int count = 0;
-    private boolean first;
-    private int CurrentExpandedGroup = 0;
-    private int i = 0;
-    private int j = 0;
-
     public NetworkFragment() { }
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//
-//        children = new String[][]{
-//                {"\tIP Address", "\tDNS", "\tGateway", "\tMask", "Start Configuration"},
-//                {"\tESSID", "\tPassword", "Start Configuration"},
-//                {"\tESSID", "\tPassword", "Spinner", "Start Configuration"},
-//                {"\tESSID", "\tPassword", "\tHotspot ESSID", "\tHotspot Password", "Start Configuration"},
-//                {"Reset Network"},
-//                {"Reboot RPI"},
-//                {""}
-//        };
-//        Constants.setGroups();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,62 +50,11 @@ public class NetworkFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new NetworkListAdapter(getContext(), NetworkListItem.getNetworkList(), mChatService);
         adapter.setListener(listener);
-//
-//        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-//            @Override
-//            public void onGroupExpand(int groupPosition) {
-//                String group = getGroups().get(groupPosition);
-//                if (group.contains("Network Mode")) {
-//                    expListView.collapseGroup(groupPosition);
-//                    if (group.contains("default")) { expListView.expandGroup(0); }
-//                    else if (group.contains("wifi")) { expListView.expandGroup(1); }
-//                    else if (group.contains("ap local") || group.contains("ap internet")) { expListView.expandGroup(2); }
-//                    else if (group.contains("bridge")) { expListView.expandGroup(3); }
-//                    alert = false;
-//                    Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
-//                }
-//                if (count == 0) { first = true;
-//                } else { first = false; }
-//                ++count;
-//                expandOneGroup();
-//            }
-//        });
-
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
     }
 
-    //makes sure that only one group is expanded at once
-    private void expandOneGroup() {
-        currentExpandedGroup();
 
-        if (i == CurrentExpandedGroup) {
-            otherExpandedGroup();
-        }
-        if (j == 7 && i != j) {
-            j = 0;
-        }
-    }
-
-    private void currentExpandedGroup() {
-        for (; i < getGroups().size(); i++) {
-            if (expListView.isGroupExpanded(i)) {
-                CurrentExpandedGroup = i;
-                break;
-            }
-        }
-    }
-
-    private void otherExpandedGroup() {
-        for (; j < getGroups().size(); j++) {
-            if (expListView.isGroupExpanded(j) && j != i) {
-                if (!first) {
-                    expListView.collapseGroup(i);
-                }
-                i = j;
-            }
-        }
-    }
 
     private void updateNetworkMode() {
         alert = false;
@@ -185,10 +113,6 @@ public class NetworkFragment extends BaseFragment {
     };
 
     private void changeList(String readMessage) {
-        if (getGroups() != null && getGroups().size() >= 6) {
-            Constants.changeGroup(readMessage);
-            expListView.performItemClick(null, 6, expListView.getItemIdAtPosition(6));
-            alert = false;
-        }
+        adapter.setNetworkMode("Network Mode: " + readMessage);
     }
 }
