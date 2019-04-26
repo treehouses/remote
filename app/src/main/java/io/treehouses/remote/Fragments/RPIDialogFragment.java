@@ -92,7 +92,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 dialog.setTitle("Connecting...");
                 dialog.setMessage("Device Name: " + mainDevice.getName() + "\nDevice Address: " + mainDevice.getAddress());
                 dialog.show();
-
             }
         });
 
@@ -250,11 +249,18 @@ public class RPIDialogFragment extends BaseDialogFragment {
 //            }
 //        }
 //    };
+
+
+
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             Log.e("RPIDialogFragment", "" + msg.what);
             FragmentActivity activity = getActivity();
+
+            String readMessage = (String)msg.obj;
+            Log.e("TAG", "TESTING: readmessage: "+ readMessage);
+
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
@@ -314,4 +320,9 @@ public class RPIDialogFragment extends BaseDialogFragment {
             }
         }
     };
+
+    public Handler getmHandler() {
+
+        return mHandler;
+    }
 }
