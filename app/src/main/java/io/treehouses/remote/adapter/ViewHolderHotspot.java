@@ -12,6 +12,7 @@ public class ViewHolderHotspot {
 private Spinner spn;
     public ViewHolderHotspot(View v, final HomeInteractListener listener) {
         etEssid = v.findViewById(R.id.et_hotspot_ssid);
+        spn = v.findViewById(R.id.spn_hotspot_type);
         etPassword = v.findViewById(R.id.et_hotspot_password);
         v.findViewById(R.id.btn_start_config).setOnClickListener(new View.OnClickListener() {
             @Override
