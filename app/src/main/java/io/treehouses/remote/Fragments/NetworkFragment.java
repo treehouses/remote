@@ -101,10 +101,10 @@ public class NetworkFragment extends BaseFragment {
                         networkStatus = false;
                         alert = false;
                     }
-                    if (alert) { showAlertDialog(readMessage);
-                    } else { alert = false; }
-                    if (bridge) { updateNetworkMode();
-                    } else{ alert = true; }
+                    if (alert) { showAlertDialog(readMessage); }
+                    else { alert = false; }
+                    if (bridge) { updateNetworkMode(); }
+                    else { alert = true; }
                     break;
             }
         }
