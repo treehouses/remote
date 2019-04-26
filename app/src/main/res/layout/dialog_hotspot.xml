@@ -1,229 +1,57 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!--<EditText-->
-    <!--android:id="@+id/hotspotSSID"-->
-    <!--android:inputType="textEmailAddress"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="16dp"-->
-    <!--android:layout_marginLeft="4dp"-->
-    <!--android:layout_marginRight="4dp"-->
-    <!--android:layout_marginBottom="4dp"-->
-    <!--android:hint="Hotspot Name" />-->
-
-    <!--<EditText-->
-    <!--android:id="@+id/hotspotPassword"-->
-    <!--android:inputType="textPassword"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="4dp"-->
-    <!--android:layout_marginLeft="4dp"-->
-    <!--android:layout_marginRight="4dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:fontFamily="sans-serif"-->
-    <!--android:hint="@string/password"/>-->
-    <!--<EditText-->
-    <!--android:id="@+id/confirmPassword"-->
-    <!--android:inputType="textPassword"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="4dp"-->
-    <!--android:layout_marginLeft="4dp"-->
-    <!--android:layout_marginRight="4dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:fontFamily="sans-serif"-->
-    <!--android:hint="@string/confirm_password"/>-->
-
-    <!--<android.support.design.card.MaterialCardView-->
-    <!--style="@style/Widget.MaterialComponents.CardView"-->
-    <!--android:layout_width="257dp"-->
-    <!--android:layout_height="355dp"-->
-    <!--android:minHeight="200dp"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
-
-    <!--<android.support.design.widget.TextInputEditText-->
-    <!--android:id="@+id/hotspotSSID"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginEnd="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginRight="16dp"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginTop="18dp"-->
-    <!--android:hint="Hotspot Name"-->
-    <!--android:inputType="textEmailAddress"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.0"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-    <!--<android.support.design.widget.TextInputEditText-->
-    <!--android:id="@+id/hotspotPassword"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:layout_marginEnd="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginRight="16dp"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginTop="16dp"-->
-    <!--android:editable="true"-->
-    <!--android:fontFamily="sans-serif"-->
-    <!--android:hint="@string/password"-->
-    <!--android:inputType="textPassword"-->
-    <!--app:layout_constraintBottom_toTopOf="@+id/confirmPassword"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/hotspotSSID" />-->
-
-    <!--<android.support.design.widget.TextInputEditText-->
-    <!--android:id="@+id/confirmPassword"-->
-
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:layout_marginEnd="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginRight="16dp"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:fontFamily="sans-serif"-->
-    <!--android:hint="@string/confirm_password"-->
-    <!--android:inputType="textPassword"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.0"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <Spinner
-        android:id="@+id/hostspotType"
-        android:layout_width="92dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!--<com.google.android.material.textfield.TextInputEditText-->
-    <!--android:id="@+id/hotspotSSID"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:layout_marginEnd="16dp"-->
-    <!--android:layout_marginRight="16dp"-->
-    <!--android:hint="ESSID"-->
-    <!--android:inputType="textEmailAddress"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.0"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/hostspotType" />-->
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout2"
+        android:id="@+id/tl_hotspot_ssid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="@dimen/padding_normal">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hotspotSSID"
+            android:id="@+id/et_hotspot_ssid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:editable="true"
             android:fontFamily="sans-serif"
             android:hint="ESSID"
             android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--<com.google.android.material.textfield.TextInputEditText-->
-    <!--android:id="@+id/hotspotPassword"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="16dp"-->
-    <!--android:layout_marginLeft="16dp"-->
-    <!--android:layout_marginTop="16dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginRight="8dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:editable="true"-->
-    <!--android:fontFamily="sans-serif"-->
-    <!--android:hint="@string/password"-->
-    <!--android:inputType="textPassword"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toStartOf="@+id/show"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/hotspotSSID"-->
-    <!--/>-->
-
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout5"
-        android:layout_width="0dp"
+        android:id="@+id/tl_password"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/hostspotType"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+        android:padding="@dimen/padding_normal"
         app:passwordToggleDrawable="@drawable/toggle_password"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hotspotPassword"
+            android:id="@+id/et_hotspot_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:editable="true"
             android:fontFamily="sans-serif"
             android:hint="@string/password"
             android:inputType="textPassword" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <!--<ToggleButton-->
-    <!--android:id="@+id/show"-->
-    <!--android:layout_width="37dp"-->
-    <!--android:layout_height="35dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:layout_marginEnd="16dp"-->
-    <!--android:layout_marginRight="16dp"-->
-    <!--android:layout_marginBottom="16dp"-->
-    <!--android:background="@drawable/show_password"-->
-    <!--android:checked="false"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />-->
+    <Spinner
+        android:id="@+id/spn_hotspot_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="200dp"
+        android:entries="@array/spinner_hotspot"
+        android:padding="@dimen/padding_normal" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include layout="@layout/layout_btn_configuration" />
+
+
+</LinearLayout>
