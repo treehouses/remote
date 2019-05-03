@@ -47,7 +47,6 @@ public class HomeFragment extends BaseFragment {
                     return;
                 }
 
-
                 if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -55,15 +54,19 @@ public class HomeFragment extends BaseFragment {
                     return;
                 } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
                     showRPIDialog();
-                    checkConnectionState();
                 }
             }
         });
         return view;
     }
 
-    private void checkConnectionState() {
-        if (mChatService.getState() == Constants.STATE_CONNECTED) {
+    private BluetoothChatService getChatService() {
+        return mChatService;
+    }
+
+    public void checkConnectionState() {
+
+        if (getChatService().getState() == Constants.STATE_CONNECTED) {
             connectRpi.setText("Disconnect");
             connectionState = true;
         } else {

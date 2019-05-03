@@ -52,6 +52,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     static BluetoothDevice mainDevice = null;
     ProgressDialog dialog;
 
+
     public static androidx.fragment.app.DialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
         Bundle bundle = new Bundle();
@@ -80,12 +81,11 @@ public class RPIDialogFragment extends BaseDialogFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mChatService = new BluetoothChatService(mHandler);
                 mainDevice = devices.get(position);
                 mChatService.connect(devices.get(position), true);
                 int status = mChatService.getState();
                 mDialog.cancel();
-//                InitialActivity initialActivity = new InitialActivity();
-//                initialActivity.setChatService(mChatService);
                 finish(status, mView);
                 Log.e("Connecting Bluetooth", "Position: " + position + " ;; Status: " + status);
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -268,6 +268,8 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");
                             dialog.dismiss();
                             listener.setChatService(mChatService);
+                            HomeFragment homeFragment = new HomeFragment();
+                            homeFragment.checkConnectionState();
                             break;
                         case Constants.STATE_NONE:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");

@@ -38,6 +38,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.UUID;
 
+import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.Fragments.RPIDialogFragment;
 import io.treehouses.remote.MiscOld.Constants;
 
 /**
@@ -351,6 +353,7 @@ public class BluetoothChatService implements Serializable{
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
+
                 } catch (IOException e) {
                     Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
                     checkConnection("connectionCheck");
@@ -371,6 +374,8 @@ public class BluetoothChatService implements Serializable{
                                 // Either not ready or already connected. Terminate new socket.
                                 try {
                                     mmServerSocket.close();
+                                    HomeFragment homeFragment = new HomeFragment();
+                                    homeFragment.checkConnectionState();
                                 } catch (IOException e) {
                                     Log.e(TAG, "Could not close unwanted socket", e);
                                 }
@@ -396,10 +401,12 @@ public class BluetoothChatService implements Serializable{
     private void checkConnection(String message) {
         mCurrentState = getState();
         if (mCurrentState == Constants.STATE_CONNECTED) {
-            Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+            Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ);
             Bundle bundle = new Bundle();
             bundle.putString(Constants.TOAST, message);
             msg.setData(bundle);
+            RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
+            rpiDialogFragment.getmHandler();
             mHandler.handleMessage(msg);
         }
     }
