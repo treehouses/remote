@@ -17,10 +17,11 @@ import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.callback.SetDisconnect;
 
 import static io.treehouses.remote.MiscOld.Constants.REQUEST_ENABLE_BT;
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements SetDisconnect {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
     private Button connectRpi;
@@ -34,6 +35,8 @@ public class HomeFragment extends BaseFragment {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
         connectRpi = view.findViewById(R.id.button);
+        RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
+        rpiDialogFragment.setCheckConnectionState(this);
 
         checkConnectionState();
 
@@ -64,15 +67,17 @@ public class HomeFragment extends BaseFragment {
         return mChatService;
     }
 
-    public void checkConnectionState() {
 
-        if (getChatService().getState() == Constants.STATE_CONNECTED) {
-            connectRpi.setText("Disconnect");
-            connectionState = true;
-        } else {
-            connectRpi.setText("Connect to RPI");
-            connectionState = false;
-        }
+
+
+    public void checkConnectionState() {
+//        if (getChatService().getState() == Constants.STATE_CONNECTED) {
+//            connectRpi.setText("Disconnect");
+//            connectionState = true;
+//        } else {
+//            connectRpi.setText("Connect to RPI");
+//            connectionState = false;
+//        }
     }
 
     private void showRPIDialog(){

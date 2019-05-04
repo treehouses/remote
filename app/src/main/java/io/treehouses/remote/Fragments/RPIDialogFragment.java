@@ -36,35 +36,32 @@ import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseDialogFragment;
+import io.treehouses.remote.callback.SetDisconnect;
 
 public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
 
     private static final String TAG = "RaspberryDialogFragment";
-    private static boolean isRead = false;
+    private List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+    private static BluetoothDevice mainDevice = null;
+    private ListView listView;
+    private BluetoothAdapter mBluetoothAdapter;
+    private SetDisconnect checkConnectionState;
     AlertDialog mDialog;
-    private ArrayAdapter<String> mConversationArrayAdapter;
-    ListView listView;
-    BluetoothAdapter mBluetoothAdapter;
     List<String> s = new ArrayList<String>();
-    List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
-    static BluetoothDevice mainDevice = null;
     ProgressDialog dialog;
-
 
     public static androidx.fragment.app.DialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("num", num);
         rpiDialogFragment.setArguments(bundle);
-
         return rpiDialogFragment;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         // Build the dialog and set up the button click handlers
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothCheck();
@@ -117,6 +114,10 @@ public class RPIDialogFragment extends BaseDialogFragment {
         getActivity().registerReceiver(mReceiver, filter);
 
         return mDialog;
+    }
+
+    public void setCheckConnectionState(SetDisconnect checkConnectionState)  {
+        this.checkConnectionState = checkConnectionState;
     }
 
     public BluetoothDevice getMainDevice() {
@@ -327,4 +328,5 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
         return mHandler;
     }
+
 }
