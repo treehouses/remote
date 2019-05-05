@@ -35,8 +35,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
         connectRpi = view.findViewById(R.id.button);
-        RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
-        rpiDialogFragment.setCheckConnectionState(this);
 
         checkConnectionState();
 
@@ -71,17 +69,19 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
 
     public void checkConnectionState() {
-//        if (getChatService().getState() == Constants.STATE_CONNECTED) {
-//            connectRpi.setText("Disconnect");
-//            connectionState = true;
-//        } else {
-//            connectRpi.setText("Connect to RPI");
-//            connectionState = false;
-//        }
+        if (getChatService().getState() == Constants.STATE_CONNECTED) {
+            connectRpi.setText("Disconnect");
+            connectionState = true;
+        } else {
+            connectRpi.setText("Connect to RPI");
+            connectionState = false;
+        }
     }
 
     private void showRPIDialog(){
         androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
+        RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
+        rpiDialogFragment.setCheckConnectionState(this);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
     }

@@ -269,8 +269,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");
                             dialog.dismiss();
                             listener.setChatService(mChatService);
-                            HomeFragment homeFragment = new HomeFragment();
-                            homeFragment.checkConnectionState();
+                            checkConnectionState.checkConnectionState();
                             break;
                         case Constants.STATE_NONE:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
