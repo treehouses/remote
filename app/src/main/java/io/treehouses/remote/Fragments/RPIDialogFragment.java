@@ -3,7 +3,6 @@ package io.treehouses.remote.Fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -27,11 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-import io.treehouses.remote.FragmentsOld.CustomHandler;
-import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -43,11 +38,14 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private static BluetoothChatService mChatService = null;
 
     private static final String TAG = "RaspberryDialogFragment";
+    private static RPIDialogFragment instance = null;
     private List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
     private static BluetoothDevice mainDevice = null;
     private ListView listView;
     private BluetoothAdapter mBluetoothAdapter;
     private SetDisconnect checkConnectionState;
+    private Context context;
+
     AlertDialog mDialog;
     List<String> s = new ArrayList<String>();
     ProgressDialog dialog;
@@ -63,6 +61,8 @@ public class RPIDialogFragment extends BaseDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Build the dialog and set up the button click handlers
+        instance = this;
+        context = getContext();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothCheck();
         if (mBluetoothAdapter.isDiscovering()) {
@@ -116,19 +116,15 @@ public class RPIDialogFragment extends BaseDialogFragment {
         return mDialog;
     }
 
+    public static RPIDialogFragment getInstance() {
+        return instance;
+    }
+
     public void setCheckConnectionState(SetDisconnect checkConnectionState)  {
         this.checkConnectionState = checkConnectionState;
     }
 
-    public BluetoothDevice getMainDevice() {
-        return mainDevice;
-    }
-
-    public BluetoothChatService getChatService() {
-        return mChatService;
-    }
-
-    public void finish(int status, View mView) {
+    private void finish(int status, View mView) {
         final AlertDialog mDialog = getAlertDialog(mView);
         if (status == 3) {
             mDialog.setTitle("BLUETOOTH IS CONNECTED");
@@ -152,18 +148,16 @@ public class RPIDialogFragment extends BaseDialogFragment {
 //    }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
+        try {
+            if (mBluetoothAdapter == null) {
+                context.unregisterReceiver(mReceiver);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     protected AlertDialog getAlertDialog(View mView) {
@@ -180,23 +174,27 @@ public class RPIDialogFragment extends BaseDialogFragment {
 //                })
                 .setNegativeButton(R.string.material_drawer_close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        getActivity().unregisterReceiver(mReceiver);
-                        Intent intent = new Intent();
-                        Bundle bundle = new Bundle();
-                        intent.putExtra("mChatService", mChatService);
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-//                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                          bluetoothCheck("unregister");
                     }
                 })
                 .create();
     }
 
-    protected void bluetoothCheck() {
+    public void bluetoothCheck(String... args) {
         if (mBluetoothAdapter == null) {
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
             Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show();
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
-            getActivity().unregisterReceiver(mReceiver);
+            context.unregisterReceiver(mReceiver);
+        }
+        if (args.length >= 1) {
+            if (args[0].equals("unregister")) {
+                context.unregisterReceiver(mReceiver);
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                intent.putExtra("mChatService", mChatService);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            }
         }
     }
 

@@ -1,12 +1,9 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +39,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             @Override
             public void onClick(View v) {
                 if (connectionState) {
+                    RPIDialogFragment.getInstance().bluetoothCheck("unregister");
                     mChatService.stop();
                     connectionState = false;
                     checkConnectionState();
@@ -61,15 +59,9 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         return view;
     }
 
-    private BluetoothChatService getChatService() {
-        return mChatService;
-    }
-
-
-
-
     public void checkConnectionState() {
-        if (getChatService().getState() == Constants.STATE_CONNECTED) {
+        mChatService = listener.getChatService();
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
             connectRpi.setText("Disconnect");
             connectionState = true;
         } else {
@@ -79,9 +71,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private void showRPIDialog(){
-        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
-        RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
-        rpiDialogFragment.setCheckConnectionState(this);
+        androidx.fragment.app.DialogFragment dialogFrag =  RPIDialogFragment.newInstance(123);
+        ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
     }

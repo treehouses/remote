@@ -327,13 +327,11 @@ public class BluetoothChatService implements Serializable{
             // Create a new listening server socket
             try {
                 if (secure) {
-                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
-                            MY_UUID_SECURE);
+                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, MY_UUID_SECURE);
                 } else {
-                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-                            NAME_INSECURE, MY_UUID_INSECURE);
+                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME_INSECURE, MY_UUID_INSECURE);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
             mmServerSocket = tmp;
@@ -341,21 +339,18 @@ public class BluetoothChatService implements Serializable{
         }
 
         public void run() {
-            Log.d(TAG, "Socket Type: " + mSocketType +
-                    "BEGIN mAcceptThread" + this);
+            Log.d(TAG, "Socket Type: " + mSocketType + "BEGIN mAcceptThread" + this);
             setName("AcceptThread" + mSocketType);
-
-
 
             // Listen to the server socket if we're not connected
             while (mCurrentState != Constants.STATE_CONNECTED) {
                 try {
-                    // This is a blocking call and will only return on a
-                    // successful connection or an exception
-                    socket = mmServerSocket.accept();
+                    // This is a blocking call and will only return on a successful connection or an exception
+                    Log.e("TAG", "currentState: " + mCurrentState);
 
-                } catch (IOException e) {
-                    Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
+                    socket = mmServerSocket.accept();
+                } catch (Exception e) {
+                    Log.e(TAG, "Socket Type: " + mSocketType + " accept() failed" + e);
                     checkConnection("connectionCheck");
                     break;
                 }
