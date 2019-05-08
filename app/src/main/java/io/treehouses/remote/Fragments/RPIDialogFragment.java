@@ -260,6 +260,10 @@ public class RPIDialogFragment extends BaseDialogFragment {
             String readMessage = (String)msg.obj;
             Log.e("TAG", "TESTING: readmessage: "+ readMessage);
 
+            if (readMessage.equals("connectionCheck")) {
+                dialog.dismiss();
+            }
+
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {

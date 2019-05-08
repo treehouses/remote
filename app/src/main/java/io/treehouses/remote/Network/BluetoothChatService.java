@@ -401,8 +401,7 @@ public class BluetoothChatService implements Serializable{
             bundle.putString(Constants.TOAST, message);
             msg.setData(bundle);
             RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
-            rpiDialogFragment.getmHandler();
-            mHandler.handleMessage(msg);
+            rpiDialogFragment.getmHandler().handleMessage(msg);
         }
     }
 
