@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -25,8 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.ArrayList;
-import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -36,87 +33,52 @@ import io.treehouses.remote.utils.Utils;
 
 public class TerminalFragment extends BaseFragment {
 
-    View view;
-    ListView listView;
-    Context context;
-  
-    public TerminalFragment() {
-    }
-  
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
-
-        mChatService = listener.getChatService();
-        mChatService.updateHandler(mHandler);
-        Log.e("TERMINAL mChatService", "" + mChatService.getState());
-
-        listView = view.findViewById(R.id.listView);
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.terminalList);
-        listView.setAdapter(adapter);
-
-        setHasOptionsMenu(true);
-        return view;
-    }
     private static final String TAG = "BluetoothChatFragment";
-
-    // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
-    //    private Button treehousesButton;
-//    private Button dockerButton;
-//    private Button RPI_HW_Button;
     private Button pingStatusButton;
-    //    private Button hostnameButton;
-//    private Button changePasswordButton;
-//    private Button expandButton;
     private Button mCheckButton;
     private TextView mPingStatus;
+    private ListView listView;
+    private Context context;
+    View view;
 
-    /**
-     * Name of the connected device
-     */
-    private String mConnectedDeviceName = null;
+
+    public TerminalFragment() {}
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
+        mChatService = listener.getChatService();
+        mChatService.updateHandler(mHandler);
+        Log.e("TERMINAL mChatService", "" + mChatService.getState());
+        listView = view.findViewById(R.id.listView);
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.terminalList);
+        listView.setAdapter(adapter);
+        setHasOptionsMenu(true);
+        return view;
+    }
 
     /**
      * Array adapter for the conversation thread
      */
     private ArrayAdapter<String> mConversationArrayAdapter;
 
-    /**
-     * String buffer for outgoing messages
-     */
-    private StringBuffer mOutStringBuffer;
-
-    /**
-     * Local Bluetooth adapter
-     */
-    private BluetoothAdapter mBluetoothAdapter = null;
 
     /**
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
+
     private static boolean isRead = false;
     private static boolean isCountdown = false;
-
-//    public void showRPIDialog(){
-//        DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
-//        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-//        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
-//    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-        }
-        */
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
@@ -137,13 +99,7 @@ public class TerminalFragment extends BaseFragment {
         mCheckButton = view.findViewById(R.id.check);
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
-//        treehousesButton = (Button) view.findViewById(R.id.TB);
-//        dockerButton = (Button)view.findViewById(R.id.DB);
-//        RPI_HW_Button = (Button)view.findViewById(R.id.VB);
         pingStatusButton = view.findViewById(R.id.PING);
-//        hostnameButton = (Button)view.findViewById(R.id.HN);
-//        changePasswordButton = (Button) view.findViewById(R.id.CP);
-//        expandButton = (Button)view.findViewById(R.id.EF);
     }
 
     @Override
@@ -163,7 +119,6 @@ public class TerminalFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String clickedData = (String) mConversationView.getItemAtPosition(position);
-
                 context = getContext();
                 Utils.copyToClipboard(context, clickedData);
             }
@@ -175,7 +130,6 @@ public class TerminalFragment extends BaseFragment {
                 View view = super.getView(position, convertView, parent);
                 TextView output = view.findViewById(R.id.listItem);
 
-                Log.e("tag", " LOG check list getView method is called");
                 if (isRead){
                     output.setTextColor(Color.BLUE);
                 }else {
@@ -195,15 +149,12 @@ public class TerminalFragment extends BaseFragment {
                     listener.sendMessage("docker ps");
                 } else if (position == 2) {
                     listener.sendMessage("treehouses detectrpi");
-                } else if (position == 4) {
-//                    listener.showDialog(view);
                 } else if (position == 0) {
                     showChPasswordDialog();
                 } else if (position == 5) {
                     listener.sendMessage("treehouses expandfs");
                 }
             }
-
         });
 
         // Initialize the compose field with a listener for the return key
@@ -235,14 +186,11 @@ public class TerminalFragment extends BaseFragment {
         if (mChatService.getState() == Constants.STATE_NONE) {
             mChatService = new BluetoothChatService(mHandler);
         }
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer();
     }
 
     public void checkStatusNow() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             mConnect();
-
         } else if (mChatService.getState() == Constants.STATE_NONE) {
             mOffline();
         } else {
@@ -266,122 +214,75 @@ public class TerminalFragment extends BaseFragment {
         }
     };
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case Constants.REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK) {
+                    // Bluetooth is now enabled, so set up a chat session
+                    setupChat();
+                } else {
+                    // User did not enable Bluetooth or an error occurred
+                    Log.d(TAG, "BT not enabled");
+                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                }
+                break;
+            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
+                if (resultCode == Activity.RESULT_OK) {
+                    //get password change request
+                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
 
-//    /**
-//     * This block is to create a dialog box for creating a new name or changing the password for the PI device
-//     * Sets the dialog button to be disabled if no text is in the EditText
-//     */
-//    private void showDialog(View view) {
-//        final EditText input = new EditText(getActivity());
-//        final AlertDialog alertDialog = showAlertDialog(
-//                "Rename Hostname",
-//                "Please enter new hostname",
-//                "treehouses rename ", input);
-//
-//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
-//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-//
-//        input.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//            }
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if(s.length() > 0) {
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-//                }else{
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-//                }
-//            }
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//            }
-//        });
-//    }
-//
-//    private AlertDialog showAlertDialog(String title, String message, final String command, final EditText input){
-//        return new AlertDialog.Builder(getActivity())
-//                .setTitle(title)
-//                .setMessage(message)
-//                .setIcon(android.R.drawable.ic_dialog_info)
-//                .setView(input)
-//                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                        String hostnameInput = input.getText().toString();
-//                        String h = command + hostnameInput.toString();
-//                        sendMessage(h);
-//                    }
-//                })
-//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                    }
-//                })
-//                .show();
-//    }
-//
+                    //store password and command
+                    String password = "treehouses password " + chPWD;
+                    Log.d(TAG, "back from change password");
 
+                    //send password to command line interface
+                    listener.sendMessage(password);
+                } else {
+                    Log.d(TAG, "back from change password, fail");
+                }
+                break;
+        }
+    }
 
-//    /**
-//     * Makes this device discoverable for 300 seconds (5 minutes).
-//     */
-//    private void ensureDiscoverable() {
-//        if (mBluetoothAdapter.getScanMode() !=
-//                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-//            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-//            startActivity(discoverableIntent);
-//        }
-//    }
-//
-//
-//
-//    /**
-//     * The action listener for the EditText widget, to listen for the return key
-//     */
-//    private TextView.OnEditorActionListener mWriteListener
-//            = new TextView.OnEditorActionListener() {
-//        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-//            // If the action is a key-up event on the return key, send the message
-//            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
-//                String message = view.getText().toString();
-//                sendMessage(message);
-//            }
-//            return true;
-//        }
-//    };
+    public void showChPasswordDialog() {
+        // Create an instance of the dialog fragment and show it
+        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
+    }
 
-    /**
-     * Updates the status on the action bar.
-     *
-     * @param
-     * arg: can be either a string resource ID or subTitle status
-     */
+    private boolean isJson(String str) {
+        try {
+            new JSONObject(str);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
+    }
 
-//    private void setStatus(Object arg) {
-//        FragmentActivity activity = getActivity();
-//        if (null == activity) {
-//            return;
-//        }
-//        final ActionBar actionBar = activity.getActionBar();
-//        if (null == actionBar) {
-//            return;
-//        }
-//        if(arg instanceof Integer){
-//            Log.d(TAG, "actionBar.setSubtitle(resId) = " + arg);
-//            currentStatus = getString((Integer) arg);
-//            actionBar.setSubtitle((Integer) arg);
-//        } else if(arg instanceof CharSequence){
-//            Log.d(TAG, "actionBar.setSubtitle(subTitle) = " + arg);
-//            currentStatus = arg.toString();
-//            actionBar.setSubtitle((CharSequence) arg);
-//        }
-//    }
+    private void mOffline() {
+        mPingStatus.setText(R.string.bStatusOffline);
+        pingStatusButton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
+        bgShape.setColor(Color.RED);
+    }
+
+    private void mIdle() {
+        mPingStatus.setText(R.string.bStatusIdle);
+        pingStatusButton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
+        bgShape.setColor(Color.YELLOW);
+    }
+
+    private void mConnect() {
+        mPingStatus.setText(R.string.bStatusConnected);
+        pingStatusButton.setBackgroundResource((R.drawable.circle));
+        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
+        bgShape.setColor(Color.GREEN);
+    }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -394,7 +295,6 @@ public class TerminalFragment extends BaseFragment {
                     switch (msg.arg1) {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
-//                            setStatus(R.string.title_not_connected);
                             mIdle();
                             break;
                     }
@@ -411,24 +311,17 @@ public class TerminalFragment extends BaseFragment {
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
-//                    byte[] readBuf = (byte[]) msg.obj;
-//                     construct a string from the valid bytes in the buffer
-//                    String readMessage = new String(readBuf, 0, msg.arg1);
-//                    String readMessage = new String(readBuf);
                     String readMessage = (String)msg.obj;
                     Log.d("tag", "readMessage = " + readMessage);
 
                     //TODO: if message is json -> callback from RPi
                     if (isJson(readMessage)) {
-                        //handleCallback(readMessage);
                     } else {
                         if (isCountdown) {
-                            //mHandler.removeCallbacks(watchDogTimeOut);
                             isCountdown = false;
                         }
                         //remove the space at the very end of the readMessage -> eliminate space between items
                         readMessage = readMessage.substring(0, readMessage.length() - 1);
-                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
 
                         //check if ping was successful
                         if (readMessage.contains("1 packets")) {
@@ -438,16 +331,19 @@ public class TerminalFragment extends BaseFragment {
                             mOffline();
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-                             MainApplication.getTerminalList().add(readMessage);
-                             mConversationArrayAdapter.notifyDataSetChanged();
-                         }
+                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                            MainApplication.getTerminalList().add(readMessage);
+                            mConversationArrayAdapter.notifyDataSetChanged();
+                        }
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    /**
+                     * Name of the connected device
+                     */
+                    String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     if (null != getActivity()) {
                         Toast.makeText(getActivity(), "Connected to "
                                 + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -462,155 +358,4 @@ public class TerminalFragment extends BaseFragment {
             }
         }
     };
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case Constants.REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
-                } else {
-                    // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-                            Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-                break;
-            case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if (resultCode == Activity.RESULT_OK) {
-
-                    //get password change request
-                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-
-                    //store password and command
-                    String password = "treehouses password " + chPWD;
-
-                    Log.d(TAG, "back from change password");
-
-                    //send password to command line interface
-                    listener.sendMessage(password);
-
-                } else {
-                    Log.d(TAG, "back from change password, fail");
-                }
-                break;
-        }
-    }
-
-//    /**
-//     * Establish connection with other device
-//     *
-//     * @param data   An {@link Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
-//     * @param secure Socket Security type - Secure (true) , Insecure (false)
-//     */
-//    private void connectDevice(Intent data, boolean secure) {
-//        // Get the device MAC address
-//        String address = data.getExtras()
-//                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-//        // Get the BluetoothDevice object
-//        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-//        // Attempt to connect to the device
-//        mChatService.connect(device, secure);
-//    }
-
-    // Is this unused? Can we remove this????
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        //inflater.inflate(R.menu.bluetooth_chat, menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.insecure_connect_scan: {
-//                // Launch the DeviceListActivity to see devices and do scan
-//                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-//                startActivityForResult(serverIntent, Constants.REQUEST_CONNECT_DEVICE_INSECURE);
-//                //return true;
-//                break;
-//            }
-//            case R.id.discoverable: {
-//                // Ensure this device is discoverable by others
-//                ensureDiscoverable();
-//                //return true;
-//                break;
-//            }
-//            default:
-//                return false;
-//        }
-//        return true;
-//    }
-
-    public void showChPasswordDialog() {
-        // Create an instance of the dialog fragment and show it
-        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
-    }
-
-    public boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    /*
-    public void handleCallback(String str){
-        String result;
-        String ip;
-        if(isCountdown){
-            mHandler.removeCallbacks(watchDogTimeOut);
-            isCountdown = false;
-        }
-
-        //enable user interaction
-        wifiPD.dismiss();
-        try{
-            JSONObject mJSON = new JSONObject(str);
-            result = mJSON.getString("result") == null? "" : mJSON.getString("result");
-            ip = mJSON.getString("IP") == null? "" : mJSON.getString("IP");
-            //Toast.makeText(getActivity(), "result: "+result+", IP: "+ip, Toast.LENGTH_LONG).show();
-
-            if(!result.equals("SUCCESS")){
-                Toast.makeText(getActivity(), R.string.config_fail,
-                        Toast.LENGTH_LONG).show();
-            }else{
-//                Toast.makeText(getActivity(), R.string.config_success,
-//                            Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(),getString(R.string.config_success) + ip,Toast.LENGTH_LONG).show();
-            }
-
-        }catch (JSONException e){
-            // error handling
-            Toast.makeText(getActivity(), "SOMETHING WENT WRONG", Toast.LENGTH_LONG).show();
-        }
-    }
-    */
-
-    public void mOffline() {
-        mPingStatus.setText(R.string.bStatusOffline);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.RED);
-    }
-
-    public void mIdle() {
-        mPingStatus.setText(R.string.bStatusIdle);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.YELLOW);
-    }
-
-    public void mConnect() {
-        mPingStatus.setText(R.string.bStatusConnected);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.GREEN);
-    }
 }
