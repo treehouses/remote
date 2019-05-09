@@ -21,11 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -36,7 +34,6 @@ import io.treehouses.remote.callback.SetDisconnect;
 public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
-
     private static final String TAG = "RaspberryDialogFragment";
     private static RPIDialogFragment instance = null;
     private List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
@@ -106,7 +103,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 setAdapterNotNull(s);
             }
         }
-
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -137,16 +133,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
         setAdapterNotNull(empty);
     }
 
-//    private void connectDevice(Intent data) {
-//        // Get the device MAC address
-//        String address = data.getExtras()
-//                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-//        // Get the BluetoothDevice object
-//        mainDevice = mBluetoothAdapter.getRemoteDevice(address);
-//        // Attempt to connect to the device
-//        mChatService.connect(mainDevice, true);
-//    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -160,21 +146,13 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     }
 
-    protected AlertDialog getAlertDialog(View mView) {
+    private AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
-//                .setTitle(R.string.dialog_message)
                 .setIcon(R.drawable.dialog_icon)
-//                .setPositiveButton(R.string.start_configuration, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        int selected = listView.getSelectedItemPosition();
-//                        String item = s.get(selected);
-//                    }
-//                })
                 .setNegativeButton(R.string.material_drawer_close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                          bluetoothCheck("unregister");
+                        bluetoothCheck("unregister");
                     }
                 })
                 .create();
@@ -198,16 +176,16 @@ public class RPIDialogFragment extends BaseDialogFragment {
         }
     }
 
-    public void setAdapterNotNull(List<String> listVal) {
+    private void setAdapterNotNull(List<String> listVal) {
         if (getActivity() == null) {
             Log.e("RPI DIALOG ACTIVITY", "null");
         } else {
-            listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listVal));
+            listView.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listVal));
         }
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND.
-    public final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -232,24 +210,8 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private void setupBluetoothService() {
         Log.d(TAG, "setupChat()");
-
         mChatService = new BluetoothChatService(mHandler);
     }
-
-    //    private final CustomHandler mHandler = new CustomHandler(getActivity()){
-//        @Override
-//        public void handleMessage(Message msg) {
-//            super.handleMessage(msg);
-//            if(msg.what == Constants.MESSAGE_DEVICE_NAME){
-//                String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-//                Toast.makeText(getContext(), "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
-//                dialog.dismiss();
-//                mDialog.cancel();
-//            }
-//        }
-//    };
-
-
 
     public final Handler mHandler = new Handler() {
         @Override
@@ -278,48 +240,9 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             break;
                     }
                     break;
-//                case Constants.MESSAGE_READ:
-//    //                    isRead = true;
-//    //                    byte[] readBuf = (byte[]) msg.obj;
-//    //                     construct a string from the valid bytes in the buffer
-//    //                    String readMessage = new String(readBuf, 0, msg.arg1);
-//    //                    String readMessage = new String(readBuf);
-//                    readMessage = (String)msg.obj;
-//                    Log.d(TAG, "readMessage = " + readMessage);
-//                    //TODO: if message is json -> callback from RPi
-//    //                    if(isJson(readMessage)){
-//    //                        //handleCallback(readMessage);
-//    //                    }else{
-//    //                        if(isCountdown){
-//    //                            //mHandler.removeCallbacks(watchDogTimeOut);
-//    //                            isCountdown = false;
-//    //                        }
-//    //                        //remove the space at the very end of the readMessage -> eliminate space between items
-//    //                        readMessage = readMessage.substring(0,readMessage.length()-1);
-//    //                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-//    //
-//    //                        //check if ping was successful
-//    //                        if(readMessage.contains("1 packets")){
-//    //                            mConnect();
-//    //                        }
-//    //                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
-//    //                            mOffline();
-//    //                        }
-//    //                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-//    //                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-//    //                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-//    //                            mConversationArrayAdapter.add(readMessage);
-//    //                        }
-//    //                    }
-//                    break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     Log.e("RPIDialogFragment", "Device Name " + msg.getData().getString(Constants.DEVICE_NAME));
-//                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    //                    if (null != activity) {
-                    //                        Toast.makeText(activity, "Connected to "
-                    //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    //                    }
                     break;
             }
         }
