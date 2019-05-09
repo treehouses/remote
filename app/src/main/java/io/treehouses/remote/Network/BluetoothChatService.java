@@ -38,6 +38,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.UUID;
 
+import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.Fragments.RPIDialogFragment;
 import io.treehouses.remote.MiscOld.Constants;
 
 /**
@@ -72,6 +74,7 @@ public class BluetoothChatService implements Serializable{
     private ConnectedThread mConnectedThread;
     private int mCurrentState;
     private int mNewState;
+    private BluetoothSocket socket = null;
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -274,11 +277,7 @@ public class BluetoothChatService implements Serializable{
      */
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Unable to connect device");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
+        callHandler("Unable to connect to device");
 
         mCurrentState = Constants.STATE_NONE;
         // Update UI title
@@ -293,11 +292,7 @@ public class BluetoothChatService implements Serializable{
      */
     private void connectionLost() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Device connection was lost");
-        msg.setData(bundle);
-        mHandler.sendMessage(msg);
+        callHandler("Device connection was lost");
 
         mCurrentState = Constants.STATE_NONE;
         // Update UI title
@@ -305,6 +300,14 @@ public class BluetoothChatService implements Serializable{
 
         // Start the service over to restart listening mode
         BluetoothChatService.this.start();
+    }
+
+    public void callHandler(String message) {
+        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.TOAST, message);
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
     }
 
     /**
@@ -324,13 +327,11 @@ public class BluetoothChatService implements Serializable{
             // Create a new listening server socket
             try {
                 if (secure) {
-                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE,
-                            MY_UUID_SECURE);
+                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, MY_UUID_SECURE);
                 } else {
-                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(
-                            NAME_INSECURE, MY_UUID_INSECURE);
+                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME_INSECURE, MY_UUID_INSECURE);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
             }
             mmServerSocket = tmp;
@@ -338,20 +339,19 @@ public class BluetoothChatService implements Serializable{
         }
 
         public void run() {
-            Log.d(TAG, "Socket Type: " + mSocketType +
-                    "BEGIN mAcceptThread" + this);
+            Log.d(TAG, "Socket Type: " + mSocketType + "BEGIN mAcceptThread" + this);
             setName("AcceptThread" + mSocketType);
-
-            BluetoothSocket socket = null;
 
             // Listen to the server socket if we're not connected
             while (mCurrentState != Constants.STATE_CONNECTED) {
                 try {
-                    // This is a blocking call and will only return on a
-                    // successful connection or an exception
+                    // This is a blocking call and will only return on a successful connection or an exception
+                    Log.e("TAG", "currentState: " + mCurrentState);
+
                     socket = mmServerSocket.accept();
-                } catch (IOException e) {
-                    Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
+                } catch (Exception e) {
+                    Log.e(TAG, "Socket Type: " + mSocketType + " accept() failed" + e);
+                    checkConnection("connectionCheck");
                     break;
                 }
 
@@ -362,14 +362,15 @@ public class BluetoothChatService implements Serializable{
                             case Constants.STATE_LISTEN:
                             case Constants.STATE_CONNECTING:
                                 // Situation normal. Start the connected thread.
-                                connected(socket, socket.getRemoteDevice(),
-                                        mSocketType);
+                                connected(socket, socket.getRemoteDevice(), mSocketType);
                                 break;
                             case Constants.STATE_NONE:
                             case Constants.STATE_CONNECTED:
                                 // Either not ready or already connected. Terminate new socket.
                                 try {
-                                    socket.close();
+                                    mmServerSocket.close();
+                                    HomeFragment homeFragment = new HomeFragment();
+                                    homeFragment.checkConnectionState();
                                 } catch (IOException e) {
                                     Log.e(TAG, "Could not close unwanted socket", e);
                                 }
@@ -389,6 +390,18 @@ public class BluetoothChatService implements Serializable{
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type" + mSocketType + "close() of server failed", e);
             }
+        }
+    }
+
+    private void checkConnection(String message) {
+        mCurrentState = getState();
+        if (mCurrentState == Constants.STATE_CONNECTED) {
+            Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.TOAST, message);
+            msg.setData(bundle);
+            RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
+            rpiDialogFragment.getmHandler().handleMessage(msg);
         }
     }
 
