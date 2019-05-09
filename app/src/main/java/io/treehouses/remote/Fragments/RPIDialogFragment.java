@@ -30,7 +30,6 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
-import io.treehouses.remote.FragmentsOld.CustomHandler;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
