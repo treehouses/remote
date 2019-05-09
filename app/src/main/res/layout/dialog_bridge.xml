@@ -20,20 +20,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tl_hotspot_essid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_hotspot_essid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:editable="true"
-            android:fontFamily="sans-serif"
-            android:hint="Hotspot ESSID" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tl_password"
@@ -54,11 +40,26 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_hotspot_essid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_hotspot_essid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:editable="true"
+            android:fontFamily="sans-serif"
+            android:hint="Hotspot ESSID" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tl_hotspot_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
         app:passwordToggleDrawable="@drawable/toggle_password"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/colorPrimary">
