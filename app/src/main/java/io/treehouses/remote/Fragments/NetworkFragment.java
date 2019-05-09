@@ -29,6 +29,7 @@ public class NetworkFragment extends BaseFragment {
     private Boolean networkStatus = false;
     private Boolean bridge = false;
     private ExpandableListView expListView;
+    private int lastPosition = -1;
     NetworkListAdapter adapter;
     public NetworkFragment() { }
 
@@ -48,6 +49,15 @@ public class NetworkFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new NetworkListAdapter(getContext(), NetworkListItem.getNetworkList(), mChatService);
         adapter.setListener(listener);
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (lastPosition != -1 && groupPosition != lastPosition) {
+                    expListView.collapseGroup(lastPosition);
+                }
+                lastPosition = groupPosition;
+            }
+        });
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
     }
