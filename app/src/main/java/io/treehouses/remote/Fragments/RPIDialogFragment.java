@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -222,7 +223,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
             String readMessage = (String)msg.obj;
             Log.e("TAG", "TESTING: readmessage: "+ readMessage);
 
-            if (readMessage.equals("connectionCheck")) {
+            if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) {
                 dialog.dismiss();
             }
 
