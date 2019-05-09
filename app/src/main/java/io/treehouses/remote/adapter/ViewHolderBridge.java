@@ -21,8 +21,8 @@ public class ViewHolderBridge {
         v.findViewById(R.id.btn_start_config).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String temp = "treehouses bridge \"" + etEssid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\" ";
-                String overallMessage = TextUtils.isEmpty(etHotspotEssid.getText().toString()) ? temp + "\"\"" : temp + "\"" + etHotspotEssid.getText().toString() + "\"";
+                String temp = "treehouses bridge \"" + etEssid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
+                String overallMessage = TextUtils.isEmpty(etPassword.getText().toString()) ? temp + "\"\"" : temp + "\"" + etPassword.getText().toString() + "\"";
                 overallMessage += " ";
                 if (!TextUtils.isEmpty(etHotspotPassword.getText().toString())) {
                     overallMessage += "\"" + etHotspotPassword.getText().toString() + "\"";
