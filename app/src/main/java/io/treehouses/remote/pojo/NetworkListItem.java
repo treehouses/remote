@@ -38,7 +38,7 @@ public class NetworkListItem {
         list.add(new NetworkListItem("Hotspot", R.layout.dialog_hotspot));
         list.add(new NetworkListItem("Bridge", R.layout.dialog_bridge));
         list.add(new NetworkListItem("Reset", R.layout.dialog_reset));
-        list.add(new NetworkListItem("Reboot", -1));
+        list.add(new NetworkListItem("Reboot", R.layout.dialog_reboot));
         list.add(new NetworkListItem("Network Mode: ", -1));
         return list;
     }

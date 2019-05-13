@@ -41,6 +41,14 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         this.list = list;
     }
 
+    public BluetoothChatService getChatService() {
+        return chatService;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
     @Override
     public int getGroupCount() {
         return list.size();
@@ -104,26 +112,15 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             case 4:
                 new ViewHolderReset(convertView, listener);
                 break;
+            case 5:
+                new ViewHolderReboot(convertView, listener, getChatService(), getContext());
+                break;
         }
         return convertView;
     }
 
 
-    private void reboot() {
-        try {
-            Log.d("", "reboot: ");
-            listener.sendMessage("reboot");
-            Thread.sleep(1000);
-            if (chatService.getState() != Constants.STATE_CONNECTED) {
-                Toast.makeText(context, "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-                listener.openCallFragment(new HomeFragment());
-            } else {
-                Toast.makeText(context, "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
