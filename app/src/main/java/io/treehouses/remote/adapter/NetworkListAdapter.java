@@ -48,7 +48,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int position) {
-        return position > 3 ? 0 : 1;
+        return position > 5 ? 0 : 1;
     }
 
     @Override
@@ -81,18 +81,6 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         convertView = inflater.inflate(R.layout.list_group, parent, false);
         TextView listHeader = convertView.findViewById(R.id.lblListHeader);
         listHeader.setText(getGroup(i).toString());
-        if (i>3) {
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (i == 4) {
-                        listener.sendMessage("treehouses default network");
-                    } else if (i == 5) {
-                        reboot();
-                    }
-                }
-            });
-        }
 
         return convertView;
     }
@@ -112,6 +100,9 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
                 break;
             case 3:
                 new ViewHolderBridge(convertView, listener);
+                break;
+            case 4:
+                new ViewHolderReset(convertView, listener);
                 break;
         }
         return convertView;
