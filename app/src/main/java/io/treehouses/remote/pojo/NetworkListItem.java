@@ -6,13 +6,15 @@ import java.util.List;
 import io.treehouses.remote.R;
 
 public class NetworkListItem {
-  private   String title;
-  private   int layout;
+  private String title;
+  private int layout;
 
     public NetworkListItem(String title, int layout) {
         this.title = title;
         this.layout = layout;
     }
+
+    public NetworkListItem() { }
 
     public String getTitle() {
         return title;
@@ -42,4 +44,5 @@ public class NetworkListItem {
         list.add(new NetworkListItem("Network Mode: ", -1));
         return list;
     }
+
 }

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.BoringLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +32,8 @@ public class NetworkFragment extends BaseFragment {
     private ExpandableListView expListView;
     private int lastPosition = -1;
     NetworkListAdapter adapter;
-    public NetworkFragment() { }
 
+    public NetworkFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,18 +57,23 @@ public class NetworkFragment extends BaseFragment {
                     Log.e("TAG", "groupPosition: " + groupPosition);
                     expListView.collapseGroup(6);
                     updateNetworkMode();
+
+                    NetworkListItem networkListItem = new NetworkListItem();
+                    networkListItem.setTitle(NetworkListItem.getNetworkList().get(6).toString());
+                    String condition = networkListItem.getTitle().trim();
+                    if (condition.contains("default")) { expListView.expandGroup(0); }
+                    else if (condition.contains("wifi")) { expListView.expandGroup(1); }
+                    else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
+                    else if (condition.contains("bridge")) { expListView.expandGroup(3); }
+
                 }
-                if (lastPosition != -1 && groupPosition != lastPosition) {
-                    expListView.collapseGroup(lastPosition);
-                }
+                if (lastPosition != -1 && groupPosition != lastPosition) { expListView.collapseGroup(lastPosition); }
                 lastPosition = groupPosition;
             }
         });
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
     }
-
-
 
     private void updateNetworkMode() {
         alert = false;

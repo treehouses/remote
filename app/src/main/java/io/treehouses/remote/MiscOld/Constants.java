@@ -95,13 +95,7 @@ public class Constants {
         return groups;
     }
 
-    public static ArrayList<String> changeGroup(String readMessage) {
-        groups.remove(6);
-        Log.e("TAG", "Group size after remove: " + getGroups().size());
-        groups.add("Network Mode: " + readMessage);
-        Log.e("TAG", "Group size after add: " + getGroups().size());
-        return groups;
-    }
+
 
 }
 
