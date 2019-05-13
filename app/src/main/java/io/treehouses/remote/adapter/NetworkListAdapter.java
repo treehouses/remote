@@ -48,7 +48,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int position) {
-        return position > 3 ? 0 : 1;
+        return position > 6 ? 0 : 1;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         convertView = inflater.inflate(R.layout.list_group, parent, false);
         TextView listHeader = convertView.findViewById(R.id.lblListHeader);
         listHeader.setText(getGroup(i).toString());
-        if (i>3) {
+        if (i>3 && i<6) {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
