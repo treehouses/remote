@@ -42,6 +42,14 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         this.list = list;
     }
 
+    public BluetoothChatService getChatService() {
+        return chatService;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
     @Override
     public int getGroupCount() {
         return list.size();
@@ -82,18 +90,6 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         convertView = inflater.inflate(R.layout.list_group, parent, false);
         TextView listHeader = convertView.findViewById(R.id.lblListHeader);
         listHeader.setText(getGroup(i).toString());
-        if (i>3 && i<6) {
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (i == 4) {
-                        listener.sendMessage("treehouses default network");
-                    } else if (i == 5) {
-                        reboot();
-                    }
-                }
-            });
-        }
 
         return convertView;
     }
@@ -114,25 +110,14 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             case 3:
                 new ViewHolderBridge(convertView, listener);
                 break;
+            case 4:
+                new ViewHolderReset(convertView, listener);
+                break;
+            case 5:
+                new ViewHolderReboot(convertView, listener, getChatService(), getContext());
+                break;
         }
         return convertView;
-    }
-
-
-    private void reboot() {
-        try {
-            Log.d("", "reboot: ");
-            listener.sendMessage("reboot");
-            Thread.sleep(1000);
-            if (chatService.getState() != Constants.STATE_CONNECTED) {
-                Toast.makeText(context, "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-                listener.openCallFragment(new HomeFragment());
-            } else {
-                Toast.makeText(context, "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -144,6 +129,4 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         NetworkListItem.changeGroup(s);
         notifyDataSetChanged();
     }
-
-
 }
