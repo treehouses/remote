@@ -9,6 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.treehouses.remote.Fragments.HomeFragment;
@@ -140,7 +141,9 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     }
 
     public void setNetworkMode(String s) {
-        list.get(6).setTitle(s);
+        NetworkListItem.changeGroup(s);
         notifyDataSetChanged();
     }
+
+
 }

@@ -38,10 +38,11 @@ public class NetworkFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
+        updateNetworkMode();
         expListView = view.findViewById(R.id.lvExp);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        updateNetworkMode();
+
         return view;
     }
 
@@ -58,14 +59,12 @@ public class NetworkFragment extends BaseFragment {
                     expListView.collapseGroup(6);
                     updateNetworkMode();
 
-                    NetworkListItem networkListItem = new NetworkListItem();
-                    networkListItem.setTitle(NetworkListItem.getNetworkList().get(6).toString());
-                    String condition = networkListItem.getTitle().trim();
-                    if (condition.contains("default")) { expListView.expandGroup(0); }
-                    else if (condition.contains("wifi")) { expListView.expandGroup(1); }
-                    else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
-                    else if (condition.contains("bridge")) { expListView.expandGroup(3); }
-
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            expandGroups();
+                        }
+                    }).start();
                 }
                 if (lastPosition != -1 && groupPosition != lastPosition) { expListView.collapseGroup(lastPosition); }
                 lastPosition = groupPosition;
@@ -78,8 +77,22 @@ public class NetworkFragment extends BaseFragment {
     private void updateNetworkMode() {
         alert = false;
         networkStatus = true;
+
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
+    }
+
+    private void expandGroups() {
+        while(true) {
+            if (NetworkListItem.getInstance().getTitle() != null) {
+                String condition = NetworkListItem.getInstance().getTitle().trim();
+                if (condition.contains("default")) { expListView.expandGroup(0); }
+                else if (condition.contains("wifi")) { expListView.expandGroup(1); }
+                else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
+                else if (condition.contains("bridge")) { expListView.expandGroup(3); }
+                break;
+            }
+        }
     }
 
     private AlertDialog showAlertDialog(String message) {

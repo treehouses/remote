@@ -77,25 +77,5 @@ public class Constants {
         terminalList.add("Rename Hostname");
         terminalList.add("Expand File System");
     }
-
-    public static void setGroups() {
-        if (groups.size() > 0) {
-            groups = null;
-            groups = new ArrayList<>();
-        }
-        groups.add("Ethernet: Automatic");
-        groups.add("WiFi");
-        groups.add("Hotspot");
-        groups.add("Bridge");
-        groups.add("Reset");
-        groups.add("Reboot");
-        groups.add("Network Mode: ");
-    }
-    public static ArrayList<String> getGroups() {
-        return groups;
-    }
-
-
-
 }
 
