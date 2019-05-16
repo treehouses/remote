@@ -52,6 +52,12 @@ public class NetworkFragment extends BaseFragment {
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
+                if (groupPosition == 6) {
+                    Log.e("TAG", "groupPosition: " + groupPosition);
+                    expListView.collapseGroup(6);
+                    updateNetworkMode();
+                }
+
                 if (lastPosition != -1 && groupPosition != lastPosition) {
                     expListView.collapseGroup(lastPosition);
                 }
