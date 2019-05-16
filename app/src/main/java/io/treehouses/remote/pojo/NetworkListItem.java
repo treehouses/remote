@@ -8,7 +8,7 @@ import io.treehouses.remote.R;
 public class NetworkListItem {
   private   String title;
   private   int layout;
-  private NetworkListItem instance = null;
+  private static NetworkListItem instance = null;
 
     public NetworkListItem(String title, int layout) {
         this.title = title;
@@ -16,7 +16,7 @@ public class NetworkListItem {
         instance = this;
     }
 
-    public NetworkListItem getInstance() {
+    public static NetworkListItem getInstance() {
         return instance;
     }
 

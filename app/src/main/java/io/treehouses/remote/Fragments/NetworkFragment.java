@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -56,6 +57,13 @@ public class NetworkFragment extends BaseFragment {
                     Log.e("TAG", "groupPosition: " + groupPosition);
                     expListView.collapseGroup(6);
                     updateNetworkMode();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            expandGroups();
+                        }
+                    }).start();
                 }
 
                 if (lastPosition != -1 && groupPosition != lastPosition) {
@@ -77,6 +85,19 @@ public class NetworkFragment extends BaseFragment {
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
 
+    private void expandGroups() {
+        while(true) {
+            if (NetworkListItem.getInstance().getTitle() != null) {
+                String condition = NetworkListItem.getInstance().getTitle().trim();
+                if (condition.contains("default")) { expListView.expandGroup(0); }
+                else if (condition.contains("wifi")) { expListView.expandGroup(1); }
+                else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
+                else if (condition.contains("bridge")) { expListView.expandGroup(3); }
+                break;
+            }
+        }
+    }
+
     private AlertDialog showAlertDialog(String message) {
         return new AlertDialog.Builder(getContext())
                 .setTitle("OUTPUT:")
@@ -94,7 +115,8 @@ public class NetworkFragment extends BaseFragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    public final Handler mHandler = new Handler() {
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
