@@ -223,7 +223,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
             FragmentActivity activity = getActivity();
 
             String readMessage = (String)msg.obj;
-            Log.e("TAG", "TESTING: readmessage: "+ readMessage);
 
             if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) {
                 dialog.dismiss();
