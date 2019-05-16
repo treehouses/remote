@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -214,6 +215,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         mChatService = new BluetoothChatService(mHandler);
     }
 
+    @SuppressLint("HandlerLeak")
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -221,7 +223,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
             FragmentActivity activity = getActivity();
 
             String readMessage = (String)msg.obj;
-            Log.e("TAG", "TESTING: readmessage: "+ readMessage);
 
             if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) {
                 dialog.dismiss();
@@ -235,6 +236,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             dialog.dismiss();
                             listener.setChatService(mChatService);
                             checkConnectionState.checkConnectionState();
+                            Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
