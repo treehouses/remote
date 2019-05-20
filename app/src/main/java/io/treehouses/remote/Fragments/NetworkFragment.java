@@ -93,14 +93,18 @@ public class NetworkFragment extends BaseFragment {
     private void expandGroups() {
         while(true) {
             if (!NetworkListItem.getInstance().getTitle().equals("Network Mode: ")) {
-                String condition = NetworkListItem.getInstance().getTitle().trim();
-                if (condition.contains("default")) { expListView.expandGroup(0); }
-                else if (condition.contains("wifi")) { expListView.expandGroup(1); }
-                else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
-                else if (condition.contains("bridge")) { expListView.expandGroup(3); }
+                expandGroupConditions();
                 break;
             }
         }
+    }
+
+    private void expandGroupConditions() {
+        String condition = NetworkListItem.getInstance().getTitle().trim();
+        if (condition.contains("default")) { expListView.expandGroup(0); }
+        else if (condition.contains("wifi")) { expListView.expandGroup(1); }
+        else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
+        else if (condition.contains("bridge")) { expListView.expandGroup(3); }
     }
 
     private AlertDialog showAlertDialog(String message) {
