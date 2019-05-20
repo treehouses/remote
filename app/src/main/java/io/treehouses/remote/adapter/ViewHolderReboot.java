@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -14,20 +15,27 @@ import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderReboot {
 
+    private static ViewHolderReboot instance = null;
+    private Button btnReboot;
+
     public ViewHolderReboot(final View v, final HomeInteractListener listener, final BluetoothChatService chatService, final Context context) {
 
-        Button btnReboot = v.findViewById(R.id.btnReboot);
-        btnReboot.setText("Reboot Rpi Now");
-
+        instance = this;
+        btnReboot = v.findViewById(R.id.btnReboot);
+        btnReboot.setText("Reboot Rpi");
         btnReboot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reboot(listener, chatService, context);
+                NetworkFragment.getInstance().showAlertDialog("Are you sure you want to reboot your device?", "Reboot");
             }
         });
     }
 
-    private void reboot(HomeInteractListener listener, BluetoothChatService chatService, Context context) {
+    public static ViewHolderReboot getInstance() {
+        return instance;
+    }
+
+    public void reboot(HomeInteractListener listener, BluetoothChatService chatService, Context context) {
         try {
             Log.d("", "reboot: ");
             listener.sendMessage("reboot");
