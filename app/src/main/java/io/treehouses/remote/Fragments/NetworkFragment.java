@@ -41,7 +41,6 @@ public class NetworkFragment extends BaseFragment {
         expListView = view.findViewById(R.id.lvExp);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        updateNetworkMode();
         return view;
     }
 
@@ -76,6 +75,12 @@ public class NetworkFragment extends BaseFragment {
         expListView.setGroupIndicator(null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        expListView.expandGroup(6);
+    }
+
 
 
     private void updateNetworkMode() {
@@ -87,7 +92,7 @@ public class NetworkFragment extends BaseFragment {
 
     private void expandGroups() {
         while(true) {
-            if (NetworkListItem.getInstance().getTitle() != null) {
+            if (!NetworkListItem.getInstance().getTitle().equals("Network Mode: ")) {
                 String condition = NetworkListItem.getInstance().getTitle().trim();
                 if (condition.contains("default")) { expListView.expandGroup(0); }
                 else if (condition.contains("wifi")) { expListView.expandGroup(1); }
@@ -141,6 +146,7 @@ public class NetworkFragment extends BaseFragment {
                     }
                     if (alert) { showAlertDialog(readMessage); }
                     else { alert = false; }
+
                     if (bridge) { updateNetworkMode(); }
                     else { alert = true; }
                     break;
