@@ -86,8 +86,7 @@ public class NetworkFragment extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                })
-                .setNegativeButton("Continue", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (title) {
@@ -102,8 +101,7 @@ public class NetworkFragment extends BaseFragment {
                                 break;
                         }
                     }
-                })
-                .show();
+                }).show();
     }
 
     /**
