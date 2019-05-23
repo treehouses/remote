@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.treehouses.remote.adapter.NetworkListAdapter;
+import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -26,6 +27,7 @@ public class NetworkFragment extends BaseFragment {
 
     View view;
     private BluetoothChatService mChatService = null;
+    private static NetworkFragment instance = null;
     private Boolean alert = true;
     private Boolean networkStatus = false;
     private Boolean bridge = false;
@@ -39,6 +41,7 @@ public class NetworkFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_network_fragment, container, false);
         expListView = view.findViewById(R.id.lvExp);
+        instance = this;
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         return view;
@@ -81,7 +84,9 @@ public class NetworkFragment extends BaseFragment {
         expListView.expandGroup(6);
     }
 
-
+    public static NetworkFragment getInstance() {
+        return instance;
+    }
 
     private void updateNetworkMode() {
         alert = false;
@@ -89,6 +94,7 @@ public class NetworkFragment extends BaseFragment {
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
+
 
     private void expandGroups() {
         while(true) {
@@ -107,18 +113,32 @@ public class NetworkFragment extends BaseFragment {
         else if (condition.contains("bridge")) { expListView.expandGroup(3); }
     }
 
-    private AlertDialog showAlertDialog(String message) {
+    public AlertDialog showAlertDialog(final String message, final String title) {
         return new AlertDialog.Builder(getContext())
-                .setTitle("OUTPUT:")
+                .setTitle(title)
                 .setMessage(message)
                 .setIcon(R.drawable.wificon)
-                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                })
-                .show();
+                }).setNegativeButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (title) {
+                            case "OUTPUT:":
+                                dialog.cancel();
+                                break;
+                            case "Reset":
+                                listener.sendMessage("treehouses default network");
+                                break;
+                            case "Reboot":
+                                ViewHolderReboot.getInstance().reboot(listener, mChatService, getContext());
+                                break;
+                        }
+                    }
+                }).show();
     }
 
     /**
@@ -148,7 +168,7 @@ public class NetworkFragment extends BaseFragment {
                         networkStatus = false;
                         alert = false;
                     }
-                    if (alert) { showAlertDialog(readMessage); }
+                    if (alert) { showAlertDialog(readMessage, "OUTPUT:"); }
                     else { alert = false; }
 
                     if (bridge) { updateNetworkMode(); }
