@@ -2,6 +2,8 @@ package io.treehouses.remote.adapter;
 
 import android.view.View;
 import android.widget.Button;
+
+import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
@@ -11,11 +13,11 @@ public class ViewHolderReset {
 
     public ViewHolderReset(final View v, final HomeInteractListener listener) {
         btnReset = v.findViewById(R.id.btnReset);
-        btnReset.setText("Reset Network Now");
+        btnReset.setText("Reset Network");
         v.findViewById(R.id.btnReset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.sendMessage("treehouses default network");
+                NetworkFragment.getInstance().showAlertDialog("Are you sure you want to reset the network to default?", "Reset");
             }
         });
     }
