@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -43,7 +44,6 @@ public class NetworkFragment extends BaseFragment {
         instance = this;
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        updateNetworkMode();
         return view;
     }
 
@@ -55,6 +55,19 @@ public class NetworkFragment extends BaseFragment {
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
+                if (groupPosition == 6) {
+                    Log.e("TAG", "groupPosition: " + groupPosition);
+                    expListView.collapseGroup(6);
+                    updateNetworkMode();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            expandGroups();
+                        }
+                    }).start();
+                }
+
                 if (lastPosition != -1 && groupPosition != lastPosition) {
                     expListView.collapseGroup(lastPosition);
                 }
@@ -63,6 +76,12 @@ public class NetworkFragment extends BaseFragment {
         });
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        expListView.expandGroup(6);
     }
 
     public static NetworkFragment getInstance() {
@@ -74,6 +93,24 @@ public class NetworkFragment extends BaseFragment {
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void expandGroups() {
+        while(true) {
+            if (!NetworkListItem.getInstance().getTitle().equals("Network Mode: ")) {
+                expandGroupConditions();
+                break;
+            }
+        }
+    }
+
+    private void expandGroupConditions() {
+        String condition = NetworkListItem.getInstance().getTitle().trim();
+        if (condition.contains("default")) { expListView.expandGroup(0); }
+        else if (condition.contains("wifi")) { expListView.expandGroup(1); }
+        else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
+        else if (condition.contains("bridge")) { expListView.expandGroup(3); }
     }
 
     public AlertDialog showAlertDialog(final String message, final String title) {
@@ -107,7 +144,8 @@ public class NetworkFragment extends BaseFragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    public final Handler mHandler = new Handler() {
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -132,6 +170,7 @@ public class NetworkFragment extends BaseFragment {
                     }
                     if (alert) { showAlertDialog(readMessage, "OUTPUT:"); }
                     else { alert = false; }
+
                     if (bridge) { updateNetworkMode(); }
                     else { alert = true; }
                     break;

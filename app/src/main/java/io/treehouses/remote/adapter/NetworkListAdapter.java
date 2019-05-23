@@ -56,7 +56,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int position) {
-        return position > 5 ? 0 : 1;
+        return position > 6 ? 0 : 1;
     }
 
     @Override
