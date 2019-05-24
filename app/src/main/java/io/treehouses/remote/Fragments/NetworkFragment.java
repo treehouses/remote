@@ -59,13 +59,6 @@ public class NetworkFragment extends BaseFragment {
                     Log.e("TAG", "groupPosition: " + groupPosition);
                     expListView.collapseGroup(6);
                     updateNetworkMode();
-
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            expandGroups();
-//                        }
-//                    }).start();
                 }
 
                 if (lastPosition != -1 && groupPosition != lastPosition) {
@@ -93,24 +86,6 @@ public class NetworkFragment extends BaseFragment {
         networkStatus = true;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void expandGroups() {
-        while(true) {
-            if (!NetworkListItem.getInstance().getTitle().equals("Network Mode: ")) {
-                expandGroupConditions();
-                break;
-            }
-        }
-    }
-
-    private void expandGroupConditions() {
-        String condition = NetworkListItem.getInstance().getTitle().trim();
-        if (condition.contains("default")) { expListView.expandGroup(0); }
-        else if (condition.contains("wifi")) { expListView.expandGroup(1); }
-        else if (condition.contains("internet") || condition.contains("local")) { expListView.expandGroup(2); }
-        else if (condition.contains("bridge")) { expListView.expandGroup(3); }
     }
 
     public AlertDialog showAlertDialog(final String message, final String title) {
