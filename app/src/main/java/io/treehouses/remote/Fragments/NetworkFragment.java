@@ -118,18 +118,15 @@ public class NetworkFragment extends BaseFragment {
                 .setTitle(title)
                 .setMessage(message)
                 .setIcon(R.drawable.wificon)
-                .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                .setPositiveButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                }).setNegativeButton("Continue", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (title) {
-                            case "OUTPUT:":
-                                dialog.cancel();
-                                break;
                             case "Reset":
                                 listener.sendMessage("treehouses default network");
                                 break;
@@ -137,6 +134,19 @@ public class NetworkFragment extends BaseFragment {
                                 ViewHolderReboot.getInstance().reboot(listener, mChatService, getContext());
                                 break;
                         }
+                    }
+                }).show();
+    }
+
+    private AlertDialog showAlertDialog(final String message) {
+        return new AlertDialog.Builder(getContext())
+                .setTitle("OUTPUT:")
+                .setMessage(message)
+                .setIcon(R.drawable.wificon)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                     }
                 }).show();
     }
@@ -168,7 +178,7 @@ public class NetworkFragment extends BaseFragment {
                         networkStatus = false;
                         alert = false;
                     }
-                    if (alert) { showAlertDialog(readMessage, "OUTPUT:"); }
+                    if (alert) { showAlertDialog(readMessage); }
                     else { alert = false; }
 
                     if (bridge) { updateNetworkMode(); }
