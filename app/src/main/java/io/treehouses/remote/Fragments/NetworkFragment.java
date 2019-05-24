@@ -60,12 +60,12 @@ public class NetworkFragment extends BaseFragment {
                     expListView.collapseGroup(6);
                     updateNetworkMode();
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            expandGroups();
-                        }
-                    }).start();
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            expandGroups();
+//                        }
+//                    }).start();
                 }
 
                 if (lastPosition != -1 && groupPosition != lastPosition) {
@@ -180,5 +180,20 @@ public class NetworkFragment extends BaseFragment {
 
     private void changeList(String readMessage) {
         adapter.setNetworkMode("Network Mode: " + readMessage);
+        switch (readMessage) {
+            case "default":
+                expListView.expandGroup(0);
+                break;
+            case "wifi":
+                expListView.expandGroup(1);
+                break;
+            case "internet":
+            case "local":
+                expListView.expandGroup(2);
+                break;
+            case "bridge":
+                expListView.expandGroup(3);
+                break;
+        }
     }
 }
