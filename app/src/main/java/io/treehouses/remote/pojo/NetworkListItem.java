@@ -8,16 +8,10 @@ import io.treehouses.remote.R;
 public class NetworkListItem {
   private   String title;
   private   int layout;
-  private static NetworkListItem instance = null;
 
     public NetworkListItem(String title, int layout) {
         this.title = title;
         this.layout = layout;
-        instance = this;
-    }
-
-    public static NetworkListItem getInstance() {
-        return instance;
     }
 
     public String getTitle() {
