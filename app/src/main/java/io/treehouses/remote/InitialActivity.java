@@ -52,7 +52,7 @@ import org.json.JSONObject;
 public class InitialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
 
-
+    private static InitialActivity instance = null;
     private Boolean validBluetoothConnection = false;
     int REQUEST_COARSE_LOCATION = 99;
     private static BluetoothChatService mChatService = null;
@@ -64,6 +64,7 @@ public class InitialActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         setContentView(R.layout.activity_initial2);
 
         Log.e(TAG, "onCreate(Bundle) called");
@@ -105,6 +106,10 @@ public class InitialActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
+    }
+
+    public static InitialActivity getInstance() {
+        return instance;
     }
 
     @Override
