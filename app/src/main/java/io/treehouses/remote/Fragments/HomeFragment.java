@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -21,7 +22,7 @@ import static io.treehouses.remote.MiscOld.Constants.REQUEST_ENABLE_BT;
 public class HomeFragment extends BaseFragment implements SetDisconnect {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
-    private Button connectRpi;
+    private Button connectRpi, getStarted;
     private Boolean connectionState = false;
     View view;
 
@@ -31,10 +32,27 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
-        connectRpi = view.findViewById(R.id.button);
+        connectRpi = view.findViewById(R.id.btn_connect);
+        getStarted = view.findViewById(R.id.btn_getStarted);
 
         checkConnectionState();
 
+        connectRpiListener();
+        getStartedListener();
+
+        return view;
+    }
+
+    private void getStartedListener() {
+        getStarted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InitialActivity.getInstance().openCallFragment(new AboutFragment());
+            }
+        });
+    }
+
+    public void connectRpiListener() {
         connectRpi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +74,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 }
             }
         });
-        return view;
     }
 
     public void checkConnectionState() {
