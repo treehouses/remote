@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,28 +10,29 @@
         android:id="@+id/et_essid"
         android:layout_width="match_parent"
         android:layout_height="39dp"
-        android:hint="ESSID" />
+        android:hint="ESSID"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="8dp" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout3"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:elevation="2dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/md_blue_600">
+        app:passwordToggleTint="@color/md_blue_600"
+        tools:layout_editor_absoluteX="5dp">
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_password"
-                android:layout_width="match_parent"
-                android:layout_height="39dp"
-                android:editable="true"
-                android:fontFamily="sans-serif"
-                android:hint="Password"
-                android:inputType="textPassword" />
-        </LinearLayout>
+            android:layout_height="39dp"
+            android:editable="true"
+            android:fontFamily="sans-serif"
+            android:hint="Password"
+            android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -40,29 +42,38 @@
         android:layout_height="39dp"
         android:editable="true"
         android:fontFamily="sans-serif"
-        android:hint="Hotspot ESSID" />
+        android:hint="Hotspot ESSID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="107dp"
+        android:elevation="2dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/md_blue_600">
+        app:passwordToggleTint="@color/md_blue_600"
+        tools:layout_editor_absoluteX="8dp">
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_hotspot_password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_hotspot_password"
-                android:layout_width="match_parent"
-                android:layout_height="39dp"
-                android:hint="Hotspot Password"
-                android:inputType="textPassword" />
-        </LinearLayout>
+            android:layout_height="39dp"
+            android:hint="Hotspot Password"
+            android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <include layout="@layout/layout_btn_configuration" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout5"
+        tools:layout_editor_absoluteX="8dp">
 
-</LinearLayout>
+        <include layout="@layout/layout_btn_configuration" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
