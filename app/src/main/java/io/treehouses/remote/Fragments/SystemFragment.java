@@ -14,8 +14,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import io.treehouses.remote.InitialActivity;
-import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;

@@ -16,7 +16,7 @@
 
 */
 
-package io.treehouses.remote.MiscOld;
+package io.treehouses.remote;
 
 /**
  * Created by yubo on 7/11/17.

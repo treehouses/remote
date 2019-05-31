@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.NetworkListItem;

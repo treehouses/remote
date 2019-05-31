@@ -7,13 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -25,8 +21,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
@@ -36,18 +30,13 @@ import io.treehouses.remote.Fragments.StatusFragment;
 import io.treehouses.remote.Fragments.SystemFragment;
 import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Fragments.TunnelFragment;
-import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.utils.LogUtils;
-import io.treehouses.remote.utils.Utils;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class InitialActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
