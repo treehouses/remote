@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import io.treehouses.remote.MiscOld.Constants;
 import io.treehouses.remote.R;
 
 public class DockerContainerFragment extends Fragment{

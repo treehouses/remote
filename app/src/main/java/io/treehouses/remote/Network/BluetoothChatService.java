@@ -26,7 +26,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -40,7 +39,7 @@ import java.util.UUID;
 
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.RPIDialogFragment;
-import io.treehouses.remote.MiscOld.Constants;
+import io.treehouses.remote.Constants;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
