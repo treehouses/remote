@@ -1,9 +1,14 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,12 +40,25 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
 
+        showDialogOnce();
         checkConnectionState();
-
         connectRpiListener();
         getStartedListener();
 
         return view;
+    }
+
+    private void showDialogOnce() {
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        boolean dialogShown = preferences.getBoolean("dialogShown", false);
+
+        if (!dialogShown) {
+            showWelcomeDialog();
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("dialogShown", true);
+            editor.commit();
+        }
     }
 
     private void getStartedListener() {
@@ -85,6 +103,19 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             connectRpi.setText("Connect to RPI");
             connectionState = false;
         }
+    }
+
+    private AlertDialog showWelcomeDialog() {
+        return new AlertDialog.Builder(getContext())
+                .setTitle("Welcome")
+                .setMessage("If this is your first time using Treehouses Remote, please press \"Get Started\"")
+                .setIcon(R.drawable.dialog_icon)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
     }
 
     private void showRPIDialog(){
