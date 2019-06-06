@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -108,7 +109,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private AlertDialog showWelcomeDialog() {
         return new AlertDialog.Builder(getContext())
                 .setTitle("Welcome")
-                .setMessage("If this is your first time using Treehouses Remote, please press \"Get Started\"")
+                .setMessage("Friendly Reminder: Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \'control\" and \"cli\". More information under \"Get Started\"")
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -116,6 +117,12 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                         dialog.cancel();
                     }
                 }).show();
+    }
+
+    private void openURL(String url) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     private void showRPIDialog(){
