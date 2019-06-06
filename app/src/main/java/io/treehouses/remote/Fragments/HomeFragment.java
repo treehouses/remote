@@ -1,13 +1,21 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import io.treehouses.remote.InitialActivity;
@@ -35,12 +43,25 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
 
+        showDialogOnce();
         checkConnectionState();
-
         connectRpiListener();
         getStartedListener();
 
         return view;
+    }
+
+    private void showDialogOnce() {
+        SharedPreferences preferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        boolean dialogShown = preferences.getBoolean("dialogShown", false);
+
+        if (!dialogShown) {
+            showWelcomeDialog();
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("dialogShown", true);
+            editor.commit();
+        }
     }
 
     private void getStartedListener() {
@@ -87,23 +108,30 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
+    private AlertDialog showWelcomeDialog() {
+        return new AlertDialog.Builder(getContext())
+                .setTitle("Friendly Reminder")
+                .setMessage("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". Their is more information under \"Get Started\"" +
+                        "\n\nhttp://download.treehouses.io/\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli")
+                .setIcon(R.drawable.dialog_icon)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+//    private void openURL(String url) {
+//        Intent i = new Intent(Intent.ACTION_VIEW);
+//        i.setData(Uri.parse(url));
+//        startActivity(i);
+//    }
+
     private void showRPIDialog(){
         androidx.fragment.app.DialogFragment dialogFrag =  RPIDialogFragment.newInstance(123);
         ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode == Activity.RESULT_OK){
-            //Bundle bundle = data.getExtras();
-            //String type = bundle.getString("type");
-            //Log.e("ON ACTIVITY RESULT","Request Code: "+requestCode+" ;; Result Code: "+resultCode+" ;; Intent: "+bundle+" ;; Type: "+bundle.getString("type"));
-
-
-        }
     }
 }
