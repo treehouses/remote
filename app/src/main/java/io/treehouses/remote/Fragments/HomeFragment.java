@@ -10,10 +10,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import io.treehouses.remote.InitialActivity;
@@ -108,8 +110,9 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     private AlertDialog showWelcomeDialog() {
         return new AlertDialog.Builder(getContext())
-                .setTitle("Welcome")
-                .setMessage("Friendly Reminder: Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \'control\" and \"cli\". More information under \"Get Started\"")
+                .setTitle("Friendly Reminder")
+                .setMessage("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". Their is more information under \"Get Started\"" +
+                        "\n\nhttp://download.treehouses.io/\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli")
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     @Override
