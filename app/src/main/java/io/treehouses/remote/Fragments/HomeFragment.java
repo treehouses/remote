@@ -122,11 +122,11 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 }).show();
     }
 
-    private void openURL(String url) {
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
-    }
+//    private void openURL(String url) {
+//        Intent i = new Intent(Intent.ACTION_VIEW);
+//        i.setData(Uri.parse(url));
+//        startActivity(i);
+//    }
 
     private void showRPIDialog(){
         androidx.fragment.app.DialogFragment dialogFrag =  RPIDialogFragment.newInstance(123);
