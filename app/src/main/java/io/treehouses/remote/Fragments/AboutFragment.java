@@ -46,7 +46,7 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
         gitHub.setText(Html.fromHtml("<a href='https://github.com/treehouses/remote'>GitHub</a>"));
 
         images.setMovementMethod(LinkMovementMethod.getInstance());
-        images.setText(Html.fromHtml("<a href='http://http://downloads.ole.org'>Treehouses Images</a>"));
+        images.setText(Html.fromHtml("<a href='http://http://download.treehouses.io'>Treehouses Images</a>"));
 
         gitter.setMovementMethod(LinkMovementMethod.getInstance());
         gitter.setText(Html.fromHtml("<a href='https://gitter.im/open-learning-exchange/raspberrypi'>Gitter</a>"));
