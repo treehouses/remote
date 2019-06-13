@@ -12,7 +12,7 @@ before_install:
   #  -in my_planet.enc -out my_planet -d
   - chmod +x gradlew
   - yes | sdkmanager "platforms;android-28"
-  - openssl aes-256-cbc -K $encrypted_aaf4a3063d98_key -iv $encrypted_aaf4a3063d98_iv -in treehouses-remote.jks.enc -out treehouses-remote.jks -d
+  - openssl aes-256-cbc -K $encrypted_e106cbe777cb_key -iv $encrypted_e106cbe777cb_iv -in treehouses-remote.jks.enc -out treehouses-remote.jks -d
   - mkdir "$ANDROID_HOME/licenses" || true
   - chmod +x gradlew - yes | sdkmanager "platforms;android-28"
   - "./gradlew dependencies || true"
