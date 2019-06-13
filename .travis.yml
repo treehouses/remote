@@ -10,7 +10,7 @@ env:
 before_install:
   #- openssl aes-256-cbc -K $encrypted_aaf4a3063d98_key -iv $encrypted_aaf4a3063d98_iv
   #  -in my_planet.enc -out my_planet -d
-  -- chmod +x gradlew
+  - chmod +x gradlew
   - yes | sdkmanager "platforms;android-28"
   - openssl aes-256-cbc -K $encrypted_aaf4a3063d98_key -iv $encrypted_aaf4a3063d98_iv -in treehouses-remote.jks.enc -out treehouses-remote.jks -d
   - mkdir "$ANDROID_HOME/licenses" || true
