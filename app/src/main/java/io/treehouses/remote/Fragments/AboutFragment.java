@@ -9,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import io.treehouses.remote.R;
 
 public class AboutFragment extends androidx.fragment.app.Fragment {
 
-    private Button gitHub, images, gitter;
     View view;
 
     public AboutFragment(){}
@@ -24,13 +27,15 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.activity_about_fragment, container, false);
-        gitHub = view.findViewById(R.id.btn_github);
-        images = view.findViewById(R.id.btn_image);
-        gitter = view.findViewById(R.id.btn_gitter);
-
+        Button gitHub = view.findViewById(R.id.btn_github);
+        Button images = view.findViewById(R.id.btn_image);
+        Button gitter = view.findViewById(R.id.btn_gitter);
+        TextView tvCopyright = view.findViewById(R.id.tv_copyright);
         hyperLinks(gitHub,"https://github.com/treehouses/remote" );
         hyperLinks(images,"http://http://download.treehouses.io" );
         hyperLinks(gitter,"https://gitter.im/open-learning-exchange/raspberrypi" );
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        tvCopyright.setText(String.format(getString(R.string.copyright), format.format(new Date()) + ""));
         return view;
     }
 
