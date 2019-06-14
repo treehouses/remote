@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
+def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0")
+
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
@@ -6,8 +9,8 @@ android {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 2
-        versionName "2.0"
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
