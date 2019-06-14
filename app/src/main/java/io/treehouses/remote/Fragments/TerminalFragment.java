@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,10 +24,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.time.chrono.ThaiBuddhistEra;
+
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.Terminal;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.utils.Utils;
 
@@ -40,7 +45,6 @@ public class TerminalFragment extends BaseFragment {
     private Button mCheckButton;
     private TextView mPingStatus;
     private ListView listView;
-    private Context context;
     View view;
 
 
@@ -73,7 +77,6 @@ public class TerminalFragment extends BaseFragment {
     private BluetoothChatService mChatService = null;
 
     private static boolean isRead = false;
-    private static boolean isCountdown = false;
 
     @Override
     public void onDestroy() {
@@ -114,26 +117,13 @@ public class TerminalFragment extends BaseFragment {
     public void setupChat() {
         Log.d(TAG, "setupChat()");
       
-        mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickedData = (String) mConversationView.getItemAtPosition(position);
-                context = getContext();
-                Utils.copyToClipboard(context, clickedData);
-            }
-        });
+        Terminal.copyToList(mConversationView, getContext());
 
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, MainApplication.getTerminalList()){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView output = view.findViewById(R.id.listItem);
-
-                if (isRead){
-                    output.setTextColor(Color.BLUE);
-                }else {
-                    output.setTextColor(Color.RED);
-                }
+                Terminal.getView(view, isRead);
                 return view;
             }
         };
@@ -188,13 +178,7 @@ public class TerminalFragment extends BaseFragment {
     }
 
     public void checkStatusNow() {
-        if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            mConnect();
-        } else if (mChatService.getState() == Constants.STATE_NONE) {
-            mOffline();
-        } else {
-            mIdle();
-        }
+        Terminal.checkStatus(mChatService);
     }
 
     /**
@@ -263,30 +247,22 @@ public class TerminalFragment extends BaseFragment {
     }
 
     private void mOffline() {
-        mPingStatus.setText(R.string.bStatusOffline);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.RED);
+        Terminal.offline(mPingStatus, pingStatusButton);
     }
 
     private void mIdle() {
-        mPingStatus.setText(R.string.bStatusIdle);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.YELLOW);
+        Terminal.idle(mPingStatus, pingStatusButton);
     }
 
     private void mConnect() {
-        mPingStatus.setText(R.string.bStatusConnected);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.GREEN);
+       Terminal.connect(mPingStatus, pingStatusButton);
     }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    public final Handler mHandler = new Handler() {
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -299,14 +275,7 @@ public class TerminalFragment extends BaseFragment {
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
-                    isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    if (!writeMessage.contains("google.com")) {
-                        Log.d(TAG, "writeMessage = " + writeMessage);
-                        mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
-                    }
+                    Terminal.handlerCaseWrite(isRead, TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -316,11 +285,8 @@ public class TerminalFragment extends BaseFragment {
                     //TODO: if message is json -> callback from RPi
                     if (isJson(readMessage)) {
                     } else {
-                        if (isCountdown) {
-                            isCountdown = false;
-                        }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0, readMessage.length() - 1);
+
+                        readMessage = readMessage.trim();
 
                         //check if ping was successful
                         if (readMessage.contains("1 packets")) {
@@ -331,22 +297,15 @@ public class TerminalFragment extends BaseFragment {
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
                             MainApplication.getTerminalList().add(readMessage);
                             mConversationArrayAdapter.notifyDataSetChanged();
                         }
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    /**
-                     * Name of the connected device
-                     */
-                    String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
+                    Activity activity = getActivity();
+                    Terminal.handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
                     if (null != getActivity()) {
