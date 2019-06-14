@@ -39,7 +39,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
 public class Constants {
-
+    
     static String value = "";
     private static ArrayList<String> groups = new ArrayList<>();
 
@@ -77,31 +77,5 @@ public class Constants {
         terminalList.add("Rename Hostname");
         terminalList.add("Expand File System");
     }
-
-    public static void setGroups() {
-        if (groups.size() > 0) {
-            groups = null;
-            groups = new ArrayList<>();
-        }
-        groups.add("Ethernet: Automatic");
-        groups.add("WiFi");
-        groups.add("Hotspot");
-        groups.add("Bridge");
-        groups.add("Reset");
-        groups.add("Reboot");
-        groups.add("Network Mode: ");
-    }
-    public static ArrayList<String> getGroups() {
-        return groups;
-    }
-
-    public static ArrayList<String> changeGroup(String readMessage) {
-        groups.remove(6);
-        Log.e("TAG", "Group size after remove: " + getGroups().size());
-        groups.add("Network Mode: " + readMessage);
-        Log.e("TAG", "Group size after add: " + getGroups().size());
-        return groups;
-    }
-
 }
 
