@@ -87,7 +87,7 @@ public class TerminalFragment extends BaseFragment {
             if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
-                mIdle();
+                Terminal.idle(mPingStatus, pingStatusButton);
             }
         }
     }
@@ -150,7 +150,7 @@ public class TerminalFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Log.e("CHECK STATUS", "" + mChatService.getState());
-                checkStatusNow();
+                Terminal.checkStatus(mChatService, mPingStatus, pingStatusButton);
             }
         });
 
@@ -177,10 +177,6 @@ public class TerminalFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    public void checkStatusNow() {
-        Terminal.checkStatus(mChatService);
     }
 
     /**
@@ -256,18 +252,6 @@ public class TerminalFragment extends BaseFragment {
         return true;
     }
 
-    private void mOffline() {
-        Terminal.offline(mPingStatus, pingStatusButton);
-    }
-
-    private void mIdle() {
-        Terminal.idle(mPingStatus, pingStatusButton);
-    }
-
-    private void mConnect() {
-       Terminal.connect(mPingStatus, pingStatusButton);
-    }
-
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -280,7 +264,7 @@ public class TerminalFragment extends BaseFragment {
                     switch (msg.arg1) {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
-                            mIdle();
+                            Terminal.idle(mPingStatus, pingStatusButton);
                             break;
                     }
                     break;
@@ -300,10 +284,10 @@ public class TerminalFragment extends BaseFragment {
 
                         //check if ping was successful
                         if (readMessage.contains("1 packets")) {
-                            mConnect();
+                            Terminal.connect(mPingStatus, pingStatusButton);
                         }
                         if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                            mOffline();
+                            Terminal.offline(mPingStatus, pingStatusButton);
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&

@@ -71,15 +71,15 @@ public class Terminal {
         bgResource(pingStatusButton, Color.GREEN);
     }
 
-    public static void isPingSuccesfull(String readMessage) {
+    public static void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
         readMessage = readMessage.trim();
 
         //check if ping was successful
         if (readMessage.contains("1 packets")) {
-            TunnelFragment.getInstance().mConnect();
+            connect(mPingStatus, pingStatusButton);
         }
         if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-            TunnelFragment.getInstance().mOffline();
+            offline(mPingStatus, pingStatusButton);
         }
     }
 
@@ -93,13 +93,13 @@ public class Terminal {
         });
     }
 
-    public static void checkStatus(BluetoothChatService mChatService) {
+    public static void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            TunnelFragment.getInstance().mConnect();
+            connect(mPingStatus, pingStatusButton);
         } else if (mChatService.getState() == Constants.STATE_NONE) {
-            TunnelFragment.getInstance().mOffline();
+            offline(mPingStatus, pingStatusButton);
         } else {
-            TunnelFragment.getInstance().mIdle();
+            idle(mPingStatus, pingStatusButton);
         }
     }
 }

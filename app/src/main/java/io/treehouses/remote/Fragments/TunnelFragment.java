@@ -36,7 +36,6 @@ public class TunnelFragment extends BaseFragment {
 
     private static final String TAG = "BluetoothChatFragment";
     private static boolean isRead = false;
-    private static TunnelFragment instance = null;
     private TextView mPingStatus;
     private Button pingStatusButton;
     private ArrayAdapter<String> mConversationArrayAdapter;
@@ -48,9 +47,6 @@ public class TunnelFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_tunnel_fragment, container, false);
-
-        instance = this;
-
         ArrayList<String> listview = new ArrayList<String>();
         ListView terminallist = view.findViewById(R.id.list_command);
         terminallist.setDivider(null);
@@ -88,11 +84,6 @@ public class TunnelFragment extends BaseFragment {
     }
 
     @Override
-    public void checkStatusNow() {
-        Terminal.checkStatus(mChatService);
-    }
-
-    @Override
     public void setupChat() {
         Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
@@ -114,7 +105,7 @@ public class TunnelFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Log.e("CHECK STATUS", "" + mChatService.getState());
-                checkStatusNow();
+                Terminal.checkStatus(mChatService, mPingStatus, pingStatusButton);
             }
         });
 
@@ -124,10 +115,6 @@ public class TunnelFragment extends BaseFragment {
         }
         // Initialize the buffer for outgoing messages
         new StringBuilder();
-    }
-
-    public static TunnelFragment getInstance() {
-        return instance;
     }
 
     private void onClickStartConfig(Button btn_start) {
@@ -176,8 +163,6 @@ public class TunnelFragment extends BaseFragment {
         });
     }
 
-
-
     private boolean isJson(String str) {
         try {
             new JSONObject(str);
@@ -185,18 +170,6 @@ public class TunnelFragment extends BaseFragment {
             return false;
         }
         return true;
-    }
-
-    public void mOffline() {
-        Terminal.offline(mPingStatus, pingStatusButton);
-    }
-
-    public void mIdle() {
-        Terminal.idle(mPingStatus, pingStatusButton);
-    }
-
-    public void mConnect() {
-        Terminal.connect(mPingStatus, pingStatusButton);
     }
 
     private void configConditions(String readMessage) {
@@ -224,7 +197,7 @@ public class TunnelFragment extends BaseFragment {
                     switch (msg.arg1) {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
-                            mIdle();
+                            Terminal.idle(mPingStatus, pingStatusButton);
                             break;
                     }
                     break;
@@ -242,7 +215,7 @@ public class TunnelFragment extends BaseFragment {
                     if (isJson(readMessage)) {
                         //handleCallback(readMessage);
                     } else {
-                       Terminal.isPingSuccesfull(readMessage);
+                       Terminal.isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
 
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
