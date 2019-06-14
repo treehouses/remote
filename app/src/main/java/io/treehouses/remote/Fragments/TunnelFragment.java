@@ -117,7 +117,7 @@ public class TunnelFragment extends BaseFragment {
             mChatService = new BluetoothChatService(mHandler);
         }
         // Initialize the buffer for outgoing messages
-        StringBuffer mOutStringBuffer = new StringBuffer();
+        new StringBuilder();
     }
 
     public static TunnelFragment getInstance() {

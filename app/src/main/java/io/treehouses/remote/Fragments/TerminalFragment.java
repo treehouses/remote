@@ -47,7 +47,6 @@ public class TerminalFragment extends BaseFragment {
     private ListView listView;
     View view;
 
-
     public TerminalFragment() {}
 
     @Override
@@ -69,7 +68,6 @@ public class TerminalFragment extends BaseFragment {
      * Array adapter for the conversation thread
      */
     private ArrayAdapter<String> mConversationArrayAdapter;
-
 
     /**
      * Member object for the chat services
@@ -129,22 +127,7 @@ public class TerminalFragment extends BaseFragment {
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    listener.sendMessage("treehouses");
-                } else if (position == 3) {
-                    listener.sendMessage("docker ps");
-                } else if (position == 2) {
-                    listener.sendMessage("treehouses detectrpi");
-                } else if (position == 0) {
-                    showChPasswordDialog();
-                } else if (position == 5) {
-                    listener.sendMessage("treehouses expandfs");
-                }
-            }
-        });
+        buttonFunctionality();
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
@@ -175,6 +158,25 @@ public class TerminalFragment extends BaseFragment {
         if (mChatService.getState() == Constants.STATE_NONE) {
             mChatService = new BluetoothChatService(mHandler);
         }
+    }
+
+    private void buttonFunctionality() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    listener.sendMessage("treehouses");
+                } else if (position == 3) {
+                    listener.sendMessage("docker ps");
+                } else if (position == 2) {
+                    listener.sendMessage("treehouses detectrpi");
+                } else if (position == 0) {
+                    showChPasswordDialog();
+                } else if (position == 5) {
+                    listener.sendMessage("treehouses expandfs");
+                }
+            }
+        });
     }
 
     public void checkStatusNow() {
