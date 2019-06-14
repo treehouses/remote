@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
@@ -107,7 +108,8 @@ public class TunnelFragment extends BaseFragment {
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
                                 !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
-                            mConversationArrayAdapter.add(readMessage);
+                            MainApplication.getTunnelList().add(readMessage);
+                            mConversationArrayAdapter.notifyDataSetChanged();
                         }
                     }
                     break;
@@ -179,7 +181,7 @@ public class TunnelFragment extends BaseFragment {
         Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message) {
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTunnelList()) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
