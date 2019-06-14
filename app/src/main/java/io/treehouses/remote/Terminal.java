@@ -102,4 +102,14 @@ public class Terminal {
             idle(mPingStatus, pingStatusButton);
         }
     }
+
+    public static void buttonOnClick(Button button, final BluetoothChatService mChatService, final TextView mPingStatus, final Button pingStatusButton) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("CHECK STATUS", "" + mChatService.getState());
+                Terminal.checkStatus(mChatService, mPingStatus, pingStatusButton);
+            }
+        });
+    }
 }

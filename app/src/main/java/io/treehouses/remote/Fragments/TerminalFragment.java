@@ -146,13 +146,7 @@ public class TerminalFragment extends BaseFragment {
             }
         });
 
-        mCheckButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("CHECK STATUS", "" + mChatService.getState());
-                Terminal.checkStatus(mChatService, mPingStatus, pingStatusButton);
-            }
-        });
+        Terminal.buttonOnClick(mCheckButton, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {

@@ -101,13 +101,7 @@ public class TunnelFragment extends BaseFragment {
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        btn_status.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("CHECK STATUS", "" + mChatService.getState());
-                Terminal.checkStatus(mChatService, mPingStatus, pingStatusButton);
-            }
-        });
+        Terminal.buttonOnClick(btn_status, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
