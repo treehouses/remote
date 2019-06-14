@@ -67,12 +67,18 @@ public class TunnelFragment extends BaseFragment {
         btn_status = view.findViewById(R.id.btn_status);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
+
         Button btn_start = view.findViewById(R.id.btn_start_config);
         Button btn_execute_start = view.findViewById(R.id.btn_execute_start);
         Button btn_execute_stop = view.findViewById(R.id.btn_execute_stop);
         Button btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
         Button btn_execute_address = view.findViewById(R.id.btn_execute_address);
-        sendMessage(btn_start, btn_execute_start, btn_execute_stop, btn_execute_destroy, btn_execute_address);
+
+        onClickStartConfig(btn_start);
+        onClickAddress(btn_execute_address);
+        onClickStart(btn_execute_start);
+        onClickStop(btn_execute_stop);
+        onClickDestroy(btn_execute_destroy);
     }
 
     @Override
@@ -124,7 +130,7 @@ public class TunnelFragment extends BaseFragment {
         return instance;
     }
 
-    public void sendMessage(Button btn_start, Button btn_execute_start, Button btn_execute_stop, Button btn_execute_destroy, Button btn_execute_address) {
+    private void onClickStartConfig(Button btn_start) {
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,24 +138,36 @@ public class TunnelFragment extends BaseFragment {
                 Log.e("log", "after message was sent");
             }
         });
+    }
+
+    private void onClickAddress(Button btn_execute_address) {
         btn_execute_address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.sendMessage("treehouses tor");
             }
         });
+    }
+
+    private void onClickStart(Button btn_execute_start) {
         btn_execute_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.sendMessage("treehouses tor start");
             }
         });
+    }
+
+    private void onClickStop( Button btn_execute_stop) {
         btn_execute_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.sendMessage("treehouses tor stop");
             }
         });
+    }
+
+    private void onClickDestroy(Button btn_execute_destroy) {
         btn_execute_destroy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,6 +175,8 @@ public class TunnelFragment extends BaseFragment {
             }
         });
     }
+
+
 
     private boolean isJson(String str) {
         try {

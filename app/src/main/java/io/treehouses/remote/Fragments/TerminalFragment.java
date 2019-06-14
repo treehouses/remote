@@ -203,32 +203,40 @@ public class TerminalFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case Constants.REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
-                } else {
-                    // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
+                onResultCaseEnable(resultCode);
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if (resultCode == Activity.RESULT_OK) {
-                    //get password change request
-                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-
-                    //store password and command
-                    String password = "treehouses password " + chPWD;
-                    Log.d(TAG, "back from change password");
-
-                    //send password to command line interface
-                    listener.sendMessage(password);
-                } else {
-                    Log.d(TAG, "back from change password, fail");
-                }
+                onResultCaseDialogChpass(resultCode, data);
                 break;
+        }
+    }
+
+    private void onResultCaseDialogChpass(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            //get password change request
+            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
+
+            //store password and command
+            String password = "treehouses password " + chPWD;
+            Log.d(TAG, "back from change password");
+
+            //send password to command line interface
+            listener.sendMessage(password);
+        } else {
+            Log.d(TAG, "back from change password, fail");
+        }
+    }
+
+    private void onResultCaseEnable(int resultCode) {
+        // When the request to enable Bluetooth returns
+        if (resultCode == Activity.RESULT_OK) {
+            // Bluetooth is now enabled, so set up a chat session
+            setupChat();
+        } else {
+            // User did not enable Bluetooth or an error occurred
+            Log.d(TAG, "BT not enabled");
+            Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
+            getActivity().finish();
         }
     }
 
