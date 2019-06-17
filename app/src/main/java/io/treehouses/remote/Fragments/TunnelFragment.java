@@ -213,7 +213,7 @@ public class TunnelFragment extends BaseFragment {
                        Terminal.isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
 
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
+                        if (!readMessage.contains("64 bytes") && !readMessage.contains("rtt") && !readMessage.contains("1 packets")&& !readMessage.trim().isEmpty() && !readMessage.contains("google.com") ) {
                             mConversationArrayAdapter.add(readMessage);
                         }
                     }
