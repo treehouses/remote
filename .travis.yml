@@ -52,14 +52,12 @@ android:
     - android-sdk-preview-license-.+
     - android-sdk-license-.+
     - google-gdk-license-.+
-after_success:
-  - sh set_tags.sh
 before_deploy:
   - cp $TRAVIS_BUILD_DIR/treehouses-remote.jks $HOME
   - cd app/build/outputs/apk/release
   - ls
   - cp remote-$TRAVIS_BUILD_NUMBER.apk remote.apk
-  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/treehouses-remote.jks -storepass $storepass -keypass $keypass remote.apk treehouses
+  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/treehouses-remote.jks -storepass $key_store_password -keypass $keystore_alias_password remote.apk treehouses
   - sha256sum remote.apk > remote.apk.sha256
   - ls
 deploy:
