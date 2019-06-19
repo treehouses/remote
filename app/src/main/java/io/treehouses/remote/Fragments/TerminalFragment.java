@@ -2,10 +2,7 @@ package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -25,17 +22,14 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.chrono.ThaiBuddhistEra;
-
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
-import io.treehouses.remote.Terminal;
+import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.utils.Utils;
 
-public class TerminalFragment extends BaseFragment {
+public class TerminalFragment extends BaseTerminalFragment {
 
     private static final String TAG = "BluetoothChatFragment";
     private ListView mConversationView;
@@ -87,7 +81,7 @@ public class TerminalFragment extends BaseFragment {
             if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
-                Terminal.idle(mPingStatus, pingStatusButton);
+                idle(mPingStatus, pingStatusButton);
             }
         }
     }
@@ -115,13 +109,13 @@ public class TerminalFragment extends BaseFragment {
     public void setupChat() {
         Log.d(TAG, "setupChat()");
       
-        Terminal.copyToList(mConversationView, getContext());
+        copyToList(mConversationView, getContext());
 
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, MainApplication.getTerminalList()){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                Terminal.getView(view, isRead);
+                getViews(view, isRead);
                 return view;
             }
         };
@@ -146,7 +140,7 @@ public class TerminalFragment extends BaseFragment {
             }
         });
 
-        Terminal.buttonOnClick(mCheckButton, mChatService, mPingStatus, pingStatusButton);
+        buttonOnClick(mCheckButton, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
@@ -258,12 +252,12 @@ public class TerminalFragment extends BaseFragment {
                     switch (msg.arg1) {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
-                            Terminal.idle(mPingStatus, pingStatusButton);
+                            idle(mPingStatus, pingStatusButton);
                             break;
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
-                    Terminal.handlerCaseWrite(isRead, TAG, mConversationArrayAdapter, msg);
+                    handlerCaseWrite(isRead, TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -278,10 +272,10 @@ public class TerminalFragment extends BaseFragment {
 
                         //check if ping was successful
                         if (readMessage.contains("1 packets")) {
-                            Terminal.connect(mPingStatus, pingStatusButton);
+                            connect(mPingStatus, pingStatusButton);
                         }
                         if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                            Terminal.offline(mPingStatus, pingStatusButton);
+                            offline(mPingStatus, pingStatusButton);
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
@@ -293,7 +287,7 @@ public class TerminalFragment extends BaseFragment {
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();
-                    Terminal.handlerCaseName(msg, activity);
+                    handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
                     if (null != getActivity()) {

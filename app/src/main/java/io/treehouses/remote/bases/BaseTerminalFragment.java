@@ -1,4 +1,4 @@
-package io.treehouses.remote;
+package io.treehouses.remote.bases;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,13 +14,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import io.treehouses.remote.Fragments.TunnelFragment;
+import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.R;
 import io.treehouses.remote.utils.Utils;
 
-public class Terminal {
+public class BaseTerminalFragment extends BaseFragment{
 
-    public static void handlerCaseWrite(Boolean isRead, String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
+    public void handlerCaseWrite(Boolean isRead, String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
         isRead = false;
         byte[] writeBuf = (byte[]) msg.obj;
         // construct a string from the buffer
@@ -31,7 +32,7 @@ public class Terminal {
         }
     }
 
-    public static void handlerCaseName(Message msg, Activity activity ) {
+    public void handlerCaseName(Message msg, Activity activity ) {
         // save the connected device's name
         String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
         if (null != activity) {
@@ -40,7 +41,7 @@ public class Terminal {
         }
     }
 
-    public static View getView(View view, Boolean isRead) {
+    public View getViews(View view, Boolean isRead) {
         TextView consoleView = view.findViewById(R.id.listItem);
         if (isRead) {
             consoleView.setTextColor(Color.BLUE);
@@ -50,28 +51,28 @@ public class Terminal {
         return view;
     }
 
-    public static void bgResource(Button pingStatusButton, int color) {
+    public void bgResource(Button pingStatusButton, int color) {
         pingStatusButton.setBackgroundResource((R.drawable.circle));
         GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
         bgShape.setColor(color);
     }
 
-    public static void offline(TextView mPingStatus, Button pingStatusButton) {
+    public void offline(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusOffline);
         bgResource(pingStatusButton, Color.RED);
     }
 
-    public static void idle(TextView mPingStatus, Button pingStatusButton) {
+    public void idle(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusIdle);
         bgResource(pingStatusButton, Color.YELLOW);
     }
 
-    public static void connect(TextView mPingStatus, Button pingStatusButton) {
+    public void connect(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusConnected);
         bgResource(pingStatusButton, Color.GREEN);
     }
 
-    public static void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
+    public void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
         readMessage = readMessage.trim();
 
         //check if ping was successful
@@ -83,7 +84,7 @@ public class Terminal {
         }
     }
 
-    public static void copyToList(final ListView mConversationView, final Context context) {
+    public void copyToList(final ListView mConversationView, final Context context) {
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -93,7 +94,7 @@ public class Terminal {
         });
     }
 
-    public static void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
+    public void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             connect(mPingStatus, pingStatusButton);
         } else if (mChatService.getState() == Constants.STATE_NONE) {
@@ -103,12 +104,12 @@ public class Terminal {
         }
     }
 
-    public static void buttonOnClick(Button button, final BluetoothChatService mChatService, final TextView mPingStatus, final Button pingStatusButton) {
+    public void buttonOnClick(Button button, final BluetoothChatService mChatService, final TextView mPingStatus, final Button pingStatusButton) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("CHECK STATUS", "" + mChatService.getState());
-                Terminal.checkStatus(mChatService, mPingStatus, pingStatusButton);
+                checkStatus(mChatService, mPingStatus, pingStatusButton);
             }
         });
     }

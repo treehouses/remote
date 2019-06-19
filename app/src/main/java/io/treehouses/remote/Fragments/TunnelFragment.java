@@ -2,9 +2,6 @@ package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -28,12 +24,11 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
-import io.treehouses.remote.Terminal;
+import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.utils.Utils;
 
 @SuppressWarnings("SpellCheckingInspection")
-public class TunnelFragment extends BaseFragment {
+public class TunnelFragment extends BaseTerminalFragment {
 
     private static final String TAG = "BluetoothChatFragment";
     private static boolean isRead = false;
@@ -93,16 +88,16 @@ public class TunnelFragment extends BaseFragment {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                Terminal.getView(view, isRead);
+                getViews(view, isRead);
                 return view;
             }
         };
 
-        Terminal.copyToList(mConversationView, getContext());
+        copyToList(mConversationView, getContext());
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        Terminal.buttonOnClick(btn_status, mChatService, mPingStatus, pingStatusButton);
+        buttonOnClick(btn_status, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
@@ -192,12 +187,12 @@ public class TunnelFragment extends BaseFragment {
                     switch (msg.arg1) {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
-                            Terminal.idle(mPingStatus, pingStatusButton);
+                            idle(mPingStatus, pingStatusButton);
                             break;
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
-                    Terminal.handlerCaseWrite(isRead, TAG, mConversationArrayAdapter, msg);
+                    handlerCaseWrite(isRead, TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -210,7 +205,7 @@ public class TunnelFragment extends BaseFragment {
                     if (isJson(readMessage)) {
                         //handleCallback(readMessage);
                     } else {
-                       Terminal.isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
+                       isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
 
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("64 bytes") && !readMessage.contains("rtt") && !readMessage.contains("1 packets")&& !readMessage.trim().isEmpty() && !readMessage.contains("google.com") ) {
@@ -220,7 +215,7 @@ public class TunnelFragment extends BaseFragment {
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();
-                    Terminal.handlerCaseName(msg, activity);
+                    handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
                     if (null != getActivity()) {
