@@ -58,8 +58,10 @@ before_deploy:
   - cp $TRAVIS_BUILD_DIR/treehouses-remote.jks $HOME
   - cd app/build/outputs/apk/release
   - ls
-  - cp remote-$TRAVIS_BUILD_NUMBER.apk remote.apk
-  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/treehouses-remote.jks -storepass $key_store_password -keypass $keystore_alias_password remote.apk treehouses
+  - cp remote-$TRAVIS_BUILD_NUMBER.apk remote-unaligned.apk
+  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/treehouses-remote.jks -storepass $key_store_password -keypass $keystore_alias_password remote-unaligned.apk treehouses
+  - jarsigner -verify remote-unaligned.apk
+  - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 remote-unaligned.apk remote.apk"
   - sha256sum remote.apk > remote.apk.sha256
   - ls
 deploy:
