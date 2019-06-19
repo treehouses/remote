@@ -54,9 +54,6 @@ android:
     - google-gdk-license-.+
 after_success:
   - sh set_tags.sh
-#before_deploy:
-#  - mv app/build/outputs/apk/debug/remote.apk app/build/outputs/apk/debug/remote-$TRAVIS_BUILD_NUMBER.apk
-#  - sync;sync;sync
 before_deploy:
   - cp $TRAVIS_BUILD_DIR/treehouses-remote.jks $HOME
   - cd app/build/outputs/apk/release
