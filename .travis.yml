@@ -57,9 +57,10 @@ after_success:
 before_deploy:
   - cp $TRAVIS_BUILD_DIR/treehouses-remote.jks $HOME
   - cd app/build/outputs/apk/release
-  - ls
+  - cp remote-$TRAVIS_BUILD_NUMBER.apk remote.apk
   - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/treehouses-remote.jks -storepass $storepass -keypass $keypass remote-$TRAVIS_BUILD_NUMBER.apk treehouses
-  - sha256sum remote.apk > remote-$TRAVIS_BUILD_NUMBER.apk.sha256
+  - sha256sum remote.apk > remote.apk.sha256
+  - ls
 deploy:
   provider: releases
   api_key:
