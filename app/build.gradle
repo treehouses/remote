@@ -27,7 +27,7 @@ android {
 //                } else {
 //                    outputFileName += "-SNAPSHOT.apk";
 //                }
-                outputFileName += "remote" + android.defaultConfig.versionCode +".apk"
+                outputFileName += "remote-" + android.defaultConfig.versionCode +".apk"
             }
         }
     }
