@@ -257,7 +257,8 @@ public class TerminalFragment extends BaseTerminalFragment {
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
-                    handlerCaseWrite(isRead, TAG, mConversationArrayAdapter, msg);
+                    isRead = false;
+                    handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
