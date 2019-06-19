@@ -12,24 +12,29 @@ android {
         versionCode appVersionCode
         versionName appVersionName+""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                outputFileName = new File("remote-" + android.defaultConfig.versionCode +".apk")
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        android.applicationVariants.all { variant ->
-            variant.outputs.all {
-//                outputFileName = applicationId;
-//                outputFileName += "-v" + android.defaultConfig.versionName;
-//                if (variant.buildType.name == "release") {
-//                    outputFileName += ".apk";
-//                } else {
-//                    outputFileName += "-SNAPSHOT.apk";
-//                }
-                outputFileName += "remote-" + android.defaultConfig.versionCode +".apk"
-            }
-        }
+//        android.applicationVariants.all { variant ->
+//            variant.outputs.all {
+////                outputFileName = applicationId;
+////                outputFileName += "-v" + android.defaultConfig.versionName;
+////                if (variant.buildType.name == "release") {
+////                    outputFileName += ".apk";
+////                } else {
+////                    outputFileName += "-SNAPSHOT.apk";
+////                }
+//                outputFileName += "remote-" + android.defaultConfig.versionCode +".apk"
+//            }
+//        }
     }
     lintOptions {
         abortOnError false

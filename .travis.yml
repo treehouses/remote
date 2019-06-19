@@ -59,7 +59,7 @@ before_deploy:
   - cd app/build/outputs/apk/release
   - ls
   - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/treehouses-remote.jks -storepass $storepass -keypass $keypass remote-$TRAVIS_BUILD_NUMBER.apk treehouses
-  - sha256sum remote.apk > remote.apk.sha256
+  - sha256sum remote.apk > remote-$TRAVIS_BUILD_NUMBER.apk.sha256
 deploy:
   provider: releases
   api_key:
