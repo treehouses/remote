@@ -1,10 +1,8 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -23,14 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.utils.Utils;
 
-public class TerminalFragment extends BaseFragment {
+public class TerminalFragment extends BaseTerminalFragment {
 
     private static final String TAG = "BluetoothChatFragment";
     private ListView mConversationView;
@@ -40,9 +39,7 @@ public class TerminalFragment extends BaseFragment {
     private Button mCheckButton;
     private TextView mPingStatus;
     private ListView listView;
-    private Context context;
     View view;
-
 
     public TerminalFragment() {}
 
@@ -66,14 +63,12 @@ public class TerminalFragment extends BaseFragment {
      */
     private ArrayAdapter<String> mConversationArrayAdapter;
 
-
     /**
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
 
     private static boolean isRead = false;
-    private static boolean isCountdown = false;
 
     @Override
     public void onDestroy() {
@@ -86,7 +81,7 @@ public class TerminalFragment extends BaseFragment {
             if (mChatService.getState() == Constants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
-                mIdle();
+                idle(mPingStatus, pingStatusButton);
             }
         }
     }
@@ -114,47 +109,19 @@ public class TerminalFragment extends BaseFragment {
     public void setupChat() {
         Log.d(TAG, "setupChat()");
       
-        mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickedData = (String) mConversationView.getItemAtPosition(position);
-                context = getContext();
-                Utils.copyToClipboard(context, clickedData);
-            }
-        });
+        copyToList(mConversationView, getContext());
 
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, MainApplication.getTerminalList()){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                TextView output = view.findViewById(R.id.listItem);
-
-                if (isRead){
-                    output.setTextColor(Color.BLUE);
-                }else {
-                    output.setTextColor(Color.RED);
-                }
+                getViews(view, isRead);
                 return view;
             }
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    listener.sendMessage("treehouses");
-                } else if (position == 3) {
-                    listener.sendMessage("docker ps");
-                } else if (position == 2) {
-                    listener.sendMessage("treehouses detectrpi");
-                } else if (position == 0) {
-                    showChPasswordDialog();
-                } else if (position == 5) {
-                    listener.sendMessage("treehouses expandfs");
-                }
-            }
-        });
+        buttonFunctionality();
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
@@ -173,13 +140,7 @@ public class TerminalFragment extends BaseFragment {
             }
         });
 
-        mCheckButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("CHECK STATUS", "" + mChatService.getState());
-                checkStatusNow();
-            }
-        });
+        buttonOnClick(mCheckButton, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
@@ -187,14 +148,23 @@ public class TerminalFragment extends BaseFragment {
         }
     }
 
-    public void checkStatusNow() {
-        if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            mConnect();
-        } else if (mChatService.getState() == Constants.STATE_NONE) {
-            mOffline();
-        } else {
-            mIdle();
-        }
+    private void buttonFunctionality() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    listener.sendMessage("treehouses");
+                } else if (position == 3) {
+                    listener.sendMessage("docker ps");
+                } else if (position == 2) {
+                    listener.sendMessage("treehouses detectrpi");
+                } else if (position == 0) {
+                    showChPasswordDialog();
+                } else if (position == 5) {
+                    listener.sendMessage("treehouses expandfs");
+                }
+            }
+        });
     }
 
     /**
@@ -217,32 +187,40 @@ public class TerminalFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case Constants.REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
-                } else {
-                    // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
+                onResultCaseEnable(resultCode);
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
-                if (resultCode == Activity.RESULT_OK) {
-                    //get password change request
-                    String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-
-                    //store password and command
-                    String password = "treehouses password " + chPWD;
-                    Log.d(TAG, "back from change password");
-
-                    //send password to command line interface
-                    listener.sendMessage(password);
-                } else {
-                    Log.d(TAG, "back from change password, fail");
-                }
+                onResultCaseDialogChpass(resultCode, data);
                 break;
+        }
+    }
+
+    private void onResultCaseDialogChpass(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            //get password change request
+            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
+
+            //store password and command
+            String password = "treehouses password " + chPWD;
+            Log.d(TAG, "back from change password");
+
+            //send password to command line interface
+            listener.sendMessage(password);
+        } else {
+            Log.d(TAG, "back from change password, fail");
+        }
+    }
+
+    private void onResultCaseEnable(int resultCode) {
+        // When the request to enable Bluetooth returns
+        if (resultCode == Activity.RESULT_OK) {
+            // Bluetooth is now enabled, so set up a chat session
+            setupChat();
+        } else {
+            // User did not enable Bluetooth or an error occurred
+            Log.d(TAG, "BT not enabled");
+            Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
+            getActivity().finish();
         }
     }
 
@@ -262,31 +240,11 @@ public class TerminalFragment extends BaseFragment {
         return true;
     }
 
-    private void mOffline() {
-        mPingStatus.setText(R.string.bStatusOffline);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.RED);
-    }
-
-    private void mIdle() {
-        mPingStatus.setText(R.string.bStatusIdle);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.YELLOW);
-    }
-
-    private void mConnect() {
-        mPingStatus.setText(R.string.bStatusConnected);
-        pingStatusButton.setBackgroundResource((R.drawable.circle));
-        GradientDrawable bgShape = (GradientDrawable) pingStatusButton.getBackground();
-        bgShape.setColor(Color.GREEN);
-    }
-
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    public final Handler mHandler = new Handler() {
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -294,19 +252,13 @@ public class TerminalFragment extends BaseFragment {
                     switch (msg.arg1) {
                         case Constants.STATE_LISTEN:
                         case Constants.STATE_NONE:
-                            mIdle();
+                            idle(mPingStatus, pingStatusButton);
                             break;
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
-                    String writeMessage = new String(writeBuf);
-                    if (!writeMessage.contains("google.com")) {
-                        Log.d(TAG, "writeMessage = " + writeMessage);
-                        mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
-                    }
+                    handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
                     isRead = true;
@@ -316,37 +268,27 @@ public class TerminalFragment extends BaseFragment {
                     //TODO: if message is json -> callback from RPi
                     if (isJson(readMessage)) {
                     } else {
-                        if (isCountdown) {
-                            isCountdown = false;
-                        }
-                        //remove the space at the very end of the readMessage -> eliminate space between items
-                        readMessage = readMessage.substring(0, readMessage.length() - 1);
+
+                        readMessage = readMessage.trim();
 
                         //check if ping was successful
                         if (readMessage.contains("1 packets")) {
-                            mConnect();
+                            connect(mPingStatus, pingStatusButton);
                         }
                         if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                            mOffline();
+                            offline(mPingStatus, pingStatusButton);
                         }
                         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
                         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
+                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
                             MainApplication.getTerminalList().add(readMessage);
                             mConversationArrayAdapter.notifyDataSetChanged();
                         }
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    /**
-                     * Name of the connected device
-                     */
-                    String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
+                    Activity activity = getActivity();
+                    handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
                     if (null != getActivity()) {
