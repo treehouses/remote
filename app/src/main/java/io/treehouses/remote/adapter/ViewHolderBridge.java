@@ -1,8 +1,10 @@
 package io.treehouses.remote.adapter;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -13,7 +15,7 @@ public class ViewHolderBridge {
     public TextInputEditText etEssid, etHotspotEssid, etPassword, etHotspotPassword;
     public Button btnStartConfiguration;
 
-    public ViewHolderBridge(View v, final HomeInteractListener listener) {
+    public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
         etEssid = v.findViewById(R.id.et_essid);
         etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
         etPassword = v.findViewById(R.id.et_password);
@@ -28,6 +30,7 @@ public class ViewHolderBridge {
                     overallMessage += "\"" + etHotspotPassword.getText().toString() + "\"";
                 }
                 listener.sendMessage(overallMessage);
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
         });
     }
