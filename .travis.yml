@@ -63,6 +63,7 @@ before_deploy:
   - jarsigner -verify remote-unaligned.apk
   - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 remote-unaligned.apk remote.apk"
   - sha256sum remote.apk > remote.apk.sha256
+  - rm remote-unaligned.apk
   - ls
 deploy:
   provider: releases
