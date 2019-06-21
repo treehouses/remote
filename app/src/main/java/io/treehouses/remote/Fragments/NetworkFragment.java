@@ -84,6 +84,7 @@ public class NetworkFragment extends BaseFragment {
     private void updateNetworkMode() {
         alert = false;
         networkStatus = true;
+        bridge = false;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
