@@ -14,6 +14,8 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import io.treehouses.remote.enums.Bridge;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
@@ -22,18 +24,19 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.NetworkListItem;
 
-
 public class NetworkFragment extends BaseFragment {
 
-    View view;
-    private BluetoothChatService mChatService = null;
+    private static Bridge bridgeStatus = Bridge.UNCONFIGURED;
+    private static Boolean bridge = false;
     private static NetworkFragment instance = null;
+    private int lastPosition = -1;
+    private BluetoothChatService mChatService = null;
     private Boolean alert = true;
     private Boolean networkStatus = false;
-    private Boolean bridge = false;
     private ExpandableListView expListView;
-    private int lastPosition = -1;
-    NetworkListAdapter adapter;
+    private NetworkListAdapter adapter;
+    View view;
+
     public NetworkFragment() { }
 
 
@@ -81,9 +84,14 @@ public class NetworkFragment extends BaseFragment {
         return instance;
     }
 
+    public static Bridge getBridgeStatus() {
+        return bridgeStatus;
+    }
+
     private void updateNetworkMode() {
         alert = false;
         networkStatus = true;
+        bridge = false;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
@@ -138,13 +146,17 @@ public class NetworkFragment extends BaseFragment {
                     String readMessage = (String) msg.obj;
                     Log.d("TAG", "readMessage = " + readMessage);
                     if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
-                        bridge = readMessage.trim().contains("the bridge has been built");
-                        if (!bridge) { updateNetworkMode(); }
+
+                        if (readMessage.trim().contains("the bridge has been built")) { bridgeStatus = Bridge.BUILT; }
+                        if (readMessage.trim().contains("Error when trying to run the command 'treehouses bridge")) { bridgeStatus = Bridge.ERROR; }
+
+                        if (bridgeStatus == Bridge.UNCONFIGURED) { updateNetworkMode(); }
                         else { alert = true; }
-                        if (networkStatus && !bridge) { return; }
+
+                        if (networkStatus && bridgeStatus == Bridge.UNCONFIGURED) { return; }
                     }
                     if (readMessage.contains("please reboot your device")) { alert = true; }
-                    Log.d("TAG", "readMessage = " + readMessage);
+
                     if (readMessage.trim().contains("default network")) { networkStatus = true; }
                     if (readMessage.trim().equals("false") || readMessage.trim().contains("true")) { return; }
 
@@ -153,10 +165,11 @@ public class NetworkFragment extends BaseFragment {
                         networkStatus = false;
                         alert = false;
                     }
+
                     if (alert) { showAlertDialog(readMessage); }
                     else { alert = false; }
 
-                    if (bridge) { updateNetworkMode(); }
+                    if (bridgeStatus == Bridge.BUILT) { updateNetworkMode(); }
                     else { alert = true; }
                     break;
             }
