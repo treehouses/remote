@@ -16,7 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import io.treehouses.remote.callback.ButtonConfig;
+import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
@@ -34,7 +34,7 @@ public class NetworkFragment extends BaseFragment {
     private Boolean changeList = true;
     private ExpandableListView expListView;
     private NetworkListAdapter adapter;
-    private ButtonConfig btnConfig;
+    private ButtonConfiguration buttonConfiguration;
     View view;
 
     public NetworkFragment() { }
@@ -87,8 +87,8 @@ public class NetworkFragment extends BaseFragment {
         return instance;
     }
 
-    public void setBtnConfig(ButtonConfig btnConfig) {
-        this.btnConfig = btnConfig;
+    public void setButtonConfiguration(ButtonConfiguration buttonConfiguration) {
+        this.buttonConfiguration = buttonConfiguration;
     }
 
     private void updateNetworkMode() {
@@ -162,13 +162,13 @@ public class NetworkFragment extends BaseFragment {
             case "open wifi network": // wifi with no password
             case "password network": // wifi with password
                 alert = false;
-                btnConfig.btnConfigDisabled(true, Color.WHITE);
+                buttonConfiguration.buttonProperties(true, Color.WHITE);
                 updateNetworkMode();
                 return true;
         }
 
         if (readMessage.contains("Error")) {
-            btnConfig.btnConfigDisabled(true, Color.WHITE);
+            buttonConfiguration.buttonProperties(true, Color.WHITE);
             alert = true;
         }
         return false;

@@ -1,11 +1,6 @@
 package io.treehouses.remote;
 
-import android.widget.Button;
+public abstract class ButtonConfiguration {
 
-public class ButtonConfiguration {
-
-    public static void buttonProperties(Button button, Boolean clickable, int color) {
-       button.setClickable(clickable);
-       button.setTextColor(color);
-   }
+    public abstract void buttonProperties(Boolean clickable, int color);
 }

@@ -10,10 +10,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
-import io.treehouses.remote.callback.ButtonConfig;
 import io.treehouses.remote.callback.HomeInteractListener;
 
-public class ViewHolderWifi implements ButtonConfig {
+public class ViewHolderWifi extends ButtonConfiguration {
     private TextInputEditText etSsid, etPassword;
     private Button btnStartConfiguration;
 
@@ -28,7 +27,7 @@ public class ViewHolderWifi implements ButtonConfig {
                 String password = etPassword.getText().toString();
                 listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
 
-                btnConfigDisabled(false, Color.LTGRAY);
+                buttonProperties(false, Color.LTGRAY);
 
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
 
@@ -39,8 +38,9 @@ public class ViewHolderWifi implements ButtonConfig {
     }
 
     @Override
-    public void btnConfigDisabled(Boolean clickable, int color) {
-        NetworkFragment.getInstance().setBtnConfig(this);
-        ButtonConfiguration.buttonProperties(btnStartConfiguration, clickable, color);
+    public void buttonProperties(Boolean clickable, int color) {
+        NetworkFragment.getInstance().setButtonConfiguration(this);
+        btnStartConfiguration.setClickable(clickable);
+        btnStartConfiguration.setTextColor(color);
     }
 }

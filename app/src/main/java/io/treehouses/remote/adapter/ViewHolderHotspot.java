@@ -10,10 +10,9 @@ import android.widget.Toast;
 import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
-import io.treehouses.remote.callback.ButtonConfig;
 import io.treehouses.remote.callback.HomeInteractListener;
 
-class ViewHolderHotspot implements ButtonConfig {
+class ViewHolderHotspot extends ButtonConfiguration{
     private EditText etEssid, etPassword;
     private Spinner spn;
     private Button btnStartConfiguration;
@@ -34,16 +33,16 @@ class ViewHolderHotspot implements ButtonConfig {
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 }
 
-                btnConfigDisabled(false, Color.LTGRAY);
+                buttonProperties(false, Color.LTGRAY);
             }
         });
 
     }
 
-
     @Override
-    public void btnConfigDisabled(Boolean clickable, int color) {
-        NetworkFragment.getInstance().setBtnConfig(this);
-        ButtonConfiguration.buttonProperties(btnStartConfiguration, clickable, color);
+    public void buttonProperties(Boolean clickable, int color) {
+        NetworkFragment.getInstance().setButtonConfiguration(this);
+        btnStartConfiguration.setClickable(clickable);
+        btnStartConfiguration.setTextColor(color);
     }
 }
