@@ -93,16 +93,16 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         convertView = inflater.inflate(list.get(i).getLayout(), parent, false);
         switch (i) {
             case 0:
-                new ViewHolderEthernet(convertView, listener);
+                new ViewHolderEthernet(convertView, listener, getContext());
                 break;
             case 1:
-                new ViewHolderWifi(convertView, listener);
+                new ViewHolderWifi(convertView, listener, getContext());
                 break;
             case 2:
-                new ViewHolderHotspot(convertView, listener);
+                new ViewHolderHotspot(convertView, listener, getContext());
                 break;
             case 3:
-                new ViewHolderBridge(convertView, listener);
+                new ViewHolderBridge(convertView, listener, getContext());
                 break;
             case 4:
                 new ViewHolderReset(convertView, listener);

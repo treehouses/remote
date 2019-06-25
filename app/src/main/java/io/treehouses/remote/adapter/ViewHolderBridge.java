@@ -1,12 +1,12 @@
 package io.treehouses.remote.adapter;
 
 import android.graphics.Color;
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
-
 import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.callback.ButtonConfig;
@@ -17,7 +17,8 @@ public class ViewHolderBridge implements ButtonConfig {
     private TextInputEditText etEssid, etHotspotEssid, etPassword, etHotspotPassword;
     private Button btnStartConfiguration;
 
-    ViewHolderBridge(View v, final HomeInteractListener listener) {
+    public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
+
         etEssid = v.findViewById(R.id.et_essid);
         etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
         etPassword = v.findViewById(R.id.et_password);
@@ -35,6 +36,8 @@ public class ViewHolderBridge implements ButtonConfig {
                 listener.sendMessage(overallMessage);
 
                 btnConfigDisabled(false, Color.LTGRAY);
+              
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
 
             }
         });
