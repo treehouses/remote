@@ -157,26 +157,16 @@ public class NetworkFragment extends BaseFragment {
 
     private Boolean btnConfigValidation(String readMessage) {
         switch (readMessage) {
-            case "This pirateship has anchored successfully!":
-                // if hotspot is configured... and also for Ethernet
-                alert = false;
-                btnConfig.btnConfigDisabled(true, Color.WHITE);
-                updateNetworkMode();
-                return true;
-            case "the bridge has been built ;), a reboot is required to apply changes":
-                // if bridge is configured or if it fails
-                btnConfig.btnConfigDisabled(true, Color.WHITE);
-                alert = false;
-                updateNetworkMode();
-                return true;
-            case "open wifi network":
-            case "password network":
-                // if wifi is configured
+            case "This pirateship has anchored successfully!": // hotspot or ethernet
+            case "the bridge has been built ;), a reboot is required to apply changes": // bridge
+            case "open wifi network": // wifi with no password
+            case "password network": // wifi with password
                 alert = false;
                 btnConfig.btnConfigDisabled(true, Color.WHITE);
                 updateNetworkMode();
                 return true;
         }
+
         if (readMessage.contains("Error")) {
             btnConfig.btnConfigDisabled(true, Color.WHITE);
             alert = true;
