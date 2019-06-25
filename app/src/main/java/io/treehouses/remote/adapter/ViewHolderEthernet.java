@@ -1,14 +1,18 @@
 package io.treehouses.remote.adapter;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
+import io.treehouses.remote.callback.ButtonConfig;
 import io.treehouses.remote.callback.HomeInteractListener;
 
-public class ViewHolderEthernet {
+public class ViewHolderEthernet implements ButtonConfig {
     public TextInputEditText etIp, etDNS, etGateway, etMask;
     public Button btnStartConfiguration;
 
@@ -26,7 +30,15 @@ public class ViewHolderEthernet {
                 String gateway = etGateway.getText().toString();
                 String mask = etMask.getText().toString();
                 listener.sendMessage(String.format("treehouses ethernet \"%s\" \"%s\" \"%s\" \"%s\"", ip, mask, gateway, dns));
+                btnConfigDisabled(false, Color.LTGRAY);
             }
         });
+
+    }
+
+    @Override
+    public void btnConfigDisabled(Boolean clickable, int color) {
+        NetworkFragment.getInstance().setBtnConfig(this);
+        ButtonConfiguration.buttonProperties(btnStartConfiguration, clickable, color);
     }
 }

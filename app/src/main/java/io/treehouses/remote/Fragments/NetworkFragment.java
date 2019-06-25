@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import io.treehouses.remote.enums.Bridge;
+import io.treehouses.remote.callback.ButtonConfig;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
@@ -26,15 +27,14 @@ import io.treehouses.remote.pojo.NetworkListItem;
 
 public class NetworkFragment extends BaseFragment {
 
-    private static Bridge bridgeStatus = Bridge.UNCONFIGURED;
-    private static Boolean bridge = false;
     private static NetworkFragment instance = null;
     private int lastPosition = -1;
     private BluetoothChatService mChatService = null;
     private Boolean alert = true;
-    private Boolean networkStatus = false;
+    private Boolean changeList = true;
     private ExpandableListView expListView;
     private NetworkListAdapter adapter;
+    private ButtonConfig btnConfig;
     View view;
 
     public NetworkFragment() { }
@@ -77,6 +77,9 @@ public class NetworkFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        alert = false;
+        updateNetworkMode();
+        Log.e("TAG", "onResume is called");
         expListView.expandGroup(6);
     }
 
@@ -84,14 +87,12 @@ public class NetworkFragment extends BaseFragment {
         return instance;
     }
 
-    public static Bridge getBridgeStatus() {
-        return bridgeStatus;
+    public void setBtnConfig(ButtonConfig btnConfig) {
+        this.btnConfig = btnConfig;
     }
 
     private void updateNetworkMode() {
-        alert = false;
-        networkStatus = true;
-        bridge = false;
+        changeList = true;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
@@ -134,51 +135,9 @@ public class NetworkFragment extends BaseFragment {
                 }).show();
     }
 
-    /**
-     * The Handler that gets information back from the BluetoothChatService
-     */
-    @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_READ:
-                    String readMessage = (String) msg.obj;
-                    Log.d("TAG", "readMessage = " + readMessage);
-                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
-
-                        if (readMessage.trim().contains("the bridge has been built")) { bridgeStatus = Bridge.BUILT; }
-                        if (readMessage.trim().contains("Error when trying to run the command 'treehouses bridge")) { bridgeStatus = Bridge.ERROR; }
-
-                        if (bridgeStatus == Bridge.UNCONFIGURED) { updateNetworkMode(); }
-                        else { alert = true; }
-
-                        if (networkStatus && bridgeStatus == Bridge.UNCONFIGURED) { return; }
-                    }
-                    if (readMessage.contains("please reboot your device")) { alert = true; }
-
-                    if (readMessage.trim().contains("default network")) { networkStatus = true; }
-                    if (readMessage.trim().equals("false") || readMessage.trim().contains("true")) { return; }
-
-                    if (networkStatus) {
-                        changeList(readMessage);
-                        networkStatus = false;
-                        alert = false;
-                    }
-
-                    if (alert) { showAlertDialog(readMessage); }
-                    else { alert = false; }
-
-                    if (bridgeStatus == Bridge.BUILT) { updateNetworkMode(); }
-                    else { alert = true; }
-                    break;
-            }
-        }
-    };
-
     private void changeList(String readMessage) {
         adapter.setNetworkMode("Network Mode: " + readMessage);
-        if (readMessage.contains("default")) {
+        if (readMessage.contains("default") || readMessage.contains("static ethernet")) {
             expListView.expandGroup(0);
         } else if (readMessage.contains("wifi")) {
             expListView.expandGroup(1);
@@ -188,4 +147,69 @@ public class NetworkFragment extends BaseFragment {
             expListView.expandGroup(3);
         }
     }
+
+    private Boolean btnConfigValidation(String readMessage) {
+        switch (readMessage) {
+            case "This pirateship has anchored successfully!":
+                // if hotspot is configured... and also for Ethernet
+                alert = false;
+                btnConfig.btnConfigDisabled(true, Color.WHITE);
+                updateNetworkMode();
+                return true;
+            case "the bridge has been built ;), a reboot is required to apply changes":
+                // if bridge is configured or if it fails
+                btnConfig.btnConfigDisabled(true, Color.WHITE);
+                alert = false;
+                updateNetworkMode();
+                return true;
+            case "open wifi network":
+            case "password network":
+                // if wifi is configured
+                alert = false;
+                btnConfig.btnConfigDisabled(true, Color.WHITE);
+                updateNetworkMode();
+                return true;
+        }
+        if (readMessage.contains("Error")) {
+            btnConfig.btnConfigDisabled(true, Color.WHITE);
+            alert = true;
+        }
+        return false;
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == Constants.MESSAGE_READ) {
+                String readMessage = (String) msg.obj;
+                Log.d("TAG", "readMessage = " + readMessage);
+
+                Boolean result = btnConfigValidation(readMessage.trim());
+                if (result || readMessage.trim().equals("false") || readMessage.trim().contains("true")) {
+                    return;
+                }
+
+                if (readMessage.contains("please reboot your device")) {
+                    alert = true;
+                    changeList = false;
+                }
+
+                if (changeList) {
+                    changeList(readMessage.trim());
+                    changeList = false;
+                }
+
+                if (alert) {
+                    showAlertDialog(readMessage);
+                    alert = false;
+                }
+            }
+        }
+    };
+
+
 }
