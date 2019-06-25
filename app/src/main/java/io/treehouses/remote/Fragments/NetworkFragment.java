@@ -137,14 +137,21 @@ public class NetworkFragment extends BaseFragment {
 
     private void changeList(String readMessage) {
         adapter.setNetworkMode("Network Mode: " + readMessage);
-        if (readMessage.contains("default") || readMessage.contains("static ethernet")) {
-            expListView.expandGroup(0);
-        } else if (readMessage.contains("wifi")) {
-            expListView.expandGroup(1);
-        } else if (readMessage.contains("internet") || readMessage.contains("local")) {
-            expListView.expandGroup(2);
-        } else if (readMessage.contains("bridge")) {
-            expListView.expandGroup(3);
+        switch (readMessage) {
+            case "default":
+            case "static ethernet":
+                expListView.expandGroup(0);
+                break;
+            case "wifi":
+                expListView.expandGroup(1);
+                break;
+            case "internet":
+            case "local":
+                expListView.expandGroup(2);
+                break;
+            case "bridge":
+                expListView.expandGroup(3);
+                break;
         }
     }
 
