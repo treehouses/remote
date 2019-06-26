@@ -14,7 +14,6 @@ import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderBridge extends ButtonConfiguration {
     private TextInputEditText etEssid, etHotspotEssid, etPassword, etHotspotPassword;
-    private Button btnStartConfiguration;
 
     public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
 
@@ -43,10 +42,4 @@ public class ViewHolderBridge extends ButtonConfiguration {
         });
     }
 
-    @Override
-    public void buttonProperties(Boolean clickable, int color) {
-        NetworkFragment.getInstance().setButtonConfiguration(this);
-        btnStartConfiguration.setClickable(clickable);
-        btnStartConfiguration.setTextColor(color);
-    }
 }

@@ -1,6 +1,14 @@
 package io.treehouses.remote;
 
-public abstract class ButtonConfiguration {
+import android.widget.Button;
 
-    public abstract void buttonProperties(Boolean clickable, int color);
+import io.treehouses.remote.Fragments.NetworkFragment;
+
+public abstract class ButtonConfiguration {
+    protected Button btnStartConfiguration;
+    public  void buttonProperties(Boolean clickable, int color){
+        NetworkFragment.getInstance().setButtonConfiguration(this);
+        btnStartConfiguration.setClickable(clickable);
+        btnStartConfiguration.setTextColor(color);
+    }
 }

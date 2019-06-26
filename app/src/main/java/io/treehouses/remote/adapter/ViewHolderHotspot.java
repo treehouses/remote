@@ -15,7 +15,6 @@ import io.treehouses.remote.callback.HomeInteractListener;
 class ViewHolderHotspot extends ButtonConfiguration{
     private EditText etEssid, etPassword;
     private Spinner spn;
-    private Button btnStartConfiguration;
 
     public ViewHolderHotspot(View v, final HomeInteractListener listener, final Context context) {
         etEssid = v.findViewById(R.id.et_hotspot_ssid);
@@ -37,12 +36,5 @@ class ViewHolderHotspot extends ButtonConfiguration{
             }
         });
 
-    }
-
-    @Override
-    public void buttonProperties(Boolean clickable, int color) {
-        NetworkFragment.getInstance().setButtonConfiguration(this);
-        btnStartConfiguration.setClickable(clickable);
-        btnStartConfiguration.setTextColor(color);
     }
 }

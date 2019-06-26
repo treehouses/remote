@@ -13,7 +13,6 @@ import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderEthernet extends ButtonConfiguration {
     public TextInputEditText etIp, etDNS, etGateway, etMask;
-    public Button btnStartConfiguration;
 
     public ViewHolderEthernet(View v, final HomeInteractListener listener, final Context context) {
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
@@ -36,12 +35,5 @@ public class ViewHolderEthernet extends ButtonConfiguration {
             }
         });
 
-    }
-
-    @Override
-    public void buttonProperties(Boolean clickable, int color) {
-        NetworkFragment.getInstance().setButtonConfiguration(this);
-        btnStartConfiguration.setClickable(clickable);
-        btnStartConfiguration.setTextColor(color);
     }
 }

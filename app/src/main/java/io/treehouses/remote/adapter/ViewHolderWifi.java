@@ -14,7 +14,6 @@ import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderWifi extends ButtonConfiguration {
     private TextInputEditText etSsid, etPassword;
-    private Button btnStartConfiguration;
 
     public ViewHolderWifi(View v, final HomeInteractListener listener, final Context context) {
         etSsid = v.findViewById(R.id.et_ssid);
@@ -26,7 +25,6 @@ public class ViewHolderWifi extends ButtonConfiguration {
                 String ssid = etSsid.getText().toString();
                 String password = etPassword.getText().toString();
                 listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
-
                 buttonProperties(false, Color.LTGRAY);
 
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
@@ -35,12 +33,5 @@ public class ViewHolderWifi extends ButtonConfiguration {
 
         });
 
-    }
-
-    @Override
-    public void buttonProperties(Boolean clickable, int color) {
-        NetworkFragment.getInstance().setButtonConfiguration(this);
-        btnStartConfiguration.setClickable(clickable);
-        btnStartConfiguration.setTextColor(color);
     }
 }
