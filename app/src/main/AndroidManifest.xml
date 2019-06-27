@@ -46,8 +46,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:label="@string/app_name" android:name=".WifiAdapter.WiFiManager"/>
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

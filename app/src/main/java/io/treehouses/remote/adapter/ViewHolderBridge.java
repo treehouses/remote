@@ -8,24 +8,28 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.ButtonConfiguration;
-import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderBridge extends ButtonConfiguration {
-    private TextInputEditText etEssid, etHotspotEssid, etPassword, etHotspotPassword;
+    private TextInputEditText etHotspotEssid, etPassword, etHotspotPassword;
+    private Button btnStartConfiguration;
 
     public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
 
-        etEssid = v.findViewById(R.id.et_essid);
+        etSsid = v.findViewById(R.id.et_essid);
         etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
         etPassword = v.findViewById(R.id.et_password);
         etHotspotPassword = v.findViewById(R.id.et_hotspot_password);
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
+        btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
+
+        buttonWifiSearch(context);
+
         btnStartConfiguration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String temp = "treehouses bridge \"" + etEssid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
+                String temp = "treehouses bridge \"" + etSsid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
                 String overallMessage = TextUtils.isEmpty(etPassword.getText().toString()) ? temp + "\"\"" : temp + "\"" + etPassword.getText().toString() + "\"";
                 overallMessage += " ";
 
