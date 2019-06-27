@@ -58,7 +58,10 @@
             android:id="@+id/btnWifiSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Search WiFi networks" />
+            android:text="Search WiFi networks"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/bg_white"
+            android:backgroundTint="@color/colorPrimary" />
 
         <include
             layout="@layout/layout_btn_configuration"

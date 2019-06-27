@@ -67,13 +67,23 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout5"
         tools:layout_editor_absoluteX="8dp">
 
+        <Button
+            android:id="@+id/btnWifiSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search wifi networks"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/bg_white"
+            android:backgroundTint="@color/colorPrimary" />
+
         <include layout="@layout/layout_btn_configuration" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
