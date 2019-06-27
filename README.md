@@ -18,6 +18,8 @@ We will need a few hardware and software components as follows:
 
 * Raspberry Pi 3 (or Zero W) and 5V 2.4A (1.2A for Zero) power supply with microUSB connector
 
+**NOTE**: A Raspberry Pi 4 would be a bonus purchase as of recently our latest images are not supported yet with the device
+
 * A microSD card reader
 
 * A [Class 10](https://www.sdcard.org/developers/overview/speed_class/index.html) microSD card (minimal 8GB, but we strongly recommend 16GB or greater)
@@ -34,21 +36,15 @@ We will need a few hardware and software components as follows:
 
 2. Once it's done burning, remount the microSD card if its unmounted by Etcher, so that you can view the contents in the `boot` partition. You will see a long list of files.
 
-3. Create a file named `autorunonce.txt` and place it in the `boot` partition of the microSD card:
+3. Unmount and remove the microSD card from the card reader and place it into the RPi.
 
-    ```
-    treehouses rename treehouses # rename the raspberry pi so we could easily distinguish the bluetooth device
-    treehouses bluetooth on # enable bluetooth and our bluetooth-server on the Raspberry Pi
-    # treehouses wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
-    ```
+4. Connect the RPi to power.
 
-4. Unmount and remove the microSD card from the card reader and place it into the RPi.
+5. If you possess an android phone find the Treehouses Remote app on Google Play Store and [download](https://play.google.com/store/apps/details?id=io.treehouses.remote) it.
 
-5. Connect a RJ45 network cable to the Ethernet port on the RPi (skip this step if you have Wi-Fi configured in step 3.)
+6. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
 
-6. Connect the RPi to power.
 
-7. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
 
 ## Setting Up the Android Device
 
@@ -57,10 +53,10 @@ We assume you've already installed [Android Studio](https://developer.android.co
 ### Connect to Raspsberry Pi via Bluetooth
 
 1.In the android bluetooth settings, scan and pair with the Pi device.
-1. Click on the three dots (menu icon) at the upper right corner of the app. 
-1. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
-1. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
-1. If it does not work, please click on `cmd` button and repeat steps 1 through 3.
+2. Click on the three dots (menu icon) at the upper right corner of the app. 
+3. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
+4. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
+5. If it does not work, please click on `cmd` button and repeat steps 1 through 3.
 
 ### Features
 
