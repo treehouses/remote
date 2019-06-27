@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,8 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
@@ -22,18 +25,18 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.NetworkListItem;
 
-
 public class NetworkFragment extends BaseFragment {
 
-    View view;
-    private BluetoothChatService mChatService = null;
     private static NetworkFragment instance = null;
-    private Boolean alert = true;
-    private Boolean networkStatus = false;
-    private Boolean bridge = false;
-    private ExpandableListView expListView;
     private int lastPosition = -1;
-    NetworkListAdapter adapter;
+    private BluetoothChatService mChatService = null;
+    private Boolean alert = true;
+    private Boolean changeList = true;
+    private ExpandableListView expListView;
+    private NetworkListAdapter adapter;
+    private ButtonConfiguration buttonConfiguration;
+    View view;
+
     public NetworkFragment() { }
 
 
@@ -74,6 +77,9 @@ public class NetworkFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        alert = false;
+        updateNetworkMode();
+        Log.e("TAG", "onResume is called");
         expListView.expandGroup(6);
     }
 
@@ -81,10 +87,12 @@ public class NetworkFragment extends BaseFragment {
         return instance;
     }
 
+    public void setButtonConfiguration(ButtonConfiguration buttonConfiguration) {
+        this.buttonConfiguration = buttonConfiguration;
+    }
+
     private void updateNetworkMode() {
-        alert = false;
-        networkStatus = true;
-        bridge = false;
+        changeList = true;
         listener.sendMessage("treehouses networkmode");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
@@ -127,6 +135,45 @@ public class NetworkFragment extends BaseFragment {
                 }).show();
     }
 
+    private void changeList(String readMessage) {
+        adapter.setNetworkMode("Network Mode: " + readMessage);
+        switch (readMessage) {
+            case "default":
+            case "static ethernet":
+                expListView.expandGroup(0);
+                break;
+            case "wifi":
+                expListView.expandGroup(1);
+                break;
+            case "internet":
+            case "local":
+                expListView.expandGroup(2);
+                break;
+            case "bridge":
+                expListView.expandGroup(3);
+                break;
+        }
+    }
+
+    private Boolean btnConfigValidation(String readMessage) {
+        switch (readMessage) {
+            case "This pirateship has anchored successfully!": // hotspot or ethernet
+            case "the bridge has been built ;), a reboot is required to apply changes": // bridge
+            case "open wifi network": // wifi with no password
+            case "password network": // wifi with password
+                alert = false;
+                buttonConfiguration.buttonProperties(true, Color.WHITE);
+                updateNetworkMode();
+                return true;
+        }
+
+        if (readMessage.contains("Error")) {
+            buttonConfiguration.buttonProperties(true, Color.WHITE);
+            alert = true;
+        }
+        return false;
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -134,46 +181,32 @@ public class NetworkFragment extends BaseFragment {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constants.MESSAGE_READ:
-                    String readMessage = (String) msg.obj;
-                    Log.d("TAG", "readMessage = " + readMessage);
-                    if (readMessage.trim().equals("password network") || readMessage.trim().contains("This pirateship has") || readMessage.trim().contains("the bridge has been built")) {
-                        bridge = readMessage.trim().contains("the bridge has been built");
-                        if (!bridge) { updateNetworkMode(); }
-                        else { alert = true; }
-                        if (networkStatus && !bridge) { return; }
-                    }
-                    if (readMessage.contains("please reboot your device")) { alert = true; }
-                    Log.d("TAG", "readMessage = " + readMessage);
-                    if (readMessage.trim().contains("default network")) { networkStatus = true; }
-                    if (readMessage.trim().equals("false") || readMessage.trim().contains("true")) { return; }
+            if (msg.what == Constants.MESSAGE_READ) {
+                String readMessage = (String) msg.obj;
+                Log.d("TAG", "readMessage = " + readMessage);
 
-                    if (networkStatus) {
-                        changeList(readMessage);
-                        networkStatus = false;
-                        alert = false;
-                    }
-                    if (alert) { showAlertDialog(readMessage); }
-                    else { alert = false; }
+                Boolean result = btnConfigValidation(readMessage.trim());
+                if (result || readMessage.trim().equals("false") || readMessage.trim().contains("true")) {
+                    return;
+                }
 
-                    if (bridge) { updateNetworkMode(); }
-                    else { alert = true; }
-                    break;
+                if (readMessage.contains("please reboot your device")) {
+                    alert = true;
+                    changeList = false;
+                }
+
+                if (changeList) {
+                    changeList(readMessage.trim());
+                    changeList = false;
+                }
+
+                if (alert) {
+                    showAlertDialog(readMessage);
+                    alert = false;
+                }
             }
         }
     };
 
-    private void changeList(String readMessage) {
-        adapter.setNetworkMode("Network Mode: " + readMessage);
-        if (readMessage.contains("default")) {
-            expListView.expandGroup(0);
-        } else if (readMessage.contains("wifi")) {
-            expListView.expandGroup(1);
-        } else if (readMessage.contains("internet") || readMessage.contains("local")) {
-            expListView.expandGroup(2);
-        } else if (readMessage.contains("bridge")) {
-            expListView.expandGroup(3);
-        }
-    }
+
 }
