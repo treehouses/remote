@@ -117,9 +117,14 @@ public class WifiDialogFragment extends DialogFragment {
         for (String s : resultArray) {
             if (s.contains("SSID") && !s.contains("BSSID")) {
 
-                wifiList.add(s.substring(6));
+                String ssid = s.substring(6);
 
-                Log.e("TAG", "SSID = " + s.substring(6));
+                // add to list if SSID is not hidden
+                if (!ssid.equals("")) {
+                    wifiList.add(ssid);
+                }
+
+                Log.e("TAG", "SSID = " + ssid);
             }
         }
     }
