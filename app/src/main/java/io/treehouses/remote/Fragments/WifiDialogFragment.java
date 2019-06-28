@@ -32,6 +32,7 @@ public class WifiDialogFragment extends DialogFragment {
     private Context context;
     private String SSID;
     private View mView;
+    private Boolean firstScan = true;
 
     @Override
     public void onAttach(Context context) {
@@ -97,9 +98,8 @@ public class WifiDialogFragment extends DialogFragment {
             public void onReceive(Context c, Intent intent) {
                 boolean success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false);
                 if (success) {
-
                     scanSuccess();
-                } else {
+                } else if (firstScan) {
                     scanFailure();
                 }
             }
@@ -144,13 +144,15 @@ public class WifiDialogFragment extends DialogFragment {
 
         getSSIDs(results);
 
-        if (results.size() >= 1) {
+        if (results.size() >= 1 && firstScan) {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show();
             setAdapter();
-        } else {
+        } else if (results.size() < 1 && firstScan) {
             Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
            if (mDialog != null)
             mDialog.dismiss();
         }
+        firstScan = false;
+
     }
 }
