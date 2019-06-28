@@ -120,12 +120,16 @@ public class WifiDialogFragment extends DialogFragment {
                 String ssid = s.substring(6);
 
                 // add to list if SSID is not hidden
-                if (!ssid.equals("")) {
-                    wifiList.add(ssid);
-                }
+                addToList(ssid);
 
                 Log.e("TAG", "SSID = " + ssid);
             }
+        }
+    }
+
+    private void addToList(String ssid) {
+        if (!ssid.equals("")) {
+            wifiList.add(ssid);
         }
     }
 
@@ -148,11 +152,16 @@ public class WifiDialogFragment extends DialogFragment {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show();
             setAdapter();
         } else if (results.size() < 1 && firstScan) {
-            Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
-           if (mDialog != null)
-            mDialog.dismiss();
+            ifResultListEmpty();
         }
         firstScan = false;
 
+    }
+
+    private void ifResultListEmpty() {
+        Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
     }
 }
