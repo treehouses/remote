@@ -75,7 +75,9 @@ public class WifiDialogFragment extends DialogFragment {
 
     private void setupWifi() {
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
+        if (wifiManager == null)
+            return;
+        wifiManager.setWifiEnabled(true);
         BroadcastReceiver wifiScanReceiver = wifiBroadcastReceiver();
 
         IntentFilter intentFilter = new IntentFilter();
@@ -139,6 +141,7 @@ public class WifiDialogFragment extends DialogFragment {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
+           if (mDialog!=null)
             mDialog.dismiss();
         }
     }
