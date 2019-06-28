@@ -72,7 +72,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
         dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_HOLO_DARK);
         listView = mView.findViewById(R.id.listView);
-        mDialog = getAlertDialog(mView);
+        mDialog = getAlertDialog(mView, context, false);
         mDialog.setTitle(R.string.select_device);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -123,7 +123,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     }
 
     private void finish(int status, View mView) {
-        final AlertDialog mDialog = getAlertDialog(mView);
+        final AlertDialog mDialog = getAlertDialog(mView, context, false);
         if (status == 3) {
             mDialog.setTitle("BLUETOOTH IS CONNECTED");
         } else if (status == 2) {
@@ -148,13 +148,15 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     }
 
-    private AlertDialog getAlertDialog(View mView) {
-        return new AlertDialog.Builder(getActivity())
+    public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
+        return new AlertDialog.Builder(context)
                 .setView(mView)
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton(R.string.material_drawer_close, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        bluetoothCheck("unregister");
+                        if (!wifi) {
+                            bluetoothCheck("unregister");
+                        }
                     }
                 })
                 .create();

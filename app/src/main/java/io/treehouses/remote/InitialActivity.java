@@ -31,6 +31,7 @@ import io.treehouses.remote.Fragments.SystemFragment;
 import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.bases.PermissionActivity;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.utils.LogUtils;
 
@@ -38,7 +39,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class InitialActivity extends AppCompatActivity
+public class InitialActivity extends PermissionActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
 
     private static InitialActivity instance = null;
@@ -55,7 +56,7 @@ public class InitialActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         instance = this;
         setContentView(R.layout.activity_initial2);
-
+        requestPermission();
         Log.e(TAG, "onCreate(Bundle) called");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -86,6 +87,7 @@ public class InitialActivity extends AppCompatActivity
 ////                        .setAction("Action", null).show();
 //            }
 //        });
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

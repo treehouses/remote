@@ -15,6 +15,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.adapter.NetworkListAdapter;
@@ -133,6 +134,13 @@ public class NetworkFragment extends BaseFragment {
                         dialog.cancel();
                     }
                 }).show();
+    }
+
+    public void showWifiDialog(View v) {
+        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+        androidx.fragment.app.DialogFragment dialogFrag =  WifiDialogFragment.newInstance();
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        dialogFrag.show(activity.getSupportFragmentManager().beginTransaction(),"wifiDialog");
     }
 
     private void changeList(String readMessage) {
