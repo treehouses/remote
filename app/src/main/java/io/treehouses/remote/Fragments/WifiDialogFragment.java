@@ -69,6 +69,7 @@ public class WifiDialogFragment extends DialogFragment {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             SSID = wifiList.get(position);
             ButtonConfiguration.getSSID().setText(SSID.trim());
+            wifiList.clear();
             mDialog.dismiss();
         });
     }
@@ -96,6 +97,7 @@ public class WifiDialogFragment extends DialogFragment {
             public void onReceive(Context c, Intent intent) {
                 boolean success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false);
                 if (success) {
+
                     scanSuccess();
                 } else {
                     scanFailure();
@@ -105,6 +107,7 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void getSSIDs(List<ScanResult> results) {
+        wifiList.clear();
         // converts Object list to array
         Object[] object = results.toArray();
         String temp = Arrays.toString(object);
@@ -130,18 +133,18 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void scanFailure() {
-        // handle failure: new scan did NOT succeed
+        // handle failure: new scan did not succeed
         List<ScanResult> results = wifiManager.getScanResults();
         Log.e("TAG", "Scan Failed - scan results: " + results);
 
         getSSIDs(results);
-        setAdapter();
 
         if (results.size() >= 1) {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show();
+            setAdapter();
         } else {
             Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
-           if (mDialog!=null)
+           if (mDialog != null)
             mDialog.dismiss();
         }
     }
