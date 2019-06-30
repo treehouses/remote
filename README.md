@@ -23,7 +23,7 @@ We will need a few hardware and software components as follows:
 	• Zero W
 	• Pi 3b+
 
-*5V 2.4A (1.2A for Zero) power supply with microUSB connector
+* 5V 2.4A (1.2A for Zero) power supply with microUSB connector
 
 **NOTE**: A Raspberry Pi 4 would be a bonus purchase as of recently our latest images are not supported yet with the device
 
