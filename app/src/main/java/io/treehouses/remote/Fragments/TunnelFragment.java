@@ -66,11 +66,11 @@ public class TunnelFragment extends BaseTerminalFragment {
         Button btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
         Button btn_execute_address = view.findViewById(R.id.btn_execute_address);
 
-        onClickStartConfig(btn_start);
-        onClickAddress(btn_execute_address);
-        onClickStart(btn_execute_start);
-        onClickStop(btn_execute_stop);
-        onClickDestroy(btn_execute_destroy);
+        btn_start.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
+        btn_execute_address.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
+        btn_execute_start.setOnClickListener(v -> listener.sendMessage("treehouses tor start"));
+        btn_execute_stop.setOnClickListener(v -> listener.sendMessage("treehouses tor stop"));
+        btn_execute_destroy.setOnClickListener(v -> listener.sendMessage("treehouses tor destroy"));
     }
 
     @Override
@@ -84,13 +84,7 @@ public class TunnelFragment extends BaseTerminalFragment {
         Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTunnelList()) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                return getViews(view, isRead);
-            }
-        };
+        getViewFunction();
 
         copyToList(mConversationView, getContext());
 
@@ -106,33 +100,15 @@ public class TunnelFragment extends BaseTerminalFragment {
         new StringBuilder();
     }
 
-    private void onClickStartConfig(Button btn_start) {
-        btn_start.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
-    }
-
-    private void onClickAddress(Button btn_execute_address) {
-        btn_execute_address.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
-    }
-
-    private void onClickStart(Button btn_execute_start) {
-        btn_execute_start.setOnClickListener(v -> listener.sendMessage("treehouses tor start"));
-    }
-
-    private void onClickStop( Button btn_execute_stop) {
-        btn_execute_stop.setOnClickListener(v -> listener.sendMessage("treehouses tor stop"));
-    }
-
-    private void onClickDestroy(Button btn_execute_destroy) {
-        btn_execute_destroy.setOnClickListener(v -> listener.sendMessage("treehouses tor destroy"));
-    }
-
-    private boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
+    private void getViewFunction() {
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTunnelList()) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                view = getViews(view, isRead);
+                return view;
+            }
+        };
     }
 
     private void configConditions(String readMessage) {
@@ -151,20 +127,6 @@ public class TunnelFragment extends BaseTerminalFragment {
         }
     }
 
-    private void handlerCaseRead(String readMessage) {
-        isRead = true;
-
-        Log.d(TAG, "readMessage = " + readMessage);
-
-        configConditions(readMessage);
-
-        //TODO: if message is json -> callback from RPi
-        if (!isJson(readMessage)) {
-            isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
-            filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
-        }
-    }
-
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -179,7 +141,9 @@ public class TunnelFragment extends BaseTerminalFragment {
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
-                    handlerCaseRead(readMessage);
+                    isRead = true;
+                    configConditions(readMessage);
+                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton, mConversationArrayAdapter);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();
@@ -191,5 +155,4 @@ public class TunnelFragment extends BaseTerminalFragment {
             }
         }
     };
-
 }

@@ -228,32 +228,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
     }
 
-    private boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
-
-    private void pingValidation(String readMessage) {
-        //TODO: if message is json -> callback from RPi
-        if (!isJson(readMessage)) {
-            readMessage = readMessage.trim();
-
-            //check if ping was successful
-            if (readMessage.contains("1 packets")) {
-                connect(mPingStatus, pingStatusButton);
-            }
-            if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                offline(mPingStatus, pingStatusButton);
-            }
-
-            filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
-        }
-    }
-
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -270,10 +244,9 @@ public class TerminalFragment extends BaseTerminalFragment {
                     handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
-                    isRead = true;
                     String readMessage = (String)msg.obj;
-                    Log.d("tag", "readMessage = " + readMessage);
-                    pingValidation(readMessage);
+                    isRead = true;
+                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton, mConversationArrayAdapter);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();

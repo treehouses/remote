@@ -14,6 +14,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import io.treehouses.remote.Constants;
@@ -81,17 +85,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgResource(pingStatusButton, Color.GREEN);
     }
 
-    public void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
-        readMessage = readMessage.trim();
 
-        //check if ping was successful
-        if (readMessage.contains("1 packets")) {
-            connect(mPingStatus, pingStatusButton);
-        }
-        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-            offline(mPingStatus, pingStatusButton);
-        }
-    }
 
     protected void copyToList(final ListView mConversationView, final Context context) {
         mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -129,5 +123,37 @@ public class BaseTerminalFragment extends BaseFragment{
             list.add(readMessage);
             mConversationArrayAdapter.notifyDataSetChanged();
         }
+    }
+
+    protected void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
+        readMessage = readMessage.trim();
+
+        //check if ping was successful
+        if (readMessage.contains("1 packets")) {
+            connect(mPingStatus, pingStatusButton);
+        }
+        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
+            offline(mPingStatus, pingStatusButton);
+        }
+    }
+
+    protected void handlerCaseRead(String readMessage, TextView mPingStatus, Button pingStatusButton, ArrayAdapter mConversationArrayAdapter) {
+
+        Log.d("TAG", "readMessage = " + readMessage);
+
+        //TODO: if message is json -> callback from RPi
+        if (!isJson(readMessage)) {
+            isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
+            filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
+        }
+    }
+
+    private boolean isJson(String readMessage) {
+        try {
+            new JSONObject(readMessage);
+        } catch (JSONException ex) {
+            return false;
+        }
+        return true;
     }
 }
