@@ -39,7 +39,7 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
                 listener.sendMessage(overallMessage);
 
-                buttonProperties(false, Color.LTGRAY);
+                buttonProperties(false, Color.LTGRAY, v);
               
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
