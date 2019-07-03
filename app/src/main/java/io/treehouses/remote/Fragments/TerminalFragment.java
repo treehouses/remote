@@ -246,7 +246,8 @@ public class TerminalFragment extends BaseTerminalFragment {
                 case Constants.MESSAGE_READ:
                     String readMessage = (String)msg.obj;
                     isRead = true;
-                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton, mConversationArrayAdapter);
+                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
+                    filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();

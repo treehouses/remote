@@ -143,7 +143,8 @@ public class TunnelFragment extends BaseTerminalFragment {
                     String readMessage = (String) msg.obj;
                     isRead = true;
                     configConditions(readMessage);
-                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton, mConversationArrayAdapter);
+                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
+                    filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();

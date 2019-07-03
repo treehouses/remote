@@ -88,12 +88,9 @@ public class BaseTerminalFragment extends BaseFragment{
 
 
     protected void copyToList(final ListView mConversationView, final Context context) {
-        mConversationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickedData = (String) mConversationView.getItemAtPosition(position);
-                Utils.copyToClipboard(context, clickedData);
-            }
+        mConversationView.setOnItemClickListener((parent, view, position, id) -> {
+            String clickedData = (String) mConversationView.getItemAtPosition(position);
+            Utils.copyToClipboard(context, clickedData);
         });
     }
 
@@ -108,12 +105,9 @@ public class BaseTerminalFragment extends BaseFragment{
     }
 
     protected void buttonOnClick(Button button, final BluetoothChatService mChatService, final TextView mPingStatus, final Button pingStatusButton) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("CHECK STATUS", "" + mChatService.getState());
-                checkStatus(mChatService, mPingStatus, pingStatusButton);
-            }
+        button.setOnClickListener(v -> {
+            Log.e("CHECK STATUS", "" + mChatService.getState());
+            checkStatus(mChatService, mPingStatus, pingStatusButton);
         });
     }
 
@@ -137,14 +131,13 @@ public class BaseTerminalFragment extends BaseFragment{
         }
     }
 
-    protected void handlerCaseRead(String readMessage, TextView mPingStatus, Button pingStatusButton, ArrayAdapter mConversationArrayAdapter) {
+    protected void handlerCaseRead(String readMessage, TextView mPingStatus, Button pingStatusButton) {
 
         Log.d("TAG", "readMessage = " + readMessage);
 
         //TODO: if message is json -> callback from RPi
         if (!isJson(readMessage)) {
             isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
-            filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
         }
     }
 
