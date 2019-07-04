@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -62,7 +63,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         adapter.setListener(listener);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
         expandableListView = view.findViewById(R.id.terminalList);
-
+        onGroupExpand();
         expandableListView.setAdapter(adapter);
         setHasOptionsMenu(true);
 
@@ -78,9 +79,21 @@ public class TerminalFragment extends BaseTerminalFragment {
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
+
+
     }
 
-
+    public void onGroupExpand() {
+        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            if (!expandableListView.isGroupExpanded(groupPosition)) {
+                int blue = Color.parseColor("#2196f3");
+                expandableListView.setBackgroundColor(blue);
+            } else {
+                expandableListView.setBackgroundColor(0);
+            }
+            return false;
+        });
+    }
 
     /**
      * Array adapter for the conversation thread
