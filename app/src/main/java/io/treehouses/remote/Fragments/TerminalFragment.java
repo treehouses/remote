@@ -152,7 +152,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private void buttonFunctionality() {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             if (position == 1) {
-                listener.sendMessage("treehouses");
+                listener.sendMessage("treehouses help");
             } else if (position == 3) {
                 listener.sendMessage("docker ps");
             } else if (position == 2) {
