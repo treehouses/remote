@@ -152,8 +152,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-//        buttonFunctionality();
-
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
@@ -178,15 +176,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             mChatService = new BluetoothChatService(mHandler);
         }
     }
-
-//    private void buttonFunctionality() {
-//        expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//            }
-//        });
-//    }
 
     /**
      * The action listener for the EditText widget, to listen for the return key
