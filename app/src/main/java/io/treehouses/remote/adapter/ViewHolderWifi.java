@@ -33,7 +33,7 @@ public class ViewHolderWifi extends ButtonConfiguration {
             String password = etPassword.getText().toString();
             listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
 
-            buttonProperties(false, Color.LTGRAY);
+            buttonProperties(false, Color.LTGRAY, v);
 
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
 

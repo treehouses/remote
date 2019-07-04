@@ -146,8 +146,7 @@ public class TerminalFragment extends BaseTerminalFragment {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                getViews(view, isRead);
-                return view;
+                return getViews(view, isRead);
             }
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
@@ -155,19 +154,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
-        // Initialize the send button with a listener that for click events
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Send a message using content of the edit text widget
-                View view = getView();
-                if (null != view) {
-                    TextView consoleInput = view.findViewById(R.id.edit_text_out);
-                    String message = consoleInput.getText().toString();
-                    listener.sendMessage(message);
-                    consoleInput.setText("");
-                }
-            }
-        });
+        btnSendClickListener();
 
         buttonOnClick(mCheckButton, mChatService, mPingStatus, pingStatusButton);
 
@@ -177,11 +164,40 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
+    private void btnSendClickListener() {
+        // Initialize the send button with a listener that for click events
+        mSendButton.setOnClickListener(v -> {
+            // Send a message using content of the edit text widget
+            View view = getView();
+            if (null != view) {
+                TextView consoleInput = view.findViewById(R.id.edit_text_out);
+                String message = consoleInput.getText().toString();
+                listener.sendMessage(message);
+                consoleInput.setText("");
+            }
+        });
+    }
+
+    private void buttonFunctionality() {
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            if (position == 1) {
+                listener.sendMessage("treehouses help");
+            } else if (position == 3) {
+                listener.sendMessage("docker ps");
+            } else if (position == 2) {
+                listener.sendMessage("treehouses detectrpi");
+            } else if (position == 0) {
+                showChPasswordDialog();
+            } else if (position == 5) {
+                listener.sendMessage("treehouses expandfs");
+            }
+        });
+    }
+
     /**
      * The action listener for the EditText widget, to listen for the return key
      */
-    private TextView.OnEditorActionListener mWriteListener
-            = new TextView.OnEditorActionListener() {
+    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
         public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
@@ -241,15 +257,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
     }
 
-    private boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
-    }
-
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -259,52 +266,24 @@ public class TerminalFragment extends BaseTerminalFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case Constants.STATE_LISTEN:
-                        case Constants.STATE_NONE:
-                            idle(mPingStatus, pingStatusButton);
-                            break;
-                    }
+                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(mPingStatus, pingStatusButton); }
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
                     handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
-                    isRead = true;
                     String readMessage = (String)msg.obj;
-                    Log.d("tag", "readMessage = " + readMessage);
-
-                    //TODO: if message is json -> callback from RPi
-                    if (isJson(readMessage)) {
-                    } else {
-
-                        readMessage = readMessage.trim();
-
-                        //check if ping was successful
-                        if (readMessage.contains("1 packets")) {
-                            connect(mPingStatus, pingStatusButton);
-                        }
-                        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-                            offline(mPingStatus, pingStatusButton);
-                        }
-                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
-                            MainApplication.getTerminalList().add(readMessage);
-                            mConversationArrayAdapter.notifyDataSetChanged();
-                        }
-                    }
+                    isRead = true;
+                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
+                    filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();
                     handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    handlerCaseToast(msg);
                     break;
             }
         }

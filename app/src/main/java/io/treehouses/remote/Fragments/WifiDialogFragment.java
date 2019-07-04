@@ -32,6 +32,7 @@ public class WifiDialogFragment extends DialogFragment {
     private Context context;
     private String SSID;
     private View mView;
+    private Boolean firstScan = true;
 
     @Override
     public void onAttach(Context context) {
@@ -69,6 +70,7 @@ public class WifiDialogFragment extends DialogFragment {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             SSID = wifiList.get(position);
             ButtonConfiguration.getSSID().setText(SSID.trim());
+            wifiList.clear();
             mDialog.dismiss();
         });
     }
@@ -97,7 +99,7 @@ public class WifiDialogFragment extends DialogFragment {
                 boolean success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false);
                 if (success) {
                     scanSuccess();
-                } else {
+                } else if (firstScan) {
                     scanFailure();
                 }
             }
@@ -105,6 +107,7 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void getSSIDs(List<ScanResult> results) {
+        wifiList.clear();
         // converts Object list to array
         Object[] object = results.toArray();
         String temp = Arrays.toString(object);
@@ -114,10 +117,19 @@ public class WifiDialogFragment extends DialogFragment {
         for (String s : resultArray) {
             if (s.contains("SSID") && !s.contains("BSSID")) {
 
-                wifiList.add(s.substring(6));
+                String ssid = s.substring(6);
 
-                Log.e("TAG", "SSID = " + s.substring(6));
+                // add to list if SSID is not hidden
+                addToList(ssid);
+
+                Log.e("TAG", "SSID = " + ssid);
             }
+        }
+    }
+
+    private void addToList(String ssid) {
+        if (!ssid.equals("")) {
+            wifiList.add(ssid);
         }
     }
 
@@ -130,18 +142,25 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void scanFailure() {
-        // handle failure: new scan did NOT succeed
+        // handle failure: new scan did not succeed
         List<ScanResult> results = wifiManager.getScanResults();
         Log.e("TAG", "Scan Failed - scan results: " + results);
 
         getSSIDs(results);
-        setAdapter();
 
-        if (results.size() >= 1) {
+        if (results.size() >= 1 && firstScan) {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
-           if (mDialog!=null)
+            setAdapter();
+        } else if (results.size() < 1 && firstScan) {
+            ifResultListEmpty();
+        }
+        firstScan = false;
+
+    }
+
+    private void ifResultListEmpty() {
+        Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
+        if (mDialog != null) {
             mDialog.dismiss();
         }
     }
