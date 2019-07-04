@@ -1,5 +1,5 @@
 package io.treehouses.remote;
-
+import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.content.Context;
@@ -22,8 +22,8 @@ public abstract class ButtonConfiguration {
     }
 
     protected void buttonWifiSearch(Context context) {
-        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Toast.makeText(context, "Wifi scan not available for this android version", Toast.LENGTH_LONG).show();
+        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
         } else {
             btnWifiSearch.setOnClickListener(v1 -> NetworkFragment.getInstance().showWifiDialog(v1));
         }
