@@ -16,9 +16,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,8 +32,9 @@ import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
-import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.pojo.NetworkListItem;
 
 public class TerminalFragment extends BaseTerminalFragment {
 
@@ -38,7 +45,9 @@ public class TerminalFragment extends BaseTerminalFragment {
     private Button pingStatusButton;
     private Button mCheckButton;
     private TextView mPingStatus;
-    private ListView listView;
+    private ExpandableListView expandableListView;
+    private NetworkListAdapter adapter;
+    private static TerminalFragment instance = null;
     View view;
 
     public TerminalFragment() {}
@@ -48,15 +57,30 @@ public class TerminalFragment extends BaseTerminalFragment {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
+        instance = this;
+        adapter = new NetworkListAdapter(getContext(), NetworkListItem.getTerminalList(), mChatService);
+        adapter.setListener(listener);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        listView = view.findViewById(R.id.listView);
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.terminalList);
-        listView.setAdapter(adapter);
+        expandableListView = view.findViewById(R.id.terminalList);
+
+        expandableListView.setAdapter(adapter);
         setHasOptionsMenu(true);
+
         return view;
     }
+
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        mConversationView = view.findViewById(R.id.in);
+        mOutEditText = view.findViewById(R.id.edit_text_out);
+        mCheckButton = view.findViewById(R.id.check);
+        mSendButton = view.findViewById(R.id.button_send);
+        mPingStatus = view.findViewById(R.id.pingStatus);
+        pingStatusButton = view.findViewById(R.id.PING);
+    }
+
+
 
     /**
      * Array adapter for the conversation thread
@@ -87,20 +111,14 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        mConversationView = view.findViewById(R.id.in);
-        mOutEditText = view.findViewById(R.id.edit_text_out);
-        mCheckButton = view.findViewById(R.id.check);
-        mSendButton = view.findViewById(R.id.button_send);
-        mPingStatus = view.findViewById(R.id.pingStatus);
-        pingStatusButton = view.findViewById(R.id.PING);
-    }
-
-    @Override
     public void onResume(){
         Log.e("tag", "LOG check onResume method ");
         super.onResume();
         setupChat();
+    }
+
+    public static TerminalFragment getInstance() {
+        return instance;
     }
 
     /**
@@ -121,7 +139,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        buttonFunctionality();
+//        buttonFunctionality();
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
@@ -148,24 +166,14 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
-    private void buttonFunctionality() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    listener.sendMessage("treehouses");
-                } else if (position == 3) {
-                    listener.sendMessage("docker ps");
-                } else if (position == 2) {
-                    listener.sendMessage("treehouses detectrpi");
-                } else if (position == 0) {
-                    showChPasswordDialog();
-                } else if (position == 5) {
-                    listener.sendMessage("treehouses expandfs");
-                }
-            }
-        });
-    }
+//    private void buttonFunctionality() {
+//        expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
+//    }
 
     /**
      * The action listener for the EditText widget, to listen for the return key

@@ -91,6 +91,17 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(list.get(i).getLayout(), parent, false);
+
+        if (list.get(i).getLayout() != R.layout.button_layout) {
+            switchStatement(i, convertView);
+        } else {
+            new ViewHolderCommands(convertView, listener);
+        }
+
+        return convertView;
+    }
+
+    private void switchStatement(int i, View convertView) {
         switch (i) {
             case 0:
                 new ViewHolderEthernet(convertView, listener, getContext());
@@ -111,11 +122,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
                 new ViewHolderReboot(convertView, listener, getChatService(), getContext());
                 break;
         }
-        return convertView;
     }
-
-
-
 
     @Override
     public boolean isChildSelectable(int i, int i1) {

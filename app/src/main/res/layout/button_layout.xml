@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnChangePass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Pi Password" />
+
+    <Button
+        android:id="@+id/btnTreehouses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Treehouses" />
+
+    <Button
+        android:id="@+id/btnTreehousesDetect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Treehouses Detectrpi" />
+
+    <Button
+        android:id="@+id/btnDocker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Docker ps" />
+
+    <Button
+        android:id="@+id/btnExpand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Expand File System" />
+</LinearLayout>
