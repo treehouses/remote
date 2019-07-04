@@ -1,6 +1,6 @@
 package io.treehouses.remote;
-
 import android.os.Build;
+import android.view.View;
 import android.widget.Button;
 import android.content.Context;
 import android.widget.Button;
@@ -14,7 +14,8 @@ public abstract class ButtonConfiguration {
     protected Button btnWifiSearch;
     protected static TextInputEditText etSsid;
 
-    public void buttonProperties(Boolean clickable, int color) {
+    public void buttonProperties(Boolean clickable, int color, View v) {
+        Button btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         NetworkFragment.getInstance().setButtonConfiguration(this);
         btnStartConfiguration.setClickable(clickable);
         btnStartConfiguration.setTextColor(color);
