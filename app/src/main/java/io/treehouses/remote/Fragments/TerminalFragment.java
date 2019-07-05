@@ -86,8 +86,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private void onGroupExpand() {
         expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             if (!expandableListView.isGroupExpanded(groupPosition)) {
-                int blue = Color.parseColor("#2196f3");
-                expandableListView.setBackgroundColor(blue);
+                expandableListView.setBackgroundColor(Color.WHITE);
             } else {
                 expandableListView.setBackgroundColor(0);
             }
@@ -174,22 +173,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                 String message = consoleInput.getText().toString();
                 listener.sendMessage(message);
                 consoleInput.setText("");
-            }
-        });
-    }
-
-    private void buttonFunctionality() {
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            if (position == 1) {
-                listener.sendMessage("treehouses help");
-            } else if (position == 3) {
-                listener.sendMessage("docker ps");
-            } else if (position == 2) {
-                listener.sendMessage("treehouses detectrpi");
-            } else if (position == 0) {
-                showChPasswordDialog();
-            } else if (position == 5) {
-                listener.sendMessage("treehouses expandfs");
             }
         });
     }

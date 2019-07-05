@@ -18,7 +18,7 @@ class ViewHolderCommands {
         initializeButtons(v);
 
         changePass.setOnClickListener(v15 -> TerminalFragment.getInstance().showChPasswordDialog());
-        treehouses.setOnClickListener(v14 -> listener.sendMessage("treehouses"));
+        treehouses.setOnClickListener(v14 -> listener.sendMessage("treehouses help"));
         detect.setOnClickListener(v13 -> listener.sendMessage("treehouses detectrpi"));
         docker.setOnClickListener(v12 -> listener.sendMessage("docker ps"));
         expand.setOnClickListener(v1 -> listener.sendMessage("treehouses expandfs"));
