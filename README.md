@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/treehouses/remote.svg?branch=master)](https://travis-ci.org/treehouses/remote) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/treehouses/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+
 An Android app that communicates with headless Raspberry Pi mobile server running [treehouses image](https://github.com/treehouses/builder) via Bluetooth.
 - Get detailed software and hardware information of a Raspberry Pi.
 - Configure a Raspberry Pi through user-friendly interface.
@@ -9,6 +10,7 @@ An Android app that communicates with headless Raspberry Pi mobile server runnin
 Check our [issues](https://github.com/treehouses/remote/issues) to see what features we are working on.
 
 ## Setting Up the Raspberry Pi
+Within this section we will cover the required hardware and software you will need to contribute to the System's Engineering team, then explore the first steps you should take as a Virtual Intern.
 
 ### Prerequisites
 <!---
@@ -16,11 +18,18 @@ Check our [issues](https://github.com/treehouses/remote/issues) to see what feat
 --->
 We will need a few hardware and software components as follows:
 
-* Raspberry Pi 3 (or Zero W) and 5V 2.4A (1.2A for Zero) power supply with microUSB connector
+* Raspberry versions:
+	• Pi 3 
+	• Zero W
+	• Pi 3b+
 
-* A microSD card reader
+* 5V 2.4A (1.2A for Zero) power supply with microUSB connector
 
-* A [Class 10](https://www.sdcard.org/developers/overview/speed_class/index.html) microSD card (minimal 8GB, but we strongly recommend 16GB or greater)
+**NOTE**: A Raspberry Pi 4 would be a bonus purchase as of recently our latest images are not supported yet with the device
+
+* A microSD card reader (check to see if your computer has an SD slot)  
+
+* Three or more [Class 10](https://www.sdcard.org/developers/overview/speed_class/index.html) microSD card (minimal 8GB, but we strongly recommend 32GB or greater)
 
 * Software for burning OS image to microSD card. We recommend [Etcher](https://etcher.io), but there are many from which to choose
 
@@ -28,27 +37,38 @@ We will need a few hardware and software components as follows:
 
 * Wi-Fi or a ethernet connection
 
-### Get It Up and Running
 
-1. Burn the treehouse image to the microSD card. This is a simple process with Etcher - select the treehouse image, select the microSD card and burn the image;
+##Get It Up and Running
+After getting your microSD cards and card reader/adapter, our first step will be to burn an image of the treehouse onto the a microSD card which we will later insert into our Rasperry Pi.
 
-2. Once it's done burning, remount the microSD card if its unmounted by Etcher, so that you can view the contents in the `boot` partition. You will see a long list of files.
+### Prepping the microSD card
+1. Download the treehouse image that is available [here](http://download.treehouses.io/treehouse-88img.gz)
 
-3. Create a file named `autorunonce.txt` and place it in the `boot` partition of the microSD card:
+2. Download and install [Etcher](https://etcher.io) or another software.
 
-    ```
-    treehouses rename treehouses # rename the raspberry pi so we could easily distinguish the bluetooth device
-    treehouses bluetooth on # enable bluetooth and our bluetooth-server on the Raspberry Pi
-    # treehouses wifi ssid password # if you do not have ethernet cable/access to router, uncomment this line and replace with your wifi ssid and password 
-    ```
+3. Insert a microSD card into the card reader and connect this to your computer 
 
-4. Unmount and remove the microSD card from the card reader and place it into the RPi.
+4.   Burn the treehouses image onto the microSD card, this is done by:
+* Opening Etcher
+* Clicking "Select Image" -This is the downloaded image
+* Selecting the "Target" - This is your microSD card
+* Clicking "Flash!"
 
-5. Connect a RJ45 network cable to the Ethernet port on the RPi (skip this step if you have Wi-Fi configured in step 3.)
+The process will take approximately 10 min to complete.
 
-6. Connect the RPi to power.
+5.  Once it's done burning,  if you chose you can view the contents in the `boot` partition. You will see a long list of files.
 
-7. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
+6. Unmount and safely eject the microSD card from your computer. 
+
+### Starting up the Raspberry Pi
+1. Place the microSD card into the RPi.
+
+2. Connect the RPi to power, if there in an "on" switch or button ensure the Rpi has power.
+
+3. If you possess an android phone, find the Treehouses Remote app on Google Play Store and [download](https://play.google.com/store/apps/details?id=io.treehouses.remote) it.
+
+4. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
+
 
 ## Setting Up the Android Device
 
@@ -56,11 +76,15 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 ### Connect to Raspsberry Pi via Bluetooth
 
-1.In the android bluetooth settings, scan and pair with the Pi device.
-1. Click on the three dots (menu icon) at the upper right corner of the app. 
-1. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
-1. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
-1. If it does not work, please click on `cmd` button and repeat steps 1 through 3.
+1. In the android bluetooth settings, scan and pair with the Pi device.
+
+2. Click on the three dots (menu icon) at the upper right corner of the app. 
+
+3. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
+
+4. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
+
+5. If it does not work, please click on `cmd` button and repeat steps 1 through 3.
 
 ### Features
 
@@ -70,6 +94,8 @@ We assume you've already installed [Android Studio](https://developer.android.co
   - Use buttons on the lower part of the screen to performe various commands.
   - The circle on the upper left corner shows the Raspberry Pi's internet connectivity status using color green and red.
   - To return to dashboard, click on the back button at the bottom of the device.
+
+
 
 ## Tools
 

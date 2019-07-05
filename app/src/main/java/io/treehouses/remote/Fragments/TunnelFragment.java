@@ -66,11 +66,11 @@ public class TunnelFragment extends BaseTerminalFragment {
         Button btn_execute_destroy = view.findViewById(R.id.btn_execute_destroy);
         Button btn_execute_address = view.findViewById(R.id.btn_execute_address);
 
-        onClickStartConfig(btn_start);
-        onClickAddress(btn_execute_address);
-        onClickStart(btn_execute_start);
-        onClickStop(btn_execute_stop);
-        onClickDestroy(btn_execute_destroy);
+        btn_start.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
+        btn_execute_address.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
+        btn_execute_start.setOnClickListener(v -> listener.sendMessage("treehouses tor start"));
+        btn_execute_stop.setOnClickListener(v -> listener.sendMessage("treehouses tor stop"));
+        btn_execute_destroy.setOnClickListener(v -> listener.sendMessage("treehouses tor destroy"));
     }
 
     @Override
@@ -84,14 +84,7 @@ public class TunnelFragment extends BaseTerminalFragment {
         Log.e("tag", "LOG setupChat()");
         LayoutInflater inflater = getLayoutInflater();
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTunnelList()) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                getViews(view, isRead);
-                return view;
-            }
-        };
+        getViewFunction();
 
         copyToList(mConversationView, getContext());
 
@@ -107,59 +100,15 @@ public class TunnelFragment extends BaseTerminalFragment {
         new StringBuilder();
     }
 
-    private void onClickStartConfig(Button btn_start) {
-        btn_start.setOnClickListener(new View.OnClickListener() {
+    private void getViewFunction() {
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTunnelList()) {
             @Override
-            public void onClick(View v) {
-                listener.sendMessage("treehouses tor");
-                Log.e("log", "after message was sent");
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                view = getViews(view, isRead);
+                return view;
             }
-        });
-    }
-
-    private void onClickAddress(Button btn_execute_address) {
-        btn_execute_address.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.sendMessage("treehouses tor");
-            }
-        });
-    }
-
-    private void onClickStart(Button btn_execute_start) {
-        btn_execute_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.sendMessage("treehouses tor start");
-            }
-        });
-    }
-
-    private void onClickStop( Button btn_execute_stop) {
-        btn_execute_stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.sendMessage("treehouses tor stop");
-            }
-        });
-    }
-
-    private void onClickDestroy(Button btn_execute_destroy) {
-        btn_execute_destroy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.sendMessage("treehouses tor destroy");
-            }
-        });
-    }
-
-    private boolean isJson(String str) {
-        try {
-            new JSONObject(str);
-        } catch (JSONException ex) {
-            return false;
-        }
-        return true;
+        };
     }
 
     private void configConditions(String readMessage) {
@@ -184,48 +133,27 @@ public class TunnelFragment extends BaseTerminalFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case Constants.STATE_LISTEN:
-                        case Constants.STATE_NONE:
-                            idle(mPingStatus, pingStatusButton);
-                            break;
-                    }
+                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(mPingStatus, pingStatusButton); }
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
                     handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
                     break;
                 case Constants.MESSAGE_READ:
-                    isRead = true;
                     String readMessage = (String) msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
-
-                   configConditions(readMessage);
-
-                    //TODO: if message is json -> callback from RPi
-                    if (isJson(readMessage)) {
-                        //handleCallback(readMessage);
-                    } else {
-                       isPingSuccesfull(readMessage, mPingStatus, pingStatusButton);
-
-                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-                        if (!readMessage.contains("64 bytes") && !readMessage.contains("rtt") && !readMessage.contains("1 packets")&& !readMessage.trim().isEmpty() && !readMessage.contains("google.com") ) {
-                            mConversationArrayAdapter.add(readMessage);
-                        }
-                    }
+                    isRead = true;
+                    configConditions(readMessage);
+                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
+                    filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     Activity activity = getActivity();
                     handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    handlerCaseToast(msg);
                     break;
             }
         }
     };
-
 }

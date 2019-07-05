@@ -29,7 +29,7 @@ public class ViewHolderEthernet extends ButtonConfiguration {
                 String mask = etMask.getText().toString();
                 listener.sendMessage(String.format("treehouses ethernet \"%s\" \"%s\" \"%s\" \"%s\"", ip, mask, gateway, dns));
 
-                buttonProperties(false, Color.LTGRAY);
+                buttonProperties(false, Color.LTGRAY, v);
 
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
