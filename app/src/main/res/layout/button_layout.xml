@@ -7,29 +7,34 @@
         android:id="@+id/btnChangePass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change Pi Password" />
+        android:text="Change Pi Password"
+        android:theme="@style/PrimaryButton" />
 
     <Button
         android:id="@+id/btnTreehouses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Treehouses" />
+        android:text="Treehouses help"
+        android:theme="@style/PrimaryButton" />
 
     <Button
         android:id="@+id/btnTreehousesDetect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Treehouses Detectrpi" />
+        android:text="Treehouses Detectrpi"
+        android:theme="@style/PrimaryButton" />
 
     <Button
         android:id="@+id/btnDocker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Docker ps" />
+        android:text="Docker ps"
+        android:theme="@style/PrimaryButton" />
 
     <Button
         android:id="@+id/btnExpand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Expand File System" />
+        android:text="Expand File System"
+        android:theme="@style/PrimaryButton" />
 </LinearLayout>

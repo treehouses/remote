@@ -83,7 +83,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     }
 
-    public void onGroupExpand() {
+    private void onGroupExpand() {
         expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
             if (!expandableListView.isGroupExpanded(groupPosition)) {
                 int blue = Color.parseColor("#2196f3");
