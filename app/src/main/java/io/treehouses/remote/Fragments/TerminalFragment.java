@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -16,9 +17,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,8 +33,9 @@ import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
-import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.pojo.NetworkListItem;
 
 public class TerminalFragment extends BaseTerminalFragment {
 
@@ -38,7 +46,9 @@ public class TerminalFragment extends BaseTerminalFragment {
     private Button pingStatusButton;
     private Button mCheckButton;
     private TextView mPingStatus;
-    private ListView listView;
+    private ExpandableListView expandableListView;
+    private NetworkListAdapter adapter;
+    private static TerminalFragment instance = null;
     View view;
 
     public TerminalFragment() {}
@@ -48,14 +58,40 @@ public class TerminalFragment extends BaseTerminalFragment {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
+        instance = this;
+        adapter = new NetworkListAdapter(getContext(), NetworkListItem.getTerminalList(), mChatService);
+        adapter.setListener(listener);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        listView = view.findViewById(R.id.listView);
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.terminal_options_list, R.id.terminalTexxtview, Constants.terminalList);
-        listView.setAdapter(adapter);
+        expandableListView = view.findViewById(R.id.terminalList);
+        onGroupExpand();
+        expandableListView.setAdapter(adapter);
         setHasOptionsMenu(true);
+
         return view;
+    }
+
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        mConversationView = view.findViewById(R.id.in);
+        mOutEditText = view.findViewById(R.id.edit_text_out);
+        mCheckButton = view.findViewById(R.id.check);
+        mSendButton = view.findViewById(R.id.button_send);
+        mPingStatus = view.findViewById(R.id.pingStatus);
+        pingStatusButton = view.findViewById(R.id.PING);
+
+
+    }
+
+    private void onGroupExpand() {
+        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
+            if (!expandableListView.isGroupExpanded(groupPosition)) {
+                expandableListView.setBackgroundColor(Color.WHITE);
+            } else {
+                expandableListView.setBackgroundColor(0);
+            }
+            return false;
+        });
     }
 
     /**
@@ -87,20 +123,14 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        mConversationView = view.findViewById(R.id.in);
-        mOutEditText = view.findViewById(R.id.edit_text_out);
-        mCheckButton = view.findViewById(R.id.check);
-        mSendButton = view.findViewById(R.id.button_send);
-        mPingStatus = view.findViewById(R.id.pingStatus);
-        pingStatusButton = view.findViewById(R.id.PING);
-    }
-
-    @Override
     public void onResume(){
         Log.e("tag", "LOG check onResume method ");
         super.onResume();
         setupChat();
+    }
+
+    public static TerminalFragment getInstance() {
+        return instance;
     }
 
     /**
@@ -119,8 +149,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             }
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
-
-        buttonFunctionality();
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
@@ -145,22 +173,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                 String message = consoleInput.getText().toString();
                 listener.sendMessage(message);
                 consoleInput.setText("");
-            }
-        });
-    }
-
-    private void buttonFunctionality() {
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            if (position == 1) {
-                listener.sendMessage("treehouses help");
-            } else if (position == 3) {
-                listener.sendMessage("docker ps");
-            } else if (position == 2) {
-                listener.sendMessage("treehouses detectrpi");
-            } else if (position == 0) {
-                showChPasswordDialog();
-            } else if (position == 5) {
-                listener.sendMessage("treehouses expandfs");
             }
         });
     }
