@@ -56,20 +56,17 @@ public class NetworkFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         adapter = new NetworkListAdapter(getContext(), NetworkListItem.getNetworkList(), mChatService);
         adapter.setListener(listener);
-        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                if (groupPosition == 6) {
-                    Log.e("TAG", "groupPosition: " + groupPosition);
-                    expListView.collapseGroup(6);
-                    updateNetworkMode();
-                }
-
-                if (lastPosition != -1 && groupPosition != lastPosition) {
-                    expListView.collapseGroup(lastPosition);
-                }
-                lastPosition = groupPosition;
+        expListView.setOnGroupExpandListener(groupPosition -> {
+            if (groupPosition == 6) {
+                Log.e("TAG", "groupPosition: " + groupPosition);
+                expListView.collapseGroup(6);
+                updateNetworkMode();
             }
+
+            if (lastPosition != -1 && groupPosition != lastPosition) {
+                expListView.collapseGroup(lastPosition);
+            }
+            lastPosition = groupPosition;
         });
         expListView.setAdapter(adapter);
         expListView.setGroupIndicator(null);
@@ -103,22 +100,15 @@ public class NetworkFragment extends BaseFragment {
                 .setTitle(title)
                 .setMessage(message)
                 .setIcon(R.drawable.wificon)
-                .setPositiveButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).setNegativeButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (title) {
-                            case "Reset":
-                                listener.sendMessage("treehouses default network");
-                                break;
-                            case "Reboot":
-                                ViewHolderReboot.getInstance().reboot(listener, mChatService, getContext());
-                                break;
-                        }
+                .setPositiveButton("No", (dialog, which) -> dialog.cancel())
+                .setNegativeButton("Yes", (dialog, which) -> {
+                    switch (title) {
+                        case "Reset":
+                            listener.sendMessage("treehouses default network");
+                            break;
+                        case "Reboot":
+                            ViewHolderReboot.getInstance().reboot(listener, mChatService, getContext());
+                            break;
                     }
                 }).show();
     }
@@ -128,12 +118,7 @@ public class NetworkFragment extends BaseFragment {
                 .setTitle("OUTPUT:")
                 .setMessage(message)
                 .setIcon(R.drawable.wificon)
-                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).show();
+                .setNegativeButton("OK", (dialog, which) -> dialog.cancel()).show();
     }
 
     public void showWifiDialog(View v) {
@@ -146,18 +131,18 @@ public class NetworkFragment extends BaseFragment {
     private void changeList(String readMessage) {
         adapter.setNetworkMode("Network Mode: " + readMessage);
         switch (readMessage) {
-            case "default":
-            case "static ethernet":
+            case "default": // ethernet
+            case "static ethernet": // ethernet
                 expListView.expandGroup(0);
                 break;
-            case "wifi":
+            case "wifi": // wifi
                 expListView.expandGroup(1);
                 break;
-            case "internet":
-            case "local":
+            case "internet": // hotspot
+            case "local": // hotspot
                 expListView.expandGroup(2);
                 break;
-            case "bridge":
+            case "bridge": // bridge
                 expListView.expandGroup(3);
                 break;
         }

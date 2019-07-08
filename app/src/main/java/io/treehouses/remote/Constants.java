@@ -68,14 +68,6 @@ public class Constants {
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
 
-    public static final List<String> terminalList = new ArrayList();
-    static {
-        terminalList.add("Change Pi Password");
-        terminalList.add("Treehouses");
-        terminalList.add("Treehouses Detectrpi");
-        terminalList.add("Docker ps");
-        terminalList.add("Rename Hostname");
-        terminalList.add("Expand File System");
-    }
+
 }
 

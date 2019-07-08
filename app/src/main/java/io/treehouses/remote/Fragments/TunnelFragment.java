@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class TunnelFragment extends BaseTerminalFragment {
     private ArrayAdapter<String> mConversationArrayAdapter;
     private ListView mConversationView = null;
     private Button btn_status;
+    private Switch aSwitch;
 
     View view;
 
@@ -49,6 +51,10 @@ public class TunnelFragment extends BaseTerminalFragment {
         terminallist.setDividerHeight(0);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.tunnel_commands_list, R.id.command_textView, listview);
         terminallist.setAdapter(adapter);
+
+        aSwitch = view.findViewById(R.id.switchNotification);
+
+        onSwitchChecked();
 
         return view;
     }
@@ -109,6 +115,16 @@ public class TunnelFragment extends BaseTerminalFragment {
                 return view;
             }
         };
+    }
+
+    private void onSwitchChecked() {
+        aSwitch.setOnClickListener(v -> {
+            if (aSwitch.isChecked()) {
+                listener.sendMessage("treehouses tor notice on");
+            } else {
+                listener.sendMessage("treehouses tor notice off");
+            }
+        });
     }
 
     private void configConditions(String readMessage) {
