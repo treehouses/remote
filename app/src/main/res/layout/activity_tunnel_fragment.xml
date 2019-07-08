@@ -167,7 +167,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/switchNotification"
         android:layout_width="189dp"
         android:layout_height="42dp"
         android:layout_marginStart="8dp"
@@ -190,7 +190,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/switch1"
+        app:layout_constraintBottom_toTopOf="@+id/switchNotification"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title"
         android:stackFromBottom="true"
