@@ -22,11 +22,14 @@ public abstract class ButtonConfiguration {
     }
 
     protected void buttonWifiSearch(Context context) {
-        if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
-        } else {
-            btnWifiSearch.setOnClickListener(v1 -> NetworkFragment.getInstance().showWifiDialog(v1));
-        }
+
+        btnWifiSearch.setOnClickListener(v1 -> {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
+            } else {
+                NetworkFragment.getInstance().showWifiDialog(v1);
+            }
+        });
     }
 
     public static TextInputEditText getSSID() {
