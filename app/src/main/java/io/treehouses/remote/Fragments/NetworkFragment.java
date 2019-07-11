@@ -76,8 +76,6 @@ public class NetworkFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         alert = false;
-        updateNetworkMode();
-        Log.e("TAG", "onResume is called");
         expListView.expandGroup(6);
     }
 
@@ -92,6 +90,7 @@ public class NetworkFragment extends BaseFragment {
     private void updateNetworkMode() {
         changeList = true;
         listener.sendMessage("treehouses networkmode");
+        Log.e("TAG", "network mode updated");
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_SHORT).show();
     }
 
