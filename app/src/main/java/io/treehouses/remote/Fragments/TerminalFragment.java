@@ -29,6 +29,8 @@ import androidx.annotation.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -40,15 +42,16 @@ import io.treehouses.remote.pojo.NetworkListItem;
 public class TerminalFragment extends BaseTerminalFragment {
 
     private static final String TAG = "BluetoothChatFragment";
+    private static TerminalFragment instance = null;
     private ListView mConversationView;
-    private EditText mOutEditText;
-    private Button mSendButton;
-    private Button pingStatusButton;
-    private Button mCheckButton;
     private TextView mPingStatus;
+    private EditText mOutEditText;
+    private Button mSendButton, pingStatusButton, mCheckButton, mPrevious;
     private ExpandableListView expandableListView;
     private NetworkListAdapter adapter;
-    private static TerminalFragment instance = null;
+    private ArrayList<String> list;
+    private int i;
+    private String last;
     View view;
 
     public TerminalFragment() {}
@@ -79,6 +82,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
+        mPrevious = view.findViewById(R.id.btnPrevious);
 
 
     }
@@ -175,6 +179,19 @@ public class TerminalFragment extends BaseTerminalFragment {
                 consoleInput.setText("");
             }
         });
+
+        mPrevious.setOnClickListener(v -> {
+            setLastCommand();
+        });
+    }
+
+    private void setLastCommand() {
+        try {
+            last = list.get(--i);
+            mOutEditText.setText(last);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -186,6 +203,7 @@ public class TerminalFragment extends BaseTerminalFragment {
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 listener.sendMessage(message);
+
                 mOutEditText.setText("");
             }
             return true;
@@ -240,6 +258,12 @@ public class TerminalFragment extends BaseTerminalFragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
     }
 
+    private void addToCommandList(String writeMessage) {
+        MainApplication.getCommandList().add(writeMessage);
+        list = MainApplication.getCommandList();
+        i = list.size();
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -253,7 +277,8 @@ public class TerminalFragment extends BaseTerminalFragment {
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
-                    handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
+                    String writeMessage = handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
+                    addToCommandList(writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String)msg.obj;

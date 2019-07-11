@@ -28,7 +28,7 @@ import io.treehouses.remote.utils.Utils;
 
 public class BaseTerminalFragment extends BaseFragment{
 
-    public void handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
+    public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
 
         byte[] writeBuf = (byte[]) msg.obj;
         // construct a string from the buffer
@@ -37,6 +37,7 @@ public class BaseTerminalFragment extends BaseFragment{
             Log.d(TAG, "writeMessage = " + writeMessage);
             mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
         }
+        return writeMessage;
     }
 
     public void handlerCaseName(Message msg, Activity activity ) {
