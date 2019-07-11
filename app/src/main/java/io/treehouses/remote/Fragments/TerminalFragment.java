@@ -70,7 +70,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         return view;
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
@@ -79,8 +78,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
-
-
     }
 
     private void onGroupExpand() {
@@ -131,6 +128,10 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     public static TerminalFragment getInstance() {
         return instance;
+    }
+
+    public ArrayAdapter<String> getmConversationArrayAdapter() {
+        return mConversationArrayAdapter;
     }
 
     /**
