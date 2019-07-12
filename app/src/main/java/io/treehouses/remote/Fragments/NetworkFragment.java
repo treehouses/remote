@@ -160,8 +160,12 @@ public class NetworkFragment extends BaseFragment {
         }
 
         if (readMessage.contains("Error")) {
-            buttonConfiguration.buttonProperties(true, Color.WHITE, view);
-            alert = true;
+            if (readMessage.contains("Error when trying to run the command 'treehouses n")) {
+                changeList("Error");
+            } else {
+                buttonConfiguration.buttonProperties(true, Color.WHITE, view);
+                alert = true;
+            }
         }
         return false;
     }
