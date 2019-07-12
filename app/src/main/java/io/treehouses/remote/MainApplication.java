@@ -10,14 +10,14 @@ import io.treehouses.remote.Fragments.TerminalFragment;
 
 public class MainApplication extends Application {
 
-    private static ArrayList terminalList;
-    private static ArrayList tunnelList;
+    private static ArrayList terminalList, tunnelList, commandList;
 
     @Override
     public void onCreate() {
         super.onCreate();
         terminalList = new ArrayList();
         tunnelList = new ArrayList();
+        commandList = new ArrayList();
     }
 
     public static ArrayList getTerminalList() {
@@ -26,5 +26,9 @@ public class MainApplication extends Application {
 
     public static ArrayList getTunnelList() {
         return tunnelList;
+    }
+
+    public static ArrayList getCommandList() {
+        return commandList;
     }
 }
