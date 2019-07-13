@@ -77,6 +77,14 @@ public class NetworkFragment extends BaseFragment {
         super.onResume();
         alert = false;
         expListView.expandGroup(6);
+
+        try {
+           // Thread.sleep(10);
+            listener.sendMessage("treehouses networkmode info");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static NetworkFragment getInstance() {
@@ -166,6 +174,26 @@ public class NetworkFragment extends BaseFragment {
         return false;
     }
 
+    private void wifiPrefill(String readMessage) {
+        if (readMessage.contains("essid"))  {
+            String[] array = readMessage.split(",");
+            for (String element: array) {
+                elementConditions(element);
+            }
+        }
+    }
+
+    private void elementConditions(String element) {
+        Log.e("TAG", "networkmode= " + element);
+        if (element.contains("wlan0")) {
+            ButtonConfiguration.getSSID().setText(element.substring(14).trim());
+        } else if (element.contains("ap0")) {
+            ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
+        } else if (element.length() > 5 && !element.contains("password") && !element.contains("ip")) {
+            ButtonConfiguration.getSSID().setText(element.substring(6).trim());
+        }
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -181,6 +209,10 @@ public class NetworkFragment extends BaseFragment {
                 if (result || readMessage.trim().equals("false") || readMessage.trim().contains("true")) {
                     return;
                 }
+
+                wifiPrefill(readMessage);
+               // bridgePrefill(readMessage);
+
 
                 if (readMessage.contains("please reboot your device")) {
                     alert = true;
@@ -199,6 +231,5 @@ public class NetworkFragment extends BaseFragment {
             }
         }
     };
-
 
 }
