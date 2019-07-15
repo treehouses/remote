@@ -222,7 +222,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
         @Override
         public void handleMessage(Message msg) {
             Log.e("RPIDialogFragment", "" + msg.what);
-            FragmentActivity activity = getActivity();
 
             String readMessage = (String)msg.obj;
 
