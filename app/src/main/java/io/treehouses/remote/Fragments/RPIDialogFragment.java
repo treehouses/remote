@@ -238,6 +238,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             dialog.dismiss();
                             listener.setChatService(mChatService);
                             checkConnectionState.checkConnectionState();
+                            mBluetoothAdapter.cancelDiscovery();
                             Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
