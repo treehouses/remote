@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ public class SystemFragment extends BaseFragment {
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 getListFragment(position);
@@ -136,7 +138,14 @@ public class SystemFragment extends BaseFragment {
                 Log.d("TAG", "Wifi Hotspot is on now");
                 mReservation = reservation;
 
-                setHotspotName(mChatService.getConnectedDeviceName(), getContext());
+                Log.d("TAG", "SSID = " + getWifiApConfiguration());
+
+
+//                configApState(getContext());
+
+//                getSSID();
+
+//                setHotspotName(mChatService.getConnectedDeviceName(), getContext());
 
                // Log.e("TAG", "SSID = " + getWifiApConfiguration().SSID);
             }
@@ -155,46 +164,54 @@ public class SystemFragment extends BaseFragment {
         }, new Handler());
     }
 
-    public static boolean setHotspotName(String newName, Context context) {
-        try {
-            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(context.WIFI_SERVICE);
-            Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
-            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
+//    public void getSSID() {
+//        WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
+//        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+//        Log.d("wifiInfo", wifiInfo.toString());
+//        Log.d("SSID = ",wifiInfo.getSSID());
+//    }
 
-            String ssid = wifiConfig.SSID;
+//    public static boolean setHotspotName(String newName, Context context) {
+//        try {
+//            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(context.WIFI_SERVICE);
+//            Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
+//            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
+//
+//            String ssid = wifiConfig.SSID;
+//
+//            Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
+//            setConfigMethod.invoke(wifiManager, wifiConfig);
+//
+//            return true;
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-            Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
-            setConfigMethod.invoke(wifiManager, wifiConfig);
-
-            return true;
+    private WifiConfiguration getWifiApConfiguration() {
+        Method m = getWifiManagerMethod("getWifiApConfiguration", manager);
+        if(m != null) {
+            try {
+                return (WifiConfiguration) m.invoke(manager);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return null;
     }
 
-//    private WifiConfiguration getWifiApConfiguration() {
-//        Method m = getWifiManagerMethod("getWifiApConfiguration", manager);
-//        if(m != null) {
-//            try {
-//                return (WifiConfiguration) m.invoke(manager);
-//            } catch(Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private static Method getWifiManagerMethod(final String methodName, final WifiManager wifiManager) {
-//        final Method[] methods = wifiManager.getClass().getDeclaredMethods();
-//        for (Method method : methods) {
-//            if (method.getName().equals(methodName)) {
-//                return method;
-//            }
-//        }
-//        return null;
-//    }
+    private static Method getWifiManagerMethod(final String methodName, final WifiManager wifiManager) {
+        final Method[] methods = wifiManager.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
 //    private void turnOffHotspot() {
 //        if (mReservation != null) {
 //            mReservation.close();
@@ -211,7 +228,7 @@ public class SystemFragment extends BaseFragment {
 ////                wifimanager.setWifiEnabled(false);
 ////            }
 //            Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-//            method.invoke(wifimanager, wificonfiguration, !isApOn(context));
+//            method.invoke(wifimanager, wificonfiguration);
 //            return true;
 //        }
 //        catch (Exception e) {
