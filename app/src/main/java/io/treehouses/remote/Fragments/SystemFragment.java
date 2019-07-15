@@ -1,8 +1,13 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +17,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 
+import static android.content.Context.WIFI_SERVICE;
+
 public class SystemFragment extends BaseFragment {
 
-    View view;
     private BluetoothChatService mChatService = null;
+    private WifiManager manager;
+    View view;
 
 
     public SystemFragment() {
@@ -41,6 +54,11 @@ public class SystemFragment extends BaseFragment {
         list.add("RPI Password Settings");
         list.add("Container");
         list.add("Upgrade CLI");
+        list.add("Tether");
+
+
+
+
 
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
@@ -58,6 +76,7 @@ public class SystemFragment extends BaseFragment {
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void getListFragment(int position) {
         switch (position) {
             case 0:
@@ -90,24 +109,146 @@ public class SystemFragment extends BaseFragment {
             case 5:
                 listener.sendMessage("treehouses upgrade");
                 break;
+            case 6:
+                configureHotspot();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
     }
 
-    public void showRenameDialog() {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void configureHotspot() {
+//        configApState(getContext());
+        turnOnHotspot();
+    }
+
+    private WifiManager.LocalOnlyHotspotReservation mReservation;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void turnOnHotspot() {
+        manager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
+
+            @Override
+            public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                super.onStarted(reservation);
+                Log.d("TAG", "Wifi Hotspot is on now");
+                mReservation = reservation;
+
+                setHotspotName(mChatService.getConnectedDeviceName(), getContext());
+
+               // Log.e("TAG", "SSID = " + getWifiApConfiguration().SSID);
+            }
+
+            @Override
+            public void onStopped() {
+                super.onStopped();
+                Log.d("TAG", "onStopped: ");
+            }
+
+            @Override
+            public void onFailed(int reason) {
+                super.onFailed(reason);
+                Log.d("TAG", "onFailed: ");
+            }
+        }, new Handler());
+    }
+
+    public static boolean setHotspotName(String newName, Context context) {
+        try {
+            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(context.WIFI_SERVICE);
+            Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
+            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
+
+            String ssid = wifiConfig.SSID;
+
+            Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
+            setConfigMethod.invoke(wifiManager, wifiConfig);
+
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+//    private WifiConfiguration getWifiApConfiguration() {
+//        Method m = getWifiManagerMethod("getWifiApConfiguration", manager);
+//        if(m != null) {
+//            try {
+//                return (WifiConfiguration) m.invoke(manager);
+//            } catch(Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return null;
+//    }
+//
+//    private static Method getWifiManagerMethod(final String methodName, final WifiManager wifiManager) {
+//        final Method[] methods = wifiManager.getClass().getDeclaredMethods();
+//        for (Method method : methods) {
+//            if (method.getName().equals(methodName)) {
+//                return method;
+//            }
+//        }
+//        return null;
+//    }
+//    private void turnOffHotspot() {
+//        if (mReservation != null) {
+//            mReservation.close();
+//        }
+//    }
+
+
+//    private static boolean configApState(Context context) {
+//        WifiManager wifimanager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
+//        WifiConfiguration wificonfiguration = null;
+//        try {
+//            // if WiFi is on, turn it off
+////            if(isApOn(context)) {
+////                wifimanager.setWifiEnabled(false);
+////            }
+//            Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+//            method.invoke(wifimanager, wificonfiguration, !isApOn(context));
+//            return true;
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+
+//    private static boolean isApOn(Context context) {
+//        WifiManager wifimanager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
+//        try {
+//            Method method = wifimanager.getClass().getDeclaredMethod("isWifiApEnabled");
+//            method.setAccessible(true);
+//            return (Boolean) method.invoke(wifimanager);
+//        }
+//        catch (Throwable ignored) {}
+//        return false;
+//    }
+//
+//    public void getApName() {
+//
+//    }
+
+
+    private void showRenameDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = RenameDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "renameDialog");
     }
 
-    public void showContainerDialog() {
+    private void showContainerDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = ContainerDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(), "ethernetDialog");
     }
 
-    public void showChPasswordDialog() {
+    private void showChPasswordDialog() {
         // Create an instance of the dialog fragment and show it
         androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
@@ -121,12 +262,16 @@ public class SystemFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK) {
             Bundle bundle = data.getExtras();
             String type = bundle.getString("type");
-            if (type.equals("rename")) {
-                listener.sendMessage("treehouses rename \"" + bundle.getString("hostname") + "\"");
-            } else if (type.equals("container")) {
-                listener.sendMessage("treehouses container \"" + bundle.getString("container") + "\"");
-            } else if (type.equals("chPass")) {
-                listener.sendMessage("treehouses password \"" + bundle.getString("password") + "\"");
+            switch (type) {
+                case "rename":
+                    listener.sendMessage("treehouses rename \"" + bundle.getString("hostname") + "\"");
+                    break;
+                case "container":
+                    listener.sendMessage("treehouses container \"" + bundle.getString("container") + "\"");
+                    break;
+                case "chPass":
+                    listener.sendMessage("treehouses password \"" + bundle.getString("password") + "\"");
+                    break;
             }
         }
     }
