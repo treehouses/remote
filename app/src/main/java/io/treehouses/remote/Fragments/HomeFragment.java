@@ -111,7 +111,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private AlertDialog showWelcomeDialog() {
         return new AlertDialog.Builder(getContext())
                 .setTitle("Friendly Reminder")
-                .setMessage("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". there is more information under \"Get Started\"" +
+                .setMessage("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
                         "\n\nhttp://download.treehouses.io/\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli")
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
