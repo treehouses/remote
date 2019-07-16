@@ -222,7 +222,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
         @Override
         public void handleMessage(Message msg) {
             Log.e("RPIDialogFragment", "" + msg.what);
-            FragmentActivity activity = getActivity();
 
             String readMessage = (String)msg.obj;
 
@@ -238,6 +237,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             dialog.dismiss();
                             listener.setChatService(mChatService);
                             checkConnectionState.checkConnectionState();
+                            mBluetoothAdapter.cancelDiscovery();
                             Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
