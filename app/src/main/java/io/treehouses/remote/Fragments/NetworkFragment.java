@@ -160,8 +160,13 @@ public class NetworkFragment extends BaseFragment {
         }
 
         if (readMessage.contains("Error")) {
-            buttonConfiguration.buttonProperties(true, Color.WHITE, view);
-            alert = true;
+            try {
+                buttonConfiguration.buttonProperties(true, Color.WHITE, view);
+                alert = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                changeList("Error");
+            }
         }
         return false;
     }
