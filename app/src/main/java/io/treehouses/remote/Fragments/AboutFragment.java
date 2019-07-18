@@ -38,7 +38,7 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
         version.setOnClickListener(v -> {
             String versionName = BuildConfig.VERSION_NAME;
             if (versionName.equals("1.0.0")) {
-                versionName = "Latest version";
+                versionName = "latest version";
             }
             Toast.makeText(getContext(), versionName, Toast.LENGTH_LONG).show();
         });
