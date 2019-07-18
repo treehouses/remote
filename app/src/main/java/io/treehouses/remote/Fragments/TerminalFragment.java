@@ -190,6 +190,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         try {
             last = list.get(--i);
             mOutEditText.setText(last);
+            mOutEditText.setSelection(mOutEditText.length());
         } catch (Exception e) {
             e.printStackTrace();
         }
