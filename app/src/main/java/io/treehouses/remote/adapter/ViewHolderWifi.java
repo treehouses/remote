@@ -2,6 +2,7 @@ package io.treehouses.remote.adapter;
 
 
 import android.graphics.Color;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.content.Context;
@@ -25,6 +26,8 @@ public class ViewHolderWifi extends ButtonConfiguration {
         etPassword = v.findViewById(R.id.et_password);
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
+
+        etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         buttonWifiSearch(context);
 
