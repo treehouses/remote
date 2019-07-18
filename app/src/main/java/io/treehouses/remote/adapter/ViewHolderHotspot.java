@@ -2,6 +2,7 @@ package io.treehouses.remote.adapter;
 
 import android.graphics.Color;
 import android.content.Context;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,19 +22,19 @@ class ViewHolderHotspot extends ButtonConfiguration{
         spn = v.findViewById(R.id.spn_hotspot_type);
         etPassword = v.findViewById(R.id.et_hotspot_password);
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
-        btnStartConfiguration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (etPassword.getText().toString().isEmpty()) {
-                    listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                } else {
-                    listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                }
 
-                buttonProperties(false, Color.LTGRAY, v);
+        etEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
+        btnStartConfiguration.setOnClickListener(view -> {
+            if (etPassword.getText().toString().isEmpty()) {
+                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            } else {
+                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
+
+            buttonProperties(false, Color.LTGRAY, v);
         });
 
     }
