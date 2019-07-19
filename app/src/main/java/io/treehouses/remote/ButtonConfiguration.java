@@ -10,6 +10,9 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.w3c.dom.Text;
@@ -18,10 +21,11 @@ import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
 
 public abstract class ButtonConfiguration {
-    protected TextInputEditText etHotspotEssid, etPassword, etHotspotPassword;
+    protected @Nullable TextInputEditText etHotspotEssid, etPassword, etHotspotPassword;
     protected Button btnStartConfiguration;
     protected Button btnWifiSearch;
-    protected static TextInputEditText etSsid, essid;
+    protected static @Nullable TextInputEditText etSsid, essid;
+    protected Boolean messageSent = false;
 
     public void buttonProperties(Boolean clickable, int color, Button btnStartConfiguration) {
         NetworkFragment.getInstance().setButtonConfiguration(this);
@@ -41,6 +45,7 @@ public abstract class ButtonConfiguration {
     }
 
     protected TextWatcher getTextWatcher(final EditText editText, View v) {
+        etPassword = v.findViewById(R.id.et_password);
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
@@ -48,33 +53,31 @@ public abstract class ButtonConfiguration {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable == etSsid.getEditableText()) {
-                    wifiTextChanged(editText, v);
-                } else if (editable == essid.getEditableText()) {
-                    bridgeTextChanged(editText, v);
-                }
+
+                afterTextChangedListener(editable, editText);
 
                 Log.e("TAG", "afterTextChanged()");
             }
         };
     }
 
-    private void wifiTextChanged(EditText editText, View v) {
-        if (editText.length() > 0) {
-            buttonProperties(true, Color.WHITE, getBtnStartConfiguration());
-        } else {
-            buttonProperties(false, Color.LTGRAY, getBtnStartConfiguration());
+    @Nullable
+    private void afterTextChangedListener(@Nullable Editable editable, @Nullable EditText editText) {
+
+        if (editable == etSsid.getEditableText() || editable == etPassword.getEditableText() && !messageSent) { // wifi
+            textChanged(editText.length() > 0 && etSsid.length() > 0);
+        } else if (editable == essid.getEditableText() && !messageSent) {                                       // bridge
+            textChanged(editText.length() > 0 && etHotspotEssid.length() > 0);
         }
     }
 
-    private void bridgeTextChanged(EditText editText, View v) {
-        if (editText.length() > 0 && etHotspotEssid.length() > 0 )  {
-            buttonProperties(true, Color.WHITE, getBtnStartConfiguration());
+    private void textChanged(boolean condition) {
+        if (condition) {
+            buttonProperties(true, Color.WHITE, btnStartConfiguration);
         } else {
-            buttonProperties(false, Color.LTGRAY, getBtnStartConfiguration());
+            buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
         }
     }
-
 
     public static TextInputEditText getSSID() {
         return etSsid;
@@ -82,6 +85,10 @@ public abstract class ButtonConfiguration {
 
     public static TextInputEditText getEssid() {
         return essid;
+    }
+
+    public void setMessageSent(Boolean messageSent) {
+        this.messageSent = messageSent;
     }
 
     private Button getBtnStartConfiguration() {

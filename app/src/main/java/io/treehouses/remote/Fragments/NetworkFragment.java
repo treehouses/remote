@@ -157,12 +157,14 @@ public class NetworkFragment extends BaseFragment {
             case "password network": // wifi with password
                 alert = false;
                 buttonConfiguration.buttonProperties(true, Color.WHITE, btnConfig);
+                buttonConfiguration.setMessageSent(false);
                 updateNetworkMode();
                 return true;
         }
 
         if (readMessage.contains("Error")) {
             try {
+                buttonConfiguration.setMessageSent(false);
                 buttonConfiguration.buttonProperties(true, Color.WHITE, btnConfig);
                 alert = true;
             } catch (Exception e) {

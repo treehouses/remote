@@ -26,9 +26,11 @@ class ViewHolderHotspot extends ButtonConfiguration{
             public void onClick(View view) {
                 if (etPassword.getText().toString().isEmpty()) {
                     listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\"");
+                    messageSent = true;
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 } else {
                     listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
+                    messageSent = true;
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 }
 

@@ -20,6 +20,13 @@ public class ViewHolderEthernet extends ButtonConfiguration {
         etDNS = v.findViewById(R.id.dns);
         etGateway = v.findViewById(R.id.gateway);
         etMask = v.findViewById(R.id.mask);
+
+        etIp.addTextChangedListener(getTextWatcher(etIp, v));
+        etDNS.addTextChangedListener(getTextWatcher(etDNS, v));
+        etGateway.addTextChangedListener(getTextWatcher(etGateway, v));
+        etMask.addTextChangedListener(getTextWatcher(etMask, v));
+
+
         btnStartConfiguration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -28,6 +35,7 @@ public class ViewHolderEthernet extends ButtonConfiguration {
                 String gateway = etGateway.getText().toString();
                 String mask = etMask.getText().toString();
                 listener.sendMessage(String.format("treehouses ethernet \"%s\" \"%s\" \"%s\" \"%s\"", ip, mask, gateway, dns));
+                messageSent = true;
 
                 buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 

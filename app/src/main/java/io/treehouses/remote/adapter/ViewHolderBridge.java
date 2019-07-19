@@ -43,6 +43,7 @@ class ViewHolderBridge extends ButtonConfiguration {
                 }
 
                 listener.sendMessage(overallMessage);
+                messageSent = true;
 
                 buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
               
