@@ -11,13 +11,11 @@ import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
-public class ViewHolderBridge extends ButtonConfiguration {
-    private TextInputEditText etHotspotEssid, etPassword, etHotspotPassword;
-    private Button btnStartConfiguration;
+class ViewHolderBridge extends ButtonConfiguration {
 
-    public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
+    ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
 
-        etSsid = v.findViewById(R.id.et_essid);
+        essid = v.findViewById(R.id.et_essid);
         etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
         etPassword = v.findViewById(R.id.et_password);
         etHotspotPassword = v.findViewById(R.id.et_hotspot_password);
@@ -25,6 +23,13 @@ public class ViewHolderBridge extends ButtonConfiguration {
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
         buttonWifiSearch(context);
+
+
+        essid.addTextChangedListener(getTextWatcher(etSsid, v));
+        etHotspotEssid.addTextChangedListener(getTextWatcher(etHotspotEssid, v));
+        etPassword.addTextChangedListener(getTextWatcher(etPassword, v));
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
 
         btnStartConfiguration.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,11 +44,12 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
                 listener.sendMessage(overallMessage);
 
-                buttonProperties(false, Color.LTGRAY, v);
+                buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
               
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
         });
     }
+
 
 }

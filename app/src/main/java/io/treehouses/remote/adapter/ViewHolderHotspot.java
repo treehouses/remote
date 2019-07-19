@@ -32,7 +32,7 @@ class ViewHolderHotspot extends ButtonConfiguration{
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 }
 
-                buttonProperties(false, Color.LTGRAY, v);
+                buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
             }
         });
 
