@@ -122,14 +122,14 @@ public class SystemFragment extends BaseFragment {
                         intent.setData(Uri.parse(String.format("vnc://%s:5900", ip)));
                         startActivity(intent);
                     } catch (Exception e) {
-//                        Snackbar.make(in, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                Intent intent = new Intent(Intent.ACTION_VIEW);
-//                                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
-//                                startActivity(intent);
-//                            }
-//                        }).show();
+                        Snackbar.make(in, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
+                                startActivity(intent);
+                            }
+                        }).show();
                     }
                 }).setNegativeButton("Dismiss", null).show();
     }
