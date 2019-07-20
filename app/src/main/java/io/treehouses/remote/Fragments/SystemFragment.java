@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,11 +22,13 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.utils.Utils;
 
 public class SystemFragment extends BaseFragment {
 
@@ -40,8 +43,6 @@ public class SystemFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_system_fragment, container, false);
-
-
         ArrayList<String> list = new ArrayList<String>();
         list.add("Reboot");
         list.add("Expand File System");
@@ -50,20 +51,11 @@ public class SystemFragment extends BaseFragment {
         list.add("Container");
         list.add("Upgrade CLI");
         list.add("Open VNC");
-
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getListFragment(position);
-            }
-        });
-
+        listView.setOnItemClickListener((parent, view, position, id) -> getListFragment(position));
         mChatService = listener.getChatService();
-
         return view;
     }
 
@@ -73,7 +65,6 @@ public class SystemFragment extends BaseFragment {
                 listener.sendMessage("reboot");
                 try {
                     Thread.sleep(1000);
-
                     if (mChatService.getState() != Constants.STATE_CONNECTED) {
                         Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
                     } else {
@@ -109,6 +100,16 @@ public class SystemFragment extends BaseFragment {
     private void openVnc() {
         EditText in = new EditText(getActivity());
         in.setHint("Enter IP Address of you raspberry PI");
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")));
+        List<ResolveInfo> activities = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+        if (activities.size() == 0) {
+            Snackbar.make(getView(), "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", view -> {
+                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                intent1.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
+                startActivity(intent1);
+            }).show();
+            return;
+        }
         new AlertDialog.Builder(getActivity()).setTitle("Open VNC Client")
                 .setView(in)
                 .setPositiveButton("Open", (dialogInterface, i) -> {
@@ -118,18 +119,8 @@ public class SystemFragment extends BaseFragment {
                         return;
                     }
                     try {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(String.format("vnc://%s:5900", ip)));
-                        startActivity(intent);
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
                     } catch (Exception e) {
-                        Snackbar.make(in, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
-                                startActivity(intent);
-                            }
-                        }).show();
                     }
                 }).setNegativeButton("Dismiss", null).show();
     }
