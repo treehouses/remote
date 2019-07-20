@@ -55,6 +55,26 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <Button
+        android:id="@+id/btnVncOn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:text="vnc on"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintTop_toBottomOf="@+id/btnDocker"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/btnVncStatus"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:text="vnc status"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintTop_toBottomOf="@+id/btnDocker"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
         android:id="@+id/btnClear"
         android:layout_width="match_parent"
         android:layout_height="48dp"
