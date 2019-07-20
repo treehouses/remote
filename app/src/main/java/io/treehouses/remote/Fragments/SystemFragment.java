@@ -1,16 +1,24 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -41,6 +49,7 @@ public class SystemFragment extends BaseFragment {
         list.add("RPI Password Settings");
         list.add("Container");
         list.add("Upgrade CLI");
+        list.add("Open VNC");
 
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
@@ -90,9 +99,39 @@ public class SystemFragment extends BaseFragment {
             case 5:
                 listener.sendMessage("treehouses upgrade");
                 break;
+            case 6:
+                openVnc();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
+    }
+
+    private void openVnc() {
+        EditText in = new EditText(getActivity());
+        in.setHint("Enter IP Address of you raspberry PI");
+        new AlertDialog.Builder(getActivity()).setTitle("Open VNC Client")
+                .setView(in)
+                .setPositiveButton("Open", (dialogInterface, i) -> {
+                    String ip = in.getText().toString();
+                    if (TextUtils.isEmpty(ip)) {
+                        Toast.makeText(getActivity(), "Invalid ip address", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(String.format("vnc://%s:5900", ip)));
+                        startActivity(intent);
+                    } catch (Exception e) {
+//                        Snackbar.make(in, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                Intent intent = new Intent(Intent.ACTION_VIEW);
+//                                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
+//                                startActivity(intent);
+//                            }
+//                        }).show();
+                    }
+                }).setNegativeButton("Dismiss", null).show();
     }
 
     public void showRenameDialog() {
