@@ -2,6 +2,7 @@ package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -51,6 +52,8 @@ public class SystemFragment extends BaseFragment {
         list.add("Container");
         list.add("Upgrade CLI");
         list.add("Open VNC");
+        list.add("Open Hotspot Settings");
+
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
@@ -92,6 +95,8 @@ public class SystemFragment extends BaseFragment {
                 break;
             case 6:
                 openVnc();
+            case 7:
+                openHotspotSettings();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
@@ -111,18 +116,27 @@ public class SystemFragment extends BaseFragment {
             return;
         }
         new AlertDialog.Builder(getActivity()).setTitle("Open VNC Client")
-                .setView(in)
-                .setPositiveButton("Open", (dialogInterface, i) -> {
-                    String ip = in.getText().toString();
-                    if (TextUtils.isEmpty(ip)) {
-                        Toast.makeText(getActivity(), "Invalid ip address", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
-                    } catch (Exception e) {
-                    }
-                }).setNegativeButton("Dismiss", null).show();
+        .setView(in)
+        .setPositiveButton("Open", (dialogInterface, i) -> {
+            String ip = in.getText().toString();
+            if (TextUtils.isEmpty(ip)) {
+                Toast.makeText(getActivity(), "Invalid ip address", Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
+            } catch (Exception e) {
+            }
+        }).setNegativeButton("Dismiss", null).show();
+    }
+  
+    private void openHotspotSettings() {
+        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.TetherSettings");
+        intent.setComponent(cn);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity( intent);
     }
 
     public void showRenameDialog() {
