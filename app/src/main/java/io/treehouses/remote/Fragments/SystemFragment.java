@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class SystemFragment extends BaseFragment {
         list.add("RPI Password Settings");
         list.add("Container");
         list.add("Upgrade CLI");
+        list.add("Open Hotspot Settings");
 
         ListView listView = view.findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
@@ -90,9 +92,20 @@ public class SystemFragment extends BaseFragment {
             case 5:
                 listener.sendMessage("treehouses upgrade");
                 break;
+            case 6:
+                openHotspotSettings();
             default:
                 Log.e("Default Network Switch", "Nothing...");
         }
+    }
+
+    private void openHotspotSettings() {
+        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.TetherSettings");
+        intent.setComponent(cn);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity( intent);
     }
 
     public void showRenameDialog() {
