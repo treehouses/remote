@@ -19,7 +19,7 @@ class ViewHolderCommands {
         detect.setOnClickListener(v13 -> listener.sendMessage("treehouses detectrpi"));
         docker.setOnClickListener(v12 -> listener.sendMessage("docker ps"));
         expand.setOnClickListener(v1 -> listener.sendMessage("treehouses expandfs"));
-        vncOn.setOnClickListener(v16 -> listener.sendMessage("treehouse vnc on"));
+        vncOn.setOnClickListener(v16 -> listener.sendMessage("treehouses vnc on"));
         vncStatus.setOnClickListener(v17 -> listener.sendMessage("treehouses vnc"));
         clear.setOnClickListener(v1 -> {
             MainApplication.getTerminalList().clear();
