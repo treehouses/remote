@@ -126,8 +126,7 @@ public class SystemFragment extends BaseFragment {
             }
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
         }).setNegativeButton("Dismiss", null).show();
     }
   
@@ -202,13 +201,17 @@ public class SystemFragment extends BaseFragment {
 
     private void foreach(String[] array) {
         for (String element : array) {
-            if (element.contains("ip")) {
-                Log.e("TAG", "network info: " + element);
-                try {
-                    in.setText(element.trim().substring(4));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            elementConditions(element);
+        }
+    }
+
+    private void elementConditions(String element) {
+        if (element.contains("ip")) {
+            Log.e("TAG", "network info: " + element);
+            try {
+                in.setText(element.trim().substring(4));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
