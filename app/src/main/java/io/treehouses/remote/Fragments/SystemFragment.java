@@ -95,10 +95,13 @@ public class SystemFragment extends BaseFragment {
                 break;
             case 6:
                 openVnc();
+                break;
             case 7:
                 openHotspotSettings();
+                break;
             default:
                 Log.e("Default Network Switch", "Nothing...");
+                break;
         }
     }
 
