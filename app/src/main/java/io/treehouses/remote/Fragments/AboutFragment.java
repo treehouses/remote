@@ -32,7 +32,7 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
         Button version = view.findViewById(R.id.btn_version);
         TextView tvCopyright = view.findViewById(R.id.tv_copyright);
         hyperLinks(gitHub,"https://github.com/treehouses/remote" );
-        hyperLinks(images,"http://http://download.treehouses.io" );
+        hyperLinks(images,"http://download.treehouses.io" );
         hyperLinks(gitter,"https://gitter.im/open-learning-exchange/raspberrypi" );
 
         version.setOnClickListener(v -> {
