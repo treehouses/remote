@@ -1,44 +1,40 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
-
 import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.utils.Utils;
 
 public class SystemFragment extends BaseFragment {
 
     View view;
     private BluetoothChatService mChatService = null;
+    private EditText in;
 
 
-    public SystemFragment() {
-    }
+    public SystemFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +55,7 @@ public class SystemFragment extends BaseFragment {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> getListFragment(position));
         mChatService = listener.getChatService();
+        mChatService.updateHandler(mHandler);
         return view;
     }
 
@@ -106,7 +103,7 @@ public class SystemFragment extends BaseFragment {
     }
 
     private void openVnc() {
-        EditText in = new EditText(getActivity());
+        in = new EditText(getActivity());
         in.setHint("Enter IP Address of you raspberry PI");
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")));
         List<ResolveInfo> activities = getActivity().getPackageManager().queryIntentActivities(intent, 0);
@@ -118,6 +115,7 @@ public class SystemFragment extends BaseFragment {
             }).show();
             return;
         }
+        listener.sendMessage("treehouses networkmode info");
         new AlertDialog.Builder(getActivity()).setTitle("Open VNC Client")
         .setView(in)
         .setPositiveButton("Open", (dialogInterface, i) -> {
@@ -128,8 +126,7 @@ public class SystemFragment extends BaseFragment {
             }
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
         }).setNegativeButton("Dismiss", null).show();
     }
   
@@ -174,6 +171,47 @@ public class SystemFragment extends BaseFragment {
                 listener.sendMessage("treehouses container \"" + bundle.getString("container") + "\"");
             } else if (type.equals("chPass")) {
                 listener.sendMessage("treehouses password \"" + bundle.getString("password") + "\"");
+            }
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == Constants.MESSAGE_READ) {
+                String readMessage = (String) msg.obj;
+                Log.d("TAG", "readMessage = " + readMessage);
+
+                if (readMessage.trim().contains("true") || readMessage.trim().contains("false")) {
+                    return;
+                }
+
+                prefillIp(readMessage.trim());
+            }
+        }
+    };
+
+    private void prefillIp(String readMessage) {
+        if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
+            String[] array = readMessage.split(",");
+            foreach(array);
+        }
+    }
+
+    private void foreach(String[] array) {
+        for (String element : array) {
+            elementConditions(element);
+        }
+    }
+
+    private void elementConditions(String element) {
+        if (element.contains("ip")) {
+            Log.e("TAG", "network info: " + element);
+            try {
+                in.setText(element.trim().substring(4));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
