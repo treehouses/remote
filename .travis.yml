@@ -1,6 +1,7 @@
 language: android
 sudo: false
 jdk: oraclejdk8
+dist : trusty
 env:
   global:
     - ANDROID_API=25
@@ -42,7 +43,6 @@ android:
     - sys-img-armeabi-v7a-addon-google_apis-google-$ANDROID_API_LEVEL
     - sys-img-armeabi-v7a-addon-google_apis-google-$EMULATOR_API_LEVEL
     - build-tools-23.0.1
-    - android-28
     - android-24
     - android-23
     - android-22
