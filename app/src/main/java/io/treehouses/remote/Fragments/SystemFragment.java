@@ -6,10 +6,13 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,18 +30,19 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 
+import static android.content.Context.WIFI_SERVICE;
+
 public class SystemFragment extends BaseFragment {
 
     View view;
     private BluetoothChatService mChatService = null;
     private EditText in;
-
+    private Boolean hostname = false;
 
     public SystemFragment() { }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_system_fragment, container, false);
         ArrayList<String> list = new ArrayList<String>();
         list.add("Reboot");
@@ -57,6 +61,15 @@ public class SystemFragment extends BaseFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Log.e("TAG", "onResume called");
+        listener.sendMessage("hostname -I");
+        hostname = true;
     }
 
     public void getListFragment(int position) {
@@ -181,16 +194,60 @@ public class SystemFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
                 String readMessage = (String) msg.obj;
+                String prefill = "";
                 Log.d("TAG", "readMessage = " + readMessage);
 
                 if (readMessage.trim().contains("true") || readMessage.trim().contains("false")) {
                     return;
                 }
 
-                prefillIp(readMessage.trim());
+                WifiManager wm = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
+                String deviceIp = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+
+                Log.e("TAG", "ip: " + deviceIp);
+
+                //TODO need a better way to detect 'hostname -I' response
+                if (readMessage.contains(".") && hostname) {
+                    hostname = false;
+
+                    convertIpToNum(readMessage.trim());
+
+//                    String[] hostnameIp = readMessage.split(" ");
+//                    for (String ip : hostnameIp) {
+//                        if () {
+//                            prefill = readMessage;
+//                        }
+//                    }
+                }
+
+                //prefillIp(prefill);
             }
         }
     };
+
+    private void convertIpToNum(String ip) {
+        ArrayList<String> list = new ArrayList<>();
+        String[] ipArray = ip.split("[.]");
+
+//        for (String element : ipArray) {
+//            Log.e("TAG", "new IP: " + element);
+//        }
+
+        for (int i = 0; i < ipArray.length; i++) {
+            list.add(ipArray[i]);
+            if (i > 2) {
+                String convertedIp = list.get(0) + list.get(1) + list.get(2) + list.get(3);
+                Log.e("TAG", "New IP: " + convertedIp);
+                int num = Integer.parseInt(convertedIp);
+                subnetMask();
+                list.clear();
+            }
+        }
+    }
+
+    private void subnetMask() {
+//        if 
+    }
 
     private void prefillIp(String readMessage) {
         if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
