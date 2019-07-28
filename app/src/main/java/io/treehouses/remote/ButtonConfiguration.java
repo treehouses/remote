@@ -12,7 +12,7 @@ import io.treehouses.remote.Fragments.NetworkFragment;
 public abstract class ButtonConfiguration {
     protected Button btnStartConfiguration;
     protected Button btnWifiSearch;
-    protected static TextInputEditText etSsid;
+    protected static TextInputEditText etSsid, etHotspotEssid;
 
     public void buttonProperties(Boolean clickable, int color, View v) {
         Button btnStartConfiguration = v.findViewById(R.id.btn_start_config);
@@ -35,4 +35,6 @@ public abstract class ButtonConfiguration {
     public static TextInputEditText getSSID() {
         return etSsid;
     }
+
+    public static TextInputEditText getEtHotspotEssid() {return etHotspotEssid; }
 }
