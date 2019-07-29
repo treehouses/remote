@@ -13,7 +13,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderBridge extends ButtonConfiguration {
-    private TextInputEditText etHotspotEssid, etPassword, etHotspotPassword;
+    private TextInputEditText etPassword, etHotspotPassword;
     private Button btnStartConfiguration;
 
     public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
