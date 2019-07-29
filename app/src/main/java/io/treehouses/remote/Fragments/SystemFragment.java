@@ -203,21 +203,25 @@ public class SystemFragment extends BaseFragment {
                     return;
                 }
 
-                if (readMessage.contains(".") && hostname) {
-                    checkSubnet(readMessage, diff);
-                }
-
-                if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
-                    if (network) {
-                        prefillIp(readMessage);
-                    } else {
-                        Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
-                        prefillIp(readMessage);
-                    }
-                }
+                checkAndPrefilIp(readMessage, diff);
             }
         }
     };
+
+    private void checkAndPrefilIp(String readMessage, ArrayList<Long> diff) {
+        if (readMessage.contains(".") && hostname) {
+            checkSubnet(readMessage, diff);
+        }
+
+        if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
+            if (network) {
+                prefillIp(readMessage);
+            } else {
+                Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
+                prefillIp(readMessage);
+            }
+        }
+    }
 
     private void checkSubnet(String readMessage, ArrayList<Long> diff) {
         hostname = false;
