@@ -213,6 +213,10 @@ public class SystemFragment extends BaseFragment {
             checkSubnet(readMessage, diff);
         }
 
+        ipPrefil(readMessage, diff);
+    }
+
+    private void ipPrefil(String readMessage, ArrayList<Long> diff) {
         if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
             if (network) {
                 prefillIp(readMessage);
