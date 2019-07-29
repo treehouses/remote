@@ -235,8 +235,6 @@ public class SystemFragment extends BaseFragment {
 
         long deviceIpAddress = ipToLong(deviceIp);
 
-        Log.e("TAG", "ip: " + deviceIpAddress);
-
         convertIp(readMessage, deviceIpAddress, diff);
         network = isInNetwork(diff);
     }
@@ -249,7 +247,6 @@ public class SystemFragment extends BaseFragment {
             if (element.length() <= 15) {
                 long ip = ipToLong(element);
                 diff.add(deviceIpAddress - ip);
-                Log.e("TAG", "conversion: " + ip);
             }
         }
     }
@@ -281,7 +278,6 @@ public class SystemFragment extends BaseFragment {
 
     private void elementConditions(String element) {
         if (element.contains("ip")) {
-            Log.e("TAG", "network info: " + element);
             try {
                 in.setText(element.trim().substring(4));
             } catch (Exception e) {
