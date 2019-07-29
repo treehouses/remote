@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -37,6 +37,7 @@ public class SystemFragment extends BaseFragment {
     View view;
     private BluetoothChatService mChatService = null;
     private EditText in;
+    private Boolean network = true;
     private Boolean hostname = false;
 
     public SystemFragment() { }
@@ -194,69 +195,77 @@ public class SystemFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
                 String readMessage = (String) msg.obj;
-                String prefill = "";
+                ArrayList<Long> diff = new ArrayList<>();
+
                 Log.d("TAG", "readMessage = " + readMessage);
 
                 if (readMessage.trim().contains("true") || readMessage.trim().contains("false")) {
                     return;
                 }
 
-                WifiManager wm = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
-                String deviceIp = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-
-                Log.e("TAG", "ip: " + deviceIp);
-
-                //TODO need a better way to detect 'hostname -I' response
                 if (readMessage.contains(".") && hostname) {
-                    hostname = false;
-
-                    convertIpToNum(readMessage.trim());
-
-//                    String[] hostnameIp = readMessage.split(" ");
-//                    for (String ip : hostnameIp) {
-//                        if () {
-//                            prefill = readMessage;
-//                        }
-//                    }
+                    checkSubnet(readMessage, diff);
                 }
 
-                //prefillIp(prefill);
+                if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
+                    if (network) {
+                        prefillIp(readMessage);
+                    } else {
+                        Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
+                        prefillIp(readMessage);
+                    }
+                }
             }
         }
     };
 
-    private void convertIpToNum(String ip) {
-        ArrayList<String> list = new ArrayList<>();
-        String[] ipArray = ip.split("[.]");
+    private void checkSubnet(String readMessage, ArrayList<Long> diff) {
+        hostname = false;
 
-//        for (String element : ipArray) {
-//            Log.e("TAG", "new IP: " + element);
-//        }
+        WifiManager wm = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
+        String deviceIp = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
-        for (int i = 0; i < ipArray.length; i++) {
-            list.add(ipArray[i]);
-            if (i > 2) {
-                String convertedIp = list.get(0) + list.get(1) + list.get(2) + list.get(3);
-                Log.e("TAG", "New IP: " + convertedIp);
-                int num = Integer.parseInt(convertedIp);
-                subnetMask();
-                list.clear();
+        long deviceIpAddress = ipToLong(deviceIp);
+
+        Log.e("TAG", "ip: " + deviceIpAddress);
+
+        convertIp(readMessage, deviceIpAddress, diff);
+        network = isInNetwork(diff);
+    }
+
+    private void convertIp(String readMessage, long deviceIpAddress, ArrayList<Long> diff) {
+        String[] array = readMessage.split(" ");
+
+        for (String element : array) {
+            //TODO: Need to convert IPv6 addresses to long; currently it is being skipped
+            if (element.length() <= 15) {
+                long ip = ipToLong(element);
+                diff.add(deviceIpAddress - ip);
+                Log.e("TAG", "conversion: " + ip);
             }
         }
     }
 
-    private void subnetMask() {
-//        if 
+    private long ipToLong(String ipAddress) {
+        String[] ipAddressInArray = ipAddress.split("[.]");
+        long result = 0;
+
+        for (int i = 0; i < ipAddressInArray.length; i++) {
+            int power = 3 - i;
+            int ip = Integer.parseInt(ipAddressInArray[i]);
+            result += ip * Math.pow(256, power);
+        }
+        return result;
+    }
+
+    private boolean isInNetwork(ArrayList<Long> diff) {
+        Collections.sort(diff);
+        return diff.get(0) <= 256;
     }
 
     private void prefillIp(String readMessage) {
-        if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
-            String[] array = readMessage.split(",");
-            foreach(array);
-        }
-    }
+        String[] array = readMessage.split(",");
 
-    private void foreach(String[] array) {
         for (String element : array) {
             elementConditions(element);
         }
