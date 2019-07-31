@@ -193,14 +193,17 @@ public class NetworkFragment extends BaseFragment {
     private void elementConditions(String element) {
         Log.e("TAG", "networkmode= " + element);
         if (element.contains("wlan0")) {
-            if (ButtonConfiguration.getSSID() != null)
-                ButtonConfiguration.getSSID().setText(element.substring(14).trim());
+            setSSIDText(element.substring(14).trim());
         } else if (element.contains("ap0")) {
             ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
         } else if (element.length() > 5 && !element.contains("password") && !element.contains("ip")) {
-            if (ButtonConfiguration.getSSID() != null)
-                ButtonConfiguration.getSSID().setText(element.substring(6).trim());
+            setSSIDText(element.substring(6).trim());
         }
+    }
+
+    private void setSSIDText(String substring) {
+        if (ButtonConfiguration.getSSID() != null)
+            ButtonConfiguration.getSSID().setText(substring);
     }
 
     /**
