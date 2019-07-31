@@ -147,8 +147,8 @@ public class NetworkFragment extends BaseFragment {
             case "wifi": // wifi
                 expListView.expandGroup(1);
                 break;
-            case "internet": // hotspot
-            case "local": // hotspot
+            case "ap internet": // hotspot
+            case "ap local": // hotspot
                 expListView.expandGroup(2);
                 break;
             case "bridge": // bridge
