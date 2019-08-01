@@ -38,10 +38,11 @@ import static android.content.Context.WIFI_SERVICE;
 public class SystemFragment extends BaseFragment {
 
     private BluetoothChatService mChatService = null;
-    private WifiManager manager;
     private EditText in;
     private Boolean network = true;
     private Boolean hostname = false;
+    private WifiManager.LocalOnlyHotspotReservation mReservation;
+
     View view;
 
     public SystemFragment() { }
@@ -51,27 +52,15 @@ public class SystemFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_system_fragment, container, false);
         ArrayList<String> list = new ArrayList<String>();
-        list.add("Reboot");
-        list.add("Expand File System");
-        list.add("Rename Hostname");
-        list.add("RPI Password Settings");
-        list.add("Container");
-        list.add("Upgrade CLI");
         list.add("Open VNC");
         list.add("Open Hotspot Settings");
-        list.add("Tether");
+        list.add("Configure Tethering");
 
         ListView listView = view.findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, list);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getListFragment(position);
-            }
-        });
+        listView.setOnItemClickListener((parent, view, position, id) -> getListFragment(position));
 
         listView.setOnItemClickListener((parent, view, position, id) -> getListFragment(position));
         mChatService = listener.getChatService();
@@ -82,8 +71,6 @@ public class SystemFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.e("TAG", "onResume called");
         listener.sendMessage("hostname -I");
         hostname = true;
     }
@@ -92,42 +79,13 @@ public class SystemFragment extends BaseFragment {
     private void getListFragment(int position) {
         switch (position) {
             case 0:
-                listener.sendMessage("reboot");
-                try {
-                    Thread.sleep(1000);
-                    if (mChatService.getState() != Constants.STATE_CONNECTED) {
-                        Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                break;
-            case 1:
-                listener.sendMessage("treehouses expandfs");
-                break;
-            case 2:
-                showRenameDialog();
-                break;
-            case 3:
-                showChPasswordDialog();
-                break;
-            case 4:
-                showContainerDialog();
-                break;
-            case 5:
-                listener.sendMessage("treehouses upgrade");
-                break;
-            case 6:
                 openVnc();
                 break;
-            case 7:
+            case 1:
                 openHotspotSettings();
                 break;
-            case 8:
-                configureHotspot();
+            case 2:
+                turnOnHotspot();
                 break;
             default:
                 Log.e("Default Network Switch", "Nothing...");
@@ -173,98 +131,26 @@ public class SystemFragment extends BaseFragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void configureHotspot() {
-        turnOnHotspot();
-    }
-
-    private WifiManager.LocalOnlyHotspotReservation mReservation;
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void turnOnHotspot() {
-        manager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
+        WifiManager manager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
-
             @Override
             public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
                 super.onStarted(reservation);
                 Log.d("TAG", "Wifi Hotspot is on now");
                 mReservation = reservation;
-            }
-
-            @Override
+            } @Override
             public void onStopped() {
                 super.onStopped();
                 Log.d("TAG", "onStopped: ");
                 mReservation.close();
-            }
-
-            @Override
+            } @Override
             public void onFailed(int reason) {
                 super.onFailed(reason);
                 Log.d("TAG", "onFailed: ");
             }
         }, new Handler());
     }
-
-    private void showRenameDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = RenameDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "renameDialog");
-    }
-
-    private void showContainerDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = ContainerDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ethernetDialog");
-    }
-
-    private void showChPasswordDialog() {
-        // Create an instance of the dialog fragment and show it
-        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            String type = bundle.getString("type");
-            switch (type) {
-                case "rename":
-                    listener.sendMessage("treehouses rename \"" + bundle.getString("hostname") + "\"");
-                    break;
-                case "container":
-                    listener.sendMessage("treehouses container \"" + bundle.getString("container") + "\"");
-                    break;
-                case "chPass":
-                    listener.sendMessage("treehouses password \"" + bundle.getString("password") + "\"");
-                    break;
-            }
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == Constants.MESSAGE_READ) {
-                String readMessage = (String) msg.obj;
-                ArrayList<Long> diff = new ArrayList<>();
-
-                Log.d("TAG", "readMessage = " + readMessage);
-
-                if (readMessage.trim().contains("true") || readMessage.trim().contains("false")) {
-                    return;
-                }
-
-                checkAndPrefilIp(readMessage, diff);
-            }
-        }
-    };
 
     private void checkAndPrefilIp(String readMessage, ArrayList<Long> diff) {
         if (readMessage.contains(".") && hostname) {
@@ -343,4 +229,23 @@ public class SystemFragment extends BaseFragment {
             }
         }
     }
+
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == Constants.MESSAGE_READ) {
+                String readMessage = (String) msg.obj;
+                ArrayList<Long> diff = new ArrayList<>();
+
+                Log.d("TAG", "readMessage = " + readMessage);
+
+                if (readMessage.trim().contains("true") || readMessage.trim().contains("false")) {
+                    return;
+                }
+
+                checkAndPrefilIp(readMessage, diff);
+            }
+        }
+    };
 }
