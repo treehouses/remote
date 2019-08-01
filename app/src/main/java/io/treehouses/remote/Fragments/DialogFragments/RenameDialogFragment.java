@@ -58,10 +58,8 @@ public class RenameDialogFragment extends DialogFragment {
                 .setIcon(R.drawable.dialog_icon)
                 .setPositiveButton(R.string.start_configuration,
                         (dialog, whichButton) -> {
-                            //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                            String hostname = mHostNameEditText.getText().toString();
-
                             Intent intent = new Intent();
+                            String hostname = mHostNameEditText.getText().toString();
                             intent.putExtra("hostname", hostname);
                             intent.putExtra("type", "rename");
                             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
