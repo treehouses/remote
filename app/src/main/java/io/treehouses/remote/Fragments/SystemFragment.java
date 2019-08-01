@@ -120,7 +120,6 @@ public class SystemFragment extends BaseFragment {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void configureHotspot() {
-//        configApState(getContext());
         turnOnHotspot();
     }
 
@@ -137,17 +136,6 @@ public class SystemFragment extends BaseFragment {
                 super.onStarted(reservation);
                 Log.d("TAG", "Wifi Hotspot is on now");
                 mReservation = reservation;
-
-                Log.d("TAG", "SSID = " + getWifiApConfiguration());
-
-
-//                configApState(getContext());
-
-//                getSSID();
-
-//                setHotspotName(mChatService.getConnectedDeviceName(), getContext());
-
-               // Log.e("TAG", "SSID = " + getWifiApConfiguration().SSID);
             }
 
             @Override
@@ -163,95 +151,6 @@ public class SystemFragment extends BaseFragment {
             }
         }, new Handler());
     }
-
-//    public void getSSID() {
-//        WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
-//        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-//        Log.d("wifiInfo", wifiInfo.toString());
-//        Log.d("SSID = ",wifiInfo.getSSID());
-//    }
-
-//    public static boolean setHotspotName(String newName, Context context) {
-//        try {
-//            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(context.WIFI_SERVICE);
-//            Method getConfigMethod = wifiManager.getClass().getMethod("getWifiApConfiguration");
-//            WifiConfiguration wifiConfig = (WifiConfiguration) getConfigMethod.invoke(wifiManager);
-//
-//            String ssid = wifiConfig.SSID;
-//
-//            Method setConfigMethod = wifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
-//            setConfigMethod.invoke(wifiManager, wifiConfig);
-//
-//            return true;
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
-    private WifiConfiguration getWifiApConfiguration() {
-        Method m = getWifiManagerMethod("getWifiApConfiguration", manager);
-        if(m != null) {
-            try {
-                return (WifiConfiguration) m.invoke(manager);
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    private static Method getWifiManagerMethod(final String methodName, final WifiManager wifiManager) {
-        final Method[] methods = wifiManager.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                return method;
-            }
-        }
-        return null;
-    }
-
-//    private void turnOffHotspot() {
-//        if (mReservation != null) {
-//            mReservation.close();
-//        }
-//    }
-
-
-//    private static boolean configApState(Context context) {
-//        WifiManager wifimanager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
-//        WifiConfiguration wificonfiguration = null;
-//        try {
-//            // if WiFi is on, turn it off
-////            if(isApOn(context)) {
-////                wifimanager.setWifiEnabled(false);
-////            }
-//            Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-//            method.invoke(wifimanager, wificonfiguration);
-//            return true;
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
-
-//    private static boolean isApOn(Context context) {
-//        WifiManager wifimanager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
-//        try {
-//            Method method = wifimanager.getClass().getDeclaredMethod("isWifiApEnabled");
-//            method.setAccessible(true);
-//            return (Boolean) method.invoke(wifimanager);
-//        }
-//        catch (Throwable ignored) {}
-//        return false;
-//    }
-//
-//    public void getApName() {
-//
-//    }
-
 
     private void showRenameDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = RenameDialogFragment.newInstance(123);
