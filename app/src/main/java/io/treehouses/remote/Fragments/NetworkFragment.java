@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,7 +39,8 @@ public class NetworkFragment extends BaseFragment {
     private ButtonConfiguration buttonConfiguration;
     View view;
 
-    public NetworkFragment() { }
+    public NetworkFragment() {
+    }
 
 
     @Override
@@ -77,6 +79,14 @@ public class NetworkFragment extends BaseFragment {
         super.onResume();
         alert = false;
         expListView.expandGroup(6);
+
+        try {
+            // Thread.sleep(10);
+            listener.sendMessage("treehouses networkmode info");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static NetworkFragment getInstance() {
@@ -122,9 +132,9 @@ public class NetworkFragment extends BaseFragment {
 
     public void showWifiDialog(View v) {
         AppCompatActivity activity = (AppCompatActivity) v.getContext();
-        androidx.fragment.app.DialogFragment dialogFrag =  WifiDialogFragment.newInstance();
+        androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(activity.getSupportFragmentManager().beginTransaction(),"wifiDialog");
+        dialogFrag.show(activity.getSupportFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     private void changeList(String readMessage) {
@@ -160,10 +170,40 @@ public class NetworkFragment extends BaseFragment {
         }
 
         if (readMessage.contains("Error")) {
-            buttonConfiguration.buttonProperties(true, Color.WHITE, view);
-            alert = true;
+            try {
+                buttonConfiguration.buttonProperties(true, Color.WHITE, view);
+                alert = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                changeList("Error");
+            }
         }
         return false;
+    }
+
+    private void wifiPrefill(String readMessage) {
+        if (readMessage.contains("essid")) {
+            String[] array = readMessage.split(",");
+            for (String element : array) {
+                elementConditions(element);
+            }
+        }
+    }
+
+    private void elementConditions(String element) {
+        Log.e("TAG", "networkmode= " + element);
+        if (element.contains("wlan0")) {
+            setSSIDText(element.substring(14).trim());
+        } else if (element.contains("ap0")) {
+            ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
+        } else if (element.length() > 5 && !element.contains("password") && !element.contains("ip")) {
+            setSSIDText(element.substring(6).trim());
+        }
+    }
+
+    private void setSSIDText(String substring) {
+        if (ButtonConfiguration.getSSID() != null)
+            ButtonConfiguration.getSSID().setText(substring);
     }
 
     /**
@@ -182,6 +222,10 @@ public class NetworkFragment extends BaseFragment {
                     return;
                 }
 
+                wifiPrefill(readMessage);
+                // bridgePrefill(readMessage);
+
+
                 if (readMessage.contains("please reboot your device")) {
                     alert = true;
                     changeList = false;
@@ -199,6 +243,5 @@ public class NetworkFragment extends BaseFragment {
             }
         }
     };
-
 
 }
