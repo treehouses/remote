@@ -77,8 +77,6 @@ public class NetworkFragment extends BaseFragment {
         super.onResume();
         alert = false;
         expListView.expandGroup(6);
-
-        listener.sendMessage("treehouses networkmode info");
     }
 
     public static NetworkFragment getInstance() {
@@ -130,6 +128,7 @@ public class NetworkFragment extends BaseFragment {
     }
 
     private void changeList(String readMessage) {
+        listener.sendMessage("treehouses networkmode info");
         adapter.setNetworkMode("Network Mode: " + readMessage);
         switch (readMessage) {
             case "default": // ethernet
