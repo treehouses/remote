@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments;
+package io.treehouses.remote.Fragments.DialogFragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import io.treehouses.remote.Fragments.TextBoxValidation;
 import io.treehouses.remote.R;
 
 /**
@@ -21,9 +22,9 @@ public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragme
 
     private static String TAG = "ChPasswordDialogFragment";
 
-    protected EditText passwordEditText;
-    protected EditText confirmPassEditText;
-    TextBoxValidation textBoxValidation = new TextBoxValidation();
+    private EditText passwordEditText;
+    private EditText confirmPassEditText;
+    private TextBoxValidation textBoxValidation = new TextBoxValidation();
 
     public static ChPasswordDialogFragment newInstance(int num) {
         ChPasswordDialogFragment chPassDialogFragment = new ChPasswordDialogFragment();
@@ -55,42 +56,30 @@ public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragme
                 .setTitle(R.string.change_password)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.change_password,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                String chPass = passwordEditText.getText().toString();
+                        (dialog, whichButton) -> {
+                            dialog.dismiss();
+                            String chPass = passwordEditText.getText().toString();
 
-                                Intent i = new Intent();
-                                i.putExtra("type","chPass");
-                                i.putExtra("password", chPass);
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, i);
-                            }
+                            Intent i = new Intent();
+                            i.putExtra("type","chPass");
+                            i.putExtra("password", chPass);
+                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, i);
                         }
                 )
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
-                    }
-                })
+                .setNegativeButton(R.string.cancel, (dialog, whichButton) -> getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent()))
                 .create();
     }
     //initialize the view
-    protected void initLayoutView(View mView) {
+    private void initLayoutView(View mView) {
         passwordEditText = mView.findViewById(R.id.changePassword);
         confirmPassEditText = mView.findViewById(R.id.confirmPassword);
-
     }
+
     //listener for text change within this dialog
-    public void setTextChangeListener(final AlertDialog mDialog) {
-        textBoxValidation.mDialog = mDialog;
-        textBoxValidation.textWatcher = passwordEditText;
-        textBoxValidation.PWD = passwordEditText;
+    private void setTextChangeListener(final AlertDialog mDialog) {
+        textBoxValidation.setmDialog(mDialog);
+        textBoxValidation.setTextWatcher(passwordEditText);
+        textBoxValidation.setPWD(passwordEditText);
         textBoxValidation.changePWValidation(confirmPassEditText, getActivity());
-
-        textBoxValidation.mDialog = mDialog;
-        textBoxValidation.textWatcher = confirmPassEditText;
-        textBoxValidation.PWD = passwordEditText;
-        textBoxValidation.changePWValidation(confirmPassEditText, getActivity());
-
     }
 }

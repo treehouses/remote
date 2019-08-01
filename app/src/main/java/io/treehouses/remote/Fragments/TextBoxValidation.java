@@ -16,18 +16,41 @@ import io.treehouses.remote.R;
 
 public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
 
-    AlertDialog mDialog;
-    EditText textWatcher;
-    EditText SSID;
-    EditText PWD;
-    EditText IpAddressEditText;
-    EditText MaskEditText;
-    EditText GateWayEditText;
-    EditText DNSEditText;
-    EditText ESSIDEditText;
-    EditText HotspotESSIDEditText;
+    private AlertDialog mDialog;
+    private EditText textWatcher;
+    private EditText SSID;
+    private EditText PWD;
+
+    //TODO: this file needs to be refactored and maybe make it usable for the future
+    private EditText IpAddressEditText;
+    private EditText MaskEditText;
+    private EditText GateWayEditText;
+    private EditText DNSEditText;
+    private EditText ESSIDEditText;
+    private EditText HotspotESSIDEditText;
     EditText PasswordEditText;
     EditText HotspotPasswordEditText;
+
+    public EditText getSSID() {
+        return SSID;
+    }
+
+    public void setmDialog(AlertDialog mDialog) {
+        this.mDialog = mDialog;
+    }
+
+    public void setTextWatcher(EditText textWatcher) {
+        this.textWatcher = textWatcher;
+    }
+
+    public void setSSID(EditText SSID) {
+        this.SSID = SSID;
+    }
+
+    public void setPWD(EditText PWD) {
+        this.PWD = PWD;
+    }
+
 
     /**
      * Textwatcher for most dialogs
@@ -152,7 +175,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
         }
     }
 
-    protected void getListener(final AlertDialog mDialog) {
+    public void getListener(final AlertDialog mDialog) {
         mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {

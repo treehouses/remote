@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments;
+package io.treehouses.remote.Fragments.DialogFragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,21 +9,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
 
 import androidx.fragment.app.DialogFragment;
 import io.treehouses.remote.R;
 
-public class RenameDialogFragment extends DialogFragment {
-    private static final String TAG = "RenameDialogFragment";
+public class ContainerDialogFragment extends DialogFragment {
+
+    private static final String TAG = "ContainerDialogFragment";
 
     // Layout Views
-    protected EditText mHostNameEditText;
-    TextBoxValidation textboxValidation = new TextBoxValidation();
+    protected Spinner mSpinner;
 
-    public static RenameDialogFragment newInstance(int num){
+    public static ContainerDialogFragment newInstance(int num){
 
-        RenameDialogFragment dialogFragment = new RenameDialogFragment();
+        ContainerDialogFragment dialogFragment = new ContainerDialogFragment();
 //        Bundle bundle = new Bundle();
 //        bundle.putInt("num", num);
 //        dialogFragment.setArguments(bundle);
@@ -37,15 +40,19 @@ public class RenameDialogFragment extends DialogFragment {
 
         // Build the dialog and set up the button click handlers
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.dialog_rename,null);
+        View mView = inflater.inflate(R.layout.dialog_container,null);
         initLayoutView(mView);
 
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("None");
+        list.add("Docker");
+        list.add("Balena");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(adapter);
+
         final AlertDialog mDialog = getAlertDialog(mView);
-
-        //initially disable button click
-        textboxValidation.getListener(mDialog);
-        setTextChangeListener(mDialog);
-
         return mDialog;
     }
 
@@ -57,12 +64,10 @@ public class RenameDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.start_configuration,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                //                                getActivity().getIntent().putExtra("isValidInput", mSSIDEditText.getText().toString().length() > 0? Boolean.TRUE: Boolean.FALSE);
-                                String hostname = mHostNameEditText.getText().toString();
-
+                                String container = mSpinner.getSelectedItem().toString();
                                 Intent intent = new Intent();
-                                intent.putExtra("hostname", hostname);
-                                intent.putExtra("type", "rename");
+                                intent.putExtra("container",container);
+                                intent.putExtra("type", "container");
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                             }
                         }
@@ -74,15 +79,7 @@ public class RenameDialogFragment extends DialogFragment {
                 })
                 .create();
     }
-
-    public void setTextChangeListener(final AlertDialog mDialog) {
-        textboxValidation.mDialog = mDialog;
-        textboxValidation.textWatcher = mHostNameEditText;
-        textboxValidation.SSID = mHostNameEditText;
-        textboxValidation.textboxValidation(getActivity(), "rename");
-    }
-
     protected void initLayoutView(View mView) {
-        mHostNameEditText = mView.findViewById(R.id.hostname);
+        mSpinner = mView.findViewById(R.id.spinner);
     }
 }
