@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments;
+package io.treehouses.remote.Fragments.DialogFragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -26,7 +26,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import androidx.fragment.app.FragmentActivity;
+
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
