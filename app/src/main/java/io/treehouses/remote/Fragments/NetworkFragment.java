@@ -39,9 +39,7 @@ public class NetworkFragment extends BaseFragment {
     private ButtonConfiguration buttonConfiguration;
     View view;
 
-    public NetworkFragment() {
-    }
-
+    public NetworkFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,13 +78,7 @@ public class NetworkFragment extends BaseFragment {
         alert = false;
         expListView.expandGroup(6);
 
-        try {
-            // Thread.sleep(10);
-            listener.sendMessage("treehouses networkmode info");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        listener.sendMessage("treehouses networkmode info");
     }
 
     public static NetworkFragment getInstance() {
@@ -147,8 +139,8 @@ public class NetworkFragment extends BaseFragment {
             case "wifi": // wifi
                 expListView.expandGroup(1);
                 break;
-            case "internet": // hotspot
-            case "local": // hotspot
+            case "ap internet": // hotspot
+            case "ap local": // hotspot
                 expListView.expandGroup(2);
                 break;
             case "bridge": // bridge
@@ -181,7 +173,7 @@ public class NetworkFragment extends BaseFragment {
         return false;
     }
 
-    private void wifiPrefill(String readMessage) {
+    private void prefill(String readMessage) {
         if (readMessage.contains("essid")) {
             String[] array = readMessage.split(",");
             for (String element : array) {
@@ -192,11 +184,13 @@ public class NetworkFragment extends BaseFragment {
 
     private void elementConditions(String element) {
         Log.e("TAG", "networkmode= " + element);
-        if (element.contains("wlan0")) {
+        if (element.contains("wlan0") && !element.contains("ap essid")) {                   // bridge essid
             setSSIDText(element.substring(14).trim());
-        } else if (element.contains("ap0")) {
+        } else if (element.contains("ap essid")) {                                          // ap essid
+            setSSIDText(element.substring(16).trim());
+        } else if (element.contains("ap0")) {                                               // hotspot essid for bridge
             ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
-        } else if (element.length() > 5 && !element.contains("password") && !element.contains("ip")) {
+        } else if (element.contains("essid")) {                                             // wifi ssid
             setSSIDText(element.substring(6).trim());
         }
     }
@@ -222,9 +216,7 @@ public class NetworkFragment extends BaseFragment {
                     return;
                 }
 
-                wifiPrefill(readMessage);
-                // bridgePrefill(readMessage);
-
+                prefill(readMessage);
 
                 if (readMessage.contains("please reboot your device")) {
                     alert = true;

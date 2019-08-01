@@ -14,23 +14,22 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 class ViewHolderHotspot extends ButtonConfiguration{
-    private EditText etEssid, etPassword;
+    private EditText etPassword;
     private Spinner spn;
 
     public ViewHolderHotspot(View v, final HomeInteractListener listener, final Context context) {
-        etEssid = v.findViewById(R.id.et_hotspot_ssid);
+        etSsid = v.findViewById(R.id.et_hotspot_ssid);
         spn = v.findViewById(R.id.spn_hotspot_type);
         etPassword = v.findViewById(R.id.et_hotspot_password);
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
-
-        etEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         btnStartConfiguration.setOnClickListener(view -> {
             if (etPassword.getText().toString().isEmpty()) {
-                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\"");
+                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\"");
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             } else {
-                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etEssid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
+                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
 
