@@ -1,38 +1,30 @@
 package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.content.ComponentName;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Message;
-import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
-import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.snackbar.Snackbar;
 import java.util.Collections;
-import java.util.List;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.NetworkListAdapter;
+import io.treehouses.remote.adapter.ViewHolderVnc;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.pojo.NetworkListItem;
+
 import static android.content.Context.WIFI_SERVICE;
 
 public class SystemFragment extends BaseFragment {
@@ -41,7 +33,6 @@ public class SystemFragment extends BaseFragment {
     private EditText in;
     private Boolean network = true;
     private Boolean hostname = false;
-    private WifiManager.LocalOnlyHotspotReservation mReservation;
 
     View view;
 
@@ -51,18 +42,12 @@ public class SystemFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_system_fragment, container, false);
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("Open VNC");
-        list.add("Open Hotspot Settings");
-        list.add("Configure Tethering");
 
-        ListView listView = view.findViewById(R.id.listView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, list);
+        ExpandableListView listView = view.findViewById(R.id.listView);
+        NetworkListAdapter adapter = new NetworkListAdapter(getContext(), NetworkListItem.getSystemList(), mChatService);
+        adapter.setListener(listener);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view, position, id) -> getListFragment(position));
-
-        listView.setOnItemClickListener((parent, view, position, id) -> getListFragment(position));
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         return view;
@@ -73,83 +58,6 @@ public class SystemFragment extends BaseFragment {
         super.onResume();
         listener.sendMessage("hostname -I");
         hostname = true;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void getListFragment(int position) {
-        switch (position) {
-            case 0:
-                openVnc();
-                break;
-            case 1:
-                openHotspotSettings();
-                break;
-            case 2:
-                turnOnHotspot();
-                break;
-            default:
-                Log.e("Default Network Switch", "Nothing...");
-                break;
-        }
-    }
-
-    private void openVnc() {
-        in = new EditText(getActivity());
-        in.setHint("Enter IP Address of you raspberry PI");
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")));
-        List<ResolveInfo> activities = getActivity().getPackageManager().queryIntentActivities(intent, 0);
-        if (activities.size() == 0) {
-            Snackbar.make(getView(), "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", view -> {
-                Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
-                startActivity(intent1);
-            }).show();
-            return;
-        }
-        listener.sendMessage("treehouses networkmode info");
-        new AlertDialog.Builder(getActivity()).setTitle("Open VNC Client")
-        .setView(in)
-        .setPositiveButton("Open", (dialogInterface, i) -> {
-            String ip = in.getText().toString();
-            if (TextUtils.isEmpty(ip)) {
-                Toast.makeText(getActivity(), "Invalid ip address", Toast.LENGTH_LONG).show();
-                return;
-            }
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
-            } catch (Exception e) { }
-        }).setNegativeButton("Dismiss", null).show();
-    }
-  
-    private void openHotspotSettings() {
-        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.TetherSettings");
-        intent.setComponent(cn);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity( intent);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void turnOnHotspot() {
-        WifiManager manager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
-            @Override
-            public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
-                super.onStarted(reservation);
-                Log.d("TAG", "Wifi Hotspot is on now");
-                mReservation = reservation;
-            } @Override
-            public void onStopped() {
-                super.onStopped();
-                Log.d("TAG", "onStopped: ");
-                mReservation.close();
-            } @Override
-            public void onFailed(int reason) {
-                super.onFailed(reason);
-                Log.d("TAG", "onFailed: ");
-            }
-        }, new Handler());
     }
 
     private void checkAndPrefilIp(String readMessage, ArrayList<Long> diff) {
@@ -223,12 +131,13 @@ public class SystemFragment extends BaseFragment {
     private void elementConditions(String element) {
         if (element.contains("ip")) {
             try {
-                in.setText(element.trim().substring(4));
+                ViewHolderVnc.getEditTextIp().setText(element.trim().substring(4));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {

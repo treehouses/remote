@@ -1,11 +1,14 @@
 package io.treehouses.remote.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
 
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         this.list = list;
     }
 
-    public BluetoothChatService getChatService() {
+    private BluetoothChatService getChatService() {
         return chatService;
     }
 
@@ -88,38 +91,43 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(list.get(i).getLayout(), parent, false);
+        int layout = list.get(i).getLayout();
 
-        if (list.get(i).getLayout() != R.layout.button_layout) {
-            switchStatement(i, convertView);
-        } else {
+        if (layout == R.layout.open_vnc) {
+            new ViewHolderVnc(convertView, listener, context);
+        } else if (layout == R.layout.configure_tethering) {
+            new ViewHolderTether(convertView, listener, context);
+        } else if (layout == R.layout.button_layout) {
             new ViewHolderCommands(convertView, listener);
+        } else {
+            switchStatement(i, convertView);
         }
-
         return convertView;
     }
 
     private void switchStatement(int i, View convertView) {
         switch (i) {
             case 0:
-                new ViewHolderEthernet(convertView, listener, getContext());
+                new ViewHolderEthernet(convertView, listener, context);
                 break;
             case 1:
-                new ViewHolderWifi(convertView, listener, getContext());
+                new ViewHolderWifi(convertView, listener, context);
                 break;
             case 2:
-                new ViewHolderHotspot(convertView, listener, getContext());
+                new ViewHolderHotspot(convertView, listener, context);
                 break;
             case 3:
-                new ViewHolderBridge(convertView, listener, getContext());
+                new ViewHolderBridge(convertView, listener, context);
                 break;
             case 4:
                 new ViewHolderReset(convertView, listener);
                 break;
             case 5:
-                new ViewHolderReboot(convertView, listener, getChatService(), getContext());
+                new ViewHolderReboot(convertView, listener, getChatService(), context);
                 break;
         }
     }
