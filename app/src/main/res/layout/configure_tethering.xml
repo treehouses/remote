@@ -6,50 +6,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextSSID"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout2"
+            android:layout_width="406dp"
+            android:layout_height="37dp"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnFindSSID"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/md_blue_600">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:hint="@string/password"
+                    android:inputType="textPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnFindSSID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Hotspot SSID" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="Find SSID"
+            android:theme="@style/PrimaryButton"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+            tools:layout_editor_absoluteX="0dp" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/md_blue_600">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextPassword"
+        <Button
+            android:id="@+id/btnEnableHotspot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="@string/password" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="Enable Hotspot"
+            android:theme="@style/PrimaryButton"
+            app:layout_constraintTop_toBottomOf="@+id/btnFindSSID"
+            tools:layout_editor_absoluteX="0dp" />
 
-    <include
-        layout="@layout/layout_btn_configuration"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/btnEnableHotspot"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enable Hotspot"
-        android:theme="@style/PrimaryButton" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextSSID"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:hint="Hotspot SSID" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btnFindSSID"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Find SSID"
-        android:theme="@style/PrimaryButton" />
+        <include
+            layout="@layout/layout_btn_configuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/btnEnableHotspot"
+            tools:layout_editor_absoluteX="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

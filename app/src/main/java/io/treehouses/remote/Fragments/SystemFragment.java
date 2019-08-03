@@ -69,10 +69,10 @@ public class SystemFragment extends BaseFragment {
             checkSubnet(readMessage, diff);
         }
 
-        ipPrefil(readMessage, diff);
+        ipPrefil(readMessage);
     }
 
-    private void ipPrefil(String readMessage, ArrayList<Long> diff) {
+    private void ipPrefil(String readMessage) {
         if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
             if (network) {
                 prefillIp(readMessage);
@@ -148,12 +148,19 @@ public class SystemFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
                 String readMessage = (String) msg.obj;
+                readMessage = readMessage.trim();
                 ArrayList<Long> diff = new ArrayList<>();
 
                 Log.d("TAG", "readMessage = " + readMessage);
 
-                if (readMessage.trim().contains("true") || readMessage.trim().contains("false")) {
+                if (readMessage.contains("true") || readMessage.contains("false")) {
                     return;
+                }
+
+                if (readMessage.contains("Success: the vnc service has been started")) {
+                    Toast.makeText(getContext(), "VNC enabled", Toast.LENGTH_LONG).show();
+                } else if (readMessage.contains("Success: the vnc service has been stopped")) {
+                    Toast.makeText(getContext(), "VNC disabled", Toast.LENGTH_LONG).show();
                 }
 
                 checkAndPrefilIp(readMessage, diff);

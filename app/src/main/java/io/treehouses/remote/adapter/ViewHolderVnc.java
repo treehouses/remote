@@ -7,22 +7,32 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.List;
 import io.treehouses.remote.R;
+import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderVnc {
 
     private static TextInputEditText editTextIp;
 
-    ViewHolderVnc(View v, Context context) {
+    ViewHolderVnc(View v, Context context, HomeInteractListener listener) {
         Button btnStartConfig = v.findViewById(R.id.btn_start_config);
+        Switch vnc = v.findViewById(R.id.switchVnc);
         editTextIp = v.findViewById(R.id.editTextIp);
 
-        btnStartConfig.setOnClickListener(v1 -> {
-            openVnc(context, v, editTextIp);
+        btnStartConfig.setOnClickListener(v1 -> openVnc(context, v, editTextIp));
+        vnc.setOnClickListener(v12 -> {
+            if (vnc.isChecked()) {
+                listener.sendMessage("treehouses vnc on");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                listener.sendMessage("treehouses vnc off");
+            }
         });
     }
 
