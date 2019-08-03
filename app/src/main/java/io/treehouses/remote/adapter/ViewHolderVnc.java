@@ -7,29 +7,22 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-
 import java.util.List;
-
 import io.treehouses.remote.R;
-import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderVnc {
 
     private static TextInputEditText editTextIp;
 
-    ViewHolderVnc(View v, HomeInteractListener listener, Context context) {
+    ViewHolderVnc(View v, Context context) {
         Button btnStartConfig = v.findViewById(R.id.btn_start_config);
         editTextIp = v.findViewById(R.id.editTextIp);
 
         btnStartConfig.setOnClickListener(v1 -> {
-            openVnc(context, v, listener, editTextIp);
+            openVnc(context, v, editTextIp);
         });
     }
 
@@ -37,7 +30,7 @@ public class ViewHolderVnc {
         return editTextIp;
     }
 
-    private void openVnc(Context context, View v, HomeInteractListener listener, TextInputEditText in) {
+    private void openVnc(Context context, View v, TextInputEditText in) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")));
         List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
         if (activities.size() == 0) {
@@ -48,7 +41,6 @@ public class ViewHolderVnc {
             }).show();
             return;
         }
-        listener.sendMessage("treehouses networkmode info");
         String ip = in.getText().toString();
         if (TextUtils.isEmpty(ip)) {
             Toast.makeText(context, "Invalid ip address", Toast.LENGTH_LONG).show();

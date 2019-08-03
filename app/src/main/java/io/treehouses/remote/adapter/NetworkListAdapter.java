@@ -98,7 +98,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         int layout = list.get(i).getLayout();
 
         if (layout == R.layout.open_vnc) {
-            new ViewHolderVnc(convertView, listener, context);
+            new ViewHolderVnc(convertView, context);
         } else if (layout == R.layout.configure_tethering) {
             new ViewHolderTether(convertView, listener, context);
         } else if (layout == R.layout.button_layout) {

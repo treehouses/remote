@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import androidx.annotation.RequiresApi;
@@ -29,8 +28,6 @@ import static android.content.Context.WIFI_SERVICE;
 
 public class SystemFragment extends BaseFragment {
 
-    private BluetoothChatService mChatService = null;
-    private EditText in;
     private Boolean network = true;
     private Boolean hostname = false;
 
@@ -42,14 +39,21 @@ public class SystemFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_system_fragment, container, false);
+        BluetoothChatService mChatService = listener.getChatService();
+        mChatService.updateHandler(mHandler);
 
         ExpandableListView listView = view.findViewById(R.id.listView);
         NetworkListAdapter adapter = new NetworkListAdapter(getContext(), NetworkListItem.getSystemList(), mChatService);
         adapter.setListener(listener);
+
+        listView.setOnGroupExpandListener(groupPosition -> {
+            if (groupPosition == 0) {
+                listener.sendMessage("treehouses networkmode info");
+            }
+        });
+
         listView.setAdapter(adapter);
 
-        mChatService = listener.getChatService();
-        mChatService.updateHandler(mHandler);
         return view;
     }
 
@@ -137,7 +141,6 @@ public class SystemFragment extends BaseFragment {
             }
         }
     }
-
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
