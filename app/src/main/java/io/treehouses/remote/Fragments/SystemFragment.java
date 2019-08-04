@@ -142,6 +142,14 @@ public class SystemFragment extends BaseFragment {
         }
     }
 
+    private void vncToast(String readMessage) {
+        if (readMessage.contains("Success: the vnc service has been started")) {
+            Toast.makeText(getContext(), "VNC enabled", Toast.LENGTH_LONG).show();
+        } else if (readMessage.contains("Success: the vnc service has been stopped")) {
+            Toast.makeText(getContext(), "VNC disabled", Toast.LENGTH_LONG).show();
+        }
+    }
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -157,11 +165,7 @@ public class SystemFragment extends BaseFragment {
                     return;
                 }
 
-                if (readMessage.contains("Success: the vnc service has been started")) {
-                    Toast.makeText(getContext(), "VNC enabled", Toast.LENGTH_LONG).show();
-                } else if (readMessage.contains("Success: the vnc service has been stopped")) {
-                    Toast.makeText(getContext(), "VNC disabled", Toast.LENGTH_LONG).show();
-                }
+                vncToast(readMessage);
 
                 checkAndPrefilIp(readMessage, diff);
             }
