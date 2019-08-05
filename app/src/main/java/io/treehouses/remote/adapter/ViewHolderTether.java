@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
@@ -43,7 +44,9 @@ class ViewHolderTether {
             String password = editTextPassword.getText().toString();
 
             if (!TextUtils.isEmpty(ssid)) {
-                listener.sendMessage("treehouses wifi " + ssid  + " " + password);
+                listener.sendMessage("treehouses wifi " + ssid  + " " + (password.isEmpty() ? "" : password));
+                Toast.makeText(context, "Connected", Toast.LENGTH_LONG).show();
+
             }
         });
     }

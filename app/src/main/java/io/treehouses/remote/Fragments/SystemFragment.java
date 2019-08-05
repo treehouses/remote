@@ -165,6 +165,10 @@ public class SystemFragment extends BaseFragment {
                     return;
                 }
 
+                if (readMessage.equals("password network") || readMessage.equals("open wifi network")) {
+                    Toast.makeText(getContext(), "Connected", Toast.LENGTH_LONG).show();
+                }
+
                 vncToast(readMessage);
 
                 checkAndPrefilIp(readMessage, diff);
