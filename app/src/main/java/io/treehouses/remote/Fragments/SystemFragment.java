@@ -20,6 +20,7 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.NetworkListAdapter;
+import io.treehouses.remote.adapter.ViewHolderTether;
 import io.treehouses.remote.adapter.ViewHolderVnc;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.pojo.NetworkListItem;
@@ -30,6 +31,7 @@ public class SystemFragment extends BaseFragment {
 
     private Boolean network = true;
     private Boolean hostname = false;
+    private Boolean tether = false;
 
     View view;
 
@@ -47,13 +49,15 @@ public class SystemFragment extends BaseFragment {
         adapter.setListener(listener);
 
         listView.setOnGroupExpandListener(groupPosition -> {
-            if (groupPosition == 0) {
+            if (groupPosition == 1) {
                 listener.sendMessage("treehouses networkmode info");
+                tether = true;
+                return;
             }
+            listener.sendMessage("treehouses networkmode info");
         });
 
         listView.setAdapter(adapter);
-
         return view;
     }
 
@@ -65,7 +69,7 @@ public class SystemFragment extends BaseFragment {
     }
 
     private void checkAndPrefilIp(String readMessage, ArrayList<Long> diff) {
-        if (readMessage.contains(".") && hostname) {
+        if (readMessage.contains(".") && hostname && !readMessage.contains("essid")) {
             checkSubnet(readMessage, diff);
         }
 
@@ -133,9 +137,12 @@ public class SystemFragment extends BaseFragment {
     }
 
     private void elementConditions(String element) {
-        if (element.contains("ip")) {
+        if (element.contains("essid") && tether) {
+            tether = false;
+            ViewHolderTether.getEditTextSSID().setText(element.substring(6).trim());
+        } else if (element.contains("ip")) {
             try {
-                ViewHolderVnc.getEditTextIp().setText(element.trim().substring(4));
+                ViewHolderVnc.getEditTextIp().setText(element.substring(4).trim());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -155,8 +162,7 @@ public class SystemFragment extends BaseFragment {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
-                String readMessage = (String) msg.obj;
-                readMessage = readMessage.trim();
+                String readMessage = msg.obj.toString().trim();
                 ArrayList<Long> diff = new ArrayList<>();
 
                 Log.d("TAG", "readMessage = " + readMessage);

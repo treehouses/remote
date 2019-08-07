@@ -120,7 +120,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/hotspotSSID"
+        android:id="@+id/editTextSSID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -152,6 +152,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hotspotSSID" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextSSID" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
