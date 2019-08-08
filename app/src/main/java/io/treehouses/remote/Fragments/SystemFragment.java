@@ -165,18 +165,23 @@ public class SystemFragment extends BaseFragment {
                 String readMessage = msg.obj.toString().trim();
                 ArrayList<Long> diff = new ArrayList<>();
 
+                readMessageConditions(readMessage);
+                
                 Log.d("TAG", "readMessage = " + readMessage);
 
-                if (readMessage.contains("true") || readMessage.contains("false")) {
-                    return;
-                }
-
-                if (readMessage.equals("password network") || readMessage.equals("open wifi network")) {
-                    Toast.makeText(getContext(), "Connected", Toast.LENGTH_LONG).show();
-                }
                 vncToast(readMessage);
                 checkAndPrefilIp(readMessage, diff);
             }
         }
     };
+
+    private void readMessageConditions(String readMessage) {
+        if (readMessage.contains("true") || readMessage.contains("false")) {
+            return;
+        }
+
+        if (readMessage.equals("password network") || readMessage.equals("open wifi network")) {
+            Toast.makeText(getContext(), "Connected", Toast.LENGTH_LONG).show();
+        }
+    }
 }
