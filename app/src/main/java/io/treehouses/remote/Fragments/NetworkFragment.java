@@ -2,7 +2,6 @@ package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,11 +13,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
@@ -40,7 +41,6 @@ public class NetworkFragment extends BaseFragment {
     View view;
 
     public NetworkFragment() { }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -123,12 +123,13 @@ public class NetworkFragment extends BaseFragment {
 
     public void showWifiDialog(View v) {
         AppCompatActivity activity = (AppCompatActivity) v.getContext();
-        androidx.fragment.app.DialogFragment dialogFrag =  WifiDialogFragment.newInstance();
+        androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(activity.getSupportFragmentManager().beginTransaction(),"wifiDialog");
+        dialogFrag.show(activity.getSupportFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     private void changeList(String readMessage) {
+        listener.sendMessage("treehouses networkmode info");
         adapter.setNetworkMode("Network Mode: " + readMessage);
         switch (readMessage) {
             case "default": // ethernet
@@ -138,8 +139,8 @@ public class NetworkFragment extends BaseFragment {
             case "wifi": // wifi
                 expListView.expandGroup(1);
                 break;
-            case "internet": // hotspot
-            case "local": // hotspot
+            case "ap internet": // hotspot
+            case "ap local": // hotspot
                 expListView.expandGroup(2);
                 break;
             case "bridge": // bridge
@@ -175,6 +176,33 @@ public class NetworkFragment extends BaseFragment {
         return false;
     }
 
+    private void prefill(String readMessage) {
+        if (readMessage.contains("essid")) {
+            String[] array = readMessage.split(",");
+            for (String element : array) {
+                elementConditions(element);
+            }
+        }
+    }
+
+    private void elementConditions(String element) {
+        Log.e("TAG", "networkmode= " + element);
+        if (element.contains("wlan0") && !element.contains("ap essid")) {                   // bridge essid
+            setSSIDText(element.substring(14).trim());
+        } else if (element.contains("ap essid")) {                                          // ap essid
+            setSSIDText(element.substring(16).trim());
+        } else if (element.contains("ap0")) {                                               // hotspot essid for bridge
+            ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
+        } else if (element.contains("essid")) {                                             // wifi ssid
+            setSSIDText(element.substring(6).trim());
+        }
+    }
+
+    private void setSSIDText(String substring) {
+        if (ButtonConfiguration.getSSID() != null)
+            ButtonConfiguration.getSSID().setText(substring);
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -190,6 +218,8 @@ public class NetworkFragment extends BaseFragment {
                 if (result || readMessage.trim().equals("false") || readMessage.trim().contains("true")) {
                     return;
                 }
+
+                prefill(readMessage);
 
                 if (readMessage.contains("please reboot your device")) {
                     alert = true;
@@ -208,6 +238,5 @@ public class NetworkFragment extends BaseFragment {
             }
         }
     };
-
 
 }

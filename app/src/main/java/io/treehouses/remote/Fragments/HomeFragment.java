@@ -1,23 +1,19 @@
 package io.treehouses.remote.Fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;

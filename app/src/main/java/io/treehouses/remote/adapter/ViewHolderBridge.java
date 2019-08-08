@@ -12,7 +12,9 @@ import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
-class ViewHolderBridge extends ButtonConfiguration {
+public class ViewHolderBridge extends ButtonConfiguration {
+    private TextInputEditText etPassword, etHotspotPassword;
+    private Button btnStartConfiguration;
 
     ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
 
@@ -28,11 +30,10 @@ class ViewHolderBridge extends ButtonConfiguration {
 
         buttonWifiSearch(context);
 
-
-
         essid.addTextChangedListener(getTextWatcher(etSsid, v));
         etHotspotEssid.addTextChangedListener(getTextWatcher(etHotspotEssid, v));
         etPassword.addTextChangedListener(getTextWatcher(etPassword, v));
+
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
         btnStartConfiguration.setOnClickListener(view -> {
@@ -44,6 +45,7 @@ class ViewHolderBridge extends ButtonConfiguration {
                 overallMessage += "\"" + etHotspotPassword.getText().toString() + "\"";
             }
             messageSent = true;
+            listener.sendMessage(overallMessage);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 

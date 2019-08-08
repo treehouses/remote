@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments;
+package io.treehouses.remote.Fragments.DialogFragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -57,7 +57,7 @@ public class WifiDialogFragment extends DialogFragment {
         return mDialog;
     }
 
-    static androidx.fragment.app.DialogFragment newInstance() {
+    public static androidx.fragment.app.DialogFragment newInstance() {
         return new WifiDialogFragment();
     }
 

@@ -7,23 +7,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.content.Context;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.w3c.dom.Text;
-
-import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
 
 public abstract class ButtonConfiguration {
-    protected @Nullable TextInputEditText etHotspotEssid, etPassword, etHotspotPassword;
+    @Nullable protected static TextInputEditText etHotspotEssid;
+    @Nullable protected TextInputEditText etPassword;
+    @Nullable protected TextInputEditText etHotspotPassword;
     protected Button btnStartConfiguration;
     protected Button btnWifiSearch;
+
     protected static @Nullable TextInputEditText etSsid, essid;
     protected Boolean messageSent = false;
 
@@ -94,4 +90,6 @@ public abstract class ButtonConfiguration {
     private Button getBtnStartConfiguration() {
         return btnStartConfiguration;
     }
+
+    public static TextInputEditText getEtHotspotEssid() {return etHotspotEssid; }
 }
