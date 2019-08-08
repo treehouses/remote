@@ -74,23 +74,31 @@ public class ViewHolderTether {
     private void turnOnHotspot(Context context) {
         WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
-                @Override
-                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
-                    super.onStarted(reservation);
-                    Log.d("TAG", "Wifi Hotspot is on now");
-                    mReservation = reservation;
-                } @Override
-                public void onStopped() {
-                    super.onStopped();
-                    Log.d("TAG", "onStopped: ");
-                    mReservation.close();
-                } @Override
-                public void onFailed(int reason) {
-                    super.onFailed(reason);
-                    Log.d("TAG", "onFailed: ");
-                }
-            }, new Handler());
+            try {
+                manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
+                    @Override
+                    public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                        super.onStarted(reservation);
+                        Log.d("TAG", "Wifi Hotspot is on now");
+                        mReservation = reservation;
+                    }
+
+                    @Override
+                    public void onStopped() {
+                        super.onStopped();
+                        Log.d("TAG", "onStopped: ");
+                        mReservation.close();
+                    }
+
+                    @Override
+                    public void onFailed(int reason) {
+                        super.onFailed(reason);
+                        Log.d("TAG", "onFailed: ");
+                    }
+                }, new Handler());
+            }catch (Exception e){
+                Toast.makeText(context,"Something went wrong, Unable to start hotspot", Toast.LENGTH_LONG).show();
+            }
         }
 
 
