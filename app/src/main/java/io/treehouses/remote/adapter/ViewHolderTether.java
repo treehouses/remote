@@ -79,21 +79,18 @@ public class ViewHolderTether {
                     @Override
                     public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
                         super.onStarted(reservation);
-                        Log.d("TAG", "Wifi Hotspot is on now");
                         mReservation = reservation;
                     }
 
                     @Override
                     public void onStopped() {
                         super.onStopped();
-                        Log.d("TAG", "onStopped: ");
                         mReservation.close();
                     }
 
                     @Override
                     public void onFailed(int reason) {
                         super.onFailed(reason);
-                        Log.d("TAG", "onFailed: ");
                     }
                 }, new Handler());
             }catch (Exception e){
