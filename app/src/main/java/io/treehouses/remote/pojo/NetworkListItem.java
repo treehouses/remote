@@ -52,7 +52,7 @@ public class NetworkListItem {
     public static List<NetworkListItem> getSystemList() {
         List<NetworkListItem> systemList = new ArrayList();
         systemList.add(new NetworkListItem("Open VNC", R.layout.open_vnc));
-        systemList.add(new NetworkListItem("Configure Tethering", R.layout.configure_tethering));
+        systemList.add(new NetworkListItem("Configure Tethering (beta)", R.layout.configure_tethering));
         return systemList;
     }
 }
