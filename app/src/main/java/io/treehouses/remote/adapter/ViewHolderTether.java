@@ -9,8 +9,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.Toast;
-import androidx.annotation.RequiresApi;
 import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
@@ -20,15 +20,20 @@ public class ViewHolderTether {
     private WifiManager.LocalOnlyHotspotReservation mReservation;
     private static TextInputEditText editTextSSID;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     ViewHolderTether(View v, HomeInteractListener listener, Context context) {
-        Button btnEnableHotspot = v.findViewById(R.id.btnEnableHotspot);
+        Switch switchEnableHotspot = v.findViewById(R.id.switchEnableHotspot);
         Button btnFindSSID = v.findViewById(R.id.btnFindSSID);
         Button btnStartConfig = v.findViewById(R.id.btn_start_config);
         editTextSSID = v.findViewById(R.id.editTextSSID);
         TextInputEditText editTextPassword = v.findViewById(R.id.editTextPassword);
 
-        btnEnableHotspot.setOnClickListener(v12 -> turnOnHotspot(context));
+        switchEnableHotspot.setOnClickListener(v12 -> {
+            if (switchEnableHotspot.isChecked()) {
+                turnOnHotspot(context);
+            } else {
+                turnOffHotspot();
+            }
+        });
 
         btnFindSSID.setOnClickListener(v1 -> openHotspotSettings(context));
 
@@ -39,11 +44,18 @@ public class ViewHolderTether {
             if (!ssid.isEmpty()) {
                 listener.sendMessage("treehouses wifi " + ssid  + " " + (password.isEmpty() ? "" : password));
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-
             } else {
                 Toast.makeText(context, "Error: Invalid SSID", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void turnOffHotspot() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (mReservation != null) {
+                mReservation.close();
+            }
+        }
     }
 
     public static TextInputEditText getEditTextSSID() {
@@ -59,25 +71,28 @@ public class ViewHolderTether {
         context.startActivity( intent);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void turnOnHotspot(Context context) {
         WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
-            @Override
-            public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
-                super.onStarted(reservation);
-                Log.d("TAG", "Wifi Hotspot is on now");
-                mReservation = reservation;
-            } @Override
-            public void onStopped() {
-                super.onStopped();
-                Log.d("TAG", "onStopped: ");
-                mReservation.close();
-            } @Override
-            public void onFailed(int reason) {
-                super.onFailed(reason);
-                Log.d("TAG", "onFailed: ");
-            }
-        }, new Handler());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
+                @Override
+                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                    super.onStarted(reservation);
+                    Log.d("TAG", "Wifi Hotspot is on now");
+                    mReservation = reservation;
+                } @Override
+                public void onStopped() {
+                    super.onStopped();
+                    Log.d("TAG", "onStopped: ");
+                    mReservation.close();
+                } @Override
+                public void onFailed(int reason) {
+                    super.onFailed(reason);
+                    Log.d("TAG", "onFailed: ");
+                }
+            }, new Handler());
+        }
+
+
     }
 }
