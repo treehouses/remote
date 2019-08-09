@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,7 +23,7 @@ public class ViewHolderTether {
 
     ViewHolderTether(View v, HomeInteractListener listener, Context context) {
         Switch switchEnableHotspot = v.findViewById(R.id.switchEnableHotspot);
-        Button btnFindSSID = v.findViewById(R.id.btnFindSSID);
+        ImageView imageViewSettings = v.findViewById(R.id.imageViewSettings);
         Button btnStartConfig = v.findViewById(R.id.btn_start_config);
         editTextSSID = v.findViewById(R.id.editTextSSID);
         TextInputEditText editTextPassword = v.findViewById(R.id.editTextPassword);
@@ -35,7 +36,7 @@ public class ViewHolderTether {
             }
         });
 
-        btnFindSSID.setOnClickListener(v1 -> openHotspotSettings(context));
+        imageViewSettings.setOnClickListener(v1 -> openHotspotSettings(context));
 
         btnStartConfig.setOnClickListener(v13 -> {
             String ssid = editTextSSID.getText().toString();
