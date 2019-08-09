@@ -14,12 +14,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.Fragments.NetworkFragment;
 
 public abstract class ButtonConfiguration {
-    protected static TextInputEditText etHotspotEssid;
+    protected static TextInputEditText etHotspotEssid, etSsid, essid;
     protected TextInputEditText etPassword;
     protected Button btnStartConfiguration;
     protected Button btnWifiSearch;
-
-    protected static @Nullable TextInputEditText etSsid, essid;
     protected Boolean messageSent = false;
 
     public void buttonProperties(Boolean clickable, int color, Button btnStartConfiguration) {
@@ -41,7 +39,6 @@ public abstract class ButtonConfiguration {
     }
 
     protected TextWatcher getTextWatcher(final EditText editText, View v) {
-        etPassword = v.findViewById(R.id.et_password);
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
@@ -49,21 +46,16 @@ public abstract class ButtonConfiguration {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void afterTextChanged(Editable editable) {
-
-                afterTextChangedListener(editable, editText);
+                etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
+                if (editable == etSsid.getEditableText() && !messageSent) {                                                         // wifi
+                    textChanged(editText.length() > 0);
+                } else if (editable == essid.getEditableText() || editable == etHotspotEssid.getEditableText() && !messageSent) {   // bridge
+                    textChanged(editText.length() > 0 && essid.length() > 0 && etHotspotEssid.length() > 0);
+                }
 
                 Log.e("TAG", "afterTextChanged()");
             }
         };
-    }
-
-    private void afterTextChangedListener(Editable editable, EditText editText) {
-
-        if (editable == etSsid.getEditableText() || editable == etPassword.getEditableText() && !messageSent) { // wifi
-            textChanged(editText.length() > 0 && etSsid.length() > 0);
-        } else if (editable == essid.getEditableText() && !messageSent) {                                       // bridge
-            textChanged(editText.length() > 0 && etHotspotEssid.length() > 0);
-        }
     }
 
     private void textChanged(boolean condition) {
