@@ -6,4 +6,5 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_normal"
     android:text="Start Configuration"
-    android:theme="@style/PrimaryButton" />
+    android:theme="@style/PrimaryButton"
+    android:enabled="false" />

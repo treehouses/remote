@@ -23,8 +23,6 @@ class ViewHolderWifi extends ButtonConfiguration {
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
         etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
-        etPassword.addTextChangedListener(getTextWatcher(etPassword, v));
-        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
         etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 

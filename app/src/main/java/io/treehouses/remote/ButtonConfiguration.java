@@ -14,9 +14,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.Fragments.NetworkFragment;
 
 public abstract class ButtonConfiguration {
-    @Nullable protected static TextInputEditText etHotspotEssid;
-    @Nullable protected TextInputEditText etPassword;
-    @Nullable protected TextInputEditText etHotspotPassword;
+    protected static TextInputEditText etHotspotEssid;
+    protected TextInputEditText etPassword;
     protected Button btnStartConfiguration;
     protected Button btnWifiSearch;
 
@@ -25,6 +24,7 @@ public abstract class ButtonConfiguration {
 
     public void buttonProperties(Boolean clickable, int color, Button btnStartConfiguration) {
         NetworkFragment.getInstance().setButtonConfiguration(this);
+
         btnStartConfiguration.setEnabled(clickable);
         btnStartConfiguration.setTextColor(color);
     }
@@ -57,8 +57,7 @@ public abstract class ButtonConfiguration {
         };
     }
 
-    @Nullable
-    private void afterTextChangedListener(@Nullable Editable editable, @Nullable EditText editText) {
+    private void afterTextChangedListener(Editable editable, EditText editText) {
 
         if (editable == etSsid.getEditableText() || editable == etPassword.getEditableText() && !messageSent) { // wifi
             textChanged(editText.length() > 0 && etSsid.length() > 0);
@@ -87,8 +86,8 @@ public abstract class ButtonConfiguration {
         this.messageSent = messageSent;
     }
 
-    private Button getBtnStartConfiguration() {
-        return btnStartConfiguration;
+    protected void setBtnStartConfiguration(Button btnStartConfiguration) {
+        this.btnStartConfiguration = btnStartConfiguration;
     }
 
     public static TextInputEditText getEtHotspotEssid() {return etHotspotEssid; }
