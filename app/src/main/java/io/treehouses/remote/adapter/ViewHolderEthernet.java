@@ -12,7 +12,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderEthernet extends ButtonConfiguration {
-    public TextInputEditText etIp, etDNS, etGateway, etMask;
+
 
     public ViewHolderEthernet(View v, final HomeInteractListener listener, final Context context) {
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);

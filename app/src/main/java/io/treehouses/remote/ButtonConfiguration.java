@@ -15,7 +15,7 @@ import io.treehouses.remote.Fragments.NetworkFragment;
 
 public abstract class ButtonConfiguration {
     protected static TextInputEditText etHotspotEssid, etSsid, essid;
-    protected TextInputEditText etPassword;
+    protected TextInputEditText etIp, etDNS, etGateway, etMask;
     protected Button btnStartConfiguration;
     protected Button btnWifiSearch;
     protected Boolean messageSent = false;
@@ -46,11 +46,14 @@ public abstract class ButtonConfiguration {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void afterTextChanged(Editable editable) {
-                etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
-                if (editable == etSsid.getEditableText() && !messageSent) {                                                         // wifi
-                    textChanged(editText.length() > 0);
-                } else if (editable == essid.getEditableText() || editable == etHotspotEssid.getEditableText() && !messageSent) {   // bridge
-                    textChanged(editText.length() > 0 && essid.length() > 0 && etHotspotEssid.length() > 0);
+                //if (viewCondition(etIp, editable) || viewCondition(etDNS, editable)) {                  // ethernet
+               //     textChanged(length(editText) && length(etIp) && length(etDNS));
+                //} else
+                //
+                if (viewCondition(etSsid, editable)) {                                             // wifi
+                    textChanged(length(editText));
+                } else if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {   // bridge
+                    textChanged(length(editText) && length(essid) && length(etHotspotEssid));
                 }
 
                 Log.e("TAG", "afterTextChanged()");
@@ -64,6 +67,14 @@ public abstract class ButtonConfiguration {
         } else {
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
         }
+    }
+
+    private Boolean viewCondition(TextInputEditText editText, Editable editable) {
+        return editable == editText.getEditableText() && !messageSent;
+    }
+
+    private Boolean length(EditText editText) {
+        return editText.length() > 0;
     }
 
     public static TextInputEditText getSSID() {
