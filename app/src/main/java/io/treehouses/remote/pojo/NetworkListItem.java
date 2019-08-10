@@ -3,12 +3,11 @@ package io.treehouses.remote.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 
 public class NetworkListItem {
-    private   String title;
-    private   int layout;
+    private String title;
+    private int layout;
 
     public NetworkListItem(String title, int layout) {
         this.title = title;
@@ -48,5 +47,12 @@ public class NetworkListItem {
         List<NetworkListItem> terminalList = new ArrayList();
         terminalList.add(new NetworkListItem("Commands", R.layout.button_layout));
         return terminalList;
+    }
+
+    public static List<NetworkListItem> getSystemList() {
+        List<NetworkListItem> systemList = new ArrayList();
+        systemList.add(new NetworkListItem("Open VNC", R.layout.open_vnc));
+        systemList.add(new NetworkListItem("Configure Tethering (beta)", R.layout.configure_tethering));
+        return systemList;
     }
 }
