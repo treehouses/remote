@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.Fragments.NetworkFragment;
+import io.treehouses.remote.adapter.NetworkListAdapter;
 
 public abstract class ButtonConfiguration {
     protected static TextInputEditText etHotspotEssid, etSsid, essid;
@@ -46,14 +47,24 @@ public abstract class ButtonConfiguration {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void afterTextChanged(Editable editable) {
-                //if (viewCondition(etIp, editable) || viewCondition(etDNS, editable)) {                  // ethernet
-               //     textChanged(length(editText) && length(etIp) && length(etDNS));
-                //} else
-                //
-                if (viewCondition(etSsid, editable)) {                                             // wifi
-                    textChanged(length(editText));
-                } else if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {   // bridge
-                    textChanged(length(editText) && length(essid) && length(etHotspotEssid));
+
+                if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {                           // ethernet text listener
+                    if (viewCondition(etIp, editable) || viewCondition(etDNS, editable) ||
+                            viewCondition(etGateway, editable) || viewCondition(etMask, editable)) {
+                        textChanged(length(editText) && length(etIp) && length(etDNS));
+                    }
+                } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {                        // wifi text listener
+                    if (viewCondition(etSsid, editable)) {
+                        textChanged(length(editText));
+                    }
+                } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {                     // hotspot text listener
+                    if (viewCondition(etSsid, editable)) {
+                        textChanged(length(editText));
+                    }
+                } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {                      // bridge text listener
+                    if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {
+                        textChanged(length(editText) && length(essid) && length(etHotspotEssid));
+                    }
                 }
 
                 Log.e("TAG", "afterTextChanged()");

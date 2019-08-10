@@ -13,10 +13,10 @@
 
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/dns"
+        android:id="@+id/mask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="DNS"
+        android:hint="Mask"
         android:padding="@dimen/padding_normal" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -27,10 +27,10 @@
         android:padding="@dimen/padding_normal" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/mask"
+        android:id="@+id/dns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mask"
+        android:hint="DNS"
         android:padding="@dimen/padding_normal" />
 
     <include layout="@layout/layout_btn_configuration"/>

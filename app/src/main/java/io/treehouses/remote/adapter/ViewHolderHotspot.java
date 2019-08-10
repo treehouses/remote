@@ -22,6 +22,8 @@ class ViewHolderHotspot extends ButtonConfiguration{
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
+        etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
+
         btnStartConfiguration.setOnClickListener(view -> {
             if (etPassword.getText().toString().isEmpty()) {
                 listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\"");
