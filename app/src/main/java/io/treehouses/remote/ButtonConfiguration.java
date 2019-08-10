@@ -56,22 +56,38 @@ public abstract class ButtonConfiguration {
     }
 
     private void afterTextChangedListener(Editable editable, EditText editText) {
-        if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {                           // ethernet text listener
-            if (viewCondition(etIp, editable) || viewCondition(etDNS, editable) || viewCondition(etGateway, editable) || viewCondition(etMask, editable)) {
-                textChanged(length(editText) && length(etIp) && length(etDNS));
-            }
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {                        // wifi text listener
-            if (viewCondition(etSsid, editable)) {
-                textChanged(length(editText));
-            }
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {                     // hotspot text listener
-            if (viewCondition(etSsid, editable)) {
-                textChanged(length(editText));
-            }
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {                      // bridge text listener
-            if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {
-                textChanged(length(editText) && length(essid) && length(etHotspotEssid));
-            }
+        if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {             // ethernet text listener
+            ethernetLayout(editable, editText);
+        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {          // wifi text listener
+            wifiLayout(editable, editText);
+        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {       // hotspot text listener
+            hotspotLayout(editable, editText);
+        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {        // bridge text listener
+            bridgeLayout(editable, editText);
+        }
+    }
+
+    private void ethernetLayout(Editable editable, EditText editText) {
+        if (viewCondition(etIp, editable) || viewCondition(etDNS, editable) || viewCondition(etGateway, editable) || viewCondition(etMask, editable)) {
+            textChanged(length(editText) && length(etIp) && length(etDNS));
+        }
+    }
+
+    private void wifiLayout(Editable editable, EditText editText) {
+        if (viewCondition(etSsid, editable)) {
+            textChanged(length(editText));
+        }
+    }
+
+    private void hotspotLayout(Editable editable, EditText editText) {
+        if (viewCondition(etSsid, editable)) {
+            textChanged(length(editText));
+        }
+    }
+
+    private void bridgeLayout(Editable editable, EditText editText) {
+        if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {
+            textChanged(length(editText) && length(essid) && length(etHotspotEssid));
         }
     }
 
