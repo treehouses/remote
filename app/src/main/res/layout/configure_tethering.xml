@@ -48,7 +48,7 @@
             android:layout_marginRight="8dp"
             android:elevation="3dp"
             android:paddingTop="12dp"
-            app:srcCompat="@drawable/setttings_icon" />
+            app:srcCompat="@drawable/settings_icon" />
         <!--Icon made by Egor Rumyantsev from www.flaticon.com-->
 
         <include
