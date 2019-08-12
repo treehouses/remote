@@ -68,7 +68,7 @@ public class ViewHolderTether {
     private AlertDialog showAlertDialog(Context context) {
         return new AlertDialog.Builder(context)
                 .setTitle("OUTPUT:")
-                .setMessage("Hotspot is disabled, would you like to go to the hotspot settings?")
+                .setMessage("Hotspot is disabled, open hotspot settings?")
                 .setIcon(R.drawable.wificon)
                 .setPositiveButton(R.string.yes, (dialog, which) -> openHotspotSettings(context))
                 .setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
