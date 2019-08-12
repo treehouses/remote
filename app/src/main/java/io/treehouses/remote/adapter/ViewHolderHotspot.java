@@ -22,6 +22,8 @@ class ViewHolderHotspot extends ButtonConfiguration{
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
         etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
 
         btnStartConfiguration.setOnClickListener(view -> {

@@ -21,6 +21,8 @@ public class ViewHolderEthernet extends ButtonConfiguration {
         etGateway = v.findViewById(R.id.gateway);
         etMask = v.findViewById(R.id.mask);
 
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
         etIp.addTextChangedListener(getTextWatcher(etIp, v));
         etDNS.addTextChangedListener(getTextWatcher(etDNS, v));
         etGateway.addTextChangedListener(getTextWatcher(etGateway, v));

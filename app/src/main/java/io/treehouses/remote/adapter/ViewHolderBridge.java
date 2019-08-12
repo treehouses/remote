@@ -30,6 +30,8 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
         buttonWifiSearch(context);
 
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
         essid.addTextChangedListener(getTextWatcher(etSsid, v));
         etHotspotEssid.addTextChangedListener(getTextWatcher(etHotspotEssid, v));
         etPassword.addTextChangedListener(getTextWatcher(etPassword, v));

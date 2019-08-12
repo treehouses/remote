@@ -1,5 +1,6 @@
 package io.treehouses.remote;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,11 +22,10 @@ public abstract class ButtonConfiguration {
     protected Button btnWifiSearch;
     protected Boolean messageSent = false;
 
-    public void buttonProperties(Boolean clickable, int color, Button btnStartConfiguration) {
+    public void buttonProperties(Boolean clickable, int color, Button button) {
         NetworkFragment.getInstance().setButtonConfiguration(this);
-
-        btnStartConfiguration.setEnabled(clickable);
-        btnStartConfiguration.setTextColor(color);
+        button.setEnabled(clickable);
+        button.setTextColor(color);
     }
 
     protected void buttonWifiSearch(Context context) {

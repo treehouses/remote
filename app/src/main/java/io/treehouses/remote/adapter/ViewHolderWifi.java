@@ -22,7 +22,10 @@ class ViewHolderWifi extends ButtonConfiguration {
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
         etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
+
 
         etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
