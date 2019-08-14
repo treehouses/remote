@@ -1,4 +1,5 @@
 package io.treehouses.remote;
+
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
@@ -10,8 +11,11 @@ import android.widget.Button;
 import android.content.Context;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.material.textfield.TextInputEditText;
+
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 
@@ -42,13 +46,17 @@ public abstract class ButtonConfiguration {
     protected TextWatcher getTextWatcher(final EditText editText, View v) {
         return new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
             @Override
             public void afterTextChanged(Editable editable) {
 
-              afterTextChangedListener(editable, editText);
+                afterTextChangedListener(editable, editText);
 
                 Log.e("TAG", "afterTextChanged()");
             }
@@ -68,9 +76,13 @@ public abstract class ButtonConfiguration {
     }
 
     private void ethernetLayout(Editable editable, EditText editText) {
-        if (viewCondition(etIp, editable) || viewCondition(etDNS, editable) || viewCondition(etGateway, editable) || viewCondition(etMask, editable)) {
+        if (checkCondition(editable)) {
             textChanged(length(editText) && length(etIp) && length(etDNS));
         }
+    }
+
+    private boolean checkCondition(Editable editable) {
+        return viewCondition(etIp, editable) || viewCondition(etDNS, editable) || viewCondition(etGateway, editable) || viewCondition(etMask, editable);
     }
 
     private void wifiLayout(Editable editable, EditText editText) {
@@ -123,5 +135,7 @@ public abstract class ButtonConfiguration {
         this.btnStartConfiguration = btnStartConfiguration;
     }
 
-    public static TextInputEditText getEtHotspotEssid() {return etHotspotEssid; }
+    public static TextInputEditText getEtHotspotEssid() {
+        return etHotspotEssid;
+    }
 }

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import io.treehouses.remote.ButtonConfiguration;
-import io.treehouses.remote.Fragments.CustomTextWatcher;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
