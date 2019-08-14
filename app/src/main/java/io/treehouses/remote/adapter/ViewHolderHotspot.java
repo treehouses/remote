@@ -4,12 +4,10 @@ import android.graphics.Color;
 import android.content.Context;
 import android.text.InputType;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import io.treehouses.remote.ButtonConfiguration;
-import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
@@ -24,6 +22,10 @@ class ViewHolderHotspot extends ButtonConfiguration{
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
+        etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
+
         btnStartConfiguration.setOnClickListener(view -> {
             if (etPassword.getText().toString().isEmpty()) {
                 listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\"");
@@ -33,8 +35,7 @@ class ViewHolderHotspot extends ButtonConfiguration{
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
 
-            buttonProperties(false, Color.LTGRAY, v);
+            buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
         });
-
     }
 }

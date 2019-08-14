@@ -24,6 +24,11 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private HomeInteractListener listener;
     private BluetoothChatService chatService;
+    private static int layout;
+
+    public static int getLayout() {
+        return layout;
+    }
 
     public void setListener(HomeInteractListener listener) {
         this.listener = listener;
@@ -95,7 +100,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup parent) {
         convertView = inflater.inflate(list.get(i).getLayout(), parent, false);
-        int layout = list.get(i).getLayout();
+        layout = list.get(i).getLayout();
 
         if (layout == R.layout.open_vnc) {
             new ViewHolderVnc(convertView, context, listener);

@@ -16,19 +16,25 @@ public class ViewHolderBridge extends ButtonConfiguration {
     private TextInputEditText etPassword, etHotspotPassword;
     private Button btnStartConfiguration;
 
-    public ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
+    ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
 
-        etSsid = v.findViewById(R.id.et_essid);
+        essid = v.findViewById(R.id.et_essid);
         etHotspotEssid = v.findViewById(R.id.et_hotspot_essid);
         etPassword = v.findViewById(R.id.et_password);
         etHotspotPassword = v.findViewById(R.id.et_hotspot_password);
-        btnStartConfiguration = v.findViewById(R.id.btn_start_config);
+        setBtnStartConfiguration(btnStartConfiguration = v.findViewById(R.id.btn_start_config));
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
         etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         etHotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         buttonWifiSearch(context);
+
+        buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
+
+        essid.addTextChangedListener(getTextWatcher(etSsid, v));
+        etHotspotEssid.addTextChangedListener(getTextWatcher(etHotspotEssid, v));
+        etPassword.addTextChangedListener(getTextWatcher(etPassword, v));
 
         btnStartConfiguration.setOnClickListener(view -> {
             String temp = "treehouses bridge \"" + etSsid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
@@ -38,13 +44,12 @@ public class ViewHolderBridge extends ButtonConfiguration {
             if (!TextUtils.isEmpty(etHotspotPassword.getText().toString())) {
                 overallMessage += "\"" + etHotspotPassword.getText().toString() + "\"";
             }
-
+            messageSent = true;
             listener.sendMessage(overallMessage);
 
-            buttonProperties(false, Color.LTGRAY, v);
+            buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
         });
     }
-
 }

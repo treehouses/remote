@@ -69,7 +69,11 @@ public class WifiDialogFragment extends DialogFragment {
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             SSID = wifiList.get(position);
-            ButtonConfiguration.getSSID().setText(SSID.trim());
+            if (ButtonConfiguration.getEssid() == null) {
+                ButtonConfiguration.getSSID().setText(SSID.trim());
+            } else {
+                ButtonConfiguration.getEssid().setText(SSID.trim());
+            }
             wifiList.clear();
             mDialog.dismiss();
         });
