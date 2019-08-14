@@ -1,7 +1,9 @@
 package io.treehouses.remote.adapter;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -9,9 +11,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
@@ -21,21 +28,16 @@ public class ViewHolderTether {
     private static TextInputEditText editTextSSID;
 
     ViewHolderTether(View v, HomeInteractListener listener, Context context) {
-        Switch switchEnableHotspot = v.findViewById(R.id.switchEnableHotspot);
-        Button btnFindSSID = v.findViewById(R.id.btnFindSSID);
+        ImageView imageViewSettings = v.findViewById(R.id.imageViewSettings);
         Button btnStartConfig = v.findViewById(R.id.btn_start_config);
         editTextSSID = v.findViewById(R.id.editTextSSID);
         TextInputEditText editTextPassword = v.findViewById(R.id.editTextPassword);
 
-        switchEnableHotspot.setOnClickListener(v12 -> {
-            if (switchEnableHotspot.isChecked()) {
-                turnOnHotspot(context);
-            } else {
-                turnOffHotspot();
-            }
-        });
+        imageViewSettings.setOnClickListener(v1 -> openHotspotSettings(context));
 
-        btnFindSSID.setOnClickListener(v1 -> openHotspotSettings(context));
+        if (!isApOn(context)) {
+            showAlertDialog(context);
+        }
 
         btnStartConfig.setOnClickListener(v13 -> {
             String ssid = editTextSSID.getText().toString();
@@ -48,14 +50,6 @@ public class ViewHolderTether {
                 Toast.makeText(context, "Error: Invalid SSID", Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private void turnOffHotspot() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (mReservation != null) {
-                mReservation.close();
-            }
-        }
     }
 
     public static TextInputEditText getEditTextSSID() {
@@ -71,33 +65,34 @@ public class ViewHolderTether {
         context.startActivity( intent);
     }
 
-    private void turnOnHotspot(Context context) {
+    private AlertDialog showAlertDialog(Context context) {
+        return new AlertDialog.Builder(context)
+                .setTitle("OUTPUT:")
+                .setMessage("Hotspot is disabled, open hotspot settings?")
+                .setIcon(R.drawable.wificon)
+                .setPositiveButton(R.string.yes, (dialog, which) -> openHotspotSettings(context))
+                .setNegativeButton("NO", (dialog, which) -> dialog.cancel()).show();
+    }
+
+    private static boolean isApOn(Context context) {
         WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
-                    @Override
-                    public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
-                        super.onStarted(reservation);
-                        mReservation = reservation;
-                    }
+        int actualState = 0;
 
-                    @Override
-                    public void onStopped() {
-                        super.onStopped();
-                        mReservation.close();
-                    }
-
-                    @Override
-                    public void onFailed(int reason) {
-                        super.onFailed(reason);
-                    }
-                }, new Handler());
-            }catch (Exception e){
-                Toast.makeText(context,"Something went wrong, Unable to start hotspot", Toast.LENGTH_LONG).show();
-            }
+        Method method = null;
+        try {
+            method = manager.getClass().getDeclaredMethod("getWifiApState");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        method.setAccessible(true);
+        try {
+            actualState = (Integer) method.invoke(manager, (Object[]) null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
 
-
+        return (actualState == 13);
     }
 }
