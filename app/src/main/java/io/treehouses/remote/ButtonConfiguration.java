@@ -1,7 +1,7 @@
 package io.treehouses.remote;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,11 +11,7 @@ import android.widget.Button;
 import android.content.Context;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-
 import com.google.android.material.textfield.TextInputEditText;
-
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 
@@ -41,6 +37,30 @@ public abstract class ButtonConfiguration {
                 NetworkFragment.getInstance().showWifiDialog(v1);
             }
         });
+    }
+
+    protected void saveNetwork(Context context, String ... keyValues) {
+        SharedPreferences.Editor editor = MainApplication.getSharedPreferences().edit();
+        if (keyValues.length == 2) {
+            saveValue(editor, keyValues, 0, 1);
+        } else if (keyValues.length == 4) {
+            saveValue(editor, keyValues, 0, 1);
+            saveValue(editor, keyValues, 2, 3);
+        } else if (keyValues.length == 6) {
+            saveValue(editor, keyValues, 0, 1);
+            saveValue(editor, keyValues, 2, 3);
+            saveValue(editor, keyValues, 4, 5);
+        } else if (keyValues.length == 8) {
+            saveValue(editor, keyValues, 0, 1);
+            saveValue(editor, keyValues, 2, 3);
+            saveValue(editor, keyValues, 4, 5);
+            saveValue(editor, keyValues, 6, 7);
+        }
+        editor.commit();
+    }
+
+    private void saveValue(SharedPreferences.Editor editor, String[] keyValues,int k, int v) {
+        editor.putString(keyValues[k], keyValues[v]);
     }
 
     protected TextWatcher getTextWatcher(final EditText editText, View v) {

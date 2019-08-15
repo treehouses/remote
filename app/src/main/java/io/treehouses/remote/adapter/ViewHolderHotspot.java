@@ -27,13 +27,18 @@ class ViewHolderHotspot extends ButtonConfiguration{
         etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
 
         btnStartConfiguration.setOnClickListener(view -> {
-            if (etPassword.getText().toString().isEmpty()) {
-                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\"");
+            String ssid = etSsid.getText().toString();
+            String spinner = spn.getSelectedItem().toString();
+            String password = etPassword.getText().toString();
+            if (password.isEmpty()) {
+             //   listener.sendMessage("treehouses ap \"" + spinner + "\" \"" + ssid + "\"");
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             } else {
-                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
+              //  listener.sendMessage("treehouses ap \"" + spinner + "\" \"" + ssid + "\" \"" + password+ "\"");
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
+
+            saveNetwork(context, "ssid", ssid, "password", password, "spinner", spinner);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
         });

@@ -19,12 +19,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 
-public class ViewHolderTether {
+public class ViewHolderTether extends ButtonConfiguration {
 
-    private WifiManager.LocalOnlyHotspotReservation mReservation;
     private static TextInputEditText editTextSSID;
 
     ViewHolderTether(View v, HomeInteractListener listener, Context context) {
@@ -44,11 +44,13 @@ public class ViewHolderTether {
             String password = editTextPassword.getText().toString();
 
             if (!ssid.isEmpty()) {
-                listener.sendMessage("treehouses wifi " + ssid  + " " + (password.isEmpty() ? "" : password));
+              //  listener.sendMessage("treehouses wifi " + ssid  + " " + (password.isEmpty() ? "" : password));
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(context, "Error: Invalid SSID", Toast.LENGTH_LONG).show();
             }
+
+            saveNetwork(context,"ssid", ssid, "password", password);
         });
     }
 

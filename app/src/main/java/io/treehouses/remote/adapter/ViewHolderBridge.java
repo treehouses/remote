@@ -25,7 +25,7 @@ public class ViewHolderBridge extends ButtonConfiguration {
         setBtnStartConfiguration(btnStartConfiguration = v.findViewById(R.id.btn_start_config));
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
-        etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+//        etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         etHotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         buttonWifiSearch(context);
@@ -37,15 +37,22 @@ public class ViewHolderBridge extends ButtonConfiguration {
         etPassword.addTextChangedListener(getTextWatcher(etPassword, v));
 
         btnStartConfiguration.setOnClickListener(view -> {
-            String temp = "treehouses bridge \"" + etSsid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
-            String overallMessage = TextUtils.isEmpty(etPassword.getText().toString()) ? temp + "\"\"" : temp + "\"" + etPassword.getText().toString() + "\"";
+            String essid = etSsid.getText().toString();
+            String hotspotEssid = etHotspotEssid.getText().toString();
+            String essidPass = etPassword.getText().toString();
+            String hotspotPass = etHotspotPassword.getText().toString();
+
+            String temp = "treehouses bridge \"" + essid + "\" \"" + hotspotEssid + "\" ";
+            String overallMessage = TextUtils.isEmpty(essidPass) ? temp + "\"\"" : temp + "\"" + essidPass + "\"";
             overallMessage += " ";
 
-            if (!TextUtils.isEmpty(etHotspotPassword.getText().toString())) {
-                overallMessage += "\"" + etHotspotPassword.getText().toString() + "\"";
+            if (!TextUtils.isEmpty(hotspotPass)) {
+                overallMessage += "\"" + hotspotPass + "\"";
             }
             messageSent = true;
-            listener.sendMessage(overallMessage);
+            //listener.sendMessage(overallMessage);
+
+            saveNetwork(context,"ssid", essid, "hotspotSsid", hotspotEssid, "ssidPassword", essidPass, "hotspotPassword", hotspotPass);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
