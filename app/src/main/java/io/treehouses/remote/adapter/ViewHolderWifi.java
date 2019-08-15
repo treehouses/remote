@@ -35,11 +35,11 @@ class ViewHolderWifi extends ButtonConfiguration {
             //listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
             messageSent = true;
 
-            saveNetwork(context,"ssid", ssid, "password", password);
+            saveNetwork("ssid", ssid, "password", password);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
 
         });
     }

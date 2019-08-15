@@ -38,7 +38,7 @@ public class ViewHolderEthernet extends ButtonConfiguration {
                 //listener.sendMessage(String.format("treehouses ethernet \"%s\" \"%s\" \"%s\" \"%s\"", ip, mask, gateway, dns));
                 messageSent = true;
 
-                saveNetwork(context,"ip", ip, "mask", mask, "gateway", gateway, "dns", dns);
+                saveNetwork("ip", ip, "mask", mask, "gateway", gateway, "dns", dns);
 
                 buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 

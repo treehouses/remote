@@ -116,6 +116,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="menu_tunnel">Tunnel</string>
     <string name="yes">yes</string>
+    <string name="network_profile">Network Profiles</string>
     <string-array name="spinner_hotspot">
         <item>internet</item>
         <item>local</item>
