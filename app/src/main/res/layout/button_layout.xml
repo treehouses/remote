@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="200dp"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/btnChangePass"
@@ -11,6 +12,10 @@
         android:layout_height="38dp"
         android:text="Change Pi Password"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="-29dp" />
 
@@ -18,9 +23,12 @@
         android:id="@+id/btnTreehouses"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
         android:text="Treehouses help"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnChangePass"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -28,9 +36,12 @@
         android:id="@+id/btnDocker"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
         android:text="Docker ps"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnTreehousesDetect"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -38,9 +49,12 @@
         android:id="@+id/btnTreehousesDetect"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
-        android:text="Treehouses Detectrpi"
+        android:text="Treehouses Detect Rpi"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnTreehouses"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -48,9 +62,12 @@
         android:id="@+id/btnExpand"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
         android:text="Expand File System"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnDocker"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -61,6 +78,10 @@
         android:layout_marginTop="4dp"
         android:text="vnc on"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnDocker"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -68,9 +89,12 @@
         android:id="@+id/btnVncStatus"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
         android:text="vnc status"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnDocker"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -78,9 +102,12 @@
         android:id="@+id/btnClear"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
         android:text="Clear"
         android:theme="@style/PrimaryButton"
+        app:autoSizeMaxTextSize="11sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintTop_toBottomOf="@+id/btnDocker"
         tools:layout_editor_absoluteX="0dp" />
 
