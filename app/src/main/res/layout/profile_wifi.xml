@@ -27,7 +27,7 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextESSIDPassword"
+                    android:id="@+id/editTextPassword"
                     android:layout_width="206dp"
                     android:layout_height="43dp"
                     android:hint="@string/password"

@@ -59,8 +59,8 @@ public abstract class ButtonConfiguration {
         editor.commit();
     }
 
-    private void saveValue(SharedPreferences.Editor editor, String[] keyValues,int k, int v) {
-        editor.putString(keyValues[k], keyValues[v]);
+    private void saveValue(SharedPreferences.Editor editor, String[] keyValues,int key, int value) {
+        editor.putString(keyValues[key], keyValues[value]);
     }
 
     protected TextWatcher getTextWatcher(final EditText editText, View v) {

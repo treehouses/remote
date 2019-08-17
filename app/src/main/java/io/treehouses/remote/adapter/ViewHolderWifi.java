@@ -35,7 +35,7 @@ class ViewHolderWifi extends ButtonConfiguration {
             //listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
             messageSent = true;
 
-            saveNetwork("ssid", ssid, "password", password);
+            saveNetwork("wifiSsid", ssid, "wifiPassword", password);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 

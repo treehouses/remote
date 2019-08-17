@@ -3,65 +3,48 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TableLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:hint="IP  ">
 
-        <TableRow
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextIp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextESSID"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="IP" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextMask"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Mask" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </TableRow>
-
-        <TableRow
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextMask"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content"
+            android:hint="Mask" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextGateway"
-                    android:layout_width="203dp"
-                    android:layout_height="wrap_content"
-                    android:hint="Gateway" />
-            </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextGateway"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Gateway" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextDNS"
-                    android:layout_width="197dp"
-                    android:layout_height="wrap_content"
-                    android:hint="DNS" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-
-    </TableLayout>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="DNS" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

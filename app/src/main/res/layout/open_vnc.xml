@@ -12,7 +12,7 @@
         android:hint="Enter your Raspberry Pis IP Address">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextIp"
+            android:id="@+id/editTextSsid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

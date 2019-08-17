@@ -122,4 +122,12 @@
         <item>local</item>
     </string-array>
 
+    <string-array name="spinner_profile">
+        <item>Ethernet</item>
+        <item>Wifi</item>
+        <item>Hotspot</item>
+        <item>Bridge</item>
+        <item>Tether</item>
+    </string-array>
+
 </resources>

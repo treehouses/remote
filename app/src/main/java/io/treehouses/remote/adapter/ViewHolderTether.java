@@ -50,7 +50,7 @@ public class ViewHolderTether extends ButtonConfiguration {
                 Toast.makeText(context, "Error: Invalid SSID", Toast.LENGTH_LONG).show();
             }
 
-            saveNetwork("ssid", ssid, "password", password);
+            saveNetwork("tetherSsid", ssid, "tetherPassword", password);
         });
     }
 

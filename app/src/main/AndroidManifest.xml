@@ -24,7 +24,7 @@
         android:logo="@mipmap/ic_launcher_round"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/MyMaterialTheme.Base">
-        <activity android:name=".profileFragment"></activity>
+        <activity android:name=".Fragments.ProfileFragment"></activity>
         <activity
             android:name=".InitialActivity"
             android:label="@string/app_name"

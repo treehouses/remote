@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
+import io.treehouses.remote.Fragments.ProfileFragment;
 import io.treehouses.remote.Fragments.ServicesFragment;
 import io.treehouses.remote.Fragments.StatusFragment;
 import io.treehouses.remote.Fragments.SystemFragment;
@@ -121,7 +122,7 @@ public class InitialActivity extends PermissionActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.action_settings) {
-            openCallFragment(new profileFragment());
+            openCallFragment(new ProfileFragment());
             return true;
         }
 

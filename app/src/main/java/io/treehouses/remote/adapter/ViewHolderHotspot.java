@@ -38,7 +38,7 @@ class ViewHolderHotspot extends ButtonConfiguration{
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
 
-            saveNetwork( "ssid", ssid, "password", password, "spinner", spinner);
+            saveNetwork( "hotspotSsid", ssid, "hotspotPassword", password, "hotspotSpinner", spinner);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
         });
