@@ -1,87 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/ConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/btnChangePass"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="Change Pi Password"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:background="@color/colorPrimary"
+        android:text="Change Password"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="-29dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnTreehouses"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
-        android:text="Treehouses help"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Help"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnChangePass"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnChangePass" />
 
     <Button
         android:id="@+id/btnDocker"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
         android:text="Docker ps"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnTreehousesDetect"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTreehouses" />
 
     <Button
         android:id="@+id/btnTreehousesDetect"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
-        android:text="Treehouses Detectrpi"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Detect Rpi"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnTreehouses"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnDocker" />
 
     <Button
         android:id="@+id/btnExpand"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
-        android:text="Expand File System"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Expand FS"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnDocker"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTreehousesDetect" />
 
     <Button
         android:id="@+id/btnVncOn"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
         android:text="vnc on"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnDocker"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnExpand" />
 
     <Button
         android:id="@+id/btnVncStatus"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
         android:text="vnc status"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnDocker"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVncOn" />
 
     <Button
         android:id="@+id/btnClear"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
         android:text="Clear"
+        android:textSize="12sp"
         android:theme="@style/PrimaryButton"
-        app:layout_constraintTop_toBottomOf="@+id/btnDocker"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVncStatus" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
