@@ -197,22 +197,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
 
-    <Button
-        android:id="@+id/btn_status"
-        style="@style/Widget.AppCompat.Button.Small"
-        android:layout_width="91dp"
-        android:layout_height="34dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:background="?attr/colorPrimary"
-        android:text="Check Status"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/pingStatus"
         android:layout_width="wrap_content"

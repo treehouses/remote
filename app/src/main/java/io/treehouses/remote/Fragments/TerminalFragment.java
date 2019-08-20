@@ -39,7 +39,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private ListView mConversationView;
     private TextView mPingStatus;
     private EditText mOutEditText;
-    private Button mSendButton, pingStatusButton, mCheckButton, mPrevious;
+    private Button mSendButton, pingStatusButton, mPrevious;
     private ExpandableListView expandableListView;
     private NetworkListAdapter adapter;
     private ArrayList<String> list;
@@ -70,7 +70,6 @@ public class TerminalFragment extends BaseTerminalFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
         mOutEditText = view.findViewById(R.id.edit_text_out);
-        mCheckButton = view.findViewById(R.id.check);
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
@@ -119,6 +118,8 @@ public class TerminalFragment extends BaseTerminalFragment {
     @Override
     public void onResume(){
         Log.e("tag", "LOG check onResume method ");
+        Log.e("CHECK STATUS", "" + mChatService.getState());
+        checkStatus(mChatService, mPingStatus, pingStatusButton);
         super.onResume();
         setupChat();
     }
@@ -152,8 +153,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
         btnSendClickListener();
-
-        buttonOnClick(mCheckButton, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {

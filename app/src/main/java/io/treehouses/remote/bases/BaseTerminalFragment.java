@@ -95,7 +95,7 @@ public class BaseTerminalFragment extends BaseFragment{
         });
     }
 
-    private void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
+    public void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             connect(mPingStatus, pingStatusButton);
         } else if (mChatService.getState() == Constants.STATE_NONE) {
@@ -103,13 +103,6 @@ public class BaseTerminalFragment extends BaseFragment{
         } else {
             idle(mPingStatus, pingStatusButton);
         }
-    }
-
-    protected void buttonOnClick(Button button, final BluetoothChatService mChatService, final TextView mPingStatus, final Button pingStatusButton) {
-        button.setOnClickListener(v -> {
-            Log.e("CHECK STATUS", "" + mChatService.getState());
-            checkStatus(mChatService, mPingStatus, pingStatusButton);
-        });
     }
 
     protected void filterMessages(String readMessage, ArrayAdapter mConversationArrayAdapter, ArrayList list) {

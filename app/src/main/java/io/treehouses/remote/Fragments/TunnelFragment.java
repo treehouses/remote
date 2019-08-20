@@ -37,7 +37,6 @@ public class TunnelFragment extends BaseTerminalFragment {
     private Button pingStatusButton;
     private ArrayAdapter<String> mConversationArrayAdapter;
     private ListView mConversationView = null;
-    private Button btn_status;
     private Switch aSwitch;
 
     View view;
@@ -62,7 +61,6 @@ public class TunnelFragment extends BaseTerminalFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.list_command);
-        btn_status = view.findViewById(R.id.btn_status);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
 
@@ -95,8 +93,6 @@ public class TunnelFragment extends BaseTerminalFragment {
         copyToList(mConversationView, getContext());
 
         mConversationView.setAdapter(mConversationArrayAdapter);
-
-        buttonOnClick(btn_status, mChatService, mPingStatus, pingStatusButton);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
@@ -172,4 +168,11 @@ public class TunnelFragment extends BaseTerminalFragment {
             }
         }
     };
+
+    @Override
+    public void onResume(){
+        Log.e("CHECK STATUS", "" + mChatService.getState());
+        checkStatus(mChatService, mPingStatus, pingStatusButton);
+        super.onResume();
+    }
 }
