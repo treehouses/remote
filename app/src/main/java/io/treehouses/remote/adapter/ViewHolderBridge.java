@@ -25,8 +25,12 @@ public class ViewHolderBridge extends ButtonConfiguration {
         setBtnStartConfiguration(btnStartConfiguration = v.findViewById(R.id.btn_start_config));
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
-        etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        etHotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        try {
+            etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            etHotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         buttonWifiSearch(context);
 
