@@ -16,13 +16,14 @@ public class MyListAdapter extends BaseAdapter {
 
     public MyListAdapter(Context context) {
         mInflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        myItems.add("Test");
+        ListItem listItem = new ListItem();
+        myItems.add(listItem.caption);
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return myItems.size();
     }
 
     @Override
@@ -32,7 +33,7 @@ public class MyListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
@@ -40,24 +41,23 @@ public class MyListAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.profile_bridge, null);
-            holder.viewCaption = (EditText) convertView.findViewById(R.id.editTextIp);
+            convertView = mInflater.inflate(R.layout.profile_ethernet, parent, false);
+            holder.viewCaption = convertView.findViewById(R.id.editTextIp);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
       //  Fill EditText with the value you have in data source
-        holder.viewCaption.setText(myItems.get(position).toString());
+        holder.viewCaption.setText("test");
         holder.viewCaption.setId(position);
 
 //        we need to update adapter once we finish with editing
-//        holder.viewCaption.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (!hasFocus){
-//                final int position1 = v.getId();
-//                final EditText Caption = (EditText) v;
-//                myItems.get(position).caption = Caption.getText().toString();
-//            }
-//        });
+        holder.viewCaption.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus){
+                final EditText Caption = (EditText) v;
+                myItems.set(position, Caption.getText().toString());
+            }
+        });
         return convertView;
     }
 }

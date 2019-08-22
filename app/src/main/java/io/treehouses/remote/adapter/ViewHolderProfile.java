@@ -34,20 +34,20 @@ public class ViewHolderProfile extends ButtonConfiguration {
     }
 
     private void ethernet(View v) {
-        TextInputEditText editTextIp = v.findViewById(R.id.editTextIp);
-        TextInputEditText editTextMask = v.findViewById(R.id.editTextMask);
-        TextInputEditText editTextGateway = v.findViewById(R.id.editTextGateway);
-        TextInputEditText editTextDns = v.findViewById(R.id.editTextDns);
+//        TextInputEditText editTextIp = v.findViewById(R.id.editTextIp);
+//        TextInputEditText editTextMask = v.findViewById(R.id.editTextMask);
+//        TextInputEditText editTextGateway = v.findViewById(R.id.editTextGateway);
+//        TextInputEditText editTextDns = v.findViewById(R.id.editTextDns);
 
         String ip = MainApplication.getSharedPreferences().getString("ip", "");
         String mask = MainApplication.getSharedPreferences().getString("mask", "");
         String gateway = MainApplication.getSharedPreferences().getString("gateway", "");
         String dns = MainApplication.getSharedPreferences().getString("dns", "");
-
-        editTextIp.setText(ip);
-        editTextDns.setText(dns);
-        editTextMask.setText(mask);
-        editTextGateway.setText(gateway);
+//
+//        editTextIp.setText(ip);
+//        editTextDns.setText(dns);
+//        editTextMask.setText(mask);
+//        editTextGateway.setText(gateway);
     }
 
     private void wifi(View v) {
