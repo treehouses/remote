@@ -56,12 +56,12 @@ public class NetworkListItem {
         return systemList;
     }
 
-    public static List<NetworkListItem> getProfileList() {
-        List<NetworkListItem> profileList = new ArrayList();
-        profileList.add(new NetworkListItem("Ethernet", R.layout.profile_ethernet));
-        profileList.add(new NetworkListItem("Wifi", R.layout.profile_wifi));
-        profileList.add(new NetworkListItem("Hotspot", R.layout.profile_hotspot));
-        profileList.add(new NetworkListItem("Bridge", R.layout.profile_bridge));
-        return profileList;
-    }
+//    public static List<NetworkListItem> getProfileList() {
+//        List<NetworkListItem> profileList = new ArrayList();
+//        profileList.add(new NetworkListItem("Ethernet", R.layout.profile_ethernet));
+//        profileList.add(new NetworkListItem("Wifi", R.layout.profile_wifi));
+//        profileList.add(new NetworkListItem("Hotspot", R.layout.profile_hotspot));
+//        profileList.add(new NetworkListItem("Bridge", R.layout.profile_bridge));
+//        return profileList;
+//    }
 }

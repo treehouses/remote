@@ -7,46 +7,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.MyListAdapter;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.pojo.NetworkListItem;
 
+import static android.R.layout.simple_list_item_1;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 public class ProfileFragment extends BaseFragment {
 
-    private static ExpandableListView expandableListView;
-    private int lastPosition = -1;
+    private ListView listView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        expandableListView = view.findViewById(R.id.expandableListView);
+        listView = view.findViewById(R.id.listViewProfile);
+
+        ArrayList<String> list = new ArrayList<>();
+
+        MyListAdapter adapter = new MyListAdapter(getContext());
+        listView.setAdapter(adapter);
+
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        NetworkListAdapter adapter = new NetworkListAdapter(getContext(), NetworkListItem.getProfileList(), mChatService);
-        adapter.setListener(listener);
-        expandableListView.setAdapter(adapter);
-        expandableListView.setGroupIndicator(null);
-
-        expandableListView.setOnGroupExpandListener(groupPosition -> {
-            if (lastPosition != -1 && groupPosition != lastPosition) {
-                expandableListView.collapseGroup(lastPosition);
-            }
-            lastPosition = groupPosition;
-        });
 
         spinnerOnSelected(view);
     }
@@ -59,17 +61,13 @@ public class ProfileFragment extends BaseFragment {
                 Log.e("TAG", "onItemSelected called");
 
                 if (spinnerProfile.getSelectedItem().toString().equals("Ethernet")) {
-                    expandableListView.setVisibility(View.VISIBLE);
-                    expandableListView.expandGroup(0);
+
                 } else if (spinnerProfile.getSelectedItem().equals("Wifi")) {
-                    expandableListView.setVisibility(View.VISIBLE);
-                    expandableListView.expandGroup(1);
+
                 } else if (spinnerProfile.getSelectedItem().toString().equals("Hotspot")) {
-                    expandableListView.setVisibility(View.VISIBLE);
-                    expandableListView.expandGroup(2);
+
                 } else if (spinnerProfile.getSelectedItem().toString().equals("Bridge")) {
-                    expandableListView.setVisibility(View.VISIBLE);
-                    expandableListView.expandGroup(3);
+
                 }
             }
 

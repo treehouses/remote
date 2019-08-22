@@ -108,12 +108,13 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             new ViewHolderTether(convertView, listener, context);
         } else if (layout == R.layout.button_layout) {
             new ViewHolderCommands(convertView, listener);
-        } else if (layout == R.layout.profile_ethernet || layout == R.layout.profile_wifi || layout == R.layout.profile_hotspot|| layout == R.layout.profile_bridge) {
-            new ViewHolderProfile(context, convertView);
         } else {
             switchStatement(i, convertView);
         }
         return convertView;
+
+//         else if (layout == R.layout.profile_ethernet || layout == R.layout.profile_wifi || layout == R.layout.profile_hotspot|| layout == R.layout.profile_bridge) {
+//            new ViewHolderProfile(context, convertView);
     }
 
     private void switchStatement(int i, View convertView) {
