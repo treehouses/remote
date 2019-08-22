@@ -47,17 +47,12 @@ public class MyListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-      //  Fill EditText with the value you have in data source
         holder.viewCaption.setText("test");
         holder.viewCaption.setId(position);
-
-//        we need to update adapter once we finish with editing
-        holder.viewCaption.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus){
-                final EditText Caption = (EditText) v;
-                myItems.set(position, Caption.getText().toString());
-            }
-        });
+//        ((EditText)holder.viewCaption).setOnFocusChangeListener((view, b) -> {
+//            myItems.set(position, holder.viewCaption.getText().toString());
+//            notifyDataSetChanged();
+//        });
         return convertView;
     }
 }
