@@ -9,7 +9,7 @@ import io.treehouses.remote.callback.HomeInteractListener;
 
 class ViewHolderCommands {
 
-    private Button changePass, treehouses, detect, docker, expand, vncOn, vncStatus, clear;
+    private Button changePass, treehouses, detect, docker, expand, vncOn, vncOff, vncStatus, clear;
 
     ViewHolderCommands(View v, final HomeInteractListener listener) {
         initializeButtons(v);
@@ -20,6 +20,7 @@ class ViewHolderCommands {
         docker.setOnClickListener(v12 -> listener.sendMessage("docker ps"));
         expand.setOnClickListener(v1 -> listener.sendMessage("treehouses expandfs"));
         vncOn.setOnClickListener(v16 -> listener.sendMessage("treehouses vnc on"));
+        vncOff.setOnClickListener(v18 -> listener.sendMessage("treehouses vnc off"));
         vncStatus.setOnClickListener(v17 -> listener.sendMessage("treehouses vnc"));
         clear.setOnClickListener(v1 -> {
             MainApplication.getTerminalList().clear();
@@ -34,6 +35,7 @@ class ViewHolderCommands {
         docker = v.findViewById(R.id.btnDocker);
         expand = v.findViewById(R.id.btnExpand);
         vncOn = v.findViewById(R.id.btnVncOn);
+        vncOff = v.findViewById(R.id.btnVncOff);
         vncStatus = v.findViewById(R.id.btnVncStatus);
         clear = v.findViewById(R.id.btnClear);
     }
