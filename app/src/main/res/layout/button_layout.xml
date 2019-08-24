@@ -129,6 +129,21 @@
         app:layout_constraintTop_toBottomOf="@+id/btnVncOff" />
 
     <Button
+        android:id="@+id/btnTor"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Tor"
+        android:textSize="12sp"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVncStatus" />
+
+    <Button
         android:id="@+id/btnClear"
         android:layout_width="0dp"
         android:layout_height="26dp"
@@ -141,6 +156,6 @@
         android:theme="@style/PrimaryButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnVncStatus" />
+        app:layout_constraintTop_toBottomOf="@+id/btnTor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
