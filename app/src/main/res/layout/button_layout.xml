@@ -144,6 +144,21 @@
         app:layout_constraintTop_toBottomOf="@+id/btnVncStatus" />
 
     <Button
+        android:id="@+id/btnNetworkMode"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Network mode info"
+        android:textSize="12sp"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTor" />
+
+    <Button
         android:id="@+id/btnClear"
         android:layout_width="0dp"
         android:layout_height="26dp"
@@ -156,6 +171,6 @@
         android:theme="@style/PrimaryButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnTor" />
+        app:layout_constraintTop_toBottomOf="@+id/btnNetworkMode" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
