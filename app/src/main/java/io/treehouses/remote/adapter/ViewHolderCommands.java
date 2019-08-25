@@ -23,7 +23,7 @@ class ViewHolderCommands {
         vncOff.setOnClickListener(v18 -> listener.sendMessage("treehouses vnc off"));
         vncStatus.setOnClickListener(v17 -> listener.sendMessage("treehouses vnc"));
         treehousesTor.setOnClickListener(v19 -> listener.sendMessage("treehouses tor"));
-        treehousesNetworkModeInfo.setOnClickListener(v20 -> listener.sendMessage("treehouses networkmode"));
+        treehousesNetworkModeInfo.setOnClickListener(v20 -> listener.sendMessage("treehouses networkmode info"));
         clear.setOnClickListener(v1 -> {
             MainApplication.getTerminalList().clear();
             TerminalFragment.getInstance().getmConversationArrayAdapter().notifyDataSetChanged();
