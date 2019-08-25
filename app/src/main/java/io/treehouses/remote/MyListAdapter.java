@@ -1,5 +1,6 @@
 package io.treehouses.remote;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,18 +52,15 @@ public class MyListAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-//        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = mInflater.inflate(layout, parent, false);
-            setVariables(convertView, holder, position);
-            convertView.setTag(holder);
-//        } else {
-//            holder = new ViewHolder();
-//            setVariables(convertView, holder, position);
-//        }
+
+        holder = new ViewHolder();
+        convertView = mInflater.inflate(layout, parent, false);
+        setVariables(convertView, holder, position);
+        convertView.setTag(holder);
 
         return convertView;
     }
@@ -89,40 +87,28 @@ public class MyListAdapter extends BaseAdapter {
         holder.editText3 = convertView.findViewById(R.id.editTextGateway);
         holder.editText4 = convertView.findViewById(R.id.editTextDns);
 
-     //   holder.editText1.setText(myItems.get(position).toString());
-        //holder.editText1.setId(position);
-
-      //  holder.editText2.setText(myItems.get(position).toString());
-      //  holder.editText2.setId(position);
-
-     //   holder.editText3.setText(myItems.get(position).toString());
-       // holder.editText3.setId(position);
-
-       //holder.editText4.setText(myItems.get(position).toString());
-       // holder.editText4.setId(position);
-    }//
+        setTextValue(holder.editText1, "ethernet1", position);
+        setTextValue(holder.editText2, "ethernet2", position);
+        setTextValue(holder.editText3, "ethernet3", position);
+        setTextValue(holder.editText4, "ethernet4", position);
+    }
 
     private void wifi(ViewHolder holder, View convertView, int position) {
         holder.editText1 = convertView.findViewById(R.id.editTextSSID);
         holder.editText2 = convertView.findViewById(R.id.editTextPassword);
 
-//        holder.editText1.setText("testing");
-//        holder.editText1.setId(position);
-//
-//        holder.editText2.setText("more testing");
-//        holder.editText2.setId(position);
+        setTextValue(holder.editText1, "wifi1", position);
+        setTextValue(holder.editText2, "wifi2", position);
     }
 
     private void hotspot(ViewHolder holder, View convertView, int position) {
         holder.editText1 = convertView.findViewById(R.id.editTextSsid);
         holder.editText2 = convertView.findViewById(R.id.editTextPassword);
         holder.spinner = convertView.findViewById(R.id.spinner);
-//
-//        holder.editText1.setText(myItems.get(position).toString());
-//        holder.editText1.setId(position);
-//
-//        holder.editText2.setText(myItems.get(position).toString());
-//        holder.editText2.setId(position);
+
+        setTextValue(holder.editText1, "hotspot1", position);
+        setTextValue(holder.editText2, "hotspot2", position);
+
 
 //        String value = myItems.get(position).toString();
 //        holder.spinner.setSelection((value.equals("internet") ? 0 : 1));
@@ -135,17 +121,16 @@ public class MyListAdapter extends BaseAdapter {
         holder.editText3 = convertView.findViewById(R.id.editTextHostpotSsid);
         holder.editText4 = convertView.findViewById(R.id.editTextHostpotPassword);
 
-//        holder.editText1.setText(myItems.get(position).toString());
-//        holder.editText1.setId(position);
-//
-//        holder.editText2.setText(myItems.get(position).toString());
-//        holder.editText2.setId(position);
-//
-//        holder.editText3.setText(myItems.get(position).toString());
-//        holder.editText3.setId(position);
-//
-//        holder.editText4.setText(myItems.get(position).toString());
-//        holder.editText4.setId(position);
+        setTextValue(holder.editText1, "bridge1", position);
+        setTextValue(holder.editText2, "bridge2", position);
+        setTextValue(holder.editText3, "bridge3", position);
+        setTextValue(holder.editText4, "bridge4", position);
+
+    }
+
+    private void setTextValue(EditText editText, String string, int position) {
+        editText.setText(string);
+        editText.setId(position);
     }
 }
 
