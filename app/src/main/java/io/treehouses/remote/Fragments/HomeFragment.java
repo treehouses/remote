@@ -7,10 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
@@ -53,7 +57,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
         if (!dialogShown) {
             showWelcomeDialog();
-
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("dialogShown", true);
             editor.commit();
@@ -105,17 +108,23 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private AlertDialog showWelcomeDialog() {
-        return new AlertDialog.Builder(getContext())
+        final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
+                "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
+        Linkify.addLinks(s, Linkify.ALL);
+        final AlertDialog d = new AlertDialog.Builder(getContext())
                 .setTitle("Friendly Reminder")
-                .setMessage("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
-                        "\n\nhttp://download.treehouses.io/\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli")
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                }).show();
+                })
+                .setMessage(s)
+                .create();
+        d.show();
+        ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+       return d;
     }
 
 //    private void openURL(String url) {

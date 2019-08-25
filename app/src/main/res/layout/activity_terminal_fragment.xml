@@ -85,19 +85,6 @@
         app:layout_constraintStart_toEndOf="@+id/PING"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/check"
-        android:layout_width="51dp"
-        android:layout_height="19dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="?attr/colorPrimary"
-        android:text="Check Status"
-        android:textSize="7sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -118,8 +105,8 @@
                 android:id="@+id/terminalList"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
+                android:layout_marginStart="48dp"
+                android:layout_marginLeft="48dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
