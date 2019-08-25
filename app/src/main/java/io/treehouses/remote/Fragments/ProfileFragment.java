@@ -63,32 +63,24 @@ public class ProfileFragment extends BaseFragment {
                     MyListAdapter.setLayout(R.layout.profile_ethernet);
                     MyListAdapter.getMyItems().clear();
                     MyListAdapter.setMyItems("Ethernet1");
-                    MyListAdapter.setMyItems("Ethernet2");
-                    MyListAdapter.setMyItems("Ethernet3");
-                    MyListAdapter.setMyItems("Ethernet4");
+
 
                     adapter.notifyDataSetChanged();
                 } else if (spinnerProfile.getItemAtPosition(position).equals("Wifi")) {
                     MyListAdapter.setLayout(R.layout.profile_wifi);
                     MyListAdapter.getMyItems().clear();
                     MyListAdapter.setMyItems("Wifi1");
-                    MyListAdapter.setMyItems("Wifi2");
                     adapter.notifyDataSetChanged();
                 } else if (spinnerProfile.getItemAtPosition(position).equals("Hotspot")) {
                     MyListAdapter.setLayout(R.layout.profile_hotspot);
                     MyListAdapter.getMyItems().clear();
                     MyListAdapter.setMyItems("Hotspot1");
-                    MyListAdapter.setMyItems("Hotspot2");
-                    MyListAdapter.setMyItems("Hotspot3");
 
                     adapter.notifyDataSetChanged();
                 } else if (spinnerProfile.getItemAtPosition(position).equals("Bridge")) {
                     MyListAdapter.setLayout(R.layout.profile_bridge);
                     MyListAdapter.getMyItems().clear();
                     MyListAdapter.setMyItems("Bridge1");
-                    MyListAdapter.setMyItems("Bridge2");
-                    MyListAdapter.setMyItems("Bridge3");
-                    MyListAdapter.setMyItems("Bridge4");
 
                     adapter.notifyDataSetChanged();
                 }

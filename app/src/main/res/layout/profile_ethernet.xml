@@ -9,19 +9,19 @@
         android:layout_height="wrap_content"
         android:hint="IP Address" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextMask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Subnet Mask" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextGateway"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Default Gateway" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextDns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

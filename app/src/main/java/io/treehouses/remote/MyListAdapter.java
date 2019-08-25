@@ -18,7 +18,9 @@ public class MyListAdapter extends BaseAdapter {
 
     public MyListAdapter(Context context) {
         mInflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        myItems.add("test");
+
+//        setLayout(R.layout.profile_ethernet);
+
         notifyDataSetChanged();
     }
 
@@ -87,18 +89,18 @@ public class MyListAdapter extends BaseAdapter {
         holder.editText3 = convertView.findViewById(R.id.editTextGateway);
         holder.editText4 = convertView.findViewById(R.id.editTextDns);
 
-        holder.editText1.setText(myItems.get(position).toString());
-        holder.editText1.setId(position);
+     //   holder.editText1.setText(myItems.get(position).toString());
+        //holder.editText1.setId(position);
 
-        holder.editText2.setText(myItems.get(position).toString());
-        holder.editText2.setId(position);
+      //  holder.editText2.setText(myItems.get(position).toString());
+      //  holder.editText2.setId(position);
 
-        holder.editText3.setText(myItems.get(position).toString());
-        holder.editText3.setId(position);
+     //   holder.editText3.setText(myItems.get(position).toString());
+       // holder.editText3.setId(position);
 
-        holder.editText4.setText(myItems.get(position).toString());
-        holder.editText4.setId(position);
-    }
+       //holder.editText4.setText(myItems.get(position).toString());
+       // holder.editText4.setId(position);
+    }//
 
     private void wifi(ViewHolder holder, View convertView, int position) {
         holder.editText1 = convertView.findViewById(R.id.editTextSSID);
