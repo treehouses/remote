@@ -3,38 +3,26 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <EditText
+        android:id="@+id/editTextSSID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/ssid" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:hint="@string/password"
+        android:inputType="textPassword" />
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TableRow
             android:layout_width="445dp"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="196dp"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextSSID"
-                    android:layout_width="195dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/ssid" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="215dp"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextPassword"
-                    android:layout_width="206dp"
-                    android:layout_height="43dp"
-                    android:hint="@string/password"
-                    android:inputType="textPassword" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </TableRow>
+            android:layout_height="match_parent"/>
 
     </TableLayout>
 

@@ -54,15 +54,15 @@ public class MyListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if (convertView == null) {
+//        if (convertView == null) {
             holder = new ViewHolder();
             convertView = mInflater.inflate(layout, parent, false);
             setVariables(convertView, holder, position);
             convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-            //setVariables(convertView, holder, position);
-        }
+//        } else {
+//            holder = new ViewHolder();
+//            setVariables(convertView, holder, position);
+//        }
 
         return convertView;
     }
@@ -106,26 +106,26 @@ public class MyListAdapter extends BaseAdapter {
         holder.editText1 = convertView.findViewById(R.id.editTextSSID);
         holder.editText2 = convertView.findViewById(R.id.editTextPassword);
 
-        holder.editText1.setText("testing");
-        holder.editText1.setId(position);
-
-        holder.editText2.setText("more testing");
-        holder.editText2.setId(position);
+//        holder.editText1.setText("testing");
+//        holder.editText1.setId(position);
+//
+//        holder.editText2.setText("more testing");
+//        holder.editText2.setId(position);
     }
 
     private void hotspot(ViewHolder holder, View convertView, int position) {
         holder.editText1 = convertView.findViewById(R.id.editTextSsid);
         holder.editText2 = convertView.findViewById(R.id.editTextPassword);
         holder.spinner = convertView.findViewById(R.id.spinner);
+//
+//        holder.editText1.setText(myItems.get(position).toString());
+//        holder.editText1.setId(position);
+//
+//        holder.editText2.setText(myItems.get(position).toString());
+//        holder.editText2.setId(position);
 
-        holder.editText1.setText(myItems.get(position).toString());
-        holder.editText1.setId(position);
-
-        holder.editText2.setText(myItems.get(position).toString());
-        holder.editText2.setId(position);
-
-        String value = myItems.get(position).toString();
-        holder.spinner.setSelection((value.equals("internet") ? 0 : 1));
+//        String value = myItems.get(position).toString();
+//        holder.spinner.setSelection((value.equals("internet") ? 0 : 1));
        // holder.spinner.setId(position);
     }
 
@@ -135,17 +135,17 @@ public class MyListAdapter extends BaseAdapter {
         holder.editText3 = convertView.findViewById(R.id.editTextHostpotSsid);
         holder.editText4 = convertView.findViewById(R.id.editTextHostpotPassword);
 
-        holder.editText1.setText(myItems.get(position).toString());
-        holder.editText1.setId(position);
-
-        holder.editText2.setText(myItems.get(position).toString());
-        holder.editText2.setId(position);
-
-        holder.editText3.setText(myItems.get(position).toString());
-        holder.editText3.setId(position);
-
-        holder.editText4.setText(myItems.get(position).toString());
-        holder.editText4.setId(position);
+//        holder.editText1.setText(myItems.get(position).toString());
+//        holder.editText1.setId(position);
+//
+//        holder.editText2.setText(myItems.get(position).toString());
+//        holder.editText2.setId(position);
+//
+//        holder.editText3.setText(myItems.get(position).toString());
+//        holder.editText3.setId(position);
+//
+//        holder.editText4.setText(myItems.get(position).toString());
+//        holder.editText4.setId(position);
     }
 }
 

@@ -3,25 +3,25 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextSsid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Wifi SSID" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Wifi Password" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextHostpotSsid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Hotspot SSID" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <EditText
         android:id="@+id/editTextHostpotPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
