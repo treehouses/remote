@@ -14,14 +14,11 @@ import java.util.ArrayList;
 public class MyListAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    private static ArrayList myItems = new ArrayList();
+    private static ArrayList<String> myItems = new ArrayList<>();
     private static int layout = R.layout.profile_ethernet;
 
     public MyListAdapter(Context context) {
         mInflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-//        setLayout(R.layout.profile_ethernet);
-
         notifyDataSetChanged();
     }
 
@@ -33,14 +30,12 @@ public class MyListAdapter extends BaseAdapter {
         MyListAdapter.myItems.add(value);
     }
 
-    public static ArrayList getMyItems() {
+    public static ArrayList<String> getMyItems() {
         return myItems;
     }
 
     @Override
-    public int getCount() {
-        return myItems.size();
-    }
+    public int getCount() { return myItems.size(); }
 
     @Override
     public Object getItem(int position) {
@@ -77,6 +72,9 @@ public class MyListAdapter extends BaseAdapter {
                 break;
             case R.layout.profile_bridge:
                 bridge(holder, convertView, position);
+                break;
+            case R.layout.profile_tether:
+                tether(holder, convertView, position);
                 break;
         }
     }
@@ -126,6 +124,14 @@ public class MyListAdapter extends BaseAdapter {
         setTextValue(holder.editText3, "bridge3", position);
         setTextValue(holder.editText4, "bridge4", position);
 
+    }
+
+    private void tether(ViewHolder holder, View convertView, int position) {
+        holder.editText1 = convertView.findViewById(R.id.editTextSsid);
+        holder.editText2 = convertView.findViewById(R.id.editTextPassword);
+
+        setTextValue(holder.editText1, "tether1", position);
+        setTextValue(holder.editText2, "tether2", position);
     }
 
     private void setTextValue(EditText editText, String string, int position) {

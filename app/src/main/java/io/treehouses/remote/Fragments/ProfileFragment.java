@@ -5,28 +5,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.util.ArrayList;
-
-import io.treehouses.remote.ButtonConfiguration;
 import io.treehouses.remote.MyListAdapter;
 import io.treehouses.remote.R;
-import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.pojo.NetworkListItem;
-
-import static android.R.layout.simple_list_item_1;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class ProfileFragment extends BaseFragment {
 
@@ -59,37 +45,38 @@ public class ProfileFragment extends BaseFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("TAG", "onItemSelected called");
 
-                if (spinnerProfile.getItemAtPosition(position).equals("Ethernet")) {
-                    MyListAdapter.setLayout(R.layout.profile_ethernet);
-                    MyListAdapter.getMyItems().clear();
-                    MyListAdapter.setMyItems("Ethernet1");
-
-
-                    adapter.notifyDataSetChanged();
-                } else if (spinnerProfile.getItemAtPosition(position).equals("Wifi")) {
-                    MyListAdapter.setLayout(R.layout.profile_wifi);
-                    MyListAdapter.getMyItems().clear();
-                    MyListAdapter.setMyItems("Wifi1");
-                    adapter.notifyDataSetChanged();
-                } else if (spinnerProfile.getItemAtPosition(position).equals("Hotspot")) {
-                    MyListAdapter.setLayout(R.layout.profile_hotspot);
-                    MyListAdapter.getMyItems().clear();
-                    MyListAdapter.setMyItems("Hotspot1");
-
-                    adapter.notifyDataSetChanged();
-                } else if (spinnerProfile.getItemAtPosition(position).equals("Bridge")) {
-                    MyListAdapter.setLayout(R.layout.profile_bridge);
-                    MyListAdapter.getMyItems().clear();
-                    MyListAdapter.setMyItems("Bridge1");
-
-                    adapter.notifyDataSetChanged();
-                }
+                switchStatment(spinnerProfile, position);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
+    }
+
+    private void switchStatment(Spinner spinnerProfile, int position) {
+        switch (spinnerProfile.getItemAtPosition(position).toString()) {
+            case "Ethernet":
+                setLayout("Ethernet", R.layout.profile_ethernet);
+                break;
+            case "Wifi":
+                setLayout("Wifi", R.layout.profile_wifi);
+                break;
+            case "Hotspot":
+                setLayout("Hotspot", R.layout.profile_hotspot);
+                break;
+            case "Bridge":
+                setLayout("Bridge", R.layout.profile_bridge);
+                break;
+            case "Tether":
+                setLayout("Tether", R.layout.profile_tether);
+                break;
+        }
+    }
+
+    private void setLayout(String value, int layout) {
+        MyListAdapter.setLayout(layout);
+        MyListAdapter.getMyItems().clear();
+        MyListAdapter.setMyItems(value);
+        adapter.notifyDataSetChanged();
     }
 }

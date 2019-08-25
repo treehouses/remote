@@ -7,13 +7,17 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <EditText
-            android:id="@+id/editTextSSID"
+            android:id="@+id/editTextSsid"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/ssid"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="Hotspot SSID"
+            android:inputType="textPersonName"
             app:layout_constraintEnd_toStartOf="@+id/editTextPassword"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -22,10 +26,12 @@
             android:id="@+id/editTextPassword"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTextSSID"
+            app:layout_constraintStart_toEndOf="@+id/editTextSsid"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
