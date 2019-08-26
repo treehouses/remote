@@ -99,6 +99,21 @@
         app:layout_constraintTop_toBottomOf="@+id/btnExpand" />
 
     <Button
+        android:id="@+id/btnVncOff"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="vnc off"
+        android:textSize="12sp"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVncOn" />
+
+    <Button
         android:id="@+id/btnVncStatus"
         android:layout_width="0dp"
         android:layout_height="26dp"
@@ -111,7 +126,37 @@
         android:theme="@style/PrimaryButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnVncOn" />
+        app:layout_constraintTop_toBottomOf="@+id/btnVncOff" />
+
+    <Button
+        android:id="@+id/btnTor"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Tor"
+        android:textSize="12sp"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVncStatus" />
+
+    <Button
+        android:id="@+id/btnNetworkMode"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/colorPrimary"
+        android:text="Network mode info"
+        android:textSize="12sp"
+        android:theme="@style/PrimaryButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTor" />
 
     <Button
         android:id="@+id/btnClear"
@@ -126,6 +171,6 @@
         android:theme="@style/PrimaryButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnVncStatus" />
+        app:layout_constraintTop_toBottomOf="@+id/btnNetworkMode" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
