@@ -36,9 +36,9 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        essid.addTextChangedListener(getTextWatcher(etSsid, v));
-        etHotspotEssid.addTextChangedListener(getTextWatcher(etHotspotEssid, v));
-        etPassword.addTextChangedListener(getTextWatcher(etPassword, v));
+        essid.addTextChangedListener(new MyTextWatcher(etSsid));
+        etHotspotEssid.addTextChangedListener(new MyTextWatcher(etHotspotEssid));
+        etPassword.addTextChangedListener(new MyTextWatcher(etPassword));
 
         btnStartConfiguration.setOnClickListener(view -> {
             String temp = "treehouses bridge \"" + etSsid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";

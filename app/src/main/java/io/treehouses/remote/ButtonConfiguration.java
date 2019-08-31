@@ -43,38 +43,6 @@ public abstract class ButtonConfiguration {
         });
     }
 
-    protected TextWatcher getTextWatcher(final EditText editText, View v) {
-        return new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-                afterTextChangedListener(editable, editText);
-
-                Log.e("TAG", "afterTextChanged()");
-            }
-        };
-    }
-
-    private void afterTextChangedListener(Editable editable, EditText editText) {
-        if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {             // ethernet text listener
-            ethernetLayout(editable, editText);
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {          // wifi text listener
-            wifiLayout(editable, editText);
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {       // hotspot text listener
-            hotspotLayout(editable, editText);
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {        // bridge text listener
-            bridgeLayout(editable, editText);
-        }
-    }
-
     private void ethernetLayout(Editable editable, EditText editText) {
         if (checkCondition(editable)) {
             textChanged(length(editText) && length(etIp) && length(etDNS));
@@ -137,5 +105,37 @@ public abstract class ButtonConfiguration {
 
     public static TextInputEditText getEtHotspotEssid() {
         return etHotspotEssid;
+    }
+
+    public class MyTextWatcher implements android.text.TextWatcher{
+        EditText editText;
+
+        public MyTextWatcher(EditText editText){
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {             // ethernet text listener
+                ethernetLayout(editable, editText);
+            } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {          // wifi text listener
+                wifiLayout(editable, editText);
+            } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {       // hotspot text listener
+                hotspotLayout(editable, editText);
+            } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {        // bridge text listener
+                bridgeLayout(editable, editText);
+            }
+            Log.e("TAG", "afterTextChanged()");
+        }
     }
 }

@@ -24,7 +24,7 @@ class ViewHolderHotspot extends ButtonConfiguration{
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        etSsid.addTextChangedListener(getTextWatcher(etSsid, v));
+        etSsid.addTextChangedListener(new MyTextWatcher (etSsid));
 
         btnStartConfiguration.setOnClickListener(view -> {
             if (etPassword.getText().toString().isEmpty()) {

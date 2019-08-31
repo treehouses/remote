@@ -23,10 +23,10 @@ public class ViewHolderEthernet extends ButtonConfiguration {
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        etIp.addTextChangedListener(getTextWatcher(etIp, v));
-        etDNS.addTextChangedListener(getTextWatcher(etDNS, v));
-        etGateway.addTextChangedListener(getTextWatcher(etGateway, v));
-        etMask.addTextChangedListener(getTextWatcher(etMask, v));
+        etIp.addTextChangedListener(new MyTextWatcher(etIp));
+        etDNS.addTextChangedListener(new MyTextWatcher(etDNS));
+        etGateway.addTextChangedListener(new MyTextWatcher(etGateway));
+        etMask.addTextChangedListener(new MyTextWatcher(etMask));
 
 
         btnStartConfiguration.setOnClickListener(new View.OnClickListener() {
