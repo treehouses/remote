@@ -54,9 +54,7 @@ public class ViewHolderBridge extends ButtonConfiguration {
                 overallMessage += "\"" + hotspotPass + "\"";
             }
             messageSent = true;
-            //listener.sendMessage(overallMessage);
-
-            saveNetwork("bridgeSsid", essid, "bridgeHotspotSsid", hotspotEssid, "bridgeSsidPassword", essidPass, "bridgeHotspotPassword", hotspotPass);
+            listener.sendMessage(overallMessage);
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 

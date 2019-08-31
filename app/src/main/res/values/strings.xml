@@ -118,6 +118,7 @@
     <string name="yes">yes</string>
     <string name="network_profile">Network Profiles</string>
     <string name="ethernet">Ethernet</string>
+    <string name="select">Select</string>
     <string-array name="spinner_hotspot">
         <item>internet</item>
         <item>local</item>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import androidx.annotation.NonNull;
@@ -18,11 +19,14 @@ public class ProfileFragment extends BaseFragment {
 
     private ListView listView;
     private MyListAdapter adapter;
+    private Button addProfile;
+    private static int profileCount = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        addProfile = view.findViewById(R.id.btnAddProfile);
         listView = view.findViewById(R.id.listViewProfile);
 
         adapter = new MyListAdapter(getContext());
@@ -34,6 +38,12 @@ public class ProfileFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        addProfile.setOnClickListener(v -> {
+            profileCount++;
+            MyListAdapter.setList(Integer.toString(profileCount));
+            adapter.notifyDataSetChanged();
+        });
 
         spinnerOnSelected(view);
     }
@@ -75,8 +85,8 @@ public class ProfileFragment extends BaseFragment {
 
     private void setLayout(String value, int layout) {
         MyListAdapter.setLayout(layout);
-        MyListAdapter.getMyItems().clear();
-        MyListAdapter.setMyItems(value);
+        MyListAdapter.getList().clear();
+        MyListAdapter.setList(value);
         adapter.notifyDataSetChanged();
     }
 }

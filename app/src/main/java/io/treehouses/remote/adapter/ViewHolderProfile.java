@@ -76,19 +76,15 @@ public class ViewHolderProfile extends ButtonConfiguration {
     }
 
     private void bridge(View v) {
-        TextInputEditText editTextSsid = v.findViewById(R.id.editTextSsid);
-        TextInputEditText editTextPassword = v.findViewById(R.id.editTextPassword);
-        TextInputEditText editTextHotspot = v.findViewById(R.id.editTextHostpotSsid);
-        TextInputEditText editTextHotspotPass = v.findViewById(R.id.editTextHostpotPassword);
-
-        String ssid = MainApplication.getSharedPreferences().getString("bridgeSsid", "");
-        String ssidPassword = MainApplication.getSharedPreferences().getString("bridgeSsidPassword", "");
-        String hotspotSsid = MainApplication.getSharedPreferences().getString("bridgeHotspotSsid", "");
-        String hotspotPass = MainApplication.getSharedPreferences().getString("bridgeHotspotPassword", "");
-
-        editTextSsid.setText(ssid);
-        editTextPassword.setText(ssidPassword);
-        editTextHotspot.setText(hotspotSsid);
-        editTextHotspotPass.setText(hotspotPass);
+//        TextInputEditText editTextSsid = v.findViewById(R.id.editTextSsid);
+//        TextInputEditText editTextPassword = v.findViewById(R.id.editTextPassword);
+//        TextInputEditText editTextHotspot = v.findViewById(R.id.editTextHostpotSsid);
+//        TextInputEditText editTextHotspotPass = v.findViewById(R.id.editTextHostpotPassword);
+//
+//
+//        editTextSsid.setText(ssid);
+//        editTextPassword.setText(ssidPassword);
+//        editTextHotspot.setText(hotspotSsid);
+//        editTextHotspotPass.setText(hotspotPass);
     }
 }

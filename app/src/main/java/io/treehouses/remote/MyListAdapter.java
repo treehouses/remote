@@ -6,36 +6,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static io.treehouses.remote.ButtonConfiguration.saveNetwork;
 
 public class MyListAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    private static ArrayList<String> myItems = new ArrayList<>();
+    private static ArrayList<String> list = new ArrayList<>();
     private static int layout = R.layout.profile_ethernet;
+    private Context context;
 
     public MyListAdapter(Context context) {
         mInflater = (LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         notifyDataSetChanged();
+        this.context = context;
     }
 
     public static void setLayout(int layout) {
         MyListAdapter.layout = layout;
     }
 
-    public static void setMyItems(String value) {
-        MyListAdapter.myItems.add(value);
+    public static void setList(String value) {
+        MyListAdapter.list.add(value);
     }
 
-    public static ArrayList<String> getMyItems() {
-        return myItems;
+    public static ArrayList<String> getList() {
+        return list;
     }
 
     @Override
-    public int getCount() { return myItems.size(); }
+    public int getCount() { return list.size(); }
 
     @Override
     public Object getItem(int position) {
@@ -79,33 +85,33 @@ public class MyListAdapter extends BaseAdapter {
         }
     }
 
-    private void ethernet(ViewHolder holder, View convertView, int position) {
-        holder.editText1 = convertView.findViewById(R.id.editTextIp);
-        holder.editText2 = convertView.findViewById(R.id.editTextMask);
-        holder.editText3 = convertView.findViewById(R.id.editTextGateway);
-        holder.editText4 = convertView.findViewById(R.id.editTextDns);
+    private void ethernet(ViewHolder h, View convertView, int position) {
+        h.editText1 = convertView.findViewById(R.id.editTextIp);
+        h.editText2 = convertView.findViewById(R.id.editTextMask);
+        h.editText3 = convertView.findViewById(R.id.editTextGateway);
+        h.editText4 = convertView.findViewById(R.id.editTextDns);
 
-        setTextValue(holder.editText1, "ethernet1", position);
-        setTextValue(holder.editText2, "ethernet2", position);
-        setTextValue(holder.editText3, "ethernet3", position);
-        setTextValue(holder.editText4, "ethernet4", position);
+        setTextValue(h.editText1, "ethernet1", position);
+        setTextValue(h.editText2, "ethernet2", position);
+        setTextValue(h.editText3, "ethernet3", position);
+        setTextValue(h.editText4, "ethernet4", position);
     }
 
-    private void wifi(ViewHolder holder, View convertView, int position) {
-        holder.editText1 = convertView.findViewById(R.id.editTextSSID);
-        holder.editText2 = convertView.findViewById(R.id.editTextPassword);
+    private void wifi(ViewHolder h, View convertView, int position) {
+        h.editText1 = convertView.findViewById(R.id.editTextSSID);
+        h.editText2 = convertView.findViewById(R.id.editTextPassword);
 
-        setTextValue(holder.editText1, "wifi1", position);
-        setTextValue(holder.editText2, "wifi2", position);
+        setTextValue(h.editText1, "wifi1", position);
+        setTextValue(h.editText2, "wifi2", position);
     }
 
-    private void hotspot(ViewHolder holder, View convertView, int position) {
-        holder.editText1 = convertView.findViewById(R.id.editTextSsid);
-        holder.editText2 = convertView.findViewById(R.id.editTextPassword);
-        holder.spinner = convertView.findViewById(R.id.spinner);
+    private void hotspot(ViewHolder h, View convertView, int position) {
+        h.editText1 = convertView.findViewById(R.id.editTextSsid);
+        h.editText2 = convertView.findViewById(R.id.editTextPassword);
+        h.spinner = convertView.findViewById(R.id.spinner);
 
-        setTextValue(holder.editText1, "hotspot1", position);
-        setTextValue(holder.editText2, "hotspot2", position);
+        setTextValue(h.editText1, "hotspot1", position);
+        setTextValue(h.editText2, "hotspot2", position);
 
 
 //        String value = myItems.get(position).toString();
@@ -113,25 +119,31 @@ public class MyListAdapter extends BaseAdapter {
        // holder.spinner.setId(position);
     }
 
-    private void bridge(ViewHolder holder, View convertView, int position) {
-        holder.editText1 = convertView.findViewById(R.id.editTextSsid);
-        holder.editText2 = convertView.findViewById(R.id.editTextPassword);
-        holder.editText3 = convertView.findViewById(R.id.editTextHostpotSsid);
-        holder.editText4 = convertView.findViewById(R.id.editTextHostpotPassword);
+    private void bridge(ViewHolder h, View convertView, int position) {
+        h.editText1 = convertView.findViewById(R.id.editTextSsid);
+        h.editText2 = convertView.findViewById(R.id.editTextPassword);
+        h.editText3 = convertView.findViewById(R.id.editTextHostpotSsid);
+        h.editText4 = convertView.findViewById(R.id.editTextHostpotPassword);
 
-        setTextValue(holder.editText1, "bridge1", position);
-        setTextValue(holder.editText2, "bridge2", position);
-        setTextValue(holder.editText3, "bridge3", position);
-        setTextValue(holder.editText4, "bridge4", position);
+        setTextValue(h.editText1, MainApplication.getSharedPreferences().getString("bridgeSsid", ""), position);
+        setTextValue(h.editText2, MainApplication.getSharedPreferences().getString("bridgeSsidPassword", ""), position);
+        setTextValue(h.editText3, MainApplication.getSharedPreferences().getString("bridgeHotspotSsid", ""), position);
+        setTextValue(h.editText4, MainApplication.getSharedPreferences().getString("bridgeHotspotPassword", ""), position);
 
+        Button button = convertView.findViewById(R.id.btn_start_config);
+        button.setText(R.string.select);
+        button.setOnClickListener(v -> {
+            saveNetwork("bridgeSsid", h.editText1.getText().toString(), "bridgeSsidPassword", h.editText2.getText().toString(), "bridgeHotspotSsid", h.editText3.getText().toString(), "bridgeHotspotPassword", h.editText4.getText().toString());
+            Toast.makeText(context, "Profile Saved", Toast.LENGTH_LONG).show();
+        });
     }
 
-    private void tether(ViewHolder holder, View convertView, int position) {
-        holder.editText1 = convertView.findViewById(R.id.editTextSsid);
-        holder.editText2 = convertView.findViewById(R.id.editTextPassword);
+    private void tether(ViewHolder h, View convertView, int position) {
+        h.editText1 = convertView.findViewById(R.id.editTextSsid);
+        h.editText2 = convertView.findViewById(R.id.editTextPassword);
 
-        setTextValue(holder.editText1, "tether1", position);
-        setTextValue(holder.editText2, "tether2", position);
+        setTextValue(h.editText1, "tether1", position);
+        setTextValue(h.editText2, "tether2", position);
     }
 
     private void setTextValue(EditText editText, String string, int position) {

@@ -39,7 +39,7 @@ public abstract class ButtonConfiguration {
         });
     }
 
-    protected void saveNetwork(String ... keyValues) {
+    protected static void saveNetwork(String ... keyValues) {
         SharedPreferences.Editor editor = MainApplication.getSharedPreferences().edit();
         if (keyValues.length == 2) {
             saveValue(editor, keyValues, 0, 1);
@@ -59,7 +59,7 @@ public abstract class ButtonConfiguration {
         editor.commit();
     }
 
-    private void saveValue(SharedPreferences.Editor editor, String[] keyValues,int key, int value) {
+    private static void saveValue(SharedPreferences.Editor editor, String[] keyValues,int key, int value) {
         editor.putString(keyValues[key], keyValues[value]);
     }
 
