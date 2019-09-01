@@ -8,8 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
-import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.R;
+import io.treehouses.remote.utils.TextWatcherUtils;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderBridge extends ButtonConfiguration {
@@ -36,9 +37,9 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        essid.addTextChangedListener(new MyTextWatcher(etSsid));
-        etHotspotEssid.addTextChangedListener(new MyTextWatcher(etHotspotEssid));
-        etPassword.addTextChangedListener(new MyTextWatcher(etPassword));
+        essid.addTextChangedListener(new TextWatcherUtils(etSsid));
+        etHotspotEssid.addTextChangedListener(new TextWatcherUtils(etHotspotEssid));
+        etPassword.addTextChangedListener(new TextWatcherUtils(etPassword));
 
         btnStartConfiguration.setOnClickListener(view -> {
             String temp = "treehouses bridge \"" + etSsid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";

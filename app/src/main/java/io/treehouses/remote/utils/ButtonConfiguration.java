@@ -1,23 +1,16 @@
-package io.treehouses.remote;
+package io.treehouses.remote.utils;
 
+import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.content.Context;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import io.treehouses.remote.Fragments.NetworkFragment;
-import io.treehouses.remote.adapter.NetworkListAdapter;
 
 public abstract class ButtonConfiguration {
     protected static TextInputEditText etHotspotEssid, etSsid, essid;
@@ -43,7 +36,7 @@ public abstract class ButtonConfiguration {
         });
     }
 
-    private void ethernetLayout(Editable editable, EditText editText) {
+    void ethernetLayout(Editable editable, EditText editText) {
         if (checkCondition(editable)) {
             textChanged(length(editText) && length(etIp) && length(etDNS));
         }
@@ -53,19 +46,19 @@ public abstract class ButtonConfiguration {
         return viewCondition(etIp, editable) || viewCondition(etDNS, editable) || viewCondition(etGateway, editable) || viewCondition(etMask, editable);
     }
 
-    private void wifiLayout(Editable editable, EditText editText) {
+    void wifiLayout(Editable editable, EditText editText) {
         if (viewCondition(etSsid, editable)) {
             textChanged(length(editText));
         }
     }
 
-    private void hotspotLayout(Editable editable, EditText editText) {
+    void hotspotLayout(Editable editable, EditText editText) {
         if (viewCondition(etSsid, editable)) {
             textChanged(length(editText));
         }
     }
 
-    private void bridgeLayout(Editable editable, EditText editText) {
+    void bridgeLayout(Editable editable, EditText editText) {
         if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {
             textChanged(length(editText) && length(essid) && length(etHotspotEssid));
         }
@@ -105,37 +98,5 @@ public abstract class ButtonConfiguration {
 
     public static TextInputEditText getEtHotspotEssid() {
         return etHotspotEssid;
-    }
-
-    public class MyTextWatcher implements android.text.TextWatcher{
-        EditText editText;
-
-        public MyTextWatcher(EditText editText){
-            this.editText = editText;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {             // ethernet text listener
-                ethernetLayout(editable, editText);
-            } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {          // wifi text listener
-                wifiLayout(editable, editText);
-            } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {       // hotspot text listener
-                hotspotLayout(editable, editText);
-            } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {        // bridge text listener
-                bridgeLayout(editable, editText);
-            }
-            Log.e("TAG", "afterTextChanged()");
-        }
     }
 }

@@ -7,8 +7,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.R;
+import io.treehouses.remote.utils.TextWatcherUtils;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 class ViewHolderHotspot extends ButtonConfiguration{
@@ -24,7 +25,7 @@ class ViewHolderHotspot extends ButtonConfiguration{
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        etSsid.addTextChangedListener(new MyTextWatcher (etSsid));
+        etSsid.addTextChangedListener(new TextWatcherUtils(etSsid));
 
         btnStartConfiguration.setOnClickListener(view -> {
             if (etPassword.getText().toString().isEmpty()) {

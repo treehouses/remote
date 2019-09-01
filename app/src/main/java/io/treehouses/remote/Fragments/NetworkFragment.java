@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
@@ -86,6 +86,10 @@ public class NetworkFragment extends BaseFragment {
 
     public void setButtonConfiguration(ButtonConfiguration buttonConfiguration) {
         this.buttonConfiguration = buttonConfiguration;
+    }
+
+    public ButtonConfiguration getButtonConfiguration(){
+        return buttonConfiguration;
     }
 
     private void updateNetworkMode() {

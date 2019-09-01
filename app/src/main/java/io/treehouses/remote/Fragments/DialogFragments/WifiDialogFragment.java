@@ -19,7 +19,7 @@ import androidx.fragment.app.DialogFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import io.treehouses.remote.ButtonConfiguration;
+import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
