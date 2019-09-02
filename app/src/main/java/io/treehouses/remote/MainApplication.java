@@ -48,7 +48,6 @@ public class MainApplication extends Application {
         commandList = new ArrayList();
     }
 
-
     public static ArrayList getTerminalList() {
         return terminalList;
     }
