@@ -65,11 +65,11 @@
         android:id="@+id/PING"
         android:layout_width="10dp"
         android:layout_height="10dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/circle"
-        app:layout_constraintStart_toEndOf="@+id/check"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
