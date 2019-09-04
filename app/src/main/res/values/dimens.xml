@@ -2,14 +2,13 @@
 <resources>
     <!-- Define standard dimensions to comply with Holo-style grids and rhythm. -->
 
-    <dimen name="margin_tiny">4dp</dimen>
-    <dimen name="margin_small">8dp</dimen>
-    <dimen name="margin_medium">16dp</dimen>
-    <dimen name="margin_large">32dp</dimen>
-    <dimen name="margin_huge">64dp</dimen>
+    <dimen name="margin_tiny">2dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_huge">32dp</dimen>
 
     <!-- Semantic definitions -->
-
     <dimen name="horizontal_page_margin">@dimen/margin_medium</dimen>
     <dimen name="vertical_page_margin">@dimen/margin_medium</dimen>
 
@@ -26,12 +25,12 @@
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="icon_size_mid">36dp</dimen>
     <dimen name="profile_card">150dp</dimen>
-    <dimen name="padding_small">4dp</dimen>
     <dimen name="image_size_home_card">50dp</dimen>
     <dimen name="drawer_width">300dp</dimen>
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="_16dp">16dp</dimen>
+    <dimen name="terminal_list_margin">200dp</dimen>
 </resources>
