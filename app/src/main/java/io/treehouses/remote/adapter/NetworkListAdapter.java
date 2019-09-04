@@ -106,8 +106,6 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             new ViewHolderVnc(convertView, context, listener);
         } else if (layout == R.layout.configure_tethering) {
             new ViewHolderTether(convertView, listener, context);
-        } else if (layout == R.layout.button_layout) {
-            new ViewHolderCommands(convertView, listener);
         } else {
             switchStatement(i, convertView);
         }

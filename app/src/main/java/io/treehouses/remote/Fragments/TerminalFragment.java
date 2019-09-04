@@ -16,21 +16,25 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
-import io.treehouses.remote.pojo.NetworkListItem;
+import io.treehouses.remote.pojo.CommandListItem;
 
 public class TerminalFragment extends BaseTerminalFragment {
 
@@ -55,15 +59,50 @@ public class TerminalFragment extends BaseTerminalFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         instance = this;
-        adapter = new NetworkListAdapter(getContext(), NetworkListItem.getTerminalList(), mChatService);
-        adapter.setListener(listener);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        expandableListView = view.findViewById(R.id.terminalList);
-        onGroupExpand();
-        expandableListView.setAdapter(adapter);
         setHasOptionsMenu(true);
-
+        setupList();
         return view;
+    }
+
+    public HashMap<String, List<CommandListItem>>  getCommandsList(){
+        HashMap<String, List<CommandListItem>> expandableListDetail = new HashMap<String, List<CommandListItem>>();
+
+        List<CommandListItem> commands = new ArrayList<>();
+        commands.add(new CommandListItem("CHANGE PASSWORD", ""));
+        commands.add(new CommandListItem("HELP", ""));
+        commands.add(new CommandListItem("DOCKER PS", ""));
+        commands.add(new CommandListItem("DETECT RPI", ""));
+        commands.add(new CommandListItem("EXPAND FS", ""));
+        commands.add(new CommandListItem("VNC ON", ""));
+        commands.add(new CommandListItem("VNC OFF", ""));
+        commands.add(new CommandListItem("VNC STATUS", ""));
+        commands.add(new CommandListItem("TOR", ""));
+        commands.add(new CommandListItem("NETWORK MODE INFO", ""));
+        commands.add(new CommandListItem("CLEAR", ""));
+
+        expandableListDetail.put("Commands", commands);
+        return expandableListDetail;
+    }
+
+    public void setupList(){
+        expandableListView = view.findViewById(R.id.terminalList);
+        final HashMap<String,List<CommandListItem>> expandableListDetail = getCommandsList();
+        List<String> expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+        ExpandableListAdapter expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
+        expandableListView.setAdapter(expandableListAdapter);
+        expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            String title = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTitle();
+            if(title.equalsIgnoreCase("CLEAR")){
+                MainApplication.getTerminalList().clear();
+                getmConversationArrayAdapter().notifyDataSetChanged();
+            }else if (title.equalsIgnoreCase("CHANGE PASSWORD")){
+                showChPasswordDialog();
+            }else {
+                listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
+            }
+            return false;
+        });
     }
 
     @Override
