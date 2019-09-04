@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.treehouses.remote.R;
-import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.CommandListItem;
 
 public class CommandListAdapter extends BaseExpandableListAdapter {
@@ -43,9 +42,7 @@ public class CommandListAdapter extends BaseExpandableListAdapter {
                              boolean isLastChild, View convertView, ViewGroup parent) {
         final String expandedListText = (String) getChild(listPosition, expandedListPosition);
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.list_item, null);
+            convertView = getConvertView(R.layout.list_item);
         }
         TextView expandedListTextView = (TextView) convertView
                 .findViewById(R.id.expandedListItem);
@@ -79,14 +76,17 @@ public class CommandListAdapter extends BaseExpandableListAdapter {
                              View convertView, ViewGroup parent) {
         String listTitle = (String) getGroup(listPosition);
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.context.
-                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.list_group, null);
+             convertView = getConvertView(R.layout.list_group);
         }
         TextView listTitleTextView = (TextView) convertView
                 .findViewById(R.id.lblListHeader);
         listTitleTextView.setText(listTitle);
         return convertView;
+    }
+
+    public View getConvertView(int layout_id){
+        LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        return layoutInflater.inflate(layout_id, null);
     }
 
     @Override

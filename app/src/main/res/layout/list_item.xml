@@ -8,9 +8,9 @@
         android:id="@+id/expandedListItem"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:textAlignment="center"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:background="@drawable/ripple" />
 </LinearLayout>
