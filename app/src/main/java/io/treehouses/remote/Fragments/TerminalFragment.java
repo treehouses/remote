@@ -94,9 +94,8 @@ public class TerminalFragment extends BaseTerminalFragment {
                 getmConversationArrayAdapter().notifyDataSetChanged();
             } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) {
                 showChPasswordDialog();
-            } else {
-                listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
-            }
+            } else listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
+
             return false;
         });
     }
@@ -220,7 +219,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 listener.sendMessage(message);
-
                 mOutEditText.setText("");
             }
             return true;
