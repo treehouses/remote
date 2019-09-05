@@ -3,10 +3,9 @@ package io.treehouses.remote.Fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,21 +15,24 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
 import io.treehouses.remote.MainApplication;
-import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
-import io.treehouses.remote.adapter.NetworkListAdapter;
+import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
-import io.treehouses.remote.pojo.NetworkListItem;
+import io.treehouses.remote.pojo.CommandListItem;
 
 public class TerminalFragment extends BaseTerminalFragment {
 
@@ -41,13 +43,13 @@ public class TerminalFragment extends BaseTerminalFragment {
     private EditText mOutEditText;
     private Button mSendButton, pingStatusButton, mPrevious;
     private ExpandableListView expandableListView;
-    private NetworkListAdapter adapter;
     private ArrayList<String> list;
     private int i;
     private String last;
     View view;
 
-    public TerminalFragment() {}
+    public TerminalFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,15 +57,47 @@ public class TerminalFragment extends BaseTerminalFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         instance = this;
-        adapter = new NetworkListAdapter(getContext(), NetworkListItem.getTerminalList(), mChatService);
-        adapter.setListener(listener);
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
-        expandableListView = view.findViewById(R.id.terminalList);
-        onGroupExpand();
-        expandableListView.setAdapter(adapter);
         setHasOptionsMenu(true);
-
+        setupList();
         return view;
+    }
+
+    public HashMap<String, List<CommandListItem>> getCommandsList() {
+        HashMap<String, List<CommandListItem>> expandableListDetail = new HashMap<String, List<CommandListItem>>();
+        List<CommandListItem> commands = new ArrayList<>();
+        commands.add(new CommandListItem("CHANGE PASSWORD", ""));
+        commands.add(new CommandListItem("HELP", "treehouses help"));
+        commands.add(new CommandListItem("DOCKER PS", "docker ps"));
+        commands.add(new CommandListItem("DETECT RPI", "treehouses detectrpi"));
+        commands.add(new CommandListItem("EXPAND FS", "treehouses expandfs"));
+        commands.add(new CommandListItem("VNC ON", "treehouses vnc on"));
+        commands.add(new CommandListItem("VNC OFF", "treehouses vnc off"));
+        commands.add(new CommandListItem("VNC STATUS", "treehouses vnc"));
+        commands.add(new CommandListItem("TOR", "treehouses tor"));
+        commands.add(new CommandListItem("NETWORK MODE INFO", "treehouses networkmode info"));
+        commands.add(new CommandListItem("CLEAR", ""));
+        expandableListDetail.put("Commands", commands);
+        return expandableListDetail;
+    }
+
+    public void setupList() {
+        expandableListView = view.findViewById(R.id.terminalList);
+        final HashMap<String, List<CommandListItem>> expandableListDetail = getCommandsList();
+        List<String> expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+        ExpandableListAdapter expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
+        expandableListView.setAdapter(expandableListAdapter);
+        expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            String title = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTitle();
+            if (title.equalsIgnoreCase("CLEAR")) {
+                MainApplication.getTerminalList().clear();
+                getmConversationArrayAdapter().notifyDataSetChanged();
+            } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) {
+                showChPasswordDialog();
+            } else listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
+
+            return false;
+        });
     }
 
     @Override
@@ -74,17 +108,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
         mPrevious = view.findViewById(R.id.btnPrevious);
-    }
-
-    private void onGroupExpand() {
-        expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
-            if (!expandableListView.isGroupExpanded(groupPosition)) {
-                expandableListView.setBackgroundColor(Color.WHITE);
-            } else {
-                expandableListView.setBackgroundColor(0);
-            }
-            return false;
-        });
     }
 
     /**
@@ -116,7 +139,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         Log.e("tag", "LOG check onResume method ");
         Log.e("CHECK STATUS", "" + mChatService.getState());
         checkStatus(mChatService, mPingStatus, pingStatusButton);
@@ -137,10 +160,10 @@ public class TerminalFragment extends BaseTerminalFragment {
      */
     public void setupChat() {
         Log.d(TAG, "setupChat()");
-      
+
         copyToList(mConversationView, getContext());
 
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(),R.layout.message, MainApplication.getTerminalList()){
+        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTerminalList()) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -172,7 +195,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                 consoleInput.setText("");
             }
         });
-
         mPrevious.setOnClickListener(v -> {
             setLastCommand();
         });
@@ -197,7 +219,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 listener.sendMessage(message);
-
                 mOutEditText.setText("");
             }
             return true;
@@ -220,11 +241,9 @@ public class TerminalFragment extends BaseTerminalFragment {
         if (resultCode == Activity.RESULT_OK) {
             //get password change request
             String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-
             //store password and command
             String password = "treehouses password " + chPWD;
             Log.d(TAG, "back from change password");
-
             //send password to command line interface
             listener.sendMessage(password);
         } else {
@@ -267,7 +286,9 @@ public class TerminalFragment extends BaseTerminalFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(mPingStatus, pingStatusButton); }
+                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) {
+                        idle(mPingStatus, pingStatusButton);
+                    }
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
@@ -275,7 +296,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                     addToCommandList(writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
-                    String readMessage = (String)msg.obj;
+                    String readMessage = (String) msg.obj;
                     isRead = true;
                     handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
