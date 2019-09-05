@@ -103,6 +103,9 @@
 
             <ExpandableListView
                 android:id="@+id/terminalList"
+                android:divider="@android:color/transparent"
+                android:background="@color/bg_white"
+                android:dividerHeight="3dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"

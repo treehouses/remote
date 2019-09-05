@@ -38,15 +38,15 @@ public class CommandListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int listPosition, final int expandedListPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int listPosition, final int expandedListPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String expandedListText = (String) getChild(listPosition, expandedListPosition);
         if (convertView == null) {
             convertView = getConvertView(R.layout.list_item);
         }
-        TextView expandedListTextView = (TextView) convertView
-                .findViewById(R.id.expandedListItem);
+        TextView expandedListTextView = convertView.findViewById(R.id.expandedListItem);
         expandedListTextView.setText(expandedListText);
+
+        
         return convertView;
     }
 
