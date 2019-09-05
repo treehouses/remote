@@ -1,16 +1,7 @@
 package io.treehouses.remote;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
-import android.util.Log;
-
 import java.util.ArrayList;
-import java.util.List;
-
-import io.treehouses.remote.Fragments.TerminalFragment;
 
 public class MainApplication extends Application {
 
@@ -19,7 +10,6 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         terminalList = new ArrayList();
         tunnelList = new ArrayList();
         commandList = new ArrayList();
