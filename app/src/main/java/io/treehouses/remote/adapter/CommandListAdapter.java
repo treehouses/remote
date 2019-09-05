@@ -45,8 +45,6 @@ public class CommandListAdapter extends BaseExpandableListAdapter {
         }
         TextView expandedListTextView = convertView.findViewById(R.id.expandedListItem);
         expandedListTextView.setText(expandedListText);
-
-        
         return convertView;
     }
 
