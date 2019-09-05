@@ -43,12 +43,6 @@ public class NetworkListItem {
         return list;
     }
 
-    public static List<NetworkListItem> getTerminalList() {
-        List<NetworkListItem> terminalList = new ArrayList();
-        terminalList.add(new NetworkListItem("Commands", R.layout.button_layout));
-        return terminalList;
-    }
-
     public static List<NetworkListItem> getSystemList() {
         List<NetworkListItem> systemList = new ArrayList();
         systemList.add(new NetworkListItem("Open VNC", R.layout.open_vnc));

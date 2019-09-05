@@ -7,6 +7,8 @@
     <TextView
         android:id="@+id/command_textView"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:padding="@dimen/padding_normal"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:text="TextView" />
 </LinearLayout>

@@ -7,4 +7,12 @@
     <dimen name="margin_large">32dp</dimen>
     <dimen name="margin_huge">64dp</dimen>
     <dimen name="terminal_list_margin">220dp</dimen>
+    <dimen name="drawer_width">300dp</dimen>
+    <dimen name="text_size_very_large">32sp</dimen>
+    <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_mid">18sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="logo_size_home">300dp</dimen>
+    <dimen name="button_normal">150dp</dimen>
+
 </resources>

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.TerminalFragment"
-    android:background="#FFF">
+    android:background="#FFF"
+    tools:context=".Fragments.TerminalFragment">
 
     <ListView
         android:id="@+id/in"
@@ -21,8 +21,7 @@
         android:transcriptMode="alwaysScroll"
         app:layout_constraintBottom_toTopOf="@+id/edit_text_out"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <AutoCompleteTextView
         android:id="@+id/edit_text_out"
@@ -63,35 +62,35 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:padding="@dimen/margin_small"
+        android:layout_height="wrap_content"
         android:background="@color/md_white_1000"
+        android:padding="@dimen/margin_small"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content">
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/PING"
             android:layout_width="@dimen/_16dp"
             android:layout_height="@dimen/_16dp"
-            android:gravity="center"
-            android:foregroundGravity="center_horizontal"
-            android:background="@drawable/circle"
             android:layout_gravity="center_vertical"
+            android:background="@drawable/circle"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
             android:id="@+id/pingStatus"
             android:layout_width="match_parent"
-            android:padding="@dimen/margin_small"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:gravity="center_vertical"
+            android:padding="@dimen/margin_small"
             android:text="Bluetooth Status"
-            android:layout_gravity="center_vertical"
-            android:textSize="@dimen/text_size_small"
-          />
+            android:textSize="@dimen/text_size_small" />
     </LinearLayout>
 
     <LinearLayout
@@ -105,16 +104,18 @@
         app:layout_constraintStart_toEndOf="@+id/in"
         tools:layout_editor_absoluteY="8dp">
 
-            <ExpandableListView
-                android:id="@+id/terminalList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_large"
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginEnd="@dimen/margin_medium"
-                android:layout_marginRight="@dimen/margin_medium"
-                android:descendantFocusability="beforeDescendants"
-            />
+        <ExpandableListView
+            android:id="@+id/terminalList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_medium"
+            android:background="@color/bg_white"
+            android:descendantFocusability="beforeDescendants"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="3dp" />
 
     </LinearLayout>
 
