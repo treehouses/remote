@@ -122,10 +122,9 @@ public class NetworkFragment extends BaseFragment {
     }
 
     public void showWifiDialog(View v) {
-        AppCompatActivity activity = (AppCompatActivity) v.getContext();
         androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(activity.getSupportFragmentManager().beginTransaction(), "wifiDialog");
+        dialogFrag.show(getActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     private void changeList(String readMessage) {

@@ -1,210 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#FFF">
+    android:background="#FFF"
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/PING"
-        android:layout_width="12dp"
-        android:layout_height="13dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/circle"
-        app:layout_constraintStart_toEndOf="@+id/btn_status"
-        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/md_white_1000"
+        android:padding="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/PING"
+            android:layout_width="@dimen/_16dp"
+            android:layout_height="@dimen/_16dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/circle"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/pingStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:gravity="center_vertical"
+            android:padding="@dimen/margin_small"
+            android:text="Bluetooth Status"
+            android:textSize="@dimen/text_size_small" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_tunnel_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/margin_medium"
         android:text="Tor Service Tunnel"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="35sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pingStatus" />
+        android:textSize="@dimen/text_size_mid" />
 
-    <TextView
-        android:id="@+id/tv_command_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="Start Service"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_execute_start"
-        app:layout_constraintStart_toEndOf="@+id/btn_execute_start" />
-
-
-    <TextView
-        android:id="@+id/tv_command_start2"
-        android:layout_width="147dp"
-        android:layout_height="27dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="Tor address"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_execute_address"
-        app:layout_constraintStart_toEndOf="@+id/btn_execute_address" />
-
-    <TextView
-        android:id="@+id/tv_command_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="Stop Service"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_execute_stop"
-        app:layout_constraintStart_toEndOf="@+id/btn_execute_stop" />
-
-    <TextView
-        android:id="@+id/tv_command_destroy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="Destroy Service"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_execute_destroy"
-        app:layout_constraintStart_toEndOf="@+id/btn_execute_destroy" />
-
-    <Button
-        android:id="@+id/btn_start_config"
-        android:layout_width="248dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginLeft="120dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/colorPrimary"
-        android:text="Start Configuration"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_execute_address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_execute_destroy"
-        android:layout_width="98dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:text="Execute"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_execute_stop"
-        android:layout_width="99dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:text="Execute"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_execute_destroy"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_execute_start"
-        android:layout_width="99dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:text="Execute"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_execute_stop"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_execute_address"
-        android:layout_width="99dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:text="Execute"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_execute_start"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Switch
-        android:id="@+id/switchNotification"
-        android:layout_width="189dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="Notification: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_start_config"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
         android:id="@+id/list_command"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="12dp"
-        android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/switchNotification"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_tunnel_title" />
+        android:layout_weight="1"
+        android:padding="@dimen/margin_small" />
 
-    <TextView
-        android:id="@+id/pingStatus"
+
+    <Button
+        android:id="@+id/btn_start_config"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:text="Bluetooth Status:"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btn_status"
-        app:layout_constraintStart_toEndOf="@+id/PING" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Start Configuration"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+        android:theme="@style/PrimaryButton" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/margin_medium"
+        android:text="Tor Service Commands"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="@dimen/text_size_small" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_execute_destroy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:text="Start"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold" />
+
+
+        <Button
+            android:id="@+id/btn_execute_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:text="Stop"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <Button
+            android:id="@+id/btn_execute_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:text="Destroy"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_execute_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:text="Tor address"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <Switch
+        android:id="@+id/switchNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_medium"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Notification: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="@dimen/text_size_large" />
+
+</LinearLayout>

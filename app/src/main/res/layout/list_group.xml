@@ -10,10 +10,10 @@
 
     <TextView
         android:id="@+id/lblListHeader"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textSize="17dp"
+        android:textSize="@dimen/text_size_mid"
         android:textColor="@color/md_black_1000" />
 
 </androidx.cardview.widget.CardView>

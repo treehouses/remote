@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="_16dp">16dp</dimen>
+    <dimen name="margin_tiny">8dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_huge">64dp</dimen>
+    <dimen name="terminal_list_margin">220dp</dimen>
+    <dimen name="drawer_width">300dp</dimen>
+    <dimen name="text_size_very_large">32sp</dimen>
+    <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_mid">18sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="logo_size_home">300dp</dimen>
+    <dimen name="button_normal">150dp</dimen>
+
+</resources>
