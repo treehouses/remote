@@ -104,13 +104,26 @@ public class NetworkFragment extends BaseFragment {
                 .setNegativeButton("Yes", (dialog, which) -> {
                     switch (title) {
                         case "Reset":
-                            listener.sendMessage("treehouses default network");
+                            caseReset();
                             break;
                         case "Reboot":
                             ViewHolderReboot.getInstance().reboot(listener, mChatService, getContext());
                             break;
                     }
                 }).show();
+    }
+
+    private void caseReset() {
+        listener.sendMessage("treehouses default network");
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                updateNetworkMode();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     private AlertDialog showAlertDialog(final String message) {
@@ -129,11 +142,15 @@ public class NetworkFragment extends BaseFragment {
 
     private void changeList(String readMessage) {
         listener.sendMessage("treehouses networkmode info");
-        adapter.setNetworkMode("Network Mode: " + readMessage);
+        adapter.changeList("Network Mode: " + readMessage, 6);
         switch (readMessage) {
             case "default": // ethernet
+                expListView.expandGroup(0);
+                adapter.changeList("Ethernet: Automatic", 0);
+                break;
             case "static ethernet": // ethernet
                 expListView.expandGroup(0);
+                adapter.changeList("Ethernet: Manual", 0);
                 break;
             case "wifi": // wifi
                 expListView.expandGroup(1);

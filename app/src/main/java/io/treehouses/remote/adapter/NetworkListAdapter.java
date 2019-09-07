@@ -127,7 +127,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
                 new ViewHolderBridge(convertView, listener, context);
                 break;
             case 4:
-                new ViewHolderReset(convertView, listener);
+                new ViewHolderReset(convertView);
                 break;
             case 5:
                 new ViewHolderReboot(convertView, listener, getChatService(), context);
@@ -140,8 +140,8 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-    public void setNetworkMode(String s) {
-        list.get(6).setTitle(s);
+    public void changeList(String s, int position) {
+        list.get(position).setTitle(s);
         notifyDataSetChanged();
     }
 }
