@@ -7,45 +7,6 @@
     android:animateLayoutChanges="true"
     android:background="#FFF">
 
-    <!--<androidx.cardview.widget.CardView-->
-        <!--android:id="@+id/cardView5"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="44dp"-->
-        <!--android:layout_marginStart="-1dp"-->
-        <!--android:layout_marginLeft="-1dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginRight="8dp"-->
-        <!--android:layout_marginBottom="76dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintHorizontal_bias="1.0"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/5">-->
-
-        <!--&lt;!&ndash;<Button&ndash;&gt;-->
-        <!--&lt;!&ndash;android:id="@+id/rpiType"&ndash;&gt;-->
-        <!--&lt;!&ndash;android:layout_width="57dp"&ndash;&gt;-->
-        <!--&lt;!&ndash;android:layout_height="61dp"&ndash;&gt;-->
-        <!--&lt;!&ndash;android:background="@drawable/circle"&ndash;&gt;-->
-        <!--&lt;!&ndash;android:text="Button"&ndash;&gt;-->
-        <!--&lt;!&ndash;tools:layout_editor_absoluteX="136dp"&ndash;&gt;-->
-        <!--&lt;!&ndash;tools:layout_editor_absoluteY="16dp" />&ndash;&gt;-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/tvStatus3"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:paddingLeft="80dp"-->
-            <!--android:paddingTop="20dp"-->
-            <!--android:text="RPI Type:" />-->
-
-        <!--<ImageView-->
-            <!--android:id="@+id/rpiType"-->
-            <!--android:layout_width="49dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:srcCompat="@drawable/tick_png" />-->
-    <!--</androidx.cardview.widget.CardView>-->
 
     <Button
         android:id="@+id/upgrade"
@@ -88,28 +49,24 @@
     </androidx.cardview.widget.CardView>
 
     <!--<ListView-->
-        <!--android:id="@+id/listView"-->
-        <!--android:layout_width="368dp"-->
-        <!--android:layout_height="484dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginLeft="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginRight="8dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent" />-->
+    <!--android:id="@+id/listView"-->
+    <!--android:layout_width="368dp"-->
+    <!--android:layout_height="484dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent" />-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="54dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/margin_small"
+        app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/cardView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,171 +81,169 @@
         <!--tools:layout_editor_absoluteX="136dp"-->
         <!--tools:layout_editor_absoluteY="16dp" />-->
 
-        <TextView
-            android:id="@+id/tvStatus"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="80dp"
-            android:paddingTop="20dp"
-            android:text="Bluetooth RPI Connection" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/btStatus"
-            android:layout_width="49dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/tick_png" />
+            <ImageView
+                android:id="@+id/btStatus"
+                android:layout_width="@dimen/image_size_home_card"
+                android:layout_height="@dimen/image_size_home_card"
+                app:srcCompat="@drawable/tick_png" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_huge"
+                android:gravity="center_vertical"
+                android:text="Bluetooth RPI Connection" />
+
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView4"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/margin_small"
+        app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-        <!--<Button-->
-        <!--android:id="@+id/wifiStatus"-->
-        <!--android:layout_width="57dp"-->
-        <!--android:layout_height="61dp"-->
-        <!--android:background="@drawable/circle"-->
-        <!--android:text="Button"-->
-        <!--tools:layout_editor_absoluteX="136dp"-->
-        <!--tools:layout_editor_absoluteY="16dp" />-->
 
-        <TextView
-            android:id="@+id/tvStatus1"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="80dp"
-            android:paddingTop="20dp"
-            android:text="RPI Wifi Connection" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/wifiStatus"
-            android:layout_width="49dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/tick_png" />
+            <ImageView
+                android:id="@+id/wifiStatus"
+                android:layout_width="@dimen/image_size_home_card"
+                android:layout_height="@dimen/image_size_home_card"
+                app:srcCompat="@drawable/tick_png" />
+
+            <TextView
+                android:id="@+id/tvStatus1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_huge"
+                android:gravity="center_vertical"
+                android:text="RPI Wifi Connection" />
+
+        </LinearLayout>
+
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/margin_small"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView4">
 
-        <!--<Button-->
-        <!--android:id="@+id/rpiName"-->
-        <!--android:layout_width="57dp"-->
-        <!--android:layout_height="61dp"-->
-        <!--android:background="@drawable/circle"-->
-        <!--android:text="Button"-->
-        <!--tools:layout_editor_absoluteX="136dp"-->
-        <!--tools:layout_editor_absoluteY="16dp" />-->
 
-        <TextView
-            android:id="@+id/tvStatus2"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="80dp"
-            android:paddingTop="20dp"
-            android:text="Connected RPI Name:" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/rpiName"
-            android:layout_width="49dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/tick_png" />
+            <ImageView
+                android:id="@+id/rpiName"
+                android:layout_width="@dimen/image_size_home_card"
+                android:layout_height="@dimen/image_size_home_card"
+                app:srcCompat="@drawable/tick_png" />
+
+            <TextView
+                android:id="@+id/tvStatus2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_huge"
+                android:gravity="center_vertical"
+                android:text="Connected RPI Name:" />
+
+        </LinearLayout>
+
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/margin_small"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
-        <!--<Button-->
-        <!--android:id="@+id/rpiType"-->
-        <!--android:layout_width="57dp"-->
-        <!--android:layout_height="61dp"-->
-        <!--android:background="@drawable/circle"-->
-        <!--android:text="Button"-->
-        <!--tools:layout_editor_absoluteX="136dp"-->
-        <!--tools:layout_editor_absoluteY="16dp" />-->
 
-        <TextView
-            android:id="@+id/tvStatus3"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="80dp"
-            android:paddingTop="20dp"
-            android:text="RPI Type:" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/rpiType"
-            android:layout_width="49dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/tick_png" />
+            <ImageView
+                android:id="@+id/rpiType"
+                android:layout_width="@dimen/image_size_home_card"
+                android:layout_height="@dimen/image_size_home_card"
+                app:srcCompat="@drawable/tick_png" />
+
+            <TextView
+                android:id="@+id/tvStatus3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_huge"
+                android:gravity="center_vertical"
+                android:text="RPI Wifi Connection" />
+
+        </LinearLayout>
+
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView5"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/margin_small"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/upgrade"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView3">
 
-        <!--<Button-->
-        <!--android:id="@+id/rpiType"-->
-        <!--android:layout_width="57dp"-->
-        <!--android:layout_height="61dp"-->
-        <!--android:background="@drawable/circle"-->
-        <!--android:text="Button"-->
-        <!--tools:layout_editor_absoluteX="136dp"-->
-        <!--tools:layout_editor_absoluteY="16dp" />-->
 
-        <TextView
-            android:id="@+id/tvUpgradeCheck"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="80dp"
-            android:paddingTop="20dp"
-            android:text="Upgrade Status:" />
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/upgradeCheck"
-            android:layout_width="49dp"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/tick_png" />
+            <ImageView
+                android:id="@+id/upgradeCheck"
+                android:layout_width="@dimen/image_size_home_card"
+                android:layout_height="@dimen/image_size_home_card"
+                app:srcCompat="@drawable/tick_png" />
+
+            <TextView
+                android:id="@+id/tvUpgradeCheck"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_huge"
+                android:gravity="center_vertical"
+                android:text="RPI Wifi Connection" />
+
+        </LinearLayout>
+
 
     </androidx.cardview.widget.CardView>
 

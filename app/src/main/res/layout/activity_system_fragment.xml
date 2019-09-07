@@ -1,55 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFF">
+    android:background="@color/md_white_1000"
+    android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+    <TextView
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:boxBackgroundColor="@color/bg_white"
-        app:boxBackgroundMode="filled"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/bg_white"
-            android:editable="false"
-            android:gravity="center_vertical|center_horizontal|center"
-            android:text="System"
-            android:textColor="@color/md_grey_800"
-            android:textColorHint="@color/bg_white"
-            android:textSize="25sp"
-            android:textStyle="normal">
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/bg_white"
+        android:editable="false"
+        android:minHeight="@dimen/header_height"
+        android:layout_margin="@dimen/margin_large"
+        android:gravity="center"
+        android:text="System"
+        android:textColor="@color/md_grey_800"
+        android:textSize="@dimen/text_size_very_large"
+      />
 
     <ExpandableListView
         android:id="@+id/listView"
-        android:layout_width="0dp"
-        android:layout_height="471dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="@dimen/margin_medium" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

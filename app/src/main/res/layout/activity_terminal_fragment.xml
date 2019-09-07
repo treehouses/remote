@@ -76,8 +76,7 @@
             android:background="@drawable/circle"
             android:foregroundGravity="center_horizontal"
             android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            />
 
 
         <TextView
