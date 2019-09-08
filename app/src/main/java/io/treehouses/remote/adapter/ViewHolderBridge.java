@@ -17,6 +17,8 @@ public class ViewHolderBridge extends ButtonConfiguration {
     private TextInputEditText etPassword, etHotspotPassword;
     private Button btnStartConfiguration;
 
+    public ViewHolderBridge(){}
+
     ViewHolderBridge(View v, final HomeInteractListener listener, final Context context) {
 
         essid = v.findViewById(R.id.et_essid);

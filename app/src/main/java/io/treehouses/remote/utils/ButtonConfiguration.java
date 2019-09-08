@@ -36,50 +36,6 @@ public abstract class ButtonConfiguration {
         });
     }
 
-    void ethernetLayout(Editable editable, EditText editText) {
-        if (checkCondition(editable)) {
-            textChanged(length(editText) && length(etIp) && length(etDNS));
-        }
-    }
-
-    private boolean checkCondition(Editable editable) {
-        return viewCondition(etIp, editable) || viewCondition(etDNS, editable) || viewCondition(etGateway, editable) || viewCondition(etMask, editable);
-    }
-
-    void wifiLayout(Editable editable, EditText editText) {
-        if (viewCondition(etSsid, editable)) {
-            textChanged(length(editText));
-        }
-    }
-
-    void hotspotLayout(Editable editable, EditText editText) {
-        if (viewCondition(etSsid, editable)) {
-            textChanged(length(editText));
-        }
-    }
-
-    void bridgeLayout(Editable editable, EditText editText) {
-        if (viewCondition(essid, editable) || viewCondition(etHotspotEssid, editable)) {
-            textChanged(length(editText) && length(essid) && length(etHotspotEssid));
-        }
-    }
-
-    private void textChanged(boolean condition) {
-        if (condition) {
-            buttonProperties(true, Color.WHITE, btnStartConfiguration);
-        } else {
-            buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
-        }
-    }
-
-    private Boolean viewCondition(TextInputEditText editText, Editable editable) {
-        return editable == editText.getEditableText() && !messageSent;
-    }
-
-    private Boolean length(EditText editText) {
-        return editText.length() > 0;
-    }
-
     public static TextInputEditText getSSID() {
         return etSsid;
     }
