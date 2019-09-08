@@ -17,6 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_large"
+            app:cardElevation="@dimen/margin_small"
+            app:cardUseCompatPadding="true"
             app:layout_constraintBottom_toTopOf="@+id/listView">
 
             <TextView
@@ -237,11 +239,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_margin="@dimen/margin_medium"
-            android:background="?attr/colorPrimary"
             android:text="Upgrade?"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3" />
+            android:theme="@style/PrimaryButton"
+            android:visibility="visible" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
