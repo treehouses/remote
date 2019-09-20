@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseObject;
+
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
@@ -34,7 +36,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Boolean connectionState = false;
     View view;
 
-    public HomeFragment(){}
+    public HomeFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,6 +102,11 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     public void checkConnectionState() {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
+            ParseObject testObject = new ParseObject("userlog");
+            testObject.put("title", mChatService.getConnectedDeviceName() + "");
+            testObject.put("description", "Connected to bluetooth");
+            testObject.put("type", "BT Connection");
+            testObject.saveInBackground();
             connectRpi.setText("Disconnect");
             connectionState = true;
         } else {
@@ -123,8 +131,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 .setMessage(s)
                 .create();
         d.show();
-        ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-       return d;
+        ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        return d;
     }
 
 //    private void openURL(String url) {
@@ -133,10 +141,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 //        startActivity(i);
 //    }
 
-    private void showRPIDialog(){
-        androidx.fragment.app.DialogFragment dialogFrag =  RPIDialogFragment.newInstance(123);
+    private void showRPIDialog() {
+        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
     }
 }

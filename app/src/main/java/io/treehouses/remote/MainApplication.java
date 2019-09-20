@@ -1,6 +1,10 @@
 package io.treehouses.remote;
 
 import android.app.Application;
+
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 import java.util.ArrayList;
 
 public class MainApplication extends Application {
@@ -13,6 +17,12 @@ public class MainApplication extends Application {
         terminalList = new ArrayList();
         tunnelList = new ArrayList();
         commandList = new ArrayList();
+        Parse.initialize(new Parse.Configuration.Builder(this)
+                .applicationId(Constants.PARSE_APPLICATION_ID)
+                .clientKey(null)
+                .server(Constants.PARSE_URL)
+                .build()
+        );
     }
 
     public static ArrayList getTerminalList() {
