@@ -21,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
@@ -108,6 +109,10 @@ public class InitialActivity extends PermissionActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            Fragment f = (getSupportFragmentManager()).findFragmentById(R.id.fragment_container);
+            if(f instanceof HomeFragment){
+                finish();
+            }
             super.onBackPressed();
         }
     }
