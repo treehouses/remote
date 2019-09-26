@@ -87,6 +87,13 @@ public class SystemFragment extends BaseFragment {
                 Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
                 prefillIp(readMessage);
             }
+        }else  if (readMessage.contains("ap0")) {
+            if (network) {
+                prefillHotspot(readMessage);
+            } else {
+                Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
+                prefillIp(readMessage);
+            }
         }
     }
 
@@ -139,11 +146,21 @@ public class SystemFragment extends BaseFragment {
         }
     }
 
+    private void prefillHotspot(String readMessage){
+        String[] array = readMessage.split(",");
+
+        for (String element : array) {
+            elementConditions(element);
+            Log.d("TAG", "readMessageElement = " + element);
+            if (element.contains("essid") && tether) {
+                tether = false;
+                ViewHolderTether.getEditTextSSID().setText(element.substring(12).trim());
+            }
+        }
+    }
+
     private void elementConditions(String element) {
-        if (element.contains("essid") && tether) {
-            tether = false;
-            ViewHolderTether.getEditTextSSID().setText(element.substring(6).trim());
-        } else if (element.contains("ip")) {
+        if (element.contains("ip")) {
             try {
                 ViewHolderVnc.getEditTextIp().setText(element.substring(4).trim());
             } catch (Exception e) {
