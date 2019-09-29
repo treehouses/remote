@@ -151,7 +151,6 @@ public class SystemFragment extends BaseFragment {
 
         for (String element : array) {
             elementConditions(element);
-            Log.d("TAG", "readMessageElement = " + element);
             if (element.contains("essid") && tether) {
                 tether = false;
                 ViewHolderTether.getEditTextSSID().setText(element.substring(12).trim());
