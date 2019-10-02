@@ -3,12 +3,11 @@ package io.treehouses.remote.adapter;
 import android.graphics.Color;
 import android.content.Context;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
-import com.google.android.material.textfield.TextInputEditText;
-import io.treehouses.remote.ButtonConfiguration;
-import io.treehouses.remote.Fragments.NetworkFragment;
+
+import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.R;
+import io.treehouses.remote.utils.TextWatcherUtils;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 public class ViewHolderEthernet extends ButtonConfiguration {
@@ -23,10 +22,10 @@ public class ViewHolderEthernet extends ButtonConfiguration {
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        etIp.addTextChangedListener(getTextWatcher(etIp, v));
-        etDNS.addTextChangedListener(getTextWatcher(etDNS, v));
-        etGateway.addTextChangedListener(getTextWatcher(etGateway, v));
-        etMask.addTextChangedListener(getTextWatcher(etMask, v));
+        etIp.addTextChangedListener(new TextWatcherUtils(etIp));
+        etDNS.addTextChangedListener(new TextWatcherUtils(etDNS));
+        etGateway.addTextChangedListener(new TextWatcherUtils(etGateway));
+        etMask.addTextChangedListener(new TextWatcherUtils(etMask));
 
 
         btnStartConfiguration.setOnClickListener(new View.OnClickListener() {
