@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
 def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0")
 
@@ -11,11 +10,11 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode appVersionCode
-        versionName appVersionName + ""
+        versionName appVersionName+""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         applicationVariants.all { variant ->
             variant.outputs.all { output ->
-                outputFileName = new File("remote-" + android.defaultConfig.versionCode + ".apk")
+                outputFileName = new File("remote-" + android.defaultConfig.versionCode +".apk")
             }
         }
     }
@@ -38,7 +37,6 @@ android.defaultConfig.vectorDrawables.useSupportLibrary = true
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.firebase:firebase-core:16.0.4'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
