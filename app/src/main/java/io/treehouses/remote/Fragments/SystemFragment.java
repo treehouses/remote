@@ -13,9 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
 import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
 import java.util.Collections;
+
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
 import io.treehouses.remote.Fragments.DialogFragments.ContainerDialogFragment;
@@ -38,7 +41,8 @@ public class SystemFragment extends BaseFragment {
 
     View view;
 
-    public SystemFragment() { }
+    public SystemFragment() {
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -80,13 +84,20 @@ public class SystemFragment extends BaseFragment {
     }
 
     private void ipPrefil(String readMessage) {
+        if (network) {
+            checkIfHotspot(readMessage);
+        } else {
+            Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
+            prefillIp(readMessage);
+        }
+
+    }
+
+    private void checkIfHotspot(String readMessage) {
         if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
-            if (network) {
-                prefillIp(readMessage);
-            } else {
-                Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
-                prefillIp(readMessage);
-            }
+            prefillIp(readMessage);
+        } else if (readMessage.contains("ap0")) {
+            prefillHotspot(readMessage);
         }
     }
 
@@ -139,11 +150,20 @@ public class SystemFragment extends BaseFragment {
         }
     }
 
+    private void prefillHotspot(String readMessage) {
+        String[] array = readMessage.split(",");
+
+        for (String element : array) {
+            elementConditions(element);
+            if (element.contains("essid") && tether) {
+                tether = false;
+                ViewHolderTether.getEditTextSSID().setText(element.substring(12).trim());
+            }
+        }
+    }
+
     private void elementConditions(String element) {
-        if (element.contains("essid") && tether) {
-            tether = false;
-            ViewHolderTether.getEditTextSSID().setText(element.substring(6).trim());
-        } else if (element.contains("ip")) {
+        if (element.contains("ip")) {
             try {
                 ViewHolderVnc.getEditTextIp().setText(element.substring(4).trim());
             } catch (Exception e) {
@@ -169,7 +189,7 @@ public class SystemFragment extends BaseFragment {
                 ArrayList<Long> diff = new ArrayList<>();
 
                 readMessageConditions(readMessage);
-                
+
                 Log.d("TAG", "readMessage = " + readMessage);
 
                 vncToast(readMessage);
