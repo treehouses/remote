@@ -33,6 +33,8 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseDialogFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
@@ -87,13 +89,19 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
+
         if (pairedDevice.size() > 0) {
             for (BluetoothDevice device : pairedDevice) {
-                devices.add(device);
+                String deviceHardwareAddress = device.getAddress();
                 String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                s.add(deviceName + "\n" + deviceHardwareAddress);
-                setAdapterNotNull(s);
+
+                //Raspberry Pi bluetooth address only start with B or D
+                if(deviceHardwareAddress.charAt(0) == ('B') ||
+                        deviceHardwareAddress.charAt(0) == ('D')){
+                    devices.add(device);
+                    s.add(deviceName + "\n" + deviceHardwareAddress);
+                    setAdapterNotNull(s);
+                }
             }
         }
     }
@@ -171,7 +179,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     public void bluetoothCheck(String... args) {
         if (mBluetoothAdapter == null) {
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
-            Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", LENGTH_LONG).show();
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
             context.unregisterReceiver(mReceiver);
         }
@@ -247,7 +255,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             listener.setChatService(mChatService);
                             checkConnectionState.checkConnectionState();
                             mBluetoothAdapter.cancelDiscovery();
-                            Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Bluetooth Connected", LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
