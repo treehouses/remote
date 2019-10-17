@@ -90,18 +90,16 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
 
-        if (pairedDevice.size() > 0) {
-            for (BluetoothDevice device : pairedDevice) {
-                String deviceHardwareAddress = device.getAddress();
-                String deviceName = device.getName();
+        for (BluetoothDevice device : pairedDevice) {
+            String deviceHardwareAddress = device.getAddress();
+            String deviceName = device.getName();
 
-                //Raspberry Pi bluetooth address only start with B or D
-                if(deviceHardwareAddress.charAt(0) == ('B') ||
-                        deviceHardwareAddress.charAt(0) == ('D')){
-                    devices.add(device);
-                    s.add(deviceName + "\n" + deviceHardwareAddress);
-                    setAdapterNotNull(s);
-                }
+            //Raspberry Pi bluetooth address only start with B or D
+            if(deviceHardwareAddress.charAt(0) == ('B') ||
+                 deviceHardwareAddress.charAt(0) == ('D')){
+                 devices.add(device);
+                 s.add(deviceName + "\n" + deviceHardwareAddress);
+                 setAdapterNotNull(s);
             }
         }
     }
