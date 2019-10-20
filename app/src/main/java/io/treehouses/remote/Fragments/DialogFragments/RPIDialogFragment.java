@@ -87,19 +87,22 @@ public class RPIDialogFragment extends BaseDialogFragment {
         return mDialog;
     }
 
+
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
 
         for (BluetoothDevice device : pairedDevice) {
-            String deviceHardwareAddress = device.getAddress();
-            String deviceName = device.getName();
-
-            //Raspberry Pi bluetooth address only start with B or D
-            if(deviceHardwareAddress.charAt(0) == ('B') ||
-                 deviceHardwareAddress.charAt(0) == ('D')){
-                 devices.add(device);
-                 s.add(deviceName + "\n" + deviceHardwareAddress);
-                 setAdapterNotNull(s);
+            if(device.getAddress().substring(0,8).equals("B8:27:EB") ||
+                    device.getAddress().substring(0,8).equals("DC:A6:32") ||
+                    device.getAddress().substring(0,8).equals("B8-27-EB")||
+                    device.getAddress().substring(0,8).equals("DC-A6-32") ||
+                    device.getAddress().substring(0,7).equals("B827.EB") ||
+                    device.getAddress().substring(0,7).equals("DCA6.32")) {
+                devices.add(device);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                s.add(deviceName + "\n" + deviceHardwareAddress);
+                setAdapterNotNull(s);
             }
         }
     }
@@ -221,9 +224,16 @@ public class RPIDialogFragment extends BaseDialogFragment {
             }
         }
         if (!alreadyExist) {
-            devices.add(device);
-            s.add(deviceName + "\n" + deviceHardwareAddress);
-            setAdapterNotNull(s);
+            if(deviceHardwareAddress.substring(0,8).equals("B8:27:EB") ||
+                    deviceHardwareAddress.substring(0,8).equals("DC:A6:32") ||
+                    deviceHardwareAddress.substring(0,8).equals("B8-27-EB")||
+                    deviceHardwareAddress.substring(0,8).equals("DC-A6-32") ||
+                    deviceHardwareAddress.substring(0,7).equals("B827.EB") ||
+                    deviceHardwareAddress.substring(0,7).equals("DCA6.32")) {
+                devices.add(device);
+                s.add(deviceName + "\n" + deviceHardwareAddress);
+                setAdapterNotNull(s);
+            }
         }
     }
 
