@@ -99,11 +99,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
             String deviceName = device.getName();
             String deviceHardwareAddress = device.getAddress(); // MAC address
 
-            if(piAddress.contains(device.getAddress().substring(0,8))) {
-                devices.add(device);
-                s.add(deviceName + "\n" + deviceHardwareAddress);
-                setAdapterNotNull(s);
-            }else if(piAddress.contains(device.getAddress().substring(0,7))) {
+            if(checkPiAddress(deviceHardwareAddress)){
                 devices.add(device);
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
@@ -221,20 +217,26 @@ public class RPIDialogFragment extends BaseDialogFragment {
     };
 
     private void checkDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
-        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
-                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
-
         for (BluetoothDevice checkDevices : devices) {
-            if (!checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 8))) {
-                devices.add(device);
-                s.add(deviceName + "\n" + deviceHardwareAddress);
-                setAdapterNotNull(s);
-            }else if (!checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 7))){
+            if (!checkDevices.equals(device) && checkPiAddress(deviceHardwareAddress)){
                 devices.add(device);
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
             }
         }
+    }
+
+    private boolean checkPiAddress(String deviceHardwareAddress){
+        Boolean checkIfPi = false;
+        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
+                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
+
+        if (piAddress.contains(deviceHardwareAddress.substring(0, 7)) ||
+                piAddress.contains(deviceHardwareAddress.substring(0,8))) {
+            checkIfPi = true;
+        }
+
+        return checkIfPi;
     }
 
     private void setupBluetoothService() {
