@@ -91,7 +91,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
-
         Set<String> piAddress = new HashSet<String>();
         piAddress.add("B8:27:EB");
         piAddress.add("DC:A6:32");
@@ -99,7 +98,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
         piAddress.add("DC-A6-32");
         piAddress.add("B827.EB");
         piAddress.add("DCA6.32");
-
 
         for (BluetoothDevice device : pairedDevice) {
             if(piAddress.contains(device.getAddress().substring(0,8)) ||
