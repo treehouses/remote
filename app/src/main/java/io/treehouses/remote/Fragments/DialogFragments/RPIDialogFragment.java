@@ -225,8 +225,11 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
 
         for (BluetoothDevice checkDevices : devices) {
-            if (!checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 8)) ||
-                    !checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 7))){
+            if (!checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 8))) {
+                devices.add(device);
+                s.add(deviceName + "\n" + deviceHardwareAddress);
+                setAdapterNotNull(s);
+            }else if (!checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 7))){
                 devices.add(device);
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
