@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,20 +92,19 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
-        Set<String> piAddress = new HashSet<String>();
-        piAddress.add("B8:27:EB");
-        piAddress.add("DC:A6:32");
-        piAddress.add("B8-27-EB");
-        piAddress.add("DC-A6-32");
-        piAddress.add("B827.EB");
-        piAddress.add("DCA6.32");
+        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
+                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
 
         for (BluetoothDevice device : pairedDevice) {
-            if(piAddress.contains(device.getAddress().substring(0,8)) ||
-                piAddress.contains(device.getAddress().substring(0,7))) {
+            String deviceName = device.getName();
+            String deviceHardwareAddress = device.getAddress(); // MAC address
+
+            if(piAddress.contains(device.getAddress().substring(0,8))) {
                 devices.add(device);
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
+                s.add(deviceName + "\n" + deviceHardwareAddress);
+                setAdapterNotNull(s);
+            }else if(piAddress.contains(device.getAddress().substring(0,7))) {
+                devices.add(device);
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
             }
@@ -221,19 +221,12 @@ public class RPIDialogFragment extends BaseDialogFragment {
     };
 
     private void checkDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
-        Set<String> piAddress = new HashSet<String>();
-        piAddress.add("B8:27:EB");
-        piAddress.add("DC:A6:32");
-        piAddress.add("B8-27-EB");
-        piAddress.add("DC-A6-32");
-        piAddress.add("B827.EB");
-        piAddress.add("DCA6.32");
+        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
+                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
 
         for (BluetoothDevice checkDevices : devices) {
-            if (!checkDevices.equals(device) &&
-                    piAddress.contains(deviceHardwareAddress.substring(0, 8)) ||
-                    !checkDevices.equals(device) &&
-                    piAddress.contains(deviceHardwareAddress.substring(0, 7))){
+            if (!checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 8)) ||
+                    !checkDevices.equals(device) && piAddress.contains(deviceHardwareAddress.substring(0, 7))){
                 devices.add(device);
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
