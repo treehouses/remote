@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -91,13 +92,18 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
 
+        Set<String> piAddress = new HashSet<String>();
+        piAddress.add("B8:27:EB");
+        piAddress.add("DC:A6:32");
+        piAddress.add("B8-27-EB");
+        piAddress.add("DC-A6-32");
+        piAddress.add("B827.EB");
+        piAddress.add("DCA6.32");
+
+
         for (BluetoothDevice device : pairedDevice) {
-            if(device.getAddress().substring(0,8).equals("B8:27:EB") ||
-                    device.getAddress().substring(0,8).equals("DC:A6:32") ||
-                    device.getAddress().substring(0,8).equals("B8-27-EB")||
-                    device.getAddress().substring(0,8).equals("DC-A6-32") ||
-                    device.getAddress().substring(0,7).equals("B827.EB") ||
-                    device.getAddress().substring(0,7).equals("DCA6.32")) {
+            if(piAddress.contains(device.getAddress().substring(0,8)) ||
+                piAddress.contains(device.getAddress().substring(0,7))) {
                 devices.add(device);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
@@ -217,19 +223,19 @@ public class RPIDialogFragment extends BaseDialogFragment {
     };
 
     private void checkDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
-        boolean alreadyExist = false;
+        Set<String> piAddress = new HashSet<String>();
+        piAddress.add("B8:27:EB");
+        piAddress.add("DC:A6:32");
+        piAddress.add("B8-27-EB");
+        piAddress.add("DC-A6-32");
+        piAddress.add("B827.EB");
+        piAddress.add("DCA6.32");
+
         for (BluetoothDevice checkDevices : devices) {
-            if (checkDevices.equals(device)) {
-                alreadyExist = true;
-            }
-        }
-        if (!alreadyExist) {
-            if(deviceHardwareAddress.substring(0,8).equals("B8:27:EB") ||
-                    deviceHardwareAddress.substring(0,8).equals("DC:A6:32") ||
-                    deviceHardwareAddress.substring(0,8).equals("B8-27-EB")||
-                    deviceHardwareAddress.substring(0,8).equals("DC-A6-32") ||
-                    deviceHardwareAddress.substring(0,7).equals("B827.EB") ||
-                    deviceHardwareAddress.substring(0,7).equals("DCA6.32")) {
+            if (!checkDevices.equals(device) &&
+                    piAddress.contains(deviceHardwareAddress.substring(0, 8)) ||
+                    !checkDevices.equals(device) &&
+                    piAddress.contains(deviceHardwareAddress.substring(0, 7))){
                 devices.add(device);
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
