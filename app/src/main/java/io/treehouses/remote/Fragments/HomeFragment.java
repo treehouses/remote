@@ -26,6 +26,7 @@ import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
+import static io.treehouses.remote.Constants.TOAST;
 
 public class HomeFragment extends BaseFragment implements SetDisconnect {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
