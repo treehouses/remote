@@ -7,15 +7,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.parse.ParseObject;
 
@@ -36,6 +40,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Button connectRpi, getStarted;
     private Boolean connectionState = false;
     View view;
+    SharedPreferences preferences;
 
     public HomeFragment() {
     }
@@ -46,13 +51,28 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         mChatService = listener.getChatService();
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
-
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
         getStartedListener();
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showLogDialog();
+    }
+
+    private void showLogDialog() {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean showDialog = preferences.getBoolean("show_log_dialog", true);
+        if (connectionCount >= 3 && showDialog) {
+            new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                    "Do you like to share it? It will help us to improve.").setPositiveButton("Yes", (dialogInterface, i) -> preferences.edit().putBoolean("send_log", true)).setNegativeButton("No", null).show();
+            preferences.edit().putBoolean("show_log_dialog", true).commit();
+        }
     }
 
     private void showDialogOnce() {
@@ -68,46 +88,48 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private void getStartedListener() {
-        getStarted.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InitialActivity.getInstance().openCallFragment(new AboutFragment());
-            }
-        });
+        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
     }
 
     public void connectRpiListener() {
-        connectRpi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (connectionState) {
-                    RPIDialogFragment.getInstance().bluetoothCheck("unregister");
-                    mChatService.stop();
-                    connectionState = false;
-                    checkConnectionState();
-                    return;
-                }
+        connectRpi.setOnClickListener(v -> {
+            if (connectionState) {
+                RPIDialogFragment.getInstance().bluetoothCheck("unregister");
+                mChatService.stop();
+                connectionState = false;
+                checkConnectionState();
+                return;
+            }
 
-                if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                    return;
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog();
-                }
+            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
+                return;
+            } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                showRPIDialog();
             }
         });
     }
 
     public void checkConnectionState() {
         mChatService = listener.getChatService();
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean sendLog = preferences.getBoolean("send_log", true);
+        showLogDialog();
+        Log.e("", "checkConnectionState: "+connectionCount + " " + sendLog );
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            ParseObject testObject = new ParseObject("userlog");
-            testObject.put("title", mChatService.getConnectedDeviceName() + "");
-            testObject.put("description", "Connected to bluetooth");
-            testObject.put("type", "BT Connection");
-            testObject.saveInBackground();
+            Log.e("TREEHOUSES", "checkConnectionState: "+connectionCount + " " + sendLog );
+            if (connectionCount >= 3 && sendLog) {
+                Log.d("", "checkConnectionState: send log");
+                ParseObject testObject = new ParseObject("userlog");
+                testObject.put("title", mChatService.getConnectedDeviceName() + "");
+                testObject.put("description", "Connected to bluetooth");
+                testObject.put("type", "BT Connection");
+                testObject.saveInBackground();
+
+            }
+            preferences.edit().putInt("connection_count", connectionCount + 1).commit();
             connectRpi.setText("Disconnect");
             connectionState = true;
         } else {
