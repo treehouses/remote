@@ -24,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +34,8 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseDialogFragment;
 import io.treehouses.remote.callback.SetDisconnect;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 public class RPIDialogFragment extends BaseDialogFragment {
 
@@ -85,13 +89,18 @@ public class RPIDialogFragment extends BaseDialogFragment {
         return mDialog;
     }
 
+
     private void bondedDevices() {
         Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
-        if (pairedDevice.size() > 0) {
-            for (BluetoothDevice device : pairedDevice) {
+        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
+                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
+
+        for (BluetoothDevice device : pairedDevice) {
+            String deviceName = device.getName();
+            String deviceHardwareAddress = device.getAddress(); // MAC address
+
+            if(checkPiAddress(deviceHardwareAddress)){
                 devices.add(device);
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
                 s.add(deviceName + "\n" + deviceHardwareAddress);
                 setAdapterNotNull(s);
             }
@@ -171,7 +180,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     public void bluetoothCheck(String... args) {
         if (mBluetoothAdapter == null) {
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
-            Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Your Bluetooth Is Not Enabled or Not Supported", LENGTH_LONG).show();
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
             context.unregisterReceiver(mReceiver);
         }
@@ -208,17 +217,26 @@ public class RPIDialogFragment extends BaseDialogFragment {
     };
 
     private void checkDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
-        boolean alreadyExist = false;
         for (BluetoothDevice checkDevices : devices) {
-            if (checkDevices.equals(device)) {
-                alreadyExist = true;
+            if (!checkDevices.equals(device) && checkPiAddress(deviceHardwareAddress)){
+                devices.add(device);
+                s.add(deviceName + "\n" + deviceHardwareAddress);
+                setAdapterNotNull(s);
             }
         }
-        if (!alreadyExist) {
-            devices.add(device);
-            s.add(deviceName + "\n" + deviceHardwareAddress);
-            setAdapterNotNull(s);
+    }
+
+    private boolean checkPiAddress(String deviceHardwareAddress){
+        Boolean checkIfPi = false;
+        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
+                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
+
+        if (piAddress.contains(deviceHardwareAddress.substring(0, 7)) ||
+                piAddress.contains(deviceHardwareAddress.substring(0,8))) {
+            checkIfPi = true;
         }
+
+        return checkIfPi;
     }
 
     private void setupBluetoothService() {
@@ -247,7 +265,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             listener.setChatService(mChatService);
                             checkConnectionState.checkConnectionState();
                             mBluetoothAdapter.cancelDiscovery();
-                            Toast.makeText(context, "Bluetooth Connected", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Bluetooth Connected", LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
