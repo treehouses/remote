@@ -128,6 +128,7 @@ public class InitialActivity extends PermissionActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         checkStatusNow();
+        validBluetoothConnection = true;
         if (validBluetoothConnection) {
             onNavigationItemClicked(id);
         } else {
