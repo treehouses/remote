@@ -9,7 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity {
 
     private static final int SPLASH_TIME_OUT = 2000;
     Animation splash;
@@ -24,7 +24,7 @@ public class SplashScreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreen.this, InitialActivity.class);
+                Intent intent = new Intent(SplashScreenActivity.this, InitialActivity.class);
                 startActivity(intent);
                 finish();
             }
