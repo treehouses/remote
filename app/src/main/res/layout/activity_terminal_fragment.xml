@@ -25,12 +25,18 @@
 
     <AutoCompleteTextView
         android:id="@+id/edit_text_out"
-        android:layout_width="266dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/rectangle_border"
         android:hint="Enter Treehouse Commands"
+        android:paddingStart="@dimen/margin_medium"
+        android:paddingLeft="@dimen/margin_medium"
+        android:paddingTop="@dimen/margin_medium"
+        android:paddingEnd="@dimen/margin_medium"
+        android:paddingRight="@dimen/margin_small"
+        android:paddingBottom="@dimen/margin_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_send"
         app:layout_constraintHorizontal_bias="0.0"
@@ -38,25 +44,19 @@
 
     <Button
         android:id="@+id/button_send"
-        android:layout_width="56dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/colorPrimary"
-        android:text="Send"
+        android:layout_width="@dimen/icon_size_mid"
+        android:layout_height="@dimen/icon_size_mid"
+        android:layout_margin="@dimen/margin_medium"
+        android:background="@drawable/ic_send_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnPrevious" />
 
     <Button
         android:id="@+id/btnPrevious"
-        android:layout_width="56dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/colorPrimary"
-        android:text="Last"
+        android:layout_width="@dimen/icon_size_mid"
+        android:layout_height="@dimen/icon_size_mid"
+        android:layout_margin="@dimen/margin_medium"
+        android:background="@drawable/ic_history_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -75,8 +75,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/circle"
             android:foregroundGravity="center_horizontal"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
 
         <TextView
