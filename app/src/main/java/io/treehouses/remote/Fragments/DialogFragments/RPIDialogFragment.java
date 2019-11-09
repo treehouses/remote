@@ -21,7 +21,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +35,7 @@ import java.util.Set;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.RPIListAdapter;
 import io.treehouses.remote.bases.BaseDialogFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 
@@ -41,16 +45,25 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
     private static final String TAG = "RaspberryDialogFragment";
+
+    public static final String BONDED_TAG = "BONDED";
+
     private static RPIDialogFragment instance = null;
-    private List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+    private List<BluetoothDevice> raspberry_devices = new ArrayList<BluetoothDevice>();
+    private List<BluetoothDevice> all_devices = new ArrayList<BluetoothDevice>();
+    private Set<BluetoothDevice> pairedDevices;
     private static BluetoothDevice mainDevice = null;
     private ListView listView;
+    private ArrayAdapter mArrayAdapter;
     private BluetoothAdapter mBluetoothAdapter;
     private SetDisconnect checkConnectionState;
     private Context context;
+    private Switch mDiscoverAllDevices;
+    private Button mCloseButton;
 
     AlertDialog mDialog;
-    List<String> s = new ArrayList<String>();
+    List<String[]> raspberryDevicesText = new ArrayList<String[]>();
+    List<String[]> allDevicesText = new ArrayList<String[]>();
     ProgressDialog dialog;
 
     public static androidx.fragment.app.DialogFragment newInstance(int num) {
@@ -74,12 +87,25 @@ public class RPIDialogFragment extends BaseDialogFragment {
         mBluetoothAdapter.startDiscovery();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
-        dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_HOLO_DARK);
+        dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
         listView = mView.findViewById(R.id.listView);
         mDialog = getAlertDialog(mView, context, false);
         mDialog.setTitle(R.string.select_device);
 
         listViewOnClickListener(mView);
+
+        mCloseButton = mView.findViewById(R.id.rpi_close_button);
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeDialog();
+            }
+        });
+
+        mDiscoverAllDevices = mView.findViewById(R.id.rpi_switch);
+        mDiscoverAllDevices.setChecked(true);
+
+        switchViewOnClickListener();
 
         if (mChatService == null) { setupBluetoothService(); }
 
@@ -88,23 +114,21 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
         return mDialog;
     }
-
-
+    //Gets paired bluetooth devices
     private void bondedDevices() {
-        Set<BluetoothDevice> pairedDevice = mBluetoothAdapter.getBondedDevices();
-        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
-                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
+        pairedDevices = mBluetoothAdapter.getBondedDevices();
+//        for (BluetoothDevice device : pairedDevice) {
+//            String deviceName = device.getName();
+//            String deviceHardwareAddress = device.getAddress(); // MAC address
 
-        for (BluetoothDevice device : pairedDevice) {
-            String deviceName = device.getName();
-            String deviceHardwareAddress = device.getAddress(); // MAC address
-
-            if(checkPiAddress(deviceHardwareAddress)){
-                devices.add(device);
-                s.add(deviceName + "\n" + deviceHardwareAddress);
-                setAdapterNotNull(s);
-            }
-        }
+            //Raspberry Pi
+//            if(checkPiAddress(deviceHardwareAddress)){
+//                raspberry_devices.add(device);
+//                raspberryDevicesText.add(deviceName + "\n" + deviceHardwareAddress);
+//                setAdapterNotNull(raspberryDevicesText);
+//            }
+            //Not Raspberry Pi
+//        }
     }
 
     private void intentFilter() {
@@ -118,8 +142,20 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private void listViewOnClickListener(View mView) {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             mChatService = new BluetoothChatService(mHandler);
-            mainDevice = devices.get(position);
-            mChatService.connect(devices.get(position), true);
+            if (mDiscoverAllDevices.isChecked()) {
+                mainDevice = raspberry_devices.get(position);
+                mChatService.connect(raspberry_devices.get(position), true);
+            }
+            else {
+                if (checkPiAddress(all_devices.get(position).getAddress())) {
+                    mainDevice = all_devices.get(position);
+                    mChatService.connect(all_devices.get(position),true);
+                }
+                else {
+                    Toast.makeText(getContext(), "Device Unsupported",LENGTH_LONG).show();
+                    return;
+                }
+            }
             int status = mChatService.getState();
             mDialog.cancel();
             finish(status, mView);
@@ -128,6 +164,23 @@ public class RPIDialogFragment extends BaseDialogFragment {
             dialog.setTitle("Connecting...");
             dialog.setMessage("Device Name: " + mainDevice.getName() + "\nDevice Address: " + mainDevice.getAddress());
             dialog.show();
+        });
+    }
+
+    private void switchViewOnClickListener() {
+        mDiscoverAllDevices.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d(TAG, "SWITCH: "+allDevicesText.toString());
+                if (isChecked) {
+                    setAdapterNotNull(raspberryDevicesText);
+                    buttonView.setText(R.string.paired_devices);
+                }
+                else {
+                    setAdapterNotNull(allDevicesText);
+                    buttonView.setText(R.string.all_devices);
+                }
+            }
         });
     }
 
@@ -148,7 +201,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         } else {
             mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         }
-        List<String> empty = new ArrayList<>();
+        List<String[]> empty = new ArrayList<>();
         setAdapterNotNull(empty);
     }
 
@@ -169,14 +222,15 @@ public class RPIDialogFragment extends BaseDialogFragment {
         return new AlertDialog.Builder(context)
                 .setView(mView)
                 .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton(R.string.material_drawer_close, (dialog, whichButton) -> {
-                    if (!wifi) {
-                        bluetoothCheck("unregister");
-                    }
-                })
                 .create();
     }
 
+    public void closeDialog() {
+        bluetoothCheck("unregister");
+        dismiss();
+    }
+
+    //Check if bluetooth is supported
     public void bluetoothCheck(String... args) {
         if (mBluetoothAdapter == null) {
             Log.i("Bluetooth Adapter", "Bluetooth not supported");
@@ -194,11 +248,13 @@ public class RPIDialogFragment extends BaseDialogFragment {
         }
     }
 
-    private void setAdapterNotNull(List<String> listVal) {
+    private void setAdapterNotNull(List<String[]> listVal) {
         if (getActivity() == null) {
             Log.e("RPI DIALOG ACTIVITY", "null");
         } else {
-            listView.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, listVal));
+            Log.d(TAG, listVal.toString());
+            mArrayAdapter = new RPIListAdapter(getContext(), listVal);
+            listView.setAdapter(mArrayAdapter);
         }
     }
 
@@ -210,20 +266,43 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-                checkDevices(device, deviceName, deviceHardwareAddress);
+                addToRaspberry(device, deviceName, deviceHardwareAddress);
+                addToAllDevices(device, deviceName, deviceHardwareAddress);
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
         }
     };
-
-    private void checkDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
-        for (BluetoothDevice checkDevices : devices) {
-            if (!checkDevices.equals(device) && checkPiAddress(deviceHardwareAddress)){
-                devices.add(device);
-                s.add(deviceName + "\n" + deviceHardwareAddress);
-                setAdapterNotNull(s);
+    private void addToRaspberry(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
+        if (!raspberry_devices.contains(device) && checkPiAddress(deviceHardwareAddress)){
+            raspberry_devices.add(device);
+            if (pairedDevices.contains(device)) {
+                raspberryDevicesText.add(new String[]{deviceName + "\n" + deviceHardwareAddress, BONDED_TAG});
+            } else {
+                raspberryDevicesText.add(new String[]{deviceName + "\n" + deviceHardwareAddress, ""});
             }
+//            mArrayAdapter.notifyDataSetChanged();
+            if (mDiscoverAllDevices.isChecked()) {
+                if (mArrayAdapter == null) {
+                    setAdapterNotNull(raspberryDevicesText);
+                } else {
+                    mArrayAdapter.notifyDataSetChanged();
+                }
+            }
+            Log.d(TAG, "ADDED RASPBERRY DEVICE");
         }
+    }
+
+    private void addToAllDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
+        if (!all_devices.contains(device)) {
+            all_devices.add(device);
+            allDevicesText.add(new String[]{deviceName + "\n" + deviceHardwareAddress, ""});
+//            mArrayAdapter.notifyDataSetChanged();
+            if (!mDiscoverAllDevices.isChecked()) {
+                mArrayAdapter.notifyDataSetChanged();
+            }
+            Log.d(TAG, "ADDED GENERAL DEVICE");
+        }
+
     }
 
     private boolean checkPiAddress(String deviceHardwareAddress){
@@ -284,5 +363,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
         return mHandler;
     }
+
 
 }

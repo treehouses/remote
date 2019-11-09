@@ -121,4 +121,8 @@
         <item>local</item>
     </string-array>
 
+    <!--RPI Dialog-->
+    <string name="paired_devices">Raspberry Pi</string>
+    <string name="all_devices">All Devices</string>
+
 </resources>
