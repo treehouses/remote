@@ -87,6 +87,19 @@ public class RPIDialogFragment extends BaseDialogFragment {
         mBluetoothAdapter.startDiscovery();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
+        initDialog(mView);
+
+        if (mChatService == null) { setupBluetoothService(); }
+
+        //Gets bonded devices
+        pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+        intentFilter();
+
+        return mDialog;
+    }
+
+    private void initDialog(View mView) {
         dialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
         listView = mView.findViewById(R.id.listView);
         mDialog = getAlertDialog(mView, context, false);
@@ -106,29 +119,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
         mDiscoverAllDevices.setChecked(true);
 
         switchViewOnClickListener();
-
-        if (mChatService == null) { setupBluetoothService(); }
-
-        bondedDevices();
-        intentFilter();
-
-        return mDialog;
-    }
-    //Gets paired bluetooth devices
-    private void bondedDevices() {
-        pairedDevices = mBluetoothAdapter.getBondedDevices();
-//        for (BluetoothDevice device : pairedDevice) {
-//            String deviceName = device.getName();
-//            String deviceHardwareAddress = device.getAddress(); // MAC address
-
-            //Raspberry Pi
-//            if(checkPiAddress(deviceHardwareAddress)){
-//                raspberry_devices.add(device);
-//                raspberryDevicesText.add(deviceName + "\n" + deviceHardwareAddress);
-//                setAdapterNotNull(raspberryDevicesText);
-//            }
-            //Not Raspberry Pi
-//        }
     }
 
     private void intentFilter() {
