@@ -28,9 +28,9 @@ public class StatusFragment extends BaseFragment {
     View view;
 
     private static final String TAG = "StatusFragment";
-    private ImageView wifiStatus, btRPIName, rpiType;
-    private ImageView btStatus, ivUpgrad;
-    private TextView tvStatus1, tvStatus2, tvStatus3, tvUpgrade;
+    private ImageView wifiStatus, btRPIName, rpiType, memoryStatus;
+    private ImageView btStatus, ivUpgrade;
+    private TextView tvStatus1, tvStatus2, tvStatus3, tvUpgrade, tvMemory;
     private List<String> outs = new ArrayList<>();
     private Boolean wifiStatusVal = false;
     private Button upgrade;
@@ -69,11 +69,14 @@ public class StatusFragment extends BaseFragment {
         wifiStatus = view.findViewById(R.id.wifiStatus);
         btRPIName = view.findViewById(R.id.rpiName);
         rpiType = view.findViewById(R.id.rpiType);
-        ivUpgrad = view.findViewById(R.id.upgradeCheck);
+        memoryStatus = view.findViewById(R.id.memoryStatus);
+
+        ivUpgrade = view.findViewById(R.id.upgradeCheck);
         tvStatus1 = view.findViewById(R.id.tvStatus1);
         tvStatus2 = view.findViewById(R.id.tvStatus2);
         tvStatus3 = view.findViewById(R.id.tvStatus3);
         tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
+        tvMemory = view.findViewById(R.id.tvMemoryStatus);
         upgrade = view.findViewById(R.id.upgrade);
         upgrade.setVisibility(View.GONE);
 
@@ -98,14 +101,17 @@ public class StatusFragment extends BaseFragment {
             setRPIType();
         }
         if (outs.size() == 2) {
-            checkWifiStatus();
+            getMemory();
         }
         if (outs.size() == 3) {
-            checkUpgradeStatus();
+            checkWifiStatus();
         }
         if (outs.size() == 4) {
-            outs.remove(2);
-            outs.remove(2);
+            checkUpgradeStatus();
+        }
+        if (outs.size() == 5) {
+            outs.remove(3);
+            outs.remove(3);
             checkWifiStatus();
         }
     }
@@ -123,13 +129,19 @@ public class StatusFragment extends BaseFragment {
     private void setRPIType() {
         tvStatus3.setText("RPI Type: " + outs.get(0));
         rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        writeToRPI("treehouses memory free");
+    }
+
+    private void getMemory() {
+        tvMemory.setText("Memory: " + outs.get(1) + "bytes available");
+        memoryStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         writeToRPI("treehouses internet");
     }
 
     private void checkWifiStatus() {
-        tvStatus1.setText("RPI Wifi Connection: " + outs.get(1));
-        Log.e("StatusFragment", "**" + outs.get(1) + "**" + outs.get(1).equals("true "));
-        if (outs.get(1).equals("true ")) {
+        tvStatus1.setText("RPI Wifi Connection: " + outs.get(2));
+        Log.e("StatusFragment", "**" + outs.get(2) + "**" + outs.get(2).equals("true "));
+        if (outs.get(2).equals("true ")) {
             Log.e("StatusFragment", "TRUE");
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
@@ -148,13 +160,13 @@ public class StatusFragment extends BaseFragment {
             pd.dismiss();
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
         }
-        if (outs.get(2).equals("false ")) {
-            ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        if (outs.get(3).equals("false ")) {
+            ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version");
             upgrade.setVisibility(View.GONE);
         } else {
-            ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(2).substring(4));
+            ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
+            tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(3).substring(4));
             upgrade.setVisibility(View.VISIBLE);
         }
     }
