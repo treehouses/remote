@@ -275,12 +275,8 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private void addToRaspberry(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
         if (!raspberry_devices.contains(device) && checkPiAddress(deviceHardwareAddress)){
             raspberry_devices.add(device);
-            if (pairedDevices.contains(device)) {
-                raspberryDevicesText.add(new String[]{deviceName + "\n" + deviceHardwareAddress, BONDED_TAG});
-            } else {
-                raspberryDevicesText.add(new String[]{deviceName + "\n" + deviceHardwareAddress, ""});
-            }
-//            mArrayAdapter.notifyDataSetChanged();
+            addToText(raspberryDevicesText, device, deviceName, deviceHardwareAddress);
+
             if (mDiscoverAllDevices.isChecked()) {
                 if (mArrayAdapter == null) {
                     setAdapterNotNull(raspberryDevicesText);
@@ -295,14 +291,22 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private void addToAllDevices(BluetoothDevice device, String deviceName, String deviceHardwareAddress) {
         if (!all_devices.contains(device)) {
             all_devices.add(device);
-            allDevicesText.add(new String[]{deviceName + "\n" + deviceHardwareAddress, ""});
-//            mArrayAdapter.notifyDataSetChanged();
+            addToText(allDevicesText, device, deviceName, deviceHardwareAddress);
             if (!mDiscoverAllDevices.isChecked()) {
                 mArrayAdapter.notifyDataSetChanged();
             }
             Log.d(TAG, "ADDED GENERAL DEVICE");
         }
 
+    }
+
+    private void addToText(List<String[]> textList, BluetoothDevice device,
+                           String deviceName, String deviceHardwareAddress) {
+        if (pairedDevices.contains(device)) {
+            textList.add(new String[]{deviceName + "\n" + deviceHardwareAddress, BONDED_TAG});
+        } else {
+            textList.add(new String[]{deviceName + "\n" + deviceHardwareAddress, ""});
+        }
     }
 
     private boolean checkPiAddress(String deviceHardwareAddress){

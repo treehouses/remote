@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/device_info"
+<RelativeLayout android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    android:gravity="center_vertical"
-    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall" />
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/paired_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/paired_devices"
+        android:visibility="visible"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:tint="@color/md_green_500"
+        android:src="@drawable/paired" />
+
+    <TextView
+        android:id="@+id/device_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginStart="56dp"
+        android:gravity="center_vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+
+</RelativeLayout>

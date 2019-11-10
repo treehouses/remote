@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -25,17 +26,19 @@ public class RPIListAdapter extends ArrayAdapter<String[]> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        TextView text;
         String deviceText = data.get(position)[0];
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_rpi_item, parent, false);
         }
 
-        text = convertView.findViewById(R.id.device_info);
+        TextView text = convertView.findViewById(R.id.device_info);
+        ImageView pairedImage = convertView.findViewById(R.id.paired_icon);
+
         text.setText(deviceText);
+        pairedImage.setVisibility(View.INVISIBLE);
         if (data.get(position)[1].equals(RPIDialogFragment.BONDED_TAG)) {
-            text.setTextColor(context.getResources().getColor(R.color.md_green_500));
+            pairedImage.setVisibility(View.VISIBLE);
         }
 
         // Return the completed view to render on screen
