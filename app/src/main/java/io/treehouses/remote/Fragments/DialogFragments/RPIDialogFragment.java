@@ -58,7 +58,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private BluetoothAdapter mBluetoothAdapter;
     private SetDisconnect checkConnectionState;
     private Context context;
-    private Switch mDiscoverAllDevices;
+    private Switch mDiscoverRaspberry;
     private Button mCloseButton;
 
     AlertDialog mDialog;
@@ -115,8 +115,8 @@ public class RPIDialogFragment extends BaseDialogFragment {
             }
         });
 
-        mDiscoverAllDevices = mView.findViewById(R.id.rpi_switch);
-        mDiscoverAllDevices.setChecked(true);
+        mDiscoverRaspberry = mView.findViewById(R.id.rpi_switch);
+        mDiscoverRaspberry.setChecked(true);
 
         switchViewOnClickListener();
     }
@@ -132,7 +132,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private void listViewOnClickListener(View mView) {
         listView.setOnItemClickListener((parent, view, position, id) -> {
             mChatService = new BluetoothChatService(mHandler);
-            if (mDiscoverAllDevices.isChecked()) {
+            if (mDiscoverRaspberry.isChecked()) {
                 mainDevice = raspberry_devices.get(position);
                 mChatService.connect(raspberry_devices.get(position), true);
             }
@@ -158,7 +158,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     }
 
     private void switchViewOnClickListener() {
-        mDiscoverAllDevices.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mDiscoverRaspberry.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.d(TAG, "SWITCH: "+allDevicesText.toString());
@@ -267,7 +267,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
             raspberry_devices.add(device);
             addToText(raspberryDevicesText, device, deviceName, deviceHardwareAddress);
 
-            if (mDiscoverAllDevices.isChecked()) {
+            if (mDiscoverRaspberry.isChecked()) {
                 if (mArrayAdapter == null) {
                     setAdapterNotNull(raspberryDevicesText);
                 } else {
@@ -282,7 +282,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         if (!all_devices.contains(device)) {
             all_devices.add(device);
             addToText(allDevicesText, device, deviceName, deviceHardwareAddress);
-            if (!mDiscoverAllDevices.isChecked()) {
+            if (!mDiscoverRaspberry.isChecked()) {
                 mArrayAdapter.notifyDataSetChanged();
             }
             Log.d(TAG, "ADDED GENERAL DEVICE");
