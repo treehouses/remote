@@ -26,6 +26,7 @@ import com.parse.ParseObject;
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
@@ -62,7 +63,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        showLogDialog();
+        if (MainApplication.showLogDialog){
+            showLogDialog();
+            MainApplication.showLogDialog = false;
+        }
     }
 
     private void showLogDialog() {

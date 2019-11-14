@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class MainApplication extends Application {
 
     private static ArrayList terminalList, tunnelList, commandList;
-
+    public static boolean showLogDialog = false;
     @Override
     public void onCreate() {
         super.onCreate();
