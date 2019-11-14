@@ -247,24 +247,21 @@ public class RPIDialogFragment extends BaseDialogFragment {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress(); // MAC address
-                if (checkPiAddress(deviceHardwareAddress)) {
-                    addToDialog(device, deviceName, deviceHardwareAddress, raspberryDevicesText, raspberry_devices);
+                if (checkPiAddress(device.getAddress())) {
+                    addToDialog(device, raspberryDevicesText, raspberry_devices);
                 }
-                addToDialog(device, deviceName, deviceHardwareAddress, allDevicesText, all_devices);
+                addToDialog(device, allDevicesText, all_devices);
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
         }
     };
-    private void addToDialog(BluetoothDevice device, String deviceName, String deviceHardwareAddress,
-                             List<String[]> textList, List<BluetoothDevice> mDevices) {
+    private void addToDialog(BluetoothDevice device, List<String[]> textList, List<BluetoothDevice> mDevices) {
         if (!mDevices.contains(device)){
             mDevices.add(device);
             if (pairedDevices.contains(device)) {
-                textList.add(new String[]{deviceName + "\n" + deviceHardwareAddress, BONDED_TAG});
+                textList.add(new String[]{device.getName() + "\n" + device.getAddress(), BONDED_TAG});
             } else {
-                textList.add(new String[]{deviceName + "\n" + deviceHardwareAddress, ""});
+                textList.add(new String[]{device.getName() + "\n" + device.getAddress(), ""});
             }
             mArrayAdapter.notifyDataSetChanged();
             Log.d(TAG, "ADDED DEVICE");
