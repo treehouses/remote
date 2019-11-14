@@ -89,7 +89,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/btn_execute_destroy"
+            android:id="@+id/btn_execute_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -103,7 +103,7 @@
 
 
         <Button
-            android:id="@+id/btn_execute_start"
+            android:id="@+id/btn_execute_stop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -125,7 +125,7 @@
 
 
         <Button
-            android:id="@+id/btn_execute_address"
+            android:id="@+id/btn_execute_destroy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -138,7 +138,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btn_execute_stop"
+            android:id="@+id/btn_execute_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"

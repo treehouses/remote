@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/splash_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="96dp"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/treehouses2" />
+
+    <TextView
+        android:id="@+id/logo_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Treehouses"
+        android:textSize="18sp"
+        app:fontFamily="@font/roboto_medium"
+        android:textColor="@color/md_grey_600"
+        android:paddingTop="8dp"
+        android:layout_gravity="center"
+        android:layout_below="@+id/splash_logo"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

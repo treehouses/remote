@@ -10,11 +10,11 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode appVersionCode
-        versionName appVersionName+""
+        versionName appVersionName + ""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         applicationVariants.all { variant ->
             variant.outputs.all { output ->
-                outputFileName = new File("remote-" + android.defaultConfig.versionCode +".apk")
+                outputFileName = new File("remote-" + android.defaultConfig.versionCode + ".apk")
             }
         }
     }

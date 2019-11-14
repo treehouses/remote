@@ -71,7 +71,9 @@ public class TunnelFragment extends BaseTerminalFragment {
         Button btn_execute_address = view.findViewById(R.id.btn_execute_address);
 
         btn_start.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
-        btn_execute_address.setOnClickListener(v -> listener.sendMessage("treehouses tor"));
+        btn_execute_address.setOnClickListener(v -> {
+            listener.sendMessage("treehouses tor");
+        });
         btn_execute_start.setOnClickListener(v -> listener.sendMessage("treehouses tor start"));
         btn_execute_stop.setOnClickListener(v -> listener.sendMessage("treehouses tor stop"));
         btn_execute_destroy.setOnClickListener(v -> listener.sendMessage("treehouses tor destroy"));
