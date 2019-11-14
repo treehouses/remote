@@ -1,12 +1,17 @@
 package io.treehouses.remote.Fragments;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.Fragments.DialogFragments.RenameDialogFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,9 +20,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +38,14 @@ public class StatusFragment extends BaseFragment {
     private static final String TAG = "StatusFragment";
     private ImageView wifiStatus, btRPIName, rpiType;
     private ImageView btStatus, ivUpgrad;
-    private TextView tvStatus1, tvStatus2, tvStatus3, tvUpgrade;
+    private TextView tvStatus, tvStatus1, tvStatus2, tvStatus3, tvUpgrade;
     private List<String> outs = new ArrayList<>();
     private Boolean wifiStatusVal = false;
     private Button upgrade;
     private ProgressDialog pd;
     private Boolean updateRightNow = false;
     private BluetoothChatService mChatService = null;
+    private CardView RPIName;
     /**
      * Name of the connected device
      */
@@ -51,6 +60,8 @@ public class StatusFragment extends BaseFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         deviceName = mChatService.getConnectedDeviceName();
+
+        tvStatus.setText("Bluetooth Connection: " + deviceName);
 
         Log.e("STATUS", "device name: " + deviceName);
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
@@ -70,12 +81,14 @@ public class StatusFragment extends BaseFragment {
         btRPIName = view.findViewById(R.id.rpiName);
         rpiType = view.findViewById(R.id.rpiType);
         ivUpgrad = view.findViewById(R.id.upgradeCheck);
+        tvStatus = view.findViewById(R.id.tvStatus);
         tvStatus1 = view.findViewById(R.id.tvStatus1);
         tvStatus2 = view.findViewById(R.id.tvStatus2);
         tvStatus3 = view.findViewById(R.id.tvStatus3);
         tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
         upgrade = view.findViewById(R.id.upgrade);
         upgrade.setVisibility(View.GONE);
+        RPIName = view.findViewById(R.id.cardView);
 
         upgrade.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +97,15 @@ public class StatusFragment extends BaseFragment {
                 updateRightNow = true;
                 pd = ProgressDialog.show(getActivity(), "Updating...", "Please wait a few seconds...");
                 pd.setCanceledOnTouchOutside(true);
+            }
+        });
+
+        RPIName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RenameDialogFragment fragment = new RenameDialogFragment();
+                showRenameDialog();
+
             }
         });
     }
@@ -116,7 +138,8 @@ public class StatusFragment extends BaseFragment {
     }
 
     private void setRPIDeviceName() {
-        tvStatus2.setText("Connected RPI Name: " + deviceName);
+        String name = deviceName.substring(0, deviceName.indexOf("-"));
+        tvStatus2.setText("Connected RPI Name: " + name);
         btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
     }
 
@@ -157,6 +180,28 @@ public class StatusFragment extends BaseFragment {
             tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(2).substring(4));
             upgrade.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void showRenameDialog() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View mView = inflater.inflate(R.layout.dialog_rename,null);
+        EditText mHostNameEditText = mView.findViewById(R.id.hostname);
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setView(getLayoutInflater().inflate(R.layout.dialog_rename, null))
+                .setTitle("Rename Raspberry Pi")
+                .setIcon(R.drawable.dialog_icon)
+                .setPositiveButton("Rename",
+                        (dialog, whichButton) -> {
+                            Intent intent = new Intent();
+                            String hostname = mHostNameEditText.getText().toString();
+                            intent.putExtra("hostname", hostname);
+                            intent.putExtra("type", "rename");
+                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                        }
+                )
+                .setNegativeButton(R.string.cancel, (dialog, whichButton) -> getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent()))
+                .create();
+        alertDialog.show();
     }
 
     /**
