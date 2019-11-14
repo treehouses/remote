@@ -11,6 +11,7 @@ import io.treehouses.remote.bases.BaseFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -186,20 +187,24 @@ public class StatusFragment extends BaseFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mView = inflater.inflate(R.layout.dialog_rename,null);
         EditText mHostNameEditText = mView.findViewById(R.id.hostname);
+        mHostNameEditText.setHint("New Hostname");
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setView(getLayoutInflater().inflate(R.layout.dialog_rename, null))
-                .setTitle("Rename Raspberry Pi")
+                .setView(mView)
+                .setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-")))
                 .setIcon(R.drawable.dialog_icon)
-                .setPositiveButton("Rename",
-                        (dialog, whichButton) -> {
-                            Intent intent = new Intent();
-                            String hostname = mHostNameEditText.getText().toString();
-                            intent.putExtra("hostname", hostname);
-                            intent.putExtra("type", "rename");
-                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
                         }
                 )
-                .setNegativeButton(R.string.cancel, (dialog, whichButton) -> getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent()))
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
                 .create();
         alertDialog.show();
     }
