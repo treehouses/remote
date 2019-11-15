@@ -166,13 +166,9 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private void finish(int status, View mView) {
         final AlertDialog mDialog = getAlertDialog(mView, context, false);
-        if (status == 3) {
-            mDialog.setTitle("BLUETOOTH IS CONNECTED");
-        } else if (status == 2) {
-            mDialog.setTitle("BLUETOOTH IS CONNECTING...");
-        } else {
-            mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
-        }
+        if (status == 3) mDialog.setTitle("BLUETOOTH IS CONNECTED");
+        else if (status == 2) mDialog.setTitle("BLUETOOTH IS CONNECTING...");
+        else mDialog.setTitle("BLUETOOTH IS NOT CONNECTED");
         setAdapterNotNull(new ArrayList<>());
     }
 
@@ -215,8 +211,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+            if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (checkPiAddress(device.getAddress())) {
                     addToDialog(device, raspberryDevicesText, raspberry_devices);
@@ -281,7 +276,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
     };
 
     public Handler getmHandler() {
-
         return mHandler;
     }
 }
