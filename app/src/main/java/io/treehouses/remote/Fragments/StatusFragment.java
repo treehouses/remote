@@ -185,9 +185,9 @@ public class StatusFragment extends BaseFragment {
 
     private void showRenameDialog() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mView = inflater.inflate(R.layout.dialog_rename,null);
+        View mView = inflater.inflate(R.layout.dialog_rename_status,null);
         EditText mHostNameEditText = mView.findViewById(R.id.hostname);
-        mHostNameEditText.setHint("New Hostname");
+        mHostNameEditText.setHint("New Name");
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setView(mView)
                 .setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-")))
@@ -195,7 +195,13 @@ public class StatusFragment extends BaseFragment {
                 .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                if (!mHostNameEditText.getText().toString().equals("")) {
+                                    writeToRPI("treehouses rename " + mHostNameEditText.getText().toString());
+                                    Toast.makeText(getContext(), "Raspberry Pi Renamed", Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    Toast.makeText(getContext(), "Please enter a new name", Toast.LENGTH_LONG).show();
+                                }
                             }
                         }
                 )

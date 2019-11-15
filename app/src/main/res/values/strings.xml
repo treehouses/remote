@@ -121,4 +121,6 @@
         <item>local</item>
     </string-array>
 
+    <string name="rename_message">Changes will come into effect upon reboot of your Raspberry Pi and your device.\nNote: changing your hostname will also change your bluetooth ID</string>
+
 </resources>
