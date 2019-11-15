@@ -176,9 +176,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     public void onDestroy() {
         super.onDestroy();
         try {
-            if (mBluetoothAdapter == null) {
-                context.unregisterReceiver(mReceiver);
-            }
+            if (mBluetoothAdapter == null) context.unregisterReceiver(mReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }
