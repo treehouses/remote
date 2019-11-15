@@ -56,10 +56,9 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private SetDisconnect checkConnectionState;
     private Context context;
     private Switch mDiscoverRaspberry;
-
-    AlertDialog mDialog;
+    private AlertDialog mDialog;
     private List<String[]> raspberryDevicesText = new ArrayList<String[]>(), allDevicesText = new ArrayList<String[]>();
-    ProgressDialog pDialog;
+    private ProgressDialog pDialog;
 
     public static androidx.fragment.app.DialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
@@ -84,9 +83,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         if (mChatService == null) { mChatService = new BluetoothChatService(mHandler); }
 
         pairedDevices = mBluetoothAdapter.getBondedDevices();
-
         setAdapterNotNull(raspberryDevicesText);
-
         intentFilter();
 
         return mDialog;
@@ -128,19 +125,18 @@ public class RPIDialogFragment extends BaseDialogFragment {
             if (checkPiAddress(deviceList.get(position).getAddress())) {
                 mainDevice = deviceList.get(position);
                 mChatService.connect(deviceList.get(position),true);
+                int status = mChatService.getState();
+                mDialog.cancel();
+                finish(status, mView);
+                Log.e("Connecting Bluetooth", "Position: " + position + " ;; Status: " + status);
+                pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pDialog.setTitle("Connecting...");
+                pDialog.setMessage("Device Name: " + mainDevice.getName() + "\nDevice Address: " + mainDevice.getAddress());
+                pDialog.show();
             }
             else {
                 Toast.makeText(getContext(), "Device Unsupported",LENGTH_LONG).show();
-                return;
             }
-            int status = mChatService.getState();
-            mDialog.cancel();
-            finish(status, mView);
-            Log.e("Connecting Bluetooth", "Position: " + position + " ;; Status: " + status);
-            pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            pDialog.setTitle("Connecting...");
-            pDialog.setMessage("Device Name: " + mainDevice.getName() + "\nDevice Address: " + mainDevice.getAddress());
-            pDialog.show();
         });
     }
 
@@ -193,10 +189,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     }
 
     public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
-        return new AlertDialog.Builder(context)
-                .setView(mView)
-                .setIcon(R.drawable.dialog_icon)
-                .create();
+        return new AlertDialog.Builder(context).setView(mView).setIcon(R.drawable.dialog_icon).create();
     }
 
     public void bluetoothCheck(String... args) {
@@ -233,6 +226,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
             }
         }
     };
+
     private void addToDialog(BluetoothDevice device, List<String[]> textList, List<BluetoothDevice> mDevices) {
         if (!mDevices.contains(device)){
             mDevices.add(device);
@@ -242,14 +236,12 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 textList.add(new String[]{device.getName() + "\n" + device.getAddress(), ""});
             }
             mArrayAdapter.notifyDataSetChanged();
-            Log.d(TAG, "ADDED DEVICE");
         }
     }
 
     private boolean checkPiAddress(String deviceHardwareAddress) {
         Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
                 "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
-
         return piAddress.contains(deviceHardwareAddress.substring(0, 7))
                 || piAddress.contains(deviceHardwareAddress.substring(0, 8));
     }
@@ -259,7 +251,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
         @Override
         public void handleMessage(Message msg) {
             Log.e("RPIDialogFragment", "" + msg.what);
-
             String readMessage = (String)msg.obj;
 
             if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) {
@@ -283,7 +274,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
                     }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
                     Log.e("RPIDialogFragment", "Device Name " + msg.getData().getString(Constants.DEVICE_NAME));
                     break;
             }
@@ -294,5 +284,4 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
         return mHandler;
     }
-
 }
