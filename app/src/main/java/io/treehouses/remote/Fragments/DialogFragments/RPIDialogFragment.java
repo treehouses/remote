@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private AlertDialog mDialog;
     private List<DeviceInfo> raspberryDevicesText = new ArrayList<DeviceInfo>(), allDevicesText = new ArrayList<DeviceInfo>();
     private ProgressDialog pDialog;
+    private ProgressBar progressBar;
 
     public static androidx.fragment.app.DialogFragment newInstance(int num) {
         RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
@@ -105,6 +107,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         mDiscoverRaspberry = mView.findViewById(R.id.rpi_switch);
         mDiscoverRaspberry.setChecked(true);
         switchViewOnClickListener();
+        progressBar = mView.findViewById(R.id.progressBar);
     }
 
     private void intentFilter() {
@@ -146,10 +149,12 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 if (isChecked) {
                     setAdapterNotNull(raspberryDevicesText);
                     buttonView.setText(R.string.paired_devices);
+                    if (raspberry_devices.isEmpty()) progressBar.setVisibility(View.VISIBLE);
                 }
                 else {
                     setAdapterNotNull(allDevicesText);
                     buttonView.setText(R.string.all_devices);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -212,6 +217,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (checkPiAddress(device.getAddress())) {
                     addToDialog(device, raspberryDevicesText, raspberry_devices);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
                 addToDialog(device, allDevicesText, all_devices);
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
@@ -230,8 +236,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private boolean checkPiAddress(String deviceHardwareAddress) {
         Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
                 "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
-        return piAddress.contains(deviceHardwareAddress.substring(0, 7))
-                || piAddress.contains(deviceHardwareAddress.substring(0, 8));
+        return piAddress.contains(deviceHardwareAddress.substring(0, 7)) || piAddress.contains(deviceHardwareAddress.substring(0, 8));
     }
 
     @SuppressLint("HandlerLeak")
