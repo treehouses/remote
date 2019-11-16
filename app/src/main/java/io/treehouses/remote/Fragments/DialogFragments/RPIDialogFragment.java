@@ -36,6 +36,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.RPIListAdapter;
 import io.treehouses.remote.bases.BaseDialogFragment;
 import io.treehouses.remote.callback.SetDisconnect;
+import io.treehouses.remote.pojo.DeviceInfo;
 
 import static android.widget.Toast.LENGTH_LONG;
 
@@ -43,8 +44,6 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
     private static final String TAG = "RaspberryDialogFragment";
-
-    public static final String BONDED_TAG = "BONDED";
 
     private static RPIDialogFragment instance = null;
     private List<BluetoothDevice> raspberry_devices = new ArrayList<BluetoothDevice>(), all_devices = new ArrayList<BluetoothDevice>();
@@ -57,7 +56,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     private Context context;
     private Switch mDiscoverRaspberry;
     private AlertDialog mDialog;
-    private List<String[]> raspberryDevicesText = new ArrayList<String[]>(), allDevicesText = new ArrayList<String[]>();
+    private List<DeviceInfo> raspberryDevicesText = new ArrayList<DeviceInfo>(), allDevicesText = new ArrayList<DeviceInfo>();
     private ProgressDialog pDialog;
 
     public static androidx.fragment.app.DialogFragment newInstance(int num) {
@@ -202,7 +201,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         }
     }
 
-    private void setAdapterNotNull(List<String[]> listVal) {
+    private void setAdapterNotNull(List<DeviceInfo> listVal) {
         mArrayAdapter = new RPIListAdapter(getContext(), listVal);
         listView.setAdapter(mArrayAdapter);
     }
@@ -220,14 +219,10 @@ public class RPIDialogFragment extends BaseDialogFragment {
         }
     };
 
-    private void addToDialog(BluetoothDevice device, List<String[]> textList, List<BluetoothDevice> mDevices) {
+    private void addToDialog(BluetoothDevice device, List<DeviceInfo> textList, List<BluetoothDevice> mDevices) {
         if (!mDevices.contains(device)){
             mDevices.add(device);
-            if (pairedDevices.contains(device)) {
-                textList.add(new String[]{device.getName() + "\n" + device.getAddress(), BONDED_TAG});
-            } else {
-                textList.add(new String[]{device.getName() + "\n" + device.getAddress(), ""});
-            }
+            textList.add(new DeviceInfo(device.getName() + "\n" + device.getAddress(), pairedDevices.contains(device)));
             mArrayAdapter.notifyDataSetChanged();
         }
     }
