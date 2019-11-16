@@ -46,7 +46,7 @@ public class StatusFragment extends BaseFragment {
     private ProgressDialog pd;
     private Boolean updateRightNow = false;
     private BluetoothChatService mChatService = null;
-    private CardView RPIName;
+    private CardView cardRPIName;
     /**
      * Name of the connected device
      */
@@ -89,8 +89,13 @@ public class StatusFragment extends BaseFragment {
         tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
         upgrade = view.findViewById(R.id.upgrade);
         upgrade.setVisibility(View.GONE);
-        RPIName = view.findViewById(R.id.cardView);
+        cardRPIName = view.findViewById(R.id.cardView);
 
+        upgradeOnViewClickListener();
+        rpiNameOnViewClickListener();
+    }
+
+    private void upgradeOnViewClickListener() {
         upgrade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,13 +105,13 @@ public class StatusFragment extends BaseFragment {
                 pd.setCanceledOnTouchOutside(true);
             }
         });
+    }
 
-        RPIName.setOnClickListener(new View.OnClickListener() {
+    private void rpiNameOnViewClickListener() {
+        cardRPIName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RenameDialogFragment fragment = new RenameDialogFragment();
                 showRenameDialog();
-
             }
         });
     }
@@ -188,15 +193,20 @@ public class StatusFragment extends BaseFragment {
         View mView = inflater.inflate(R.layout.dialog_rename_status,null);
         EditText mHostNameEditText = mView.findViewById(R.id.hostname);
         mHostNameEditText.setHint("New Name");
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setView(mView)
+        AlertDialog alertDialog = createRenameDialog(mView, mHostNameEditText);
+        alertDialog.show();
+    }
+
+    private AlertDialog createRenameDialog(View view, EditText mEditText) {
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
                 .setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-")))
                 .setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (!mHostNameEditText.getText().toString().equals("")) {
-                                    writeToRPI("treehouses rename " + mHostNameEditText.getText().toString());
+                                if (!mEditText.getText().toString().equals("")) {
+                                    writeToRPI("treehouses rename " + mEditText.getText().toString());
                                     Toast.makeText(getContext(), "Raspberry Pi Renamed", Toast.LENGTH_LONG).show();
                                 }
                                 else {
@@ -212,7 +222,6 @@ public class StatusFragment extends BaseFragment {
                     }
                 })
                 .create();
-        alertDialog.show();
     }
 
     /**
