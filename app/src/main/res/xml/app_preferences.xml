@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="General">
+
+        <Preference
+            android:title="Contributors"
+            android:key="contributors">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/treehouses/remote/graphs/contributors" />
+        </Preference>
+        <Preference
+            android:title="About"
+            android:key="about_button">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://treehouses.io/#!index.md" />
+        </Preference>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

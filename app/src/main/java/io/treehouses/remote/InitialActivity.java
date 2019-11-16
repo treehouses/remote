@@ -62,6 +62,7 @@ public class InitialActivity extends PermissionActivity
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         drawer = findViewById(R.id.drawer_layout);
 
         checkLocationPermission();
@@ -76,19 +77,7 @@ public class InitialActivity extends PermissionActivity
 
         checkStatusNow();
 
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//        getSupportActionBar().setTitle(R.string.app_project_name);
         openCallFragment(new HomeFragment());
-//
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//            }
-//        });
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -184,11 +173,6 @@ public class InitialActivity extends PermissionActivity
 
     }
 //
-//    @Override
-//    public void updateHandler(Handler handler) {
-//        if (mChatService != null)
-//            mChatService.updateHandler(mHandler);
-//    }
 
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -246,58 +230,7 @@ public class InitialActivity extends PermissionActivity
             validBluetoothConnection = false;
         }
         Log.e("BOOLEAN", "" + validBluetoothConnection);
-
-        //start pinging for wifi check
-//        final Handler h = new Handler();
-//        final int delay = 20000;
-//        h.postDelayed(new Runnable(){
-//            public void run(){
-//                String ping = "ping -c 1 google.com";
-//                sendPing(ping);
-//                //remove the space at the very end of the readMessage -> eliminate space between items
-//                String readMessage = new String(mOutStringBuffer);
-//                readMessage = readMessage.substring(0,readMessage.length()-1);
-//                //check if ping was successful
-//                if(readMessage.contains("1 packets")){validWifiConnection = true;}
-//                if(readMessage.contains("Unreachable") || readMessage.contains("failure")){validWifiConnection = false;}
-//                h.postDelayed(this, delay);
-//            }
-//        }, delay);
-
     }
-//    /**
-//     * This block is to create a dialog box for creating a new name or changing the password for the PI device
-//     * Sets the dialog button to be disabled if no text is in the EditText
-//     */
-//    private void showDialog(View view) {
-//        final EditText input = new EditText(InitialActivity.this);
-//        final AlertDialog alertDialog = showAlertDialog(
-//                "Rename Hostname",
-//                "Please enter new hostname",
-//                "treehouses rename ", input);
-//
-//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
-//        alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-//
-//        input.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//            }
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if(s.length() > 0) {
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(true);
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(true);
-//                }else{
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setClickable(false);
-//                    alertDialog.getButton(alertDialog.BUTTON_POSITIVE).setEnabled(false);
-//                }
-//            }
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//            }
-//        });
-//    }
 
     private AlertDialog showAlertDialog() {
         return new AlertDialog.Builder(InitialActivity.this)
@@ -348,59 +281,6 @@ public class InitialActivity extends PermissionActivity
 //            FragmentActivity activity = getActivity();
             //InitialActivity activity = InitialActivity.this;
             switch (msg.what) {
-//                case Constants.MESSAGE_STATE_CHANGE:
-//                    switch (msg.arg1) {
-//                        case Constants.STATE_LISTEN:
-//                        case Constants.STATE_NONE:
-////                            setStatus(R.string.title_not_connected);
-//                            mIdle();
-//                            break;
-//                    }
-//                    break;
-//                case Constants.MESSAGE_WRITE:
-//                    isRead = false;
-//                    byte[] writeBuf = (byte[]) msg.obj;
-//                    // construct a string from the buffer
-//                    String writeMessage = new String(writeBuf);
-//                    if(!writeMessage.contains("google.com")) {
-//                        Log.d(TAG, "writeMessage = " + writeMessage);
-//                        mConversationArrayAdapter.add("Command:  " + writeMessage);
-//                    }
-//                    break;
-//                case Constants.MESSAGE_READ:
-//                    isRead = true;
-////                    byte[] readBuf = (byte[]) msg.obj;
-////                     construct a string from the valid bytes in the buffer
-////                    String readMessage = new String(readBuf, 0, msg.arg1);
-////                    String readMessage = new String(readBuf);
-//                    String readMessage = (String)msg.obj;
-//                    Log.d(TAG, "readMessage = " + readMessage);
-//                    //TODO: if message is json -> callback from RPi
-//                    if(isJson(readMessage)){
-//                        //handleCallback(readMessage);
-//                    }else{
-//                        if(isCountdown){
-//                            //mHandler.removeCallbacks(watchDogTimeOut);
-//                            isCountdown = false;
-//                        }
-//                        //remove the space at the very end of the readMessage -> eliminate space between items
-//                        readMessage = readMessage.substring(0,readMessage.length()-1);
-//                        //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-//
-//                        //check if ping was successful
-//                        if(readMessage.contains("1 packets")){
-//                            mConnect();
-//                        }
-//                        if(readMessage.contains("Unreachable") || readMessage.contains("failure")){
-//                            mOffline();
-//                        }
-//                        //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-//                        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") &&
-//                                !readMessage.contains("rtt") && !readMessage.trim().isEmpty()){
-//                            mConversationArrayAdapter.add(readMessage);
-//                        }
-//                    }
-//                    break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
@@ -414,25 +294,9 @@ public class InitialActivity extends PermissionActivity
 //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
 //                    }
                     break;
-//                case Constants.MESSAGE_TOAST:
-//                    if (null != activity) {
-//                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//                    break;
             }
         }
     };
-
-
-//    public boolean isJson(String str) {
-//        try {
-//            new JSONObject(str);
-//        } catch (JSONException ex) {
-//            return false;
-//        }
-//        return true;
-//    }
 
 
 }
