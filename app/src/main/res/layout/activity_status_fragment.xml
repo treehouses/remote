@@ -190,7 +190,44 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
-                    android:text="RPI Wifi Connection" />
+                    android:text="RPI Type" />
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="@dimen/margin_small"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toTopOf="@+id/cardView5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView3">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/memoryStatus"
+                    android:layout_width="@dimen/image_size_home_card"
+                    android:layout_height="@dimen/image_size_home_card"
+                    app:srcCompat="@drawable/tick_png" />
+
+                <TextView
+                    android:id="@+id/tvMemoryStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/margin_huge"
+                    android:gravity="center_vertical"
+                    android:text="Memory: " />
 
             </LinearLayout>
 
@@ -226,7 +263,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
-                    android:text="RPI Wifi Connection" />
+                    android:text="RPI Upgrade" />
 
             </LinearLayout>
 

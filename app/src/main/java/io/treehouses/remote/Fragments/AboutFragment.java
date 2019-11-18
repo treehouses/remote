@@ -30,10 +30,12 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
         Button images = view.findViewById(R.id.btn_image);
         Button gitter = view.findViewById(R.id.btn_gitter);
         Button version = view.findViewById(R.id.btn_version);
+        Button contributors = view.findViewById(R.id.btn_contributors);
         TextView tvCopyright = view.findViewById(R.id.tv_copyright);
         hyperLinks(gitHub,"https://github.com/treehouses/remote" );
         hyperLinks(images,"http://download.treehouses.io" );
         hyperLinks(gitter,"https://gitter.im/open-learning-exchange/raspberrypi" );
+        hyperLinks(contributors, "https://github.com/treehouses/remote/graphs/contributors");
 
         version.setOnClickListener(v -> {
             String versionName = BuildConfig.VERSION_NAME;
