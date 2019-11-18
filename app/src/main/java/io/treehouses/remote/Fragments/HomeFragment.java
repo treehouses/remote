@@ -23,6 +23,9 @@ import androidx.annotation.Nullable;
 
 import com.parse.ParseObject;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
@@ -63,7 +66,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (MainApplication.showLogDialog){
+        if (MainApplication.showLogDialog) {
             showLogDialog();
             MainApplication.showLogDialog = false;
         }
@@ -122,26 +125,38 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     public void checkConnectionState() {
         mChatService = listener.getChatService();
-        int connectionCount = preferences.getInt("connection_count", 0);
-        boolean sendLog = preferences.getBoolean("send_log", true);
         showLogDialog();
-        Log.e("", "checkConnectionState: "+connectionCount + " " + sendLog );
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            if (connectionCount >= 3 && sendLog) {
-                Log.d("", "checkConnectionState: send log");
-                ParseObject testObject = new ParseObject("userlog");
-                testObject.put("title", mChatService.getConnectedDeviceName() + "");
-                testObject.put("description", "Connected to bluetooth");
-                testObject.put("type", "BT Connection");
-                testObject.saveInBackground();
-
-            }
-            preferences.edit().putInt("connection_count", connectionCount + 1).commit();
+            sendLog();
             connectRpi.setText("Disconnect");
             connectionState = true;
         } else {
             connectRpi.setText("Connect to RPI");
             connectionState = false;
+        }
+    }
+
+    private void sendLog() {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean sendLog = preferences.getBoolean("send_log", true);
+
+
+        Calendar currentDate = Calendar.getInstance();
+        currentDate.add(Calendar.DAY_OF_YEAR, -7);
+
+        long lastLogSent = preferences.getLong("last_log_sent", Calendar.getInstance().getTimeInMillis());
+        if (connectionCount >= 3 && sendLog) {
+
+            if (lastLogSent < currentDate.getTimeInMillis()) {
+                ParseObject testObject = new ParseObject("userlog");
+                testObject.put("title", mChatService.getConnectedDeviceName() + "");
+                testObject.put("description", "Connected to bluetooth");
+                testObject.put("type", "BT Connection");
+                testObject.saveInBackground();
+                preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis());
+                preferences.edit().putInt("connection_count", connectionCount + 1).commit();
+
+            }
         }
     }
 
