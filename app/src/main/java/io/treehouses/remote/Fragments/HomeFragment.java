@@ -72,10 +72,14 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private void showLogDialog() {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean showDialog = preferences.getBoolean("show_log_dialog", true);
-        if (connectionCount >= 3 && showDialog) {
+        if (connectionCount == 3 && showDialog) {
             new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                    "Do you like to share it? It will help us to improve.").setPositiveButton("Yes", (dialogInterface, i) -> preferences.edit().putBoolean("send_log", true)).setNegativeButton("No", null).show();
-            preferences.edit().putBoolean("show_log_dialog", true).commit();
+                    "Do you like to share it? It will help us to improve.")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        preferences.edit().putBoolean("send_log", true).commit();
+                        preferences.edit().putBoolean("show_log_dialog", false).commit();
+                    })
+                    .setNegativeButton("No", null).show();
         }
     }
 
@@ -123,7 +127,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         showLogDialog();
         Log.e("", "checkConnectionState: "+connectionCount + " " + sendLog );
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            Log.e("TREEHOUSES", "checkConnectionState: "+connectionCount + " " + sendLog );
             if (connectionCount >= 3 && sendLog) {
                 Log.d("", "checkConnectionState: send log");
                 ParseObject testObject = new ParseObject("userlog");
