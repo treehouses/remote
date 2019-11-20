@@ -38,7 +38,7 @@ public class StatusFragment extends BaseFragment {
 
     private static final String TAG = "StatusFragment";
     private ImageView wifiStatus, btRPIName, rpiType;
-    private ImageView btStatus, ivUpgrad;
+    private ImageView btStatus, ivUpgrade;
     private TextView tvStatus, tvStatus1, tvStatus2, tvStatus3, tvUpgrade;
     private List<String> outs = new ArrayList<>();
     private Boolean wifiStatusVal = false;
@@ -81,7 +81,7 @@ public class StatusFragment extends BaseFragment {
         wifiStatus = view.findViewById(R.id.wifiStatus);
         btRPIName = view.findViewById(R.id.rpiName);
         rpiType = view.findViewById(R.id.rpiType);
-        ivUpgrad = view.findViewById(R.id.upgradeCheck);
+        ivUpgrade = view.findViewById(R.id.upgradeCheck);
         tvStatus = view.findViewById(R.id.tvStatus);
         tvStatus1 = view.findViewById(R.id.tvStatus1);
         tvStatus2 = view.findViewById(R.id.tvStatus2);
@@ -178,11 +178,11 @@ public class StatusFragment extends BaseFragment {
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
         }
         if (outs.get(2).equals("false ")) {
-            ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+            ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version");
             upgrade.setVisibility(View.GONE);
         } else {
-            ivUpgrad.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
+            ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(2).substring(4));
             upgrade.setVisibility(View.VISIBLE);
         }
