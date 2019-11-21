@@ -274,7 +274,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
-                    android:text="RPI Upgrade Status" />
+                    android:text="RPI Upgrade Status"/>
 
             </LinearLayout>
 
