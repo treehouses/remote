@@ -159,16 +159,17 @@
                     android:text="Connected RPI Name:" />
             </LinearLayout>
 
-            <Button
+            <ImageView
                 android:id="@+id/editName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="35dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:scaleType="fitXY"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/margin_small"
                 android:layout_marginRight="@dimen/margin_small"
-                android:paddingLeft="@dimen/margin_large"
-                android:text="Edit"
-                 />
+                android:background="@drawable/ic_edit_black_24dp" />
 
         </androidx.cardview.widget.CardView>
 
