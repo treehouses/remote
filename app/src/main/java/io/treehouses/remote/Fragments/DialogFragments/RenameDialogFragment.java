@@ -55,6 +55,7 @@ public class RenameDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
                 .setTitle(R.string.dialog_message)
+                .setMessage(R.string.rename_message)
                 .setIcon(R.drawable.dialog_icon)
                 .setPositiveButton(R.string.start_configuration,
                         (dialog, whichButton) -> {
