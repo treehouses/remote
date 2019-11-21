@@ -179,8 +179,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private void dismissTestConnection() {
-        testConnectionDialog.cancel();
-        createTestConnectionDialog(true, "Process Finished", R.string.test_finished).show();
+        if (testConnectionDialog != null) {
+            testConnectionDialog.cancel();
+            createTestConnectionDialog(true, "Process Finished", R.string.test_finished).show();
+        }
     }
 
     private void writeToRPI(String ping) {
@@ -210,8 +212,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                     Log.e("StatusFragment", "READ");
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
-                    if (!readMessage.isEmpty()) result = true;
-                    dismissTestConnection();
+                    if (!readMessage.isEmpty()) {
+                        result = true;
+                        dismissTestConnection();
+                    }
 
                     //TODO: if message is json -> callback from RPi
                     break;
