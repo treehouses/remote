@@ -85,6 +85,11 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         setAdapterNotNull(raspberryDevicesText);
+        for (BluetoothDevice d : pairedDevices) {
+            if (checkPiAddress(d.getAddress())) {
+                addToDialog(d, raspberryDevicesText, raspberry_devices);
+                progressBar.setVisibility(View.INVISIBLE); }
+        }
         intentFilter();
 
         return mDialog;
@@ -181,9 +186,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         super.onDestroy();
         try {
             if (mBluetoothAdapter == null) context.unregisterReceiver(mReceiver);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
@@ -234,8 +237,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     }
 
     private boolean checkPiAddress(String deviceHardwareAddress) {
-        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32",
-                "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
+        Set<String> piAddress = new HashSet<String>(Arrays.asList("B8:27:EB", "DC:A6:32", "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"));
         return piAddress.contains(deviceHardwareAddress.substring(0, 7)) || piAddress.contains(deviceHardwareAddress.substring(0, 8));
     }
 
@@ -273,7 +275,5 @@ public class RPIDialogFragment extends BaseDialogFragment {
         }
     };
 
-    public Handler getmHandler() {
-        return mHandler;
-    }
+    public Handler getmHandler() { return mHandler; }
 }
