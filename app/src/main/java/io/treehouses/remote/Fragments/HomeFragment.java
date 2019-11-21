@@ -197,30 +197,22 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    checkStatusNow();
-                    break;
                 case Constants.MESSAGE_WRITE:
-                    Log.e("StatusFragment", "WRITE");
+                    Log.e("HomeFragment", "WRITE");
                     byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-
                     Log.d(TAG, "writeMessage = " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
-                    Log.e("StatusFragment", "READ");
+                    Log.e("HomeFragment", "READ");
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
                     if (!readMessage.isEmpty()) {
                         result = true;
                         dismissTestConnection();
                     }
-
-                    //TODO: if message is json -> callback from RPi
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     break;
             }
