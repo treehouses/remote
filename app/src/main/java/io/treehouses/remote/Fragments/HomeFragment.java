@@ -198,15 +198,11 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_WRITE:
-                    Log.e("HomeFragment", "WRITE");
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);
-                    Log.d(TAG, "writeMessage = " + writeMessage);
+                    String writeMessage = new String((byte[]) msg.obj);
+                    Log.d(TAG, "WRITTEN: "+ writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
-                    Log.e("HomeFragment", "READ");
                     String readMessage = (String) msg.obj;
-                    Log.d(TAG, "readMessage = " + readMessage);
                     if (!readMessage.isEmpty()) {
                         result = true;
                         dismissTestConnection();
