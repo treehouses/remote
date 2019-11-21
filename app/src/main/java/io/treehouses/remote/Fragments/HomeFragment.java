@@ -51,13 +51,13 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
-        mChatService.updateHandler(mHandler);
         mConnectedDeviceName = mChatService.getConnectedDeviceName();
 
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
         testConnection = view.findViewById(R.id.test_connection);
 
+        Log.d(TAG, "TEST");
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
@@ -133,6 +133,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             connectionState = false;
             testConnection.setVisibility(View.GONE);
         }
+        mChatService.updateHandler(mHandler);
     }
 
     private void showWelcomeDialog() {
