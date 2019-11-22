@@ -2,20 +2,26 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
@@ -29,10 +35,14 @@ import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 import static io.treehouses.remote.Constants.TOAST;
 
 public class HomeFragment extends BaseFragment implements SetDisconnect {
+    private static final String TAG = "HOME_FRAGMENT";
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
-    private Button connectRpi, getStarted;
+    private Button connectRpi, getStarted, testConnection;
     private Boolean connectionState = false;
+    private Boolean result = false;
+    private String mConnectedDeviceName;
+    private AlertDialog testConnectionDialog;
     View view;
 
     public HomeFragment(){}
@@ -41,13 +51,18 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
+        mConnectedDeviceName = mChatService.getConnectedDeviceName();
+
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
+        testConnection = view.findViewById(R.id.test_connection);
 
+        Log.d(TAG, "TEST");
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
         getStartedListener();
+        testConnectionListener();
 
         return view;
     }
@@ -96,19 +111,32 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             }
         });
     }
+    public void testConnectionListener() {
+        testConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeToRPI("treehouses led dance");
+                testConnectionDialog = createTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
+                testConnectionDialog.show();
+            }
+        });
+    }
 
     public void checkConnectionState() {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             connectRpi.setText("Disconnect");
             connectionState = true;
+            testConnection.setVisibility(View.VISIBLE);
         } else {
             connectRpi.setText("Connect to RPI");
             connectionState = false;
+            testConnection.setVisibility(View.GONE);
         }
+        mChatService.updateHandler(mHandler);
     }
 
-    private AlertDialog showWelcomeDialog() {
+    private void showWelcomeDialog() {
         final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
                 "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
         Linkify.addLinks(s, Linkify.ALL);
@@ -125,14 +153,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 .create();
         d.show();
         ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-       return d;
     }
-
-//    private void openURL(String url) {
-//        Intent i = new Intent(Intent.ACTION_VIEW);
-//        i.setData(Uri.parse(url));
-//        startActivity(i);
-//    }
 
     private void showRPIDialog(){
         androidx.fragment.app.DialogFragment dialogFrag =  RPIDialogFragment.newInstance(123);
@@ -140,4 +161,57 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
         dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
     }
+
+    private AlertDialog createTestConnectionDialog(Boolean dismissable, String title, int messageID) {
+        AlertDialog.Builder d = new AlertDialog.Builder(getContext())
+                .setTitle(title)
+                .setIcon(R.drawable.ic_action_device_access_bluetooth_searching)
+                .setMessage(messageID);
+        if (dismissable) {
+            d.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+        }
+        return d.create();
+    }
+
+    private void dismissTestConnection() {
+        if (testConnectionDialog != null) {
+            testConnectionDialog.cancel();
+            createTestConnectionDialog(true, "Process Finished", R.string.test_finished).show();
+        }
+    }
+
+    private void writeToRPI(String ping) {
+        byte[] pSend = ping.getBytes();
+        mChatService.write(pSend);
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_WRITE:
+                    String writeMessage = new String((byte[]) msg.obj);
+                    Log.d(TAG, "WRITTEN: "+ writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    String readMessage = (String) msg.obj;
+                    if (!readMessage.isEmpty()) {
+                        result = true;
+                        dismissTestConnection();
+                    }
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    break;
+            }
+        }
+    };
 }

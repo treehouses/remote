@@ -126,4 +126,8 @@
     <string name="paired_devices">Raspberry Pi</string>
     <string name="all_devices">All Devices</string>
 
+    <!--Home Fragment-->
+    <string name="test_connection_message">You should be able to see a flashing green light on your Raspberry Pi right now.</string>
+    <string name="test_finished">The flashing has now stopped.</string>
+
 </resources>
