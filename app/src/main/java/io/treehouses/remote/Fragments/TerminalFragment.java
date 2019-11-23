@@ -39,17 +39,20 @@ import io.treehouses.remote.utils.SaveUtils;
 public class TerminalFragment extends BaseTerminalFragment {
 
     private static final String TAG = "BluetoothChatFragment";
+    private static final String TITLE_EXPANDABLE = "Commands";
     private static TerminalFragment instance = null;
     private ListView mConversationView;
     private TextView mPingStatus;
     private EditText mOutEditText;
     private Button mSendButton, pingStatusButton, mPrevious;
     private ExpandableListView expandableListView;
+    private ExpandableListAdapter expandableListAdapter;
     private ArrayList<String> list;
     private int i;
     private String last;
     View view;
-    HashMap<String, List<CommandListItem>> expandableListDetail;
+    private List<String> expandableListTitle;
+    private HashMap<String, List<CommandListItem>> expandableListDetail;
 
     public TerminalFragment() {
     }
@@ -61,35 +64,17 @@ public class TerminalFragment extends BaseTerminalFragment {
         mChatService.updateHandler(mHandler);
         instance = this;
         expandableListDetail = new HashMap<>();
-        expandableListDetail.put("Commands", SaveUtils.getCommandsList(getContext()));
+        expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
         setHasOptionsMenu(true);
         setupList();
         return view;
     }
 
-//    public HashMap<String, List<CommandListItem>> getCommandsList() {
-//        expandableListDetail = new HashMap<String, List<CommandListItem>>();
-//        List<CommandListItem> commands = new ArrayList<>();
-//        commands.add(new CommandListItem("CHANGE PASSWORD", ""));
-//        commands.add(new CommandListItem("HELP", "treehouses help"));
-//        commands.add(new CommandListItem("DOCKER PS", "docker ps"));
-//        commands.add(new CommandListItem("DETECT RPI", "treehouses detectrpi"));
-//        commands.add(new CommandListItem("EXPAND FS", "treehouses expandfs"));
-//        commands.add(new CommandListItem("VNC ON", "treehouses vnc on"));
-//        commands.add(new CommandListItem("VNC OFF", "treehouses vnc off"));
-//        commands.add(new CommandListItem("VNC STATUS", "treehouses vnc"));
-//        commands.add(new CommandListItem("TOR", "treehouses tor"));
-//        commands.add(new CommandListItem("NETWORK MODE INFO", "treehouses networkmode info"));
-//        commands.add(new CommandListItem("CLEAR", ""));
-//        expandableListDetail.put("Commands", commands);
-//        return expandableListDetail;
-//    }
-
     public void setupList() {
         expandableListView = view.findViewById(R.id.terminalList);
-        List<String> expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-        ExpandableListAdapter expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
+        expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+        expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             if (childPosition < expandableListDetail.get("Commands").size()) {
@@ -103,7 +88,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                     listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
                 }
             } else {
-                //TODO: ADD NEW COMMAND HERE
                 showAddCommandDialog();
             }
 
@@ -245,6 +229,9 @@ public class TerminalFragment extends BaseTerminalFragment {
             case Constants.REQUEST_DIALOG_FRAGMENT_CHPASS:
                 onResultCaseDialogChpass(resultCode, data);
                 break;
+            case Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND:
+                onResultAddCommand(resultCode);
+                break;
         }
     }
 
@@ -274,6 +261,16 @@ public class TerminalFragment extends BaseTerminalFragment {
             getActivity().finish();
         }
     }
+    private void onResultAddCommand(int resultcode) {
+        if (resultcode == Activity.RESULT_OK) {
+            expandableListDetail.clear();
+            expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
+            expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+            expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
+            expandableListView.setAdapter(expandableListAdapter);
+            expandableListView.expandGroup(0,true);
+        }
+    }
 
     public void showChPasswordDialog() {
         // Create an instance of the dialog fragment and show it
@@ -284,6 +281,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private void showAddCommandDialog() {
         androidx.fragment.app.DialogFragment dialogFragment = AddCommandDialogFragment.newInstance();
+        dialogFragment.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND);
         dialogFragment.show(getFragmentManager().beginTransaction(), "AddCommandDialog");
     }
 

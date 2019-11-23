@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +18,8 @@ public class SaveUtils {
 
     public static final String COMMANDS_TITLES_KEY = "commands_titles";
     public static final String COMMANDS_VALUES_KEY = "commands_values";
+
+    public static final String ACTION_KEYWORD = "ACTION";
 
     public static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
         String strArr = "";
@@ -36,7 +40,7 @@ public class SaveUtils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String str = prefs.getString(arrayName, null);
         if (str == null || str.equals("")) {
-            return null;
+            return new ArrayList<String>();
         }
         else {
             strArr = str.split(DELIMITER);
@@ -46,14 +50,13 @@ public class SaveUtils {
 
     public static void addToArrayList(Context context, String arrayName, String toAdd) {
         ArrayList<String> arrayList = getStringArray(context, arrayName);
-        if (arrayList == null) arrayList = new ArrayList<>();
         arrayList.add(toAdd);
         saveStringArray(context, arrayList, arrayName);
     }
 
     public static Boolean removeFromArrayList(Context context, String arrayName, String toRemove) {
         ArrayList<String> arrayList = getStringArray(context, arrayName);
-        if (arrayList != null) {
+        if (!arrayList.isEmpty()) {
             arrayList.remove(toRemove);
             return true;
         }
@@ -67,7 +70,7 @@ public class SaveUtils {
     //TERMINAL COMMAND LIST UTILS
 
     public static void initCommandsList(Context context) {
-        if (getStringArray(context, COMMANDS_TITLES_KEY) == null || getStringArray(context, COMMANDS_VALUES_KEY) == null) {
+        if (getStringArray(context, COMMANDS_TITLES_KEY).isEmpty() || getStringArray(context, COMMANDS_VALUES_KEY).isEmpty()) {
             String[] titles = {"CHANGE PASSWORD", "HELP", "DOCKER PS", "DETECT RPI", "EXPAND FS",
                     "VNC ON", "VNC OFF", "VNC STATUS", "TOR", "NETWORK MODE INFO", "CLEAR"};
             String[] commands = {"ACTION", "treehouses help", "docker ps", "treehouses detectrpi", "treehouses expandfs",
@@ -84,10 +87,14 @@ public class SaveUtils {
 
         List<CommandListItem> finalArray = new ArrayList<>();
 
-        if (titles == null || values == null || titles.size() != values.size()) {
-            Log.e("COMMANDLIST", "ERROR SIZE: COMMANDS and VALUES");
+        if (titles.isEmpty() || values.isEmpty()) {
             return new ArrayList<CommandListItem>();
         }
+        if (titles.size() != values.size()) {
+            Log.e("COMMANDLIST", "ERROR SIZE: COMMANDS and VALUES");
+            return new ArrayList<>();
+        }
+
         for (int i = 0; i < titles.size(); i++) {
             finalArray.add(new CommandListItem(titles.get(i), values.get(i)));
         }

@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.CommandListItem;
@@ -23,13 +27,11 @@ public class AddCommandDialogFragment extends androidx.fragment.app.DialogFragme
     private EditText commandValue;
 
     public static AddCommandDialogFragment newInstance() {
-        AddCommandDialogFragment addCommandDialogFragment = new AddCommandDialogFragment();
-        return addCommandDialogFragment;
+        return new AddCommandDialogFragment();
     }
 
-    @Override
+    @Override @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mView = inflater.inflate(R.layout.dialog_add_command,null);
         initLayoutView(mView);
@@ -48,9 +50,15 @@ public class AddCommandDialogFragment extends androidx.fragment.app.DialogFragme
                 .setPositiveButton("Add Command", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                SaveUtils.addToCommandsList(getContext(),
-                                        new CommandListItem(commandTitle.getText().toString(), commandValue.getText().toString()));
-                                dismiss();
+                                if (commandTitle.getText().toString().length() > 0 && commandValue.getText().toString().length() > 0) {
+                                    SaveUtils.addToCommandsList(getContext(),
+                                            new CommandListItem(commandTitle.getText().toString(), commandValue.getText().toString()));
+                                    done();
+                                    dismiss();
+                                }
+                                else {
+                                    Toast.makeText(getContext(), "Please Enter Text", Toast.LENGTH_LONG).show();
+                                }
                             }
                         }
                 )
@@ -59,8 +67,13 @@ public class AddCommandDialogFragment extends androidx.fragment.app.DialogFragme
                     public void onClick(DialogInterface dialog, int which) {
                         dismiss();
                     }
-                })
-                .create();
+                }).create();
+    }
+
+    private void done() {
+        Intent intent = new Intent();
+        intent.putExtra("done",true);
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }
 
     //initialize views
