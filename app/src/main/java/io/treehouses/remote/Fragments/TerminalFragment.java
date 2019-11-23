@@ -47,6 +47,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private int i;
     private String last;
     View view;
+    HashMap<String, List<CommandListItem>> expandableListDetail;
 
     public TerminalFragment() {
     }
@@ -57,6 +58,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         instance = this;
+        expandableListDetail = getCommandsList();
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
         setHasOptionsMenu(true);
         setupList();
@@ -64,7 +66,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
     public HashMap<String, List<CommandListItem>> getCommandsList() {
-        HashMap<String, List<CommandListItem>> expandableListDetail = new HashMap<String, List<CommandListItem>>();
+        expandableListDetail = new HashMap<String, List<CommandListItem>>();
         List<CommandListItem> commands = new ArrayList<>();
         commands.add(new CommandListItem("CHANGE PASSWORD", ""));
         commands.add(new CommandListItem("HELP", "treehouses help"));
@@ -83,18 +85,23 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     public void setupList() {
         expandableListView = view.findViewById(R.id.terminalList);
-        final HashMap<String, List<CommandListItem>> expandableListDetail = getCommandsList();
         List<String> expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
         ExpandableListAdapter expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
-            String title = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTitle();
-            if (title.equalsIgnoreCase("CLEAR")) {
-                MainApplication.getTerminalList().clear();
-                getmConversationArrayAdapter().notifyDataSetChanged();
-            } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) {
-                showChPasswordDialog();
-            } else listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
+            if (childPosition < expandableListDetail.get("Commands").size()) {
+                String title = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTitle();
+                if (title.equalsIgnoreCase("CLEAR")) {
+                    MainApplication.getTerminalList().clear();
+                    getmConversationArrayAdapter().notifyDataSetChanged();
+                } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) {
+                    showChPasswordDialog();
+                } else {
+                    listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
+                }
+            } else {
+                //TODO: ADD NEW COMMAND HERE
+            }
 
             return false;
         });

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/md_green_50">
+
+    <ImageView
+        android:id="@+id/expandedListItem"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_add_box_black_24dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:scaleType="center" />
+</LinearLayout>
