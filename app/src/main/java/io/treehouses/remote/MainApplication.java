@@ -3,6 +3,8 @@ package io.treehouses.remote;
 import android.app.Application;
 import java.util.ArrayList;
 
+import io.treehouses.remote.utils.SaveUtils;
+
 public class MainApplication extends Application {
 
     private static ArrayList terminalList, tunnelList, commandList;
@@ -13,6 +15,7 @@ public class MainApplication extends Application {
         terminalList = new ArrayList();
         tunnelList = new ArrayList();
         commandList = new ArrayList();
+        SaveUtils.initCommandsList(getApplicationContext());
     }
 
     public static ArrayList getTerminalList() {

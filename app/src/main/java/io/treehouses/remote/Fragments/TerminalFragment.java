@@ -33,6 +33,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.pojo.CommandListItem;
+import io.treehouses.remote.utils.SaveUtils;
 
 public class TerminalFragment extends BaseTerminalFragment {
 
@@ -58,30 +59,31 @@ public class TerminalFragment extends BaseTerminalFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         instance = this;
-        expandableListDetail = getCommandsList();
+        expandableListDetail = new HashMap<>();
+        expandableListDetail.put("Commands", SaveUtils.getCommandsList(getContext()));
         Log.e("TERMINAL mChatService", "" + mChatService.getState());
         setHasOptionsMenu(true);
         setupList();
         return view;
     }
 
-    public HashMap<String, List<CommandListItem>> getCommandsList() {
-        expandableListDetail = new HashMap<String, List<CommandListItem>>();
-        List<CommandListItem> commands = new ArrayList<>();
-        commands.add(new CommandListItem("CHANGE PASSWORD", ""));
-        commands.add(new CommandListItem("HELP", "treehouses help"));
-        commands.add(new CommandListItem("DOCKER PS", "docker ps"));
-        commands.add(new CommandListItem("DETECT RPI", "treehouses detectrpi"));
-        commands.add(new CommandListItem("EXPAND FS", "treehouses expandfs"));
-        commands.add(new CommandListItem("VNC ON", "treehouses vnc on"));
-        commands.add(new CommandListItem("VNC OFF", "treehouses vnc off"));
-        commands.add(new CommandListItem("VNC STATUS", "treehouses vnc"));
-        commands.add(new CommandListItem("TOR", "treehouses tor"));
-        commands.add(new CommandListItem("NETWORK MODE INFO", "treehouses networkmode info"));
-        commands.add(new CommandListItem("CLEAR", ""));
-        expandableListDetail.put("Commands", commands);
-        return expandableListDetail;
-    }
+//    public HashMap<String, List<CommandListItem>> getCommandsList() {
+//        expandableListDetail = new HashMap<String, List<CommandListItem>>();
+//        List<CommandListItem> commands = new ArrayList<>();
+//        commands.add(new CommandListItem("CHANGE PASSWORD", ""));
+//        commands.add(new CommandListItem("HELP", "treehouses help"));
+//        commands.add(new CommandListItem("DOCKER PS", "docker ps"));
+//        commands.add(new CommandListItem("DETECT RPI", "treehouses detectrpi"));
+//        commands.add(new CommandListItem("EXPAND FS", "treehouses expandfs"));
+//        commands.add(new CommandListItem("VNC ON", "treehouses vnc on"));
+//        commands.add(new CommandListItem("VNC OFF", "treehouses vnc off"));
+//        commands.add(new CommandListItem("VNC STATUS", "treehouses vnc"));
+//        commands.add(new CommandListItem("TOR", "treehouses tor"));
+//        commands.add(new CommandListItem("NETWORK MODE INFO", "treehouses networkmode info"));
+//        commands.add(new CommandListItem("CLEAR", ""));
+//        expandableListDetail.put("Commands", commands);
+//        return expandableListDetail;
+//    }
 
     public void setupList() {
         expandableListView = view.findViewById(R.id.terminalList);
