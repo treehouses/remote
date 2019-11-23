@@ -14,8 +14,8 @@ import io.treehouses.remote.pojo.CommandListItem;
 public class SaveUtils {
     private static final String DELIMITER = "#/@/#";
 
-    private static final String COMMANDS_TITLES_KEY = "commands_titles";
-    private static final String COMMANDS_VALUES_KEY = "commands_values";
+    public static final String COMMANDS_TITLES_KEY = "commands_titles";
+    public static final String COMMANDS_VALUES_KEY = "commands_values";
 
     public static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
         String strArr = "";
@@ -23,7 +23,7 @@ public class SaveUtils {
             strArr += array.get(i) + DELIMITER;
         }
         if (strArr.length() != 0) {
-            strArr = strArr.substring(0, strArr.length() - 1);
+            strArr = strArr.substring(0, strArr.length() - DELIMITER.length());
         }
 
         SharedPreferences.Editor e = PreferenceManager.getDefaultSharedPreferences(context).edit();
@@ -44,14 +44,11 @@ public class SaveUtils {
         return new ArrayList<>(Arrays.asList(strArr));
     }
 
-    public static Boolean addToArrayList(Context context, String arrayName, String toAdd) {
+    public static void addToArrayList(Context context, String arrayName, String toAdd) {
         ArrayList<String> arrayList = getStringArray(context, arrayName);
-        if (arrayList != null) {
-            arrayList.add(toAdd);
-            saveStringArray(context, arrayList, arrayName);
-            return true;
-        }
-        return false;
+        if (arrayList == null) arrayList = new ArrayList<>();
+        arrayList.add(toAdd);
+        saveStringArray(context, arrayList, arrayName);
     }
 
     public static Boolean removeFromArrayList(Context context, String arrayName, String toRemove) {
@@ -61,6 +58,10 @@ public class SaveUtils {
             return true;
         }
         return false;
+    }
+
+    public static void clearArrayList(Context context, String arrayName) {
+        saveStringArray(context, new ArrayList<>(), arrayName);
     }
 
     //TERMINAL COMMAND LIST UTILS
@@ -84,7 +85,8 @@ public class SaveUtils {
         List<CommandListItem> finalArray = new ArrayList<>();
 
         if (titles == null || values == null || titles.size() != values.size()) {
-            Log.e("COMMANDLIST", "ERROR SIZE: COMMANDS: " + titles.size() +" and VALUES: " + values.size());
+            Log.e("COMMANDLIST", "ERROR SIZE: COMMANDS and VALUES");
+            return new ArrayList<CommandListItem>();
         }
         for (int i = 0; i < titles.size(); i++) {
             finalArray.add(new CommandListItem(titles.get(i), values.get(i)));

@@ -6,6 +6,7 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.utils.SaveUtils;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -68,6 +69,8 @@ public class StatusFragment extends BaseFragment {
         String ping = "treehouses detectrpi";
         byte[] pSend1 = ping.getBytes();
         mChatService.write(pSend1);
+        SaveUtils.clearArrayList(getContext(), SaveUtils.COMMANDS_TITLES_KEY);
+        SaveUtils.clearArrayList(getContext(), SaveUtils.COMMANDS_VALUES_KEY);
         return view;
     }
 

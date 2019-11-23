@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment;
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -103,6 +104,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                 }
             } else {
                 //TODO: ADD NEW COMMAND HERE
+                showAddCommandDialog();
             }
 
             return false;
@@ -278,6 +280,11 @@ public class TerminalFragment extends BaseTerminalFragment {
         androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
         dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
+    }
+
+    private void showAddCommandDialog() {
+        androidx.fragment.app.DialogFragment dialogFragment = AddCommandDialogFragment.newInstance();
+        dialogFragment.show(getFragmentManager().beginTransaction(), "AddCommandDialog");
     }
 
     private void addToCommandList(String writeMessage) {
