@@ -26,7 +26,7 @@ public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragme
     private EditText confirmPassEditText;
     private TextBoxValidation textBoxValidation = new TextBoxValidation();
 
-    public static ChPasswordDialogFragment newInstance(int num) {
+    public static ChPasswordDialogFragment newInstance() {
         ChPasswordDialogFragment chPassDialogFragment = new ChPasswordDialogFragment();
         return chPassDialogFragment;
     }

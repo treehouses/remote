@@ -83,12 +83,12 @@ public class TerminalFragment extends BaseTerminalFragment {
                     MainApplication.getTerminalList().clear();
                     getmConversationArrayAdapter().notifyDataSetChanged();
                 } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) {
-                    showChPasswordDialog();
+                    showDialog(ChPasswordDialogFragment.newInstance(), Constants.REQUEST_DIALOG_FRAGMENT_CHPASS, "ChangePassDialog");
                 } else {
                     listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
                 }
             } else {
-                showAddCommandDialog();
+                showDialog(AddCommandDialogFragment.newInstance(), Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND, "AddCommandDialog");
             }
 
             return false;
@@ -142,13 +142,9 @@ public class TerminalFragment extends BaseTerminalFragment {
         setupChat();
     }
 
-    public static TerminalFragment getInstance() {
-        return instance;
-    }
+    public static TerminalFragment getInstance() { return instance; }
 
-    public ArrayAdapter<String> getmConversationArrayAdapter() {
-        return mConversationArrayAdapter;
-    }
+    public ArrayAdapter<String> getmConversationArrayAdapter() { return mConversationArrayAdapter; }
 
     /**
      * Set up the UI and background operations for chat.
@@ -173,9 +169,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         btnSendClickListener();
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        if (mChatService.getState() == Constants.STATE_NONE) {
-            mChatService = new BluetoothChatService(mHandler);
-        }
+        if (mChatService.getState() == Constants.STATE_NONE) mChatService = new BluetoothChatService(mHandler);
     }
 
     private void btnSendClickListener() {
@@ -200,9 +194,7 @@ public class TerminalFragment extends BaseTerminalFragment {
             last = list.get(--i);
             mOutEditText.setText(last);
             mOutEditText.setSelection(mOutEditText.length());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     /**
@@ -244,8 +236,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             Log.d(TAG, "back from change password");
             //send password to command line interface
             listener.sendMessage(password);
-        } else {
-            Log.d(TAG, "back from change password, fail");
         }
     }
 
@@ -272,17 +262,10 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
-    public void showChPasswordDialog() {
+    public void showDialog(androidx.fragment.app.DialogFragment dialogFrag, int requestCode, String tag) {
         // Create an instance of the dialog fragment and show it
-        androidx.fragment.app.DialogFragment dialogFrag = ChPasswordDialogFragment.newInstance(123);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_CHPASS);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "ChangePassDialog");
-    }
-
-    private void showAddCommandDialog() {
-        androidx.fragment.app.DialogFragment dialogFragment = AddCommandDialogFragment.newInstance();
-        dialogFragment.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND);
-        dialogFragment.show(getFragmentManager().beginTransaction(), "AddCommandDialog");
+        dialogFrag.setTargetFragment(this, requestCode);
+        dialogFrag.show(getFragmentManager().beginTransaction(), tag);
     }
 
     private void addToCommandList(String writeMessage) {

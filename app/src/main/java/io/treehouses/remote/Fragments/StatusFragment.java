@@ -69,6 +69,8 @@ public class StatusFragment extends BaseFragment {
         String ping = "treehouses detectrpi";
         byte[] pSend1 = ping.getBytes();
         mChatService.write(pSend1);
+        SaveUtils.clearArrayList(getContext(), SaveUtils.COMMANDS_TITLES_KEY);
+        SaveUtils.clearArrayList(getContext(), SaveUtils.COMMANDS_VALUES_KEY);
         return view;
     }
 
