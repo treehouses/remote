@@ -11,7 +11,7 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:textAlignment="center"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/md_white_1000"
         android:background="@drawable/ripple" />
 </LinearLayout>
