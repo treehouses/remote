@@ -1,12 +1,15 @@
 package io.treehouses.remote.Fragments;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,13 +34,14 @@ public class StatusFragment extends BaseFragment {
     private static final String TAG = "StatusFragment";
     private ImageView wifiStatus, btRPIName, rpiType, memoryStatus;
     private ImageView btStatus, ivUpgrade;
-    private TextView tvStatus1, tvStatus2, tvStatus3, tvUpgrade, tvMemory;
+    private TextView tvStatus, tvStatus1, tvStatus2, tvStatus3, tvUpgrade, tvMemory;
     private List<String> outs = new ArrayList<>();
     private Boolean wifiStatusVal = false;
     private Button upgrade;
     private ProgressDialog pd;
     private Boolean updateRightNow = false;
     private BluetoothChatService mChatService = null;
+    private CardView cardRPIName;
     /**
      * Name of the connected device
      */
@@ -51,6 +56,8 @@ public class StatusFragment extends BaseFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         deviceName = mChatService.getConnectedDeviceName();
+
+        tvStatus.setText("Bluetooth Connection: " + deviceName);
 
         Log.e("STATUS", "device name: " + deviceName);
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
@@ -72,6 +79,7 @@ public class StatusFragment extends BaseFragment {
         memoryStatus = view.findViewById(R.id.memoryStatus);
 
         ivUpgrade = view.findViewById(R.id.upgradeCheck);
+        tvStatus = view.findViewById(R.id.tvStatus);
         tvStatus1 = view.findViewById(R.id.tvStatus1);
         tvStatus2 = view.findViewById(R.id.tvStatus2);
         tvStatus3 = view.findViewById(R.id.tvStatus3);
@@ -79,7 +87,13 @@ public class StatusFragment extends BaseFragment {
         tvMemory = view.findViewById(R.id.tvMemoryStatus);
         upgrade = view.findViewById(R.id.upgrade);
         upgrade.setVisibility(View.GONE);
+        cardRPIName = view.findViewById(R.id.cardView);
 
+        upgradeOnViewClickListener();
+        rpiNameOnViewClickListener();
+    }
+
+    private void upgradeOnViewClickListener() {
         upgrade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +101,14 @@ public class StatusFragment extends BaseFragment {
                 updateRightNow = true;
                 pd = ProgressDialog.show(getActivity(), "Updating...", "Please wait a few seconds...");
                 pd.setCanceledOnTouchOutside(true);
+            }
+        });
+    }
+    private void rpiNameOnViewClickListener() {
+        cardRPIName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRenameDialog();
             }
         });
     }
@@ -122,7 +144,8 @@ public class StatusFragment extends BaseFragment {
     }
 
     private void setRPIDeviceName() {
-        tvStatus2.setText("Connected RPI Name: " + deviceName);
+        String name = deviceName.substring(0, deviceName.indexOf("-"));
+        tvStatus2.setText("Connected RPI Name: " + name);
         btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
     }
 
@@ -170,6 +193,43 @@ public class StatusFragment extends BaseFragment {
             upgrade.setVisibility(View.VISIBLE);
         }
     }
+
+    private void showRenameDialog() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View mView = inflater.inflate(R.layout.dialog_rename_status,null);
+        EditText mHostNameEditText = mView.findViewById(R.id.hostname);
+        mHostNameEditText.setHint("New Name");
+        AlertDialog alertDialog = createRenameDialog(mView, mHostNameEditText);
+        alertDialog.show();
+    }
+
+    private AlertDialog createRenameDialog(View view, EditText mEditText) {
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-")))
+                .setIcon(R.drawable.dialog_icon)
+                .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (!mEditText.getText().toString().equals("")) {
+                                    writeToRPI("treehouses rename " + mEditText.getText().toString());
+                                    Toast.makeText(getContext(), "Raspberry Pi Renamed", Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    Toast.makeText(getContext(), "Please enter a new name", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                )
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+    }
+
 
     /**
      * The Handler that gets information back from the BluetoothChatService
