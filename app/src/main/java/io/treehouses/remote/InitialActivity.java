@@ -27,6 +27,7 @@ import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.Fragments.ServicesFragment;
+import io.treehouses.remote.Fragments.SettingsFragment;
 import io.treehouses.remote.Fragments.StatusFragment;
 import io.treehouses.remote.Fragments.SystemFragment;
 import io.treehouses.remote.Fragments.TerminalFragment;
@@ -59,7 +60,6 @@ public class InitialActivity extends PermissionActivity
         setContentView(R.layout.activity_initial2);
         requestPermission();
         Log.e(TAG, "onCreate(Bundle) called");
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -230,6 +230,14 @@ public class InitialActivity extends PermissionActivity
             validBluetoothConnection = false;
         }
         Log.e("BOOLEAN", "" + validBluetoothConnection);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            openCallFragment(new SettingsFragment());
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private AlertDialog showAlertDialog() {

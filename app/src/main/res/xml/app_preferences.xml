@@ -1,6 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="General">
+        <SwitchPreference
+            android:title="Splash Screen"
+            android:key="splashScreen"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="About">
         <Preference
             android:title="Contributors"
             android:key="contributors">
@@ -8,10 +14,16 @@
                 android:data="https://github.com/treehouses/remote/graphs/contributors" />
         </Preference>
         <Preference
-            android:title="About"
-            android:key="about_button">
+            android:title="Help"
+            android:key="help_button">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://treehouses.io/#!index.md" />
+        </Preference>
+        <Preference
+            android:title="Report an Issue"
+            android:key="reportIssue">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/treehouses/remote/issues"/>
         </Preference>
 
     </PreferenceCategory>
