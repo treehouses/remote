@@ -2,11 +2,11 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
@@ -19,13 +19,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-
 import java.util.Calendar;
-
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
@@ -68,7 +66,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         testConnection = view.findViewById(R.id.test_connection);
 
-        Log.d(TAG, "TEST");
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
@@ -143,7 +140,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             @Override
             public void onClick(View v) {
                 writeToRPI("treehouses led dance");
-                testConnectionDialog = createTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
+                testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
                 testConnectionDialog.show();
             }
         });
@@ -217,8 +214,33 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
     }
 
-    private AlertDialog createTestConnectionDialog(Boolean dismissable, String title, int messageID) {
+    private AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID) {
+        LayoutInflater layoutInflater = getLayoutInflater();
+        View mView = layoutInflater.inflate(R.layout.dialog_test_connection, null);
+        ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
+        ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
+        if (!dismissable) {
+            mIndicatorGreen.setVisibility(View.VISIBLE);
+            mIndicatorRed.setVisibility(View.VISIBLE);
+        } else {
+            mIndicatorGreen.setVisibility(View.INVISIBLE);
+            mIndicatorRed.setVisibility(View.INVISIBLE);
+        }
+        mIndicatorGreen.setBackgroundResource(R.drawable.flash_anim_green);
+        mIndicatorRed.setBackgroundResource(R.drawable.flash_anim_red);
+
+        AnimationDrawable animationDrawable = (AnimationDrawable) mIndicatorGreen.getBackground();
+
+        animationDrawable.start();
+
+        AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
+        a.show();
+        return a;
+    }
+
+    private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
         AlertDialog.Builder d = new AlertDialog.Builder(getContext())
+                .setView(mView)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_action_device_access_bluetooth_searching)
                 .setMessage(messageID);
@@ -236,7 +258,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private void dismissTestConnection() {
         if (testConnectionDialog != null) {
             testConnectionDialog.cancel();
-            createTestConnectionDialog(true, "Process Finished", R.string.test_finished).show();
+            showTestConnectionDialog(true, "Process Finished", R.string.test_finished);
         }
     }
 
