@@ -50,6 +50,18 @@ public class TerminalFragment extends BaseTerminalFragment {
     private String last;
     View view;
 
+    /**
+     * Array adapter for the conversation thread
+     */
+    private ArrayAdapter<String> mConversationArrayAdapter;
+
+    /**
+     * Member object for the chat services
+     */
+    private BluetoothChatService mChatService = null;
+
+    private static boolean isRead = false;
+
     public TerminalFragment() { }
 
     @Override
@@ -104,44 +116,12 @@ public class TerminalFragment extends BaseTerminalFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
         mOutEditText = view.findViewById(R.id.edit_text_out);
-        setUpAutoComplete();
+        setUpAutoComplete(mOutEditText);
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
         mPrevious = view.findViewById(R.id.btnPrevious);
     }
-
-    private void setUpAutoComplete() {
-        final String[] commands = getResources().getStringArray(R.array.commands_list);
-        final String[] array2 = {"treehouses", "docker"};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
-        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
-        mOutEditText.setThreshold(1);
-        mOutEditText.setAdapter(arrayAdapter);
-        mOutEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() < 6) { mOutEditText.setAdapter(arrayAdapter1); }
-                else { mOutEditText.setAdapter(arrayAdapter); }
-            }
-            @Override
-            public void afterTextChanged(Editable s) { }
-        });
-    }
-
-    /**
-     * Array adapter for the conversation thread
-     */
-    private ArrayAdapter<String> mConversationArrayAdapter;
-
-    /**
-     * Member object for the chat services
-     */
-    private BluetoothChatService mChatService = null;
-
-    private static boolean isRead = false;
 
     @Override
     public void onDestroy() {
