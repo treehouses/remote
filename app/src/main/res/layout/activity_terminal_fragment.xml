@@ -110,6 +110,7 @@
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginRight="@dimen/margin_medium"
+            android:layout_marginBottom="100dp"
             android:background="@color/bg_white"
             android:descendantFocusability="beforeDescendants"
             android:divider="@android:color/transparent"
