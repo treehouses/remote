@@ -12,7 +12,7 @@
         android:visibility="visible"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:tint="@color/md_green_500"
+        android:tint="@color/md_grey_400"
         android:src="@drawable/paired" />
 
     <TextView

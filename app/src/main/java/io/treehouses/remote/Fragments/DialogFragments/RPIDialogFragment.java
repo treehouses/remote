@@ -44,7 +44,6 @@ import static android.widget.Toast.LENGTH_LONG;
 public class RPIDialogFragment extends BaseDialogFragment {
 
     private static BluetoothChatService mChatService = null;
-    private static final String TAG = "RaspberryDialogFragment";
 
     private static RPIDialogFragment instance = null;
     private List<BluetoothDevice> raspberry_devices = new ArrayList<BluetoothDevice>(), all_devices = new ArrayList<BluetoothDevice>();
@@ -87,7 +86,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         setAdapterNotNull(raspberryDevicesText);
         for (BluetoothDevice d : pairedDevices) {
             if (checkPiAddress(d.getAddress())) {
-                addToDialog(d, raspberryDevicesText, raspberry_devices);
+                addToDialog(d, raspberryDevicesText, raspberry_devices, false);
                 progressBar.setVisibility(View.INVISIBLE); }
         }
         intentFilter();
@@ -141,9 +140,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
                 pDialog.setMessage("Device Name: " + mainDevice.getName() + "\nDevice Address: " + mainDevice.getAddress());
                 pDialog.show();
             }
-            else {
-                Toast.makeText(getContext(), "Device Unsupported",LENGTH_LONG).show();
-            }
+            else { Toast.makeText(getContext(), "Device Unsupported",LENGTH_LONG).show(); }
         });
     }
 
@@ -165,13 +162,9 @@ public class RPIDialogFragment extends BaseDialogFragment {
         });
     }
 
-    public static RPIDialogFragment getInstance() {
-        return instance;
-    }
+    public static RPIDialogFragment getInstance() { return instance; }
 
-    public void setCheckConnectionState(SetDisconnect checkConnectionState)  {
-        this.checkConnectionState = checkConnectionState;
-    }
+    public void setCheckConnectionState(SetDisconnect checkConnectionState)  { this.checkConnectionState = checkConnectionState; }
 
     private void finish(int status, View mView) {
         final AlertDialog mDialog = getAlertDialog(mView, context, false);
@@ -184,9 +177,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            if (mBluetoothAdapter == null) context.unregisterReceiver(mReceiver);
-        } catch (Exception e) { e.printStackTrace(); }
+        try { if (mBluetoothAdapter == null) context.unregisterReceiver(mReceiver); } catch (Exception e) { e.printStackTrace(); }
     }
 
     public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
@@ -219,21 +210,24 @@ public class RPIDialogFragment extends BaseDialogFragment {
             if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (checkPiAddress(device.getAddress())) {
-                    addToDialog(device, raspberryDevicesText, raspberry_devices);
+                    addToDialog(device, raspberryDevicesText, raspberry_devices, true);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
-                addToDialog(device, allDevicesText, all_devices);
+                addToDialog(device, allDevicesText, all_devices, true);
                 Log.e("Broadcast BT", device.getName() + "\n" + device.getAddress());
             }
         }
     };
 
-    private void addToDialog(BluetoothDevice device, List<DeviceInfo> textList, List<BluetoothDevice> mDevices) {
+    private void addToDialog(BluetoothDevice device, List<DeviceInfo> textList, List<BluetoothDevice> mDevices, Boolean inRange) {
         if (!mDevices.contains(device)){
             mDevices.add(device);
-            textList.add(new DeviceInfo(device.getName() + "\n" + device.getAddress(), pairedDevices.contains(device)));
-            mArrayAdapter.notifyDataSetChanged();
+            textList.add(new DeviceInfo(device.getName() + "\n" + device.getAddress(), pairedDevices.contains(device), inRange));
         }
+        else {
+            textList.get(mDevices.indexOf(device)).setInRange(true);
+        }
+        mArrayAdapter.notifyDataSetChanged();
     }
 
     private boolean checkPiAddress(String deviceHardwareAddress) {
@@ -246,7 +240,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         @Override
         public void handleMessage(Message msg) {
             Log.e("RPIDialogFragment", "" + msg.what);
-            String readMessage = (String)msg.obj;
+            String readMessage = (String) msg.obj;
 
             if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) {
                 pDialog.dismiss();
