@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,7 +44,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private static TerminalFragment instance = null;
     private ListView mConversationView;
     private TextView mPingStatus;
-    private EditText mOutEditText;
+    private AutoCompleteTextView mOutEditText;
     private Button mSendButton, pingStatusButton, mPrevious;
     private ExpandableListView expandableListView;
     private ArrayList<String> list;
@@ -104,10 +108,31 @@ public class TerminalFragment extends BaseTerminalFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
         mOutEditText = view.findViewById(R.id.edit_text_out);
+        setUpAutoComplete();
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
         mPrevious = view.findViewById(R.id.btnPrevious);
+    }
+
+    private void setUpAutoComplete() {
+        final String[] commands = getResources().getStringArray(R.array.commands_list);
+        final String[] array2 = {"treehouses", "docker"};
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
+        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
+        mOutEditText.setThreshold(1);
+        mOutEditText.setAdapter(arrayAdapter);
+        mOutEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 6) { mOutEditText.setAdapter(arrayAdapter1); }
+                else { mOutEditText.setAdapter(arrayAdapter); }
+            }
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
     }
 
     /**

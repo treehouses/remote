@@ -53,7 +53,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme.Base"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
 
         <meta-data
