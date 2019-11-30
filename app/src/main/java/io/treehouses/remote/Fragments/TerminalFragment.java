@@ -17,7 +17,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -25,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,8 +50,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private String last;
     View view;
 
-    public TerminalFragment() {
-    }
+    public TerminalFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,9 +93,8 @@ public class TerminalFragment extends BaseTerminalFragment {
             if (title.equalsIgnoreCase("CLEAR")) {
                 MainApplication.getTerminalList().clear();
                 getmConversationArrayAdapter().notifyDataSetChanged();
-            } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) {
-                showChPasswordDialog();
-            } else listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
+            } else if (title.equalsIgnoreCase("CHANGE PASSWORD")) { showChPasswordDialog(); }
+            else listener.sendMessage(expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getCommand());
 
             return false;
         });
@@ -153,32 +149,23 @@ public class TerminalFragment extends BaseTerminalFragment {
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == Constants.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mChatService.start();
-                idle(mPingStatus, pingStatusButton);
-            }
+        if (mChatService != null && mChatService.getState() == Constants.STATE_NONE) {
+            mChatService.start();
+            idle(mPingStatus, pingStatusButton);
         }
     }
 
     @Override
     public void onResume() {
-        Log.e("tag", "LOG check onResume method ");
         Log.e("CHECK STATUS", "" + mChatService.getState());
         checkStatus(mChatService, mPingStatus, pingStatusButton);
         super.onResume();
         setupChat();
     }
 
-    public static TerminalFragment getInstance() {
-        return instance;
-    }
+    public static TerminalFragment getInstance() { return instance; }
 
-    public ArrayAdapter<String> getmConversationArrayAdapter() {
-        return mConversationArrayAdapter;
-    }
+    public ArrayAdapter<String> getmConversationArrayAdapter() { return mConversationArrayAdapter; }
 
     /**
      * Set up the UI and background operations for chat.
@@ -203,9 +190,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         btnSendClickListener();
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        if (mChatService.getState() == Constants.STATE_NONE) {
-            mChatService = new BluetoothChatService(mHandler);
-        }
+        if (mChatService.getState() == Constants.STATE_NONE) mChatService = new BluetoothChatService(mHandler);
     }
 
     private void btnSendClickListener() {
@@ -215,14 +200,11 @@ public class TerminalFragment extends BaseTerminalFragment {
             View view = getView();
             if (null != view) {
                 TextView consoleInput = view.findViewById(R.id.edit_text_out);
-                String message = consoleInput.getText().toString();
-                listener.sendMessage(message);
+                listener.sendMessage(consoleInput.getText().toString());
                 consoleInput.setText("");
             }
         });
-        mPrevious.setOnClickListener(v -> {
-            setLastCommand();
-        });
+        mPrevious.setOnClickListener(v -> { setLastCommand(); });
     }
 
     private void setLastCommand() {
@@ -230,9 +212,7 @@ public class TerminalFragment extends BaseTerminalFragment {
             last = list.get(--i);
             mOutEditText.setText(last);
             mOutEditText.setSelection(mOutEditText.length());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     /**
@@ -268,11 +248,8 @@ public class TerminalFragment extends BaseTerminalFragment {
             String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
             //store password and command
             String password = "treehouses password " + chPWD;
-            Log.d(TAG, "back from change password");
             //send password to command line interface
             listener.sendMessage(password);
-        } else {
-            Log.d(TAG, "back from change password, fail");
         }
     }
 
@@ -311,9 +288,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) {
-                        idle(mPingStatus, pingStatusButton);
-                    }
+                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(mPingStatus, pingStatusButton); }
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
@@ -327,8 +302,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
-                    Activity activity = getActivity();
-                    handlerCaseName(msg, activity);
+                    handlerCaseName(msg, getActivity());
                     break;
                 case Constants.MESSAGE_TOAST:
                     handlerCaseToast(msg);
