@@ -5,10 +5,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -142,5 +145,24 @@ public class BaseTerminalFragment extends BaseFragment{
             return false;
         }
         return true;
+    }
+    public void setUpAutoComplete(AutoCompleteTextView autoComplete) {
+        final String[] commands = getResources().getStringArray(R.array.commands_list);
+        final String[] array2 = {"treehouses", "docker"};
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
+        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
+        autoComplete.setThreshold(1);
+        autoComplete.setAdapter(arrayAdapter);
+        autoComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() < 6) { autoComplete.setAdapter(arrayAdapter1); }
+                else { autoComplete.setAdapter(arrayAdapter); }
+            }
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
     }
 }
