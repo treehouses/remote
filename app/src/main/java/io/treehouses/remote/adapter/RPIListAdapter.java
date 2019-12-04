@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.List;
 
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
@@ -39,6 +41,11 @@ public class RPIListAdapter extends ArrayAdapter<DeviceInfo> {
         pairedImage.setVisibility(View.INVISIBLE);
         if (data.get(position).isPaired()) {
             pairedImage.setVisibility(View.VISIBLE);
+            if (data.get(position).isInRange()) {
+                pairedImage.setColorFilter(ContextCompat.getColor(context, R.color.md_green_500));
+            } else {
+                pairedImage.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_400));
+            }
         }
 
         // Return the completed view to render on screen
