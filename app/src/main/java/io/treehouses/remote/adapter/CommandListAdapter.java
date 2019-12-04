@@ -1,6 +1,7 @@
 package io.treehouses.remote.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +29,10 @@ public class CommandListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int listPosition, int expandedListPosition) {
-        return this.expandableListDetail.get(this.expandableListTitle.get(listPosition))
-                .get(expandedListPosition).getTitle();
+        if (expandedListPosition < expandableListDetail.get(this.expandableListTitle.get(listPosition)).size()) {
+            return this.expandableListDetail.get(this.expandableListTitle.get(listPosition)).get(expandedListPosition).getTitle();
+        }
+        return "Add";
     }
 
     @Override
@@ -40,18 +43,23 @@ public class CommandListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int listPosition, final int expandedListPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String expandedListText = (String) getChild(listPosition, expandedListPosition);
-        if (convertView == null) {
-            convertView = getConvertView(R.layout.list_item);
+        if (expandedListPosition == this.expandableListDetail.get(this.expandableListTitle.get(listPosition)).size()) {
+            convertView = getConvertView(R.layout.list_add);
         }
-        TextView expandedListTextView = convertView.findViewById(R.id.expandedListItem);
-        expandedListTextView.setText(expandedListText);
+        else {
+            convertView = getConvertView(R.layout.list_item);
+            TextView expandedListTextView = convertView.findViewById(R.id.expandedListItem);
+            expandedListTextView.setText(expandedListText);
+        }
         return convertView;
     }
 
     @Override
     public int getChildrenCount(int listPosition) {
-        return this.expandableListDetail.get(this.expandableListTitle.get(listPosition))
-                .size();
+        if (listPosition == 0) {
+            return this.expandableListDetail.get(this.expandableListTitle.get(listPosition)).size() + 1;
+        }
+        return this.expandableListDetail.get(this.expandableListTitle.get(listPosition)).size();
     }
 
     @Override

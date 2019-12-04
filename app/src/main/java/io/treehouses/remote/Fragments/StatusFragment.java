@@ -6,6 +6,7 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.utils.SaveUtils;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
