@@ -124,4 +124,9 @@ public class SaveUtils {
         removeFromArrayList(context, COMMANDS_TITLES_KEY, commandListItem.getTitle());
         removeFromArrayList(context, COMMANDS_VALUES_KEY, commandListItem.getCommand());
     }
+
+    public static void clearCommandsList (Context context) {
+        clearArrayList(context, COMMANDS_TITLES_KEY);
+        clearArrayList(context, COMMANDS_VALUES_KEY);
+    }
 }
