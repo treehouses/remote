@@ -170,6 +170,10 @@ public class StatusFragment extends BaseFragment {
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         }
+        else {
+            wifiStatusVal = false;
+            wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
+        }
         if (wifiStatusVal) {
             writeToRPI("treehouses upgrade --check");
         } else {
