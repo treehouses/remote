@@ -190,7 +190,9 @@ public class StatusFragment extends BaseFragment {
             upgrade.setVisibility(View.GONE);
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(3).substring(4));
+            if (outs.get(3).length()>4) {
+                tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(3).substring(4));
+            }
             upgrade.setVisibility(View.VISIBLE);
         }
     }
