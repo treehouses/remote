@@ -119,25 +119,27 @@ public class StatusFragment extends BaseFragment {
     }
 
     private void updateStatus() {
-        if (outs.size() == 1) {
-            setRPIDeviceName();
-        }
-        if (outs.size() == 2) {
-            setRPIType();
-        }
-        if (outs.size() == 3) {
-            getMemory();
-        }
-        if (outs.size() == 4) {
-            checkWifiStatus();
-        }
-        if (outs.size() == 5) {
-            checkUpgradeStatus();
-        }
-        if (outs.size() == 6) {
-            outs.remove(4);
-            outs.remove(4);
-            checkWifiStatus();
+        switch (outs.size()) {
+            case 1:
+                setRPIDeviceName();
+                break;
+            case 2:
+                setRPIType();
+                break;
+            case 3:
+                getMemory();
+                break;
+            case 4:
+                checkWifiStatus();
+                break;
+            case 5:
+                checkUpgradeStatus();
+                break;
+            case 6:
+                outs.remove(4);
+                outs.remove(4);
+                checkWifiStatus();
+                break;
         }
     }
 
