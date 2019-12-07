@@ -66,7 +66,7 @@ public class StatusFragment extends BaseFragment {
         }
         checkStatusNow();
 
-        String ping = "treehouses detectrpi";
+        String ping = "hostname";
         byte[] pSend1 = ping.getBytes();
         mChatService.write(pSend1);
         return view;
@@ -119,22 +119,24 @@ public class StatusFragment extends BaseFragment {
     }
 
     private void updateStatus() {
-        setRPIDeviceName();
         if (outs.size() == 1) {
-            setRPIType();
+            setRPIDeviceName();
         }
         if (outs.size() == 2) {
-            getMemory();
+            setRPIType();
         }
         if (outs.size() == 3) {
-            checkWifiStatus();
+            getMemory();
         }
         if (outs.size() == 4) {
-            checkUpgradeStatus();
+            checkWifiStatus();
         }
         if (outs.size() == 5) {
-            outs.remove(3);
-            outs.remove(3);
+            checkUpgradeStatus();
+        }
+        if (outs.size() == 6) {
+            outs.remove(4);
+            outs.remove(4);
             checkWifiStatus();
         }
     }
@@ -145,27 +147,28 @@ public class StatusFragment extends BaseFragment {
     }
 
     private void setRPIDeviceName() {
-        String name = deviceName.substring(0, deviceName.indexOf("-"));
+        String name = outs.get(0);
         tvStatus2.setText("Connected RPI Name: " + name);
         btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        writeToRPI("treehouses detectrpi");
     }
 
     private void setRPIType() {
-        tvStatus3.setText("RPI Type: " + outs.get(0));
+        tvStatus3.setText("RPI Type: " + outs.get(1));
         rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         writeToRPI("treehouses memory free");
     }
 
     private void getMemory() {
-        tvMemory.setText("Memory: " + outs.get(1) + "bytes available");
+        tvMemory.setText("Memory: " + outs.get(2) + "bytes available");
         memoryStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         writeToRPI("treehouses internet");
     }
 
     private void checkWifiStatus() {
-        tvStatus1.setText("RPI Wifi Connection: " + outs.get(2));
-        Log.e("StatusFragment", "**" + outs.get(2) + "**" + outs.get(2).equals("true "));
-        if (outs.get(2).equals("true ")) {
+        tvStatus1.setText("RPI Wifi Connection: " + outs.get(3));
+        Log.e("StatusFragment", "**" + outs.get(3) + "**" + outs.get(3).equals("true "));
+        if (outs.get(3).equals("true ")) {
             Log.e("StatusFragment", "TRUE");
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
@@ -188,13 +191,13 @@ public class StatusFragment extends BaseFragment {
             pd.dismiss();
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
         }
-        if (outs.get(3).equals("false ")) {
+        if (outs.get(4).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version");
             upgrade.setVisibility(View.GONE);
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(3).substring(4));
+            tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(4).substring(4));
             upgrade.setVisibility(View.VISIBLE);
         }
     }
