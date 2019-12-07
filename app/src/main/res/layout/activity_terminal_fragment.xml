@@ -28,7 +28,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
-        android:layout_marginBottom="12dp"
         android:background="@drawable/rectangle_border"
         android:hint="Enter Treehouse Commands"
         android:paddingStart="@dimen/margin_medium"
@@ -39,7 +38,6 @@
         android:paddingBottom="@dimen/margin_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_send"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -61,6 +59,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/md_white_1000"
@@ -110,6 +109,7 @@
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginRight="@dimen/margin_medium"
+            android:layout_marginBottom="100dp"
             android:background="@color/bg_white"
             android:descendantFocusability="beforeDescendants"
             android:divider="@android:color/transparent"

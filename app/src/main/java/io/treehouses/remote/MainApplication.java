@@ -7,6 +7,8 @@ import com.parse.ParseObject;
 
 import java.util.ArrayList;
 
+import io.treehouses.remote.utils.SaveUtils;
+
 public class MainApplication extends Application {
 
     private static ArrayList terminalList, tunnelList, commandList;
@@ -17,13 +19,13 @@ public class MainApplication extends Application {
         terminalList = new ArrayList();
         tunnelList = new ArrayList();
         commandList = new ArrayList();
-
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(Constants.PARSE_APPLICATION_ID)
                 .clientKey(null)
                 .server(Constants.PARSE_URL)
                 .build()
         );
+        SaveUtils.initCommandsList(getApplicationContext());
     }
 
     public static ArrayList getTerminalList() {

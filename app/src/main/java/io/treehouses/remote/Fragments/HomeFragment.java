@@ -22,8 +22,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+
 import java.util.Calendar;
+
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
@@ -87,15 +90,25 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean showDialog = preferences.getBoolean("show_log_dialog", true);
         LogUtils.log(connectionCount + "  " + showDialog);
-        if (connectionCount >= 3 && showDialog) {
-            new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                    "Do you like to share it? It will help us to improve.")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        preferences.edit().putBoolean("send_log", true).commit();
-                        preferences.edit().putBoolean("show_log_dialog", false).commit();
-                    })
-                    .setNegativeButton("No", null).show();
-            MainApplication.showLogDialog = false;
+        long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_YEAR, -7);
+        if (lastDialogShown < date.getTimeInMillis()) {
+            if (connectionCount >= 3 && showDialog) {
+                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
+                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                        "Do you like to share it? It will help us to improve.")
+                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                            preferences.edit().putBoolean("send_log", true).commit();
+                            preferences.edit().putBoolean("show_log_dialog", false).commit();
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                MainApplication.showLogDialog = false;
+                            }
+                        }).show();
+            }
         }
     }
 
@@ -148,8 +161,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     public void checkConnectionState() {
         mChatService = listener.getChatService();
-        showLogDialog();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
+            showLogDialog();
             sendLog();
             connectRpi.setText("Disconnect");
             connectionState = true;

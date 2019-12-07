@@ -4,6 +4,21 @@
             android:title="Splash Screen"
             android:key="splashScreen"
             android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:title="Terminal Autocomplete"
+            android:key="autocomplete"
+            android:defaultValue="true" />
+
+        <Preference
+            android:title="Clear Commands List"
+            android:key="clear_commands"
+            android:summary="Clear the customizable commands list in terminal">
+        </Preference>
+        <Preference
+            android:title="Default Commands List"
+            android:key="reset_commands"
+            android:summary="Reset list to the default commands in terminal">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="About">

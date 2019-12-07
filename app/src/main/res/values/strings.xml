@@ -130,4 +130,60 @@
     <string name="test_connection_message">You should be able to see a flashing green light on your Raspberry Pi right now.</string>
     <string name="test_finished">The flashing has now stopped.</string>
 
+    <!--Add Command Dialog-->
+    <string name="add_command_title">Add a Command</string>
+  
+    <!--Commands-->
+    <string-array name="commands_list">
+        <item>treehouses ap</item>
+        <item>treehouses apchannel</item>
+        <item>treehouses bluetooth</item>
+        <item>treehouses bluetoothid</item>
+        <item>treehouses bootoption</item>
+        <item>treehouses bridge</item>
+        <item>treehouses burn</item>
+        <item>treehouses button</item>
+        <item>treehouses clone</item>
+        <item>treehouses container</item>
+        <item>treehouses coralenv</item>
+        <item>treehouses cron</item>
+        <item>treehouses default</item>
+        <item>treehouses detect</item>
+        <item>treehouses detectrpi</item>
+        <item>treehouses discover</item>
+        <item>treehouses ethernet</item>
+        <item>treehouses expandfs</item>
+        <item>treehouses feedback</item>
+        <item>treehouses help</item>
+        <item>treehouses image</item>
+        <item>treehouses internet</item>
+        <item>treehouses led</item>
+        <item>treehouses locale</item>
+        <item>treehouses memory</item>
+        <item>treehouses networkmode</item>
+        <item>treehouses ntp</item>
+        <item>treehouses openvpn</item>
+        <item>treehouses password</item>
+        <item>treehouses rebootneeded</item>
+        <item>treehouses rename</item>
+        <item>treehouses restore</item>
+        <item>treehouses rtc</item>
+        <item>treehouses services</item>
+        <item>treehouses speedtest</item>
+        <item>treehouses ssh</item>
+        <item>treehouses sshkey</item>
+        <item>treehouses sshtunnel</item>
+        <item>treehouses staticwifi</item>
+        <item>treehouses temperature</item>
+        <item>treehouses timezone</item>
+        <item>treehouses tor</item>
+        <item>treehouses upgrade</item>
+        <item>treehouses version</item>
+        <item>treehouses vnc</item>
+        <item>treehouses wifi</item>
+        <item>treehouses wificountry</item>
+        <item>treehouses wifistatus</item>
+        <item>docker ps</item>
+    </string-array>
+
 </resources>
