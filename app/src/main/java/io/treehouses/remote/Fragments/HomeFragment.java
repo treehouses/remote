@@ -63,12 +63,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
         mConnectedDeviceName = mChatService.getConnectedDeviceName();
-
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         testConnection = view.findViewById(R.id.test_connection);
-
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
@@ -80,7 +78,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         if (MainApplication.showLogDialog) {
             showLogDialog();
         }
@@ -102,12 +99,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                             preferences.edit().putBoolean("send_log", true).commit();
                             preferences.edit().putBoolean("show_log_dialog", false).commit();
                         })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                MainApplication.showLogDialog = false;
-                            }
-                        }).show();
+                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
             }
         }
     }
@@ -149,13 +141,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     public void testConnectionListener() {
-        testConnection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeToRPI("treehouses led dance");
-                testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
-                testConnectionDialog.show();
-            }
+        testConnection.setOnClickListener(v -> {
+            writeToRPI("treehouses led dance");
+            testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
+            testConnectionDialog.show();
         });
     }
 
@@ -187,7 +176,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
         LogUtils.log(lastLogSent + " " + currentDate.getTimeInMillis());
         if (connectionCount >= 3 && sendLog) {
-
             if (lastLogSent < currentDate.getTimeInMillis()) {
                 ParseObject testObject = new ParseObject("userlog");
                 testObject.put("title", mChatService.getConnectedDeviceName() + "");
@@ -207,12 +195,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         final AlertDialog d = new AlertDialog.Builder(getContext())
                 .setTitle("Friendly Reminder")
                 .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                .setNegativeButton("OK", (dialog, which) -> dialog.cancel())
                 .setMessage(s)
                 .create();
         d.show();
@@ -241,11 +224,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
         mIndicatorGreen.setBackgroundResource(R.drawable.flash_anim_green);
         mIndicatorRed.setBackgroundResource(R.drawable.flash_anim_red);
-
         AnimationDrawable animationDrawable = (AnimationDrawable) mIndicatorGreen.getBackground();
-
         animationDrawable.start();
-
         AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
         a.show();
         return a;
@@ -257,14 +237,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 .setTitle(title)
                 .setIcon(R.drawable.ic_action_device_access_bluetooth_searching)
                 .setMessage(messageID);
-        if (dismissable) {
-            d.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-        }
+        if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
         return d.create();
     }
 
