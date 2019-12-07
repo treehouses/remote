@@ -143,7 +143,7 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void addToList(String ssid) {
-        if (!ssid.equals("")) {
+        if (ssid.trim().length()>0) {
             wifiList.add(ssid);
             progressBar.setVisibility(View.INVISIBLE);
         }
