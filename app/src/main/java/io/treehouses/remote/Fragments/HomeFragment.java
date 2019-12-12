@@ -15,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -125,6 +126,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             connectRpi.setText("Disconnect");
             connectionState = true;
             testConnection.setVisibility(View.VISIBLE);
+            testUpgradeStatus();
         } else {
             connectRpi.setText("Connect to RPI");
             connectionState = false;
@@ -207,6 +209,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
+    private void testUpgradeStatus() {
+        writeToRPI("treehouses upgrade --check");
+    }
+
     private void writeToRPI(String ping) {
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
@@ -225,7 +231,13 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
-                    if (!readMessage.isEmpty()) {
+                    Log.d(TAG, readMessage);
+
+                    if (!readMessage.isEmpty() && readMessage.contains("true")) {
+                        InitialActivity.getInstance().setNotification(true);
+                    }
+
+                    else if (!readMessage.isEmpty() && !readMessage.contains("false")) {
                         result = true;
                         dismissTestConnection();
                     }

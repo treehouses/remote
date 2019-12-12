@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
@@ -192,6 +193,7 @@ public class StatusFragment extends BaseFragment {
             updateRightNow = false;
             pd.dismiss();
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
+            InitialActivity.getInstance().setNotification(false);
         }
         if (outs.get(4).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));

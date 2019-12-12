@@ -49,6 +49,7 @@ public class InitialActivity extends PermissionActivity
     int REQUEST_COARSE_LOCATION = 99;
     private static BluetoothChatService mChatService = null;
     private String mConnectedDeviceName = null;
+    private NavigationView navigationView;
     DrawerLayout drawer;
     private String TAG = "InitialActivity";
 
@@ -84,8 +85,9 @@ public class InitialActivity extends PermissionActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemIconTintList(null);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
     }
 
@@ -173,6 +175,10 @@ public class InitialActivity extends PermissionActivity
 
     }
 //
+    public void setNotification(Boolean b) {
+        if (b) navigationView.getMenu().getItem(7).setIcon(R.drawable.status_notification);
+        else navigationView.getMenu().getItem(7).setIcon(R.drawable.status);
+    }
 
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
