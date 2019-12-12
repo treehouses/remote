@@ -126,7 +126,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             connectRpi.setText("Disconnect");
             connectionState = true;
             testConnection.setVisibility(View.VISIBLE);
-            testUpgradeStatus();
+            writeToRPI("treehouses upgrade --check"); //Check upgrade status
+
         } else {
             connectRpi.setText("Connect to RPI");
             connectionState = false;
@@ -208,9 +209,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             showTestConnectionDialog(true, "Process Finished", R.string.test_finished);
         }
     }
-
-    private void testUpgradeStatus() {
-        writeToRPI("treehouses upgrade --check");
+    private boolean checkUpgrade(String s) {
+        if (!s.isEmpty() && s.contains("true")) {
+            InitialActivity.getInstance().setNotification(true);
+            return true;
+        } else if (!s.isEmpty() && s.contains("false")) {
+            InitialActivity.getInstance().setNotification(false);
+            return true;
+        }
+        return  false;
     }
 
     private void writeToRPI(String ping) {
@@ -232,12 +239,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, readMessage);
-
-                    if (!readMessage.isEmpty() && readMessage.contains("true")) {
-                        InitialActivity.getInstance().setNotification(true);
-                    }
-
-                    else if (!readMessage.isEmpty() && !readMessage.contains("false")) {
+                    if (!readMessage.isEmpty() && !checkUpgrade(readMessage)) {
                         result = true;
                         dismissTestConnection();
                     }
