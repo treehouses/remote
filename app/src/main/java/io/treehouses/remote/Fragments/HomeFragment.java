@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.os.Message;
 import android.text.SpannableString;
@@ -22,13 +23,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
+import java.util.Calendar;
+
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
+import io.treehouses.remote.utils.LogUtils;
+import io.treehouses.remote.utils.Utils;
+import okio.Utf8;
+
+import com.parse.ParseObject;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
@@ -42,30 +53,58 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private String mConnectedDeviceName;
     private AlertDialog testConnectionDialog;
     View view;
+    SharedPreferences preferences;
 
-    public HomeFragment(){}
+    public HomeFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
         mConnectedDeviceName = mChatService.getConnectedDeviceName();
-
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         testConnection = view.findViewById(R.id.test_connection);
-
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
         getStartedListener();
         testConnectionListener();
-
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (MainApplication.showLogDialog) {
+            showLogDialog();
+        }
+    }
+
+    private void showLogDialog() {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean showDialog = preferences.getBoolean("show_log_dialog", true);
+        LogUtils.log(connectionCount + "  " + showDialog);
+        long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.DAY_OF_YEAR, -7);
+        if (lastDialogShown < date.getTimeInMillis()) {
+            if (connectionCount >= 3 && showDialog) {
+                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
+                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                        "Do you like to share it? It will help us to improve.")
+                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                            preferences.edit().putBoolean("send_log", true).commit();
+                            preferences.edit().putBoolean("show_log_dialog", false).commit();
+                        })
+                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
+            }
+        }
+    }
+
     private void showDialogOnce() {
-        SharedPreferences preferences = this.getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
         boolean dialogShown = preferences.getBoolean("dialogShown", false);
 
         if (!dialogShown) {
@@ -77,51 +116,43 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private void getStartedListener() {
-        getStarted.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InitialActivity.getInstance().openCallFragment(new AboutFragment());
-            }
-        });
+        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
     }
 
     public void connectRpiListener() {
-        connectRpi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (connectionState) {
-                    RPIDialogFragment.getInstance().bluetoothCheck("unregister");
-                    mChatService.stop();
-                    connectionState = false;
-                    checkConnectionState();
-                    return;
-                }
+        connectRpi.setOnClickListener(v -> {
+            if (connectionState) {
+                RPIDialogFragment.getInstance().bluetoothCheck("unregister");
+                mChatService.stop();
+                connectionState = false;
+                checkConnectionState();
+                return;
+            }
 
-                if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                    return;
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog();
-                }
+            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
+                return;
+            } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                showRPIDialog();
             }
         });
     }
+
     public void testConnectionListener() {
-        testConnection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeToRPI("treehouses led dance");
-                testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
-                testConnectionDialog.show();
-            }
+        testConnection.setOnClickListener(v -> {
+            writeToRPI("treehouses led dance");
+            testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
+            testConnectionDialog.show();
         });
     }
 
     public void checkConnectionState() {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
+            showLogDialog();
+            sendLog();
             connectRpi.setText("Disconnect");
             connectionState = true;
             testConnection.setVisibility(View.VISIBLE);
@@ -133,30 +164,50 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         mChatService.updateHandler(mHandler);
     }
 
-    private void showWelcomeDialog() {
+    private void sendLog() {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean sendLog = preferences.getBoolean("send_log", true);
+        preferences.edit().putInt("connection_count", connectionCount + 1).commit();
+        Calendar currentDate = Calendar.getInstance();
+        currentDate.add(Calendar.DAY_OF_YEAR, -7);
+
+        long lastLogSent = preferences.getLong("last_log_sent", 0);
+        if (lastLogSent == 0)
+            preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
+        LogUtils.log(lastLogSent + " " + currentDate.getTimeInMillis());
+        if (connectionCount >= 3 && sendLog) {
+            if (lastLogSent < currentDate.getTimeInMillis()) {
+                ParseObject testObject = new ParseObject("userlog");
+                testObject.put("title", mChatService.getConnectedDeviceName() + "");
+                testObject.put("description", "Connected to bluetooth");
+                testObject.put("type", "BT Connection");
+                testObject.saveInBackground();
+                preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
+
+            }
+        }
+    }
+
+    private AlertDialog showWelcomeDialog() {
         final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
                 "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
         Linkify.addLinks(s, Linkify.ALL);
         final AlertDialog d = new AlertDialog.Builder(getContext())
                 .setTitle("Friendly Reminder")
                 .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
+                .setNegativeButton("OK", (dialog, which) -> dialog.cancel())
                 .setMessage(s)
                 .create();
         d.show();
-        ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        return d;
     }
 
-    private void showRPIDialog(){
-        androidx.fragment.app.DialogFragment dialogFrag =  RPIDialogFragment.newInstance(123);
+    private void showRPIDialog() {
+        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(),"rpiDialog");
+        dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
     }
 
     private AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID) {
@@ -173,11 +224,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
         mIndicatorGreen.setBackgroundResource(R.drawable.flash_anim_green);
         mIndicatorRed.setBackgroundResource(R.drawable.flash_anim_red);
-
         AnimationDrawable animationDrawable = (AnimationDrawable) mIndicatorGreen.getBackground();
-
         animationDrawable.start();
-
         AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
         a.show();
         return a;
@@ -189,14 +237,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 .setTitle(title)
                 .setIcon(R.drawable.ic_action_device_access_bluetooth_searching)
                 .setMessage(messageID);
-        if (dismissable) {
-            d.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-        }
+        if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
         return d.create();
     }
 
@@ -221,7 +262,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             switch (msg.what) {
                 case Constants.MESSAGE_WRITE:
                     String writeMessage = new String((byte[]) msg.obj);
-                    Log.d(TAG, "WRITTEN: "+ writeMessage);
+                    Log.d(TAG, "WRITTEN: " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
