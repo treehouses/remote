@@ -72,7 +72,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         connectRpiListener();
         getStartedListener();
         testConnectionListener();
-        preferences.edit().putBoolean("show_log_dialog", false).commit();
         return view;
     }
 
