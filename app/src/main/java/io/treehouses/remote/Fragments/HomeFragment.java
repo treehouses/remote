@@ -37,6 +37,7 @@ import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
 import io.treehouses.remote.utils.Utils;
+import io.treehouses.remote.utils.VersionUtils;
 import okio.Utf8;
 
 import com.parse.ParseObject;
@@ -169,11 +170,13 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         boolean sendLog = preferences.getBoolean("send_log", true);
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
         if (connectionCount >= 3 && sendLog) {
-                ParseObject testObject = new ParseObject("userlog");
-                testObject.put("title", mChatService.getConnectedDeviceName() + "");
-                testObject.put("description", "Connected to bluetooth");
-                testObject.put("type", "BT Connection");
-                testObject.saveInBackground();
+            ParseObject testObject = new ParseObject("userlog");
+            testObject.put("title", mChatService.getConnectedDeviceName() + "");
+            testObject.put("description", "Connected to bluetooth");
+            testObject.put("type", "BT Connection");
+            testObject.put("versionCode", VersionUtils.getVersionCode(getActivity()));
+            testObject.put("versionName", VersionUtils.getVersionName(getActivity()));
+            testObject.saveInBackground();
         }
     }
 
