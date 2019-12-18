@@ -170,21 +170,14 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
         Calendar currentDate = Calendar.getInstance();
         currentDate.add(Calendar.DAY_OF_YEAR, -7);
-
-        long lastLogSent = preferences.getLong("last_log_sent", 0);
-        if (lastLogSent == 0)
-            preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
         LogUtils.log(lastLogSent + " " + currentDate.getTimeInMillis());
         if (connectionCount >= 3 && sendLog) {
-            if (lastLogSent < currentDate.getTimeInMillis()) {
                 ParseObject testObject = new ParseObject("userlog");
                 testObject.put("title", mChatService.getConnectedDeviceName() + "");
                 testObject.put("description", "Connected to bluetooth");
                 testObject.put("type", "BT Connection");
                 testObject.saveInBackground();
                 preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
-
-            }
         }
     }
 
