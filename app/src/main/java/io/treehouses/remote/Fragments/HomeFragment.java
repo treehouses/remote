@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
@@ -176,6 +177,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             testObject.put("type", "BT Connection");
             testObject.put("versionCode", VersionUtils.getVersionCode(getActivity()));
             testObject.put("versionName", VersionUtils.getVersionName(getActivity()));
+            testObject.put("deviceName", Build.DEVICE);
             testObject.saveInBackground();
         }
     }
