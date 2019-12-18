@@ -168,7 +168,7 @@ public class InitialActivity extends PermissionActivity
         fragmentTransaction.addToBackStack("");
         fragmentTransaction.commit();
 //        menuItem.setChecked(true);
-        setTitle("Treehouses Remote");
+        setTitle("treehouses remote");
 //        drawer.closeDrawers();
 
     }

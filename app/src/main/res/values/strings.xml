@@ -50,7 +50,7 @@
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
 
-    <string name="app_name">Treehouses Remote</string>
+    <string name="app_name">treehouses remote</string>
 
     <string name="intro_message">
         <![CDATA[
@@ -87,7 +87,7 @@
     <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
     <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
-    <string name="app_project_name">Treehouses Remote</string>
+    <string name="app_project_name">treehouses remote</string>
     <string name="action_settings">Settings</string>
     <string name="title_sync_settings">Sync Settings</string>
     <string name="btn_sync">Sync</string>
@@ -100,7 +100,7 @@
     <string name="menu_ssh">SSH</string>
     <string name="menu_about">About</string>
     <string name="menu_status">Status</string>
-    <string name="initial_textview">Treehouses Remote is an Android App that communicates with headless Rasberry Pi Mobile Server running Treehouses image via Bluetooth. \n \n To start using Treehouses Remote, you will need to install the Treehouses Image on your Raspberry Pi; the download link is found below. </string>
+    <string name="initial_textview">treehouses remote is an Android App that communicates with headless Rasberry Pi Mobile Server running treehouses image via Bluetooth. \n \n To start using treehouses remote, you will need to install the treehouses image on your Raspberry Pi; the download link is found below. </string>
     <string name="copyright">&#169; %s Open Learning Exchange</string>
     <string name="rights_reserved">All Rights Reserved</string>
     <string name="contributors">Contributors</string>

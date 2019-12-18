@@ -71,7 +71,7 @@
             android:layout_marginEnd="@dimen/padding_normal"
             android:layout_marginRight="@dimen/padding_normal"
             android:background="@color/colorPrimary"
-            android:text="Treehouses Image"
+            android:text="treehouses image"
             android:textColor="@color/bg_white"
             android:textSize="@dimen/text_size_mid"
             android:paddingLeft="@dimen/margin_medium"

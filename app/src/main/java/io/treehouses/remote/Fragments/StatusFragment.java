@@ -191,7 +191,7 @@ public class StatusFragment extends BaseFragment {
         if (updateRightNow) {
             updateRightNow = false;
             pd.dismiss();
-            Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "treehouses cli has been updated!!!", Toast.LENGTH_LONG).show();
         }
         if (outs.get(4).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));

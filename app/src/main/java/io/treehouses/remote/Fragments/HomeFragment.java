@@ -93,7 +93,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         if (lastDialogShown < date.getTimeInMillis()) {
             if (connectionCount >= 3 && showDialog) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
-                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
                         .setPositiveButton("Yes", (dialogInterface, i) -> {
                             preferences.edit().putBoolean("send_log", true).commit();
@@ -189,7 +189,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private AlertDialog showWelcomeDialog() {
-        final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
+        final SpannableString s = new SpannableString("treehouses remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
                 "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
         Linkify.addLinks(s, Linkify.ALL);
         final AlertDialog d = new AlertDialog.Builder(getContext())

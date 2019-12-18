@@ -65,7 +65,7 @@ The process will take approximately 10 min to complete.
 
 2. Connect the RPi to power, if there in an "on" switch or button ensure the Rpi has power.
 
-3. If you possess an android phone, find the Treehouses Remote app on Google Play Store and [download](https://play.google.com/store/apps/details?id=io.treehouses.remote) it.
+3. If you possess an android phone, find the treehouses remote app on Google Play Store and [download](https://play.google.com/store/apps/details?id=io.treehouses.remote) it.
 
 4. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
 
