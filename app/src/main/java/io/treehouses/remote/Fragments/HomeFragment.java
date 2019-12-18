@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
@@ -37,6 +38,7 @@ import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
 import io.treehouses.remote.utils.Utils;
+import io.treehouses.remote.utils.VersionUtils;
 import okio.Utf8;
 
 import com.parse.ParseObject;
@@ -168,23 +170,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean sendLog = preferences.getBoolean("send_log", true);
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
-        Calendar currentDate = Calendar.getInstance();
-        currentDate.add(Calendar.DAY_OF_YEAR, -7);
-
-        long lastLogSent = preferences.getLong("last_log_sent", 0);
-        if (lastLogSent == 0)
-            preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
-        LogUtils.log(lastLogSent + " " + currentDate.getTimeInMillis());
         if (connectionCount >= 3 && sendLog) {
-            if (lastLogSent < currentDate.getTimeInMillis()) {
-                ParseObject testObject = new ParseObject("userlog");
-                testObject.put("title", mChatService.getConnectedDeviceName() + "");
-                testObject.put("description", "Connected to bluetooth");
-                testObject.put("type", "BT Connection");
-                testObject.saveInBackground();
-                preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
-
-            }
+            ParseObject testObject = new ParseObject("userlog");
+            testObject.put("title", mChatService.getConnectedDeviceName() + "");
+            testObject.put("description", "Connected to bluetooth");
+            testObject.put("type", "BT Connection");
+            testObject.put("versionCode", VersionUtils.getVersionCode(getActivity()));
+            testObject.put("versionName", VersionUtils.getVersionName(getActivity()));
+            testObject.put("deviceName", Build.DEVICE);
+            testObject.saveInBackground();
         }
     }
 
