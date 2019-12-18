@@ -168,9 +168,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean sendLog = preferences.getBoolean("send_log", true);
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
-        Calendar currentDate = Calendar.getInstance();
-        currentDate.add(Calendar.DAY_OF_YEAR, -7);
-        LogUtils.log(lastLogSent + " " + currentDate.getTimeInMillis());
         if (connectionCount >= 3 && sendLog) {
                 ParseObject testObject = new ParseObject("userlog");
                 testObject.put("title", mChatService.getConnectedDeviceName() + "");
