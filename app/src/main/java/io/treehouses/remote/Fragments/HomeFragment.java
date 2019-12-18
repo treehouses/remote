@@ -174,7 +174,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 testObject.put("description", "Connected to bluetooth");
                 testObject.put("type", "BT Connection");
                 testObject.saveInBackground();
-                preferences.edit().putLong("last_log_sent", Calendar.getInstance().getTimeInMillis()).commit();
         }
     }
 
