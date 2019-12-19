@@ -19,6 +19,13 @@
             android:key="reset_commands"
             android:summary="Reset list to the default commands in terminal">
         </Preference>
+        <ListPreference
+            android:defaultValue="LED Dance"
+            android:entries="@array/led_options"
+            android:entryValues="@array/led_options"
+            android:key="led_pattern"
+            android:title="LED Pattern"
+            android:summary="Set the Test Connection LED Pattern"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="About">

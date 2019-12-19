@@ -132,6 +132,19 @@
 
     <!--Add Command Dialog-->
     <string name="add_command_title">Add a Command</string>
+
+    <!--Settings-->
+    <string-array name="led_options">
+        <item>LED Dance</item>
+        <item>LED Thanksgiving</item>
+        <item>LED New Years</item>
+    </string-array>
+
+    <string-array name="led_options_commands">
+        <item>treehouses led dance</item>
+        <item>treehouses led thanksgiving</item>
+        <item>treehouses led newyear</item>
+    </string-array>
   
     <!--Commands-->
     <string-array name="commands_list">

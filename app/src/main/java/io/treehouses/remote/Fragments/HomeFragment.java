@@ -2,8 +2,6 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
@@ -26,7 +24,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
@@ -37,9 +38,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
-import io.treehouses.remote.utils.Utils;
 import io.treehouses.remote.utils.VersionUtils;
-import okio.Utf8;
 
 import com.parse.ParseObject;
 
@@ -54,6 +53,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Boolean result = false;
     private String mConnectedDeviceName;
     private AlertDialog testConnectionDialog;
+    private int selected_LED;
     View view;
     SharedPreferences preferences;
 
@@ -144,9 +144,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     public void testConnectionListener() {
         testConnection.setOnClickListener(v -> {
-            writeToRPI("treehouses led dance");
+            String preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getString("led_pattern", "LED Dance");
+            List<String> options = Arrays.asList(getResources().getStringArray(R.array.led_options));
+            String[] options_code = getResources().getStringArray(R.array.led_options_commands);
+            selected_LED = options.indexOf(preference);
+            Log.d("TAG", preference + " " + options);
+            writeToRPI(options_code[selected_LED]);
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
             testConnectionDialog.show();
+            result = false;
         });
     }
 
@@ -216,10 +222,22 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             mIndicatorGreen.setVisibility(View.INVISIBLE);
             mIndicatorRed.setVisibility(View.INVISIBLE);
         }
-        mIndicatorGreen.setBackgroundResource(R.drawable.flash_anim_green);
-        mIndicatorRed.setBackgroundResource(R.drawable.flash_anim_red);
-        AnimationDrawable animationDrawable = (AnimationDrawable) mIndicatorGreen.getBackground();
-        animationDrawable.start();
+        if (selected_LED == 1) {
+            mIndicatorGreen.setBackgroundResource(R.drawable.thanksgiving_anim_green);
+            mIndicatorRed.setBackgroundResource(R.drawable.thanksgiving_anim_red);
+        }
+        else if (selected_LED == 2) {
+            mIndicatorGreen.setBackgroundResource(R.drawable.newyear_anim_green);
+            mIndicatorRed.setBackgroundResource(R.drawable.newyear_anim_red);
+        }
+        else {
+            mIndicatorGreen.setBackgroundResource(R.drawable.dance_anim_green);
+            mIndicatorRed.setBackgroundResource(R.drawable.dance_anim_red);
+        }
+        AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
+        AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
+        animationDrawableGreen.start();
+        animationDrawableRed.start();
         AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
         a.show();
         return a;
@@ -260,7 +278,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
-                    if (!readMessage.isEmpty()) {
+                    if (!readMessage.isEmpty() && !result) {
                         result = true;
                         dismissTestConnection();
                     }
