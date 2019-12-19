@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.fragment.app.DialogFragment;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.R;
+import io.treehouses.remote.utils.Utils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -33,13 +37,15 @@ public class WifiDialogFragment extends DialogFragment {
     private String SSID;
     private View mView;
     private Boolean firstScan = true;
+    private ProgressBar progressBar;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
+        mView = inflater.inflate(R.layout.dialog_listview, null);
+        progressBar = mView.findViewById(R.id.progressBar);
     }
 
     @NonNull
@@ -49,8 +55,16 @@ public class WifiDialogFragment extends DialogFragment {
 
         setupWifi();
 
-        mDialog = RPIDialogFragment.getInstance().getAlertDialog(mView, getContext(), true);
-        mDialog.setTitle("Choose a network");
+        mDialog = new AlertDialog.Builder(context)
+                .setView(mView)
+                .setIcon(R.drawable.dialog_icon)
+                .setTitle("Choose a network: ")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
 
         Log.e("TAG", "SSID = " +  wifiList.toString());
 
@@ -75,14 +89,13 @@ public class WifiDialogFragment extends DialogFragment {
                 ButtonConfiguration.getEssid().setText(SSID.trim());
             }
             wifiList.clear();
-            mDialog.dismiss();
+            dismiss();
         });
     }
 
     private void setupWifi() {
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager == null)
-            return;
+        if (wifiManager == null) return;
         wifiManager.setWifiEnabled(true);
         BroadcastReceiver wifiScanReceiver = wifiBroadcastReceiver();
 
@@ -132,8 +145,9 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void addToList(String ssid) {
-        if (!ssid.equals("")) {
+        if (ssid.trim().length()>0) {
             wifiList.add(ssid);
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -164,8 +178,6 @@ public class WifiDialogFragment extends DialogFragment {
 
     private void ifResultListEmpty() {
         Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
+        dismiss();
     }
 }
