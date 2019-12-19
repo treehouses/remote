@@ -94,8 +94,8 @@
         android:id="@+id/linearLayout"
         android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
         android:orientation="vertical"
 
         app:layout_constraintBottom_toBottomOf="parent"
