@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import io.treehouses.remote.utils.ButtonConfiguration;
 import io.treehouses.remote.R;
+import io.treehouses.remote.utils.Utils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -175,9 +177,7 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void ifResultListEmpty() {
-        Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
+        Toast.makeText(context, "Scan unsuccessful, please try again. Turn you localtion service and try again.", Toast.LENGTH_LONG).show();
+        dismiss();
     }
 }
