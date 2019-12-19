@@ -89,7 +89,7 @@ public class WifiDialogFragment extends DialogFragment {
                 ButtonConfiguration.getEssid().setText(SSID.trim());
             }
             wifiList.clear();
-            mDialog.dismiss();
+            dismiss();
         });
     }
 
@@ -177,7 +177,7 @@ public class WifiDialogFragment extends DialogFragment {
     }
 
     private void ifResultListEmpty() {
-        Toast.makeText(context, "Scan unsuccessful, please try again. Turn you localtion service and try again.", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
         dismiss();
     }
 }
