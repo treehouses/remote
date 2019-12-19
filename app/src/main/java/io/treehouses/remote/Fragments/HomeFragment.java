@@ -222,18 +222,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             mIndicatorGreen.setVisibility(View.INVISIBLE);
             mIndicatorRed.setVisibility(View.INVISIBLE);
         }
-        if (selected_LED == 1) {
-            mIndicatorGreen.setBackgroundResource(R.drawable.thanksgiving_anim_green);
-            mIndicatorRed.setBackgroundResource(R.drawable.thanksgiving_anim_red);
-        }
-        else if (selected_LED == 2) {
-            mIndicatorGreen.setBackgroundResource(R.drawable.newyear_anim_green);
-            mIndicatorRed.setBackgroundResource(R.drawable.newyear_anim_red);
-        }
-        else {
-            mIndicatorGreen.setBackgroundResource(R.drawable.dance_anim_green);
-            mIndicatorRed.setBackgroundResource(R.drawable.dance_anim_red);
-        }
+        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed);
         AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
         AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
         animationDrawableGreen.start();
@@ -241,6 +230,20 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
         a.show();
         return a;
+    }
+    private void setAnimatorBackgrounds(ImageView green, ImageView red) {
+        if (selected_LED == 1) {
+            green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
+            red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
+        }
+        else if (selected_LED == 2) {
+            green.setBackgroundResource(R.drawable.newyear_anim_green);
+            red.setBackgroundResource(R.drawable.newyear_anim_red);
+        }
+        else {
+            green.setBackgroundResource(R.drawable.dance_anim_green);
+            red.setBackgroundResource(R.drawable.dance_anim_red);
+        }
     }
 
     private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
