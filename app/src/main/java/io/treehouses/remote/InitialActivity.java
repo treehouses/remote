@@ -35,6 +35,7 @@ import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.PermissionActivity;
 import io.treehouses.remote.callback.HomeInteractListener;
+import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.utils.LogUtils;
 
 import android.view.Menu;
@@ -42,7 +43,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class InitialActivity extends PermissionActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
 
     private static InitialActivity instance = null;
     private Boolean validBluetoothConnection = false;
@@ -175,6 +176,7 @@ public class InitialActivity extends PermissionActivity
 
     }
 //
+    @Override
     public void setNotification(Boolean b) {
         if (b) navigationView.getMenu().getItem(7).setIcon(R.drawable.status_notification);
         else navigationView.getMenu().getItem(7).setIcon(R.drawable.status);

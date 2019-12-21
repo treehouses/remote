@@ -7,10 +7,12 @@ import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.utils.SaveUtils;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatusFragment extends BaseFragment {
-    public StatusFragment() {}
-
     View view;
 
     private static final String TAG = "StatusFragment";
@@ -44,10 +44,11 @@ public class StatusFragment extends BaseFragment {
     private Boolean updateRightNow = false;
     private BluetoothChatService mChatService = null;
     private CardView cardRPIName;
+
+    private NotificationCallback notificationListener;
     /**
      * Name of the connected device
      */
-    private String mConnectedDeviceName = null;
     private String deviceName = "";
 
     @Override
@@ -113,10 +114,6 @@ public class StatusFragment extends BaseFragment {
                 showRenameDialog();
             }
         });
-    }
-
-    public void checkStatusNow() {
-        Log.e("DEVICE", "" + mConnectedDeviceName);
     }
 
     private void updateStatus() {
@@ -193,7 +190,7 @@ public class StatusFragment extends BaseFragment {
             updateRightNow = false;
             pd.dismiss();
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
-            InitialActivity.getInstance().setNotification(false);
+            notificationListener.setNotification(false);
         }
         if (outs.get(4).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
@@ -202,7 +199,7 @@ public class StatusFragment extends BaseFragment {
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             if (outs.get(4).length()>4) {
-                tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(4).substring(4));
+                tvUpgrade.setText("Upgrade Status: New Version Available: " + outs.get(4).substring(4));
             }
             upgrade.setVisibility(View.VISIBLE);
         }
@@ -243,7 +240,15 @@ public class StatusFragment extends BaseFragment {
                 })
                 .create();
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement NotificationListener");
+        }
+    }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -272,10 +277,6 @@ public class StatusFragment extends BaseFragment {
 
                     updateStatus();
                     //TODO: if message is json -> callback from RPi
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     break;
             }
         }

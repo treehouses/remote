@@ -29,28 +29,28 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.callback.SetDisconnect;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 public class HomeFragment extends BaseFragment implements SetDisconnect {
+
+    private NotificationCallback notificationListener;
+
     private static final String TAG = "HOME_FRAGMENT";
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
     private Button connectRpi, getStarted, testConnection;
     private Boolean connectionState = false;
     private Boolean result = false;
-    private String mConnectedDeviceName;
     private AlertDialog testConnectionDialog;
     View view;
-
-    public HomeFragment(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
-        mConnectedDeviceName = mChatService.getConnectedDeviceName();
 
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
@@ -102,7 +102,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                    return;
                 } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
                     showRPIDialog();
                 }
@@ -211,10 +210,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
     private boolean checkUpgrade(String s) {
         if (!s.isEmpty() && s.contains("true")) {
-            InitialActivity.getInstance().setNotification(true);
+            notificationListener.setNotification(true);
             return true;
         } else if (!s.isEmpty() && s.contains("false")) {
-            InitialActivity.getInstance().setNotification(false);
+            notificationListener.setNotification(false);
             return true;
         }
         return  false;
@@ -223,6 +222,16 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private void writeToRPI(String ping) {
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement NotificationListener");
+        }
     }
 
     /**
@@ -243,9 +252,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                         result = true;
                         dismissTestConnection();
                     }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     break;
             }
         }
