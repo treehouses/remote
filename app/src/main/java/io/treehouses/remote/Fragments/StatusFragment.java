@@ -205,7 +205,7 @@ public class StatusFragment extends BaseFragment {
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             if (outs.get(6).length()>4) {
-                tvUpgrade.setText("Upgrade available from "+ rpiVersion +" to " + outs.get(5).substring(4));
+                tvUpgrade.setText("Upgrade available from "+ rpiVersion +" to " + outs.get(6).substring(4));
             }
             upgrade.setVisibility(View.VISIBLE);
         }
