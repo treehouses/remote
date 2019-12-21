@@ -3,7 +3,6 @@ package io.treehouses.remote.Fragments;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
@@ -17,7 +16,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -39,9 +37,7 @@ import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
-import io.treehouses.remote.utils.Utils;
 import io.treehouses.remote.utils.VersionUtils;
-import okio.Utf8;
 
 import com.parse.ParseObject;
 
@@ -80,9 +76,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (MainApplication.showLogDialog) {
-            showLogDialog();
-        }
+        if (MainApplication.showLogDialog) { showLogDialog(); }
     }
 
     private void showLogDialog() {
@@ -100,8 +94,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                         .setPositiveButton("Yes", (dialogInterface, i) -> {
                             preferences.edit().putBoolean("send_log", true).commit();
                             preferences.edit().putBoolean("show_log_dialog", false).commit();
-                        })
-                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
+                        }).setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
             }
         }
     }
@@ -117,9 +110,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
-    private void getStartedListener() {
-        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
-    }
+    private void getStartedListener() { getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment())); }
 
     public void connectRpiListener() {
         connectRpi.setOnClickListener(new View.OnClickListener() {
@@ -137,9 +128,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog();
-                }
+                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) { showRPIDialog(); }
             }
         });
     }
@@ -190,11 +179,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
                 "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
         Linkify.addLinks(s, Linkify.ALL);
-        final AlertDialog d = new AlertDialog.Builder(getContext())
-                .setTitle("Friendly Reminder")
-                .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton("OK", (dialog, which) -> dialog.cancel())
-                .setMessage(s)
+        final AlertDialog d = new AlertDialog.Builder(getContext()).setTitle("Friendly Reminder").setIcon(R.drawable.dialog_icon)
+                .setNegativeButton("OK", (dialog, which) -> dialog.cancel()).setMessage(s)
                 .create();
         d.show();
         ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
@@ -264,11 +250,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            notificationListener = (NotificationCallback) getContext();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NotificationListener");
-        }
+        try { notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
     }
 
     /**
