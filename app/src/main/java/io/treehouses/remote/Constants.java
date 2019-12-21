@@ -39,7 +39,9 @@ import io.treehouses.remote.Network.BluetoothChatService;
  * Defines several constants used between {@link BluetoothChatService} and the UI.
  */
 public class Constants {
-    
+
+    public static final String PARSE_URL = "http://treehouses.media.mit.edu:1337/parse/" ;
+    public static final String PARSE_APPLICATION_ID = "treehouses";
     static String value = "";
     private static ArrayList<String> groups = new ArrayList<>();
 
