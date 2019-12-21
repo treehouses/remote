@@ -43,11 +43,13 @@ public class StatusFragment extends BaseFragment {
     private Boolean updateRightNow = false;
     private BluetoothChatService mChatService = null;
     private CardView cardRPIName;
+
     /**
      * Name of the connected device
      */
     private String mConnectedDeviceName = null;
     private String deviceName = "";
+    private String rpiVersion="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,6 +104,8 @@ public class StatusFragment extends BaseFragment {
                 updateRightNow = true;
                 pd = ProgressDialog.show(getActivity(), "Updating...", "Please wait a few seconds...");
                 pd.setCanceledOnTouchOutside(true);
+
+                if (outs.size()>5) rpiVersion = outs.get(5).substring(4);
             }
         });
     }
@@ -127,17 +131,20 @@ public class StatusFragment extends BaseFragment {
                 setRPIType();
                 break;
             case 3:
-                getMemory();
+                setVersion();
                 break;
             case 4:
-                checkWifiStatus();
+                getMemory();
                 break;
             case 5:
-                checkUpgradeStatus();
+                checkWifiStatus();
                 break;
             case 6:
-                outs.remove(4);
-                outs.remove(4);
+                checkUpgradeStatus();
+                break;
+            case 7:
+                outs.remove(5);
+                outs.remove(5);
                 checkWifiStatus();
                 break;
         }
@@ -158,19 +165,24 @@ public class StatusFragment extends BaseFragment {
     private void setRPIType() {
         tvStatus3.setText("RPI Type: " + outs.get(1));
         rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        writeToRPI("treehouses version");
+    }
+
+    private void setVersion() {
+        rpiVersion = outs.get(2);
         writeToRPI("treehouses memory free");
     }
 
     private void getMemory() {
-        tvMemory.setText("Memory: " + outs.get(2) + "bytes available");
+        tvMemory.setText("Memory: " + outs.get(3) + "bytes available");
         memoryStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         writeToRPI("treehouses internet");
     }
 
     private void checkWifiStatus() {
-        tvStatus1.setText("RPI Wifi Connection: " + outs.get(3));
-        Log.e("StatusFragment", "**" + outs.get(3) + "**" + outs.get(3).equals("true "));
-        if (outs.get(3).equals("true ")) {
+        tvStatus1.setText("RPI Wifi Connection: " + outs.get(4));
+        Log.e("StatusFragment", "**" + outs.get(4) + "**" + outs.get(4).equals("true "));
+        if (outs.get(4).equals("true ")) {
             Log.e("StatusFragment", "TRUE");
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
@@ -193,14 +205,14 @@ public class StatusFragment extends BaseFragment {
             pd.dismiss();
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
         }
-        if (outs.get(4).equals("false ")) {
+        if (outs.get(5).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-            tvUpgrade.setText("Upgrade Status: Latest Version");
+            tvUpgrade.setText("Upgrade Status: Latest Version: " + rpiVersion);
             upgrade.setVisibility(View.GONE);
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            if (outs.get(4).length()>4) {
-                tvUpgrade.setText("Upgrade Status: Required for Version: " + outs.get(4).substring(4));
+            if (outs.get(5).length()>4) {
+                tvUpgrade.setText("Upgrade available from "+ rpiVersion +" to " + outs.get(5).substring(4));
             }
             upgrade.setVisibility(View.VISIBLE);
         }
