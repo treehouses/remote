@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -51,20 +50,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Button connectRpi, getStarted, testConnection;
     private Boolean connectionState = false;
     private Boolean result = false;
-    private String mConnectedDeviceName;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     View view;
     SharedPreferences preferences;
 
-    public HomeFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
-        mConnectedDeviceName = mChatService.getConnectedDeviceName();
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -117,9 +111,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
-    private void getStartedListener() {
-        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
-    }
+    private void getStartedListener() { getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment())); }
 
     public void connectRpiListener() {
         connectRpi.setOnClickListener(v -> {
@@ -148,7 +140,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             List<String> options = Arrays.asList(getResources().getStringArray(R.array.led_options));
             String[] options_code = getResources().getStringArray(R.array.led_options_commands);
             selected_LED = options.indexOf(preference);
-            Log.d("TAG", preference + " " + options);
             writeToRPI(options_code[selected_LED]);
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
             testConnectionDialog.show();
@@ -247,11 +238,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
-        AlertDialog.Builder d = new AlertDialog.Builder(getContext())
-                .setView(mView)
-                .setTitle(title)
-                .setIcon(R.drawable.ic_action_device_access_bluetooth_searching)
-                .setMessage(messageID);
+        AlertDialog.Builder d = new AlertDialog.Builder(getContext()).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID);
         if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
         return d.create();
     }
@@ -285,9 +272,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                         result = true;
                         dismissTestConnection();
                     }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     break;
             }
         }
