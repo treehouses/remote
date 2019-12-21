@@ -202,8 +202,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID) {
-        LayoutInflater layoutInflater = getLayoutInflater();
-        View mView = layoutInflater.inflate(R.layout.dialog_test_connection, null);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_test_connection, null);
         ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
         ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
         if (!dismissable) {
