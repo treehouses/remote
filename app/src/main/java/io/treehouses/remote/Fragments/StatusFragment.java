@@ -229,9 +229,7 @@ public class StatusFragment extends BaseFragment {
 
     private AlertDialog createRenameDialog(View view, EditText mEditText) {
         return new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-")))
-                .setIcon(R.drawable.dialog_icon)
+                .setView(view).setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-"))).setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -275,7 +273,6 @@ public class StatusFragment extends BaseFragment {
                     Log.d(TAG, "writeMessage = " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
-                    Log.e("StatusFragment", "READ");
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
                     outs.add(readMessage);
