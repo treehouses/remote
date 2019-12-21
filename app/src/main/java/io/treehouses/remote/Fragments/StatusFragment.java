@@ -118,10 +118,10 @@ public class StatusFragment extends BaseFragment {
     private void updateStatus() {
         switch (outs.size()) {
             case 1:
-                setRPIDeviceName();
+                setCard(tvStatus2, btRPIName, "Connected RPI Name: " + outs.get(0), "treehouses detectrpi");
                 break;
             case 2:
-                setRPIType();
+                setCard(tvStatus3, rpiType, "RPI Type: " + outs.get(1), "treehouses image");
                 break;
             case 3:
                 setImage();
@@ -130,8 +130,16 @@ public class StatusFragment extends BaseFragment {
                 setVersion();
                 break;
             case 5:
-                getMemory();
+                setCard(tvMemory, memoryStatus, "Memory: " + outs.get(4) + "bytes available", "treehouses internet");
                 break;
+            default:
+                checkWifiUpgrade(outs.size());
+                break;
+
+        }
+    }
+    private void checkWifiUpgrade(int size) {
+        switch(size) {
             case 6:
                 checkWifiStatus();
                 break;
@@ -150,17 +158,10 @@ public class StatusFragment extends BaseFragment {
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
     }
-
-    private void setRPIDeviceName() {
-        tvStatus2.setText("Connected RPI Name: " + outs.get(0));
-        btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        writeToRPI("treehouses detectrpi");
-    }
-
-    private void setRPIType() {
-        tvStatus3.setText("RPI Type: " + outs.get(1));
-        rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        writeToRPI("treehouses image");
+    private void setCard(TextView textView, ImageView tick, String text, String command) {
+        textView.setText(text);
+        tick.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        writeToRPI(command);
     }
 
     private void setImage() {
@@ -172,12 +173,6 @@ public class StatusFragment extends BaseFragment {
     private void setVersion() {
         rpiVersion = outs.get(3);
         writeToRPI("treehouses memory free");
-    }
-
-    private void getMemory() {
-        tvMemory.setText("Memory: " + outs.get(4) + "bytes available");
-        memoryStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        writeToRPI("treehouses internet");
     }
 
     private void checkWifiStatus() {
