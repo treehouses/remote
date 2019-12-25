@@ -6,14 +6,32 @@
     android:orientation="vertical"
     android:padding="@dimen/margin_medium">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/et_ssid"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:hint="SSID"
-        android:inputType="textPersonName"
-        />
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_ssid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="SSID"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/btnWifiSearch"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:layout_marginLeft="-40dp"
+            android:layout_marginStart="-40dp"
+            android:scaleType="fitXY"
+            android:background="@drawable/wificon">
+
+        </Button>
+
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout4"
@@ -32,14 +50,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <Button
-        android:id="@+id/btnWifiSearch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:text="Search WiFi networks"
-        android:theme="@style/PrimaryButton" />
 
     <include layout="@layout/layout_btn_configuration" />
 
