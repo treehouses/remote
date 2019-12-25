@@ -37,6 +37,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
+import io.treehouses.remote.utils.Utils;
 import io.treehouses.remote.utils.VersionUtils;
 
 import com.parse.ParseObject;
@@ -179,6 +180,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             testObject.put("deviceModel", Build.MODEL);
             testObject.put("deviceSerialNumber", Build.SERIAL +"");
             testObject.put("macAddress", Utils.getWifiMacAddress(getActivity()));
+            testObject.put("gps_latitude", preferences.getString("last_lat",""));
+            testObject.put("gps_longitude",  preferences.getString("last_lng",""));
             testObject.saveInBackground();
         }
     }

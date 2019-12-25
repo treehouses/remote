@@ -59,6 +59,9 @@
             android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
 
+        <service android:name=".utils.GPSService" />
+
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -35,6 +36,7 @@ import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.PermissionActivity;
 import io.treehouses.remote.callback.HomeInteractListener;
+import io.treehouses.remote.utils.GPSService;
 import io.treehouses.remote.utils.LogUtils;
 
 import android.view.Menu;
@@ -52,7 +54,6 @@ public class InitialActivity extends PermissionActivity
     private String mConnectedDeviceName = null;
     DrawerLayout drawer;
     private String TAG = "InitialActivity";
-    private FusedLocationProviderClient fusedLocationClient;
 
 
     @Override
@@ -89,6 +90,7 @@ public class InitialActivity extends PermissionActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
+        new GPSService(this);
     }
 
     public static InitialActivity getInstance() {
