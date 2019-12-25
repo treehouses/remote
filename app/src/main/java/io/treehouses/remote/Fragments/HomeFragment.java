@@ -2,8 +2,6 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
@@ -26,7 +24,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
@@ -37,9 +37,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
-import io.treehouses.remote.utils.Utils;
 import io.treehouses.remote.utils.VersionUtils;
-import okio.Utf8;
 
 import com.parse.ParseObject;
 
@@ -52,19 +50,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Button connectRpi, getStarted, testConnection;
     private Boolean connectionState = false;
     private Boolean result = false;
-    private String mConnectedDeviceName;
     private AlertDialog testConnectionDialog;
+    private int selected_LED;
     View view;
     SharedPreferences preferences;
-
-    public HomeFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
-        mConnectedDeviceName = mChatService.getConnectedDeviceName();
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -117,9 +111,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
-    private void getStartedListener() {
-        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
-    }
+    private void getStartedListener() { getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment())); }
 
     public void connectRpiListener() {
         connectRpi.setOnClickListener(v -> {
@@ -144,9 +136,14 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     public void testConnectionListener() {
         testConnection.setOnClickListener(v -> {
-            writeToRPI("treehouses led dance");
+            String preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getString("led_pattern", "LED Dance");
+            List<String> options = Arrays.asList(getResources().getStringArray(R.array.led_options));
+            String[] options_code = getResources().getStringArray(R.array.led_options_commands);
+            selected_LED = options.indexOf(preference);
+            writeToRPI(options_code[selected_LED]);
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
             testConnectionDialog.show();
+            result = false;
         });
     }
 
@@ -209,8 +206,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     }
 
     private AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID) {
-        LayoutInflater layoutInflater = getLayoutInflater();
-        View mView = layoutInflater.inflate(R.layout.dialog_test_connection, null);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_test_connection, null);
         ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
         ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
         if (!dismissable) {
@@ -220,21 +216,32 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             mIndicatorGreen.setVisibility(View.INVISIBLE);
             mIndicatorRed.setVisibility(View.INVISIBLE);
         }
-        mIndicatorGreen.setBackgroundResource(R.drawable.flash_anim_green);
-        mIndicatorRed.setBackgroundResource(R.drawable.flash_anim_red);
-        AnimationDrawable animationDrawable = (AnimationDrawable) mIndicatorGreen.getBackground();
-        animationDrawable.start();
+        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed);
+        AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
+        AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
+        animationDrawableGreen.start();
+        animationDrawableRed.start();
         AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
         a.show();
         return a;
     }
+    private void setAnimatorBackgrounds(ImageView green, ImageView red) {
+        if (selected_LED == 1) {
+            green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
+            red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
+        }
+        else if (selected_LED == 2) {
+            green.setBackgroundResource(R.drawable.newyear_anim_green);
+            red.setBackgroundResource(R.drawable.newyear_anim_red);
+        }
+        else {
+            green.setBackgroundResource(R.drawable.dance_anim_green);
+            red.setBackgroundResource(R.drawable.dance_anim_red);
+        }
+    }
 
     private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
-        AlertDialog.Builder d = new AlertDialog.Builder(getContext())
-                .setView(mView)
-                .setTitle(title)
-                .setIcon(R.drawable.ic_action_device_access_bluetooth_searching)
-                .setMessage(messageID);
+        AlertDialog.Builder d = new AlertDialog.Builder(getContext()).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID);
         if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
         return d.create();
     }
@@ -264,13 +271,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
-                    if (!readMessage.isEmpty()) {
+                    if (!readMessage.isEmpty() && !result) {
                         result = true;
                         dismissTestConnection();
                     }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     break;
             }
         }

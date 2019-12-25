@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +31,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         setPreferencesFromResource(R.xml.app_preferences, rootKey);
         Preference clearCommandsList = findPreference("clear_commands");
         Preference resetCommandsList = findPreference("reset_commands");
-        if (clearCommandsList != null && resetCommandsList != null) {
-            clearCommandsList.setOnPreferenceClickListener(this);
-            resetCommandsList.setOnPreferenceClickListener(this);
-        }
-        else {
-            Log.e("Settings Fragment", "Null Preference");
+
+        setClickListener(clearCommandsList);
+        setClickListener(resetCommandsList);
+    }
+
+    private void setClickListener(Preference preference) {
+        if (preference != null) {
+            preference.setOnPreferenceClickListener(this);
+        } else {
+            Log.e("SETTINGS", "Unknown key");
         }
     }
 
@@ -51,6 +56,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 SaveUtils.initCommandsList(getContext());
                 Toast.makeText(getContext(), "Commands has been reset to default", Toast.LENGTH_LONG).show();
                 break;
+            case "led_pattern":
+
         }
         return false;
     }
