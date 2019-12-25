@@ -20,8 +20,12 @@ public class Utils {
     }
 
     public static String getWifiMacAddress(Context context){
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wInfo = wifiManager.getConnectionInfo();
-        String macAddress = wInfo.getMacAddress();
+        try {
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wInfo = wifiManager.getConnectionInfo();
+            return wInfo.getMacAddress();
+        }catch (Exception e){
+            return "";
+        }
     }
 }

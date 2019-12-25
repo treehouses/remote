@@ -41,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+
 public class InitialActivity extends PermissionActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
 
@@ -51,6 +52,7 @@ public class InitialActivity extends PermissionActivity
     private String mConnectedDeviceName = null;
     DrawerLayout drawer;
     private String TAG = "InitialActivity";
+    private FusedLocationProviderClient fusedLocationClient;
 
 
     @Override

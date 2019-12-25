@@ -178,8 +178,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             testObject.put("versionCode", VersionUtils.getVersionCode(getActivity()));
             testObject.put("versionName", VersionUtils.getVersionName(getActivity()));
             testObject.put("deviceName", Build.DEVICE);
-            testObject.put("serialNumber", Build.SERIAL +"");
-
+            testObject.put("deviceManufacturer", Build.MANUFACTURER);
+            testObject.put("deviceModel", Build.MODEL);
+            testObject.put("deviceSerialNumber", Build.SERIAL +"");
+            testObject.put("macAddress", Utils.getWifiMacAddress(getActivity()));
             testObject.saveInBackground();
         }
     }
