@@ -112,7 +112,9 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
-    private void getStartedListener() { getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment())); }
+    private void getStartedListener() {
+        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
+    }
 
     public void connectRpiListener() {
         connectRpi.setOnClickListener(v -> {
@@ -178,10 +180,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             testObject.put("deviceName", Build.DEVICE);
             testObject.put("deviceManufacturer", Build.MANUFACTURER);
             testObject.put("deviceModel", Build.MODEL);
-            testObject.put("deviceSerialNumber", Build.SERIAL +"");
-            testObject.put("macAddress", Utils.getWifiMacAddress(getActivity()));
-            testObject.put("gps_latitude", preferences.getString("last_lat",""));
-            testObject.put("gps_longitude",  preferences.getString("last_lng",""));
+            testObject.put("deviceSerialNumber", Utils.getAndroidId(getActivity()));
+            testObject.put("macAddress", Utils.getMacAddr());
             testObject.saveInBackground();
         }
     }
@@ -228,16 +228,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         a.show();
         return a;
     }
+
     private void setAnimatorBackgrounds(ImageView green, ImageView red) {
         if (selected_LED == 1) {
             green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
             red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
-        }
-        else if (selected_LED == 2) {
+        } else if (selected_LED == 2) {
             green.setBackgroundResource(R.drawable.newyear_anim_green);
             red.setBackgroundResource(R.drawable.newyear_anim_red);
-        }
-        else {
+        } else {
             green.setBackgroundResource(R.drawable.dance_anim_green);
             red.setBackgroundResource(R.drawable.dance_anim_red);
         }

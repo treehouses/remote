@@ -7,6 +7,11 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.widget.Toast;
 
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
+import android.provider.Settings.Secure;
+
 public class Utils {
     public static void copyToClipboard(Context context, String clickedData) {
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
@@ -19,13 +24,39 @@ public class Utils {
         Toast.makeText(context, "Copied to clipboard: " + clickedData, Toast.LENGTH_LONG).show();
     }
 
-    public static String getWifiMacAddress(Context context){
+    public static String getMacAddr() {
         try {
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wInfo = wifiManager.getConnectionInfo();
-            return wInfo.getMacAddress();
-        }catch (Exception e){
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+                return getAddress(nif);
+            }
+        } catch (Exception ex) {
+        }
+        return "";
+    }
+
+    public static String  getAndroidId(Context context){
+         return Secure.getString(context.getContentResolver(),
+                Secure.ANDROID_ID);
+
+    }
+
+    private static String getAddress(NetworkInterface nif) throws Exception {
+        byte[] macBytes = nif.getHardwareAddress();
+        if (macBytes == null) {
             return "";
         }
+
+        StringBuilder res1 = new StringBuilder();
+        for (byte b : macBytes) {
+            res1.append(String.format("%02X:", b));
+        }
+
+        if (res1.length() > 0) {
+            res1.deleteCharAt(res1.length() - 1);
+        }
+        return res1.toString();
     }
+
 }
