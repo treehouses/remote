@@ -36,7 +36,6 @@ import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.PermissionActivity;
 import io.treehouses.remote.callback.HomeInteractListener;
-import io.treehouses.remote.utils.GPSService;
 import io.treehouses.remote.utils.LogUtils;
 
 import android.view.Menu;
@@ -90,7 +89,6 @@ public class InitialActivity extends PermissionActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
-        new GPSService(this);
     }
 
     public static InitialActivity getInstance() {

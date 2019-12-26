@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.location.LocationManagerCompat;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -182,7 +185,9 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             testObject.put("deviceModel", Build.MODEL);
             testObject.put("deviceSerialNumber", Utils.getAndroidId(getActivity()));
             testObject.put("macAddress", Utils.getMacAddr());
+            testObject.put("androidVersion", Build.VERSION.CODENAME );
             testObject.saveInBackground();
+
         }
     }
 
