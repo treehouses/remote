@@ -36,6 +36,7 @@ import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.SetDisconnect;
@@ -174,21 +175,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         boolean sendLog = preferences.getBoolean("send_log", true);
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
         if (connectionCount >= 3 && sendLog) {
-            ParseObject testObject = new ParseObject("userlog");
-            testObject.put("title", mChatService.getConnectedDeviceName() + "");
-            testObject.put("description", "Connected to bluetooth");
-            testObject.put("type", "BT Connection");
-            testObject.put("versionCode", VersionUtils.getVersionCode(getActivity()));
-            testObject.put("versionName", VersionUtils.getVersionName(getActivity()));
-            testObject.put("deviceName", Build.DEVICE);
-            testObject.put("deviceManufacturer", Build.MANUFACTURER);
-            testObject.put("deviceModel", Build.MODEL);
-            testObject.put("deviceSerialNumber", Utils.getAndroidId(getActivity()));
-            testObject.put("macAddress", Utils.getMacAddr());
-            testObject.put("androidVersion", Build.VERSION.SDK_INT +"");
-            testObject.put("gps_latitude", preferences.getString("last_lat",""));
-            testObject.put("gps_longitude", preferences.getString("last_lng",""));
-            testObject.saveInBackground();
+            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), preferences);
         }
     }
 
