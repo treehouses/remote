@@ -89,8 +89,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         if (lastDialogShown < date.getTimeInMillis()) {
             if (connectionCount >= 3 && showDialog) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
-                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                        "Do you like to share it? It will help us to improve.")
+                new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.collect_data_title)).setCancelable(false).setMessage(getString(R.string.collect_data_message))
                         .setPositiveButton("Yes", (dialogInterface, i) -> {
                             preferences.edit().putBoolean("send_log", true).commit();
                             preferences.edit().putBoolean("show_log_dialog", false).commit();
