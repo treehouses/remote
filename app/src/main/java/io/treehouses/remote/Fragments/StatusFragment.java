@@ -1,15 +1,12 @@
 package io.treehouses.remote.Fragments;
 
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.Constants;
-import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 
 import io.treehouses.remote.callback.NotificationCallback;
-import io.treehouses.remote.utils.SaveUtils;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -263,7 +260,6 @@ public class StatusFragment extends BaseFragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     checkStatusNow();

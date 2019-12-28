@@ -49,7 +49,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     private NotificationCallback notificationListener;
 
-    private static final String TAG = "HOME_FRAGMENT";
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
     private Button connectRpi, getStarted, testConnection;
@@ -57,12 +56,11 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Boolean result = false;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
-    View view;
-    SharedPreferences preferences;
+    private SharedPreferences preferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_home_fragment, container, false);
+        View view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         mChatService = listener.getChatService();
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
@@ -89,16 +87,14 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DAY_OF_YEAR, -7);
-        if (lastDialogShown < date.getTimeInMillis()) {
-            if (connectionCount >= 3 && showDialog) {
-                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
-                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                        "Do you like to share it? It will help us to improve.")
-                        .setPositiveButton("Yes", (dialogInterface, i) -> {
-                            preferences.edit().putBoolean("send_log", true).commit();
-                            preferences.edit().putBoolean("show_log_dialog", false).commit();
-                        }).setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
-            }
+        if (lastDialogShown < date.getTimeInMillis() && connectionCount >= 3 && showDialog) {
+            preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
+            new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                    "Do you like to share it? It will help us to improve.")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        preferences.edit().putBoolean("send_log", true).commit();
+                        preferences.edit().putBoolean("show_log_dialog", false).commit();
+                    }).setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
         }
     }
 
@@ -258,10 +254,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         return false;
     }
 
-    private void writeToRPI(String ping) {
-        byte[] pSend = ping.getBytes();
-        mChatService.write(pSend);
-    }
+    private void writeToRPI(String ping) { mChatService.write(ping.getBytes()); }
 
     @Override
     public void onAttach(Context context) {
@@ -279,12 +272,10 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             switch (msg.what) {
                 case Constants.MESSAGE_WRITE:
                     String writeMessage = new String((byte[]) msg.obj);
-                    Log.d(TAG, "WRITTEN: " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
 
-                    Log.d(TAG, readMessage);
                     if (!readMessage.isEmpty() && !checkUpgrade(readMessage) && !result) {
                         result = true;
                         dismissTestConnection();
