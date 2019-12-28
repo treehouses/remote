@@ -135,6 +135,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     public void testConnectionListener() {
         testConnection.setOnClickListener(v -> {
+            result = false;
             writeToRPI("treehouses led dance");
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
             testConnectionDialog.show();
@@ -231,15 +232,13 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             showTestConnectionDialog(true, "Process Finished", R.string.test_finished);
         }
     }
+
     private boolean checkUpgrade(String s) {
-        if (!s.isEmpty() && s.contains("true")) {
-            notificationListener.setNotification(true);
-            return true;
-        } else if (!s.isEmpty() && s.contains("false")) {
-            notificationListener.setNotification(false);
+        if (!s.isEmpty() && s.contains("true") || s.contains("false")) {
+            notificationListener.setNotification(s.contains("true"));
             return true;
         }
-        return  false;
+        return false;
     }
 
     private void writeToRPI(String ping) {
@@ -268,7 +267,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, readMessage);
-                    if (!readMessage.isEmpty() && !checkUpgrade(readMessage)) {
+                    if (!readMessage.isEmpty() && !checkUpgrade(readMessage) && !result) {
                         result = true;
                         dismissTestConnection();
                     }
