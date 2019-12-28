@@ -38,7 +38,6 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.callback.SetDisconnect;
-import io.treehouses.remote.utils.LogUtils;
 import io.treehouses.remote.utils.VersionUtils;
 
 import com.parse.ParseObject;
@@ -83,7 +82,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private void showLogDialog() {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean showDialog = preferences.getBoolean("show_log_dialog", true);
-        LogUtils.log(connectionCount + "  " + showDialog);
         long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DAY_OF_YEAR, -7);
@@ -270,9 +268,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Constants.MESSAGE_WRITE:
-                    String writeMessage = new String((byte[]) msg.obj);
-                    break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
 
