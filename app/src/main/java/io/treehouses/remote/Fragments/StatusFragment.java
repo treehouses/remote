@@ -7,6 +7,7 @@ import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
+
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.utils.SaveUtils;
 
@@ -36,7 +37,7 @@ public class StatusFragment extends BaseFragment {
     private static final String TAG = "StatusFragment";
     private ImageView wifiStatus, btRPIName, rpiType, memoryStatus;
     private ImageView btStatus, ivUpgrade;
-    private TextView tvStatus, tvStatus1, tvStatus2, tvStatus3, tvUpgrade, tvMemory;
+    private TextView tvStatus, tvStatus1, tvStatus2, tvStatus3, tvUpgrade, tvMemory, tvImage;
     private List<String> outs = new ArrayList<>();
     private Boolean wifiStatusVal = false;
     private Button upgrade;
@@ -50,6 +51,7 @@ public class StatusFragment extends BaseFragment {
      * Name of the connected device
      */
     private String deviceName = "";
+    private String rpiVersion="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,9 +65,7 @@ public class StatusFragment extends BaseFragment {
         tvStatus.setText("Bluetooth Connection: " + deviceName);
 
         Log.e("STATUS", "device name: " + deviceName);
-        if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        }
+        if (mChatService.getState() == Constants.STATE_CONNECTED) { btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick)); }
         checkStatusNow();
 
         String ping = "hostname";
@@ -88,6 +88,7 @@ public class StatusFragment extends BaseFragment {
         tvStatus3 = view.findViewById(R.id.tvStatus3);
         tvUpgrade = view.findViewById(R.id.tvUpgradeCheck);
         tvMemory = view.findViewById(R.id.tvMemoryStatus);
+        tvImage = view.findViewById(R.id.image_text);
         upgrade = view.findViewById(R.id.upgrade);
         upgrade.setVisibility(View.GONE);
         cardRPIName = view.findViewById(R.id.cardView);
@@ -104,6 +105,8 @@ public class StatusFragment extends BaseFragment {
                 updateRightNow = true;
                 pd = ProgressDialog.show(getActivity(), "Updating...", "Please wait a few seconds...");
                 pd.setCanceledOnTouchOutside(true);
+
+                if (outs.size()>5) rpiVersion = outs.get(5).substring(4);
             }
         });
     }
@@ -119,23 +122,37 @@ public class StatusFragment extends BaseFragment {
     private void updateStatus() {
         switch (outs.size()) {
             case 1:
-                setRPIDeviceName();
+                setCard(tvStatus2, btRPIName, "Connected RPI Name: " + outs.get(0), "treehouses detectrpi");
                 break;
             case 2:
-                setRPIType();
+                setCard(tvStatus3, rpiType, "RPI Type: " + outs.get(1), "treehouses image");
                 break;
             case 3:
-                getMemory();
+                setImage();
                 break;
             case 4:
-                checkWifiStatus();
+                setVersion();
                 break;
             case 5:
+                setCard(tvMemory, memoryStatus, "Memory: " + outs.get(4) + "bytes available", "treehouses internet");
+                break;
+            default:
+                checkWifiUpgrade(outs.size());
+                break;
+
+        }
+    }
+    private void checkWifiUpgrade(int size) {
+        switch(size) {
+            case 6:
+                checkWifiStatus();
+                break;
+            case 7:
                 checkUpgradeStatus();
                 break;
-            case 6:
-                outs.remove(4);
-                outs.remove(4);
+            case 8:
+                outs.remove(6);
+                outs.remove(6);
                 checkWifiStatus();
                 break;
         }
@@ -145,31 +162,26 @@ public class StatusFragment extends BaseFragment {
         byte[] pSend = ping.getBytes();
         mChatService.write(pSend);
     }
-
-    private void setRPIDeviceName() {
-        String name = outs.get(0);
-        tvStatus2.setText("Connected RPI Name: " + name);
-        btRPIName.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        writeToRPI("treehouses detectrpi");
+    private void setCard(TextView textView, ImageView tick, String text, String command) {
+        textView.setText(text);
+        tick.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+        writeToRPI(command);
     }
 
-    private void setRPIType() {
-        tvStatus3.setText("RPI Type: " + outs.get(1));
-        rpiType.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+    private void setImage() {
+        tvImage.setText("Treehouses Image Version: "+ outs.get(2));
+        writeToRPI("treehouses version");
+
+    }
+
+    private void setVersion() {
+        rpiVersion = outs.get(3);
         writeToRPI("treehouses memory free");
     }
 
-    private void getMemory() {
-        tvMemory.setText("Memory: " + outs.get(2) + "bytes available");
-        memoryStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-        writeToRPI("treehouses internet");
-    }
-
     private void checkWifiStatus() {
-        tvStatus1.setText("RPI Wifi Connection: " + outs.get(3));
-        Log.e("StatusFragment", "**" + outs.get(3) + "**" + outs.get(3).equals("true "));
-        if (outs.get(3).equals("true ")) {
-            Log.e("StatusFragment", "TRUE");
+        tvStatus1.setText("RPI Wifi Connection: " + outs.get(5));
+        if (outs.get(5).equals("true ")) {
             wifiStatusVal = true;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         }
@@ -177,9 +189,8 @@ public class StatusFragment extends BaseFragment {
             wifiStatusVal = false;
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
         }
-        if (wifiStatusVal) {
-            writeToRPI("treehouses upgrade --check");
-        } else {
+        if (wifiStatusVal) { writeToRPI("treehouses upgrade --check"); }
+        else {
             tvUpgrade.setText("Upgrade Status: NO INTERNET");
             upgrade.setVisibility(View.GONE);
         }
@@ -192,14 +203,14 @@ public class StatusFragment extends BaseFragment {
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
             notificationListener.setNotification(false);
         }
-        if (outs.get(4).equals("false ")) {
+        if (outs.get(6).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-            tvUpgrade.setText("Upgrade Status: Latest Version");
+            tvUpgrade.setText("Upgrade Status: Latest Version: " + rpiVersion);
             upgrade.setVisibility(View.GONE);
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            if (outs.get(4).length()>4) {
-                tvUpgrade.setText("Upgrade Status: New Version Available: " + outs.get(4).substring(4));
+            if (outs.get(6).length()>4) {
+                tvUpgrade.setText("Upgrade available from "+ rpiVersion +" to " + outs.get(6).substring(4));
             }
             upgrade.setVisibility(View.VISIBLE);
         }
@@ -216,9 +227,7 @@ public class StatusFragment extends BaseFragment {
 
     private AlertDialog createRenameDialog(View view, EditText mEditText) {
         return new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-")))
-                .setIcon(R.drawable.dialog_icon)
+                .setView(view).setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-"))).setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -226,9 +235,7 @@ public class StatusFragment extends BaseFragment {
                                     writeToRPI("treehouses rename " + mEditText.getText().toString());
                                     Toast.makeText(getContext(), "Raspberry Pi Renamed", Toast.LENGTH_LONG).show();
                                 }
-                                else {
-                                    Toast.makeText(getContext(), "Please enter a new name", Toast.LENGTH_LONG).show();
-                                }
+                                else { Toast.makeText(getContext(), "Please enter a new name", Toast.LENGTH_LONG).show(); }
                             }
                         }
                 )
@@ -262,7 +269,6 @@ public class StatusFragment extends BaseFragment {
                     checkStatusNow();
                     break;
                 case Constants.MESSAGE_WRITE:
-                    Log.e("StatusFragment", "WRITE");
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
@@ -270,13 +276,11 @@ public class StatusFragment extends BaseFragment {
                     Log.d(TAG, "writeMessage = " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
-                    Log.e("StatusFragment", "READ");
                     String readMessage = (String) msg.obj;
                     Log.d(TAG, "readMessage = " + readMessage);
                     outs.add(readMessage);
 
                     updateStatus();
-                    //TODO: if message is json -> callback from RPi
                     break;
             }
         }
