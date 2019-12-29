@@ -94,7 +94,8 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
                             preferences.edit().putBoolean("send_log", true).commit();
                             preferences.edit().putBoolean("show_log_dialog", false).commit();
                         })
-                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
+                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show()
+                .setIcon(R.drawable.ic_cloud_upload_black_24dp);
             }
         }
     }
