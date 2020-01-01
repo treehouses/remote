@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
+        app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600">
 
         <com.google.android.material.textfield.TextInputEditText

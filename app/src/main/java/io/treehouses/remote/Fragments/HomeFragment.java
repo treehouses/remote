@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.location.LocationManagerCompat;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -34,10 +37,15 @@ import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.callback.SetDisconnect;
+
+import io.treehouses.remote.utils.LogUtils;
+import io.treehouses.remote.utils.Utils;
+
 import io.treehouses.remote.utils.VersionUtils;
 
 import com.parse.ParseObject;
@@ -107,7 +115,9 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
-    private void getStartedListener() { getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment())); }
+    private void getStartedListener() {
+        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
+    }
 
     public void connectRpiListener() {
         connectRpi.setOnClickListener(new View.OnClickListener() {
@@ -166,14 +176,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         boolean sendLog = preferences.getBoolean("send_log", true);
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
         if (connectionCount >= 3 && sendLog) {
-            ParseObject testObject = new ParseObject("userlog");
-            testObject.put("title", mChatService.getConnectedDeviceName() + "");
-            testObject.put("description", "Connected to bluetooth");
-            testObject.put("type", "BT Connection");
-            testObject.put("versionCode", VersionUtils.getVersionCode(getActivity()));
-            testObject.put("versionName", VersionUtils.getVersionName(getActivity()));
-            testObject.put("deviceName", Build.DEVICE);
-            testObject.saveInBackground();
+            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), preferences);
         }
     }
 
@@ -216,16 +219,15 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         a.show();
         return a;
     }
+
     private void setAnimatorBackgrounds(ImageView green, ImageView red) {
         if (selected_LED == 1) {
             green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
             red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
-        }
-        else if (selected_LED == 2) {
+        } else if (selected_LED == 2) {
             green.setBackgroundResource(R.drawable.newyear_anim_green);
             red.setBackgroundResource(R.drawable.newyear_anim_red);
-        }
-        else {
+        } else {
             green.setBackgroundResource(R.drawable.dance_anim_green);
             red.setBackgroundResource(R.drawable.dance_anim_red);
         }

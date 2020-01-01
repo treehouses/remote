@@ -35,4 +35,6 @@
     <dimen name="terminal_list_margin">200dp</dimen>
     <dimen name="logo_size_home">250dp</dimen>
     <dimen name="button_normal">150dp</dimen>
+
+    <dimen name="terminal_commands_width">200dp</dimen>
 </resources>
