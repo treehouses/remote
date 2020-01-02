@@ -10,9 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.os.Message;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
@@ -34,16 +30,15 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
-import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.bases.BaseHomeFragment;
 import io.treehouses.remote.callback.SetDisconnect;
-import io.treehouses.remote.utils.LogUtils;
 import io.treehouses.remote.utils.VersionUtils;
 
 import com.parse.ParseObject;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
-public class HomeFragment extends BaseFragment implements SetDisconnect {
+public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private static final String TAG = "HOME_FRAGMENT";
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
@@ -55,7 +50,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     View view;
-    SharedPreferences preferences;
+    private SharedPreferences preferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,7 +62,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         testConnection = view.findViewById(R.id.test_connection);
         welcome_text = view.findViewById(R.id.welcome_home);
         background = view.findViewById(R.id.background_home);
-        showDialogOnce();
+        showDialogOnce(preferences);
         checkConnectionState();
         connectRpiListener();
         getStartedListener();
@@ -79,39 +74,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (MainApplication.showLogDialog) {
-            showLogDialog();
-        }
-    }
-
-    private void showLogDialog() {
-        int connectionCount = preferences.getInt("connection_count", 0);
-        boolean showDialog = preferences.getBoolean("show_log_dialog", true);
-        LogUtils.log(connectionCount + "  " + showDialog);
-        long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
-        Calendar date = Calendar.getInstance();
-        date.add(Calendar.DAY_OF_YEAR, -7);
-        if (lastDialogShown < date.getTimeInMillis()) {
-            if (connectionCount >= 3 && showDialog) {
-                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
-                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                        "Do you like to share it? It will help us to improve.")
-                        .setPositiveButton("Yes", (dialogInterface, i) -> {
-                            preferences.edit().putBoolean("send_log", true).commit();
-                            preferences.edit().putBoolean("show_log_dialog", false).commit();
-                        })
-                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
-            }
-        }
-    }
-
-    private void showDialogOnce() {
-        boolean dialogShown = preferences.getBoolean("dialogShown", false);
-
-        if (!dialogShown) {
-            showWelcomeDialog();
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("dialogShown", true);
-            editor.commit();
+            showLogDialog(preferences);
         }
     }
 
@@ -154,7 +117,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     public void checkConnectionState() {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            showLogDialog();
+            showLogDialog(preferences);
             sendLog();
             welcome_text.setVisibility(View.GONE);
             testConnection.setVisibility(View.VISIBLE);
@@ -194,21 +157,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         }
     }
 
-    private AlertDialog showWelcomeDialog() {
-        final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
-                "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
-        Linkify.addLinks(s, Linkify.ALL);
-        final AlertDialog d = new AlertDialog.Builder(getContext())
-                .setTitle("Friendly Reminder")
-                .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton("OK", (dialog, which) -> dialog.cancel())
-                .setMessage(s)
-                .create();
-        d.show();
-        ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-        return d;
-    }
-
     private void showRPIDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
@@ -227,7 +175,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             mIndicatorGreen.setVisibility(View.INVISIBLE);
             mIndicatorRed.setVisibility(View.INVISIBLE);
         }
-        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed);
+        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed, selected_LED);
         AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
         AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
         animationDrawableGreen.start();
@@ -235,20 +183,6 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
         a.show();
         return a;
-    }
-    private void setAnimatorBackgrounds(ImageView green, ImageView red) {
-        if (selected_LED == 1) {
-            green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
-            red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
-        }
-        else if (selected_LED == 2) {
-            green.setBackgroundResource(R.drawable.newyear_anim_green);
-            red.setBackgroundResource(R.drawable.newyear_anim_red);
-        }
-        else {
-            green.setBackgroundResource(R.drawable.dance_anim_green);
-            red.setBackgroundResource(R.drawable.dance_anim_red);
-        }
     }
 
     private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
