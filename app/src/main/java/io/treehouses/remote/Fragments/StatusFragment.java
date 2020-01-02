@@ -1,14 +1,16 @@
 package io.treehouses.remote.Fragments;
 
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentActivity;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 
+import io.treehouses.remote.callback.NotificationCallback;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,8 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatusFragment extends BaseFragment {
-    public StatusFragment() {}
-
     View view;
 
     private static final String TAG = "StatusFragment";
@@ -43,6 +43,7 @@ public class StatusFragment extends BaseFragment {
     private BluetoothChatService mChatService = null;
     private CardView cardRPIName;
 
+    private NotificationCallback notificationListener;
     /**
      * Name of the connected device
      */
@@ -197,6 +198,7 @@ public class StatusFragment extends BaseFragment {
             updateRightNow = false;
             pd.dismiss();
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
+            notificationListener.setNotification(false);
         }
         if (outs.get(6).equals("false ")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
@@ -242,7 +244,15 @@ public class StatusFragment extends BaseFragment {
                 })
                 .create();
     }
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement NotificationListener");
+        }
+    }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -250,7 +260,6 @@ public class StatusFragment extends BaseFragment {
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     checkStatusNow();

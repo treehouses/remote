@@ -22,7 +22,7 @@
             android:title="@string/menu_terminal" />
         <item
             android:id="@+id/menu_services"
-            android:icon="@drawable/circle"
+            android:icon="@drawable/ic_apps_black_24dp"
             android:title="@string/menu_services" />
         <item
             android:id="@+id/menu_tunnel"
@@ -34,7 +34,7 @@
             android:title="@string/menu_about" />
         <item
             android:id="@+id/menu_status"
-            android:icon="@drawable/about"
+            android:icon="@drawable/status"
             android:title="@string/menu_status" />
     </group>
 
