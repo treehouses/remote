@@ -156,17 +156,19 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog();
             sendLog();
+            welcome_text.setVisibility(View.GONE);
+            testConnection.setVisibility(View.VISIBLE);
             connectRpi.setText("Disconnect");
             connectRpi.setBackgroundResource(R.drawable.disconnect_rpi);
             background.animate().translationY(150);
             connectRpi.animate().translationY(110);
             getStarted.animate().translationY(70);
             connectionState = true;
-            welcome_text.setVisibility(View.GONE);
-            testConnection.setVisibility(View.VISIBLE);
+
         } else {
             connectRpi.setText("Connect to RPI");
             testConnection.setVisibility(View.GONE);
+            welcome_text.setVisibility(View.VISIBLE);
             background.animate().translationY(0);
             connectRpi.animate().translationY(0);
             getStarted.animate().translationY(0);
