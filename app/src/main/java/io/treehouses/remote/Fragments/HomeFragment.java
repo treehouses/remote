@@ -51,6 +51,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
     private Boolean connectionState = false;
     private Boolean result = false;
     private TextView welcome_text;
+    private ImageView background;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     View view;
@@ -65,6 +66,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         testConnection = view.findViewById(R.id.test_connection);
         welcome_text = view.findViewById(R.id.welcome_home);
+        background = view.findViewById(R.id.background_home);
         showDialogOnce();
         checkConnectionState();
         connectRpiListener();
@@ -156,14 +158,20 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
             sendLog();
             connectRpi.setText("Disconnect");
             connectRpi.setBackgroundResource(R.drawable.disconnect_rpi);
+            background.animate().translationY(150);
+            connectRpi.animate().translationY(110);
+            getStarted.animate().translationY(70);
             connectionState = true;
             welcome_text.setVisibility(View.GONE);
             testConnection.setVisibility(View.VISIBLE);
         } else {
             connectRpi.setText("Connect to RPI");
+            testConnection.setVisibility(View.GONE);
+            background.animate().translationY(0);
+            connectRpi.animate().translationY(0);
+            getStarted.animate().translationY(0);
             connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
             connectionState = false;
-            testConnection.setVisibility(View.GONE);
         }
         mChatService.updateHandler(mHandler);
     }
