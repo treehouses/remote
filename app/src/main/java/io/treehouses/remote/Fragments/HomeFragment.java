@@ -5,10 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
@@ -16,7 +13,6 @@ import android.os.Message;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.location.LocationManagerCompat;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -43,12 +38,6 @@ import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.callback.SetDisconnect;
 
-import io.treehouses.remote.utils.LogUtils;
-import io.treehouses.remote.utils.Utils;
-
-import io.treehouses.remote.utils.VersionUtils;
-
-import com.parse.ParseObject;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 

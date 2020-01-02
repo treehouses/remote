@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -67,7 +66,6 @@ public class InitialActivity extends PermissionActivity
         instance = this;
         setContentView(R.layout.activity_initial2);
         requestPermission();
-        Log.e(TAG, "onCreate(Bundle) called");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -87,8 +85,7 @@ public class InitialActivity extends PermissionActivity
 
         openCallFragment(new HomeFragment());
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -109,9 +106,7 @@ public class InitialActivity extends PermissionActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             Fragment f = (getSupportFragmentManager()).findFragmentById(R.id.fragment_container);
-            if(f instanceof HomeFragment){
-                finish();
-            }
+            if(f instanceof HomeFragment) finish();
             super.onBackPressed();
         }
     }
