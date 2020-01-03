@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -36,7 +35,11 @@ import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.PermissionActivity;
 import io.treehouses.remote.callback.HomeInteractListener;
+
+import io.treehouses.remote.callback.NotificationCallback;
+
 import io.treehouses.remote.utils.GPSService;
+
 import io.treehouses.remote.utils.LogUtils;
 
 import android.view.Menu;
@@ -45,13 +48,14 @@ import android.widget.Toast;
 
 
 public class InitialActivity extends PermissionActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
 
     private static InitialActivity instance = null;
     private Boolean validBluetoothConnection = false;
     int REQUEST_COARSE_LOCATION = 99;
     private static BluetoothChatService mChatService = null;
     private String mConnectedDeviceName = null;
+    private NavigationView navigationView;
     DrawerLayout drawer;
     private String TAG = "InitialActivity";
 
@@ -62,7 +66,6 @@ public class InitialActivity extends PermissionActivity
         instance = this;
         setContentView(R.layout.activity_initial2);
         requestPermission();
-        Log.e(TAG, "onCreate(Bundle) called");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -82,13 +85,13 @@ public class InitialActivity extends PermissionActivity
 
         openCallFragment(new HomeFragment());
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemIconTintList(null);
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
         new GPSService(this);
     }
@@ -103,9 +106,7 @@ public class InitialActivity extends PermissionActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             Fragment f = (getSupportFragmentManager()).findFragmentById(R.id.fragment_container);
-            if(f instanceof HomeFragment){
-                finish();
-            }
+            if(f instanceof HomeFragment) finish();
             super.onBackPressed();
         }
     }
@@ -177,6 +178,11 @@ public class InitialActivity extends PermissionActivity
 
     }
 //
+    @Override
+    public void setNotification(Boolean b) {
+        if (b) navigationView.getMenu().getItem(7).setIcon(R.drawable.status_notification);
+        else navigationView.getMenu().getItem(7).setIcon(R.drawable.status);
+    }
 
     protected void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
