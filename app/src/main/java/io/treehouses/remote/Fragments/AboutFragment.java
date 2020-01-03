@@ -33,7 +33,7 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
         Button contributors = view.findViewById(R.id.btn_contributors);
         TextView tvCopyright = view.findViewById(R.id.tv_copyright);
         hyperLinks(gitHub,"https://github.com/treehouses/remote" );
-        hyperLinks(images,"http://download.treehouses.io" );
+        hyperLinks(images,"https://treehouses.io/#!pages/download.md" );
         hyperLinks(gitter,"https://gitter.im/open-learning-exchange/raspberrypi" );
         hyperLinks(contributors, "https://github.com/treehouses/remote/graphs/contributors");
 

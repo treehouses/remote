@@ -171,7 +171,7 @@ public class HomeFragment extends BaseFragment implements SetDisconnect {
 
     private AlertDialog showWelcomeDialog() {
         final SpannableString s = new SpannableString("Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by \"control\" and \"cli\". There is more information under \"Get Started\"" +
-                "\n\nhttp://download.treehouses.io\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
+                "\n\nhttps://treehouses.io/#!pages/download.md\nhttps://github.com/treehouses/control\nhttps://github.com/treehouses/cli");
         Linkify.addLinks(s, Linkify.ALL);
         final AlertDialog d = new AlertDialog.Builder(getContext()).setTitle("Friendly Reminder").setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK", (dialog, which) -> dialog.cancel()).setMessage(s)
