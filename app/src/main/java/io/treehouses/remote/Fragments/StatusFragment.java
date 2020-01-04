@@ -1,13 +1,5 @@
 package io.treehouses.remote.Fragments;
 
-import androidx.cardview.widget.CardView;
-import io.treehouses.remote.Constants;
-import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.R;
-import io.treehouses.remote.bases.BaseFragment;
-
-import io.treehouses.remote.callback.NotificationCallback;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -25,8 +17,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import io.treehouses.remote.Constants;
+import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.callback.NotificationCallback;
 
 public class StatusFragment extends BaseFragment {
     View view;

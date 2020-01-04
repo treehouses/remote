@@ -1,15 +1,17 @@
 package io.treehouses.remote.adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.text.InputType;
 import android.view.View;
-import android.content.Context;
 import android.widget.Toast;
+
 import com.google.android.material.textfield.TextInputEditText;
-import io.treehouses.remote.utils.ButtonConfiguration;
+
 import io.treehouses.remote.R;
-import io.treehouses.remote.utils.TextWatcherUtils;
 import io.treehouses.remote.callback.HomeInteractListener;
+import io.treehouses.remote.utils.ButtonConfiguration;
+import io.treehouses.remote.utils.TextWatcherUtils;
 
 class ViewHolderWifi extends ButtonConfiguration {
 

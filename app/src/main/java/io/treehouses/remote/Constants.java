@@ -22,17 +22,9 @@ package io.treehouses.remote;
  * Created by yubo on 7/11/17.
  */
 
-import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 
 /**

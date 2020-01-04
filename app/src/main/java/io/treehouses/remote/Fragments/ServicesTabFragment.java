@@ -9,9 +9,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-
 import androidx.fragment.app.Fragment;
+
+import java.util.ArrayList;
 
 import io.treehouses.remote.R;
 
