@@ -137,10 +137,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog(preferences);
-            //sendLog();
-            listener.sendMessage("treehouses image\n");
-            listener.sendMessage("treehouses version\n");
-            listener.sendMessage("treehouses bluetooth mac\n");
+            sendImageInfoCommand();
             welcome_text.setVisibility(View.GONE);
             testConnection.setVisibility(View.VISIBLE);
             connectRpi.setText("Disconnect");
@@ -164,6 +161,12 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             connectionState = false;
         }
         mChatService.updateHandler(mHandler);
+    }
+
+    private void sendImageInfoCommand() {
+        listener.sendMessage("treehouses image\n");
+        listener.sendMessage("treehouses version\n");
+        listener.sendMessage("treehouses bluetooth mac\n");
     }
 
     private void sendLog() {
