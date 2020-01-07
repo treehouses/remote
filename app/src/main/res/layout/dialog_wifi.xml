@@ -53,4 +53,10 @@
 
     <include layout="@layout/layout_btn_configuration" />
 
+    <Button
+        android:id="@+id/set_wifi_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add WIFI Profile" />
+
 </LinearLayout>

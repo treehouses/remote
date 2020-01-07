@@ -101,4 +101,17 @@
         android:layout_marginBottom="@dimen/_16dp"
         tools:layout_editor_absoluteY="360dp" />
 
+    <ExpandableListView
+        android:id="@+id/network_profiles"
+        android:layout_width="match_parent"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ExpandableListView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

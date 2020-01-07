@@ -11,20 +11,18 @@ import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.os.Message;
 
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,19 +33,23 @@ import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.ProfilesListAdapter;
 import io.treehouses.remote.bases.BaseHomeFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 
-import io.treehouses.remote.utils.VersionUtils;
 import io.treehouses.remote.callback.NotificationCallback;
+import io.treehouses.remote.utils.SaveUtils;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private static final String TAG = "HOME_FRAGMENT";
+    private static final String[] group_labels = {"Wifi, Hotspot, Bridge"};
 
     private NotificationCallback notificationListener;
+
+    private ExpandableListView network_profiles;
 
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
@@ -71,6 +73,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         testConnection = view.findViewById(R.id.test_connection);
         welcome_text = view.findViewById(R.id.welcome_home);
         background = view.findViewById(R.id.background_home);
+        network_profiles = view.findViewById(R.id.network_profiles);
+        setupProfiles();
         showDialogOnce(preferences);
         checkConnectionState();
         connectRpiListener();
@@ -79,13 +83,20 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         return view;
     }
 
+    public void setupProfiles() {
+
+        ProfilesListAdapter profileAdapter = new ProfilesListAdapter(getContext(),
+                Arrays.asList(group_labels), SaveUtils.getProfiles(getContext()));
+
+        network_profiles.setAdapter(profileAdapter);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         if (MainApplication.showLogDialog) {
             showLogDialog(preferences);
-
         }
     }
 
