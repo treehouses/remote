@@ -7,9 +7,11 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import io.treehouses.remote.pojo.CommandListItem;
+import io.treehouses.remote.pojo.NetworkProfile;
 
 public class SaveUtils {
     private static final String DELIMITER = "#/@/#";
@@ -17,7 +19,13 @@ public class SaveUtils {
     public static final String COMMANDS_TITLES_KEY = "commands_titles";
     public static final String COMMANDS_VALUES_KEY = "commands_values";
 
+    public static final String SSIDS_KEY = "essids_names";
+    public static final String PASSWORDS_KEY = "passwords_keys";
+    public static final String OPTIONS_KEY = "options_keys";
+
     public static final String ACTION_KEYWORD = "ACTION";
+
+    public static final String NONE = "/@/";
 
     public static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
         String strArr = "";
@@ -126,5 +134,46 @@ public class SaveUtils {
     public static void clearCommandsList (Context context) {
         clearArrayList(context, COMMANDS_TITLES_KEY);
         clearArrayList(context, COMMANDS_VALUES_KEY);
+    }
+
+    // Network Profiles
+    private static String nonEmpty (String s) {
+        if( s.equals("") || s.equals(" ")) {
+            return NONE;
+        }
+        return s;
+    }
+
+    public static void addProfile(Context context, NetworkProfile profile) {
+        addToArrayList(context, SSIDS_KEY, profile.ssid);
+        addToArrayList(context, PASSWORDS_KEY, nonEmpty(profile.password));
+        addToArrayList(context, OPTIONS_KEY, nonEmpty(profile.option));
+    }
+
+    public static HashMap<String, List<NetworkProfile>> getProfiles(Context context) {
+        ArrayList<String> essids = getStringArray(context, SSIDS_KEY);
+        ArrayList<String> passwords = getStringArray(context, PASSWORDS_KEY);
+        ArrayList<String> options = getStringArray(context, OPTIONS_KEY);
+
+        ArrayList<NetworkProfile> wifi = new ArrayList<>();
+        ArrayList<NetworkProfile> hotspot = new ArrayList<>();
+        for (int i = 0; i < essids.size(); i++) {
+            if (options.get(i).equals(NONE)) {
+                wifi.add(new NetworkProfile(essids.get(i), passwords.get(i)));
+            }
+            else {
+                hotspot.add(new NetworkProfile(essids.get(i), passwords.get(i),options.get(i)));
+            }
+        }
+        HashMap<String, List<NetworkProfile>> profiles = new HashMap<>();
+        profiles.put("WIFI", wifi);
+        profiles.put("Hotspot", hotspot);
+        return profiles;
+    }
+
+    public static void clearProfiles(Context context) {
+        clearArrayList(context, SSIDS_KEY);
+        clearArrayList(context, PASSWORDS_KEY);
+        clearArrayList(context, OPTIONS_KEY);
     }
 }

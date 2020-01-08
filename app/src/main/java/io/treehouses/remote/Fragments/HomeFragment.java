@@ -5,23 +5,19 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-
 import android.util.Log;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,21 +35,26 @@ import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.adapter.ProfilesListAdapter;
 import io.treehouses.remote.bases.BaseHomeFragment;
 import io.treehouses.remote.callback.SetDisconnect;
 
-import io.treehouses.remote.utils.Utils;
-import io.treehouses.remote.utils.VersionUtils;
 import io.treehouses.remote.callback.NotificationCallback;
-import io.treehouses.remote.callback.SetDisconnect;
+import io.treehouses.remote.pojo.NetworkProfile;
+import io.treehouses.remote.utils.SaveUtils;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private static final String TAG = "HOME_FRAGMENT";
+    private static final String[] group_labels = {"WIFI", "Hotspot"};
 
     private NotificationCallback notificationListener;
+
+    private ProgressBar progressBar;
+
+    private ExpandableListView network_profiles;
 
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothChatService mChatService = null;
@@ -61,11 +62,13 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private Boolean connectionState = false;
     private Boolean result = false;
     private TextView welcome_text;
-    private ImageView background;
+    private ImageView background, logo;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     View view;
-    private SharedPreferences preferences;
+
+    private String network_ssid = "";
+    private FrameLayout layout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +80,11 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         testConnection = view.findViewById(R.id.test_connection);
         welcome_text = view.findViewById(R.id.welcome_home);
         background = view.findViewById(R.id.background_home);
+        network_profiles = view.findViewById(R.id.network_profiles);
+        progressBar = view.findViewById(R.id.progress_home);
+        logo = view.findViewById(R.id.logo_home);
+        layout = view.findViewById(R.id.layout_back);
+        setupProfiles();
         showDialogOnce(preferences);
         checkConnectionState();
         connectRpiListener();
@@ -85,13 +93,47 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         return view;
     }
 
+    private void setupProfiles() {
+
+        ProfilesListAdapter profileAdapter = new ProfilesListAdapter(getContext(),
+                Arrays.asList(group_labels), SaveUtils.getProfiles(getContext()));
+
+        network_profiles.setAdapter(profileAdapter);
+        network_profiles.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                NetworkProfile networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
+                switchProfile(networkProfile);
+                return false;
+            }
+        });
+    }
+
+    private void switchProfile(NetworkProfile networkProfile) {
+        progressBar.setVisibility(View.VISIBLE);
+        Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
+
+        if (networkProfile.option.equals(SaveUtils.NONE)) {
+            //WIFI
+            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
+            network_ssid = networkProfile.ssid;
+        } else {
+            //Hotspot
+            if (networkProfile.password.equals(SaveUtils.NONE)) {
+                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\"");
+            } else {
+                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\" \"" + networkProfile.password + "\"");
+            }
+            network_ssid = networkProfile.ssid;
+        }
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         if (MainApplication.showLogDialog) {
             showLogDialog(preferences);
-
         }
     }
 
@@ -129,7 +171,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             String[] options_code = getResources().getStringArray(R.array.led_options_commands);
             selected_LED = options.indexOf(preference);
             writeToRPI(options_code[selected_LED]);
-            testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message);
+            testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selected_LED);
             testConnectionDialog.show();
             result = false;
         });
@@ -139,7 +181,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog(preferences);
-            sendImageInfoCommand();
+            transitionOnConnected();
+
             welcome_text.setVisibility(View.GONE);
             testConnection.setVisibility(View.VISIBLE);
             connectRpi.setText("Disconnect");
@@ -148,40 +191,55 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             connectRpi.animate().translationY(110);
             getStarted.animate().translationY(70);
             connectionState = true;
-
-            testConnection.setVisibility(View.VISIBLE);
-            writeToRPI("treehouses upgrade --check"); //Check upgrade status
+            writeToRPI("treehouses upgrade --check\n"); //Check upgrade status
+            sendImageInfoCommand();
 
         } else {
-            connectRpi.setText("Connect to RPI");
-            testConnection.setVisibility(View.GONE);
-            welcome_text.setVisibility(View.VISIBLE);
-            background.animate().translationY(0);
-            connectRpi.animate().translationY(0);
-            getStarted.animate().translationY(0);
-            connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
+            transitionDisconnected();
             connectionState = false;
         }
         mChatService.updateHandler(mHandler);
     }
 
-    private void sendImageInfoCommand() {
-        listener.sendMessage("treehouses bluetooth mac\n");
-        listener.sendMessage("treehouses image\n");
-        listener.sendMessage("treehouses version\n");
+    private void transitionOnConnected() {
+        welcome_text.setVisibility(View.GONE);
+        testConnection.setVisibility(View.VISIBLE);
+        connectRpi.setText("Disconnect");
+        connectRpi.setBackgroundResource(R.drawable.disconnect_rpi);
+        background.animate().translationY(150);
+        connectRpi.animate().translationY(110);
+        getStarted.animate().translationY(70);
+        testConnection.setVisibility(View.VISIBLE);
+        layout.setVisibility(View.VISIBLE);
+        logo.setVisibility(View.GONE);
     }
 
-    private void sendLog() {
-        int connectionCount = preferences.getInt("connection_count", 0);
-        boolean sendLog = preferences.getBoolean("send_log", true);
-        preferences.edit().putInt("connection_count", connectionCount + 1).commit();
-        if (connectionCount >= 3 && sendLog) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("imageVersion", imageVersion);
-            map.put("treehousesVersion", tresshousesVersion);
-            map.put("bluetoothMacAddress", bluetoothMac);
-            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), map, preferences);
-        }
+    private void sendImageInfoCommand() {
+//        new Thread(() -> {
+//            try {
+               // Thread.sleep(200);
+                listener.sendMessage("treehouses bluetooth mac\n");
+               // Thread.sleep(200);
+                listener.sendMessage("treehouses image\n");
+               // Thread.sleep(200);
+                listener.sendMessage("treehouses version\n");
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+
+    }
+
+    private void transitionDisconnected() {
+        connectRpi.setText("Connect to RPI");
+        testConnection.setVisibility(View.GONE);
+        welcome_text.setVisibility(View.VISIBLE);
+        background.animate().translationY(0);
+        connectRpi.animate().translationY(0);
+        getStarted.animate().translationY(0);
+        connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
+        logo.setVisibility(View.VISIBLE);
+        layout.setVisibility(View.GONE);
     }
 
     private void showRPIDialog() {
@@ -191,46 +249,11 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
     }
 
-    private AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID) {
-        View mView = getLayoutInflater().inflate(R.layout.dialog_test_connection, null);
-        ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
-        ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
-        if (!dismissable) {
-            mIndicatorGreen.setVisibility(View.VISIBLE);
-            mIndicatorRed.setVisibility(View.VISIBLE);
-        } else {
-            mIndicatorGreen.setVisibility(View.INVISIBLE);
-            mIndicatorRed.setVisibility(View.INVISIBLE);
-        }
-        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed, selected_LED);
-        AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
-        AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
-        animationDrawableGreen.start();
-        animationDrawableRed.start();
-        AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
-        a.show();
-        return a;
-    }
-
-    private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
-        AlertDialog.Builder d = new AlertDialog.Builder(getContext()).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID);
-        if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
-        return d.create();
-    }
-
     private void dismissTestConnection() {
         if (testConnectionDialog != null) {
             testConnectionDialog.cancel();
-            showTestConnectionDialog(true, "Process Finished", R.string.test_finished);
+            showTestConnectionDialog(true, "Process Finished", R.string.test_finished, selected_LED);
         }
-    }
-
-    private boolean checkUpgrade(String s) {
-        if (!s.isEmpty() && s.contains("true") || s.contains("false")) {
-            notificationListener.setNotification(s.contains("true"));
-            return true;
-        }
-        return false;
     }
 
     private void writeToRPI(String ping) {
@@ -247,43 +270,54 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
+    private boolean matchResult(String output, String option1, String option2) {
+        return output.contains(option1) || output.contains(option2);
+    }
+
+    private void readMessage(String output) {
+        if (output.contains(" ") && output.split(" ").length == 2) {
+            String[] result = output.split(" ");
+            for (String r : result)
+                checkImageInfo(r,  mChatService.getConnectedDeviceName());
+        } else {
+            checkImageInfo(output,  mChatService.getConnectedDeviceName());
+        }
+
+        if (matchResult(output, "true", "false")) {
+            notificationListener.setNotification(output.contains("true"));
+        } else if (matchResult(output, "network", "successfully")) {
+            Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
+        } else if (output.toLowerCase().contains("error")) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
+        } else if (!result) {
+            result = true;
+            dismissTestConnection();
+        }
+        try {
+            notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement NotificationListener");
+        }
+    }
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
+
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
-                    String readMessage = (String) msg.obj;
-                    checkImageInfo(readMessage);
-                    Log.d(TAG, "handleMessage: " + readMessage);
-                    if (!readMessage.isEmpty() && !checkUpgrade(readMessage) && !result) {
-                        result = true;
-                        dismissTestConnection();
+                    String output = (String) msg.obj;
+                    if (!output.isEmpty()) {
+                        readMessage(output);
                     }
-                    break;
             }
         }
     };
 
-    private void checkImageInfo(String readMessage) {
-
-        String versionRegex = ".*\\..*\\..*";
-        String regexImage = "release.*";
-        boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
-        boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
-        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
-            bluetoothMac = readMessage;
-        }
-        if (matchesImagePattern)
-            imageVersion = readMessage;
-        if (matchesVersion) {
-            tresshousesVersion = readMessage;
-            sendLog();
-        }
-
-    }
 }

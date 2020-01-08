@@ -2,19 +2,26 @@ package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import io.treehouses.remote.MainApplication;
+import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.utils.LogUtils;
 
 public class BaseHomeFragment extends BaseFragment {
+    public SharedPreferences preferences;
+    public String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
 
     public void setAnimatorBackgrounds(ImageView green, ImageView red, int option) {
         if (option == 1) {
@@ -52,6 +59,42 @@ public class BaseHomeFragment extends BaseFragment {
         }
     }
 
+
+
+
+    public void checkImageInfo(String readMessage, String deviceName) {
+
+        String versionRegex = ".*\\..*\\..*";
+        String regexImage = "release.*";
+        boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
+        boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
+        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
+            bluetoothMac = readMessage;
+        }
+        if (matchesImagePattern)
+            imageVersion = readMessage;
+        if (matchesVersion) {
+            tresshousesVersion = readMessage;
+            sendLog(deviceName);
+        }
+    }
+
+
+    private void sendLog(String deviceName) {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean sendLog = preferences.getBoolean("send_log", true);
+        preferences.edit().putInt("connection_count", connectionCount + 1).commit();
+        if (connectionCount >= 3 && sendLog) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("imageVersion", imageVersion);
+            map.put("treehousesVersion", tresshousesVersion);
+            map.put("bluetoothMacAddress", bluetoothMac);
+            ParseDbService.sendLog(getActivity(), deviceName, map, preferences);
+        }
+    }
+
+
+
     protected void showDialogOnce(SharedPreferences preferences) {
         boolean dialogShown = preferences.getBoolean("dialogShown", false);
 
@@ -76,5 +119,32 @@ public class BaseHomeFragment extends BaseFragment {
         d.show();
         ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         return d;
+    }
+
+    public AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID, int selected_LED) {
+        View mView = getLayoutInflater().inflate(R.layout.dialog_test_connection, null);
+        ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
+        ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
+        if (!dismissable) {
+            mIndicatorGreen.setVisibility(View.VISIBLE);
+            mIndicatorRed.setVisibility(View.VISIBLE);
+        } else {
+            mIndicatorGreen.setVisibility(View.INVISIBLE);
+            mIndicatorRed.setVisibility(View.INVISIBLE);
+        }
+        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed, selected_LED);
+        AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
+        AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
+        animationDrawableGreen.start();
+        animationDrawableRed.start();
+        AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
+        a.show();
+        return a;
+    }
+
+    public AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
+        AlertDialog.Builder d = new AlertDialog.Builder(getContext()).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID);
+        if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
+        return d.create();
     }
 }
