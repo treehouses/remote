@@ -21,7 +21,7 @@ public class SaveUtils {
     public static final String COMMANDS_TITLES_KEY = "commands_titles";
     public static final String COMMANDS_VALUES_KEY = "commands_values";
 
-    public static final String ESSIDS_KEY = "essids_names";
+    public static final String SSIDS_KEY = "essids_names";
     public static final String PASSWORDS_KEY = "passwords_keys";
     public static final String OPTIONS_KEY = "options_keys";
 
@@ -147,13 +147,13 @@ public class SaveUtils {
     }
 
     public static void addProfile(Context context, NetworkProfile profile) {
-        addToArrayList(context, ESSIDS_KEY, profile.essid);
+        addToArrayList(context, SSIDS_KEY, profile.ssid);
         addToArrayList(context, PASSWORDS_KEY, nonEmpty(profile.password));
         addToArrayList(context, OPTIONS_KEY, nonEmpty(profile.option));
     }
 
     public static HashMap<String, List<NetworkProfile>> getProfiles(Context context) {
-        ArrayList<String> essids = getStringArray(context, ESSIDS_KEY);
+        ArrayList<String> essids = getStringArray(context, SSIDS_KEY);
         ArrayList<String> passwords = getStringArray(context, PASSWORDS_KEY);
         ArrayList<String> options = getStringArray(context, OPTIONS_KEY);
 
@@ -174,7 +174,7 @@ public class SaveUtils {
     }
 
     public static void clearProfiles(Context context) {
-        clearArrayList(context, ESSIDS_KEY);
+        clearArrayList(context, SSIDS_KEY);
         clearArrayList(context, PASSWORDS_KEY);
         clearArrayList(context, OPTIONS_KEY);
     }

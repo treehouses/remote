@@ -113,17 +113,17 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
         if (networkProfile.option.equals(SaveUtils.NONE)) {
             //WIFI
-            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.essid, networkProfile.password));
-            network_ssid = networkProfile.essid;
+            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
+            network_ssid = networkProfile.ssid;
         }
         else {
             //Hotspot
             if (networkProfile.password.equals(SaveUtils.NONE)) {
-                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.essid + "\"");
+                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\"");
             } else {
-                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.essid + "\" \"" + networkProfile.password + "\"");
+                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\" \"" + networkProfile.password + "\"");
             }
-            network_ssid = networkProfile.essid;
+            network_ssid = networkProfile.ssid;
         }
     }
 
@@ -249,11 +249,15 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
+    private boolean matchResult(String output, String option1, String option2) {
+        return output.contains(option1) || output.contains(option2);
+    }
+
     private void readMessage(String output) {
-        if (output.contains("true") || output.contains("false")) {
+        if (matchResult(output, "true", "false")) {
             notificationListener.setNotification(output.contains("true"));
         }
-        else if (output.contains("network") || output.contains("successfully")) {
+        else if (matchResult(output, "network", "successfully")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
         }

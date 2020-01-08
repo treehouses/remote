@@ -77,7 +77,7 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = layoutInflater.inflate(R.layout.row_profile, null);
         TextView label = convertView.findViewById(R.id.label);
-        label.setText(data.get(titles.get(groupPosition)).get(childPosition).essid);
+        label.setText(data.get(titles.get(groupPosition)).get(childPosition).ssid);
         return convertView;
     }
 
