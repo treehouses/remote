@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 
@@ -165,9 +166,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void sendImageInfoCommand() {
+        listener.sendMessage("treehouses bluetooth mac\n");
         listener.sendMessage("treehouses image\n");
         listener.sendMessage("treehouses version\n");
-        listener.sendMessage("treehouses bluetooth mac\n");
     }
 
     private void sendLog() {
@@ -179,7 +180,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             map.put("imageVersion", imageVersion);
             map.put("treehousesVersion", tresshousesVersion);
             map.put("bluetoothMacAddress", bluetoothMac);
-            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(),map, preferences);
+            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), map, preferences);
         }
     }
 
@@ -249,7 +250,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    String imageVersion = "", tresshousesVersion = "" , bluetoothMac = "";
+    String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -274,15 +275,15 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         String regexImage = "release.*";
         boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
         boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
+        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
+            bluetoothMac = readMessage;
+        }
         if (matchesImagePattern)
             imageVersion = readMessage;
-        if(matchesVersion)
+        if (matchesVersion) {
             tresshousesVersion = readMessage;
-        if(readMessage.split(":").length == 6){
-            bluetoothMac = readMessage;
             sendLog();
         }
-
 
     }
 }
