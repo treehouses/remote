@@ -9,9 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+
 import java.util.List;
+
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 

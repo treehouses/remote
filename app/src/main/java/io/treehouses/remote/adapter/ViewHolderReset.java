@@ -2,6 +2,7 @@ package io.treehouses.remote.adapter;
 
 import android.view.View;
 import android.widget.Button;
+
 import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.R;
 

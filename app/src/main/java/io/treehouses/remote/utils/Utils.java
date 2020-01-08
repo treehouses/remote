@@ -3,14 +3,12 @@ package io.treehouses.remote.utils;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.provider.Settings.Secure;
 import android.widget.Toast;
 
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
-import android.provider.Settings.Secure;
 
 import androidx.fragment.app.FragmentActivity;
 

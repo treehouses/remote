@@ -1,17 +1,19 @@
 package io.treehouses.remote.adapter;
 
-import android.graphics.Color;
 import android.content.Context;
+import android.graphics.Color;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.google.android.material.textfield.TextInputEditText;
-import io.treehouses.remote.utils.ButtonConfiguration;
+
 import io.treehouses.remote.R;
-import io.treehouses.remote.utils.TextWatcherUtils;
 import io.treehouses.remote.callback.HomeInteractListener;
+import io.treehouses.remote.utils.ButtonConfiguration;
+import io.treehouses.remote.utils.TextWatcherUtils;
 
 public class ViewHolderBridge extends ButtonConfiguration {
     private TextInputEditText etPassword, etHotspotPassword;

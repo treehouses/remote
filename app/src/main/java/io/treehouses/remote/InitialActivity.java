@@ -5,24 +5,26 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import com.google.android.material.navigation.NavigationView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.navigation.NavigationView;
+
 import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NetworkFragment;
@@ -35,16 +37,9 @@ import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.PermissionActivity;
 import io.treehouses.remote.callback.HomeInteractListener;
-
 import io.treehouses.remote.callback.NotificationCallback;
-
 import io.treehouses.remote.utils.GPSService;
-
 import io.treehouses.remote.utils.LogUtils;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 
 public class InitialActivity extends PermissionActivity

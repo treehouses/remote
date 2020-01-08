@@ -16,17 +16,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-import io.treehouses.remote.utils.ButtonConfiguration;
+import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
+import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderReboot;
 import io.treehouses.remote.bases.BaseFragment;
-import io.treehouses.remote.Constants;
-import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.NetworkListItem;
+import io.treehouses.remote.utils.ButtonConfiguration;
 
 public class NetworkFragment extends BaseFragment {
 
