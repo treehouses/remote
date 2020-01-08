@@ -22,8 +22,6 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import io.treehouses.remote.MainApplication;
-
 public class GPSService extends Service implements LocationListener {
 
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters

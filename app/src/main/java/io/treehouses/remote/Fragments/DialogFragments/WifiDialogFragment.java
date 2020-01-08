@@ -17,16 +17,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import androidx.fragment.app.DialogFragment;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import io.treehouses.remote.utils.ButtonConfiguration;
-import io.treehouses.remote.R;
-import io.treehouses.remote.utils.Utils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import io.treehouses.remote.R;
+import io.treehouses.remote.utils.ButtonConfiguration;
 
 public class WifiDialogFragment extends DialogFragment {
 

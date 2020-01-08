@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat;
 
 import java.util.List;
 
-import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.DeviceInfo;
 

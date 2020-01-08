@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import io.treehouses.remote.Constants;
-import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
-import io.treehouses.remote.Fragments.DialogFragments.ContainerDialogFragment;
-import io.treehouses.remote.Fragments.DialogFragments.RenameDialogFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.NetworkListAdapter;

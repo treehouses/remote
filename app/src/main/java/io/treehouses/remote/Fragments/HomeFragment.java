@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.os.Handler;
 import android.os.Message;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +26,9 @@ import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
-import io.treehouses.remote.Constants;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.ParseDbService;
@@ -40,6 +40,8 @@ import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
+import io.treehouses.remote.callback.NotificationCallback;
+import io.treehouses.remote.callback.SetDisconnect;
 
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 

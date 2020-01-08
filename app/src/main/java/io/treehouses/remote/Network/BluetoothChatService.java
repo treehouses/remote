@@ -37,9 +37,9 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.UUID;
 
-import io.treehouses.remote.Fragments.HomeFragment;
-import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
+import io.treehouses.remote.Fragments.HomeFragment;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
