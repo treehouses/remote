@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.os.Handler;
@@ -16,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,7 +46,7 @@ import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private static final String TAG = "HOME_FRAGMENT";
-    private static final String[] group_labels = {"WIFI", "Hotspot", "Bridge"};
+    private static final String[] group_labels = {"WIFI", "Hotspot"};
 
     private NotificationCallback notificationListener;
 
@@ -60,12 +60,13 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private Boolean connectionState = false;
     private Boolean result = false;
     private TextView welcome_text;
-    private ImageView background;
+    private ImageView background, logo;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     View view;
     private SharedPreferences preferences;
     private String network_ssid = "";
+    private FrameLayout layout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,6 +80,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         background = view.findViewById(R.id.background_home);
         network_profiles = view.findViewById(R.id.network_profiles);
         progressBar = view.findViewById(R.id.progress_home);
+        logo = view.findViewById(R.id.logo_home);
+        layout = view.findViewById(R.id.layout_back);
         setupProfiles();
         showDialogOnce(preferences);
         checkConnectionState();
@@ -106,6 +109,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     private void switchProfile(NetworkProfile networkProfile) {
         progressBar.setVisibility(View.VISIBLE);
+        Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
+
         if (networkProfile.option.equals(SaveUtils.NONE)) {
             //WIFI
             listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.essid, networkProfile.password));
@@ -194,7 +199,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpi.animate().translationY(110);
         getStarted.animate().translationY(70);
         testConnection.setVisibility(View.VISIBLE);
-        network_profiles.setVisibility(View.VISIBLE);
+        layout.setVisibility(View.VISIBLE);
+        logo.setVisibility(View.GONE);
     }
 
     private void transitionDisconnected() {
@@ -205,7 +211,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpi.animate().translationY(0);
         getStarted.animate().translationY(0);
         connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
-        network_profiles.setVisibility(View.GONE);
+        logo.setVisibility(View.VISIBLE);
+        layout.setVisibility(View.GONE);
     }
 
     private void sendLog() {
