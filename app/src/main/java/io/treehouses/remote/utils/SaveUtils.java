@@ -27,7 +27,7 @@ public class SaveUtils {
 
     public static final String ACTION_KEYWORD = "ACTION";
 
-    private static final String NO_OPTION = "/@/";
+    public static final String NONE = "/@/";
 
     public static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
         String strArr = "";
@@ -142,12 +142,16 @@ public class SaveUtils {
 
     public static void addProfile(Context context, NetworkProfile profile) {
         addToArrayList(context, ESSIDS_KEY, profile.essid);
-        addToArrayList(context, PASSWORDS_KEY, profile.password);
-        if (profile.option.equals("") || profile.option.equals(" ")) {
-            addToArrayList(context, OPTIONS_KEY, NO_OPTION);
-            return;
+        if (profile.password.equals("") || profile.option.equals(" ")) {
+            addToArrayList(context, PASSWORDS_KEY, NONE);
+        } else {
+            addToArrayList(context, PASSWORDS_KEY, profile.password);
         }
-        addToArrayList(context, OPTIONS_KEY, profile.option);
+        if (profile.option.equals("") || profile.option.equals(" ")) {
+            addToArrayList(context, OPTIONS_KEY, NONE);
+        } else {
+            addToArrayList(context, OPTIONS_KEY, profile.option);
+        }
     }
 
     public static HashMap<String, List<NetworkProfile>> getProfiles(Context context) {
@@ -158,8 +162,8 @@ public class SaveUtils {
         ArrayList<NetworkProfile> wifi = new ArrayList<>();
         ArrayList<NetworkProfile> hotspot = new ArrayList<>();
         for (int i = 0; i < essids.size(); i++) {
-            if (options.get(i).equals(NO_OPTION)) {
-                wifi.add(new NetworkProfile(essids.get(i), passwords.get(i), ""));
+            if (options.get(i).equals(NONE)) {
+                wifi.add(new NetworkProfile(essids.get(i), passwords.get(i)));
             }
             else {
                 hotspot.add(new NetworkProfile(essids.get(i), passwords.get(i),options.get(i)));
@@ -169,5 +173,11 @@ public class SaveUtils {
         profiles.put("WIFI", wifi);
         profiles.put("Hotspot", hotspot);
         return profiles;
+    }
+
+    public static void clearProfiles(Context context) {
+        clearArrayList(context, ESSIDS_KEY);
+        clearArrayList(context, PASSWORDS_KEY);
+        clearArrayList(context, OPTIONS_KEY);
     }
 }

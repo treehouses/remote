@@ -2,9 +2,11 @@ package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.graphics.drawable.AnimationDrawable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -76,5 +78,32 @@ public class BaseHomeFragment extends BaseFragment {
         d.show();
         ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         return d;
+    }
+
+    public AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID, int selected_LED) {
+        View mView = getLayoutInflater().inflate(R.layout.dialog_test_connection, null);
+        ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
+        ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
+        if (!dismissable) {
+            mIndicatorGreen.setVisibility(View.VISIBLE);
+            mIndicatorRed.setVisibility(View.VISIBLE);
+        } else {
+            mIndicatorGreen.setVisibility(View.INVISIBLE);
+            mIndicatorRed.setVisibility(View.INVISIBLE);
+        }
+        setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed, selected_LED);
+        AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
+        AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();
+        animationDrawableGreen.start();
+        animationDrawableRed.start();
+        AlertDialog a = createTestConnectionDialog(mView, dismissable, title, messageID);
+        a.show();
+        return a;
+    }
+
+    public AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
+        AlertDialog.Builder d = new AlertDialog.Builder(getContext()).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID);
+        if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
+        return d.create();
     }
 }

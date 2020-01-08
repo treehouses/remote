@@ -30,12 +30,17 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return data.get(titles.get(groupPosition)).size();
+        if (data.get(titles.get(groupPosition)) == null) {
+            return 0;
+        }
+        else {
+            return data.get(titles.get(groupPosition)).size();
+        }
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return null;
+        return "YEEY";
     }
 
     @Override
@@ -78,6 +83,6 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 }
