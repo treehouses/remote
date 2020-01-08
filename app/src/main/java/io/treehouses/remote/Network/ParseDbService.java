@@ -6,6 +6,8 @@ import android.os.Build;
 
 import com.parse.ParseObject;
 
+import java.util.HashMap;
+
 import io.treehouses.remote.utils.Utils;
 import io.treehouses.remote.utils.VersionUtils;
 
@@ -13,7 +15,7 @@ public class ParseDbService {
     public ParseDbService() {
     }
 
-    public static void sendLog(Context context, String rpiName, SharedPreferences preferences){
+    public static void sendLog(Context context, String rpiName, HashMap<String, String> map, SharedPreferences preferences) {
         ParseObject testObject = new ParseObject("userlog");
         testObject.put("title", rpiName + "");
         testObject.put("description", "Connected to bluetooth");
@@ -25,9 +27,13 @@ public class ParseDbService {
         testObject.put("deviceModel", Build.MODEL);
         testObject.put("deviceSerialNumber", Utils.getAndroidId(context));
         testObject.put("macAddress", Utils.getMacAddr());
-        testObject.put("androidVersion", Build.VERSION.SDK_INT +"");
-        testObject.put("gps_latitude", preferences.getString("last_lat",""));
-        testObject.put("gps_longitude", preferences.getString("last_lng",""));
+        testObject.put("androidVersion", Build.VERSION.SDK_INT + "");
+        testObject.put("gps_latitude", preferences.getString("last_lat", ""));
+        testObject.put("gps_longitude", preferences.getString("last_lng", ""));
+        testObject.put("imageVersion", map.get("imageVersion") + "");
+        testObject.put("treehousesVersion", map.get("treehousesVersion") + "");
+        testObject.put("bluetoothMacAddress", map.get("bluetoothMacAddress") + "");
         testObject.saveInBackground();
     }
+
 }
