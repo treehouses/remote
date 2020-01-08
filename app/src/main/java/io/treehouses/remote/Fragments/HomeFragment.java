@@ -66,7 +66,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     View view;
-    private SharedPreferences preferences;
+
     private String network_ssid = "";
     private FrameLayout layout;
 
@@ -242,19 +242,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         layout.setVisibility(View.GONE);
     }
 
-    private void sendLog() {
-        int connectionCount = preferences.getInt("connection_count", 0);
-        boolean sendLog = preferences.getBoolean("send_log", true);
-        preferences.edit().putInt("connection_count", connectionCount + 1).commit();
-        if (connectionCount >= 3 && sendLog) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("imageVersion", imageVersion);
-            map.put("treehousesVersion", tresshousesVersion);
-            map.put("bluetoothMacAddress", bluetoothMac);
-            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), map, preferences);
-        }
-    }
-
     private void showRPIDialog() {
         androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
@@ -291,9 +278,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         if (output.contains(" ") && output.split(" ").length == 2) {
             String[] result = output.split(" ");
             for (String r : result)
-                checkImageInfo(r);
+                checkImageInfo(r,  mChatService.getConnectedDeviceName());
         } else {
-            checkImageInfo(output);
+            checkImageInfo(output,  mChatService.getConnectedDeviceName());
         }
 
         if (matchResult(output, "true", "false")) {
@@ -318,7 +305,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
+
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -332,24 +319,5 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             }
         }
     };
-
-    private void checkImageInfo(String readMessage) {
-
-        String versionRegex = ".*\\..*\\..*";
-
-        String regexImage = "release.*";
-        boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
-        boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
-        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
-            bluetoothMac = readMessage;
-        }
-        if (matchesImagePattern)
-            imageVersion = readMessage;
-        if (matchesVersion) {
-            tresshousesVersion = readMessage;
-            sendLog();
-        }
-
-    }
 
 }

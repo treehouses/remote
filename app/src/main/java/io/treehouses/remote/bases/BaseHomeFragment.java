@@ -11,12 +11,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import io.treehouses.remote.MainApplication;
+import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.utils.LogUtils;
 
 public class BaseHomeFragment extends BaseFragment {
+    public SharedPreferences preferences;
+    public String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
 
     public void setAnimatorBackgrounds(ImageView green, ImageView red, int option) {
         if (option == 1) {
@@ -53,6 +58,42 @@ public class BaseHomeFragment extends BaseFragment {
             }
         }
     }
+
+
+
+
+    public void checkImageInfo(String readMessage, String deviceName) {
+
+        String versionRegex = ".*\\..*\\..*";
+        String regexImage = "release.*";
+        boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
+        boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
+        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
+            bluetoothMac = readMessage;
+        }
+        if (matchesImagePattern)
+            imageVersion = readMessage;
+        if (matchesVersion) {
+            tresshousesVersion = readMessage;
+            sendLog(deviceName);
+        }
+    }
+
+
+    private void sendLog(String deviceName) {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean sendLog = preferences.getBoolean("send_log", true);
+        preferences.edit().putInt("connection_count", connectionCount + 1).commit();
+        if (connectionCount >= 3 && sendLog) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("imageVersion", imageVersion);
+            map.put("treehousesVersion", tresshousesVersion);
+            map.put("bluetoothMacAddress", bluetoothMac);
+            ParseDbService.sendLog(getActivity(), deviceName, map, preferences);
+        }
+    }
+
+
 
     protected void showDialogOnce(SharedPreferences preferences) {
         boolean dialogShown = preferences.getBoolean("dialogShown", false);
