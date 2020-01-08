@@ -139,19 +139,17 @@ public class SaveUtils {
     }
 
     // Network Profiles
+    private static String nonEmpty (String s) {
+        if( s.equals("") || s.equals(" ")) {
+            return NONE;
+        }
+        return s;
+    }
 
     public static void addProfile(Context context, NetworkProfile profile) {
         addToArrayList(context, ESSIDS_KEY, profile.essid);
-        if (profile.password.equals("") || profile.option.equals(" ")) {
-            addToArrayList(context, PASSWORDS_KEY, NONE);
-        } else {
-            addToArrayList(context, PASSWORDS_KEY, profile.password);
-        }
-        if (profile.option.equals("") || profile.option.equals(" ")) {
-            addToArrayList(context, OPTIONS_KEY, NONE);
-        } else {
-            addToArrayList(context, OPTIONS_KEY, profile.option);
-        }
+        addToArrayList(context, PASSWORDS_KEY, nonEmpty(profile.password));
+        addToArrayList(context, OPTIONS_KEY, nonEmpty(profile.option));
     }
 
     public static HashMap<String, List<NetworkProfile>> getProfiles(Context context) {
