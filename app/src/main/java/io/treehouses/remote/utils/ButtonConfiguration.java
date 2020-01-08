@@ -1,12 +1,8 @@
 package io.treehouses.remote.utils;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
-import android.text.Editable;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
