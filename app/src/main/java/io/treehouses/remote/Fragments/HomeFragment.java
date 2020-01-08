@@ -9,6 +9,13 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+
+import android.util.Log;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +28,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
@@ -31,6 +40,10 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseHomeFragment;
+import io.treehouses.remote.callback.SetDisconnect;
+
+import io.treehouses.remote.utils.Utils;
+import io.treehouses.remote.utils.VersionUtils;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.callback.SetDisconnect;
 
@@ -102,7 +115,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) { showRPIDialog(); }
+                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                    showRPIDialog();
+                }
             }
         });
     }
@@ -124,7 +139,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog(preferences);
-            sendLog();
+            sendImageInfoCommand();
             welcome_text.setVisibility(View.GONE);
             testConnection.setVisibility(View.VISIBLE);
             connectRpi.setText("Disconnect");
@@ -150,12 +165,22 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         mChatService.updateHandler(mHandler);
     }
 
+    private void sendImageInfoCommand() {
+        listener.sendMessage("treehouses bluetooth mac\n");
+        listener.sendMessage("treehouses image\n");
+        listener.sendMessage("treehouses version\n");
+    }
+
     private void sendLog() {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean sendLog = preferences.getBoolean("send_log", true);
         preferences.edit().putInt("connection_count", connectionCount + 1).commit();
         if (connectionCount >= 3 && sendLog) {
-            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), preferences);
+            HashMap<String, String> map = new HashMap<>();
+            map.put("imageVersion", imageVersion);
+            map.put("treehousesVersion", tresshousesVersion);
+            map.put("bluetoothMacAddress", bluetoothMac);
+            ParseDbService.sendLog(getActivity(), mChatService.getConnectedDeviceName(), map, preferences);
         }
     }
 
@@ -208,25 +233,33 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         return false;
     }
 
-    private void writeToRPI(String ping) { mChatService.write(ping.getBytes()); }
+    private void writeToRPI(String ping) {
+        mChatService.write(ping.getBytes());
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try { notificationListener = (NotificationCallback) getContext();
-        } catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
+        try {
+            notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement NotificationListener");
+        }
     }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+    String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
-
+                    checkImageInfo(readMessage);
+                    Log.d(TAG, "handleMessage: " + readMessage);
                     if (!readMessage.isEmpty() && !checkUpgrade(readMessage) && !result) {
                         result = true;
                         dismissTestConnection();
@@ -235,4 +268,22 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             }
         }
     };
+
+    private void checkImageInfo(String readMessage) {
+
+        String versionRegex = ".*\\..*\\..*";
+        String regexImage = "release.*";
+        boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
+        boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
+        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
+            bluetoothMac = readMessage;
+        }
+        if (matchesImagePattern)
+            imageVersion = readMessage;
+        if (matchesVersion) {
+            tresshousesVersion = readMessage;
+            sendLog();
+        }
+
+    }
 }

@@ -10,6 +10,8 @@ import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.fragment.app.FragmentActivity;
+
 public class Utils {
     public static void copyToClipboard(Context context, String clickedData) {
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
@@ -57,4 +59,7 @@ public class Utils {
         return res1.toString();
     }
 
+    public static void toast(Context context, String s) {
+        Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+    }
 }
