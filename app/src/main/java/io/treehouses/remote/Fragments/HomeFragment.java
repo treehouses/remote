@@ -311,7 +311,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
+  private   String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -322,9 +322,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     if (!output.isEmpty()) {
                         readMessage(output);
                     }
-                case Constants.STATE_NONE:
-
-
             }
         }
     };
