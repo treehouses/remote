@@ -215,18 +215,18 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void sendImageInfoCommand() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(200);
+//        new Thread(() -> {
+//            try {
+               // Thread.sleep(200);
                 listener.sendMessage("treehouses bluetooth mac\n");
-                Thread.sleep(200);
+               // Thread.sleep(200);
                 listener.sendMessage("treehouses image\n");
-                Thread.sleep(200);
+               // Thread.sleep(200);
                 listener.sendMessage("treehouses version\n");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
 
     }
 
@@ -288,7 +288,14 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void readMessage(String output) {
-        checkImageInfo(output);
+        if (output.contains(" ") && output.split(" ").length == 2) {
+            String[] result = output.split(" ");
+            for (String r : result)
+                checkImageInfo(r);
+        } else {
+            checkImageInfo(output);
+        }
+
         if (matchResult(output, "true", "false")) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "network", "successfully")) {
@@ -311,7 +318,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-  private   String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
+    private String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
