@@ -31,7 +31,7 @@ public class ViewHolderBridge extends ButtonConfiguration {
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
 
         try {
-            etSsid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            essid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
             etHotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,12 +41,12 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
         buttonProperties(false, Color.LTGRAY, btnStartConfiguration);
 
-        essid.addTextChangedListener(new TextWatcherUtils(etSsid));
+        essid.addTextChangedListener(new TextWatcherUtils(essid));
         etHotspotEssid.addTextChangedListener(new TextWatcherUtils(etHotspotEssid));
         etPassword.addTextChangedListener(new TextWatcherUtils(etPassword));
 
         btnStartConfiguration.setOnClickListener(view -> {
-            String temp = "treehouses bridge \"" + etSsid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
+            String temp = "treehouses bridge \"" + essid.getText().toString() + "\" \"" + etHotspotEssid.getText().toString() + "\" ";
             String overallMessage = TextUtils.isEmpty(etPassword.getText().toString()) ? temp + "\"\"" : temp + "\"" + etPassword.getText().toString() + "\"";
             overallMessage += " ";
 
