@@ -58,7 +58,7 @@ class ViewHolderWifi extends ButtonConfiguration {
         saveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(etSsid.getText().toString(), etPassword.getText().toString(),""));
+                SaveUtils.addProfile(context, new NetworkProfile(etSsid.getText().toString(), etPassword.getText().toString()));
                 Toast.makeText(context, "Profile Saved", Toast.LENGTH_LONG).show();
             }
         });

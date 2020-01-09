@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,13 +21,9 @@ public class SaveUtils {
     public static final String COMMANDS_TITLES_KEY = "commands_titles";
     public static final String COMMANDS_VALUES_KEY = "commands_values";
 
-    public static final String SSIDS_KEY = "essids_names";
-    public static final String PASSWORDS_KEY = "passwords_keys";
-    public static final String OPTIONS_KEY = "options_keys";
+    public static final String NETWORK_PROFILES_KEY = "network_profile_keys";
 
     public static final String ACTION_KEYWORD = "ACTION";
-
-    public static final String NONE = "/@/";
 
     public static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
         String strArr = "";
@@ -136,33 +134,27 @@ public class SaveUtils {
         clearArrayList(context, COMMANDS_VALUES_KEY);
     }
 
-    // Network Profiles
-    private static String nonEmpty (String s) {
-        if( s.equals("") || s.equals(" ")) {
-            return NONE;
-        }
-        return s;
-    }
-
     public static void addProfile(Context context, NetworkProfile profile) {
-        addToArrayList(context, SSIDS_KEY, profile.ssid);
-        addToArrayList(context, PASSWORDS_KEY, nonEmpty(profile.password));
-        addToArrayList(context, OPTIONS_KEY, nonEmpty(profile.option));
+        Gson gson = new Gson();
+        Log.d("PROFILE", Integer.toString(profile.profileType));
+        addToArrayList(context, NETWORK_PROFILES_KEY, gson.toJson(profile));
     }
 
     public static HashMap<String, List<NetworkProfile>> getProfiles(Context context) {
-        ArrayList<String> essids = getStringArray(context, SSIDS_KEY);
-        ArrayList<String> passwords = getStringArray(context, PASSWORDS_KEY);
-        ArrayList<String> options = getStringArray(context, OPTIONS_KEY);
-
+        Gson gson = new Gson();
+        ArrayList<String> json_profiles = getStringArray(context, NETWORK_PROFILES_KEY);
         ArrayList<NetworkProfile> wifi = new ArrayList<>();
         ArrayList<NetworkProfile> hotspot = new ArrayList<>();
-        for (int i = 0; i < essids.size(); i++) {
-            if (options.get(i).equals(NONE)) {
-                wifi.add(new NetworkProfile(essids.get(i), passwords.get(i)));
+        for (int i = 0; i < json_profiles.size(); i++) {
+            NetworkProfile profile = gson.fromJson(json_profiles.get(i), NetworkProfile.class);
+            if (profile.isWifi()) {
+                wifi.add(profile);
+            }
+            else if (profile.isHotspot()){
+                hotspot.add(profile);
             }
             else {
-                hotspot.add(new NetworkProfile(essids.get(i), passwords.get(i),options.get(i)));
+                Log.e("SAVE UTILS", "Not a supported type");
             }
         }
         HashMap<String, List<NetworkProfile>> profiles = new HashMap<>();
@@ -172,8 +164,6 @@ public class SaveUtils {
     }
 
     public static void clearProfiles(Context context) {
-        clearArrayList(context, SSIDS_KEY);
-        clearArrayList(context, PASSWORDS_KEY);
-        clearArrayList(context, OPTIONS_KEY);
+        clearArrayList(context, NETWORK_PROFILES_KEY);
     }
 }

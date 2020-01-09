@@ -24,9 +24,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         setPreferencesFromResource(R.xml.app_preferences, rootKey);
         Preference clearCommandsList = findPreference("clear_commands");
         Preference resetCommandsList = findPreference("reset_commands");
+        Preference clearNetworkProfiles = findPreference("network_profiles");
 
         setClickListener(clearCommandsList);
         setClickListener(resetCommandsList);
+        setClickListener(clearNetworkProfiles);
     }
 
     private void setClickListener(Preference preference) {
@@ -49,8 +51,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 SaveUtils.initCommandsList(getContext());
                 Toast.makeText(getContext(), "Commands has been reset to default", Toast.LENGTH_LONG).show();
                 break;
-            case "led_pattern":
-
+            case "network_profiles":
+                SaveUtils.clearProfiles(getContext());
+                Toast.makeText(getContext(), "Network Profiles have been reset", Toast.LENGTH_LONG).show();
+                break;
         }
         return false;
     }

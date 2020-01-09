@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,16 +23,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.ProfilesListAdapter;
 import io.treehouses.remote.bases.BaseHomeFragment;
@@ -113,18 +109,21 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         progressBar.setVisibility(View.VISIBLE);
         Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
 
-        if (networkProfile.option.equals(SaveUtils.NONE)) {
+        if (networkProfile.isWifi()) {
             //WIFI
             listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
             network_ssid = networkProfile.ssid;
-        } else {
+        } else if (networkProfile.isHotspot()){
             //Hotspot
-            if (networkProfile.password.equals(SaveUtils.NONE)) {
+            if (networkProfile.password.isEmpty()) {
                 listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\"");
             } else {
                 listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\" \"" + networkProfile.password + "\"");
             }
             network_ssid = networkProfile.ssid;
+        }
+        else {
+            Log.e("Home", "UNKNOWN TYPE");
         }
     }
 

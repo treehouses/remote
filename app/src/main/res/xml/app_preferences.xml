@@ -9,16 +9,6 @@
             android:key="autocomplete"
             android:defaultValue="true" />
 
-        <Preference
-            android:title="Clear Commands List"
-            android:key="clear_commands"
-            android:summary="Clear the customizable commands list in terminal">
-        </Preference>
-        <Preference
-            android:title="Default Commands List"
-            android:key="reset_commands"
-            android:summary="Reset list to the default commands in terminal">
-        </Preference>
         <ListPreference
             android:defaultValue="LED Dance"
             android:entries="@array/led_options"
@@ -26,6 +16,27 @@
             android:key="led_pattern"
             android:title="LED Pattern"
             android:summary="Set the Test Connection LED Pattern"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="User Customization">
+        <Preference
+            android:title="Clear Commands List"
+            android:key="clear_commands"
+            android:summary="Clear the customizable commands list in terminal">
+        </Preference>
+
+        <Preference
+            android:title="Default Commands List"
+            android:key="reset_commands"
+            android:summary="Reset list to the default commands in terminal">
+        </Preference>
+
+        <Preference
+            android:title="Clear Network Profiles"
+            android:key="network_profiles"
+            android:summary="Clear all Network Profiles (WIFI, Hotspot, Bridge)">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="About">
