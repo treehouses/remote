@@ -59,7 +59,7 @@ class ViewHolderWifi extends ButtonConfiguration {
             @Override
             public void onClick(View v) {
                 SaveUtils.addProfile(context, new NetworkProfile(etSsid.getText().toString(), etPassword.getText().toString()));
-                Toast.makeText(context, "Profile Saved", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
             }
         });
 

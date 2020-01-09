@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -44,7 +45,7 @@ import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private static final String TAG = "HOME_FRAGMENT";
-    private static final String[] group_labels = {"WIFI", "Hotspot"};
+    private static final String[] group_labels = {"WiFi", "Hotspot", "Bridge"};
 
     private NotificationCallback notificationListener;
 
@@ -113,7 +114,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             //WIFI
             listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
             network_ssid = networkProfile.ssid;
-        } else if (networkProfile.isHotspot()){
+        }
+        else if (networkProfile.isHotspot()){
             //Hotspot
             if (networkProfile.password.isEmpty()) {
                 listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\"");
@@ -122,9 +124,15 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             }
             network_ssid = networkProfile.ssid;
         }
-        else {
-            Log.e("Home", "UNKNOWN TYPE");
+        else if (networkProfile.isBridge()) {
+            //Bridge
+            String temp = "treehouses bridge \"" + networkProfile.ssid + "\" \"" + networkProfile.hotspot_ssid + "\" ";
+            String overallMessage = TextUtils.isEmpty(networkProfile.password) ? temp + "\"\"" : temp + "\"" + networkProfile.password + "\"" + " ";
+
+            if (!TextUtils.isEmpty(networkProfile.hotspot_password)) overallMessage += "\"" + networkProfile.hotspot_password + "\"";
+            listener.sendMessage(overallMessage);
         }
+        else { Log.e("Home", "UNKNOWN TYPE"); }
     }
 
     @Override

@@ -136,7 +136,6 @@ public class SaveUtils {
 
     public static void addProfile(Context context, NetworkProfile profile) {
         Gson gson = new Gson();
-        Log.d("PROFILE", Integer.toString(profile.profileType));
         addToArrayList(context, NETWORK_PROFILES_KEY, gson.toJson(profile));
     }
 
@@ -145,21 +144,26 @@ public class SaveUtils {
         ArrayList<String> json_profiles = getStringArray(context, NETWORK_PROFILES_KEY);
         ArrayList<NetworkProfile> wifi = new ArrayList<>();
         ArrayList<NetworkProfile> hotspot = new ArrayList<>();
+        ArrayList<NetworkProfile> bridge = new ArrayList<>();
         for (int i = 0; i < json_profiles.size(); i++) {
             NetworkProfile profile = gson.fromJson(json_profiles.get(i), NetworkProfile.class);
             if (profile.isWifi()) {
                 wifi.add(profile);
             }
-            else if (profile.isHotspot()){
+            else if (profile.isHotspot()) {
                 hotspot.add(profile);
+            }
+            else if (profile.isBridge()) {
+                bridge.add(profile);
             }
             else {
                 Log.e("SAVE UTILS", "Not a supported type");
             }
         }
         HashMap<String, List<NetworkProfile>> profiles = new HashMap<>();
-        profiles.put("WIFI", wifi);
+        profiles.put("WiFi", wifi);
         profiles.put("Hotspot", hotspot);
+        profiles.put("Bridge", bridge);
         return profiles;
     }
 
