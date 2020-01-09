@@ -67,8 +67,8 @@ public class ViewHolderBridge extends ButtonConfiguration {
         });
 
         addBridgeProfile.setOnClickListener(view -> {
-            Log.d("SSID", etSsid.getText().toString());
-            NetworkProfile networkProfile = new NetworkProfile(etSsid.getText().toString(), etPassword.getText().toString(),
+            Log.d("SSID", essid.getText().toString());
+            NetworkProfile networkProfile = new NetworkProfile(essid.getText().toString(), etPassword.getText().toString(),
                     etHotspotEssid.getText().toString(), etHotspotPassword.getText().toString());
 
             SaveUtils.addProfile(context, networkProfile);

@@ -189,14 +189,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog(preferences);
             transitionOnConnected();
-
-            welcome_text.setVisibility(View.GONE);
-            testConnection.setVisibility(View.VISIBLE);
-            connectRpi.setText("Disconnect");
-            connectRpi.setBackgroundResource(R.drawable.disconnect_rpi);
-            background.animate().translationY(150);
-            connectRpi.animate().translationY(110);
-            getStarted.animate().translationY(70);
             connectionState = true;
             writeToRPI("treehouses upgrade --check\n"); //Check upgrade status
             sendImageInfoCommand();
@@ -221,22 +213,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         logo.setVisibility(View.GONE);
     }
 
-    private void sendImageInfoCommand() {
-//        new Thread(() -> {
-//            try {
-               // Thread.sleep(200);
-                listener.sendMessage("treehouses bluetooth mac\n");
-               // Thread.sleep(200);
-                listener.sendMessage("treehouses image\n");
-               // Thread.sleep(200);
-                listener.sendMessage("treehouses version\n");
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-
-    }
-
     private void transitionDisconnected() {
         connectRpi.setText("Connect to RPI");
         testConnection.setVisibility(View.GONE);
@@ -247,6 +223,13 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
         logo.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
+    }
+
+    private void sendImageInfoCommand() {
+        listener.sendMessage("treehouses bluetooth mac\n");
+        listener.sendMessage("treehouses image\n");
+        listener.sendMessage("treehouses version\n");
+
     }
 
     private void showRPIDialog() {
@@ -295,10 +278,14 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         } else if (matchResult(output, "network", "successfully")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
+        } else if (output.toLowerCase().contains("bridge has been built")) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Bridge Has Been Built", Toast.LENGTH_LONG).show();
         } else if (output.toLowerCase().contains("error")) {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
         } else if (!result) {
+            //Test Connection
             result = true;
             dismissTestConnection();
         }
