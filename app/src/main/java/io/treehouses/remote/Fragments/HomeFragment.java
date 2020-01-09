@@ -267,11 +267,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private void readMessage(String output) {
         if (output.contains(" ") && output.split(" ").length == 2) {
             String[] result = output.split(" ");
-            for (String r : result)
-                checkImageInfo(r,  mChatService.getConnectedDeviceName());
-        } else {
-            checkImageInfo(output,  mChatService.getConnectedDeviceName());
-        }
+            for (String r : result) checkImageInfo(r,  mChatService.getConnectedDeviceName());
+        } else { checkImageInfo(output,  mChatService.getConnectedDeviceName()); }
 
         if (matchResult(output, "true", "false")) {
             notificationListener.setNotification(output.contains("true"));
