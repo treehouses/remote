@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -12,12 +13,15 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
+import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.ButtonConfiguration;
+import io.treehouses.remote.utils.SaveUtils;
 import io.treehouses.remote.utils.TextWatcherUtils;
 
 public class ViewHolderBridge extends ButtonConfiguration {
     private TextInputEditText etPassword, etHotspotPassword;
     private Button btnStartConfiguration;
+    private Button addBridgeProfile;
 
     public ViewHolderBridge(){}
 
@@ -29,6 +33,7 @@ public class ViewHolderBridge extends ButtonConfiguration {
         etHotspotPassword = v.findViewById(R.id.et_hotspot_password);
         setBtnStartConfiguration(btnStartConfiguration = v.findViewById(R.id.btn_start_config));
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
+        addBridgeProfile = v.findViewById(R.id.add_bridge_profile);
 
         try {
             essid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -60,5 +65,17 @@ public class ViewHolderBridge extends ButtonConfiguration {
 
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
         });
+
+        addBridgeProfile.setOnClickListener(view -> {
+            Log.d("SSID", essid.getText().toString());
+            NetworkProfile networkProfile = new NetworkProfile(essid.getText().toString(), etPassword.getText().toString(),
+                    etHotspotEssid.getText().toString(), etHotspotPassword.getText().toString());
+
+            SaveUtils.addProfile(context, networkProfile);
+            Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show();
+        });
+
+
     }
+
 }

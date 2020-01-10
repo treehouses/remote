@@ -51,7 +51,7 @@ class ViewHolderHotspot extends ButtonConfiguration{
             @Override
             public void onClick(View v) {
                 SaveUtils.addProfile(context, new NetworkProfile(etSsid.getText().toString(), etPassword.getText().toString(), spn.getSelectedItem().toString()));
-                Toast.makeText(context, "Profile Saved", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
             }
         });
     }
