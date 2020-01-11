@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.pojo.CommandListItem;
 import io.treehouses.remote.pojo.NetworkProfile;
 
@@ -62,6 +63,7 @@ public class SaveUtils {
         ArrayList<String> arrayList = getStringArray(context, arrayName);
         if (!arrayList.isEmpty()) {
             arrayList.remove(toRemove);
+            saveStringArray(context, arrayList, arrayName);
             return true;
         }
         return false;
@@ -161,10 +163,17 @@ public class SaveUtils {
             }
         }
         HashMap<String, List<NetworkProfile>> profiles = new HashMap<>();
-        profiles.put("WiFi", wifi);
-        profiles.put("Hotspot", hotspot);
-        profiles.put("Bridge", bridge);
+        profiles.put(HomeFragment.group_labels[0], wifi);
+        profiles.put(HomeFragment.group_labels[1], hotspot);
+        profiles.put(HomeFragment.group_labels[2], bridge);
         return profiles;
+    }
+
+    public static void deleteProfile(Context context, int groupPosition, int childPosition) {
+        HashMap<String, List<NetworkProfile>> profiles = getProfiles(context);
+        NetworkProfile networkProfile = profiles.get(HomeFragment.group_labels[groupPosition]).get(childPosition);
+        Gson gson = new Gson();
+        removeFromArrayList(context, NETWORK_PROFILES_KEY, gson.toJson(networkProfile));
     }
 
     public static void clearProfiles(Context context) {
