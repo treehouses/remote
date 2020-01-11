@@ -63,7 +63,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private ImageView background, logo;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
-    View view;
 
     private String network_ssid = "";
     private FrameLayout layout;
@@ -107,7 +106,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void switchProfile(NetworkProfile networkProfile) {
-        showProgressBar(networkProfile.ssid);
+        progressDialog = ProgressDialog.show(getContext(), "Connecting...", "Switching to " + networkProfile.ssid, true);
+        progressDialog.show();
 
         if (networkProfile.isWifi()) {
             //WIFI
@@ -132,11 +132,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             listener.sendMessage(overallMessage);
         }
         else { Log.e("Home", "UNKNOWN TYPE"); }
-    }
-
-    private void showProgressBar(String name) {
-        progressDialog = ProgressDialog.show(getContext(), "Connecting...", "Switching to " + name, true);
-        progressDialog.show();
     }
 
     @Override
