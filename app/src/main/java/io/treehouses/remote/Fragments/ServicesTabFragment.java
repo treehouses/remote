@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -85,19 +86,24 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         switch (view.getId()) {
             case R.id.start_service:
                 Log.d("SERVICES", "START " + services.get(position));
+                Toast.makeText(getContext(), services.get(position) + " Started", Toast.LENGTH_LONG).show();
                 writeToRPI("treehouses services "+services.get(position) + " up");
                 break;
             case R.id.stop_service:
                 Log.d("SERVICES", "STOP " + services.get(position));
                 writeToRPI("treehouses services "+services.get(position) + " stop");
+                Toast.makeText(getContext(), services.get(position) + " Stopped", Toast.LENGTH_LONG).show();
                 break;
             case R.id.install_service:
                 Log.d("SERVICES", "INSTALL " + services.get(position));
                 writeToRPI("treehouses services "+services.get(position) + " up");
+                Toast.makeText(getContext(), services.get(position) + " Installed", Toast.LENGTH_LONG).show();
                 break;
             case R.id.uninstall_service:
                 Log.d("SERVICES", "UNINSTALL " + services.get(position));
                 writeToRPI("treehouses services "+services.get(position) + " down");
+                Toast.makeText(getContext(), services.get(position) + " Uninstalled", Toast.LENGTH_LONG).show();
+
                 break;
         }
     }
