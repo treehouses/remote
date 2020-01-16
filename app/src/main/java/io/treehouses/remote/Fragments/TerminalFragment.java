@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
@@ -41,7 +42,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private static final String TAG = "BluetoothChatFragment";
     private static final String TITLE_EXPANDABLE = "Commands";
     private static TerminalFragment instance = null;
-    private ListView mConversationView;
+    private EditText mConversationView;
     private TextView mPingStatus;
     private AutoCompleteTextView mOutEditText;
     private Button mSendButton, pingStatusButton, mPrevious;
@@ -114,6 +115,20 @@ public class TerminalFragment extends BaseTerminalFragment {
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
         mPrevious = view.findViewById(R.id.btnPrevious);
+
+        mConversationView.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    String message = mConversationView.getText().toString();
+                    listener.sendMessage(message);
+                    mOutEditText.setText("");
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -146,7 +161,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     public void setupChat() {
         Log.d(TAG, "setupChat()");
 
-        copyToList(mConversationView, getContext());
+//        copyToList(mConversationView, getContext());
 
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTerminalList()) {
             @Override
@@ -155,7 +170,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                 return getViews(view, isRead);
             }
         };
-        mConversationView.setAdapter(mConversationArrayAdapter);
+//        mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
@@ -202,6 +217,9 @@ public class TerminalFragment extends BaseTerminalFragment {
             return true;
         }
     };
+
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -262,6 +280,9 @@ public class TerminalFragment extends BaseTerminalFragment {
         MainApplication.getCommandList().add(writeMessage);
         list = MainApplication.getCommandList();
         i = list.size();
+        String s = mConversationView.getText().toString();
+        s += "Command: " + writeMessage+ "\n";
+        mConversationView.setText(s);
     }
 
     /**
@@ -285,6 +306,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                     isRead = true;
                     handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
+                    addToCommandList(readMessage);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     handlerCaseName(msg, getActivity());

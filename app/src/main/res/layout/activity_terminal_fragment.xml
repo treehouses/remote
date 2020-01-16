@@ -4,24 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF"
+    android:background="@color/md_grey_900"
     tools:context=".Fragments.TerminalFragment">
 
-    <ListView
+    <EditText
         android:id="@+id/in"
         android:layout_width="match_parent"
+        android:textColor="@color/bg_white"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginLeft="@dimen/margin_medium"
-        android:layout_marginTop="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
         android:layout_marginRight="@dimen/margin_medium"
-        android:layout_marginBottom="@dimen/margin_medium"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
+        android:textCursorDrawable="@drawable/cursor"
         app:layout_constraintBottom_toTopOf="@+id/edit_text_out"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <AutoCompleteTextView
         android:id="@+id/edit_text_out"
@@ -30,6 +31,8 @@
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/rectangle_border"
         android:hint="Enter Treehouse Commands"
+        android:textColorHint="@color/bg_white"
+        android:textColor="@color/bg_white"
         android:paddingStart="@dimen/margin_medium"
         android:paddingLeft="@dimen/margin_medium"
         android:paddingTop="@dimen/margin_medium"

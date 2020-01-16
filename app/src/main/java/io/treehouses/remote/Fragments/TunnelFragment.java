@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -31,7 +32,7 @@ public class TunnelFragment extends BaseTerminalFragment {
     private TextView mPingStatus;
     private Button pingStatusButton;
     private ArrayAdapter<String> mConversationArrayAdapter;
-    private ListView mConversationView = null;
+    private EditText mConversationView = null;
     private Switch aSwitch;
 
     View view;
@@ -87,9 +88,9 @@ public class TunnelFragment extends BaseTerminalFragment {
         // Initialize the array adapter for the conversation thread
         getViewFunction();
 
-        copyToList(mConversationView, getContext());
+        //copyToList(mConversationView, getContext());
 
-        mConversationView.setAdapter(mConversationArrayAdapter);
+        //mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {

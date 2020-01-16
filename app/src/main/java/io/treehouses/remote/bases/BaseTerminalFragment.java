@@ -61,7 +61,7 @@ public class BaseTerminalFragment extends BaseFragment{
     public View getViews(View view, Boolean isRead) {
         TextView consoleView = view.findViewById(R.id.listItem);
         if (isRead) {
-            consoleView.setTextColor(Color.BLUE);
+            consoleView.setTextColor(Color.WHITE);
         } else {
             consoleView.setTextColor(Color.RED);
         }
@@ -91,12 +91,12 @@ public class BaseTerminalFragment extends BaseFragment{
 
 
 
-    protected void copyToList(final ListView mConversationView, final Context context) {
-        mConversationView.setOnItemClickListener((parent, view, position, id) -> {
-            String clickedData = (String) mConversationView.getItemAtPosition(position);
-            Utils.copyToClipboard(context, clickedData);
-        });
-    }
+//    protected void copyToList(final ListView mConversationView, final Context context) {
+//        mConversationView.setOnItemClickListener((parent, view, position, id) -> {
+//            String clickedData = (String) mConversationView.getItemAtPosition(position);
+//            Utils.copyToClipboard(context, clickedData);
+//        });
+//    }
 
     public void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
@@ -112,7 +112,7 @@ public class BaseTerminalFragment extends BaseFragment{
         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
         if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
             list.add(readMessage);
-            mConversationArrayAdapter.notifyDataSetChanged();
+//            mConversationArrayAdapter.notifyDataSetChanged();
         }
     }
 
