@@ -1,7 +1,9 @@
 package io.treehouses.remote.adapter;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,12 +99,31 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
         deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SaveUtils.deleteProfile(context, groupPosition, childPosition);
-                data.get(titles.get(groupPosition)).remove(childPosition);
-                ProfilesListAdapter.this.notifyDataSetChanged();
+                showConfirmation(data.get(titles.get(groupPosition)).get(childPosition).ssid, groupPosition, childPosition);
             }
         });
         return convertView;
+    }
+
+    private void showConfirmation(String name, int groupPosition, int childPosition) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle("Delete Profile?")
+                .setMessage("Are you sure you want to delete the following Network Profile: " + name)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SaveUtils.deleteProfile(context, groupPosition, childPosition);
+                        data.get(titles.get(groupPosition)).remove(childPosition);
+                        ProfilesListAdapter.this.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        alertDialog.show();
     }
 
     @Override
