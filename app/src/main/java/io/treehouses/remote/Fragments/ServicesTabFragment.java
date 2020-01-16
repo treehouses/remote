@@ -80,30 +80,26 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     };
 
+    private void performService(String action, String command, String name) {
+        Log.d("SERVICES", action +" "+ name);
+        Toast.makeText(getContext(), name + " " + action, Toast.LENGTH_LONG).show();
+        writeToRPI(command);
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("CLICKED", "SDF");
         switch (view.getId()) {
             case R.id.start_service:
-                Log.d("SERVICES", "START " + services.get(position));
-                Toast.makeText(getContext(), services.get(position) + " Started", Toast.LENGTH_LONG).show();
-                writeToRPI("treehouses services "+services.get(position) + " up");
+                performService("Started", "treehouses services "+services.get(position) + " up", services.get(position));
                 break;
             case R.id.stop_service:
-                Log.d("SERVICES", "STOP " + services.get(position));
-                writeToRPI("treehouses services "+services.get(position) + " stop");
-                Toast.makeText(getContext(), services.get(position) + " Stopped", Toast.LENGTH_LONG).show();
+                performService("Stopped", "treehouses services "+services.get(position) + " stop", services.get(position));
                 break;
             case R.id.install_service:
-                Log.d("SERVICES", "INSTALL " + services.get(position));
-                writeToRPI("treehouses services "+services.get(position) + " up");
-                Toast.makeText(getContext(), services.get(position) + " Installed", Toast.LENGTH_LONG).show();
+                performService("Installed", "treehouses services "+services.get(position) + " up", services.get(position));
                 break;
             case R.id.uninstall_service:
-                Log.d("SERVICES", "UNINSTALL " + services.get(position));
-                writeToRPI("treehouses services "+services.get(position) + " down");
-                Toast.makeText(getContext(), services.get(position) + " Uninstalled", Toast.LENGTH_LONG).show();
-
+                performService("Uninstalled", "treehouses services "+services.get(position) + " down", services.get(position));
                 break;
         }
     }
