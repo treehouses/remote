@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -45,11 +46,11 @@ import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private static final String TAG = "HOME_FRAGMENT";
-    private static final String[] group_labels = {"WiFi", "Hotspot", "Bridge"};
+    public static final String[] group_labels = {"WiFi", "Hotspot", "Bridge"};
 
     private NotificationCallback notificationListener;
 
-    private ProgressBar progressBar;
+    private ProgressDialog progressDialog;
 
     private ExpandableListView network_profiles;
 
@@ -62,7 +63,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private ImageView background, logo;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
-    View view;
 
     private String network_ssid = "";
     private FrameLayout layout;
@@ -78,7 +78,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         welcome_text = view.findViewById(R.id.welcome_home);
         background = view.findViewById(R.id.background_home);
         network_profiles = view.findViewById(R.id.network_profiles);
-        progressBar = view.findViewById(R.id.progress_home);
         logo = view.findViewById(R.id.logo_home);
         layout = view.findViewById(R.id.layout_back);
         setupProfiles();
@@ -107,8 +106,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void switchProfile(NetworkProfile networkProfile) {
-        progressBar.setVisibility(View.VISIBLE);
-        Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_LONG).show();
+        progressDialog = ProgressDialog.show(getContext(), "Connecting...", "Switching to " + networkProfile.ssid, true);
+        progressDialog.show();
 
         if (networkProfile.isWifi()) {
             //WIFI
@@ -229,7 +228,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         listener.sendMessage("treehouses bluetooth mac\n");
         listener.sendMessage("treehouses image\n");
         listener.sendMessage("treehouses version\n");
-
     }
 
     private void showRPIDialog() {
@@ -274,12 +272,12 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "network", "successfully")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
-            progressBar.setVisibility(View.GONE);
+            progressDialog.dismiss();
         } else if (output.toLowerCase().contains("bridge has been built")) {
-            progressBar.setVisibility(View.GONE);
+            progressDialog.dismiss();
             Toast.makeText(getContext(), "Bridge Has Been Built", Toast.LENGTH_LONG).show();
         } else if (output.toLowerCase().contains("error")) {
-            progressBar.setVisibility(View.GONE);
+            progressDialog.dismiss();
             Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
         } else if (!result) {
             //Test Connection
