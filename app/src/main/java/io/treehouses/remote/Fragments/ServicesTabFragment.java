@@ -40,7 +40,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        writeToRPI("treehouses services available string");
+        writeToRPI("treehouses services available");
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
@@ -70,10 +70,10 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    if (!output.isEmpty()) {
+                    if (!output.isEmpty() && output.startsWith("Available")) {
                         //Read
                         progressBar.setVisibility(View.GONE);
-                        services.addAll(Arrays.asList(output.split(" ")));
+                        services.addAll(Arrays.asList(output.substring(11).split(" ")));
                         adapter.notifyDataSetChanged();
                     }
             }
