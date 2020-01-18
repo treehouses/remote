@@ -90,7 +90,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (view.getId()) {
             case R.id.start_service:
-                performService("Started", "treehouses services "+services.get(position) + " up", services.get(position));
+                performService("Started", "treehouses services "+services.get(position) + " start", services.get(position));
                 break;
             case R.id.stop_service:
                 performService("Stopped", "treehouses services "+services.get(position) + " stop", services.get(position));
