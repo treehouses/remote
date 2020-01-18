@@ -35,14 +35,16 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.pojo.CommandListItem;
+import io.treehouses.remote.pojo.ShellTerminal;
 import io.treehouses.remote.utils.SaveUtils;
 
 public class TerminalFragment extends BaseTerminalFragment {
+    private static final String NAME = "root@sriharivishnu:~# ";
 
     private static final String TAG = "BluetoothChatFragment";
     private static final String TITLE_EXPANDABLE = "Commands";
     private static TerminalFragment instance = null;
-    private EditText mConversationView;
+    private ShellTerminal mConversationView;
     private TextView mPingStatus;
     private AutoCompleteTextView mOutEditText;
     private Button mSendButton, pingStatusButton, mPrevious;
@@ -121,14 +123,14 @@ public class TerminalFragment extends BaseTerminalFragment {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
-                    String message = getLine(1).substring(getLine(1).indexOf("#")+1);
+                    String message = mConversationView.getLine(1).substring(mConversationView.getLine(1).indexOf("#")+1);
                     listener.sendMessage(message);
                     return true;
                 }
                 return false;
             }
         });
-        mConversationView.setText("root@sriharivishnu:~# ");
+        mConversationView.setText(NAME);
 
     }
 
@@ -281,20 +283,16 @@ public class TerminalFragment extends BaseTerminalFragment {
         i = list.size();
 
         if (output) {
-            if (getLine(1).equals("root@sriharivishnu:~# ") && mConversationView.getText().toString().lastIndexOf("\n") != -1) {
+            if (mConversationView.getLine(1).equals(NAME) && mConversationView.getText().toString().lastIndexOf("\n") != -1) {
                 mConversationView.setText(mConversationView.getText().toString().substring(0, mConversationView.getText().toString().lastIndexOf("\n")));
             }
             String s = mConversationView.getText().toString();
-            s += "\n"+writeMessage + "\n" + "root@sriharivishnu:~# ";
+            s += "\n"+writeMessage + "\n" + NAME;
             mConversationView.setText(s);
         }
         mConversationView.setSelection(mConversationView.getText().length());
     }
 
-    private String getLine(int i) {
-        String[] commands = mConversationView.getText().toString().split("\n");
-        return commands[commands.length-i];
-    }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
