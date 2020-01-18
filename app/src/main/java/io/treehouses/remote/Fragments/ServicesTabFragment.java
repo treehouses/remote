@@ -40,7 +40,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        writeToRPI("treehouses services available");
+        writeToRPI("treehouses remote services available");
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
