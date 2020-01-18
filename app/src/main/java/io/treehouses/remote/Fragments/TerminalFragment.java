@@ -109,8 +109,8 @@ public class TerminalFragment extends BaseTerminalFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mConversationView = view.findViewById(R.id.in);
-        mOutEditText = view.findViewById(R.id.edit_text_out);
-        setUpAutoComplete(mOutEditText);
+        //mOutEditText = view.findViewById(R.id.edit_text_out);
+        //setUpAutoComplete(mOutEditText);
         mSendButton = view.findViewById(R.id.button_send);
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
@@ -121,14 +121,15 @@ public class TerminalFragment extends BaseTerminalFragment {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     // Perform action on key press
-                    String message = mConversationView.getText().toString();
+                    String message = getLine(1).substring(getLine(1).indexOf("#")+1);
                     listener.sendMessage(message);
-                    mOutEditText.setText("");
                     return true;
                 }
                 return false;
             }
         });
+        mConversationView.setText("root@sriharivishnu:~# ");
+
     }
 
     @Override
@@ -173,7 +174,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 //        mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        mOutEditText.setOnEditorActionListener(mWriteListener);
+        //mOutEditText.setOnEditorActionListener(mWriteListener);
 
         btnSendClickListener();
 
@@ -192,16 +193,16 @@ public class TerminalFragment extends BaseTerminalFragment {
                 consoleInput.setText("");
             }
         });
-        mPrevious.setOnClickListener(v -> { setLastCommand(); });
+        //mPrevious.setOnClickListener(v -> { setLastCommand(); });
     }
 
-    private void setLastCommand() {
-        try {
-            last = list.get(--i);
-            mOutEditText.setText(last);
-            mOutEditText.setSelection(mOutEditText.length());
-        } catch (Exception e) { e.printStackTrace(); }
-    }
+//    private void setLastCommand() {
+//        try {
+//            last = list.get(--i);
+//            mOutEditText.setText(last);
+//            mOutEditText.setSelection(mOutEditText.length());
+//        } catch (Exception e) { e.printStackTrace(); }
+//    }
 
     /**
      * The action listener for the EditText widget, to listen for the return key
@@ -217,8 +218,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             return true;
         }
     };
-
-
 
 
     @Override
@@ -276,13 +275,25 @@ public class TerminalFragment extends BaseTerminalFragment {
         dialogFrag.show(getFragmentManager().beginTransaction(), tag);
     }
 
-    private void addToCommandList(String writeMessage) {
+    private void addToCommandList(String writeMessage, Boolean output) {
         MainApplication.getCommandList().add(writeMessage);
         list = MainApplication.getCommandList();
         i = list.size();
-        String s = mConversationView.getText().toString();
-        s += "Command: " + writeMessage+ "\n";
-        mConversationView.setText(s);
+
+        if (output) {
+            if (getLine(1).equals("root@sriharivishnu:~# ") && mConversationView.getText().toString().lastIndexOf("\n") != -1) {
+                mConversationView.setText(mConversationView.getText().toString().substring(0, mConversationView.getText().toString().lastIndexOf("\n")));
+            }
+            String s = mConversationView.getText().toString();
+            s += "\n"+writeMessage + "\n" + "root@sriharivishnu:~# ";
+            mConversationView.setText(s);
+        }
+        mConversationView.setSelection(mConversationView.getText().length());
+    }
+
+    private String getLine(int i) {
+        String[] commands = mConversationView.getText().toString().split("\n");
+        return commands[commands.length-i];
     }
 
     /**
@@ -299,14 +310,14 @@ public class TerminalFragment extends BaseTerminalFragment {
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
                     String writeMessage = handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
-                    addToCommandList(writeMessage);
+                    addToCommandList(writeMessage, false);
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
                     isRead = true;
                     handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
-                    addToCommandList(readMessage);
+                    addToCommandList(readMessage, true);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     handlerCaseName(msg, getActivity());
