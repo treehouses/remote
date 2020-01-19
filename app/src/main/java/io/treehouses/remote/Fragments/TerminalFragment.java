@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,7 +23,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +43,8 @@ import io.treehouses.remote.pojo.ShellTerminal;
 import io.treehouses.remote.utils.SaveUtils;
 
 public class TerminalFragment extends BaseTerminalFragment {
-    private static final String NAME = "root@sriharivishnu:~# ";
+    private static final String CHARACTER = "> ";
+    private static SpannableString NAME;
 
     private static final String TAG = "BluetoothChatFragment";
     private static final String TITLE_EXPANDABLE = "Commands";
@@ -117,20 +122,24 @@ public class TerminalFragment extends BaseTerminalFragment {
         mPingStatus = view.findViewById(R.id.pingStatus);
         pingStatusButton = view.findViewById(R.id.PING);
         mPrevious = view.findViewById(R.id.btnPrevious);
+        mConversationView.setRawInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 
-        mConversationView.setOnKeyListener(new View.OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    // Perform action on key press
-                    String message = mConversationView.getLine(1).substring(mConversationView.getLine(1).indexOf("#")+1);
-                    listener.sendMessage(message);
-                    return true;
-                }
-                return false;
-            }
-        });
-        mConversationView.setText(NAME);
+        mConversationView.setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                        if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                            listener.sendMessage(mConversationView.getLine(1).substring(1));
+                        }
+                        // Return true if you have consumed the action, else false.
+                        return false;
+                    }
+                });
+
+        NAME = new SpannableString(CHARACTER);
+        NAME.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.accent)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mConversationView.append(NAME);
 
     }
 
@@ -188,13 +197,9 @@ public class TerminalFragment extends BaseTerminalFragment {
         // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(v -> {
             // Send a message using content of the edit text widget
-            View view = getView();
-            if (null != view) {
-                TextView consoleInput = view.findViewById(R.id.edit_text_out);
-                listener.sendMessage(consoleInput.getText().toString());
-                consoleInput.setText("");
-            }
+            listener.sendMessage(mConversationView.getLine(1).substring(1));
         });
+        Log.d("WHAT", "Srihari");
         //mPrevious.setOnClickListener(v -> { setLastCommand(); });
     }
 
@@ -209,17 +214,17 @@ public class TerminalFragment extends BaseTerminalFragment {
     /**
      * The action listener for the EditText widget, to listen for the return key
      */
-    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-            // If the action is a key-up event on the return key, send the message
-            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
-                String message = view.getText().toString();
-                listener.sendMessage(message);
-                mOutEditText.setText("");
-            }
-            return true;
-        }
-    };
+//    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
+//        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+//            // If the action is a key-up event on the return key, send the message
+//            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
+//                String message = view.getText().toString();
+//                listener.sendMessage(message);
+//                mOutEditText.setText("");
+//            }
+//            return true;
+//        }
+//    };
 
 
     @Override
@@ -283,14 +288,17 @@ public class TerminalFragment extends BaseTerminalFragment {
         i = list.size();
 
         if (output) {
-            if (mConversationView.getLine(1).equals(NAME) && mConversationView.getText().toString().lastIndexOf("\n") != -1) {
+            mConversationView.isInputting(false);
+
+            if (mConversationView.getLine(1).equals(CHARACTER) && mConversationView.getText().toString().lastIndexOf("\n") != -1) {
                 mConversationView.setText(mConversationView.getText().toString().substring(0, mConversationView.getText().toString().lastIndexOf("\n")));
             }
-            String s = mConversationView.getText().toString();
-            s += "\n"+writeMessage + "\n" + NAME;
-            mConversationView.setText(s);
+            mConversationView.append("\n"+writeMessage + "\n");
+            mConversationView.append(NAME);
         }
+        mConversationView.isInputting(true);
         mConversationView.setSelection(mConversationView.getText().length());
+
     }
 
 
@@ -326,4 +334,5 @@ public class TerminalFragment extends BaseTerminalFragment {
             }
         }
     };
+
 }

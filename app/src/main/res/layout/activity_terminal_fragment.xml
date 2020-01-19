@@ -7,7 +7,7 @@
     android:background="@color/md_grey_900"
     tools:context=".Fragments.TerminalFragment">
 
-    <EditText
+    <io.treehouses.remote.pojo.ShellTerminal
         android:id="@+id/in"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -15,7 +15,10 @@
         android:layout_marginLeft="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
         android:layout_marginRight="@dimen/margin_medium"
+        android:focusable="true"
+        android:imeOptions="actionSend"
         android:stackFromBottom="true"
+        android:inputType="textMultiLine"
         android:textColor="@color/bg_white"
         android:textCursorDrawable="@drawable/cursor"
         android:transcriptMode="alwaysScroll"
