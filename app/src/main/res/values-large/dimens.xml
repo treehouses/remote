@@ -15,4 +15,6 @@
     <dimen name="logo_size_home">300dp</dimen>
     <dimen name="button_normal">150dp</dimen>
 
+    <dimen name="terminal_commands_width">250dp</dimen>
+
 </resources>

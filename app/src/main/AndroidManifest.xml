@@ -44,7 +44,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="portrait"
         android:theme="@style/MyMaterialTheme.Base">
-        <activity android:name=".SplashScreenActivity">
+        <activity android:name=".SplashScreenActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,6 +59,9 @@
             android:theme="@style/MyMaterialTheme.Base"
             android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
+
+        <service android:name=".utils.GPSService" />
+
 
         <meta-data
             android:name="preloaded_fonts"

@@ -84,7 +84,10 @@ public class TextWatcherUtils extends ViewHolderBridge implements android.text.T
     }
 
     private Boolean viewCondition(TextInputEditText editText, Editable editable) {
-        return editable == editText.getEditableText() && !messageSent;
+        if (editText != null && editable != null) {
+            return editable == editText.getEditableText() && !messageSent;
+        }
+        return false;
     }
 
     private Boolean length(EditText editText) {

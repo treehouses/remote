@@ -1,6 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:padding="@dimen/margin_medium"
     android:layout_height="wrap_content"
@@ -21,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
+        app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -44,6 +44,12 @@
 
 
     <include layout="@layout/layout_btn_configuration" />
+
+    <Button
+        android:id="@+id/set_hotspot_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Hotspot Profile" />
 
 
 </LinearLayout>

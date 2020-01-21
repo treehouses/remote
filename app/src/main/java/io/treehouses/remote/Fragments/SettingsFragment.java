@@ -1,20 +1,13 @@
 package io.treehouses.remote.Fragments;
 
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import io.treehouses.remote.R;
-import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.utils.SaveUtils;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
@@ -31,9 +24,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         setPreferencesFromResource(R.xml.app_preferences, rootKey);
         Preference clearCommandsList = findPreference("clear_commands");
         Preference resetCommandsList = findPreference("reset_commands");
+        Preference clearNetworkProfiles = findPreference("network_profiles");
 
         setClickListener(clearCommandsList);
         setClickListener(resetCommandsList);
+        setClickListener(clearNetworkProfiles);
     }
 
     private void setClickListener(Preference preference) {
@@ -56,8 +51,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 SaveUtils.initCommandsList(getContext());
                 Toast.makeText(getContext(), "Commands has been reset to default", Toast.LENGTH_LONG).show();
                 break;
-            case "led_pattern":
-
+            case "network_profiles":
+                SaveUtils.clearProfiles(getContext());
+                Toast.makeText(getContext(), "Network Profiles have been reset", Toast.LENGTH_LONG).show();
+                break;
         }
         return false;
     }

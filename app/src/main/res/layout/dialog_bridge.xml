@@ -1,17 +1,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/margin_medium"
     android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/et_essid"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ESSID"
-        />
+        android:orientation="horizontal">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_essid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ESSID"
+            />
+        <Button
+            android:id="@+id/btnWifiSearch"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:layout_marginLeft="-40dp"
+            android:layout_marginStart="-40dp"
+            android:scaleType="fitXY"
+            android:background="@drawable/wificon"/>
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout3"
@@ -61,15 +74,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-        <Button
-            android:id="@+id/btnWifiSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Search wifi networks"
-            android:padding="@dimen/margin_medium"
-            android:theme="@style/PrimaryButton"
-            />
+    <include layout="@layout/layout_btn_configuration" />
 
-        <include layout="@layout/layout_btn_configuration" />
+    <Button
+        android:id="@+id/add_bridge_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Bridge Profile" />
 
 </LinearLayout>

@@ -7,65 +7,142 @@
     android:background="@color/bg_white">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/logo_home"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="150dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/welcome_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.223"
         app:srcCompat="@drawable/treehouses_image" />
 
-    <Button
-        android:id="@+id/btn_connect"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
-        android:background="?attr/colorPrimary"
-        android:text="CONNECT TO RPI"
-        android:textColor="@color/bg_white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-    <Button
-        android:id="@+id/btn_getStarted"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="24dp"
-        android:background="?attr/colorPrimary"
-        android:text="Get Started"
-        android:textColor="@color/bg_white"
+    <ImageView
+        android:id="@+id/background_home"
+        android:layout_width="match_parent"
+        android:layout_height="241dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_connect" />
+        app:srcCompat="@drawable/background_home" />
 
     <Button
         android:id="@+id/test_connection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test Connection"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        android:background="@drawable/test_connection"
+        android:layout_marginBottom="-10dp"
+        android:text="Test Bluetooth"
+        android:textColor="@color/bg_white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/background_home"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/background_home"
+        app:layout_constraintEnd_toEndOf="@+id/background_home"
+        app:layout_constraintStart_toStartOf="@+id/background_home"
+        app:layout_constraintTop_toTopOf="@+id/background_home">
+
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/connect_to_rpi"
+            android:text="CONNECT TO RPI"
+            android:textColor="@color/bg_white" />
+
+        <Button
+            android:id="@+id/btn_getStarted"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/get_started"
+            android:text="Get Started"
+            android:textColor="@color/bg_white" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/welcome_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome."
+        android:textColor="@color/md_grey_700"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.944" />
+        app:layout_constraintBottom_toTopOf="@id/background_home"
+        android:layout_marginBottom="@dimen/_16dp"
+        tools:layout_editor_absoluteY="360dp" />
+    <FrameLayout
+        android:id="@+id/layout_back"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="40dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/test_connection">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/profiles_background"
+            android:scaleType="fitXY"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Network Profiles"
+                app:fontFamily="@font/roboto_medium"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                android:textColor="@color/bg_white"
+                />
+            <ExpandableListView
+                android:id="@+id/network_profiles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="40dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
+            </ExpandableListView>
+        </LinearLayout>
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

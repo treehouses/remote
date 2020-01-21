@@ -14,10 +14,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -26,7 +22,6 @@ import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseTerminalFragment;
-import io.treehouses.remote.bases.BaseFragment;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class TunnelFragment extends BaseTerminalFragment {

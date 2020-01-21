@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import io.treehouses.remote.R;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
