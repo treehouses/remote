@@ -130,6 +130,9 @@
     <string name="test_connection_message">You should be able to see a flashing green light on your Raspberry Pi right now.</string>
     <string name="test_finished">The flashing has now stopped.</string>
 
+    <string name="collect_data_title">Sharing is Caring</string>
+    <string name="collect_data_message">We would like to collect your usage data in order to help us improve the Treehouses experience. This information would include location, device name and model number, and successful connections. Would you be willing to help Treehouses by sharing this data?</string>
+
     <!--Add Command Dialog-->
     <string name="add_command_title">Add a Command</string>
 
