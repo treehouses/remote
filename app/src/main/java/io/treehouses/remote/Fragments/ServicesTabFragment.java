@@ -25,13 +25,14 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesTabFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private View view;
     private ProgressBar progressBar;
-    private ArrayList<String> services;
-    ArrayAdapter<String> adapter;
+    private ArrayList<ServiceInfo> services;
+    ServicesListAdapter adapter;
 
     public ServicesTabFragment(){}
 
@@ -40,12 +41,12 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        writeToRPI("treehouses remote services available");
+        writeToRPI("treehouses remote services available\n");
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
         progressBar.setVisibility(View.VISIBLE);
-        services = new ArrayList<String>();
+        services = new ArrayList<ServiceInfo>();
 
         ListView listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services);
@@ -70,15 +71,39 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    if (!output.isEmpty() && output.startsWith("Available")) {
+                    if (output.startsWith("Available")) {
                         //Read
                         progressBar.setVisibility(View.GONE);
-                        services.addAll(Arrays.asList(output.substring(11).split(" ")));
-                        adapter.notifyDataSetChanged();
+                        updateServiceList(output.substring(output.indexOf(":")+2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
+                        writeToRPI("treehouses remote services installed\n");
                     }
+                    else if (output.startsWith("Installed")) {
+                        updateServiceList(output.substring(output.indexOf(":")+2).split(" "), ServiceInfo.SERVICE_INSTALLED);
+                        writeToRPI("treehouses remote services running\n");
+                    }
+                    else if (output.startsWith("Running")) {
+                        updateServiceList(output.substring(output.indexOf(":")+2).split(" "), ServiceInfo.SERVICE_RUNNING);
+                    }
+
             }
         }
     };
+
+    private void updateServiceList(String[] stringList, int identifier) {
+        for (String name : stringList) {
+            int a = inServiceList(name);
+            if (a >= 0) services.get(a).serviceStatus = identifier;
+            else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private int inServiceList(String name) {
+        for (int i = 0 ; i < services.size(); i++) {
+            if (services.get(i).name.equals(name)) return i;
+        }
+        return -1;
+    }
 
     private void performService(String action, String command, String name) {
         Log.d("SERVICES", action +" "+ name);
@@ -88,22 +113,23 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String name = services.get(position).name;
         switch (view.getId()) {
             case R.id.start_service:
-                performService("Started", "treehouses services "+services.get(position) + " start", services.get(position));
+                performService("Starting", "treehouses services "+ name + " start\n", name);
                 break;
             case R.id.stop_service:
-                performService("Stopped", "treehouses services "+services.get(position) + " stop", services.get(position));
+                performService("Stopping", "treehouses services "+name + " stop\n", name);
                 break;
             case R.id.install_service:
-                performService("Installed", "treehouses services "+services.get(position) + " up", services.get(position));
+                performService("Installing", "treehouses services "+name + " up\n", name);
                 break;
             case R.id.uninstall_service:
-                performService("Uninstalled", "treehouses services "+services.get(position) + " down", services.get(position));
+                performService("Uninstalling", "treehouses services "+name + " down\n", name);
                 break;
         }
+        writeToRPI("treehouses remote services available\n");
     }
-
 
 
 }
