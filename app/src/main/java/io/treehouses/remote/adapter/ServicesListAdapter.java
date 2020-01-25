@@ -54,29 +54,27 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
 
     private void setStatus(int status) {
         if (status == ServiceInfo.SERVICE_AVAILABLE) {
-            start.setEnabled(false);
-            stop.setEnabled(false);
-            install.setEnabled(true);
-            uninstall.setEnabled(false);
+            setButtons(false, false, true, false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_INSTALLED) {
-            stop.setEnabled(false);
-            start.setEnabled(true);
-            install.setEnabled(false);
-            uninstall.setEnabled(true);
+            setButtons(true, false, false, true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_RUNNING) {
-            start.setEnabled(false);
-            stop.setEnabled(true);
-            install.setEnabled(false);
-            uninstall.setEnabled(true);
+            setButtons(false, true, false, true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_green_500));
         }
+    }
+
+    private void setButtons(boolean first, boolean second, boolean third, boolean fourth) {
+        start.setEnabled(first);
+        stop.setEnabled(second);
+        install.setEnabled(third);
+        uninstall.setEnabled(fourth);
     }
 
     private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
