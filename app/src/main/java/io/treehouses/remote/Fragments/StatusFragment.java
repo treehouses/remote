@@ -120,17 +120,21 @@ public class StatusFragment extends BaseFragment {
             setCard(tvMemory, memoryStatus, "Memory: " + readMessage + "bytes available");
             writeToRPI("treehouses internet");
         } else if (lastCommand.equals("treehouses internet")) {
-            tvStatus1.setText("RPI Wifi Connection: " + readMessage);
-            if (readMessage.startsWith("true")) {
-                wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-                writeToRPI("treehouses upgrade --check");
-            } else {
-                wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-                tvUpgrade.setText("Upgrade Status: NO INTERNET");
-                upgrade.setVisibility(View.GONE);
-            }
+            checkWifiStatus(readMessage);
         } else {
             checkUpgradeStatus(readMessage);
+        }
+    }
+
+    private void checkWifiStatus(String readMessage) {
+        tvStatus1.setText("RPI Wifi Connection: " + readMessage);
+        if (readMessage.startsWith("true")) {
+            wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
+            writeToRPI("treehouses upgrade --check");
+        } else {
+            wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
+            tvUpgrade.setText("Upgrade Status: NO INTERNET");
+            upgrade.setVisibility(View.GONE);
         }
     }
 
