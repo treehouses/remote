@@ -107,14 +107,9 @@ public class StatusFragment extends BaseFragment {
     private void updateStatus(String readMessage) {
         Log.d(TAG, "updateStatus: " + lastCommand + " response " + readMessage);
         if (lastCommand.equals("hostname")) {
-            if (readMessage.startsWith("false")) {
-                Toast.makeText(getActivity(), "Unable to get status", Toast.LENGTH_LONG).show();
-                return;
-            } else {
-                setCard(tvStatus2, btRPIName, "Connected RPI Name: " + readMessage);
-            }
+            setCard(tvStatus2, btRPIName, "Connected RPI Name: " + readMessage);
             writeToRPI("treehouses remote status");
-        } else if (lastCommand.equals("treehouses remote status")) {
+        } else if (readMessage.split(" ").length == 5 && lastCommand.equals("treehouses remote status")) {
             String[] res = readMessage.split(" ");
             setCard(tvStatus1, wifiStatus, "RPI Wifi Connection : " + res[0]);
             tvImage.setText("Treehouses Image Version: " + res[2]);
