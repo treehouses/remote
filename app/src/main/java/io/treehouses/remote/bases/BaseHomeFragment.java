@@ -21,18 +21,16 @@ import io.treehouses.remote.utils.LogUtils;
 
 public class BaseHomeFragment extends BaseFragment {
     public SharedPreferences preferences;
-    public String imageVersion = "", tresshousesVersion = "", bluetoothMac = "";
+    public String imageVersion = "", tresshousesVersion = "", bluetoothMac = "", rpiVersion;
 
     public void setAnimatorBackgrounds(ImageView green, ImageView red, int option) {
         if (option == 1) {
             green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
             red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
-        }
-        else if (option == 2) {
+        } else if (option == 2) {
             green.setBackgroundResource(R.drawable.newyear_anim_green);
             red.setBackgroundResource(R.drawable.newyear_anim_red);
-        }
-        else {
+        } else {
             green.setBackgroundResource(R.drawable.dance_anim_green);
             red.setBackgroundResource(R.drawable.dance_anim_red);
         }
@@ -60,23 +58,13 @@ public class BaseHomeFragment extends BaseFragment {
     }
 
 
+    public void checkImageInfo(String[] readMessage, String deviceName) {
+        bluetoothMac = readMessage[1];
+        imageVersion = readMessage[2];
+        tresshousesVersion = readMessage[3];
+        rpiVersion = readMessage[4];
+        sendLog(deviceName);
 
-
-    public void checkImageInfo(String readMessage, String deviceName) {
-
-        String versionRegex = ".*\\..*\\..*";
-        String regexImage = "release.*";
-        boolean matchesImagePattern = Pattern.matches(regexImage, readMessage);
-        boolean matchesVersion = Pattern.matches(versionRegex, readMessage);
-        if (readMessage.contains(":") && readMessage.split(":").length == 6) {
-            bluetoothMac = readMessage;
-        }
-        if (matchesImagePattern)
-            imageVersion = readMessage;
-        if (matchesVersion) {
-            tresshousesVersion = readMessage;
-            sendLog(deviceName);
-        }
     }
 
 
@@ -89,10 +77,10 @@ public class BaseHomeFragment extends BaseFragment {
             map.put("imageVersion", imageVersion);
             map.put("treehousesVersion", tresshousesVersion);
             map.put("bluetoothMacAddress", bluetoothMac);
+            map.put("rpiVersion", rpiVersion);
             ParseDbService.sendLog(getActivity(), deviceName, map, preferences);
         }
     }
-
 
 
     protected void showDialogOnce(SharedPreferences preferences) {

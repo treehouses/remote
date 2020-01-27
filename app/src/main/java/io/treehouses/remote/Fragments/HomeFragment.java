@@ -113,8 +113,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             //WIFI
             listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
             network_ssid = networkProfile.ssid;
-        }
-        else if (networkProfile.isHotspot()){
+        } else if (networkProfile.isHotspot()) {
             //Hotspot
             if (networkProfile.password.isEmpty()) {
                 listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\"");
@@ -122,16 +121,17 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                 listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\" \"" + networkProfile.password + "\"");
             }
             network_ssid = networkProfile.ssid;
-        }
-        else if (networkProfile.isBridge()) {
+        } else if (networkProfile.isBridge()) {
             //Bridge
             String temp = "treehouses bridge \"" + networkProfile.ssid + "\" \"" + networkProfile.hotspot_ssid + "\" ";
             String overallMessage = TextUtils.isEmpty(networkProfile.password) ? temp + "\"\"" : temp + "\"" + networkProfile.password + "\"" + " ";
 
-            if (!TextUtils.isEmpty(networkProfile.hotspot_password)) overallMessage += "\"" + networkProfile.hotspot_password + "\"";
+            if (!TextUtils.isEmpty(networkProfile.hotspot_password))
+                overallMessage += "\"" + networkProfile.hotspot_password + "\"";
             listener.sendMessage(overallMessage);
+        } else {
+            Log.e("Home", "UNKNOWN TYPE");
         }
-        else { Log.e("Home", "UNKNOWN TYPE"); }
     }
 
     @Override
@@ -189,9 +189,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             showLogDialog(preferences);
             transitionOnConnected();
             connectionState = true;
-            writeToRPI("treehouses upgrade --check\n"); //Check upgrade status
-            sendImageInfoCommand();
-
+            writeToRPI("treehouses remote status\n");
         } else {
             transitionDisconnected();
             connectionState = false;
@@ -222,12 +220,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
         logo.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
-    }
-
-    private void sendImageInfoCommand() {
-        listener.sendMessage("treehouses bluetooth mac\n");
-        listener.sendMessage("treehouses image\n");
-        listener.sendMessage("treehouses version\n");
     }
 
     private void showRPIDialog() {
@@ -263,11 +255,10 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void readMessage(String output) {
-        if (output.contains(" ") && output.split(" ").length == 2) {
+        if (output.contains(" ") && output.split(" ").length == 5) {
             String[] result = output.split(" ");
-            for (String r : result) checkImageInfo(r,  mChatService.getConnectedDeviceName());
-        } else { checkImageInfo(output,  mChatService.getConnectedDeviceName()); }
-
+            checkImageInfo(result, mChatService.getConnectedDeviceName());
+        }
         if (matchResult(output, "true", "false")) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "network", "successfully")) {
@@ -284,6 +275,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             result = true;
             dismissTestConnection();
         }
+        writeToRPI("treehouses upgrade --check\n");
         try {
             notificationListener = (NotificationCallback) getContext();
         } catch (ClassCastException e) {
