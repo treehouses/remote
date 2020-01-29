@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -33,7 +34,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     private ProgressBar progressBar;
     private ArrayList<ServiceInfo> services;
     ServicesListAdapter adapter;
-
+    private TextView tvMessage;
     public ServicesTabFragment(){}
 
     @Override
@@ -45,6 +46,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
+        tvMessage = view.findViewById(R.id.tv_message);
         progressBar.setVisibility(View.VISIBLE);
         services = new ArrayList<ServiceInfo>();
 
@@ -71,8 +73,15 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    if (output.startsWith("Available")) {
+
+                    Log.d("rr", "handleMessage: " + output);
+                    if(output.startsWith("Usage:")){
+                        tvMessage.setVisibility(View.VISIBLE);
+                        tvMessage.setText("Feature not available please upgrade cli version.");
+                        progressBar.setVisibility(View.GONE);
+                    }else if (output.startsWith("Available")) {
                         //Read
+                        tvMessage.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         updateServiceList(output.substring(output.indexOf(":")+2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
                         writeToRPI("treehouses remote services installed\n");
