@@ -17,7 +17,6 @@
         android:layout_marginRight="@dimen/margin_medium"
         android:focusable="true"
         android:imeOptions="actionSend"
-        android:stackFromBottom="true"
         android:inputType="textMultiLine"
         android:textColor="@color/bg_white"
         android:textCursorDrawable="@drawable/cursor"

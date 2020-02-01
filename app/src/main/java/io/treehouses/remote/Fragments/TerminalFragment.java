@@ -137,9 +137,17 @@ public class TerminalFragment extends BaseTerminalFragment {
                     }
                 });
 
+        mPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setLastCommand();
+            }
+        });
+
         NAME = new SpannableString(CHARACTER);
         NAME.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.accent)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         mConversationView.append(NAME);
+        setUpAutoComplete(mConversationView);
 
     }
 
@@ -203,13 +211,10 @@ public class TerminalFragment extends BaseTerminalFragment {
         //mPrevious.setOnClickListener(v -> { setLastCommand(); });
     }
 
-//    private void setLastCommand() {
-//        try {
-//            last = list.get(--i);
-//            mOutEditText.setText(last);
-//            mOutEditText.setSelection(mOutEditText.length());
-//        } catch (Exception e) { e.printStackTrace(); }
-//    }
+    private void setLastCommand() {
+        mConversationView.append(mConversationView.getLastCommand());
+        mConversationView.setSelection(mConversationView.getText().length());
+    }
 
     /**
      * The action listener for the EditText widget, to listen for the return key
@@ -298,7 +303,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
         mConversationView.isInputting(true);
         mConversationView.setSelection(mConversationView.getText().length());
-
     }
 
 
