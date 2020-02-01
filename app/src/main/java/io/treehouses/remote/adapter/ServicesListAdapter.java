@@ -51,24 +51,27 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
 
     private void setStatus(int status) {
         if (status == ServiceInfo.SERVICE_AVAILABLE) {
-            setButtons(false, false);
+            setStart(false);
+            setInstall(false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_INSTALLED) {
-            setButtons(false, true);
+            setStart(false);
+            setInstall(true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_RUNNING) {
-            setButtons(true, true);
+            setStart(true);
+            setInstall(true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_green_500));
         }
     }
 
-    private void setButtons(boolean started, boolean installed) {
-        if (started) {
+    private void setStart(boolean value) {
+        if (value) {
             start.setText("Stop");
             restart.setEnabled(true);
         }
@@ -76,6 +79,9 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
             start.setText("Start");
             restart.setEnabled(false);
         }
+    }
+
+    private void setInstall(boolean installed) {
         if (installed) {
             install.setText("Uninstall");
             start.setEnabled(true);
