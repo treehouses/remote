@@ -88,6 +88,11 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
                     }else{
                         checkServiceInfo(output);
                     }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    String write_msg = new String((byte[]) msg.obj);
+                    Log.d("WRITE", write_msg);
+                    break;
 
             }
         }
@@ -126,19 +131,31 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String name = services.get(position).name;
+        ServiceInfo selected = services.get(position);
+        String name = selected.name;
         switch (view.getId()) {
             case R.id.start_service:
-                performService("Starting", "treehouses services " + name + " start\n", name);
-                break;
-            case R.id.stop_service:
-                performService("Stopping", "treehouses services " + name + " stop\n", name);
+                if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
+                    performService("Starting", "treehouses services " + name + " start\n", name);
+                }
+                else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+                    performService("Stopping", "treehouses services " + name + " stop\n", name);
+                }
                 break;
             case R.id.install_service:
-                performService("Installing", "treehouses services " + name + " up\n", name);
+                if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
+                    performService("Installing", "treehouses services " + name + " up\n", name);
+                }
+                else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+                    performService("Uninstalling", "treehouses services " + name + " down\n", name);
+
+                }
                 break;
-            case R.id.uninstall_service:
-                performService("Uninstalling", "treehouses services " + name + " down\n", name);
+
+            case R.id.restart_service:
+                if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) {
+                    performService("Restarting", "treehouses services " + name + " restart\n", name);
+                }
                 break;
         }
         writeToRPI("treehouses remote services available\n");
