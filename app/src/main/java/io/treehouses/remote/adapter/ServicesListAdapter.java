@@ -53,32 +53,29 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         if (status == ServiceInfo.SERVICE_AVAILABLE) {
             setStart(false);
             setInstall(false);
+            restart.setEnabled(false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_INSTALLED) {
             setStart(false);
             setInstall(true);
+            restart.setEnabled(false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_RUNNING) {
             setStart(true);
             setInstall(true);
+            restart.setEnabled(true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_green_500));
         }
     }
 
-    private void setStart(boolean value) {
-        if (value) {
-            start.setText("Stop");
-            restart.setEnabled(true);
-        }
-        else {
-            start.setText("Start");
-            restart.setEnabled(false);
-        }
+    private void setStart(boolean started) {
+        if (started) start.setText("Stop");
+        else start.setText("Start");
     }
 
     private void setInstall(boolean installed) {

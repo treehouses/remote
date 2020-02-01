@@ -79,7 +79,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
                         tvMessage.setVisibility(View.VISIBLE);
                         tvMessage.setText("Feature not available please upgrade cli version.");
                         progressBar.setVisibility(View.GONE);
-                    } else if (output.startsWith("Available")) {
+                    } else if (output.contains("Available:")) {
                         //Read
                         tvMessage.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
@@ -99,10 +99,10 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     };
 
     private void checkServiceInfo(String output) {
-        if (output.startsWith("Installed")) {
+        if (output.contains("Installed:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
             writeToRPI("treehouses remote services running\n");
-        } else if (output.startsWith("Running")) {
+        } else if (output.contains("Running:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
         }
     }
