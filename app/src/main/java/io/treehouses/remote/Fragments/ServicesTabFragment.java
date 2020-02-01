@@ -129,33 +129,44 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         writeToRPI(command);
     }
 
+    private void onClickInstall(ServiceInfo selected) {
+        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
+            performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+            performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
+
+        }
+    }
+
+    private void onClickStart(ServiceInfo selected) {
+        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
+            performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+            performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
+        }
+    }
+
+    private void onClickRestart(ServiceInfo selected) {
+        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) {
+            performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
+        }
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ServiceInfo selected = services.get(position);
-        String name = selected.name;
         switch (view.getId()) {
             case R.id.start_service:
-                if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
-                    performService("Starting", "treehouses services " + name + " start\n", name);
-                }
-                else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-                    performService("Stopping", "treehouses services " + name + " stop\n", name);
-                }
+                onClickStart(selected);
                 break;
             case R.id.install_service:
-                if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
-                    performService("Installing", "treehouses services " + name + " up\n", name);
-                }
-                else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-                    performService("Uninstalling", "treehouses services " + name + " down\n", name);
-
-                }
+                onClickInstall(selected);
                 break;
 
             case R.id.restart_service:
-                if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) {
-                    performService("Restarting", "treehouses services " + name + " restart\n", name);
-                }
+                onClickRestart(selected);
                 break;
         }
         writeToRPI("treehouses remote services available\n");
