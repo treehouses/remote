@@ -157,14 +157,14 @@ public class StatusFragment extends BaseFragment {
             Toast.makeText(getContext(), "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show();
             notificationListener.setNotification(false);
         }
-        if (readMessage.equals("false ")) {
+        if (readMessage.startsWith("false ") && readMessage.length() < 14) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version: " + rpiVersion);
             upgrade.setVisibility(View.GONE);
         } else {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             if (readMessage.length() > 4) {
-                tvUpgrade.setText("Upgrade available from " + rpiVersion + " to " + readMessage);
+                tvUpgrade.setText("Upgrade available from " + rpiVersion + " to " + readMessage.substring(4));
             }
             upgrade.setVisibility(View.VISIBLE);
         }
