@@ -260,7 +260,7 @@ public class BluetoothChatService implements Serializable{
      */
     public void write(byte[] out) {
         // Create temporary object
-        Log.d(TAG, "write: I am in outside write");
+        Log.d(TAG, "write: " + new String(out));
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
