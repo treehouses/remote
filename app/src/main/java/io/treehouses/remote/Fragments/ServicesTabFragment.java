@@ -79,7 +79,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
                         tvMessage.setVisibility(View.VISIBLE);
                         tvMessage.setText("Feature not available please upgrade cli version.");
                         progressBar.setVisibility(View.GONE);
-                    } else if (output.startsWith("Available")) {
+                    } else if (output.contains("Available:")) {
                         //Read
                         tvMessage.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
@@ -88,16 +88,21 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
                     }else{
                         checkServiceInfo(output);
                     }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    String write_msg = new String((byte[]) msg.obj);
+                    Log.d("WRITE", write_msg);
+                    break;
 
             }
         }
     };
 
     private void checkServiceInfo(String output) {
-        if (output.startsWith("Installed")) {
+        if (output.contains("Installed:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
             writeToRPI("treehouses remote services running\n");
-        } else if (output.startsWith("Running")) {
+        } else if (output.contains("Running:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
         }
     }
@@ -124,21 +129,44 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         writeToRPI(command);
     }
 
+    private void onClickInstall(ServiceInfo selected) {
+        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
+            performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+            performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
+
+        }
+    }
+
+    private void onClickStart(ServiceInfo selected) {
+        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
+            performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+            performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
+        }
+    }
+
+    private void onClickRestart(ServiceInfo selected) {
+        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) {
+            performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
+        }
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String name = services.get(position).name;
+        ServiceInfo selected = services.get(position);
         switch (view.getId()) {
             case R.id.start_service:
-                performService("Starting", "treehouses services " + name + " start\n", name);
-                break;
-            case R.id.stop_service:
-                performService("Stopping", "treehouses services " + name + " stop\n", name);
+                onClickStart(selected);
                 break;
             case R.id.install_service:
-                performService("Installing", "treehouses services " + name + " up\n", name);
+                onClickInstall(selected);
                 break;
-            case R.id.uninstall_service:
-                performService("Uninstalling", "treehouses services " + name + " down\n", name);
+
+            case R.id.restart_service:
+                onClickRestart(selected);
                 break;
         }
         writeToRPI("treehouses remote services available\n");

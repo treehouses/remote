@@ -18,7 +18,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private ArrayList<ServiceInfo> data;
     private Context context;
     private TextView name;
-    private Button start, stop, install, uninstall;
+    private Button start, install, restart;
     public ServicesListAdapter(Context context, ArrayList<ServiceInfo> services) {
         super(context, 0, services);
         this.data = services;
@@ -36,9 +36,8 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         setStatus(data.get(position).serviceStatus);
 
         setOnClick(parent, convertView, R.id.start_service, position);
-        setOnClick(parent, convertView, R.id.stop_service, position);
         setOnClick(parent, convertView, R.id.install_service, position);
-        setOnClick(parent, convertView, R.id.uninstall_service, position);
+        setOnClick(parent, convertView, R.id.restart_service, position);
 
         return convertView;
     }
@@ -46,35 +45,50 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private void findViews(View view) {
         name = view.findViewById(R.id.service_name);
         start = view.findViewById(R.id.start_service);
-        stop = view.findViewById(R.id.stop_service);
         install = view.findViewById(R.id.install_service);
-        uninstall = view.findViewById(R.id.uninstall_service);
-
+        restart = view.findViewById(R.id.restart_service);
     }
 
     private void setStatus(int status) {
         if (status == ServiceInfo.SERVICE_AVAILABLE) {
-            setButtons(false, false, true, false);
+
+            setButtons(false, false, false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_INSTALLED) {
-            setButtons(true, false, false, true);
+
+            setButtons(false, true, false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
         }
         else if (status == ServiceInfo.SERVICE_RUNNING) {
-            setButtons(false, true, false, true);
+            setButtons(true, true, true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_green_500));
         }
     }
 
-    private void setButtons(boolean first, boolean second, boolean third, boolean fourth) {
-        start.setEnabled(first);
-        stop.setEnabled(second);
-        install.setEnabled(third);
-        uninstall.setEnabled(fourth);
+    private void setButtons(boolean one, boolean two, boolean three) {
+        setStart(one);
+        setInstall(two);
+        restart.setEnabled(three);
+    }
+
+    private void setStart(boolean started) {
+        if (started) start.setText("Stop");
+        else start.setText("Start");
+    }
+
+    private void setInstall(boolean installed) {
+        if (installed) {
+            install.setText("Uninstall");
+            start.setEnabled(true);
+        }
+        else {
+            install.setText("Install");
+            start.setEnabled(false);
+        }
     }
 
     private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
