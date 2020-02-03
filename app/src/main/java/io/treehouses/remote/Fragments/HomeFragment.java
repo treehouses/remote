@@ -190,6 +190,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             transitionOnConnected();
             connectionState = true;
             writeToRPI("treehouses remote status\n");
+            writeToRPI("treehouses upgrade --check\n");
         } else {
             transitionDisconnected();
             connectionState = false;
@@ -254,28 +255,29 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         return output.contains(option1) || output.contains(option2);
     }
 
+    private void dismissPDialog() { if (progressDialog != null) progressDialog.dismiss(); }
+
     private void readMessage(String output) {
         if (output.contains(" ") && output.split(" ").length == 5) {
             String[] result = output.split(" ");
             checkImageInfo(result, mChatService.getConnectedDeviceName());
         }
-        if (matchResult(output, "true", "false")) {
+        if (matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "network", "successfully")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
-            progressDialog.dismiss();
+            dismissPDialog();
         } else if (output.toLowerCase().contains("bridge has been built")) {
-            progressDialog.dismiss();
+            dismissPDialog();
             Toast.makeText(getContext(), "Bridge Has Been Built", Toast.LENGTH_LONG).show();
         } else if (output.toLowerCase().contains("error")) {
-            progressDialog.dismiss();
+            dismissPDialog();
             Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
         } else if (!result) {
             //Test Connection
             result = true;
             dismissTestConnection();
         }
-        writeToRPI("treehouses upgrade --check\n");
         try {
             notificationListener = (NotificationCallback) getContext();
         } catch (ClassCastException e) {
@@ -297,6 +299,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     if (!output.isEmpty()) {
                         readMessage(output);
                     }
+                    break;
             }
         }
     };
