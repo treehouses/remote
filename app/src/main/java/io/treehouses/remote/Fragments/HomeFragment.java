@@ -144,7 +144,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void getStartedListener() {
-        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new TerminalFragment()));
+        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
     }
 
     public void connectRpiListener() {

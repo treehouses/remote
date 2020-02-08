@@ -10,5 +10,4 @@
         android:contentDescription="@string/TestButton"
         android:src="@drawable/treehouses_image" />
 
-
 </LinearLayout>
