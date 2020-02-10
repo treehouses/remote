@@ -1,8 +1,10 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -46,6 +48,16 @@ public class BaseHomeFragment extends BaseFragment {
         if (lastDialogShown < date.getTimeInMillis()) {
             if (connectionCount >= 3 && showDialog) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
+
+                new AlertDialog.Builder(getActivity()).setTitle("Rate this app").setCancelable(false).setMessage("If you enjoy playing this app, would you mind taking a moment to rate it? " +
+                        "it won't take more than a minute. Thanks for you support!")
+                        .setPositiveButton("RATE IT NOW", (dialogInterface, i) -> {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("NO, THANKS", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
+
                 new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
                         .setPositiveButton("Yes", (dialogInterface, i) -> {
