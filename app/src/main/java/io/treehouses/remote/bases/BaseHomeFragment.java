@@ -47,6 +47,7 @@ public class BaseHomeFragment extends BaseFragment {
         if (lastDialogShown < date.getTimeInMillis()) {
             if (connectionCount >= 3 && showDialog) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
+                rate();
                 new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
                         .setPositiveButton("Yes", (dialogInterface, i) -> {
@@ -58,27 +59,16 @@ public class BaseHomeFragment extends BaseFragment {
         }
     }
 
-    public void rate(SharedPreferences preferences) {
-        int connectionCount = preferences.getInt("connection_count", 0);
-        boolean showDialog = preferences.getBoolean("show_log_dialog", true);
-        LogUtils.log(connectionCount + "  " + showDialog);
-        long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
-        Calendar date = Calendar.getInstance();
-        date.add(Calendar.DAY_OF_YEAR, -7);
-        if (lastDialogShown < date.getTimeInMillis()) {
-            if (connectionCount >= 3 && showDialog) {
-                new AlertDialog.Builder(getActivity()).setTitle("Rate this app").setCancelable(false).setMessage("If you enjoy playing this app, would you mind taking a moment to rate it? " +
-                        "it won't take more than a minute. Thanks for you support!")
-                        .setPositiveButton("RATE IT NOW", (dialogInterface, i) -> {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
-                            startActivity(intent);
-                        })
-                        .setNegativeButton("NO, THANKS", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
-            }
-        }
+    public void rate() {
+        new AlertDialog.Builder(getActivity()).setTitle("Rate this app").setCancelable(false).setMessage("If you enjoy playing this app, would you mind taking a moment to rate it? " +
+                "it won't take more than a minute. Thanks for you support!")
+                .setPositiveButton("RATE IT NOW", (dialogInterface, i) -> {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
+                    startActivity(intent);
+                })
+                .setNegativeButton("NO, THANKS", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
     }
-
 
 
     public void checkImageInfo(String[] readMessage, String deviceName) {
