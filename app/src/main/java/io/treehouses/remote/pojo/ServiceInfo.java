@@ -7,8 +7,11 @@ public class ServiceInfo {
     public String name;
     public int serviceStatus;
 
+    public String url;
+
     public ServiceInfo(String n, int status) {
         this.name = n;
         this.serviceStatus = status;
+        this.url = "";
     }
 }

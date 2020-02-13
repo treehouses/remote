@@ -1,5 +1,7 @@
 package io.treehouses.remote.Fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +37,8 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     private ArrayList<ServiceInfo> services;
     ServicesListAdapter adapter;
     private TextView tvMessage;
+    private String service_name = "";
+    private boolean received = false;
 
     public ServicesTabFragment() {
     }
@@ -107,6 +111,24 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     }
 
+    private void reqUrls() {
+        for (ServiceInfo serviceInfo : services) {
+            if (serviceInfo.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+
+            }
+        }
+    }
+
+    private void getUrls(String port) {
+        for (ServiceInfo serviceInfo : services) {
+            if (serviceInfo.name.equals(service_name)) {
+                serviceInfo.url = port;
+                break;
+            }
+        }
+
+    }
+
     private void updateServiceList(String[] stringList, int identifier) {
         for (String name : stringList) {
             int a = inServiceList(name);
@@ -154,6 +176,12 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     }
 
+    private void onClickLink(ServiceInfo selected) {
+        //reqUrls();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://192.168.1.37:80"));
+        startActivity(intent);
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ServiceInfo selected = services.get(position);
@@ -168,6 +196,9 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             case R.id.restart_service:
                 onClickRestart(selected);
                 break;
+
+            case R.id.link_button:
+                onClickLink(selected);
         }
         writeToRPI("treehouses remote services available\n");
     }
