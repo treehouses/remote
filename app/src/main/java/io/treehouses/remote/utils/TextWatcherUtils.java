@@ -34,13 +34,13 @@ public class TextWatcherUtils extends ViewHolderBridge implements android.text.T
 
     @Override
     public void afterTextChanged(Editable editable) {
-        if (NetworkListAdapter.getLayout() == R.layout.dialog_ethernet) {             // ethernet text listener
+        if (NetworkListAdapter.position == 0) {             // ethernet text listener
             ethernetLayout(editable, editText);
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_wifi) {          // wifi text listener
+        } else if (NetworkListAdapter.position == 1) {          // wifi text listener
             wifiLayout(editable, editText);
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_hotspot) {       // hotspot text listener
+        } else if (NetworkListAdapter.position == 2) {       // hotspot text listener
             hotspotLayout(editable, editText);
-        } else if (NetworkListAdapter.getLayout() == R.layout.dialog_bridge) {        // bridge text listener
+        } else if (NetworkListAdapter.position == 3) {        // bridge text listener
             bridgeLayout(editable, editText);
         }
         Log.e("TAG", "afterTextChanged()");
@@ -84,7 +84,7 @@ public class TextWatcherUtils extends ViewHolderBridge implements android.text.T
     }
 
     private Boolean viewCondition(TextInputEditText editText, Editable editable) {
-        if (editText != null && editable != null) {
+        if (editText != null && editable != null && !editText.getText().toString().isEmpty()) {
             return editable == editText.getEditableText() && !messageSent;
         }
         return false;
