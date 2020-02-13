@@ -142,6 +142,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         super.onActivityCreated(savedInstanceState);
 
         if (MainApplication.showLogDialog) {
+            rate(preferences);
             showLogDialog(preferences);
         }
     }
