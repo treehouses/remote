@@ -61,7 +61,7 @@ public class BaseHomeFragment extends BaseFragment {
 
     public void rate() {
         new AlertDialog.Builder(getActivity()).setTitle("Rate this app").setCancelable(false).setMessage("If you enjoy playing this app, would you mind taking a moment to rate it? " +
-                "it won't take more than a minute. Thanks for you support!")
+                "it won't take more than a minute. Thanks for your support!")
                 .setPositiveButton("RATE IT NOW", (dialogInterface, i) -> {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
