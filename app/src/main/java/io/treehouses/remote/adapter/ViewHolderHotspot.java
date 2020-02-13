@@ -37,10 +37,10 @@ class ViewHolderHotspot extends ButtonConfiguration{
 
         btnStartConfiguration.setOnClickListener(view -> {
             if (etPassword.getText().toString().isEmpty()) {
-                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\"");
+                listener.sendMessage("treehouses ap " + spn.getSelectedItem().toString() + " " + etSsid.getText().toString());
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             } else {
-                listener.sendMessage("treehouses ap \"" + spn.getSelectedItem().toString() + "\" \"" + etSsid.getText().toString() + "\" \"" + etPassword.getText().toString() + "\"");
+                listener.sendMessage("treehouses ap " + spn.getSelectedItem().toString() + " " + etSsid.getText().toString() + " " + etPassword.getText().toString());
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
 

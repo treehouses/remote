@@ -46,7 +46,7 @@ class ViewHolderWifi extends ButtonConfiguration {
         btnStartConfiguration.setOnClickListener(view -> {
             String ssid = etSsid.getText().toString();
             String password = etPassword.getText().toString();
-            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+            listener.sendMessage(String.format("treehouses wifi %s %s", ssid, password));
             messageSent = true;
 
             buttonProperties(false, Color.LTGRAY, btnStartConfiguration);

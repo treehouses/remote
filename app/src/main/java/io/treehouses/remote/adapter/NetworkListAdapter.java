@@ -24,7 +24,9 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private HomeInteractListener listener;
     private BluetoothChatService chatService;
+    private View[] views;
     private static int layout;
+    public static int position;
 
     public static int getLayout() {
         return layout;
@@ -42,6 +44,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         this.chatService = mChatService;
         inflater = LayoutInflater.from(context);
         this.list = list;
+        this.views = new View[6];
     }
 
     private BluetoothChatService getChatService() {
@@ -99,8 +102,18 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View getChildView(int i, int i1, boolean b, View convertView, ViewGroup parent) {
+
+        // Needs to recycle views instead of creating new ones each time.
+        // if (convertView == null) creating bugs
+        if (views[i] != null) {
+            return views[i];
+        }
+
         convertView = inflater.inflate(list.get(i).getLayout(), parent, false);
+
         layout = list.get(i).getLayout();
+
+        position = i;
 
         if (layout == R.layout.open_vnc) {
             new ViewHolderVnc(convertView, context, listener);
@@ -109,6 +122,7 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         } else {
             switchStatement(i, convertView);
         }
+        views[i] = convertView;
         return convertView;
     }
 
