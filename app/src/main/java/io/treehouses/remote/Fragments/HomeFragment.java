@@ -109,6 +109,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         progressDialog = ProgressDialog.show(getContext(), "Connecting...", "Switching to " + networkProfile.ssid, true);
         progressDialog.show();
 
+        listener.sendMessage("treehouses default network \n");
         if (networkProfile.isWifi()) {
             //WIFI
             listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
@@ -264,7 +265,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
         if (matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
-        } else if (matchResult(output, "network", "successfully")) {
+        } else if (matchResult(output, "connected", "pirateship")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
             dismissPDialog();
         } else if (output.toLowerCase().contains("bridge has been built")) {
