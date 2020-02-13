@@ -1,24 +1,30 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
-import android.net.Uri;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.emoji.bundled.BundledEmojiCompatConfig;
+import androidx.emoji.text.EmojiCompat;
+import androidx.emoji.widget.EmojiTextView;
+
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.utils.LogUtils;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class BaseHomeFragment extends BaseFragment {
     public SharedPreferences preferences;
@@ -44,30 +50,23 @@ public class BaseHomeFragment extends BaseFragment {
         long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DAY_OF_YEAR, -7);
+        View v = getLayoutInflater().inflate(R.layout.alert_log,null);
+        EmojiCompat.Config config = new BundledEmojiCompatConfig(getActivity());
+        EmojiCompat.init(config);
+        String emoji = new String(Character.toChars(0x1F60A));
+
         if (lastDialogShown < date.getTimeInMillis()) {
             if (connectionCount >= 3 && showDialog) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
-                rate();
-                new AlertDialog.Builder(getActivity()).setTitle("Alert !!!!").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                        "Do you like to share it? It will help us to improve.")
-                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                new AlertDialog.Builder(getActivity()).setTitle("Sharing is Caring  " + emoji).setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                        "Do you like to share it? It will help us to improve."  )
+                        .setPositiveButton("Continue", (dialogInterface, i) -> {
                             preferences.edit().putBoolean("send_log", true).commit();
                             preferences.edit().putBoolean("show_log_dialog", false).commit();
                         })
-                        .setNegativeButton("No", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
+                        .setNegativeButton("Cancel", (dialogInterface, i) -> MainApplication.showLogDialog = false).setView(v).show();
             }
         }
-    }
-
-    public void rate() {
-        new AlertDialog.Builder(getActivity()).setTitle("Rate this app").setCancelable(false).setMessage("If you enjoy playing this app, would you mind taking a moment to rate it? " +
-                "it won't take more than a minute. Thanks for your support!")
-                .setPositiveButton("RATE IT NOW", (dialogInterface, i) -> {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
-                    startActivity(intent);
-                })
-                .setNegativeButton("NO, THANKS", (dialogInterface, i) -> MainApplication.showLogDialog = false).show();
     }
 
 
