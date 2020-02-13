@@ -89,7 +89,13 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
                         progressBar.setVisibility(View.GONE);
                         updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
                         writeToRPI("treehouses remote services installed\n");
-                    }else{
+                    }
+                    else if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + output));
+                        startActivity(intent);
+                        received = true;
+                    }
+                    else{
                         checkServiceInfo(output);
                     }
                     break;
@@ -109,24 +115,6 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         } else if (output.contains("Running:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
         }
-    }
-
-    private void reqUrls() {
-        for (ServiceInfo serviceInfo : services) {
-            if (serviceInfo.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-
-            }
-        }
-    }
-
-    private void getUrls(String port) {
-        for (ServiceInfo serviceInfo : services) {
-            if (serviceInfo.name.equals(service_name)) {
-                serviceInfo.url = port;
-                break;
-            }
-        }
-
     }
 
     private void updateServiceList(String[] stringList, int identifier) {
@@ -178,9 +166,10 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
     private void onClickLink(ServiceInfo selected) {
         //reqUrls();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://192.168.1.37:80"));
-        startActivity(intent);
+        writeToRPI("treehouses services " + selected.name + " url local \n");
+        received = false;
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -199,6 +188,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
             case R.id.link_button:
                 onClickLink(selected);
+                break;
         }
         writeToRPI("treehouses remote services available\n");
     }
