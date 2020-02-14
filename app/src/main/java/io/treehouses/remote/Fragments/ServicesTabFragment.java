@@ -1,5 +1,7 @@
 package io.treehouses.remote.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -132,10 +134,27 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     private void onClickInstall(ServiceInfo selected) {
         if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
             performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
+            writeToRPI("treehouses remote services available\n");
         }
         else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-            performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
-
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                    .setTitle("Delete " + selected.name + "?")
+                    .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
+                            writeToRPI("treehouses remote services available\n");
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create();
+            alertDialog.show();
         }
     }
 
@@ -160,6 +179,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         switch (view.getId()) {
             case R.id.start_service:
                 onClickStart(selected);
+                writeToRPI("treehouses remote services available\n");
                 break;
             case R.id.install_service:
                 onClickInstall(selected);
@@ -167,9 +187,9 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
             case R.id.restart_service:
                 onClickRestart(selected);
+                writeToRPI("treehouses remote services available\n");
                 break;
         }
-        writeToRPI("treehouses remote services available\n");
     }
 
 
