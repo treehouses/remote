@@ -6,25 +6,23 @@ import android.graphics.drawable.AnimationDrawable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.Intent;
+import android.net.Uri;
 
 import androidx.emoji.bundled.BundledEmojiCompatConfig;
 import androidx.emoji.text.EmojiCompat;
-import androidx.emoji.widget.EmojiTextView;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.utils.LogUtils;
 
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class BaseHomeFragment extends BaseFragment {
     public SharedPreferences preferences;
@@ -63,11 +61,30 @@ public class BaseHomeFragment extends BaseFragment {
                         .setPositiveButton("Continue", (dialogInterface, i) -> {
                             preferences.edit().putBoolean("send_log", true).commit();
                             preferences.edit().putBoolean("show_log_dialog", false).commit();
-                        })
-                        .setNegativeButton("Cancel", (dialogInterface, i) -> MainApplication.showLogDialog = false).setView(v).show();
+                        }).setNegativeButton("Cancel", (dialogInterface, i) -> MainApplication.showLogDialog = false).setView(v).show();
             }
         }
     }
+
+    public void rate(SharedPreferences preferences) {
+        int connectionCount = preferences.getInt("connection_count", 0);
+        boolean ratingDialog = preferences.getBoolean("ratingDialog", true);
+        LogUtils.log(connectionCount + "  " + ratingDialog);
+        long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
+        Calendar date = Calendar.getInstance();
+        if (lastDialogShown < date.getTimeInMillis()) {
+            if (connectionCount >= 3 && ratingDialog) {
+        new AlertDialog.Builder(getActivity()).setTitle("Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
+                "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
+                .setPositiveButton("RATE IT NOW", (dialogInterface, i) -> {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
+                    startActivity(intent);
+                    preferences.edit().putBoolean("ratingDialog", false).commit();
+                }).setNeutralButton("REMIND ME LATER", (dialogInterface, i)->{MainApplication.ratingDialog = false;})
+                .setNegativeButton("NO THANKS", (dialogInterface, i) -> { preferences.edit().putBoolean("ratingDialog", false).commit();
+                }).show();
+    }}}
 
 
     public void checkImageInfo(String[] readMessage, String deviceName) {
