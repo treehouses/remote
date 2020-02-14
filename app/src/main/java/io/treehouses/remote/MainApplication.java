@@ -12,7 +12,6 @@ public class MainApplication extends Application {
 
     private static ArrayList terminalList, tunnelList, commandList;
     public static boolean showLogDialog = true;
-    public static boolean ratingDialog = true;
     @Override
     public void onCreate() {
         super.onCreate();
