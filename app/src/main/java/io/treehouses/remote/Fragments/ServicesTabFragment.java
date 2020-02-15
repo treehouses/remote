@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -114,10 +116,9 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
         else if (infoClicked) {
             quoteCount += getQuoteCount(output);
+            buildString += output;
             if (output.startsWith("https://")) {
-                buildString += Html.fromHtml("<a href=\"" + output + "\">link</a>");
-            } else {
-                buildString += output;
+                buildString += "\n\n";
             }
             if (quoteCount >= 2) {
                 showInfoDialog();
@@ -126,9 +127,11 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     }
 
     private void showInfoDialog() {
+        final SpannableString s = new SpannableString(buildString);
+        Linkify.addLinks(s, Linkify.ALL);
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setMessage(buildString)
-                .setIcon(getContext().getResources().getDrawable(R.drawable.about))
+                .setTitle("Info")
+                .setMessage(s)
                 .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
