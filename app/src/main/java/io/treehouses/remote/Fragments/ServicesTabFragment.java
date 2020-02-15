@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -37,6 +39,9 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     private ArrayList<ServiceInfo> services;
     ServicesListAdapter adapter;
     private TextView tvMessage;
+    private boolean infoClicked;
+    private int quoteCount;
+    private String buildString;
 
     public ServicesTabFragment() {
     }
@@ -88,7 +93,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
                         updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
                         writeToRPI("treehouses remote services installed\n");
                     }else{
-                        checkServiceInfo(output);
+                        checkServiceStatus(output);
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
@@ -100,13 +105,47 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     };
 
-    private void checkServiceInfo(String output) {
+    private void checkServiceStatus(String output) {
         if (output.contains("Installed:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
             writeToRPI("treehouses remote services running\n");
         } else if (output.contains("Running:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
         }
+        else if (infoClicked) {
+            quoteCount += getQuoteCount(output);
+            if (output.startsWith("https://")) {
+                buildString += Html.fromHtml("<a href=\"" + output + "\">link</a>");
+            } else {
+                buildString += output;
+            }
+            if (quoteCount >= 2) {
+                showInfoDialog();
+            }
+        }
+    }
+
+    private void showInfoDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setMessage(buildString)
+                .setIcon(getContext().getResources().getDrawable(R.drawable.about))
+                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        alertDialog.show();
+        TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
+        alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    public int getQuoteCount(String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '\"') count++;
+        }
+        return count;
     }
 
     private void updateServiceList(String[] stringList, int identifier) {
@@ -173,6 +212,13 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     }
 
+    private void onClickInfo(ServiceInfo selected) {
+        writeToRPI("treehouses services " + selected.name + " info");
+        infoClicked = true;
+        quoteCount = 0;
+        buildString = "";
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ServiceInfo selected = services.get(position);
@@ -188,6 +234,10 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             case R.id.restart_service:
                 onClickRestart(selected);
                 writeToRPI("treehouses remote services available\n");
+                break;
+
+            case R.id.service_info:
+                onClickInfo(selected);
                 break;
         }
     }
