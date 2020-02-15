@@ -107,6 +107,17 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     };
 
+    private void increaseQuoteCount(String output) {
+        quoteCount += getQuoteCount(output);
+        buildString += output;
+        if (output.startsWith("https://")) {
+            buildString += "\n\n";
+        }
+        if (quoteCount >= 2) {
+            showInfoDialog();
+        }
+    }
+
     private void checkServiceStatus(String output) {
         if (output.contains("Installed:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
@@ -115,14 +126,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
         }
         else if (infoClicked) {
-            quoteCount += getQuoteCount(output);
-            buildString += output;
-            if (output.startsWith("https://")) {
-                buildString += "\n\n";
-            }
-            if (quoteCount >= 2) {
-                showInfoDialog();
-            }
+            increaseQuoteCount(output);
         }
     }
 
