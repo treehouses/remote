@@ -288,11 +288,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             result = true;
             dismissTestConnection();
         }
-        try {
-            notificationListener = (NotificationCallback) getContext();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NotificationListener");
-        }
+        try { notificationListener = (NotificationCallback) getContext(); }
+        catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
     }
 
     /**
