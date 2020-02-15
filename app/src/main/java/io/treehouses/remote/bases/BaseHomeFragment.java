@@ -12,9 +12,6 @@ import android.widget.TextView;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.emoji.bundled.BundledEmojiCompatConfig;
-import androidx.emoji.text.EmojiCompat;
-
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -49,8 +46,6 @@ public class BaseHomeFragment extends BaseFragment {
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DAY_OF_YEAR, -7);
         View v = getLayoutInflater().inflate(R.layout.alert_log,null);
-        EmojiCompat.Config config = new BundledEmojiCompatConfig(getActivity());
-        EmojiCompat.init(config);
         String emoji = new String(Character.toChars(0x1F60A));
 
         if (lastDialogShown < date.getTimeInMillis()) {
