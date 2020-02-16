@@ -90,7 +90,7 @@
         android:id="@+id/welcome_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome."
+        android:text="Welcome &#128513;"
         android:textColor="@color/md_grey_700"
         android:textStyle="bold"
         android:textSize="24sp"
