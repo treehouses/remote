@@ -18,7 +18,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private ArrayList<ServiceInfo> data;
     private Context context;
     private TextView name;
-    private Button start, install, restart;
+    private Button start, install, restart, info;
     public ServicesListAdapter(Context context, ArrayList<ServiceInfo> services) {
         super(context, 0, services);
         this.data = services;
@@ -38,6 +38,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         setOnClick(parent, convertView, R.id.start_service, position);
         setOnClick(parent, convertView, R.id.install_service, position);
         setOnClick(parent, convertView, R.id.restart_service, position);
+        setOnClick(parent, convertView, R.id.service_info, position);
 
         return convertView;
     }
@@ -47,6 +48,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         start = view.findViewById(R.id.start_service);
         install = view.findViewById(R.id.install_service);
         restart = view.findViewById(R.id.restart_service);
+        info = view.findViewById(R.id.service_info);
     }
 
     private void setStatus(int status) {
