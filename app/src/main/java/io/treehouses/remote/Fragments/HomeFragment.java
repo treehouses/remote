@@ -68,6 +68,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private String network_ssid = "";
     private FrameLayout layout;
 
+    private NetworkProfile networkProfile;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_home_fragment, container, false);
@@ -100,8 +102,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 if (SaveUtils.getProfiles(getContext()).size() > 0 && SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() > 0) {
-                    NetworkProfile networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
-                    switchProfile(networkProfile);
+                    networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
+                    listener.sendMessage("treehouses default network \n");
+                    Toast.makeText(getContext(), "Configuring...", Toast.LENGTH_LONG).show();
                 }
                 return false;
             }
@@ -142,6 +145,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         super.onActivityCreated(savedInstanceState);
 
         if (MainApplication.showLogDialog) {
+            rate(preferences);
             showLogDialog(preferences);
         }
     }
@@ -267,13 +271,16 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
         if (matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
-        } else if (matchResult(output, "network", "successfully")) {
+        } else if (matchResult(output, "connected", "pirateship")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
             dismissPDialog();
         } else if (output.toLowerCase().contains("bridge has been built")) {
             dismissPDialog();
             Toast.makeText(getContext(), "Bridge Has Been Built", Toast.LENGTH_LONG).show();
-        } else if (output.toLowerCase().contains("error")) {
+        } else if (output.toLowerCase().contains("default")) {
+            switchProfile(networkProfile);
+        }
+        else if (output.toLowerCase().contains("error")) {
             dismissPDialog();
             Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
         } else if (!result) {
@@ -281,11 +288,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             result = true;
             dismissTestConnection();
         }
-        try {
-            notificationListener = (NotificationCallback) getContext();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NotificationListener");
-        }
+        try { notificationListener = (NotificationCallback) getContext(); }
+        catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
     }
 
     /**
