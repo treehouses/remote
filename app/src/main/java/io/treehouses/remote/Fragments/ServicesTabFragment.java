@@ -80,6 +80,27 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         mChatService.write(ping.getBytes());
     }
 
+    private void performAction(String output) {
+        if (output.startsWith("Usage:")) {
+            tvMessage.setVisibility(View.VISIBLE);
+            tvMessage.setText("Feature not available please upgrade cli version.");
+            progressBar.setVisibility(View.GONE);
+        } else if (output.contains("Available:")) {
+            //Read
+            tvMessage.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
+            writeToRPI("treehouses remote services installed\n");
+        }
+        else if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + output));
+            startActivity(intent);
+            received = true;
+        }
+        else{
+            checkServiceStatus(output);
+        }
+    }
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -88,24 +109,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    if (output.startsWith("Usage:")) {
-                        tvMessage.setVisibility(View.VISIBLE);
-                        tvMessage.setText("Feature not available please upgrade cli version.");
-                        progressBar.setVisibility(View.GONE);
-                    } else if (output.contains("Available:")) {
-                        //Read
-                        tvMessage.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
-                        writeToRPI("treehouses remote services installed\n");
-                    }
-                    else if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + output));
-                        startActivity(intent);
-                        received = true;
-                    }else{
-                        checkServiceStatus(output);
-                    }
+                    performAction(output);
                     break;
                 case Constants.MESSAGE_WRITE:
                     String write_msg = new String((byte[]) msg.obj);
