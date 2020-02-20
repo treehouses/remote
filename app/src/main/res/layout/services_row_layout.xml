@@ -5,13 +5,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp">
-    <Button
-        android:id="@+id/link_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/ic_language_black_24dp">
 
-    </Button>
 
     <Button
         android:layout_width="30dp"
@@ -68,6 +62,13 @@
                 android:layout_height="wrap_content"
                 android:text="Restart" />
 
+            <Button
+                android:id="@+id/link_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ic_language_black_24dp">
+
+            </Button>
         </LinearLayout>
     </LinearLayout>
 
