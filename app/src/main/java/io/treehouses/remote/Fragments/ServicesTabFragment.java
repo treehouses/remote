@@ -93,12 +93,45 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             writeToRPI("treehouses remote services installed\n");
         }
         else if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + output));
-            startActivity(intent);
             received = true;
+            openLocalURL(output);
+        }
+        else if (output.contains(".onion") && ! received) {
+            received = true;
+            openTorURL(output);
         }
         else{
             checkServiceStatus(output);
+        }
+    }
+
+    private void openLocalURL(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + url));
+        String title = "Select a browser";
+        Intent chooser = Intent.createChooser(intent, title);
+
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            startActivity(chooser);
+        }
+    }
+
+    private void openTorURL (String url) {
+        Intent intent = getContext().getPackageManager().getLaunchIntentForPackage("org.torproject.torbrowser");
+        if (intent != null) {
+            intent.setData(Uri.parse("http://" + url));
+            startActivity(intent);//null pointer check in case package name was not found
+        }
+        else {
+            final String s = "Please install Tor Browser from: \n\n https://play.google.com/store/apps/details?id=org.torproject.torbrowser";
+            final SpannableString spannableString = new SpannableString(s);
+            Linkify.addLinks(spannableString, Linkify.ALL);
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                    .setTitle("Tor Browser Not Found")
+                    .setMessage(spannableString)
+                    .create();
+            alertDialog.show();
+            TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
+            alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
@@ -234,7 +267,28 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
     private void onClickLink(ServiceInfo selected) {
         //reqUrls();
-        writeToRPI("treehouses services " + selected.name + " url local \n");
+        View view = getLayoutInflater().inflate(R.layout.dialog_choose_url, null);
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setView(view)
+                .setTitle("Select URL type")
+                .create();
+        view.findViewById(R.id.local_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeToRPI("treehouses services " + selected.name + " url local \n");
+                alertDialog.dismiss();
+            }
+        });
+
+        view.findViewById(R.id.tor_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeToRPI("treehouses services " + selected.name + " url tor \n");
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
         received = false;
     }
 
