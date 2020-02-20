@@ -1,5 +1,7 @@
 package io.treehouses.remote.Fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -41,6 +43,8 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     private ArrayList<ServiceInfo> services;
     ServicesListAdapter adapter;
     private TextView tvMessage;
+    private String service_name = "";
+    private boolean received = false;
     private boolean infoClicked;
     private int quoteCount;
     private String buildString;
@@ -76,6 +80,27 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         mChatService.write(ping.getBytes());
     }
 
+    private void performAction(String output) {
+        if (output.startsWith("Usage:")) {
+            tvMessage.setVisibility(View.VISIBLE);
+            tvMessage.setText("Feature not available please upgrade cli version.");
+            progressBar.setVisibility(View.GONE);
+        } else if (output.contains("Available:")) {
+            //Read
+            tvMessage.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
+            writeToRPI("treehouses remote services installed\n");
+        }
+        else if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + output));
+            startActivity(intent);
+            received = true;
+        }
+        else{
+            checkServiceStatus(output);
+        }
+    }
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -84,19 +109,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    if (output.startsWith("Usage:")) {
-                        tvMessage.setVisibility(View.VISIBLE);
-                        tvMessage.setText("Feature not available please upgrade cli version.");
-                        progressBar.setVisibility(View.GONE);
-                    } else if (output.contains("Available:")) {
-                        //Read
-                        tvMessage.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
-                        writeToRPI("treehouses remote services installed\n");
-                    }else{
-                        checkServiceStatus(output);
-                    }
+                    performAction(output);
                     break;
                 case Constants.MESSAGE_WRITE:
                     String write_msg = new String((byte[]) msg.obj);
@@ -219,6 +232,13 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     }
 
+    private void onClickLink(ServiceInfo selected) {
+        //reqUrls();
+        writeToRPI("treehouses services " + selected.name + " url local \n");
+        received = false;
+    }
+
+
     private void onClickInfo(ServiceInfo selected) {
         writeToRPI("treehouses services " + selected.name + " info");
         infoClicked = true;
@@ -229,6 +249,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ServiceInfo selected = services.get(position);
+        infoClicked = false;
         switch (view.getId()) {
             case R.id.start_service:
                 onClickStart(selected);
@@ -245,6 +266,10 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
             case R.id.service_info:
                 onClickInfo(selected);
+                break;
+
+            case R.id.link_button:
+                onClickLink(selected);
                 break;
         }
     }
