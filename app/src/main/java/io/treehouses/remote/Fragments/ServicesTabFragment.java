@@ -249,6 +249,7 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ServiceInfo selected = services.get(position);
+        infoClicked = false;
         switch (view.getId()) {
             case R.id.start_service:
                 onClickStart(selected);
