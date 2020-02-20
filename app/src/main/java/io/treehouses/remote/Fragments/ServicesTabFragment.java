@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.ServicesListAdapter;
-import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.pojo.ServiceInfo;
 
-public class ServicesTabFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
 
     private View view;
     private ProgressBar progressBar;
@@ -89,30 +89,6 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         }
     }
 
-    private void openLocalURL(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + url));
-        String title = "Select a browser";
-        Intent chooser = Intent.createChooser(intent, title);
-
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) startActivity(chooser);
-    }
-
-    private void openTorURL (String url) {
-        Intent intent = getContext().getPackageManager().getLaunchIntentForPackage("org.torproject.torbrowser");
-        if (intent != null) {
-            intent.setData(Uri.parse("http://" + url));
-            startActivity(intent);//null pointer check in case package name was not found
-        }
-        else {
-            final String s = "Please install Tor Browser from: \n\n https://play.google.com/store/apps/details?id=org.torproject.torbrowser";
-            final SpannableString spannableString = new SpannableString(s);
-            Linkify.addLinks(spannableString, Linkify.ALL);
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setTitle("Tor Browser Not Found").setMessage(spannableString).create();
-            alertDialog.show();
-            TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
-            alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-    }
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -139,12 +115,16 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             buildString += "\n\n";
         }
         if (quoteCount >= 2) {
-            showInfoDialog();
+            showInfoDialog(buildString);
         }
     }
 
+    private boolean isLocalUrl(String output) {
+        return output.contains(".") && output.contains(":") && output.length() < 20 && !received;
+    }
+
     private void moreActions(String output) {
-        if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
+        if (isLocalUrl(output)) {
             received = true;
             openLocalURL(output);
         }
@@ -161,29 +141,6 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
         else if (infoClicked) {
             increaseQuoteCount(output);
         }
-    }
-
-    private void showInfoDialog() {
-        final SpannableString s = new SpannableString(buildString);
-        Linkify.addLinks(s, Linkify.ALL);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setTitle("Info").setMessage(s)
-                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        alertDialog.show();
-        TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
-        alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    public int getQuoteCount(String s) {
-        int count = 0;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '\"') count++;
-        }
-        return count;
     }
 
     private void updateServiceList(String[] stringList, int identifier) {
