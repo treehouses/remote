@@ -83,6 +83,13 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
             writeToRPI("treehouses remote services installed\n");
         }
+        else if (output.contains("Installed:")) {
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
+            writeToRPI("treehouses remote services running\n");
+        }
+        else if (output.contains("Running:")) {
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
+        }
 
         else {
             moreActions(output);
@@ -131,12 +138,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         else if (output.contains(".onion") && ! received) {
             received = true;
             openTorURL(output);
-        }
-        else if (output.contains("Installed:")) {
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
-            writeToRPI("treehouses remote services running\n");
-        } else if (output.contains("Running:")) {
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
         }
         else if (infoClicked) {
             increaseQuoteCount(output);
