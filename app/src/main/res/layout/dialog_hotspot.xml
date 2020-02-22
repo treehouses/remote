@@ -5,6 +5,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp"
+        app:fontFamily="@font/roboto_bold"
+        android:textStyle="bold"
+        android:text="Hotspot">
+
+    </TextView>
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_hotspot_ssid"
         android:layout_width="match_parent"

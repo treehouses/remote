@@ -28,7 +28,7 @@ class ViewHolderWifi extends ButtonConfiguration {
     private Button saveProfile;
 
     ViewHolderWifi(View v, final HomeInteractListener listener, final Context context) {
-        etSsid = v.findViewById(R.id.et_ssid);
+        //etSsid = v.findViewById(R.id.et_ssid);
         etPassword = v.findViewById(R.id.et_password);
         btnStartConfiguration = v.findViewById(R.id.btn_start_config);
         btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
