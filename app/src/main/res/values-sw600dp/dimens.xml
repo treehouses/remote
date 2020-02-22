@@ -15,4 +15,7 @@
     <dimen name="logo_size_home">300dp</dimen>
     <dimen name="button_normal">150dp</dimen>
 
+    <dimen name="network_icon_size">120dp</dimen>
+
+
 </resources>

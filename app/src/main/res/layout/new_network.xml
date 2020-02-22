@@ -10,18 +10,19 @@
         android:id="@+id/network_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Network"
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/current_network_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginTop="8dp"
         android:text="Current Network Mode: WiFi"
         android:textSize="@dimen/text_size_mid"
         app:fontFamily="@font/roboto_light"
@@ -29,99 +30,106 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/network_title" />
 
-    <FrameLayout
-        android:id="@+id/back_layout"
+    <ImageView
+        android:id="@+id/imageView4"
         android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginTop="@dimen/margin_large"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/profiles_background"
+        app:layout_constraintBottom_toBottomOf="@+id/back_layout"
+        app:layout_constraintEnd_toEndOf="@+id/back_layout"
+        app:layout_constraintStart_toStartOf="@+id/back_layout"
+        app:layout_constraintTop_toTopOf="@+id/back_layout" />
+
+
+    <LinearLayout
+        android:id="@+id/back_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_huge"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="@dimen/margin_huge"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_network_mode">
 
-        <ImageView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/profiles_background" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginTop="@dimen/margin_huge"
+            android:layout_marginBottom="@dimen/margin_large"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/network_wifi"
+                style="@style/Widget.AppCompat.ButtonBar"
+                android:layout_width="@dimen/network_icon_size"
+                android:layout_height="@dimen/network_icon_size"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:background="@drawable/wifi">
+
+            </Button>
+
+            <Button
+                android:id="@+id/network_hotspot"
+                style="@style/Widget.AppCompat.ButtonBar"
+                android:layout_width="@dimen/network_icon_size"
+                android:layout_height="@dimen/network_icon_size"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:background="@drawable/hotspot">
+
+            </Button>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginBottom="@dimen/margin_huge"
+            android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
+            <Button
+                android:id="@+id/network_bridge"
+                style="@style/Widget.AppCompat.ButtonBar"
+                android:layout_width="@dimen/network_icon_size"
+                android:layout_height="@dimen/network_icon_size"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:background="@drawable/bridge">
 
-                <Button
-                    android:id="@+id/network_wifi"
-                    style="@style/Widget.AppCompat.ButtonBar"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginEnd="@dimen/margin_large"
-                    android:layout_marginRight="@dimen/margin_large"
-                    android:background="@drawable/wifi">
+            </Button>
 
-                </Button>
+            <Button
+                android:id="@+id/network_ethernet"
+                style="@style/Widget.AppCompat.ButtonBar"
+                android:layout_width="@dimen/network_icon_size"
+                android:layout_height="@dimen/network_icon_size"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:background="@drawable/ethernet">
 
-                <Button
-                    android:id="@+id/network_hotspot"
-                    style="@style/Widget.AppCompat.ButtonBar"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:layout_marginLeft="@dimen/margin_large"
-                    android:background="@drawable/hotspot">
-
-                </Button>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/network_bridge"
-                    style="@style/Widget.AppCompat.ButtonBar"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginEnd="@dimen/margin_large"
-                    android:layout_marginRight="@dimen/margin_large"
-                    android:background="@drawable/bridge">
-
-                </Button>
-
-                <Button
-                    android:id="@+id/network_ethernet"
-                    style="@style/Widget.AppCompat.ButtonBar"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:layout_marginLeft="@dimen/margin_large"
-                    android:background="@drawable/ethernet">
-
-                </Button>
-            </LinearLayout>
-
-
+            </Button>
         </LinearLayout>
-    </FrameLayout>
+
+
+    </LinearLayout>
 
 
     <TextView
         android:id="@+id/network_commands_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
         android:text="Commands"
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
@@ -132,12 +140,14 @@
     <FrameLayout
         android:id="@+id/commands_back_layout"
         android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginLeft="40dp"
+        android:layout_height="175dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginRight="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/back_layout"
+        app:layout_constraintStart_toStartOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/network_commands_title">
 
         <ImageView
@@ -171,8 +181,6 @@
                 android:id="@+id/reboot_raspberry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium"
-                android:layout_marginBottom="@dimen/margin_medium"
                 android:layout_weight="1"
                 android:backgroundTint="@color/md_grey_700"
                 android:text="Reboot Raspberry Pi"
@@ -187,10 +195,10 @@
                 android:id="@+id/reset_network"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:backgroundTint="@color/md_grey_700"
                 android:text="Reset Network"
                 android:textAllCaps="false"
-                android:layout_weight="1"
                 android:textColor="@color/bg_white"
                 android:textSize="16sp"
                 app:fontFamily="@font/roboto_light">
