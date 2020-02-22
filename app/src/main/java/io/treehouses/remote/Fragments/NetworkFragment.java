@@ -207,13 +207,13 @@ public class NetworkFragment extends BaseFragment {
 
     private void elementConditions(String element) {
         Log.e("TAG", "networkmode= " + element);
-        if (element.contains("wlan0") && !element.contains("ap essid")) {                   // bridge essid
+        if (element.length() > 14 && element.contains("wlan0") && !element.contains("ap essid")) {                   // bridge essid
             setSSIDText(element.substring(14).trim());
-        } else if (element.contains("ap essid")) {                                          // ap essid
+        } else if (element.length() > 16 && element.contains("ap essid")) {                                          // ap essid
             setSSIDText(element.substring(16).trim());
-        } else if (element.contains("ap0")) {                                               // hotspot essid for bridge
+        } else if (element.length() > 11 && element.contains("ap0")) {                                               // hotspot essid for bridge
             ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
-        } else if (element.contains("essid")) {                                             // wifi ssid
+        } else if (element.length() > 6 && element.contains("essid")) {                                             // wifi ssid
             setSSIDText(element.substring(6).trim());
         }
     }
