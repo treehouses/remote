@@ -1,8 +1,11 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +17,10 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import io.treehouses.remote.Network.BluetoothChatService;
+import io.treehouses.remote.Constants;
+import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.R;
+import io.treehouses.remote.callback.BottomSheetListener;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
@@ -28,6 +33,7 @@ public class WifiBottomSheet extends BottomSheetDialogFragment {
 
     private HomeInteractListener listener;
     private Context context;
+    private BottomSheetListener wifiBottomSheetListener;
 
     public WifiBottomSheet(HomeInteractListener listener, Context context) {
         this.listener = listener;
@@ -63,6 +69,36 @@ public class WifiBottomSheet extends BottomSheetDialogFragment {
                 Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
             }
         });
+
+        searchWifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
+                } else {
+                    androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
+                    dialogFrag.setTargetFragment(getParentFragment(), Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+                    dialogFrag.show(getActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
+                }
+            }
+        });
+
         return v;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+//        try {
+//            wifiBottomSheetListener = (BottomSheetListener) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString() + " must implement listener");
+//        }
+    }
+
+    @Override
+    public void onDismiss(final DialogInterface dialogInterface) {
+        Log.d("DISMIES", "DSFSD");
     }
 }
