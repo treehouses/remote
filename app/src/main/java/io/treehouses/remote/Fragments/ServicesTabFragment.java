@@ -1,15 +1,10 @@
 package io.treehouses.remote.Fragments;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,6 +118,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         }
         if (quoteCount >= 2) {
             showInfoDialog(buildString);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -134,10 +130,12 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         if (isLocalUrl(output)) {
             received = true;
             openLocalURL(output);
+            progressBar.setVisibility(View.GONE);
         }
         else if (output.contains(".onion") && ! received) {
             received = true;
             openTorURL(output);
+            progressBar.setVisibility(View.GONE);
         }
         else if (infoClicked) {
             increaseQuoteCount(output);
@@ -229,12 +227,14 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             public void onClick(View v) {
                 writeToRPI(command);
                 alertDialog.dismiss();
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
     }
 
 
     private void onClickInfo(ServiceInfo selected) {
+        progressBar.setVisibility(View.VISIBLE);
         writeToRPI("treehouses services " + selected.name + " info");
         infoClicked = true;
         quoteCount = 0;
