@@ -26,6 +26,8 @@ import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
+import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
+
 public class BridgeBottomSheet extends BottomSheetDialogFragment {
 
     private EditText essid, password, hotspotEssid, hotspotPassword;
@@ -73,6 +75,9 @@ public class BridgeBottomSheet extends BottomSheetDialogFragment {
                 listener.sendMessage(overallMessage);
 
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                intent.putExtra(CLICKED_START_CONFIG, true);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                 dismiss();
             }
         });

@@ -1,6 +1,8 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,8 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
+
+import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
 public class HotspotBottomSheet extends BottomSheetDialogFragment {
     private EditText essidText;
@@ -55,6 +59,9 @@ public class HotspotBottomSheet extends BottomSheetDialogFragment {
                     listener.sendMessage("treehouses ap " + spinner.getSelectedItem().toString() + " " + essidText.getText().toString() + " " + passwordText.getText().toString());
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 }
+                Intent intent = new Intent();
+                intent.putExtra(CLICKED_START_CONFIG, true);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                 dismiss();
             }
         });

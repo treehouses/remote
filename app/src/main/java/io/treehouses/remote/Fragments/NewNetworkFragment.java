@@ -1,8 +1,10 @@
 package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,9 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     private Button updateNetwork, rebootPi, resetNetwork;
     private TextView currentNetworkMode;
     private BluetoothChatService mChatService;
+    private ProgressBar progressBar;
+
+    public static String CLICKED_START_CONFIG = "clicked_config";
 
 
     @Override
@@ -50,6 +56,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         resetNetwork = view.findViewById(R.id.reset_network);
 
         currentNetworkMode = view.findViewById(R.id.current_network_mode);
+        progressBar = view.findViewById(R.id.network_pbar);
 
         //Listeners
         wifiButton.setOnClickListener(this);
@@ -75,18 +82,22 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         switch (v.getId()) {
             case R.id.network_wifi:
                 WifiBottomSheet wifiBottomSheet = new WifiBottomSheet(listener, getContext());
+                wifiBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
                 wifiBottomSheet.show(getFragmentManager(), "wifi");
                 break;
             case R.id.network_hotspot:
                 HotspotBottomSheet hotspotBottomSheet = new HotspotBottomSheet(listener, getContext());
+                hotspotBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
                 hotspotBottomSheet.show(getFragmentManager(), "hotspot");
                 break;
             case R.id.network_bridge:
                 BridgeBottomSheet bridgeBottomSheet = new BridgeBottomSheet(listener, getContext());
+                bridgeBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
                 bridgeBottomSheet.show(getFragmentManager(), "bridge");
                 break;
             case R.id.network_ethernet:
                 EthernetBottomSheet ethernetBottomSheet = new EthernetBottomSheet(listener, getContext());
+                ethernetBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
                 ethernetBottomSheet.show(getFragmentManager(), "ethernet");
                 break;
             case R.id.button_network_mode:
@@ -107,6 +118,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
 
     private void updateNetworkMode() {
         writeToRPI("treehouses networkmode");
+        Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
     }
 
     private boolean isNetworkModeReturned(String output) {
@@ -125,7 +137,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
 
     private boolean isConfigReturned(String output) {
-        if (output.contains("pirateship has anchored successfully") ||output.contains("the bridge has been built")) {
+        if (output.contains("pirateship has anchored successfully") || output.contains("the bridge has been built")) {
             return true;
         }
         else if (output.contains("open wifi network") || output.contains("password network")) {
@@ -148,12 +160,14 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         //Error occurred
         else if (output.toLowerCase().contains("error")) {
             showDialog("Error", "An error has occurred.");
+            progressBar.setVisibility(View.GONE);
         }
 
         //Returned from choosing a network
         else if (isConfigReturned(output)) {
             showDialog("Network Switched", output);
             updateNetworkMode();
+            progressBar.setVisibility(View.GONE);
         }
 
     }
@@ -175,12 +189,18 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        listener.sendMessage("reboot");
-                        if (mChatService.getState() != Constants.STATE_CONNECTED) {
-                            Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-                            listener.openCallFragment(new HomeFragment());
-                        } else {
-                            Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+                        try {
+                            Log.d("", "reboot: ");
+                            listener.sendMessage("reboot");
+                            Thread.sleep(1000);
+                            if (mChatService.getState() != Constants.STATE_CONNECTED) {
+                                Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                                listener.openCallFragment(new HomeFragment());
+                            } else {
+                                Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                         dialog.dismiss();
                     }
@@ -195,8 +215,8 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
 
     private void resetNetwork() {
         AlertDialog a = new AlertDialog.Builder(getContext())
-                .setTitle("Reboot")
-                .setMessage("Are you sure you want to reboot your device?")
+                .setTitle("Reset Network")
+                .setMessage("Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -213,6 +233,16 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if( resultCode != Activity.RESULT_OK ) {
+            return;
+        }
+        if( requestCode == Constants.NETWORK_BOTTOM_SHEET && data.getBooleanExtra(CLICKED_START_CONFIG, false)) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -224,4 +254,18 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
             }
         }
     };
+
+//    Next Version:
+//    private void elementConditions(String element) {
+//        Log.e("TAG", "networkmode= " + element);
+//        if (element.contains("wlan0") && !element.contains("ap essid")) {                   // bridge essid
+//            setSSIDText(element.substring(14).trim());
+//        } else if (element.contains("ap essid")) {                                          // ap essid
+//            setSSIDText(element.substring(16).trim());
+//        } else if (element.contains("ap0")) {                                               // hotspot essid for bridge
+//            ButtonConfiguration.getEtHotspotEssid().setText(element.substring(11).trim());
+//        } else if (element.contains("essid")) {                                             // wifi ssid
+//            setSSIDText(element.substring(6).trim());
+//        }
+//    }
 }

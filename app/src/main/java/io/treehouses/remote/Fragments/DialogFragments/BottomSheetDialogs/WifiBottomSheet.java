@@ -20,10 +20,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.R;
-import io.treehouses.remote.callback.BottomSheetListener;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
+
+import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
 
 public class WifiBottomSheet extends BottomSheetDialogFragment{
@@ -34,7 +35,6 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
 
     private HomeInteractListener listener;
     private Context context;
-    private BottomSheetListener wifiBottomSheetListener;
 
     public WifiBottomSheet(HomeInteractListener listener, Context context) {
         this.listener = listener;
@@ -59,6 +59,9 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
                 String password = passwordText.getText().toString();
                 listener.sendMessage(String.format("treehouses wifi %s %s", ssid, password));
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                intent.putExtra(CLICKED_START_CONFIG, true);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                 dismiss();
             }
         });
@@ -87,16 +90,6 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
         return v;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-//        try {
-//            wifiBottomSheetListener = (BottomSheetListener) context;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString() + " must implement listener");
-//        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

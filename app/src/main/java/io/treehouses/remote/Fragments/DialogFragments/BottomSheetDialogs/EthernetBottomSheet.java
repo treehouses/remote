@@ -1,6 +1,8 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.treehouses.remote.R;
 import io.treehouses.remote.callback.HomeInteractListener;
+
+import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
 public class EthernetBottomSheet extends BottomSheetDialogFragment {
 
@@ -47,6 +51,9 @@ public class EthernetBottomSheet extends BottomSheetDialogFragment {
                 String gateway = etGateway.getText().toString();
                 String mask = etMask.getText().toString();
                 listener.sendMessage(String.format("treehouses ethernet %s %s %s %s", ip, mask, gateway, dns));
+                Intent intent = new Intent();
+                intent.putExtra(CLICKED_START_CONFIG, true);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                 dismiss();
             }
         });

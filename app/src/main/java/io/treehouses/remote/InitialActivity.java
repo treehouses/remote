@@ -27,7 +27,6 @@ import com.google.android.material.navigation.NavigationView;
 
 import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
-import io.treehouses.remote.Fragments.NetworkFragment;
 import io.treehouses.remote.Fragments.NewNetworkFragment;
 import io.treehouses.remote.Fragments.ServicesFragment;
 import io.treehouses.remote.Fragments.SettingsFragment;
@@ -37,7 +36,6 @@ import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Fragments.TunnelFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.bases.PermissionActivity;
-import io.treehouses.remote.callback.BottomSheetListener;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.utils.GPSService;
