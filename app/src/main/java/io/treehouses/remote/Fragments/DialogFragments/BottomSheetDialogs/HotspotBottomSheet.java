@@ -49,6 +49,13 @@ public class HotspotBottomSheet extends BottomSheetDialogFragment {
 
         spinner = v.findViewById(R.id.spn_hotspot_type);
 
+        startConfigListener();
+
+        setAddProfileListener();
+        return v;
+    }
+
+    private void startConfigListener() {
         startConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +72,9 @@ public class HotspotBottomSheet extends BottomSheetDialogFragment {
                 dismiss();
             }
         });
+    }
 
+    private void setAddProfileListener() {
         addProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +82,5 @@ public class HotspotBottomSheet extends BottomSheetDialogFragment {
                 Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
             }
         });
-        return v;
     }
-
 }

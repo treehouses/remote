@@ -3,8 +3,10 @@ package io.treehouses.remote.Fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,11 +19,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.BridgeBottomSheet;
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.EthernetBottomSheet;
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.HotspotBottomSheet;
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.WifiBottomSheet;
+import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
@@ -77,28 +82,25 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         mChatService.write(ping.getBytes());
     }
 
+    private void showBottomSheet(BottomSheetDialogFragment fragment, String tag) {
+        fragment.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
+        fragment.show(getFragmentManager(), tag);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.network_wifi:
-                WifiBottomSheet wifiBottomSheet = new WifiBottomSheet(listener, getContext());
-                wifiBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
-                wifiBottomSheet.show(getFragmentManager(), "wifi");
+                showBottomSheet(new WifiBottomSheet(listener, getContext()), "wifi");
                 break;
             case R.id.network_hotspot:
-                HotspotBottomSheet hotspotBottomSheet = new HotspotBottomSheet(listener, getContext());
-                hotspotBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
-                hotspotBottomSheet.show(getFragmentManager(), "hotspot");
+                showBottomSheet(new HotspotBottomSheet(listener, getContext()), "hotspot");
                 break;
             case R.id.network_bridge:
-                BridgeBottomSheet bridgeBottomSheet = new BridgeBottomSheet(listener, getContext());
-                bridgeBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
-                bridgeBottomSheet.show(getFragmentManager(), "bridge");
+                showBottomSheet(new BridgeBottomSheet(listener, getContext()), "bridge");
                 break;
             case R.id.network_ethernet:
-                EthernetBottomSheet ethernetBottomSheet = new EthernetBottomSheet(listener, getContext());
-                ethernetBottomSheet.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
-                ethernetBottomSheet.show(getFragmentManager(), "ethernet");
+                showBottomSheet(new EthernetBottomSheet(listener, getContext()), "ethernet");
                 break;
             case R.id.button_network_mode:
                 updateNetworkMode();
@@ -182,6 +184,21 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         alertDialog.show();
     }
 
+    private void rebootHelper() {
+        try {
+            listener.sendMessage("reboot");
+            Thread.sleep(1000);
+            if (mChatService.getState() != Constants.STATE_CONNECTED) {
+                Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
+                listener.openCallFragment(new HomeFragment());
+            } else {
+                Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void reboot() {
         AlertDialog a = new AlertDialog.Builder(getContext())
                 .setTitle("Reboot")
@@ -189,19 +206,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Log.d("", "reboot: ");
-                            listener.sendMessage("reboot");
-                            Thread.sleep(1000);
-                            if (mChatService.getState() != Constants.STATE_CONNECTED) {
-                                Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
-                                listener.openCallFragment(new HomeFragment());
-                            } else {
-                                Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        rebootHelper();
                         dialog.dismiss();
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -254,6 +259,16 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
             }
         }
     };
+
+    public static void openWifiDialog(BottomSheetDialogFragment bottomSheetDialogFragment, Context context) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
+        } else {
+            androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
+            dialogFrag.setTargetFragment(bottomSheetDialogFragment, Constants.REQUEST_DIALOG_WIFI);
+            dialogFrag.show(bottomSheetDialogFragment.getActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
+        }
+    }
 
 //    Next Version:
 //    private void elementConditions(String element) {

@@ -27,6 +27,7 @@ import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
 import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
+import static io.treehouses.remote.Fragments.NewNetworkFragment.openWifiDialog;
 
 public class BridgeBottomSheet extends BottomSheetDialogFragment {
 
@@ -62,6 +63,20 @@ public class BridgeBottomSheet extends BottomSheetDialogFragment {
             e.printStackTrace();
         }
 
+        startConfigListener();
+        setAddProfileListener();
+
+        btnWifiSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWifiDialog(BridgeBottomSheet.this, context);
+            }
+        });
+
+        return v;
+    }
+
+    private void startConfigListener() {
         startConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +96,9 @@ public class BridgeBottomSheet extends BottomSheetDialogFragment {
                 dismiss();
             }
         });
+    }
 
+    private void setAddProfileListener() {
         addProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,21 +109,6 @@ public class BridgeBottomSheet extends BottomSheetDialogFragment {
                 Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show();
             }
         });
-
-        btnWifiSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
-                } else {
-                    androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
-                    dialogFrag.setTargetFragment(BridgeBottomSheet.this, Constants.REQUEST_DIALOG_WIFI);
-                    dialogFrag.show(getActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
-                }
-            }
-        });
-
-        return v;
     }
 
     @Override

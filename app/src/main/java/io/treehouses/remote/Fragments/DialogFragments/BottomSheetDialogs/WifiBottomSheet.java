@@ -25,6 +25,7 @@ import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
 import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
+import static io.treehouses.remote.Fragments.NewNetworkFragment.openWifiDialog;
 
 
 public class WifiBottomSheet extends BottomSheetDialogFragment{
@@ -77,13 +78,8 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
         searchWifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
-                } else {
-                    androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
-                    dialogFrag.setTargetFragment(WifiBottomSheet.this, Constants.REQUEST_DIALOG_WIFI);
-                    dialogFrag.show(getActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
-                }
+                openWifiDialog(WifiBottomSheet.this, context);
+
             }
         });
 
