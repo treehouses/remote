@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Current Network Mode: WiFi"
+        android:text="Current Network Mode: "
         android:textSize="@dimen/text_size_mid"
         app:fontFamily="@font/roboto_light"
         app:layout_constraintEnd_toEndOf="parent"

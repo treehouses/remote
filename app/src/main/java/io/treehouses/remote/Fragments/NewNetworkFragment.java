@@ -78,15 +78,15 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
                 wifiBottomSheet.show(getFragmentManager(), "wifi");
                 break;
             case R.id.network_hotspot:
-                HotspotBottomSheet hotspotBottomSheet = new HotspotBottomSheet();
+                HotspotBottomSheet hotspotBottomSheet = new HotspotBottomSheet(listener, getContext());
                 hotspotBottomSheet.show(getFragmentManager(), "hotspot");
                 break;
             case R.id.network_bridge:
-                BridgeBottomSheet bridgeBottomSheet = new BridgeBottomSheet();
+                BridgeBottomSheet bridgeBottomSheet = new BridgeBottomSheet(listener, getContext());
                 bridgeBottomSheet.show(getFragmentManager(), "bridge");
                 break;
             case R.id.network_ethernet:
-                EthernetBottomSheet ethernetBottomSheet = new EthernetBottomSheet();
+                EthernetBottomSheet ethernetBottomSheet = new EthernetBottomSheet(listener, getContext());
                 ethernetBottomSheet.show(getFragmentManager(), "ethernet");
                 break;
             case R.id.button_network_mode:
@@ -194,8 +194,23 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
 
     private void resetNetwork() {
-        listener.sendMessage("treehouses default network");
-        Toast.makeText(getContext(), "Switching to default network...", Toast.LENGTH_LONG).show();
+        AlertDialog a = new AlertDialog.Builder(getContext())
+                .setTitle("Reboot")
+                .setMessage("Are you sure you want to reboot your device?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.sendMessage("treehouses default network");
+                        Toast.makeText(getContext(), "Switching to default network...", Toast.LENGTH_LONG).show();
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        a.show();
+
     }
 
     @SuppressLint("HandlerLeak")
