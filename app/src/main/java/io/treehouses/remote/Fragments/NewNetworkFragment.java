@@ -78,10 +78,6 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         return view;
     }
 
-    private void writeToRPI(String ping) {
-        mChatService.write(ping.getBytes());
-    }
-
     private void showBottomSheet(BottomSheetDialogFragment fragment, String tag) {
         fragment.setTargetFragment(NewNetworkFragment.this, Constants.NETWORK_BOTTOM_SHEET);
         fragment.show(getFragmentManager(), tag);
@@ -119,7 +115,8 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
 
     private void updateNetworkMode() {
-        writeToRPI("treehouses networkmode");
+        String s = "treehouses networkmode";
+        mChatService.write(s.getBytes());
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
     }
 

@@ -53,6 +53,22 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
         addProfile = v.findViewById(R.id.set_wifi_profile);
         searchWifi = v.findViewById(R.id.btnWifiSearch);
 
+        setStartConfigListener();
+
+        setAddProfileListener();
+
+        searchWifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWifiDialog(WifiBottomSheet.this, context);
+
+            }
+        });
+
+        return v;
+    }
+
+    private void setStartConfigListener() {
         startConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +82,9 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
                 dismiss();
             }
         });
+    }
 
+    private void setAddProfileListener() {
         addProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,27 +92,13 @@ public class WifiBottomSheet extends BottomSheetDialogFragment{
                 Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
             }
         });
-
-        searchWifi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWifiDialog(WifiBottomSheet.this, context);
-
-            }
-        });
-
-        return v;
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if( resultCode != Activity.RESULT_OK ) {
-            return;
-        }
-        if( requestCode == Constants.REQUEST_DIALOG_WIFI ) {
-            String ssid = data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY);
-            ssidText.setText(ssid);
+        if((resultCode == Activity.RESULT_OK) && (requestCode == Constants.REQUEST_DIALOG_WIFI) ) {
+            ssidText.setText(data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY));
         }
     }
 
