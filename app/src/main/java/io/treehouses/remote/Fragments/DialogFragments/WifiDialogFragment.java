@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments.DialogFragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -27,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.treehouses.remote.R;
-import io.treehouses.remote.utils.ButtonConfiguration;
 
 public class WifiDialogFragment extends DialogFragment {
 
@@ -39,6 +39,8 @@ public class WifiDialogFragment extends DialogFragment {
     private View mView;
     private Boolean firstScan = true;
     private ProgressBar progressBar;
+
+    public static String WIFI_SSID_KEY = "SSID";
 
     @Override
     public void onAttach(Context context) {
@@ -84,11 +86,12 @@ public class WifiDialogFragment extends DialogFragment {
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             SSID = wifiList.get(position);
-            if (position != 1) {
-                ButtonConfiguration.getSSID().setText(SSID.trim());
-            } else {
-                ButtonConfiguration.getEssid().setText(SSID.trim());
+            if( getTargetFragment() == null ) {
+                return;
             }
+            Intent intent = new Intent();
+            intent.putExtra(WIFI_SSID_KEY, SSID);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
             wifiList.clear();
             dismiss();
         });
@@ -181,4 +184,7 @@ public class WifiDialogFragment extends DialogFragment {
         Toast.makeText(context, "Scan unsuccessful, please try again.", Toast.LENGTH_LONG).show();
         dismiss();
     }
+
+
+
 }

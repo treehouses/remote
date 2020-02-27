@@ -1,8 +1,9 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +26,8 @@ import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
-public class WifiBottomSheet extends BottomSheetDialogFragment {
+
+public class WifiBottomSheet extends BottomSheetDialogFragment{
 
     private EditText ssidText;
     private EditText passwordText;
@@ -77,7 +79,7 @@ public class WifiBottomSheet extends BottomSheetDialogFragment {
                     Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show();
                 } else {
                     androidx.fragment.app.DialogFragment dialogFrag = WifiDialogFragment.newInstance();
-                    dialogFrag.setTargetFragment(getParentFragment(), Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+                    dialogFrag.setTargetFragment(WifiBottomSheet.this, Constants.REQUEST_DIALOG_WIFI);
                     dialogFrag.show(getActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
                 }
             }
@@ -98,7 +100,19 @@ public class WifiBottomSheet extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if( resultCode != Activity.RESULT_OK ) {
+            return;
+        }
+        if( requestCode == Constants.REQUEST_DIALOG_WIFI ) {
+            String ssid = data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY);
+            ssidText.setText(ssid);
+        }
+    }
+
+    @Override
     public void onDismiss(final DialogInterface dialogInterface) {
         Log.d("DISMIES", "DSFSD");
     }
+
 }

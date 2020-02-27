@@ -64,6 +64,8 @@
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:textColor="@color/bg_white"
         android:text="Start Configuration" />
 
     <Button
