@@ -2,6 +2,7 @@ package io.treehouses.remote.bases;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -171,5 +172,33 @@ public class BaseTerminalFragment extends BaseFragment{
                 }
             });
         }
+    }
+
+    protected void onResultCaseDialogChpass(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            //get password change request
+            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
+            //store password and command
+            String password = "treehouses password " + chPWD;
+            //send password to command line interface
+            listener.sendMessage(password);
+        }
+    }
+    protected void addTextChangeListener(AutoCompleteTextView autoCompleteTextView) {
+        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().endsWith("\n")) {
+                    listener.sendMessage(autoCompleteTextView.getText().toString().substring(0,autoCompleteTextView.getText().toString().length()-1));
+                    autoCompleteTextView.setText("");
+                }
+            }
+        });
     }
 }

@@ -160,7 +160,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        addTextChangeListener();
+        addTextChangeListener(mOutEditText);
 
         btnSendClickListener();
 
@@ -191,24 +191,6 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
 
-    private void addTextChangeListener() {
-        mOutEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().endsWith("\n")) {
-                    listener.sendMessage(mOutEditText.getText().toString().substring(0,mOutEditText.getText().toString().length()-1));
-                    mOutEditText.setText("");
-                }
-            }
-        });
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -224,29 +206,19 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
-    private void onResultCaseDialogChpass(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            //get password change request
-            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-            //store password and command
-            String password = "treehouses password " + chPWD;
-            //send password to command line interface
-            listener.sendMessage(password);
-        }
-    }
-
-    private void onResultCaseEnable(int resultCode) {
+    protected void onResultCaseEnable(int resultCode) {
         // When the request to enable Bluetooth returns
         if (resultCode == Activity.RESULT_OK) {
             // Bluetooth is now enabled, so set up a chat session
             setupChat();
         } else {
             // User did not enable Bluetooth or an error occurred
-            Log.d(TAG, "BT not enabled");
+            Log.d("TERMINAL", "BT not enabled");
             Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
     }
+
     private void onResultAddCommand(int resultcode) {
         if (resultcode == Activity.RESULT_OK) {
             expandableListDetail.clear();
