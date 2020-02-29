@@ -159,9 +159,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        // Initialize the compose field with a listener for the return key
-        addTextChangeListener(mOutEditText);
-
         btnSendClickListener();
 
         // Initialize the BluetoothChatService to perform bluetooth connections

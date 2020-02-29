@@ -169,6 +169,10 @@ public class BaseTerminalFragment extends BaseFragment{
                 }
                 @Override
                 public void afterTextChanged(Editable s) {
+                    if (s.toString().endsWith("\n")) {
+                        listener.sendMessage(autoComplete.getText().toString().substring(0,autoComplete.getText().toString().length()-1));
+                        autoComplete.setText("");
+                    }
                 }
             });
         }
@@ -183,22 +187,5 @@ public class BaseTerminalFragment extends BaseFragment{
             //send password to command line interface
             listener.sendMessage(password);
         }
-    }
-    protected void addTextChangeListener(AutoCompleteTextView autoCompleteTextView) {
-        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.toString().endsWith("\n")) {
-                    listener.sendMessage(autoCompleteTextView.getText().toString().substring(0,autoCompleteTextView.getText().toString().length()-1));
-                    autoCompleteTextView.setText("");
-                }
-            }
-        });
     }
 }
