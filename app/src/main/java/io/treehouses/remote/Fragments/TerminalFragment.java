@@ -179,17 +179,13 @@ public class TerminalFragment extends BaseTerminalFragment {
                 consoleInput.setText("");
             }
         });
-        mPrevious.setOnClickListener(v -> { setLastCommand(); });
+        mPrevious.setOnClickListener(v -> {
+            try {
+                last = list.get(--i);
+                mOutEditText.setText(last);
+                mOutEditText.setSelection(mOutEditText.length());
+            } catch (Exception e) { e.printStackTrace(); } });
     }
-
-    private void setLastCommand() {
-        try {
-            last = list.get(--i);
-            mOutEditText.setText(last);
-            mOutEditText.setSelection(mOutEditText.length());
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -201,7 +197,14 @@ public class TerminalFragment extends BaseTerminalFragment {
                 onResultCaseDialogChpass(resultCode, data);
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND:
-                onResultAddCommand(resultCode);
+                if (resultCode == Activity.RESULT_OK) {
+                    expandableListDetail.clear();
+                    expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
+                    expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                    expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
+                    expandableListView.setAdapter(expandableListAdapter);
+                    expandableListView.expandGroup(0,true);
+                }
                 break;
         }
     }
@@ -219,16 +222,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
-    private void onResultAddCommand(int resultcode) {
-        if (resultcode == Activity.RESULT_OK) {
-            expandableListDetail.clear();
-            expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
-            expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-            expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
-            expandableListView.setAdapter(expandableListAdapter);
-            expandableListView.expandGroup(0,true);
-        }
-    }
 
     public void showDialog(androidx.fragment.app.DialogFragment dialogFrag, int requestCode, String tag) {
         // Create an instance of the dialog fragment and show it

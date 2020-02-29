@@ -80,7 +80,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgResource(pingStatusButton, Color.RED);
     }
 
-    public void idle(TextView mPingStatus, Button pingStatusButton) {
+    protected void idle(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusIdle);
         bgResource(pingStatusButton, Color.YELLOW);
     }
