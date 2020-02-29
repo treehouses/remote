@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
@@ -28,19 +29,11 @@ import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CO
 import static io.treehouses.remote.Fragments.NewNetworkFragment.openWifiDialog;
 
 
-public class WifiBottomSheet extends BottomSheetDialogFragment{
+public class WifiBottomSheet extends BaseBottomSheetDialog {
 
     private EditText ssidText;
     private EditText passwordText;
     private Button startConfig, addProfile, searchWifi;
-
-    private HomeInteractListener listener;
-    private Context context;
-
-    public WifiBottomSheet(HomeInteractListener listener, Context context) {
-        this.listener = listener;
-        this.context = context;
-    }
 
     @Nullable
     @Override

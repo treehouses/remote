@@ -17,25 +17,19 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
 import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
-public class HotspotBottomSheet extends BottomSheetDialogFragment {
+public class HotspotBottomSheet extends BaseBottomSheetDialog {
     private EditText essidText;
     private EditText passwordText;
     private Button startConfig, addProfile;
     private Spinner spinner;
 
-    private HomeInteractListener listener;
-    private Context context;
-
-    public HotspotBottomSheet(HomeInteractListener listener, Context context) {
-        this.listener = listener;
-        this.context = context;
-    }
     @Nullable
     @Override
 

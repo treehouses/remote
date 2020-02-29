@@ -15,21 +15,15 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
-public class EthernetBottomSheet extends BottomSheetDialogFragment {
+public class EthernetBottomSheet extends BaseBottomSheetDialog {
 
     private EditText etIP, etMask, etGateway, DNSText;
     private Button startConfig;
-    private HomeInteractListener listener;
-    private Context context;
-
-    public EthernetBottomSheet(HomeInteractListener listener, Context context) {
-        this.listener = listener;
-        this.context = context;
-    }
 
     @Nullable
     @Override
