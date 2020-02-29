@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -158,8 +159,7 @@ public class BaseTerminalFragment extends BaseFragment{
             autoComplete.setAdapter(arrayAdapter);
             autoComplete.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -167,9 +167,17 @@ public class BaseTerminalFragment extends BaseFragment{
                     else autoComplete.setAdapter(arrayAdapter);
                 }
                 @Override
-                public void afterTextChanged(Editable s) {
-                }
-            });
+                public void afterTextChanged(Editable s) { } });
+            addSpaces(autoComplete);
         }
+    }
+    private void addSpaces(AutoCompleteTextView autoComplete) {
+        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                autoComplete.append(" ");
+            }
+        });
+
     }
 }
