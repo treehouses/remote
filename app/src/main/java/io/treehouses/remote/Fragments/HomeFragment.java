@@ -168,7 +168,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
                 } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog();
+                    showRPIDialog(HomeFragment.this);
                 }
             }
         });
@@ -187,18 +187,14 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         });
     }
 
-    private void checkApkVersion() {
-        checkVersionSent = true;
-        writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
-    }
-
     public void checkConnectionState() {
         mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog(preferences);
             transitionOnConnected();
             connectionState = true;
-            checkApkVersion();
+            checkVersionSent = true;
+            writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
 
         } else {
             transitionDisconnected();
@@ -232,12 +228,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         layout.setVisibility(View.GONE);
     }
 
-    private void showRPIDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
-        ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
-    }
+
 
     private void dismissTestConnection() {
         if (testConnectionDialog != null) {
@@ -259,8 +250,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             throw new ClassCastException("Activity must implement NotificationListener");
         }
     }
-
-    private boolean matchResult(String output, String option1, String option2) { return output.contains(option1) || output.contains(option2); }
 
     private void dismissPDialog() { if (progressDialog != null) progressDialog.dismiss(); }
 
@@ -293,13 +282,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private void readMessage(String output) {
         if (checkVersionSent) {
             checkVersion(output.contains("true"));
-            return;
-        }
-        if (output.contains(" ") && output.split(" ").length == 5) {
-            String[] result = output.split(" ");
-            checkImageInfo(result, mChatService.getConnectedDeviceName());
-        }
-        if (matchResult(output, "true", "false") && output.length() < 14) {
+        } else if (output.contains(" ") && output.split(" ").length == 5) {
+            checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName());
+        } else if (matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "connected", "pirateship")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
@@ -309,8 +294,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             Toast.makeText(getContext(), "Bridge Has Been Built", Toast.LENGTH_LONG).show();
         } else if (output.toLowerCase().contains("default")) {
             switchProfile(networkProfile);
-        }
-        else if (output.toLowerCase().contains("error")) {
+        } else if (output.toLowerCase().contains("error")) {
             dismissPDialog();
             Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
         } else if (!result) {
@@ -344,6 +328,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     @Override
     public void onResume() {
         super.onResume();
-        if (mChatService.getState() == Constants.STATE_CONNECTED) checkApkVersion();
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
+            checkVersionSent = true;
+            writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
+        }
     }
 }
