@@ -1,49 +1,35 @@
 package io.treehouses.remote.Fragments;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.ServicesListAdapter;
-import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.pojo.ServiceInfo;
 
-public class ServicesTabFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
 
     private View view;
     private ProgressBar progressBar;
     private ArrayList<ServiceInfo> services;
     ServicesListAdapter adapter;
     private TextView tvMessage;
-    private String service_name = "";
     private boolean received = false;
     private boolean infoClicked;
     private int quoteCount;
@@ -92,15 +78,19 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
             writeToRPI("treehouses remote services installed\n");
         }
-        else if (output.contains(".") && output.contains(":") && output.length() < 20 && !received) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + output));
-            startActivity(intent);
-            received = true;
+        else if (output.contains("Installed:")) {
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
+            writeToRPI("treehouses remote services running\n");
         }
-        else{
-            checkServiceStatus(output);
+        else if (output.contains("Running:")) {
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
+        }
+
+        else {
+            moreActions(output);
         }
     }
+
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -127,45 +117,29 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
             buildString += "\n\n";
         }
         if (quoteCount >= 2) {
-            showInfoDialog();
+            showInfoDialog(buildString);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
-    private void checkServiceStatus(String output) {
-        if (output.contains("Installed:")) {
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED);
-            writeToRPI("treehouses remote services running\n");
-        } else if (output.contains("Running:")) {
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING);
+    private boolean isLocalUrl(String output) {
+        return output.contains(".") && output.contains(":") && output.length() < 20 && !received;
+    }
+
+    private void moreActions(String output) {
+        if (isLocalUrl(output)) {
+            received = true;
+            openLocalURL(output);
+            progressBar.setVisibility(View.GONE);
+        }
+        else if (output.contains(".onion") && ! received) {
+            received = true;
+            openTorURL(output);
+            progressBar.setVisibility(View.GONE);
         }
         else if (infoClicked) {
             increaseQuoteCount(output);
         }
-    }
-
-    private void showInfoDialog() {
-        final SpannableString s = new SpannableString(buildString);
-        Linkify.addLinks(s, Linkify.ALL);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("Info")
-                .setMessage(s)
-                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        alertDialog.show();
-        TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
-        alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    public int getQuoteCount(String s) {
-        int count = 0;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '\"') count++;
-        }
-        return count;
     }
 
     private void updateServiceList(String[] stringList, int identifier) {
@@ -234,12 +208,33 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
     private void onClickLink(ServiceInfo selected) {
         //reqUrls();
-        writeToRPI("treehouses services " + selected.name + " url local \n");
+        View view = getLayoutInflater().inflate(R.layout.dialog_choose_url, null);
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setView(view)
+                .setTitle("Select URL type")
+                .create();
+
+        setOnClick(view, R.id.local_button, "treehouses services " + selected.name + " url local \n", alertDialog);
+        setOnClick(view, R.id.tor_button, "treehouses services " + selected.name + " url tor \n", alertDialog);
+
+        alertDialog.show();
         received = false;
+    }
+
+    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
+        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeToRPI(command);
+                alertDialog.dismiss();
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
 
     private void onClickInfo(ServiceInfo selected) {
+        progressBar.setVisibility(View.VISIBLE);
         writeToRPI("treehouses services " + selected.name + " info");
         infoClicked = true;
         quoteCount = 0;
@@ -276,4 +271,3 @@ public class ServicesTabFragment extends BaseFragment implements AdapterView.OnI
 
 
 }
-
