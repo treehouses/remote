@@ -32,6 +32,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.utils.Utils;
 
 public class BaseTerminalFragment extends BaseFragment{
+    private final String[] array2 = {"treehouses", "docker"};
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
 
@@ -153,7 +154,6 @@ public class BaseTerminalFragment extends BaseFragment{
 
         if (preferences.getBoolean("autocomplete", true)) {
             final String[] commands = getResources().getStringArray(R.array.commands_list);
-            final String[] array2 = {"treehouses", "docker"};
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
             ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
             autoComplete.setThreshold(1);
@@ -173,22 +173,11 @@ public class BaseTerminalFragment extends BaseFragment{
                         listener.sendMessage(autoComplete.getText().toString().substring(0,autoComplete.getText().toString().length()-1));
                         autoComplete.setText("");
                     }
-                }
-            });
+                }});
             addSpaces(autoComplete);
         }
     }
 
-    protected void onResultCaseDialogChpass(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            //get password change request
-            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-            //store password and command
-            String password = "treehouses password " + chPWD;
-            //send password to command line interface
-            listener.sendMessage(password);
-        }
-    }
     private void addSpaces(AutoCompleteTextView autoComplete) {
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

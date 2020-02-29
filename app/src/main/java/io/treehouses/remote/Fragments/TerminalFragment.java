@@ -220,7 +220,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
 
-    public void showDialog(androidx.fragment.app.DialogFragment dialogFrag, int requestCode, String tag) {
+    private void showDialog(androidx.fragment.app.DialogFragment dialogFrag, int requestCode, String tag) {
         // Create an instance of the dialog fragment and show it
         dialogFrag.setTargetFragment(this, requestCode);
         dialogFrag.show(getFragmentManager().beginTransaction(), tag);
@@ -230,6 +230,16 @@ public class TerminalFragment extends BaseTerminalFragment {
         MainApplication.getCommandList().add(writeMessage);
         list = MainApplication.getCommandList();
         i = list.size();
+    }
+    private void onResultCaseDialogChpass(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            //get password change request
+            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
+            //store password and command
+            String password = "treehouses password " + chPWD;
+            //send password to command line interface
+            listener.sendMessage(password);
+        }
     }
 
     /**
