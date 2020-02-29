@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -160,7 +161,9 @@ public class TunnelFragment extends BaseTerminalFragment {
                     handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
-                    handlerCaseToast(msg);
+                    if (null != getActivity()) {
+                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         }

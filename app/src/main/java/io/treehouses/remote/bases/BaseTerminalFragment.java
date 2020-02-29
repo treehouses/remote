@@ -53,12 +53,6 @@ public class BaseTerminalFragment extends BaseFragment{
         }
     }
 
-    public void handlerCaseToast(Message msg) {
-        if (null != getActivity()) {
-            Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     public View getViews(View view, Boolean isRead) {
         TextView consoleView = view.findViewById(R.id.listItem);
         if (isRead) {
@@ -75,7 +69,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgShape.setColor(color);
     }
 
-    protected void offline(TextView mPingStatus, Button pingStatusButton) {
+    private void offline(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusOffline);
         bgResource(pingStatusButton, Color.RED);
     }
@@ -85,7 +79,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgResource(pingStatusButton, Color.YELLOW);
     }
 
-    public void connect(TextView mPingStatus, Button pingStatusButton) {
+    private void connect(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusConnected);
         bgResource(pingStatusButton, Color.GREEN);
     }
