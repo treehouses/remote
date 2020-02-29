@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -158,7 +160,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        mOutEditText.setOnEditorActionListener(mWriteListener);
+        addTextChangeListener();
 
         btnSendClickListener();
 
@@ -188,20 +190,24 @@ public class TerminalFragment extends BaseTerminalFragment {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    /**
-     * The action listener for the EditText widget, to listen for the return key
-     */
-    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-            // If the action is a key-up event on the return key, send the message
-            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
-                String message = view.getText().toString();
-                listener.sendMessage(message);
-                mOutEditText.setText("");
+
+    private void addTextChangeListener() {
+        mOutEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().endsWith("\n")) {
+                    listener.sendMessage(mOutEditText.getText().toString().substring(0,mOutEditText.getText().toString().length()-1));
+                    mOutEditText.setText("");
+                }
             }
-            return true;
-        }
-    };
+        });
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
