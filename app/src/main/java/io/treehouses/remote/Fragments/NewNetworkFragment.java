@@ -87,16 +87,16 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.network_wifi:
-                showBottomSheet(new WifiBottomSheet(listener, getContext()), "wifi");
+                showBottomSheet(new WifiBottomSheet(), "wifi");
                 break;
             case R.id.network_hotspot:
-                showBottomSheet(new HotspotBottomSheet(listener, getContext()), "hotspot");
+                showBottomSheet(new HotspotBottomSheet(), "hotspot");
                 break;
             case R.id.network_bridge:
-                showBottomSheet(new BridgeBottomSheet(listener, getContext()), "bridge");
+                showBottomSheet(new BridgeBottomSheet(), "bridge");
                 break;
             case R.id.network_ethernet:
-                showBottomSheet(new EthernetBottomSheet(listener, getContext()), "ethernet");
+                showBottomSheet(new EthernetBottomSheet(), "ethernet");
                 break;
             case R.id.button_network_mode:
                 updateNetworkMode();
