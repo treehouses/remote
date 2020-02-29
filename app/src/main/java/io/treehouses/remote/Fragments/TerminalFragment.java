@@ -261,9 +261,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                     handlerCaseName(msg, getActivity());
                     break;
                 case Constants.MESSAGE_TOAST:
-                    if (null != getActivity()) {
-                        Toast.makeText(getActivity(), msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
-                    }
+                    handlerCaseToast(msg);
                     break;
             }
         }
