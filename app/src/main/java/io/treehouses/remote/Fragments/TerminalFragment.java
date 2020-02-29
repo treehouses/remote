@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -157,9 +159,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        // Initialize the compose field with a listener for the return key
-        mOutEditText.setOnEditorActionListener(mWriteListener);
-
         btnSendClickListener();
 
         // Initialize the BluetoothChatService to perform bluetooth connections
@@ -177,31 +176,13 @@ public class TerminalFragment extends BaseTerminalFragment {
                 consoleInput.setText("");
             }
         });
-        mPrevious.setOnClickListener(v -> { setLastCommand(); });
+        mPrevious.setOnClickListener(v -> {
+            try {
+                last = list.get(--i);
+                mOutEditText.setText(last);
+                mOutEditText.setSelection(mOutEditText.length());
+            } catch (Exception e) { e.printStackTrace(); } });
     }
-
-    private void setLastCommand() {
-        try {
-            last = list.get(--i);
-            mOutEditText.setText(last);
-            mOutEditText.setSelection(mOutEditText.length());
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    /**
-     * The action listener for the EditText widget, to listen for the return key
-     */
-    private TextView.OnEditorActionListener mWriteListener = new TextView.OnEditorActionListener() {
-        public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-            // If the action is a key-up event on the return key, send the message
-            if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
-                String message = view.getText().toString();
-                listener.sendMessage(message);
-                mOutEditText.setText("");
-            }
-            return true;
-        }
-    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -213,46 +194,33 @@ public class TerminalFragment extends BaseTerminalFragment {
                 onResultCaseDialogChpass(resultCode, data);
                 break;
             case Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND:
-                onResultAddCommand(resultCode);
+                if (resultCode == Activity.RESULT_OK) {
+                    expandableListDetail.clear();
+                    expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
+                    expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                    expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
+                    expandableListView.setAdapter(expandableListAdapter);
+                    expandableListView.expandGroup(0,true);
+                }
                 break;
         }
     }
 
-    private void onResultCaseDialogChpass(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            //get password change request
-            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
-            //store password and command
-            String password = "treehouses password " + chPWD;
-            //send password to command line interface
-            listener.sendMessage(password);
-        }
-    }
-
-    private void onResultCaseEnable(int resultCode) {
+    protected void onResultCaseEnable(int resultCode) {
         // When the request to enable Bluetooth returns
         if (resultCode == Activity.RESULT_OK) {
             // Bluetooth is now enabled, so set up a chat session
             setupChat();
         } else {
             // User did not enable Bluetooth or an error occurred
-            Log.d(TAG, "BT not enabled");
+            Log.d("TERMINAL", "BT not enabled");
             Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
     }
-    private void onResultAddCommand(int resultcode) {
-        if (resultcode == Activity.RESULT_OK) {
-            expandableListDetail.clear();
-            expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
-            expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-            expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
-            expandableListView.setAdapter(expandableListAdapter);
-            expandableListView.expandGroup(0,true);
-        }
-    }
 
-    public void showDialog(androidx.fragment.app.DialogFragment dialogFrag, int requestCode, String tag) {
+
+    private void showDialog(androidx.fragment.app.DialogFragment dialogFrag, int requestCode, String tag) {
         // Create an instance of the dialog fragment and show it
         dialogFrag.setTargetFragment(this, requestCode);
         dialogFrag.show(getFragmentManager().beginTransaction(), tag);
@@ -262,6 +230,16 @@ public class TerminalFragment extends BaseTerminalFragment {
         MainApplication.getCommandList().add(writeMessage);
         list = MainApplication.getCommandList();
         i = list.size();
+    }
+    private void onResultCaseDialogChpass(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            //get password change request
+            String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
+            //store password and command
+            String password = "treehouses password " + chPWD;
+            //send password to command line interface
+            listener.sendMessage(password);
+        }
     }
 
     /**

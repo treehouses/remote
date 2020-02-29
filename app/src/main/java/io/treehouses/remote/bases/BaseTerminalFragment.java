@@ -2,6 +2,7 @@ package io.treehouses.remote.bases;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -31,6 +32,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.utils.Utils;
 
 public class BaseTerminalFragment extends BaseFragment{
+    private final String[] array2 = {"treehouses", "docker"};
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
 
@@ -80,7 +82,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgResource(pingStatusButton, Color.RED);
     }
 
-    public void idle(TextView mPingStatus, Button pingStatusButton) {
+    protected void idle(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusIdle);
         bgResource(pingStatusButton, Color.YELLOW);
     }
@@ -152,7 +154,6 @@ public class BaseTerminalFragment extends BaseFragment{
 
         if (preferences.getBoolean("autocomplete", true)) {
             final String[] commands = getResources().getStringArray(R.array.commands_list);
-            final String[] array2 = {"treehouses", "docker"};
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
             ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
             autoComplete.setThreshold(1);
@@ -167,10 +168,16 @@ public class BaseTerminalFragment extends BaseFragment{
                     else autoComplete.setAdapter(arrayAdapter);
                 }
                 @Override
-                public void afterTextChanged(Editable s) { } });
+                public void afterTextChanged(Editable s) {
+                    if (s.toString().endsWith("\n")) {
+                        listener.sendMessage(autoComplete.getText().toString().substring(0,autoComplete.getText().toString().length()-1));
+                        autoComplete.setText("");
+                    }
+                }});
             addSpaces(autoComplete);
         }
     }
+
     private void addSpaces(AutoCompleteTextView autoComplete) {
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -178,6 +185,7 @@ public class BaseTerminalFragment extends BaseFragment{
                 autoComplete.append(" ");
             }
         });
+
 
     }
 }
