@@ -228,8 +228,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         layout.setVisibility(View.GONE);
     }
 
-
-
     private void dismissTestConnection() {
         if (testConnectionDialog != null) {
             testConnectionDialog.cancel();
@@ -274,7 +272,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                             }
                         }
                     }).create();
-            alertDialog.setCancelable(false);
             alertDialog.show();
         }
     }
