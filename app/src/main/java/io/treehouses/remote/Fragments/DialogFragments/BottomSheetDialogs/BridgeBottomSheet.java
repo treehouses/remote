@@ -74,12 +74,12 @@ public class BridgeBottomSheet extends BaseBottomSheetDialog {
         startConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String temp = "treehouses bridge " + essid.getText().toString() + " " + hotspotEssid.getText().toString() + " ";
-                String overallMessage = TextUtils.isEmpty(password.getText().toString()) ? temp : temp + password.getText().toString();
+                String temp = "treehouses bridge \"" + essid.getText().toString() + "\" \"" + hotspotEssid.getText().toString() + "\" ";
+                String overallMessage = TextUtils.isEmpty(password.getText().toString()) ? temp + "\"\"" : temp + "\"" + password.getText().toString() + "\"";
                 overallMessage += " ";
 
                 if (!TextUtils.isEmpty(hotspotPassword.getText().toString())) {
-                    overallMessage += hotspotPassword.getText().toString();
+                    overallMessage += "\"" + hotspotPassword.getText().toString() + "\"";
                 }
                 listener.sendMessage(overallMessage);
 

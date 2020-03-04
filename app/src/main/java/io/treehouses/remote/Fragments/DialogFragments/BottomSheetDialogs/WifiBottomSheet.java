@@ -66,7 +66,7 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
             public void onClick(View v) {
                 String ssid = ssidText.getText().toString();
                 String password = passwordText.getText().toString();
-                listener.sendMessage(String.format("treehouses wifi %s %s", ssid, password));
+                listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent();
                 intent.putExtra(CLICKED_START_CONFIG, true);

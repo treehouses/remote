@@ -54,10 +54,10 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
             @Override
             public void onClick(View v) {
                 if (passwordText.getText().toString().isEmpty()) {
-                    listener.sendMessage("treehouses ap " + spinner.getSelectedItem().toString() + " " + essidText.getText().toString());
+                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 } else {
-                    listener.sendMessage("treehouses ap " + spinner.getSelectedItem().toString() + " " + essidText.getText().toString() + " " + passwordText.getText().toString());
+                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
                     Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
                 }
                 Intent intent = new Intent();
