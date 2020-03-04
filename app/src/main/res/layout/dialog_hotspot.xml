@@ -5,6 +5,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp"
+        app:fontFamily="@font/roboto_bold"
+        android:textStyle="bold"
+        android:text="Hotspot">
+
+    </TextView>
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_hotspot_ssid"
         android:layout_width="match_parent"
@@ -38,12 +49,18 @@
     <Spinner
         android:id="@+id/spn_hotspot_type"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:entries="@array/spinner_hotspot"
         android:padding="@dimen/margin_medium" />
 
-
-    <include layout="@layout/layout_btn_configuration" />
+    <Button
+        android:id="@+id/btn_start_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:textColor="@color/bg_white"
+        android:layout_marginTop="8dp"
+        android:text="Start Configuration" />
 
     <Button
         android:id="@+id/set_hotspot_profile"

@@ -5,6 +5,17 @@
     android:padding="@dimen/margin_medium"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp"
+        app:fontFamily="@font/roboto_bold"
+        android:textStyle="bold"
+        android:text="Bridge">
+
+    </TextView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +85,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <include layout="@layout/layout_btn_configuration" />
+    <Button
+        android:id="@+id/btn_start_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:textColor="@color/bg_white"
+        android:layout_marginTop="8dp"
+        android:text="Start Configuration" />
 
     <Button
         android:id="@+id/add_bridge_profile"

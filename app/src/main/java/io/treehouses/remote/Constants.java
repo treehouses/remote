@@ -45,6 +45,8 @@ public class Constants {
     public static final int REQUEST_DIALOG_FRAGMENT_HOTSPOT = 5;
     public static final int REQUEST_DIALOG_FRAGMENT_CHPASS = 6;
     public static final int REQUEST_DIALOG_FRAGMENT_ADD_COMMAND = 7;
+    public static final int REQUEST_DIALOG_WIFI = 8;
+    public static final int NETWORK_BOTTOM_SHEET = 9;
 
     // Constants that indicate the current connection state (use in BluetoothChatService)
     public static final int STATE_NONE = 0;       // we're doing nothing

@@ -1,8 +1,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/padding_normal">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="24sp"
+        app:fontFamily="@font/roboto_bold"
+        android:textStyle="bold"
+        android:text="Ethernet">
+
+    </TextView>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/ip"
@@ -33,6 +45,12 @@
         android:hint="DNS"
         android:padding="@dimen/padding_normal" />
 
-    <include layout="@layout/layout_btn_configuration"/>
-
+    <Button
+        android:id="@+id/btn_start_config"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        android:textColor="@color/bg_white"
+        android:layout_marginTop="8dp"
+        android:text="Start Configuration" />
 </LinearLayout>

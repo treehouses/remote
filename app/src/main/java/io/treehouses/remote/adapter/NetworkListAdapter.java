@@ -119,34 +119,9 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             new ViewHolderVnc(convertView, context, listener);
         } else if (layout == R.layout.configure_tethering) {
             new ViewHolderTether(convertView, listener, context);
-        } else {
-            switchStatement(i, convertView);
         }
         views[i] = convertView;
         return convertView;
-    }
-
-    private void switchStatement(int i, View convertView) {
-        switch (i) {
-            case 0:
-                new ViewHolderEthernet(convertView, listener, context);
-                break;
-            case 1:
-                new ViewHolderWifi(convertView, listener, context);
-                break;
-            case 2:
-                new ViewHolderHotspot(convertView, listener, context);
-                break;
-            case 3:
-                new ViewHolderBridge(convertView, listener, context);
-                break;
-            case 4:
-                new ViewHolderReset(convertView);
-                break;
-            case 5:
-                new ViewHolderReboot(convertView, listener, getChatService(), context);
-                break;
-        }
     }
 
     @Override
@@ -154,8 +129,4 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-    public void changeList(String s, int position) {
-        list.get(position).setTitle(s);
-        notifyDataSetChanged();
-    }
 }

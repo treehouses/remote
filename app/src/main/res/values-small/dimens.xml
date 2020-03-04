@@ -17,4 +17,7 @@
 
     <dimen name="terminal_commands_width">200dp</dimen>
 
+    <dimen name="network_icon_size">85dp</dimen>
+
+
 </resources>
