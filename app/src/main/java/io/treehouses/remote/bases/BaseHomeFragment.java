@@ -15,9 +15,12 @@ import android.net.Uri;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import io.treehouses.remote.Constants;
+import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.ParseDbService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.callback.SetDisconnect;
 import io.treehouses.remote.utils.LogUtils;
 
 
@@ -159,4 +162,14 @@ public class BaseHomeFragment extends BaseFragment {
         if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
         return d.create();
     }
+
+    protected void showRPIDialog(SetDisconnect s) {
+        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
+        ((RPIDialogFragment) dialogFrag).setCheckConnectionState(s);
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
+    }
+
+    protected boolean matchResult(String output, String option1, String option2) { return output.contains(option1) || output.contains(option2); }
+
 }

@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,12 +16,10 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import io.treehouses.remote.BuildConfig;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.InitialActivity;
@@ -46,7 +47,6 @@ import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
-    private static final String TAG = "HOME_FRAGMENT";
     public static final String[] group_labels = {"WiFi", "Hotspot", "Bridge"};
 
     private NotificationCallback notificationListener;
@@ -64,6 +64,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private ImageView background, logo;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
+    private boolean checkVersionSent = false;
 
     private String network_ssid = "";
     private FrameLayout layout;
@@ -87,7 +88,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         showDialogOnce(preferences);
         checkConnectionState();
         connectRpiListener();
-        getStartedListener();
+        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
         testConnectionListener();
         return view;
     }
@@ -117,23 +118,22 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
         if (networkProfile.isWifi()) {
             //WIFI
-            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", networkProfile.ssid, networkProfile.password));
+            listener.sendMessage(String.format("treehouses wifi %s %s", networkProfile.ssid, networkProfile.password));
             network_ssid = networkProfile.ssid;
         } else if (networkProfile.isHotspot()) {
             //Hotspot
             if (networkProfile.password.isEmpty()) {
-                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\"");
+                listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid);
             } else {
-                listener.sendMessage("treehouses ap \"" + networkProfile.option + "\" \"" + networkProfile.ssid + "\" \"" + networkProfile.password + "\"");
+                listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid + " " + networkProfile.password);
             }
             network_ssid = networkProfile.ssid;
         } else if (networkProfile.isBridge()) {
             //Bridge
-            String temp = "treehouses bridge \"" + networkProfile.ssid + "\" \"" + networkProfile.hotspot_ssid + "\" ";
-            String overallMessage = TextUtils.isEmpty(networkProfile.password) ? temp + "\"\"" : temp + "\"" + networkProfile.password + "\"" + " ";
+            String temp = "treehouses bridge " + networkProfile.ssid + " " + networkProfile.hotspot_ssid + " ";
+            String overallMessage = TextUtils.isEmpty(networkProfile.password) ? temp + " " : temp + " " + networkProfile.password;
 
-            if (!TextUtils.isEmpty(networkProfile.hotspot_password))
-                overallMessage += "\"" + networkProfile.hotspot_password + "\"";
+            if (!TextUtils.isEmpty(networkProfile.hotspot_password)) overallMessage += " " + networkProfile.hotspot_password + " ";
             listener.sendMessage(overallMessage);
         } else {
             Log.e("Home", "UNKNOWN TYPE");
@@ -150,9 +150,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
-    private void getStartedListener() {
-        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
-    }
 
     public void connectRpiListener() {
         connectRpi.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +168,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
                 } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog();
+                    showRPIDialog(HomeFragment.this);
                 }
             }
         });
@@ -196,8 +193,9 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             showLogDialog(preferences);
             transitionOnConnected();
             connectionState = true;
-            writeToRPI("treehouses remote status\n");
-            writeToRPI("treehouses upgrade --check\n");
+            checkVersionSent = true;
+            writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
+
         } else {
             transitionDisconnected();
             connectionState = false;
@@ -230,13 +228,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         layout.setVisibility(View.GONE);
     }
 
-    private void showRPIDialog() {
-        androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
-        ((RPIDialogFragment) dialogFrag).setCheckConnectionState(this);
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
-    }
-
     private void dismissTestConnection() {
         if (testConnectionDialog != null) {
             testConnectionDialog.cancel();
@@ -258,18 +249,39 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
-    private boolean matchResult(String output, String option1, String option2) {
-        return output.contains(option1) || output.contains(option2);
-    }
-
     private void dismissPDialog() { if (progressDialog != null) progressDialog.dismiss(); }
 
-    private void readMessage(String output) {
-        if (output.contains(" ") && output.split(" ").length == 5) {
-            String[] result = output.split(" ");
-            checkImageInfo(result, mChatService.getConnectedDeviceName());
+    private void checkVersion(boolean b) {
+        checkVersionSent = false;
+        if (BuildConfig.VERSION_CODE == 2 || b) {
+            writeToRPI("treehouses remote status\n");
+            writeToRPI("treehouses upgrade --check\n");
         }
-        if (matchResult(output, "true", "false") && output.length() < 14) {
+        else {
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                    .setTitle("Update Required")
+                    .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
+                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String appPackageName = getActivity().getPackageName(); // getPackageName() from Context or Activity object
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            }
+                        }
+                    }).create();
+            alertDialog.show();
+        }
+    }
+
+    private void readMessage(String output) {
+        if (checkVersionSent) {
+            checkVersion(output.contains("true"));
+        } else if (output.contains(" ") && output.split(" ").length == 5) {
+            checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName());
+        } else if (matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "connected", "pirateship")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
@@ -279,8 +291,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             Toast.makeText(getContext(), "Bridge Has Been Built", Toast.LENGTH_LONG).show();
         } else if (output.toLowerCase().contains("default")) {
             switchProfile(networkProfile);
-        }
-        else if (output.toLowerCase().contains("error")) {
+        } else if (output.toLowerCase().contains("error")) {
             dismissPDialog();
             Toast.makeText(getContext(), "Network Not Found", Toast.LENGTH_LONG).show();
         } else if (!result) {
@@ -311,4 +322,12 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mChatService.getState() == Constants.STATE_CONNECTED) {
+            checkVersionSent = true;
+            writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
+        }
+    }
 }
