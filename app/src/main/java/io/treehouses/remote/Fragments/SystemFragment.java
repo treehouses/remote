@@ -119,16 +119,18 @@ public class SystemFragment extends BaseFragment {
         }
     }
 
+    private boolean checkElement(String s) {
+        return s.length() <= 15 && !s.contains(":");
+    }
+
     private boolean convertIp(String readMessage, long deviceIpAddress, ArrayList<Long> diff) {
         String[] array = readMessage.split(" ");
 
         for (String element : array) {
             //TODO: Need to convert IPv6 addresses to long; currently it is being skipped
-            if (element.length() <= 15 && !element.contains(":")) {
+            if (checkElement(element)) {
                 long ip = ipToLong(element);
-                if (ip == -1 ) {
-                    return false;
-                }
+                if (ip == -1 ) return false;
                 diff.add(deviceIpAddress - ip);
             }
         }
