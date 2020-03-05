@@ -93,10 +93,6 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
             ssidText.setText(data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY));
         }
     }
-
-    @Override
-    public void onDismiss(final DialogInterface dialogInterface) {
-
-    }
+    
 
 }
