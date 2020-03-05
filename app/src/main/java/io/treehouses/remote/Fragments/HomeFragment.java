@@ -280,19 +280,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
-    private void showUpgradeCLI() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("Update Treehouses CLI")
-                .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        alertDialog.show();
-    }
-
     private void readMessage(String output) {
         if (checkVersionSent) {
             checkVersion(output);

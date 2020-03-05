@@ -1,6 +1,7 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.text.SpannableString;
@@ -172,4 +173,17 @@ public class BaseHomeFragment extends BaseFragment {
 
     protected boolean matchResult(String output, String option1, String option2) { return output.contains(option1) || output.contains(option2); }
 
+
+    protected void showUpgradeCLI() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle("Update Treehouses CLI")
+                .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        alertDialog.show();
+    }
 }
