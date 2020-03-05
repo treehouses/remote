@@ -128,10 +128,13 @@ public class SystemFragment extends BaseFragment {
 
         for (String element : array) {
             //TODO: Need to convert IPv6 addresses to long; currently it is being skipped
+            long ip = -1;
             if (checkElement(element)) {
-                long ip = ipToLong(element);
-                if (ip == -1 ) return false;
+                ip = ipToLong(element);
                 diff.add(deviceIpAddress - ip);
+            }
+            if (ip == -1) {
+                return false;
             }
         }
         return true;
