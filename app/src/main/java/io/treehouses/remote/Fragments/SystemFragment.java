@@ -36,6 +36,8 @@ public class SystemFragment extends BaseFragment {
     private Boolean hostname = false;
     private Boolean tether = false;
 
+    private boolean retry= false;
+
     View view;
 
     public SystemFragment() {
@@ -54,11 +56,11 @@ public class SystemFragment extends BaseFragment {
 
         listView.setOnGroupExpandListener(groupPosition -> {
             if (groupPosition == 1) {
-                listener.sendMessage("treehouses networkmode info");
+                listener.sendMessage("treehouses networkmode info\n");
                 tether = true;
                 return;
             }
-            listener.sendMessage("treehouses networkmode info");
+            listener.sendMessage("treehouses networkmode info\n");
         });
 
         listView.setAdapter(adapter);
@@ -68,7 +70,7 @@ public class SystemFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        listener.sendMessage("hostname -I");
+        listener.sendMessage("hostname -I\n");
         hostname = true;
     }
 
@@ -83,7 +85,8 @@ public class SystemFragment extends BaseFragment {
     private void ipPrefil(String readMessage) {
         if (network) {
             checkIfHotspot(readMessage);
-        } else {
+        }
+        else if (!retry){
             Toast.makeText(getContext(), "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show();
             prefillIp(readMessage);
         }
@@ -106,20 +109,30 @@ public class SystemFragment extends BaseFragment {
 
         long deviceIpAddress = ipToLong(deviceIp);
 
-        convertIp(readMessage, deviceIpAddress, diff);
-        network = isInNetwork(diff);
+        if (!convertIp(readMessage, deviceIpAddress, diff)) {
+            listener.sendMessage("treehouses networkmode info\n");
+            retry = true;
+        }
+        else{
+            retry = false;
+            network = isInNetwork(diff);
+        }
     }
 
-    private void convertIp(String readMessage, long deviceIpAddress, ArrayList<Long> diff) {
+    private boolean convertIp(String readMessage, long deviceIpAddress, ArrayList<Long> diff) {
         String[] array = readMessage.split(" ");
 
         for (String element : array) {
             //TODO: Need to convert IPv6 addresses to long; currently it is being skipped
-            if (element.length() <= 15) {
+            if (element.length() <= 15 && !element.contains(":")) {
                 long ip = ipToLong(element);
+                if (ip == -1 ) {
+                    return false;
+                }
                 diff.add(deviceIpAddress - ip);
             }
         }
+        return true;
     }
 
     private long ipToLong(String ipAddress) {
@@ -128,8 +141,14 @@ public class SystemFragment extends BaseFragment {
 
         for (int i = 0; i < ipAddressInArray.length; i++) {
             int power = 3 - i;
-            int ip = Integer.parseInt(ipAddressInArray[i]);
-            result += ip * Math.pow(256, power);
+
+            try {
+                int ip = Integer.parseInt(ipAddressInArray[i]);
+                result += ip * Math.pow(256, power);
+
+            } catch (NumberFormatException e) {
+                return -1;
+            }
         }
         return result;
     }
