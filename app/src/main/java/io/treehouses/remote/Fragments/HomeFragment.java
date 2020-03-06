@@ -113,6 +113,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void switchProfile(NetworkProfile networkProfile) {
+        if (networkProfile == null) return;
         progressDialog = ProgressDialog.show(getContext(), "Connecting...", "Switching to " + networkProfile.ssid, true);
         progressDialog.show();
 
