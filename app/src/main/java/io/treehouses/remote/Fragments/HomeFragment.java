@@ -252,9 +252,13 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     private void dismissPDialog() { if (progressDialog != null) progressDialog.dismiss(); }
 
-    private void checkVersion(boolean b) {
+    private void checkVersion(String output) {
         checkVersionSent = false;
-        if (BuildConfig.VERSION_CODE == 2 || b) {
+        if (output.contains("Usage") || output.contains("command")) {
+            //CLI Needs Upgrade
+            showUpgradeCLI();
+        }
+        else if(BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
             writeToRPI("treehouses remote status\n");
             writeToRPI("treehouses upgrade --check\n");
         }
@@ -279,7 +283,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     private void readMessage(String output) {
         if (checkVersionSent) {
-            checkVersion(output.contains("true"));
+            checkVersion(output);
         } else if (output.contains(" ") && output.split(" ").length == 5) {
             checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName());
         } else if (matchResult(output, "true", "false") && output.length() < 14) {

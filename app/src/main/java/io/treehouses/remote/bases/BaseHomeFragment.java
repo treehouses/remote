@@ -1,6 +1,8 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.text.SpannableString;
@@ -8,9 +10,11 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.content.Intent;
 import android.net.Uri;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -172,4 +176,26 @@ public class BaseHomeFragment extends BaseFragment {
 
     protected boolean matchResult(String output, String option1, String option2) { return output.contains(option1) || output.contains(option2); }
 
+
+    protected void showUpgradeCLI() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle("Update Treehouses CLI")
+                .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
+                .setPositiveButton("Upgrade", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.sendMessage("treehouses upgrade \n");
+                        Toast.makeText(getContext(), "Upgraded", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Upgrade Later", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
 }
