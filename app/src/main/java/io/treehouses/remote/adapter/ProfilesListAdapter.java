@@ -37,9 +37,7 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
         if (isChildEmpty(groupPosition)) {
             return 1;
         }
-        else {
-            return data.get(titles.get(groupPosition)).size();
-        }
+        else return data.get(titles.get(groupPosition)).size();
     }
 
     @Override
@@ -80,17 +78,24 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
         return data.get(titles.get(groupPosition)) == null || data.get(titles.get(groupPosition)).size() == 0;
     }
 
+    private void setLabelText(TextView label, String s, Button delete) {
+        label.setText(s);
+        label.setTextColor(context.getResources().getColor(R.color.md_grey_700));
+        delete.setVisibility(View.GONE);
+    }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertView = layoutInflater.inflate(R.layout.row_profile, null);
         TextView label = convertView.findViewById(R.id.label);
         Button deleteProfile = convertView.findViewById(R.id.delete_profile);
-
+        if (groupPosition == 3) {
+            setLabelText(label, "Switch to Default Network", deleteProfile);
+            return convertView;
+        }
         if (isChildEmpty(groupPosition)) {
-            label.setText("Please configure in the Network screen");
-            label.setTextColor(context.getResources().getColor(R.color.md_grey_700));
-            deleteProfile.setVisibility(View.GONE);
+            setLabelText(label, "Please configure in the Network screen", deleteProfile);
             return convertView;
         }
 
