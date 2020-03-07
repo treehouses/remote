@@ -185,7 +185,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
             writeToRPI("treehouses remote services available\n");
         }
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+        else if (installedOrRunning(selected)) {
             showDeleteDialog(selected);
         }
     }

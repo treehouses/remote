@@ -100,5 +100,8 @@ public class BaseServicesFragment extends BaseFragment {
         alertDialog.show();
     }
 
+    protected boolean installedOrRunning(ServiceInfo selected) {
+        return selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING;
+    }
 
 }
