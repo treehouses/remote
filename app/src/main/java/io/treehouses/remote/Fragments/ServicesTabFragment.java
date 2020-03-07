@@ -2,6 +2,7 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +35,9 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     private boolean infoClicked;
     private int quoteCount;
     private String buildString;
+    private int[] versionIntNumber;
+
+    private static final int[] MINIMUM_VERSION = {1, 14, 1};
 
     public ServicesTabFragment() {
     }
@@ -43,7 +47,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        writeToRPI("treehouses remote services available\n");
+        writeToRPI("treehouses version\n");
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
@@ -122,6 +126,22 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         }
     }
 
+    private boolean isVersionNumber(String s) {
+        if (!s.contains(".")) return false;
+        String[] parts = s.split("[.]");
+        int[] intParts = new int[3];
+        if (parts.length != 3) return false;
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                intParts[i] = Integer.parseInt(parts[i].trim());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        versionIntNumber = intParts;
+        return true;
+    }
+
     private boolean isLocalUrl(String output) {
         return output.contains(".") && output.contains(":") && output.length() < 20 && !received;
     }
@@ -139,6 +159,9 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         }
         else if (infoClicked) {
             increaseQuoteCount(output);
+        }
+        else if (isVersionNumber(output)) {
+            writeToRPI("treehouses remote services available\n");
         }
     }
 
@@ -164,9 +187,20 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         writeToRPI(command);
     }
 
+    private boolean checkVersion() {
+        if (versionIntNumber[0] > MINIMUM_VERSION[0]) return true;
+        if (versionIntNumber[0] == MINIMUM_VERSION[0] && versionIntNumber[1] > MINIMUM_VERSION[1]) return true;
+        return (versionIntNumber[0] == MINIMUM_VERSION[0]) && (versionIntNumber[1] == MINIMUM_VERSION[1]) && (versionIntNumber[2] >= MINIMUM_VERSION[2]);
+    }
+
     private void onClickInstall(ServiceInfo selected) {
         if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
-            performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
+            if (checkVersion()) {
+                performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
+            }
+            else {
+                performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
+            }
             writeToRPI("treehouses remote services available\n");
         }
         else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
@@ -193,7 +227,12 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
     private void onClickStart(ServiceInfo selected) {
         if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
-            performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
+            if (checkVersion()) {
+                performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
+            }
+            else {
+                performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
+            }
         }
         else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
             performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
