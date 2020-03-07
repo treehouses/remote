@@ -37,7 +37,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     private String buildString;
     private int[] versionIntNumber;
 
-    private static final int[] MINIMUM_VERSION = {1, 14, 1};
 
     public ServicesTabFragment() {
     }
@@ -64,10 +63,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         listView.setOnItemClickListener(this);
 
         return view;
-    }
-
-    private void writeToRPI(String ping) {
-        mChatService.write(ping.getBytes());
     }
 
     private void performAction(String output) {
@@ -181,58 +176,26 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         return -1;
     }
 
-    private void performService(String action, String command, String name) {
-        Log.d("SERVICES", action + " " + name);
-        Toast.makeText(getContext(), name + " " + action, Toast.LENGTH_LONG).show();
-        writeToRPI(command);
-    }
-
-    private boolean checkVersion() {
-        if (versionIntNumber[0] > MINIMUM_VERSION[0]) return true;
-        if (versionIntNumber[0] == MINIMUM_VERSION[0] && versionIntNumber[1] > MINIMUM_VERSION[1]) return true;
-        return (versionIntNumber[0] == MINIMUM_VERSION[0]) && (versionIntNumber[1] == MINIMUM_VERSION[1]) && (versionIntNumber[2] >= MINIMUM_VERSION[2]);
-    }
-
     private void onClickInstall(ServiceInfo selected) {
-        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
-            if (checkVersion()) {
-                performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
-            }
-            else {
-                performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
-            }
+        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && checkVersion(versionIntNumber)) {
+            performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
+            writeToRPI("treehouses remote services available\n");
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && !checkVersion(versionIntNumber)) {
+            performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
             writeToRPI("treehouses remote services available\n");
         }
         else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                    .setTitle("Delete " + selected.name + "?")
-                    .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
-                            writeToRPI("treehouses remote services available\n");
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create();
-            alertDialog.show();
+            showDeleteDialog(selected);
         }
     }
 
     private void onClickStart(ServiceInfo selected) {
-        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
-            if (checkVersion()) {
-                performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
-            }
-            else {
-                performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
-            }
+        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && checkVersion(versionIntNumber)) {
+            performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && !checkVersion(versionIntNumber)) {
+            performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
         }
         else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
             performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
@@ -240,9 +203,8 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     }
 
     private void onClickRestart(ServiceInfo selected) {
-        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) {
-            performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
-        }
+        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
+
     }
 
     private void onClickLink(ServiceInfo selected) {
