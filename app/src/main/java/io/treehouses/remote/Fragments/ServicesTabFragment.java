@@ -2,6 +2,7 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +35,8 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     private boolean infoClicked;
     private int quoteCount;
     private String buildString;
+    private int[] versionIntNumber;
+
 
     public ServicesTabFragment() {
     }
@@ -43,7 +46,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        writeToRPI("treehouses remote services available\n");
+        writeToRPI("treehouses version\n");
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
@@ -60,10 +63,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         listView.setOnItemClickListener(this);
 
         return view;
-    }
-
-    private void writeToRPI(String ping) {
-        mChatService.write(ping.getBytes());
     }
 
     private void performAction(String output) {
@@ -122,6 +121,22 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         }
     }
 
+    private boolean isVersionNumber(String s) {
+        if (!s.contains(".")) return false;
+        String[] parts = s.split("[.]");
+        int[] intParts = new int[3];
+        if (parts.length != 3) return false;
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                intParts[i] = Integer.parseInt(parts[i].trim());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        versionIntNumber = intParts;
+        return true;
+    }
+
     private boolean isLocalUrl(String output) {
         return output.contains(".") && output.contains(":") && output.length() < 20 && !received;
     }
@@ -139,6 +154,9 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         }
         else if (infoClicked) {
             increaseQuoteCount(output);
+        }
+        else if (isVersionNumber(output)) {
+            writeToRPI("treehouses remote services available\n");
         }
     }
 
@@ -158,41 +176,25 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         return -1;
     }
 
-    private void performService(String action, String command, String name) {
-        Log.d("SERVICES", action + " " + name);
-        Toast.makeText(getContext(), name + " " + action, Toast.LENGTH_LONG).show();
-        writeToRPI(command);
-    }
-
     private void onClickInstall(ServiceInfo selected) {
-        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
+        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && checkVersion(versionIntNumber)) {
+            performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
+            writeToRPI("treehouses remote services available\n");
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && !checkVersion(versionIntNumber)) {
             performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
             writeToRPI("treehouses remote services available\n");
         }
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                    .setTitle("Delete " + selected.name + "?")
-                    .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
-                            writeToRPI("treehouses remote services available\n");
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create();
-            alertDialog.show();
+        else if (installedOrRunning(selected)) {
+            showDeleteDialog(selected);
         }
     }
 
     private void onClickStart(ServiceInfo selected) {
-        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
+        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && checkVersion(versionIntNumber)) {
+            performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
+        }
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && !checkVersion(versionIntNumber)) {
             performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
         }
         else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
@@ -201,9 +203,8 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     }
 
     private void onClickRestart(ServiceInfo selected) {
-        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) {
-            performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
-        }
+        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
+
     }
 
     private void onClickLink(ServiceInfo selected) {
