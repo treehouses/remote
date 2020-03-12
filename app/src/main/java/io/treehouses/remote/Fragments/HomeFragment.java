@@ -47,7 +47,7 @@ import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 
 public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
-    public static final String[] group_labels = {"WiFi", "Hotspot", "Bridge"};
+    public static final String[] group_labels = {"WiFi", "Hotspot", "Bridge", "Default"};
 
     private NotificationCallback notificationListener;
 
@@ -102,7 +102,11 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         network_profiles.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                if (SaveUtils.getProfiles(getContext()).size() > 0 && SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() > 0) {
+                if (groupPosition == 3) {
+                    listener.sendMessage("treehouses default network");
+                    Toast.makeText(getContext(),"Switched to Default Network", Toast.LENGTH_LONG).show();
+                }
+                else if (SaveUtils.getProfiles(getContext()).size() > 0 && SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() > 0) {
                     networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
                     listener.sendMessage("treehouses default network \n");
                     Toast.makeText(getContext(), "Configuring...", Toast.LENGTH_LONG).show();
