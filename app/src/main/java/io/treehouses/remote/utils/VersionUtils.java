@@ -7,8 +7,13 @@ import android.content.pm.PackageManager;
 public class VersionUtils {
     public static int getVersionCode(Context context) {
         try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionCode;
+            if (context != null) {
+                PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+                return pInfo.versionCode;
+            }
+            else {
+                return -1;
+            }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -16,8 +21,13 @@ public class VersionUtils {
     }
     public static String getVersionName(Context context) {
         try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionName;
+            if (context != null) {
+                PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+                return pInfo.versionName;
+            }
+            else {
+                return "ERROR";
+            }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
