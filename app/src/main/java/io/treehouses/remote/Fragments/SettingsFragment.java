@@ -67,11 +67,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
     }
 
     private void resetCommands() {
-        createAlertDialog("Reset Commands List", "Would you like to reset the command list to the default commands? ", "Reset", RESET_COMMANDS_ID);
+        createAlertDialog("Default Commands List", "Would you like to reset the command list to the default commands? ", "Reset", RESET_COMMANDS_ID);
     }
 
     private void networkProfiles() {
-        createAlertDialog("Reset Network Profiles", "Would you like to remove all network profiles? ", "Clear", NETWORK_PROFILES_ID);
+        createAlertDialog("Clear Network Profiles", "Would you like to remove all network profiles? ", "Clear", NETWORK_PROFILES_ID);
 
     }
     private void createAlertDialog(String title, String message, String positive, int ID) {
