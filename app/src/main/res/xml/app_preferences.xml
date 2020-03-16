@@ -39,6 +39,15 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Privacy">
+        <SwitchPreference
+            android:title="Share Data"
+            android:summary="Please enable to share data with the Treehouses Remote Team. This will help us to improve our services to give you the best possible experience!"
+            android:key="send_log"
+            />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="About">
         <Preference
             android:title="Contributors"
@@ -60,6 +69,9 @@
         </Preference>
 
     </PreferenceCategory>
+
+
+
 
 
 </PreferenceScreen>

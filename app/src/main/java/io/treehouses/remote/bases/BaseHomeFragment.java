@@ -47,22 +47,19 @@ public class BaseHomeFragment extends BaseFragment {
 
     protected void showLogDialog(SharedPreferences preferences) {
         int connectionCount = preferences.getInt("connection_count", 0);
-        boolean showDialog = preferences.getBoolean("show_log_dialog", true);
-        LogUtils.log(connectionCount + "  " + showDialog);
         long lastDialogShown = preferences.getLong("last_dialog_shown", 0);
         Calendar date = Calendar.getInstance();
         date.add(Calendar.DAY_OF_YEAR, -7);
         View v = getLayoutInflater().inflate(R.layout.alert_log,null);
         String emoji = new String(Character.toChars(0x1F60A));
 
-        if (lastDialogShown < date.getTimeInMillis()) {
-            if (connectionCount >= 3 && showDialog) {
+        if (lastDialogShown < date.getTimeInMillis() && !preferences.getBoolean("send_log", false)) {
+            if (connectionCount >= 3) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
                 new AlertDialog.Builder(getActivity()).setTitle("Sharing is Caring  " + emoji).setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve."  )
                         .setPositiveButton("Continue", (dialogInterface, i) -> {
                             preferences.edit().putBoolean("send_log", true).commit();
-                            preferences.edit().putBoolean("show_log_dialog", false).commit();
                         }).setNegativeButton("Cancel", (dialogInterface, i) -> MainApplication.showLogDialog = false).setView(v).show();
             }
         }
