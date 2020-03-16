@@ -18,6 +18,8 @@
 
     <ListView
         android:id="@+id/listView"
+        android:padding="32dp"
+        android:background="@drawable/profiles_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"

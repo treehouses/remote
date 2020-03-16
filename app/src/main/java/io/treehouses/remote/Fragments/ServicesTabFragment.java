@@ -246,28 +246,28 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ServiceInfo selected = services.get(position);
         infoClicked = false;
-        switch (view.getId()) {
-            case R.id.start_service:
-                onClickStart(selected);
-                writeToRPI("treehouses remote services available\n");
-                break;
-            case R.id.install_service:
-                onClickInstall(selected);
-                break;
-
-            case R.id.restart_service:
-                onClickRestart(selected);
-                writeToRPI("treehouses remote services available\n");
-                break;
-
-            case R.id.service_info:
-                onClickInfo(selected);
-                break;
-
-            case R.id.link_button:
-                onClickLink(selected);
-                break;
-        }
+//        switch (view.getId()) {
+//            case R.id.start_service:
+//                onClickStart(selected);
+//                writeToRPI("treehouses remote services available\n");
+//                break;
+//            case R.id.install_service:
+//                onClickInstall(selected);
+//                break;
+//
+//            case R.id.restart_service:
+//                onClickRestart(selected);
+//                writeToRPI("treehouses remote services available\n");
+//                break;
+//
+//            case R.id.service_info:
+//                onClickInfo(selected);
+//                break;
+//
+//            case R.id.link_button:
+//                onClickLink(selected);
+//                break;
+//        }
     }
 
 

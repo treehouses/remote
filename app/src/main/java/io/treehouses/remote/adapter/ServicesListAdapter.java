@@ -18,7 +18,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private ArrayList<ServiceInfo> data;
     private Context context;
     private TextView name;
-    private Button start, install, restart, link, info;
+    //private Button start, install, restart, link, info;
 
     public ServicesListAdapter(Context context, ArrayList<ServiceInfo> services) {
         super(context, 0, services);
@@ -38,22 +38,22 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
 
         setStatus(data.get(position).serviceStatus);
 
-        setOnClick(parent, convertView, R.id.start_service, position);
-        setOnClick(parent, convertView, R.id.install_service, position);
-        setOnClick(parent, convertView, R.id.restart_service, position);
-        setOnClick(parent, convertView, R.id.link_button, position);
-        setOnClick(parent, convertView, R.id.service_info, position);
+//        setOnClick(parent, convertView, R.id.start_service, position);
+//        setOnClick(parent, convertView, R.id.install_service, position);
+//        setOnClick(parent, convertView, R.id.restart_service, position);
+//        setOnClick(parent, convertView, R.id.link_button, position);
+//        setOnClick(parent, convertView, R.id.service_info, position);
 
         return convertView;
     }
 
     private void findViews(View view) {
         name = view.findViewById(R.id.service_name);
-        start = view.findViewById(R.id.start_service);
-        install = view.findViewById(R.id.install_service);
-        restart = view.findViewById(R.id.restart_service);
-        link = view.findViewById(R.id.link_button);
-        info = view.findViewById(R.id.service_info);
+//        start = view.findViewById(R.id.start_service);
+//        install = view.findViewById(R.id.install_service);
+//        restart = view.findViewById(R.id.restart_service);
+//        link = view.findViewById(R.id.link_button);
+//        info = view.findViewById(R.id.service_info);
     }
 
     private void setStatus(int status) {
@@ -75,31 +75,31 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     }
 
     private void setButtons(boolean one, boolean two, boolean three) {
-        setStart(one);
-        setInstall(two);
-        restart.setEnabled(three);
-
-        if (one) {
-            link.setVisibility(View.VISIBLE);
-        } else {
-            link.setVisibility(View.GONE);
-        }
+//        setStart(one);
+//        setInstall(two);
+//        restart.setEnabled(three);
+//
+//        if (one) {
+//            link.setVisibility(View.VISIBLE);
+//        } else {
+//            link.setVisibility(View.GONE);
+//        }
     }
 
-    private void setStart(boolean started) {
-        if (started) start.setText("Stop");
-        else start.setText("Start");
-    }
-
-    private void setInstall(boolean installed) {
-        if (installed) {
-            install.setText("Uninstall");
-            start.setEnabled(true);
-        } else {
-            install.setText("Install");
-            start.setEnabled(false);
-        }
-    }
+//    private void setStart(boolean started) {
+//        if (started) start.setText("Stop");
+//        else start.setText("Start");
+//    }
+//
+//    private void setInstall(boolean installed) {
+//        if (installed) {
+//            install.setText("Uninstall");
+//            start.setEnabled(true);
+//        } else {
+//            install.setText("Install");
+//            start.setEnabled(false);
+//        }
+//    }
 
     private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
         convertView.findViewById(id).setOnClickListener(new View.OnClickListener() {
