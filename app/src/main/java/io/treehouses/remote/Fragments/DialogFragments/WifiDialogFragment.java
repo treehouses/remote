@@ -90,7 +90,7 @@ public class WifiDialogFragment extends DialogFragment {
                 return;
             }
             Intent intent = new Intent();
-            intent.putExtra(WIFI_SSID_KEY, SSID);
+            intent.putExtra(WIFI_SSID_KEY, SSID.trim());
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
             wifiList.clear();
             dismiss();
