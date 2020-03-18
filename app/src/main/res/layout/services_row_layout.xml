@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    app:cardElevation="3dp"
     android:padding="8dp">
 
 
@@ -52,10 +53,10 @@
             android:layout_gravity="center"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/service_info"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <ImageView
+                android:id="@+id/service_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:background="@drawable/circle_green" />
 
         </LinearLayout>
