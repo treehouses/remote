@@ -57,7 +57,7 @@
             android:textSize="@dimen/text_size_mid"
             app:layout_constraintEnd_toStartOf="@+id/btn_gitter"
             app:layout_constraintStart_toEndOf="@+id/btn_github"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btn_gitter"
