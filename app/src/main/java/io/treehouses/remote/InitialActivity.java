@@ -78,7 +78,7 @@ public class InitialActivity extends PermissionActivity
 
         checkStatusNow();
 
-        openCallFragment(new AboutFragment());
+        openCallFragment(new HomeFragment());
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
