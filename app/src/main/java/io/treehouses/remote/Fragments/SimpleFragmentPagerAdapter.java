@@ -21,7 +21,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         if (position == 0) {
             return new ServicesTabFragment();
         } else if (position == 1){
-            return new DockerContainerFragment();
+            return new ServicesDetailsFragment();
         }
         return null;
     }
@@ -38,9 +38,9 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         switch (position) {
             case 0:
-                return "Services";
+                return "Services Overview";
             case 1:
-                return "Docker Containers";
+                return "Details";
             default:
                 return null;
         }

@@ -47,7 +47,6 @@ public class ServicesFragment extends androidx.fragment.app.Fragment {
 //                if (tab.getPosition() == 0) {
 //                    openCallFragment(new ServicesTabFragment());
 //                } else if (tab.getPosition() == 1) {
-//                    openCallFragment(new DockerContainerFragment());
 //                }
 //            }
 //            @Override

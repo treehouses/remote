@@ -18,52 +18,35 @@ import java.util.HashMap;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.ServiceInfo;
 
-public class ServicesListAdapter extends BaseAdapter {
-    private HashMap<String, ArrayList<ServiceInfo>> data;
-    private ArrayList<String> sectionHeaders;
+public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
+    private ArrayList<ServiceInfo> data;
     private Context context;
     private TextView name;
     private ImageView status;
     //private Button start, install, restart, link, info;
 
-    public ServicesListAdapter(Context context, HashMap<String, ArrayList<ServiceInfo>> services) {
+    public ServicesListAdapter(Context context, ArrayList<ServiceInfo> services) {
+        super(context,0,services);
         this.data = services;
         this.context = context;
-        sectionHeaders = new ArrayList<>();
-        sectionHeaders.addAll(services.keySet());
     }
 
-
-    @Override
-    public int getCount() {
-        int count = 0;
-        for (int i = 0; i < sectionHeaders.size(); i++) {
-            count++;
-            count += data.get(sectionHeaders.get(i)).size();
-        }
-        return count;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
+        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER) {
             convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
+        }
+        else if (data.get(position).serviceStatus == ServiceInfo.SERVICE_HEADER) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
         }
         findViews(convertView);
 
-        name.setText(data.get(sectionHeaders.get(getSectionPosition(position))).get(position).name);
 
-        setStatus(data.get(sectionHeaders.get(getSectionPosition(position))).get(position).serviceStatus);
+
+        name.setText(data.get(position).name);
+
+        setStatus(data.get(position).serviceStatus);
 
 //        setOnClick(parent, convertView, R.id.start_service, position);
 //        setOnClick(parent, convertView, R.id.install_service, position);
@@ -133,20 +116,6 @@ public class ServicesListAdapter extends BaseAdapter {
 //            start.setEnabled(false);
 //        }
 //    }
-    private int getRelativePosition (int sectionPosition, int absolutePosition) {
-
-        return 0;
-    }
-    private int getSectionPosition(int position) {
-        int count = 0;
-        for (int i = 0 ; i < sectionHeaders.size(); i++) {
-            count += data.get(sectionHeaders.get(i)).size() + 1;
-            if (position < count) {
-                return i;
-            }
-        }
-        return sectionHeaders.size()-1;
-    }
 
     private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
         convertView.findViewById(id).setOnClickListener(new View.OnClickListener() {

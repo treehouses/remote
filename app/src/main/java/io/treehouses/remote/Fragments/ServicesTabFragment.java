@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
@@ -165,6 +166,14 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             int a = inServiceList(name);
             if (a >= 0) services.get(a).serviceStatus = identifier;
             else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
+        }
+
+        Collections.sort(services);
+        if (identifier == ServiceInfo.SERVICE_RUNNING) {
+            services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER));
+            int i = 0;
+            while (i < services.size() && (services.get(i).serviceStatus != ServiceInfo.SERVICE_AVAILABLE)) i++;
+            services.add(i, new ServiceInfo("Available",ServiceInfo.SERVICE_HEADER));
         }
         adapter.notifyDataSetChanged();
     }
