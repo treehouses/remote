@@ -1,6 +1,7 @@
 package io.treehouses.remote.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.mikepenz.materialize.color.Material;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +82,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
             setButtons(false, true, false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
-            status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle));
+            status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_yellow));
 
         } else if (statusCode == ServiceInfo.SERVICE_RUNNING) {
             setButtons(true, true, true);

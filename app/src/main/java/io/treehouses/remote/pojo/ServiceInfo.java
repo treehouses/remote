@@ -17,6 +17,7 @@ public class ServiceInfo implements Comparable<ServiceInfo> {
 
     @Override
     public int compareTo(ServiceInfo o) {
+        if (o.serviceStatus == 3 || this.serviceStatus == 3) return 0;
         return o.serviceStatus - this.serviceStatus;
     }
 }

@@ -1,8 +1,6 @@
 package io.treehouses.remote.Fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +26,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
     private View view;
     private ProgressBar progressBar;
-    private ArrayList<ServiceInfo> services;
+    public ArrayList<ServiceInfo> services;
     ServicesListAdapter adapter;
     private TextView tvMessage;
 
@@ -40,9 +37,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mChatService = listener.getChatService();
-        mChatService.updateHandler(mHandler);
-
-        writeToRPI("treehouses remote services available\n");
+//        mChatService.updateHandler(handlerOverview);
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
@@ -70,7 +65,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         else if (output.contains("Available:")) {
             //Read
             tvMessage.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE);
             writeToRPI("treehouses remote services installed\n");
         }
@@ -85,7 +80,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     }
 
 
-    private final Handler mHandler = new Handler() {
+    public final Handler handlerOverview = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
@@ -106,17 +101,21 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     private void updateServiceList(String[] stringList, int identifier) {
         for (String name : stringList) {
             int a = inServiceList(name);
-            if (a >= 0) services.get(a).serviceStatus = identifier;
+            if (a >= 0 && services.get(a).serviceStatus != ServiceInfo.SERVICE_HEADER) services.get(a).serviceStatus = identifier;
             else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
         }
 
-        Collections.sort(services);
         if (identifier == ServiceInfo.SERVICE_RUNNING) {
-            services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER));
+            Collections.sort(services);
+            if (inServiceList("Installed") == -1) services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER));
             int i = 0;
-            while (i < services.size() && (services.get(i).serviceStatus != ServiceInfo.SERVICE_AVAILABLE)) i++;
-            services.add(i, new ServiceInfo("Available",ServiceInfo.SERVICE_HEADER));
+            while (i < services.size() && (services.get(i).serviceStatus != ServiceInfo.SERVICE_AVAILABLE)) {
+                Log.d("i", services.get(i).name + " "+i);
+                i++;
+            }
+            if (inServiceList("Available") == -1) services.add(i, new ServiceInfo("Available",ServiceInfo.SERVICE_HEADER));
             adapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
 
         }
     }
