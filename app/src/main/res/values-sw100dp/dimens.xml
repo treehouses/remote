@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="logo_size_home">100dp</dimen>
-    <dimen name="text_size_large">18sp</dimen>
-    <dimen name="text_size_mid">12sp</dimen>
-    <dimen name="text_size_small">8sp</dimen>
-</resources>
