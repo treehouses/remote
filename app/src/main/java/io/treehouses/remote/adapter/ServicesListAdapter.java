@@ -60,6 +60,25 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         return convertView;
     }
 
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
+        }
+        else if (data.get(position).serviceStatus == ServiceInfo.SERVICE_HEADER) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
+        }
+        findViews(convertView);
+
+
+
+        name.setText(data.get(position).name);
+
+        setStatus(data.get(position).serviceStatus);
+        return convertView;
+    }
+
+
     private void findViews(View view) {
         name = view.findViewById(R.id.service_name);
         status = view.findViewById(R.id.service_status);

@@ -54,13 +54,12 @@ public class ServicesFragment extends BaseServicesFragment {
 
             @Override
             public void onPageSelected(int position) {
+                mChatService = listener.getChatService();
                 if (position == 0) {
-                    mChatService = listener.getChatService();
                     mChatService.updateHandler(servicesTabFragment.handlerOverview);
                     writeToRPI("treehouses remote services available\n");
                 }
                 else {
-                    mChatService = listener.getChatService();
                     mChatService.updateHandler(servicesDetailsFragment.handlerDetails);
                     writeToRPI("treehouses version\n");
                 }
