@@ -158,7 +158,6 @@ public class BaseTerminalFragment extends BaseFragment {
 
     public void setUpAutoComplete(AutoCompleteTextView autoComplete) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-
         if (preferences.getBoolean("autocomplete", true)) {
             final String[] commands = getResources().getStringArray(R.array.commands_list);
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
@@ -167,8 +166,7 @@ public class BaseTerminalFragment extends BaseFragment {
             autoComplete.setAdapter(arrayAdapter);
             autoComplete.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
