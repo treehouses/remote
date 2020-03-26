@@ -97,9 +97,8 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
                         if ((ServiceInfo) serviceSelector.getSelectedItem() == null) {
                             serviceSelector.setSelection(inServiceList("planet", services));
                         }
-//                        else {
-//                            serviceSelector.setSelection(inServiceList(((ServiceInfo) serviceSelector.getSelectedItem()).name, services));
-//                        }
+                        updateButtons(((ServiceInfo) serviceSelector.getSelectedItem()).serviceStatus);
+
                         writeToRPI("treehouses services " + ((ServiceInfo) serviceSelector.getSelectedItem()).name + " icon\n");
                     }
                     break;
@@ -258,6 +257,10 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         serviceSelector.setSelection(inServiceList(services.get(position).name, services));
         writeToRPI("treehouses services " + services.get(position).name + " icon\n");
 
+        updateButtons(statusCode);
+    }
+
+    private void updateButtons(int statusCode) {
         switch (statusCode) {
             case ServiceInfo.SERVICE_AVAILABLE:
                 setButtons(false, false, false);
