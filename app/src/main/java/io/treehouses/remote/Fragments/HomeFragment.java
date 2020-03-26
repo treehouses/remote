@@ -61,7 +61,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private Boolean connectionState = false;
     private Boolean result = false;
     private TextView welcome_text;
-    private ImageView background, logo;
+    private ImageView background, logo, internetstatus;
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     private boolean checkVersionSent = false;
@@ -84,6 +84,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         network_profiles = view.findViewById(R.id.network_profiles);
         logo = view.findViewById(R.id.logo_home);
         layout = view.findViewById(R.id.layout_back);
+        internetstatus = view.findViewById(R.id.internetstatus);
         setupProfiles();
         showDialogOnce(preferences);
         checkConnectionState();
@@ -289,7 +290,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         if (checkVersionSent) {
             checkVersion(output);
         } else if (output.contains(" ") && output.split(" ").length == 5) {
-            checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName());
+            checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName(), internetstatus);
         } else if (matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "connected", "pirateship")) {
