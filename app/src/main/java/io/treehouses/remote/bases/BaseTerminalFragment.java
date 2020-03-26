@@ -1,11 +1,13 @@
 package io.treehouses.remote.bases;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +33,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.utils.Utils;
 
-public class BaseTerminalFragment extends BaseFragment{
+public class BaseTerminalFragment extends BaseFragment {
     private final String[] array2 = {"treehouses", "docker"};
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
@@ -46,7 +48,7 @@ public class BaseTerminalFragment extends BaseFragment{
         return writeMessage;
     }
 
-    public void handlerCaseName(Message msg, Activity activity ) {
+    public void handlerCaseName(Message msg, Activity activity) {
         // save the connected device's name
         String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
         if (null != activity) {
@@ -93,10 +95,14 @@ public class BaseTerminalFragment extends BaseFragment{
     }
 
 
-
     protected void copyToList(final ListView mConversationView, final Context context) {
         mConversationView.setOnItemClickListener((parent, view, position, id) -> {
             String clickedData = (String) mConversationView.getItemAtPosition(position);
+            Log.d("treehouses", "copyToList: " + clickedData);
+            if (clickedData.trim().endsWith(".onion")) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + clickedData.trim()));
+                startActivity(i);
+            }
             Utils.copyToClipboard(context, clickedData);
         });
     }
@@ -149,6 +155,7 @@ public class BaseTerminalFragment extends BaseFragment{
         }
         return true;
     }
+
     public void setUpAutoComplete(AutoCompleteTextView autoComplete) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
@@ -160,20 +167,23 @@ public class BaseTerminalFragment extends BaseFragment{
             autoComplete.setAdapter(arrayAdapter);
             autoComplete.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (s.length() < 6) autoComplete.setAdapter(arrayAdapter1);
                     else autoComplete.setAdapter(arrayAdapter);
                 }
+
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (s.toString().endsWith("\n")) {
-                        listener.sendMessage(autoComplete.getText().toString().substring(0,autoComplete.getText().toString().length()-1));
+                        listener.sendMessage(autoComplete.getText().toString().substring(0, autoComplete.getText().toString().length() - 1));
                         autoComplete.setText("");
                     }
-                }});
+                }
+            });
             addSpaces(autoComplete);
         }
     }
