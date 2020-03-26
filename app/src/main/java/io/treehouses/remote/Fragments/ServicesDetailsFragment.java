@@ -9,13 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
 
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
@@ -28,7 +27,7 @@ import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.pojo.ServiceInfo;
 
-public class ServicesDetailsFragment extends BaseServicesFragment {
+public class ServicesDetailsFragment extends BaseServicesFragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     View view;
     private Spinner serviceSelector;
@@ -44,6 +43,8 @@ public class ServicesDetailsFragment extends BaseServicesFragment {
 
     private boolean SVGSent = false;
     private String buildSVG = "";
+
+    private Button install, start, openLink;
 
     private ServicesListAdapter spinnerAdapter;
     private ArrayList<ServiceInfo> services;
@@ -64,10 +65,18 @@ public class ServicesDetailsFragment extends BaseServicesFragment {
         progressBar = view.findViewById(R.id.progressBar);
         serviceInfo = view.findViewById(R.id.service_info);
         services = new ArrayList<>();
-        services.add(new ServiceInfo("planet", ServiceInfo.SERVICE_RUNNING));
-        spinnerAdapter = new ServicesListAdapter(getContext(), services);
+        spinnerAdapter = new ServicesListAdapter(getContext(), services, getResources().getColor(R.color.md_grey_600));
         serviceSelector.setAdapter(spinnerAdapter);
+        serviceSelector.setOnItemSelectedListener(this);
+        versionIntNumber = new int[3];
 
+        install = view.findViewById(R.id.install_button);
+        start = view.findViewById(R.id.start_button);
+        openLink = view.findViewById(R.id.openLink);
+
+        install.setOnClickListener(this);
+        start.setOnClickListener(this);
+        openLink.setOnClickListener(this);
         return view;
     }
 
@@ -78,17 +87,104 @@ public class ServicesDetailsFragment extends BaseServicesFragment {
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    moreActions(output);
+                    int a = performAction(output, serviceInfo, progressBar, services, versionIntNumber, spinnerAdapter);
+                    if (a == -1) {
+                        moreActions(output);
+                    }
+                    //Services Running has been updated
+                    else if (a == 4 && spinnerAdapter.getCount() > 0) {
+                        buildSVG = "";
+                        if ((ServiceInfo) serviceSelector.getSelectedItem() == null) {
+                            serviceSelector.setSelection(inServiceList("planet", services));
+                        }
+//                        else {
+//                            serviceSelector.setSelection(inServiceList(((ServiceInfo) serviceSelector.getSelectedItem()).name, services));
+//                        }
+                        writeToRPI("treehouses services " + ((ServiceInfo) serviceSelector.getSelectedItem()).name + " icon\n");
+                    }
                     break;
+
                 case Constants.MESSAGE_WRITE:
                     String write_msg = new String((byte[]) msg.obj);
                     Log.d("WRITE", write_msg);
                     break;
-
             }
         }
     };
+    private void moreActions(String output) {
+        if (output.contains("xml") || output.contains("xmlns")) {
+            SVGSent = true;
+        }
+        else if (isLocalUrl(output)) {
+            received = true;
+            openLocalURL(output.trim());
+            progressBar.setVisibility(View.GONE);
+        }
+        if (SVGSent) {
+            buildSVG += output;
+            if (output.contains("</svg>")) {
+                SVGSent = false;
+                showIcon(buildSVG);
+                loadInfo(((ServiceInfo) serviceSelector.getSelectedItem()));
+                buildSVG = "";
+            }
+        }
+        else if (infoClicked) {
+            increaseQuoteCount(output);
+        }
+        else if (output.contains(".onion") && ! received) {
+            received = true;
+            openTorURL(output.trim());
+            progressBar.setVisibility(View.GONE);
+        }
 
+    }
+
+    private void loadInfo(ServiceInfo selected) {
+        progressBar.setVisibility(View.VISIBLE);
+        writeToRPI("treehouses services " + selected.name + " info\n");
+        quoteCount = 0;
+        buildString = "";
+        infoClicked = true;
+    }
+
+    private void increaseQuoteCount(String output) {
+        quoteCount += getQuoteCount(output);
+        buildString += output;
+        if (output.startsWith("https://")) {
+            buildString += "\n\n";
+        }
+        if (quoteCount >= 2) {
+            serviceInfo.setText(buildString);
+            progressBar.setVisibility(View.GONE);
+
+        }
+    }
+    private boolean isLocalUrl(String output) {
+        return output.contains(".") && output.contains(":") && output.length() < 25 && !received;
+    }
+
+
+    private void showIcon(String s) {
+        try {
+            SVG svg = SVG.getFromString(s);
+            PictureDrawable pd = new PictureDrawable(svg.renderToPicture());
+            logo.setImageDrawable(pd);
+        } catch (SVGParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
+        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeToRPI(command);
+                alertDialog.dismiss();
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        });
+    }
     private void onClickInstall(ServiceInfo selected) {
         if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && checkVersion(versionIntNumber)) {
             performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
@@ -98,9 +194,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment {
             performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
             writeToRPI("treehouses remote services available\n");
         }
-        else if (installedOrRunning(selected)) {
-            showDeleteDialog(selected);
-        }
+        else if (installedOrRunning(selected)) showDeleteDialog(selected);
     }
 
     private void onClickStart(ServiceInfo selected) {
@@ -113,6 +207,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment {
         else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
             performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
         }
+        writeToRPI("treehouses remote services available\n");
     }
 
     private void onClickRestart(ServiceInfo selected) {
@@ -135,105 +230,66 @@ public class ServicesDetailsFragment extends BaseServicesFragment {
         received = false;
     }
 
-    private void onClickInfo(ServiceInfo selected) {
-        progressBar.setVisibility(View.VISIBLE);
-        writeToRPI("treehouses services " + selected.name + " info");
-        quoteCount = 0;
-        buildString = "";
-        infoClicked = true;
-
+    private void setButtons(boolean started, boolean installed, boolean three) {
+        if (started) {
+            start.setText("Stop");
+            openLink.setVisibility(View.VISIBLE);
+        }
+        else {
+            start.setText("Start");
+            openLink.setVisibility(View.GONE);
+        }
+        if (installed) {
+            install.setText("Uninstall");
+            start.setEnabled(true);
+        } else {
+            install.setText("Install");
+            start.setEnabled(false);
+        }
+        //restart.setEnabled(three);
     }
 
-    private void increaseQuoteCount(String output) {
-        quoteCount += getQuoteCount(output);
-        buildString += output;
-        if (output.startsWith("https://")) {
-            buildString += "\n\n";
-        }
-        if (quoteCount >= 2) {
-            serviceInfo.setText(buildString);
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-    private boolean isLocalUrl(String output) {
-        return output.contains(".") && output.contains(":") && output.length() < 20 && !received;
-    }
 
-    private void moreActions(String output) {
-        if (SVGSent) {
-            buildSVG += output;
-            if (output.contains("</svg>")) {
-                SVGSent = false;
-                showIcon(buildSVG);
-                onClickInfo(((ServiceInfo) serviceSelector.getSelectedItem()));
-                buildSVG = "";
-            }
-        }
-        else if (isLocalUrl(output)) {
-            received = true;
-            openLocalURL(output);
-            progressBar.setVisibility(View.GONE);
-        }
-        else if (output.contains(".onion") && ! received) {
-            received = true;
-            openTorURL(output);
-            progressBar.setVisibility(View.GONE);
-        }
-        else if (infoClicked) {
-            increaseQuoteCount(output);
-        }
-        else if (isVersionNumber(output)) {
-            writeToRPI("treehouses remote services available\n");
-            serviceInfo.setText(output);
-        }
-        else if (output.startsWith("Available: ")) {
-            buildSVG = "";
-            writeToRPI("treehouses services " + ((ServiceInfo) serviceSelector.getSelectedItem()).name + " icon\n");
-        }
-        else if (output.contains("xml")) {
-            SVGSent = true;
-        }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        int statusCode = services.get(position).serviceStatus;
+        if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return;
+        buildSVG = "";
+        serviceSelector.setSelection(inServiceList(services.get(position).name, services));
+        writeToRPI("treehouses services " + services.get(position).name + " icon\n");
 
-    }
-
-    private void showIcon(String s) {
-        try {
-            SVG svg = SVG.getFromString(s);
-            PictureDrawable pd = new PictureDrawable(svg.renderToPicture());
-
-            logo.setImageDrawable(pd);
-        } catch (SVGParseException e) {
-            e.printStackTrace();
+        switch (statusCode) {
+            case ServiceInfo.SERVICE_AVAILABLE:
+                setButtons(false, false, false);
+                break;
+            case ServiceInfo.SERVICE_INSTALLED:
+                setButtons(false, true, false);
+                break;
+            case ServiceInfo.SERVICE_RUNNING:
+                setButtons(true, true, true);
+                break;
         }
     }
 
-    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
-        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeToRPI(command);
-                alertDialog.dismiss();
-                progressBar.setVisibility(View.VISIBLE);
-            }
-        });
-    }
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) { }
 
-    private boolean isVersionNumber(String s) {
-        if (!s.contains(".")) return false;
-        String[] parts = s.split("[.]");
-        int[] intParts = new int[3];
-        if (parts.length != 3) return false;
-        for (int i = 0; i < parts.length; i++) {
-            try {
-                intParts[i] = Integer.parseInt(parts[i].trim());
-            } catch (NumberFormatException e) {
-                return false;
-            }
+    @Override
+    public void onClick(View v) {
+        ServiceInfo serviceInfo = (ServiceInfo) serviceSelector.getSelectedItem();
+        switch (v.getId()) {
+            case R.id.install_button:
+                onClickInstall(serviceInfo);
+                break;
+            case R.id.start_button:
+                onClickStart(serviceInfo);
+                break;
+            case R.id.openLink:
+                onClickLink(serviceInfo);
+                break;
+
         }
-        versionIntNumber = intParts;
-        return true;
     }
-
 }
 
 

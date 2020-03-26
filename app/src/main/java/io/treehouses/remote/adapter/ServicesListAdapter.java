@@ -26,47 +26,48 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private Context context;
     private TextView name;
     private ImageView status;
+    private int headerColour;
     //private Button start, install, restart, link, info;
 
-    public ServicesListAdapter(Context context, ArrayList<ServiceInfo> services) {
+    public ServicesListAdapter(Context context, ArrayList<ServiceInfo> services, int headerColour) {
         super(context,0,services);
         this.data = services;
         this.context = context;
+        this.headerColour = headerColour;
     }
 
+    @Override
+    public void setNotifyOnChange(boolean notifyOnChange) {
+        super.setNotifyOnChange(notifyOnChange);
+
+
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER) {
+        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
             convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
         }
-        else if (data.get(position).serviceStatus == ServiceInfo.SERVICE_HEADER) {
+        else {
             convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
         }
         findViews(convertView);
 
-
-
         name.setText(data.get(position).name);
 
         setStatus(data.get(position).serviceStatus);
-
-//        setOnClick(parent, convertView, R.id.start_service, position);
-//        setOnClick(parent, convertView, R.id.install_service, position);
-//        setOnClick(parent, convertView, R.id.restart_service, position);
-//        setOnClick(parent, convertView, R.id.link_button, position);
-//        setOnClick(parent, convertView, R.id.service_info, position);
 
         return convertView;
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER) {
+        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
             convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
         }
-        else if (data.get(position).serviceStatus == ServiceInfo.SERVICE_HEADER) {
+        else {
             convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
+
         }
         findViews(convertView);
 
@@ -75,6 +76,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         name.setText(data.get(position).name);
 
         setStatus(data.get(position).serviceStatus);
+
         return convertView;
     }
 
@@ -82,6 +84,7 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private void findViews(View view) {
         name = view.findViewById(R.id.service_name);
         status = view.findViewById(R.id.service_status);
+        name.setTextColor(headerColour);
 //        start = view.findViewById(R.id.start_service);
 //        install = view.findViewById(R.id.install_service);
 //        restart = view.findViewById(R.id.restart_service);
@@ -92,52 +95,25 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     private void setStatus(int statusCode) {
         if (statusCode == ServiceInfo.SERVICE_AVAILABLE) {
 
-            setButtons(false, false, false);
+            //setButtons(false, false, false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
             status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_red));
         } else if (statusCode == ServiceInfo.SERVICE_INSTALLED) {
 
-            setButtons(false, true, false);
+            //setButtons(false, true, false);
 
             name.setTextColor(context.getResources().getColor(R.color.md_grey_600));
             status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_yellow));
 
         } else if (statusCode == ServiceInfo.SERVICE_RUNNING) {
-            setButtons(true, true, true);
+            //setButtons(true, true, true);
 
             name.setTextColor(context.getResources().getColor(R.color.md_green_500));
             status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_green));
 
         }
     }
-
-    private void setButtons(boolean one, boolean two, boolean three) {
-//        setStart(one);
-//        setInstall(two);
-//        restart.setEnabled(three);
-//
-//        if (one) {
-//            link.setVisibility(View.VISIBLE);
-//        } else {
-//            link.setVisibility(View.GONE);
-//        }
-    }
-
-//    private void setStart(boolean started) {
-//        if (started) start.setText("Stop");
-//        else start.setText("Start");
-//    }
-//
-//    private void setInstall(boolean installed) {
-//        if (installed) {
-//            install.setText("Uninstall");
-//            start.setEnabled(true);
-//        } else {
-//            install.setText("Install");
-//            start.setEnabled(false);
-//        }
-//    }
 
     private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
         convertView.findViewById(id).setOnClickListener(new View.OnClickListener() {

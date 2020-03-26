@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16dp"
         android:padding="8dp"
+
         android:background="@drawable/get_started"
         android:layout_marginStart="@dimen/margin_huge"
         android:layout_marginLeft="@dimen/margin_huge"
@@ -60,14 +61,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
                     android:orientation="vertical"
                     >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_bold"
                         android:gravity="center_horizontal"
                         android:layout_marginLeft="@dimen/_16dp"
                         android:layout_marginStart="@dimen/_16dp"
@@ -91,7 +90,7 @@
                             android:id="@+id/service_info"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="test"
+                            android:text="No Service Info Available"
                             >
 
                         </TextView>
@@ -102,7 +101,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_bold"
                     android:gravity="center_horizontal"
                     android:layout_marginTop="16dp"
                     android:layout_marginLeft="@dimen/_16dp"
@@ -117,7 +115,7 @@
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal">
                     <Button
-                        android:id="@+id/button"
+                        android:id="@+id/install_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/install_service"
@@ -127,7 +125,7 @@
                         android:text="Install" />
 
                     <Button
-                        android:id="@+id/button2"
+                        android:id="@+id/start_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/install_service"
@@ -139,9 +137,10 @@
 
                 <Button
                     android:id="@+id/openLink"
-                    android:layout_width="200dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
                     android:text="Open Link"
                     android:textColor="@color/bg_white"
                     android:background="@drawable/rounded"/>

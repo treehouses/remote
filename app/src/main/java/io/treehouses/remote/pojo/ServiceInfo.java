@@ -1,11 +1,12 @@
 package io.treehouses.remote.pojo;
 
 public class ServiceInfo implements Comparable<ServiceInfo> {
-    public final static int SERVICE_AVAILABLE = 0;
-    public final static int SERVICE_INSTALLED = 1;
-    public final static int SERVICE_RUNNING = 2;
+    public final static int SERVICE_HEADER_INSTALLED = 0;
+    public final static int SERVICE_RUNNING = 1;
+    public final static int SERVICE_INSTALLED = 2;
+    public final static int SERVICE_HEADER_AVAILABLE = 3;
+    public final static int SERVICE_AVAILABLE = 4;
 
-    public final static int SERVICE_HEADER = 3;
 
     public String name;
     public int serviceStatus;
@@ -17,7 +18,6 @@ public class ServiceInfo implements Comparable<ServiceInfo> {
 
     @Override
     public int compareTo(ServiceInfo o) {
-        if (o.serviceStatus == 3 || this.serviceStatus == 3) return 0;
-        return o.serviceStatus - this.serviceStatus;
+        return this.serviceStatus - o.serviceStatus;
     }
 }
