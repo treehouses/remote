@@ -86,7 +86,9 @@ public class BaseHomeFragment extends BaseFragment {
     }}}
 
 
-    public void checkImageInfo(String[] readMessage, String deviceName) {
+    public void checkImageInfo(String[] readMessage, String deviceName, ImageView status) {
+        if (readMessage[0].equals("true")) status.setImageDrawable(getResources().getDrawable(R.drawable.circle_green));
+        else status.setImageDrawable(getResources().getDrawable(R.drawable.circle));
         bluetoothMac = readMessage[1];
         imageVersion = readMessage[2];
         tresshousesVersion = readMessage[3];
