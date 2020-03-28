@@ -220,7 +220,7 @@ public class BaseTerminalFragment extends BaseFragment{
     protected void updateArrayAdapters(String command) {
             String s = getRootCommand(command).trim();
             if (!inSecondLevel.contains(s)) {
-                arrayAdapter2.add(getRootCommand(command));
+                arrayAdapter2.add(s);
                 inSecondLevel.add(s);
             }
             arrayAdapter3.add(command);
