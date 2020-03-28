@@ -25,6 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -33,6 +35,8 @@ import io.treehouses.remote.utils.Utils;
 
 public class BaseTerminalFragment extends BaseFragment{
     private final String[] array2 = {"treehouses", "docker"};
+    private Set<String> inSecondLevel;
+    private ArrayAdapter<String> arrayAdapter1, arrayAdapter2, arrayAdapter3;
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
 
@@ -110,10 +114,15 @@ public class BaseTerminalFragment extends BaseFragment{
             idle(mPingStatus, pingStatusButton);
         }
     }
+    private boolean filterMessages(String readMessage) {
+        boolean a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty();
+        boolean b = !readMessage.startsWith("treehouses") && !readMessage.contains("treehouses remote commands");
+        return a && b;
+    }
 
     protected void filterMessages(String readMessage, ArrayAdapter mConversationArrayAdapter, ArrayList list) {
         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-        if (!readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty()) {
+        if (filterMessages(readMessage)) {
             list.add(readMessage);
             mConversationArrayAdapter.notifyDataSetChanged();
         }
@@ -149,43 +158,86 @@ public class BaseTerminalFragment extends BaseFragment{
         }
         return true;
     }
-    public void setUpAutoComplete(AutoCompleteTextView autoComplete) {
+    private int countSpaces(String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) { if (s.charAt(i) == ' ') count++; }
+        return count;
+    }
+
+    protected void setUpAutoComplete(AutoCompleteTextView autoComplete) {
+        inSecondLevel = new HashSet<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         if (preferences.getBoolean("autocomplete", true)) {
-            final String[] commands = getResources().getStringArray(R.array.commands_list);
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, commands);
-            ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
-            autoComplete.setThreshold(1);
-            autoComplete.setAdapter(arrayAdapter);
-            autoComplete.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
+            arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+            arrayAdapter3 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (s.length() < 6) autoComplete.setAdapter(arrayAdapter1);
-                    else autoComplete.setAdapter(arrayAdapter);
-                }
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (s.toString().endsWith("\n")) {
-                        listener.sendMessage(autoComplete.getText().toString().substring(0,autoComplete.getText().toString().length()-1));
-                        autoComplete.setText("");
-                    }
-                }});
+            autoComplete.setThreshold(0);
+            autoComplete.setAdapter(arrayAdapter1);
+            addTextChangeListener(autoComplete);
             addSpaces(autoComplete);
         }
+    }
+
+    private void addTextChangeListener( AutoCompleteTextView autoComplete) {
+        autoComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (countSpaces(s.toString()) == 0) {
+                    autoComplete.setAdapter(arrayAdapter1);
+                }
+                else if (countSpaces(s.toString()) == 1) {
+                    autoComplete.setAdapter(arrayAdapter2);
+                }
+                else if (countSpaces(s.toString()) == 2){
+                    autoComplete.setAdapter(arrayAdapter3);
+                }
+
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().endsWith("\n")) {
+                    listener.sendMessage(autoComplete.getText().toString().substring(0,autoComplete.getText().toString().length()-1));
+                    autoComplete.setText("");
+                }
+            }});
+    }
+
+    private String getRootCommand (String s) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int count = 0;
+        for (int i = 0 ; i < s.length(); i++) {
+            if (s.charAt(i) == ' ') count++;
+            if (count >= 2) break;
+            stringBuilder.append(s.charAt(i));
+        }
+        return stringBuilder.toString();
+    }
+    protected void updateArrayAdapters(String command) {
+            String s = getRootCommand(command).trim();
+            if (!inSecondLevel.contains(s)) {
+                arrayAdapter2.add(getRootCommand(command));
+                inSecondLevel.add(s);
+            }
+            arrayAdapter3.add(command);
     }
 
     private void addSpaces(AutoCompleteTextView autoComplete) {
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                autoComplete.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        autoComplete.showDropDown();
+                    }
+                },100);
                 autoComplete.append(" ");
             }
         });
-
-
     }
 }
