@@ -135,9 +135,13 @@ public class BaseServicesFragment extends BaseFragment {
         System.arraycopy(intParts,0, versionNumber, 0, 3);
         return true;
     }
+
+    private boolean isError(String output) {
+        return output.startsWith("Usage:") || output.contains("Error");
+    }
     protected int performAction(String output, TextView text, ProgressBar pbar, ArrayList<ServiceInfo> services, int[] versionIntNumber, BaseAdapter adapter) {
         int i = -1;
-        if (output.startsWith("Usage:")) {
+        if (isError(output)) {
             text.setVisibility(View.VISIBLE);
             text.setText("Feature not available please upgrade cli version.");
             pbar.setVisibility(View.GONE);
