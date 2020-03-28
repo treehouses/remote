@@ -168,4 +168,8 @@ public class BaseServicesFragment extends BaseFragment {
         return output.contains("xml") || output.contains("xmlns");
     }
 
+    protected boolean isTorURL(String output, boolean received) {
+        return output.contains(".onion") && !received;
+    }
+
 }

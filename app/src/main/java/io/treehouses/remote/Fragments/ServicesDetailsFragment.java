@@ -108,12 +108,8 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     };
 
     private void resetServices() {
-        if ((ServiceInfo) serviceSelector.getSelectedItem() == null) {
-            serviceSelector.setSelection(inServiceList("planet", services));
-        }
-        else if (selected != null){
-            serviceSelector.setSelection(spinnerAdapter.getPosition(selected));
-        }
+        if ((ServiceInfo) serviceSelector.getSelectedItem() == null) { serviceSelector.setSelection(inServiceList("planet", services)); }
+        else if (selected != null){ serviceSelector.setSelection(spinnerAdapter.getPosition(selected)); }
         updateButtons(((ServiceInfo) serviceSelector.getSelectedItem()).serviceStatus);
         buildSVG = "";
 
@@ -126,19 +122,14 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             SVGSent = true;
             buildSVG += output;
         }
-        else if (SVGSent) {
-            buildingSVG(output);
-        }
+        else if (SVGSent) { buildingSVG(output); }
         else if (isLocalUrl(output)) {
             received = true;
             openLocalURL(output.trim());
             progressBar.setVisibility(View.GONE);
         }
-
-        else if (infoClicked) {
-            increaseQuoteCount(output);
-        }
-        else if (output.contains(".onion") && !received) {
+        else if (infoClicked) { increaseQuoteCount(output); }
+        else if (isTorURL(output, received)) {
             received = true;
             openTorURL(output.trim());
             progressBar.setVisibility(View.GONE);
@@ -166,9 +157,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     private void increaseQuoteCount(String output) {
         quoteCount += getQuoteCount(output);
         buildString += output;
-        if (output.startsWith("https://")) {
-            buildString += "\n\n";
-        }
+        if (output.startsWith("https://")) buildString += "\n\n";
         if (quoteCount >= 2) {
             SpannableString s = new SpannableString(buildString);
             Linkify.addLinks(s, Linkify.ALL);
@@ -186,9 +175,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             SVG svg = SVG.getFromString(s);
             PictureDrawable pd = new PictureDrawable(svg.renderToPicture());
             logo.setImageDrawable(pd);
-        } catch (SVGParseException e) {
-            e.printStackTrace();
-        }
+        } catch (SVGParseException e) { e.printStackTrace(); }
     }
 
     private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
@@ -205,22 +192,18 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && checkVersion(versionIntNumber)) {
             performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
             writeToRPI("treehouses remote services available\n");
-        }
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && !checkVersion(versionIntNumber)) {
+        } else if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && !checkVersion(versionIntNumber)) {
             performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
             writeToRPI("treehouses remote services available\n");
-        }
-        else if (installedOrRunning(selected)) showDeleteDialog(selected);
+        } else if (installedOrRunning(selected)) showDeleteDialog(selected);
     }
 
     private void onClickStart(ServiceInfo selected) {
         if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && checkVersion(versionIntNumber)) {
             performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
-        }
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && !checkVersion(versionIntNumber)) {
+        } else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && !checkVersion(versionIntNumber)) {
             performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
-        }
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+        } else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
             performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
         }
         writeToRPI("treehouses remote services available\n");
@@ -234,10 +217,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     private void onClickLink(ServiceInfo selected) {
         //reqUrls();
         View view = getLayoutInflater().inflate(R.layout.dialog_choose_url, null);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setView(view)
-                .setTitle("Select URL type")
-                .create();
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle("Select URL type").create();
 
         setOnClick(view, R.id.local_button, "treehouses services " + selected.name + " url local \n", alertDialog);
         setOnClick(view, R.id.tor_button, "treehouses services " + selected.name + " url tor \n", alertDialog);
