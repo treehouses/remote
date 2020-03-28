@@ -104,11 +104,13 @@ public class BaseServicesFragment extends BaseFragment {
             else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
         }
 
-        if (identifier == ServiceInfo.SERVICE_RUNNING) {
-            if (inServiceList("Installed", services) == -1) services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER_INSTALLED));
-            if (inServiceList("Available", services) == -1) services.add(0, new ServiceInfo("Available",ServiceInfo.SERVICE_HEADER_AVAILABLE));
-            Collections.sort(services);
-        }
+        if (identifier == ServiceInfo.SERVICE_RUNNING) formatList(services);
+    }
+
+    private void formatList(ArrayList<ServiceInfo> services) {
+        if (inServiceList("Installed", services) == -1) services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER_INSTALLED));
+        if (inServiceList("Available", services) == -1) services.add(0, new ServiceInfo("Available",ServiceInfo.SERVICE_HEADER_AVAILABLE));
+        Collections.sort(services);
     }
 
     protected int inServiceList(String name, ArrayList<ServiceInfo> services) {
@@ -134,37 +136,36 @@ public class BaseServicesFragment extends BaseFragment {
         return true;
     }
     protected int performAction(String output, TextView text, ProgressBar pbar, ArrayList<ServiceInfo> services, int[] versionIntNumber, BaseAdapter adapter) {
+        int i = -1;
         if (output.startsWith("Usage:")) {
             text.setVisibility(View.VISIBLE);
             text.setText("Feature not available please upgrade cli version.");
             pbar.setVisibility(View.GONE);
-            return 0;
-        }
-        else if (isVersionNumber(output, versionIntNumber)) {
+            i = 0;
+        } else if (isVersionNumber(output, versionIntNumber)) {
             writeToRPI("treehouses remote services available\n");
             //text.setText(output);
-            return 1;
-        }
-        else if (output.contains("Available:")) {
-            //Read
-            //text.setVisibility(View.GONE);
+            i = 1;
+        } else if (output.contains("Available:")) {
             pbar.setVisibility(View.VISIBLE);
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE, services);
             writeToRPI("treehouses remote services installed\n");
-            return 2;
-        }
-        else if (output.contains("Installed:")) {
+            i = 2;
+        } else if (output.contains("Installed:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED, services);
             writeToRPI("treehouses remote services running\n");
-            return 3;
-        }
-        else if (output.contains("Running:")) {
+            i = 3;
+        } else if (output.contains("Running:")) {
             updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING, services);
             adapter.notifyDataSetChanged();
             pbar.setVisibility(View.GONE);
-            return 4;
+            i = 4;
         }
-        return -1;
+        return i;
+    }
+
+    protected boolean containsXML(String output) {
+        return output.contains("xml") || output.contains("xmlns");
     }
 
 }

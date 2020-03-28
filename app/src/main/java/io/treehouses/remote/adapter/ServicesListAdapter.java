@@ -39,45 +39,26 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     @Override
     public void setNotifyOnChange(boolean notifyOnChange) {
         super.setNotifyOnChange(notifyOnChange);
+    }
 
+    @Override
+    public ServiceInfo getItem(int position) {
+        return data.get(position);
+    }
 
+    @Override
+    public int getPosition(ServiceInfo s) {
+        return data.indexOf(s);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
-        }
-        else {
-            convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
-        }
-        findViews(convertView);
-
-        name.setText(data.get(position).name);
-
-        setStatus(data.get(position).serviceStatus);
-
-        return convertView;
+        return initView(position, convertView, parent);
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
-        }
-        else {
-            convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
-
-        }
-        findViews(convertView);
-
-
-
-        name.setText(data.get(position).name);
-
-        setStatus(data.get(position).serviceStatus);
-
-        return convertView;
+        return initView(position, convertView, parent);
     }
 
 
@@ -122,5 +103,24 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
                 ((ListView) parent).performItemClick(v, position, 0);
             }
         });
+    }
+
+    private View initView(int position, View convertView, ViewGroup parent) {
+        if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false);
+        }
+        else {
+            convertView = LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false);
+
+        }
+        findViews(convertView);
+
+
+
+        name.setText(data.get(position).name);
+
+        setStatus(data.get(position).serviceStatus);
+
+        return convertView;
     }
 }

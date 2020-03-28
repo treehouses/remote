@@ -5,6 +5,9 @@ import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +52,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     private ServicesListAdapter spinnerAdapter;
     private ArrayList<ServiceInfo> services;
 
+    private ServiceInfo selected;
 
     public ServicesDetailsFragment(){}
 
@@ -64,6 +68,8 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         serviceSelector = view.findViewById(R.id.pickService);
         progressBar = view.findViewById(R.id.progressBar);
         serviceInfo = view.findViewById(R.id.service_info);
+        serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
+        serviceInfo.setFocusable(true);
         services = new ArrayList<>();
         spinnerAdapter = new ServicesListAdapter(getContext(), services, getResources().getColor(R.color.md_grey_600));
         serviceSelector.setAdapter(spinnerAdapter);
@@ -88,19 +94,9 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
                     int a = performAction(output, serviceInfo, progressBar, services, versionIntNumber, spinnerAdapter);
-                    if (a == -1) {
-                        moreActions(output);
-                    }
+                    if (a == -1) moreActions(output);
                     //Services Running has been updated
-                    else if (a == 4 && spinnerAdapter.getCount() > 0) {
-                        buildSVG = "";
-                        if ((ServiceInfo) serviceSelector.getSelectedItem() == null) {
-                            serviceSelector.setSelection(inServiceList("planet", services));
-                        }
-                        updateButtons(((ServiceInfo) serviceSelector.getSelectedItem()).serviceStatus);
-
-                        writeToRPI("treehouses services " + ((ServiceInfo) serviceSelector.getSelectedItem()).name + " icon\n");
-                    }
+                    else if (a == 4 && spinnerAdapter.getCount() > 0) resetServices();
                     break;
 
                 case Constants.MESSAGE_WRITE:
@@ -110,33 +106,53 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             }
         }
     };
+
+    private void resetServices() {
+        if ((ServiceInfo) serviceSelector.getSelectedItem() == null) {
+            serviceSelector.setSelection(inServiceList("planet", services));
+        }
+        else if (selected != null){
+            serviceSelector.setSelection(spinnerAdapter.getPosition(selected));
+        }
+        updateButtons(((ServiceInfo) serviceSelector.getSelectedItem()).serviceStatus);
+        buildSVG = "";
+
+        loadInfo(((ServiceInfo) serviceSelector.getSelectedItem()));
+
+    }
+
     private void moreActions(String output) {
-        if (output.contains("xml") || output.contains("xmlns")) {
+        if (containsXML(output)) {
             SVGSent = true;
+            buildSVG += output;
+        }
+        else if (SVGSent) {
+            buildingSVG(output);
         }
         else if (isLocalUrl(output)) {
             received = true;
             openLocalURL(output.trim());
             progressBar.setVisibility(View.GONE);
         }
-        if (SVGSent) {
-            buildSVG += output;
-            if (output.contains("</svg>")) {
-                SVGSent = false;
-                showIcon(buildSVG);
-                loadInfo(((ServiceInfo) serviceSelector.getSelectedItem()));
-                buildSVG = "";
-            }
-        }
+
         else if (infoClicked) {
             increaseQuoteCount(output);
         }
-        else if (output.contains(".onion") && ! received) {
+        else if (output.contains(".onion") && !received) {
             received = true;
             openTorURL(output.trim());
             progressBar.setVisibility(View.GONE);
         }
 
+    }
+
+    private void buildingSVG(String output) {
+        buildSVG += output;
+        if (output.contains("</svg>")) {
+            SVGSent = false;
+            showIcon(buildSVG);
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void loadInfo(ServiceInfo selected) {
@@ -154,9 +170,10 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             buildString += "\n\n";
         }
         if (quoteCount >= 2) {
-            serviceInfo.setText(buildString);
-            progressBar.setVisibility(View.GONE);
-
+            SpannableString s = new SpannableString(buildString);
+            Linkify.addLinks(s, Linkify.ALL);
+            serviceInfo.setText(s);
+            writeToRPI("treehouses services " + ((ServiceInfo) serviceSelector.getSelectedItem()).name + " icon\n");
         }
     }
     private boolean isLocalUrl(String output) {
@@ -255,7 +272,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return;
         buildSVG = "";
         serviceSelector.setSelection(inServiceList(services.get(position).name, services));
-        writeToRPI("treehouses services " + services.get(position).name + " icon\n");
+        loadInfo(((ServiceInfo) serviceSelector.getSelectedItem()));
 
         updateButtons(statusCode);
     }
@@ -280,6 +297,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     @Override
     public void onClick(View v) {
         ServiceInfo serviceInfo = (ServiceInfo) serviceSelector.getSelectedItem();
+        selected = serviceInfo;
         switch (v.getId()) {
             case R.id.install_button:
                 onClickInstall(serviceInfo);
@@ -294,15 +312,4 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 

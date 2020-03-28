@@ -21,6 +21,7 @@ public class ServicesFragment extends BaseServicesFragment {
     ServicesDetailsFragment servicesDetailsFragment;
 
     View view;
+    ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,7 +31,7 @@ public class ServicesFragment extends BaseServicesFragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        ViewPager viewPager = view.findViewById(R.id.pager);
+        viewPager = view.findViewById(R.id.pager);
         servicesTabFragment = new ServicesTabFragment();
         servicesDetailsFragment = new ServicesDetailsFragment();
 
@@ -47,6 +48,13 @@ public class ServicesFragment extends BaseServicesFragment {
         // Give the TabLayout the ViewPager
         tabLayout.setupWithViewPager(viewPager);
 
+        addPageChangeListener();
+
+
+        return view;
+    }
+
+    private void addPageChangeListener() {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -70,9 +78,6 @@ public class ServicesFragment extends BaseServicesFragment {
 
             }
         });
-
-
-        return view;
     }
 
 //    public void openCallFragment(Fragment newfragment) {
