@@ -36,7 +36,8 @@ public class BaseServicesFragment extends BaseFragment {
         Intent intent = getContext().getPackageManager().getLaunchIntentForPackage("org.torproject.torbrowser");
         if (intent != null) {
             intent.setData(Uri.parse("http://" + url));
-            startActivity(intent);//null pointer check in case package name was not found
+            intent.setAction(Intent.ACTION_VIEW);
+            startActivity(intent);
         }
         else {
             final String s = "Please install Tor Browser from: \n\n https://play.google.com/store/apps/details?id=org.torproject.torbrowser";
