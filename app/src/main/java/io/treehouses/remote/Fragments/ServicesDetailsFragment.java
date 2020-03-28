@@ -163,6 +163,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             Linkify.addLinks(s, Linkify.ALL);
             serviceInfo.setText(s);
             writeToRPI("treehouses services " + ((ServiceInfo) serviceSelector.getSelectedItem()).name + " icon\n");
+            infoClicked = false;
         }
     }
     private boolean isLocalUrl(String output) {
