@@ -259,6 +259,8 @@ public class RPIDialogFragment extends BaseDialogFragment {
                             Toast.makeText(context, "Bluetooth Connected", LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
+                            pDialog.dismiss();
+                            Toast.makeText(context, "Connection Failed: Please Try Again", LENGTH_LONG).show();
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
                             break;
                     }
