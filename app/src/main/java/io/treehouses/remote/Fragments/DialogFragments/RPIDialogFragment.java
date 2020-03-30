@@ -243,9 +243,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
             Log.e("RPIDialogFragment", "" + msg.what);
             String readMessage = (String) msg.obj;
 
-            if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) {
-                pDialog.dismiss();
-            }
+            if (!TextUtils.isEmpty(readMessage) && readMessage.equals("connectionCheck")) pDialog.dismiss();
 
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
