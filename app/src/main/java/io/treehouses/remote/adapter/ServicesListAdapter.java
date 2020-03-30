@@ -61,6 +61,11 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         return initView(position, convertView, parent);
     }
 
+    @Override
+    public boolean isEnabled(int position){
+        return data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE;
+    }
+
 
     private void findViews(View view) {
         name = view.findViewById(R.id.service_name);
@@ -96,14 +101,14 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
         }
     }
 
-    private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
-        convertView.findViewById(id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ListView) parent).performItemClick(v, position, 0);
-            }
-        });
-    }
+//    private void setOnClick(ViewGroup parent, View convertView, int id, int position) {
+//        convertView.findViewById(id).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ((ListView) parent).performItemClick(v, position, 0);
+//            }
+//        });
+//    }
 
     private View initView(int position, View convertView, ViewGroup parent) {
         if (data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data.get(position).serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
