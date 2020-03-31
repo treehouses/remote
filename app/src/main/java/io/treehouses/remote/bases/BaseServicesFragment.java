@@ -8,8 +8,14 @@ import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.View;
+import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import io.treehouses.remote.pojo.ServiceInfo;
 
@@ -18,6 +24,8 @@ public class BaseServicesFragment extends BaseFragment {
 
     protected void openLocalURL(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + url));
+
+        Log.d("OPENING: ", "http://" + url + "||");
         String title = "Select a browser";
         Intent chooser = Intent.createChooser(intent, title);
 
@@ -28,7 +36,8 @@ public class BaseServicesFragment extends BaseFragment {
         Intent intent = getContext().getPackageManager().getLaunchIntentForPackage("org.torproject.torbrowser");
         if (intent != null) {
             intent.setData(Uri.parse("http://" + url));
-            startActivity(intent);//null pointer check in case package name was not found
+            intent.setAction(Intent.ACTION_VIEW);
+            startActivity(intent);
         }
         else {
             final String s = "Please install Tor Browser from: \n\n https://play.google.com/store/apps/details?id=org.torproject.torbrowser";
@@ -39,21 +48,6 @@ public class BaseServicesFragment extends BaseFragment {
             TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
             alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
-    }
-
-    protected void showInfoDialog(String buildString) {
-        final SpannableString s = new SpannableString(buildString);
-        Linkify.addLinks(s, Linkify.ALL);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setTitle("Info").setMessage(s)
-                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        alertDialog.show();
-        TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
-        alertTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     protected int getQuoteCount(String s) {
@@ -86,7 +80,7 @@ public class BaseServicesFragment extends BaseFragment {
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        performService("Uninstalling", "treehouses services " + selected.name + " down\n", selected.name);
+                        performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
                         writeToRPI("treehouses remote services available\n");
                     }
                 })
@@ -102,6 +96,85 @@ public class BaseServicesFragment extends BaseFragment {
 
     protected boolean installedOrRunning(ServiceInfo selected) {
         return selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING;
+    }
+
+    protected void updateServiceList(String[] stringList, int identifier, ArrayList<ServiceInfo> services) {
+        for (String name : stringList) {
+            int a = inServiceList(name, services);
+            if (a >= 0 ) services.get(a).serviceStatus = identifier;
+            else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
+        }
+
+        if (identifier == ServiceInfo.SERVICE_RUNNING) formatList(services);
+    }
+
+    private void formatList(ArrayList<ServiceInfo> services) {
+        if (inServiceList("Installed", services) == -1) services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER_INSTALLED));
+        if (inServiceList("Available", services) == -1) services.add(0, new ServiceInfo("Available",ServiceInfo.SERVICE_HEADER_AVAILABLE));
+        Collections.sort(services);
+    }
+
+    protected int inServiceList(String name, ArrayList<ServiceInfo> services) {
+        for (int i = 0; i < services.size(); i++) {
+            if (services.get(i).name.equals(name)) return i;
+        }
+        return -1;
+    }
+
+    protected boolean isVersionNumber(String s, int[] versionNumber) {
+        if (!s.contains(".")) return false;
+        String[] parts = s.split("[.]");
+        int[] intParts = new int[3];
+        if (parts.length != 3) return false;
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                intParts[i] = Integer.parseInt(parts[i].trim());
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        System.arraycopy(intParts,0, versionNumber, 0, 3);
+        return true;
+    }
+
+    private boolean isError(String output) {
+        return output.startsWith("Usage:") || output.contains("Error");
+    }
+    protected int performAction(String output, TextView text, ProgressBar pbar, ArrayList<ServiceInfo> services, int[] versionIntNumber, BaseAdapter adapter) {
+        int i = -1;
+        if (isError(output)) {
+            text.setVisibility(View.VISIBLE);
+            text.setText("Feature not available please upgrade cli version.");
+            pbar.setVisibility(View.GONE);
+            i = 0;
+        } else if (isVersionNumber(output, versionIntNumber)) {
+            writeToRPI("treehouses remote services available\n");
+            //text.setText(output);
+            i = 1;
+        } else if (output.contains("Available:")) {
+            pbar.setVisibility(View.VISIBLE);
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE, services);
+            writeToRPI("treehouses remote services installed\n");
+            i = 2;
+        } else if (output.contains("Installed:")) {
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED, services);
+            writeToRPI("treehouses remote services running\n");
+            i = 3;
+        } else if (output.contains("Running:")) {
+            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING, services);
+            adapter.notifyDataSetChanged();
+            pbar.setVisibility(View.GONE);
+            i = 4;
+        }
+        return i;
+    }
+
+    protected boolean containsXML(String output) {
+        return output.contains("xml") || output.contains("xmlns");
+    }
+
+    protected boolean isTorURL(String output, boolean received) {
+        return output.contains(".onion") && !received;
     }
 
 }

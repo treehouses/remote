@@ -9,9 +9,12 @@ import androidx.fragment.app.FragmentPagerAdapter;
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
+    private Fragment f1, f2;
 
-    public SimpleFragmentPagerAdapter(Context context, FragmentManager fm) {
+    public SimpleFragmentPagerAdapter(Context context, FragmentManager fm, Fragment fragment1, Fragment fragment2) {
         super(fm);
+        this.f1 = fragment1;
+        this.f2 = fragment2;
         mContext = context;
     }
 
@@ -19,9 +22,9 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new ServicesTabFragment();
+            return f1;
         } else if (position == 1){
-            return new DockerContainerFragment();
+            return f2;
         }
         return null;
     }
@@ -38,9 +41,9 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         switch (position) {
             case 0:
-                return "Services";
+                return "Services Overview";
             case 1:
-                return "Docker Containers";
+                return "Details";
             default:
                 return null;
         }

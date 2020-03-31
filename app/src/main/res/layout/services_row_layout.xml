@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    app:cardElevation="3dp"
     android:padding="8dp">
 
 
@@ -42,28 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/start_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Start" />
-
-                <Button
-                    android:id="@+id/install_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Install" />
-
-                <Button
-                    android:id="@+id/restart_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Restart" />
-
-
-            </LinearLayout>
+                android:orientation="horizontal"/>
         </LinearLayout>
 
         <LinearLayout
@@ -73,18 +53,11 @@
             android:layout_gravity="center"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/service_info"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/about"
-                android:backgroundTint="@color/md_grey_700" />
-
-            <Button
-                android:id="@+id/link_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/ic_language_black_24dp" />
+            <ImageView
+                android:id="@+id/service_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/circle_green" />
 
         </LinearLayout>
     </LinearLayout>

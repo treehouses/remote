@@ -11,12 +11,17 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import io.treehouses.remote.R;
+import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.bases.BaseServicesFragment;
 
-public class ServicesFragment extends androidx.fragment.app.Fragment {
+public class ServicesFragment extends BaseServicesFragment {
 
     private FragmentActivity myContext;
+    ServicesTabFragment servicesTabFragment;
+    ServicesDetailsFragment servicesDetailsFragment;
 
     View view;
+    ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,10 +31,16 @@ public class ServicesFragment extends androidx.fragment.app.Fragment {
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        ViewPager viewPager = view.findViewById(R.id.pager);
+        viewPager = view.findViewById(R.id.pager);
+        servicesTabFragment = new ServicesTabFragment();
+        servicesDetailsFragment = new ServicesDetailsFragment();
+
+        mChatService = listener.getChatService();
+        mChatService.updateHandler(servicesTabFragment.handlerOverview);
+        writeToRPI("treehouses remote services available\n");
 
         // Create an adapter that knows which fragment should be shown on each page
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getContext(), getChildFragmentManager());
+        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getContext(), getChildFragmentManager(), servicesTabFragment, servicesDetailsFragment);
 
         // Set the adapter onto the view pager
         viewPager.setAdapter(adapter);
@@ -37,29 +48,36 @@ public class ServicesFragment extends androidx.fragment.app.Fragment {
         // Give the TabLayout the ViewPager
         tabLayout.setupWithViewPager(viewPager);
 
-//        final ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
-//        final PagerAdapter adapter = new PagerAdapter(myContext.getSupportFragmentManager(), tabLayout.getTabCount());
-//        viewPager.setAdapter(adapter);
-//        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                if (tab.getPosition() == 0) {
-//                    openCallFragment(new ServicesTabFragment());
-//                } else if (tab.getPosition() == 1) {
-//                    openCallFragment(new DockerContainerFragment());
-//                }
-//            }
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//            }
-//        });
+        addPageChangeListener();
+
 
         return view;
+    }
+
+    private void addPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mChatService = listener.getChatService();
+                if (position == 0) {
+                    mChatService.updateHandler(servicesTabFragment.handlerOverview);
+                    writeToRPI("treehouses remote services available\n");
+                }
+                else {
+                    mChatService.updateHandler(servicesDetailsFragment.handlerDetails);
+                    writeToRPI("treehouses version\n");
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
 //    public void openCallFragment(Fragment newfragment) {
