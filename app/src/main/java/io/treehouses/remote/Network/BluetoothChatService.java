@@ -35,11 +35,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Stack;
 import java.util.UUID;
 
 import io.treehouses.remote.Constants;
-import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
-import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.pojo.Command;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -72,6 +72,9 @@ public class BluetoothChatService implements Serializable{
     private ConnectedThread mConnectedThread;
     private int mCurrentState;
     private int mNewState;
+
+    private Stack<Command> sentCommands;
+    private Stack<Command> tmpSentCommands;
 //    private BluetoothSocket socket = null;
 
     /**
@@ -85,6 +88,8 @@ public class BluetoothChatService implements Serializable{
         mCurrentState = Constants.STATE_NONE;
         mNewState = mCurrentState;
         mHandler = handler;
+        sentCommands = new Stack<>();
+        tmpSentCommands = new Stack<>();
     }
 
     public void updateHandler(Handler handler){
@@ -526,8 +531,10 @@ public class BluetoothChatService implements Serializable{
                     bytes = mmInStream.read(buffer);
                     out = new String(buffer, 0, bytes);
                     Log.d(TAG, "out = " + out + "size of out = " + out.length() + ", bytes = " + bytes);
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
-                            .sendToTarget();
+                    if (!sentCommands.empty()) {
+                        mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out).sendToTarget();
+                        sentCommands.pop();
+                    }
 //                    mEmulatorView.write(buffer, bytes);
                     // Send the obtained bytes to the UI Activity
                     //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
@@ -549,13 +556,10 @@ public class BluetoothChatService implements Serializable{
             try {
                 Log.d(TAG, "write: I am in inside write method");
                 mmOutStream.write(buffer);
-
                 // Share the sent message back to the UI Activity
-                mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
-                        .sendToTarget();
+                mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer).sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);
-                Log.d(TAG, "write: i am in inside write method exception");
             }
         }
 
