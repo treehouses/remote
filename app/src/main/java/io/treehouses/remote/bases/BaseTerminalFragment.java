@@ -35,7 +35,7 @@ import io.treehouses.remote.utils.Utils;
 
 public class BaseTerminalFragment extends BaseFragment{
     private final String[] array2 = {"treehouses", "docker"};
-    private Set<String> inSecondLevel;
+    private Set<String> inSecondLevel, inThirdLevel;
     private ArrayAdapter<String> arrayAdapter1, arrayAdapter2, arrayAdapter3;
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
@@ -166,6 +166,7 @@ public class BaseTerminalFragment extends BaseFragment{
 
     protected void setUpAutoComplete(AutoCompleteTextView autoComplete) {
         inSecondLevel = new HashSet<>();
+        inThirdLevel = new HashSet<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         if (preferences.getBoolean("autocomplete", true)) {
@@ -223,7 +224,10 @@ public class BaseTerminalFragment extends BaseFragment{
                 arrayAdapter2.add(s);
                 inSecondLevel.add(s);
             }
-            arrayAdapter3.add(command);
+            if (!inThirdLevel.contains(command)) {
+                arrayAdapter3.add(command);
+                inThirdLevel.add(command);
+            }
     }
 
     private void addSpaces(AutoCompleteTextView autoComplete) {
