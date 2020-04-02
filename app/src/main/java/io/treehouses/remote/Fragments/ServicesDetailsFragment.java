@@ -210,10 +210,10 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         writeToRPI("treehouses remote services available\n");
     }
 
-    private void onClickRestart(ServiceInfo selected) {
-        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
-
-    }
+//    private void onClickRestart(ServiceInfo selected) {
+//        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
+//
+//    }
 
     private void onClickLink(ServiceInfo selected) {
         //reqUrls();
