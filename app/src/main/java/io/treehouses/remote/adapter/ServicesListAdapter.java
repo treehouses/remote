@@ -48,7 +48,12 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
 
     @Override
     public int getPosition(ServiceInfo s) {
-        return data.indexOf(s);
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).name.equals(s.name) && data.get(i).serviceStatus == s.serviceStatus) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override

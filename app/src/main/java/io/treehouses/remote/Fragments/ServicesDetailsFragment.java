@@ -108,8 +108,8 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     };
 
     private void resetServices() {
+        if (selected != null){ serviceSelector.setSelection(spinnerAdapter.getPosition(selected)); }
         if ((ServiceInfo) serviceSelector.getSelectedItem() == null) { serviceSelector.setSelection(inServiceList("planet", services)); }
-        else if (selected != null){ serviceSelector.setSelection(spinnerAdapter.getPosition(selected)); }
         updateButtons(((ServiceInfo) serviceSelector.getSelectedItem()).serviceStatus);
         buildSVG = "";
 
@@ -292,5 +292,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
         }
     }
+
+    public void setSelected(ServiceInfo s) { selected = s; }
 }
 
