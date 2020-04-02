@@ -116,7 +116,7 @@ public class BaseTerminalFragment extends BaseFragment{
     }
     private boolean filterMessages(String readMessage) {
         boolean a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty();
-        boolean b = !readMessage.startsWith("treehouses") && !readMessage.contains("treehouses remote commands");
+        boolean b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands");
         return a && b;
     }
 
