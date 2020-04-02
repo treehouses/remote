@@ -1,15 +1,16 @@
 package io.treehouses.remote.pojo;
 
 public class Command {
-    String msg;
-    String start, stop;
+    String command;
+    String start = null, stop = null;
+    String response;
 
     public Command(String msg) {
-        this.msg = msg;
+        this.command = msg;
     }
 
     public Command(String msg, String start, String stop) {
-        this.msg = msg;
+        this.command = msg;
         this.start = start;
         this.stop = stop;
     }

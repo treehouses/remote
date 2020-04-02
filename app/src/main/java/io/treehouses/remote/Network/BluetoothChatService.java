@@ -41,6 +41,10 @@ import java.util.UUID;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.pojo.Command;
 
+/*
+    ACTIVITY SENDS COMMAND -> WRITE TO THREAD AND ADD TO COMMAND STACK
+ */
+
 /**
  * This class does all the work for setting up and managing Bluetooth
  * connections with other devices. It has a thread that listens for
