@@ -18,27 +18,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
     <ListView
         android:id="@+id/listView"
-        android:padding="32dp"
-        android:background="@drawable/profiles_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
         android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/profiles_background"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/organizer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/services_title" >
+        app:layout_constraintTop_toBottomOf="@id/services_title">
 
     </ListView>
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,4 +58,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/organizer"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:fontFamily="@font/roboto_bold"
+            android:text="Memory" />
+        <ProgressBar
+            android:id="@+id/space_left"
+            android:progressDrawable="@drawable/custom_progress_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:layout_margin="8dp"
+            android:progress="100"
+            android:minHeight="20dp"
+            android:maxHeight="20dp" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
