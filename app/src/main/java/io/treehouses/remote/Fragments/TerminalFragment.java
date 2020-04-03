@@ -50,6 +50,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private ExpandableListView expandableListView;
     private ExpandableListAdapter expandableListAdapter;
     private ArrayList<String> list;
+    private ArrayList<String> commands;
     private int i;
     private String last;
     View view;
@@ -75,6 +76,8 @@ public class TerminalFragment extends BaseTerminalFragment {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
+        listener.sendMessage("treehouses remote commands \n");
+        commands = new ArrayList<>();
         instance = this;
         expandableListDetail = new HashMap<>();
         expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
@@ -263,6 +266,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                     isRead = true;
                     handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
+                    if (readMessage.startsWith("treehouses")) updateArrayAdapters(readMessage.trim());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     handlerCaseName(msg, getActivity());
