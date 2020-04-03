@@ -41,7 +41,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         switch (position) {
             case 0:
-                return "Services Overview";
+                return "Overview";
             case 1:
                 return "Details";
             default:
