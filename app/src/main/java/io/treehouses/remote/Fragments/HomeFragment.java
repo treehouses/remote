@@ -287,6 +287,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void readMessage(String output) {
+        //Remove in 1 month ( May 4th)
         if (output.startsWith("Version: ") || checkVersionSent) {
             checkVersion(output);
         } else if (output.contains(" ") && output.split(" ").length == 5) {
