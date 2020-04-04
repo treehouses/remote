@@ -74,18 +74,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:layout_gravity="center_vertical"
             app:fontFamily="@font/roboto_bold"
-            android:text="Memory" />
+            android:text="Memory Used"
+            android:textSize="@dimen/text_size_mid"/>
+
         <ProgressBar
             android:id="@+id/space_left"
-            android:progressDrawable="@drawable/custom_progress_bar"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-            android:layout_width="200dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
             android:layout_margin="8dp"
-            android:progress="100"
-            android:minHeight="20dp"
-            android:maxHeight="20dp" />
+            android:layout_marginBottom="32dp"
+            android:maxHeight="25dp"
+            android:minHeight="25dp"
+            android:progress="0"
+            android:progressDrawable="@drawable/custom_progress_bar" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
