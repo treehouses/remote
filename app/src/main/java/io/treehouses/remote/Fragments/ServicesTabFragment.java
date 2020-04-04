@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -88,15 +89,16 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             if (i >= total) {
                 total = i;
                 writeToRPI("treehouses memory used");
-            }
-            else {
+            } else {
                 used = i;
-                ObjectAnimator.ofInt(memoryMeter, "progress", (int) (((float) used / total)*100))
+                ObjectAnimator.ofInt(memoryMeter, "progress", (int) (((float) used / total) * 100))
                         .setDuration(600)
                         .start();
             }
-        } catch (NumberFormatException e) {}
-        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total)*100) + "%");
+        } catch (NumberFormatException e) {
+        }
+        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total) * 100) + "%");
+    }
 
     @Override
     public void onAttach(Context context) {
