@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/md_grey_300"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,7 +26,7 @@
         android:id="@+id/cardView8"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/margin_huge"
+        android:layout_margin="@dimen/margin_large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pickService"
         tools:layout_editor_absoluteX="32dp">
@@ -53,7 +54,7 @@
                 <ImageView
                     android:id="@+id/service_logo"
                     android:layout_width="wrap_content"
-                    android:layout_height="100dp"
+                    android:layout_height="75dp"
                     android:scaleType="fitCenter"
                     android:layout_marginTop="@dimen/margin_small"
                     android:layout_gravity="center_horizontal" />
@@ -121,7 +122,7 @@
                         android:background="@drawable/install_service"
                         android:layout_weight="1"
                         android:textColor="@color/bg_white"
-                        android:layout_margin="8dp"
+                        android:layout_margin="12dp"
                         android:text="Install" />
 
                     <Button
@@ -130,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/install_service"
                         android:layout_weight="1"
-                        android:layout_margin="8dp"
+                        android:layout_margin="12dp"
                         android:textColor="@color/bg_white"
                         android:text="Start" />
                 </LinearLayout>

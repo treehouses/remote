@@ -19,25 +19,27 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;
+import io.treehouses.remote.callback.ServicesListener;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "ServicesTabFragment";
     private View view;
     private ProgressBar progressBar;
-    public ArrayList<ServiceInfo> services;
-    ServicesListAdapter adapter;
+    public ArrayList<ServiceInfo> services, tmpservices;
+    private ServicesListAdapter adapter;
     private TextView tvMessage;
     private int[] versionIntNumber;
     private int used = 0, total = 1;
     private ProgressBar memoryMeter;
-
+    private ListView listView;
+    private ServicesListener servicesListener;
+  
     public ServicesTabFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mChatService = listener.getChatService();
-//        mChatService.updateHandler(handlerOverview);
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
@@ -47,13 +49,12 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         progressBar.setVisibility(View.VISIBLE);
         services = new ArrayList<ServiceInfo>();
 
+
         versionIntNumber = new int[3];
 
-        ListView listView = view.findViewById(R.id.listView);
+        listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
         listView.setAdapter(adapter);
-
-        listView.setItemsCanFocus(false);
 
         listView.setOnItemClickListener(this);
 
@@ -96,33 +97,25 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             }
         } catch (NumberFormatException e) {}
         Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total)*100) + "%");
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            servicesListener = (ServicesListener) getParentFragment();
+        }
+        catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ServiceInfo selected = services.get(position);
-//        switch (view.getId()) {
-//            case R.id.start_service:
-//                onClickStart(selected);
-//                writeToRPI("treehouses remote services available\n");
-//                break;
-//            case R.id.install_service:
-//                onClickInstall(selected);
-//                break;
-//
-//            case R.id.restart_service:
-//                onClickRestart(selected);
-//                writeToRPI("treehouses remote services available\n");
-//                break;
-//
-//            case R.id.service_info:
-//                onClickInfo(selected);
-//                break;
-//
-//            case R.id.link_button:
-//                onClickLink(selected);
-//                break;
-//        }
+        if (progressBar.getVisibility() != View.VISIBLE) {
+            ServiceInfo selected = services.get(position);
+            if (servicesListener != null) servicesListener.onClick(selected);
+        }
     }
 
 

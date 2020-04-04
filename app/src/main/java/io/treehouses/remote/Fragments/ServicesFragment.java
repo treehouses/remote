@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,13 @@ import com.google.android.material.tabs.TabLayout;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.bases.BaseServicesFragment;
+import io.treehouses.remote.callback.ServicesListener;
+import io.treehouses.remote.pojo.ServiceInfo;
 
-public class ServicesFragment extends BaseServicesFragment {
+public class ServicesFragment extends BaseServicesFragment implements ServicesListener {
 
+    private static final String TAG = "ServicesFragment";
+    
     private FragmentActivity myContext;
     ServicesTabFragment servicesTabFragment;
     ServicesDetailsFragment servicesDetailsFragment;
@@ -78,6 +83,13 @@ public class ServicesFragment extends BaseServicesFragment {
 
             }
         });
+    }
+
+    @Override
+    public void onClick(ServiceInfo s) {
+        Log.d(TAG, "onClick: " + s.name);
+        servicesDetailsFragment.setSelected(s);
+        viewPager.setCurrentItem(1);
     }
 
 //    public void openCallFragment(Fragment newfragment) {
