@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,6 +94,17 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpiListener();
         getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
         testConnectionListener();
+
+        try {
+            String s = "{\"available\":[\"couchdb\",\"kolibri\",\"mariadb\",\"mastodon\"],\"installed\":[\"couchdb\",\"kolibri\",\"mastodon\"],\"running\":[\"couchdb\",\"mastodon\"],\"icon\":{\"couchdb\":\"<svg>\",\"kolibri\":\"<svg>\",\"mariadb\":\"<svg>\",\"mastodon\":\"<svg>\"},\"info\":{\"couchdb\":\"<info>\",\"kolibri\":\"<info>\",\"mariadb\":\"<info>\",\"mastodon\":\"<info>\"},\"autorun\":{\"couchdb\":\"true\",\"kolibri\":\"true\",\"mariadb\":\"true\",\"mastodon\":\"true\"}}";
+
+            JSONObject jsonObject = new JSONObject(s);
+
+            Log.d("HOME", jsonObject.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return view;
     }
 
