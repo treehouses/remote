@@ -108,6 +108,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     Toast.makeText(getContext(),"Switched to Default Network", Toast.LENGTH_LONG).show();
                 }
                 else if (SaveUtils.getProfiles(getContext()).size() > 0 && SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() > 0) {
+                    if (SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() <= childPosition) return false;
                     networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
                     listener.sendMessage("treehouses default network \n");
                     Toast.makeText(getContext(), "Configuring...", Toast.LENGTH_LONG).show();
