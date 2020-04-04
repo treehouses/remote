@@ -287,7 +287,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void readMessage(String output) {
-        if (output.startsWith("Version: ") || checkVersionSent) {
+        if (output.startsWith("version: ") || checkVersionSent) {
             checkVersion(output);
         } else if (output.contains(" ") && output.split(" ").length == 5) {
             checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName(), internetstatus);
