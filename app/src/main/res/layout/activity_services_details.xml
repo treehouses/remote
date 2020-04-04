@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin_large"
+        app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pickService"
         tools:layout_editor_absoluteX="32dp">
@@ -62,8 +63,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -84,15 +84,13 @@
                         android:layout_marginLeft="@dimen/_16dp"
                         android:layout_marginRight="@dimen/_16dp"
                         android:layout_marginTop="@dimen/_16dp"
-                        android:layout_marginEnd="@dimen/_16dp"
-                        >
+                        android:layout_marginEnd="@dimen/_16dp">
 
                         <TextView
                             android:id="@+id/service_info"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="No Service Info Available"
-                            >
+                            android:text="No Service Info Available">
 
                         </TextView>
                     </ScrollView>
@@ -122,7 +120,7 @@
                         android:background="@drawable/install_service"
                         android:layout_weight="1"
                         android:textColor="@color/bg_white"
-                        android:layout_margin="12dp"
+                        android:layout_margin="16dp"
                         android:text="Install" />
 
                     <Button
@@ -131,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/install_service"
                         android:layout_weight="1"
-                        android:layout_margin="12dp"
+                        android:layout_margin="16dp"
                         android:textColor="@color/bg_white"
                         android:text="Start" />
                 </LinearLayout>
