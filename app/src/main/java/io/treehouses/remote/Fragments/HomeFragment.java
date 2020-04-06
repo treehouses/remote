@@ -267,7 +267,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             writeToRPI("treehouses remote status\n");
             writeToRPI("treehouses upgrade --check\n");
         }
-        else {
+        else if (output.contains("false")){
             AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                     .setTitle("Update Required")
                     .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
@@ -287,7 +287,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void readMessage(String output) {
-        if (checkVersionSent) {
+        //Remove in 1 month ( May 4th)
+        if (output.startsWith("version: ") || checkVersionSent) {
             checkVersion(output);
         } else if (output.contains(" ") && output.split(" ").length == 5) {
             checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName(), internetstatus);
