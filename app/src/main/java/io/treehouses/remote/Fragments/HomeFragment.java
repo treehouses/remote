@@ -249,11 +249,8 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
-            notificationListener = (NotificationCallback) getContext();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NotificationListener");
-        }
+        try { notificationListener = (NotificationCallback) getContext();
+        } catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
     }
 
     private void dismissPDialog() { if (progressDialog != null) progressDialog.dismiss(); }
@@ -288,12 +285,14 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void readMessage(String output) {
+        try { notificationListener = (NotificationCallback) getContext(); }
+        catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
         //Remove in 1 month ( May 4th)
         if (output.startsWith("version: ") || checkVersionSent) {
             checkVersion(output);
         } else if (output.contains(" ") && output.split(" ").length == 5) {
             checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName(), internetstatus);
-        } else if (matchResult(output, "true", "false") && output.length() < 14) {
+        } else if (notificationListener != null && matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "connected", "pirateship")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
@@ -311,8 +310,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             result = true;
             dismissTestConnection();
         }
-        try { notificationListener = (NotificationCallback) getContext(); }
-        catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
     }
 
     /**
