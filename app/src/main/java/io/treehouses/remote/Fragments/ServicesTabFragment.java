@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,19 +24,19 @@ import io.treehouses.remote.callback.ServicesListener;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
-
+    private static final String TAG = "ServicesTabFragment";
     private View view;
     private ProgressBar progressBar;
     public ArrayList<ServiceInfo> services, tmpservices;
     private ServicesListAdapter adapter;
     private TextView tvMessage;
     private int[] versionIntNumber;
+    private int used = 0, total = 1;
+    private ProgressBar memoryMeter;
     private ListView listView;
     private ServicesListener servicesListener;
-
-
-    public ServicesTabFragment() {
-    }
+  
+    public ServicesTabFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +45,8 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         progressBar = view.findViewById(R.id.progress_services);
         tvMessage = view.findViewById(R.id.tv_message);
+        memoryMeter = view.findViewById(R.id.space_left);
+
         progressBar.setVisibility(View.VISIBLE);
         services = new ArrayList<ServiceInfo>();
 
@@ -67,7 +70,9 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    performAction(output, tvMessage, progressBar, services, versionIntNumber, adapter);
+                    int a = performAction(output, tvMessage, progressBar, services, versionIntNumber, adapter);
+                    if (a == 4) writeToRPI("treehouses memory total \n");
+                    else if (a == -1) moreAction(output);
                     break;
                 case Constants.MESSAGE_WRITE:
                     String write_msg = new String((byte[]) msg.obj);
@@ -78,6 +83,22 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         }
     };
 
+    private void moreAction(String output) {
+        try {
+            int i = Integer.parseInt(output.trim());
+            if (i >= total) {
+                total = i;
+                writeToRPI("treehouses memory used");
+            } else {
+                used = i;
+                ObjectAnimator.ofInt(memoryMeter, "progress", (int) (((float) used / total) * 100))
+                        .setDuration(600)
+                        .start();
+            }
+        } catch (NumberFormatException e) {
+        }
+        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total) * 100) + "%");
+    }
 
     @Override
     public void onAttach(Context context) {

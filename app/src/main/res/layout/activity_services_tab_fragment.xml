@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="32dp"
@@ -21,13 +21,12 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
         android:padding="28dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/organizer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
     </ListView>
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -47,4 +46,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/organizer"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_gravity="center_vertical"
+            app:fontFamily="@font/roboto_bold"
+            android:text="Memory Used"
+            android:textSize="@dimen/text_size_mid"/>
+
+        <ProgressBar
+            android:id="@+id/space_left"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="32dp"
+            android:maxHeight="25dp"
+            android:minHeight="25dp"
+            android:progress="0"
+            android:progressDrawable="@drawable/custom_progress_bar" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
