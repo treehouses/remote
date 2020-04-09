@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
@@ -31,13 +32,11 @@ import io.treehouses.remote.pojo.ServicesData;
 public class ServicesFragment extends BaseServicesFragment implements ServicesListener {
 
     private static final String TAG = "ServicesFragment";
-    
-    private FragmentActivity myContext;
-    ServicesTabFragment servicesTabFragment;
-    ServicesDetailsFragment servicesDetailsFragment;
-    ProgressBar progressBar;
+    private ServicesTabFragment servicesTabFragment;
+    private ServicesDetailsFragment servicesDetailsFragment;
+    private ProgressBar progressBar;
+    private TabLayout tabLayout;
 
-    private ServicesData servicesData;
     private ArrayList<ServiceInfo> services;
 
     View view;
@@ -46,7 +45,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_services_fragment, container, false);
         services = new ArrayList<>();
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
@@ -58,9 +57,9 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }
         });
-        progressBar = view.findViewById(R.id.progressBar2);
+        setTabEnabled(false);
 
-//        viewPager = view.findViewById(R.id.main_content);
+        progressBar = view.findViewById(R.id.progressBar2);
 
         mChatService = listener.getChatService();
         mChatService.updateHandler(handler);
@@ -93,8 +92,17 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
         }
     };
 
+    public void setTabEnabled(boolean enabled) {
+        LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
+        tabStrip.setEnabled(enabled);
+        for(int i = 0; i < tabStrip.getChildCount(); i++) {
+            tabStrip.getChildAt(i).setClickable(enabled);
+        }
+    }
+
     public void replaceFragment(int position) {
-//        if (servicesData == null) return;
+        if (services.isEmpty()) return;
+        setTabEnabled(true);
 
         Fragment fragment = null;
         switch (position) {
