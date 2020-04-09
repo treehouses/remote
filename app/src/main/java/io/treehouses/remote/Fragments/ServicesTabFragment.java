@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,12 +24,14 @@ import io.treehouses.remote.callback.ServicesListener;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
-
+    private static final String TAG = "ServicesTabFragment";
     private View view;
     public ArrayList<ServiceInfo> services;
     private ServicesListAdapter adapter;
     private ListView listView;
     private ServicesListener servicesListener;
+    private ProgressBar memoryMeter;
+    private int used = 0, total = 1;
 
 
     public ServicesTabFragment(ArrayList<ServiceInfo> serviceInfos) {
@@ -40,6 +43,10 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         mChatService = listener.getChatService();
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
+        memoryMeter = view.findViewById(R.id.space_left);
+
+        services = new ArrayList<ServiceInfo>();
+
 
         listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
@@ -49,9 +56,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
         return view;
     }
-
-
-//    public final Handler handlerOverview = new Handler() {
+    //    public final Handler handlerOverview = new Handler() {
 //        @Override
 //        public void handleMessage(Message msg) {
 //
@@ -69,6 +74,22 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 //        }
 //    };
 
+    private void moreAction(String output) {
+        try {
+            int i = Integer.parseInt(output.trim());
+            if (i >= total) {
+                total = i;
+                writeToRPI("treehouses memory used");
+            } else {
+                used = i;
+                ObjectAnimator.ofInt(memoryMeter, "progress", (int) (((float) used / total) * 100))
+                        .setDuration(600)
+                        .start();
+            }
+        } catch (NumberFormatException e) {
+        }
+        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total) * 100) + "%");
+    }
 
     @Override
     public void onAttach(Context context) {
