@@ -25,16 +25,14 @@ import io.treehouses.remote.pojo.ServiceInfo;
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
 
     private View view;
-    private ProgressBar progressBar;
-    public ArrayList<ServiceInfo> services, tmpservices;
+    public ArrayList<ServiceInfo> services;
     private ServicesListAdapter adapter;
-    private TextView tvMessage;
-    private int[] versionIntNumber;
     private ListView listView;
     private ServicesListener servicesListener;
 
 
-    public ServicesTabFragment() {
+    public ServicesTabFragment(ArrayList<ServiceInfo> serviceInfos) {
+        this.services = serviceInfos;
     }
 
     @Override
@@ -42,13 +40,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         mChatService = listener.getChatService();
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
-        progressBar = view.findViewById(R.id.progress_services);
-        tvMessage = view.findViewById(R.id.tv_message);
-        progressBar.setVisibility(View.VISIBLE);
-        services = new ArrayList<ServiceInfo>();
-
-
-        versionIntNumber = new int[3];
 
         listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
@@ -60,23 +51,23 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     }
 
 
-    public final Handler handlerOverview = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case Constants.MESSAGE_READ:
-                    String output = (String) msg.obj;
-                    performAction(output, tvMessage, progressBar, services, versionIntNumber, adapter);
-                    break;
-                case Constants.MESSAGE_WRITE:
-                    String write_msg = new String((byte[]) msg.obj);
-                    Log.d("WRITE", write_msg);
-                    break;
-
-            }
-        }
-    };
+//    public final Handler handlerOverview = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//
+//            switch (msg.what) {
+//                case Constants.MESSAGE_READ:
+//                    String output = (String) msg.obj;
+//                    performAction(output, progressBar, services, versionIntNumber, adapter);
+//                    break;
+//                case Constants.MESSAGE_WRITE:
+//                    String write_msg = new String((byte[]) msg.obj);
+//                    Log.d("WRITE", write_msg);
+//                    break;
+//
+//            }
+//        }
+//    };
 
 
     @Override
@@ -93,10 +84,8 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (progressBar.getVisibility() != View.VISIBLE) {
-            ServiceInfo selected = services.get(position);
-            if (servicesListener != null) servicesListener.onClick(selected);
-        }
+        ServiceInfo selected = services.get(position);
+        if (servicesListener != null) servicesListener.onClick(selected);
     }
 
 
