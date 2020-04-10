@@ -45,9 +45,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
         memoryMeter = view.findViewById(R.id.space_left);
 
-        services = new ArrayList<ServiceInfo>();
-
-
         listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
         listView.setAdapter(adapter);
@@ -56,23 +53,23 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
         return view;
     }
-    //    public final Handler handlerOverview = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//
-//            switch (msg.what) {
-//                case Constants.MESSAGE_READ:
-//                    String output = (String) msg.obj;
-//                    performAction(output, progressBar, services, versionIntNumber, adapter);
-//                    break;
-//                case Constants.MESSAGE_WRITE:
-//                    String write_msg = new String((byte[]) msg.obj);
-//                    Log.d("WRITE", write_msg);
-//                    break;
-//
-//            }
-//        }
-//    };
+        public final Handler handlerOverview = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    String output = (String) msg.obj;
+                    moreAction(output);
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    String write_msg = new String((byte[]) msg.obj);
+                    Log.d("WRITE", write_msg);
+                    break;
+
+            }
+        }
+    };
 
     private void moreAction(String output) {
         try {
@@ -109,5 +106,10 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         if (servicesListener != null) servicesListener.onClick(selected);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        writeToRPI("treehouses memory total\n");
+    }
 
 }

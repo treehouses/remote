@@ -108,23 +108,18 @@ public class ServiceCardFragment extends BaseServicesFragment implements View.On
     }
 
     private void onClickInstall(ServiceInfo selected) {
-//        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && checkVersion(versionIntNumber)) {
-//            performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
-//            writeToRPI("treehouses remote services available\n");
-//        } else if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE && !checkVersion(versionIntNumber)) {
-//            performService("Installing", "treehouses services " + selected.name + " up\n", selected.name);
-//            writeToRPI("treehouses remote services available\n");
-//        } else if (installedOrRunning(selected)) showDeleteDialog(selected);
+        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
+            performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
+        }
+        else if (installedOrRunning(selected)) showDeleteDialog(selected);
     }
 
     private void onClickStart(ServiceInfo selected) {
-//        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && checkVersion(versionIntNumber)) {
-//            performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
-//        } else if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED && !checkVersion(versionIntNumber)) {
-//            performService("Starting", "treehouses services " + selected.name + " start\n", selected.name);
-//        } else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-//            performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
-//        }
+        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
+            performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
+        } else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
+            performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
+        }
     }
 
 //    private void onClickRestart(ServiceInfo selected) {

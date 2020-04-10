@@ -108,11 +108,11 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
         switch (position) {
             case 0:
                 fragment = servicesTabFragment;
-//                mChatService.updateHandler(servicesTabFragment.handlerOverview);
+                mChatService.updateHandler(servicesTabFragment.handlerOverview);
                 break;
             case 1:
                 fragment = servicesDetailsFragment;
-//                mChatService.updateHandler(servicesDetailsFragment.handlerDetails);
+                mChatService.updateHandler(servicesDetailsFragment.handlerDetails);
                 break;
             default:
                 break;
@@ -131,6 +131,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
     public void onClick(ServiceInfo s) {
         Log.d(TAG, "onClick: " + s.name);
         servicesDetailsFragment.setSelected(s);
+        tabLayout.getTabAt(1).select();
         replaceFragment(1);
     }
 

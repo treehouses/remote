@@ -75,38 +75,27 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         serviceCards.setAdapter(serviceCardAdapter);
 
         serviceCards.addOnPageChangeListener(this);
+
         return view;
     }
 
-//    public final Handler handlerDetails = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//
-//            switch (msg.what) {
-//                case Constants.MESSAGE_READ:
-//                    String output = (String) msg.obj;
-//                    int a = performAction(output, progressBar, services, versionIntNumber, spinnerAdapter);
-//                    if (a == -1) moreActions(output);
-//                    //Services Running has been updated
-//                    else if (a == 4 && spinnerAdapter.getCount() > 0) resetServices();
-//                    break;
-//
-//                case Constants.MESSAGE_WRITE:
-//                    String write_msg = new String((byte[]) msg.obj);
-//                    Log.d("WRITE", write_msg);
-//                    break;
-//            }
-//        }
-//    };
+    public final Handler handlerDetails = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
 
-    private void resetServices() {
-        if (selected != null){ serviceSelector.setSelection(spinnerAdapter.getPosition(selected)); }
-        if ((ServiceInfo) serviceSelector.getSelectedItem() == null) { serviceSelector.setSelection(inServiceList("planet", services)); }
-//        updateButtons(((ServiceInfo) serviceSelector.getSelectedItem()).serviceStatus);
-//        showIcon(servicesData.getIcon().get(((ServiceInfo) serviceSelector.getSelectedItem()).name));
-//        setServiceInfo(servicesData.getInfo().get(((ServiceInfo) serviceSelector.getSelectedItem()).name));
+            switch (msg.what) {
+                case Constants.MESSAGE_READ:
+                    String output = (String) msg.obj;
+                    moreActions(output);
+                    break;
 
-    }
+                case Constants.MESSAGE_WRITE:
+                    String write_msg = new String((byte[]) msg.obj);
+                    Log.d("WRITE", write_msg);
+                    break;
+            }
+        }
+    };
 
     private void moreActions(String output) {
         if (isLocalUrl(output)) {
@@ -132,10 +121,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             int statusCode = services.get(position).serviceStatus;
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return;
 
-            int count = 0;
-            for (int i = 0; i < position; i++) {
-                if (services.get(i).isHeader()) count++;
-            }
+            int count = countHeadersBefore(position);
             serviceCards.setCurrentItem(position-count);
         }
 
@@ -153,7 +139,27 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
 
     public void setSelected(ServiceInfo s) {
+        Log.d("SELECTED", "setSelected: " + s.name);
         selected = s;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (selected != null && serviceSelector != null) {
+            int pos = inServiceList(selected.name, services);
+            serviceSelector.setSelection(pos);
+            int count = countHeadersBefore(pos);
+            serviceCards.setCurrentItem(pos-count);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        selected = (ServiceInfo) serviceSelector.getSelectedItem();
+        ProgressBar progressBar = new ProgressBar(getContext());
+
     }
 
     @Override
@@ -164,21 +170,21 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     public void onPageSelected(int position) {
         Log.d("SELECTED", "onPageSelected: ");
         scrolled = true;
-        serviceSelector.setSelection(position+countHeadersBefore(position+1));
+        int pos = position+countHeadersBefore(position+1);
+        serviceSelector.setSelection(pos);
         scrolled = false;
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
     }
 
     private int countHeadersBefore(int position) {
-        int a = 0;
+        int count = 0;
         for (int i = 0; i <= position; i++) {
-            if (services.get(i).isHeader()) a++;
+            if (services.get(i).isHeader()) count++;
         }
-        return a;
+        return count;
     }
 }
 

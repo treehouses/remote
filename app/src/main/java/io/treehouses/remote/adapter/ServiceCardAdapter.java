@@ -36,6 +36,10 @@ public class ServiceCardAdapter extends FragmentStatePagerAdapter {
         return data.size();
     }
 
+    public ArrayList<ServiceInfo> getData() {
+        return data;
+    }
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
