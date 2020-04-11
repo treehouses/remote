@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -16,18 +17,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
 
 import io.treehouses.remote.R;
-import io.treehouses.remote.bases.BaseServicesFragment;
+import io.treehouses.remote.callback.ServiceAction;
 import io.treehouses.remote.pojo.ServiceInfo;
 
-public class ServiceCardFragment extends BaseServicesFragment implements View.OnClickListener {
+public class ServiceCardFragment extends Fragment implements View.OnClickListener {
     private ServiceInfo serviceData;
     private ImageView logo;
     private TextView serviceInfo;
     private Button install, start, openLink;
+    private ServiceAction actionListener;
 
     public ServiceCardFragment(ServiceInfo serviceData) {
         this.serviceData = serviceData;
@@ -93,83 +98,57 @@ public class ServiceCardFragment extends BaseServicesFragment implements View.On
 
     private void showIcon(String s) {
         try {
+            Log.d(serviceData.name, "showIcon:" + serviceData.icon);
             SVG svg = SVG.getFromString(s);
             PictureDrawable pd = new PictureDrawable(svg.renderToPicture());
             logo.setImageDrawable(pd);
-        } catch (SVGParseException e) { e.printStackTrace(); }
+        } catch (SVGParseException e) {
+            e.printStackTrace();
+        }
     }
-
-
 
     private void setServiceInfo(String s) {
         SpannableString spannableString = new SpannableString(s);
         Linkify.addLinks(spannableString, Linkify.ALL);
         serviceInfo.setText(s);
-    }
-
-    private void onClickInstall(ServiceInfo selected) {
-        if (selected.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
-            performService("Installing", "treehouses services " + selected.name + " install\n", selected.name);
-        }
-        else if (installedOrRunning(selected)) showDeleteDialog(selected);
-    }
-
-    private void onClickStart(ServiceInfo selected) {
-        if (selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
-            performService("Starting", "treehouses services " + selected.name + " up\n", selected.name);
-        } else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-            performService("Stopping", "treehouses services " + selected.name + " stop\n", selected.name);
-        }
+        serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 //    private void onClickRestart(ServiceInfo selected) {
 //        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
 //
 //    }
-    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
-        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeToRPI(command);
-                alertDialog.dismiss();
-//                progressBar.setVisibility(View.VISIBLE);
-            }
-        });
-    }
+//    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
+//        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                writeToRPI(command);
+//                alertDialog.dismiss();
+////                progressBar.setVisibility(View.VISIBLE);
+//            }
+//        });
+//    }
 
-    protected void performService(String action, String command, String name) {
-        Log.d("SERVICES", action + " " + name);
-        Toast.makeText(getContext(), name + " " + action, Toast.LENGTH_LONG).show();
-        writeToRPI(command);
-    }
-
-
-    private void onClickLink(ServiceInfo selected) {
-        //reqUrls();
-        View view = getLayoutInflater().inflate(R.layout.dialog_choose_url, null);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle("Select URL type").create();
-
-        setOnClick(view, R.id.local_button, "treehouses services " + selected.name + " url local \n", alertDialog);
-        setOnClick(view, R.id.tor_button, "treehouses services " + selected.name + " url tor \n", alertDialog);
-
-        alertDialog.show();
-//        received = false;
-    }
 
     @Override
     public void onClick(View v) {
-//        ServiceInfo serviceInfo = (ServiceInfo) serviceSelector.getSelectedItem();
-//        selected = serviceInfo;
         switch (v.getId()) {
             case R.id.install_button:
-//                onClickInstall(serviceInfo);
+                actionListener.onClickInstall(serviceData);
                 break;
             case R.id.start_button:
-//                onClickStart(serviceInfo);
+                actionListener.onClickStart(serviceData);
                 break;
             case R.id.openLink:
-//                onClickLink(serviceInfo);
+                actionListener.onClickLink(serviceData);
                 break;
         }
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        actionListener = (ServiceAction) getParentFragment();
+    }
+
 }

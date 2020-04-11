@@ -75,27 +75,6 @@ public class BaseServicesFragment extends BaseFragment {
         writeToRPI(command);
     }
 
-    protected void showDeleteDialog(ServiceInfo selected) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("Delete " + selected.name + "?")
-                .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
-                        writeToRPI("treehouses remote services available\n");
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        alertDialog.show();
-    }
-
     protected boolean installedOrRunning(ServiceInfo selected) {
         return selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING;
     }
@@ -109,24 +88,16 @@ public class BaseServicesFragment extends BaseFragment {
             }
         }
         for (String service : servicesData.getInstalled()) {
+            if (inServiceList(service, services) == -1) continue;
             services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
         }
         for (String service : servicesData.getRunning()) {
+            if (inServiceList(service, services) == -1) continue;
             services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_RUNNING;
         }
         formatList(services);
 
     }
-
-//    protected void updateServiceList(String[] stringList, int identifier, ArrayList<ServiceInfo> services) {
-//        for (String name : stringList) {
-//            int a = inServiceList(name, services);
-//            if (a >= 0 ) services.get(a).serviceStatus = identifier;
-//            else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
-//        }
-//
-//        if (identifier == ServiceInfo.SERVICE_RUNNING) formatList(services);
-//    }
 
     private void formatList(ArrayList<ServiceInfo> services) {
         if (inServiceList("Installed", services) == -1) services.add(0, new ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER_INSTALLED));
@@ -192,6 +163,10 @@ public class BaseServicesFragment extends BaseFragment {
 
     protected boolean isTorURL(String output, boolean received) {
         return output.contains(".onion") && !received;
+    }
+
+    protected boolean isLocalUrl(String output, boolean received) {
+        return output.contains(".") && output.contains(":") && output.length() < 25 && !received;
     }
 
 }

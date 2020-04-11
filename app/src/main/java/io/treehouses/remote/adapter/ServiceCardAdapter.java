@@ -2,24 +2,33 @@ package io.treehouses.remote.adapter;
 
 import android.app.Service;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import io.treehouses.remote.Fragments.ServiceCardFragment;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServiceCardAdapter extends FragmentStatePagerAdapter {
     private ArrayList<ServiceInfo> data;
+
     public ServiceCardAdapter(FragmentManager fm, ArrayList<ServiceInfo> data) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.data = removeHeaders(data);
+
     }
 
     private ArrayList<ServiceInfo> removeHeaders(ArrayList<ServiceInfo> data) {
@@ -40,10 +49,24 @@ public class ServiceCardAdapter extends FragmentStatePagerAdapter {
         return data;
     }
 
+
     @NonNull
     @Override
     public Fragment getItem(int position) {
         return new ServiceCardFragment(data.get(position));
     }
+
+    @Override
+    public int getItemPosition(Object o) {
+        return POSITION_NONE;
+    }
+
+
+    @Override
+    public void notifyDataSetChanged() {
+        Collections.sort(data);
+        super.notifyDataSetChanged();
+    }
+
 
 }
