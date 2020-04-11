@@ -59,12 +59,13 @@ public class BluetoothChatService implements Serializable{
 
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
     private static final UUID MY_UUID_SECURE =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+            UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
 
     //private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String connectedDeviceName = "NULL";
     // Member fields
     private final BluetoothAdapter mAdapter;
+    private BluetoothDevice mDevice;
     private static Handler mHandler;
 //    private AcceptThread mSecureAcceptThread;
     //private AcceptThread mInsecureAcceptThread;
@@ -182,6 +183,7 @@ public class BluetoothChatService implements Serializable{
             device, final String socketType) {
         Log.d(TAG, "connected, Socket Type:" + socketType);
         connectedDeviceName = device.getName();
+        mDevice = device;
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -276,13 +278,13 @@ public class BluetoothChatService implements Serializable{
     private void connectionFailed() {
         // Send a failure message back to the Activity
         callHandler("Unable to connect to device");
-
-        mCurrentState = Constants.STATE_NONE;
+        BluetoothChatService.this.connect(mDevice, true);
+        //mCurrentState = Constants.STATE_NONE;
         // Update UI title
-        updateUserInterfaceTitle();
+        //updateUserInterfaceTitle();
 
         // Start the service over to restart listening mode
-        BluetoothChatService.this.start();
+        //BluetoothChatService.this.start();
     }
 
     /**
@@ -292,12 +294,13 @@ public class BluetoothChatService implements Serializable{
         // Send a failure message back to the Activity
         callHandler("Device connection was lost");
 
-        mCurrentState = Constants.STATE_NONE;
+        BluetoothChatService.this.connect(mDevice, true);
+        /*mCurrentState = Constants.STATE_NONE;
         // Update UI title
         updateUserInterfaceTitle();
 
         // Start the service over to restart listening mode
-        BluetoothChatService.this.start();
+        BluetoothChatService.this.start();*/
     }
 
     public void callHandler(String message) {
