@@ -128,14 +128,11 @@ public class BaseServicesFragment extends BaseFragment {
         return true;
     }
 
-    private boolean isError(String output) { return output.startsWith("Usage:") || output.contains("Error"); }
+    private boolean isError(String output) { return output.toLowerCase().startsWith("usage:") || output.toLowerCase().contains("error") || output.toLowerCase().contains("unknown"); }
 
     protected int performAction(String output, ArrayList<ServiceInfo> services) {
         int i = -1;
         if (isError(output)) {
-//            text.setVisibility(View.VISIBLE);
-//            text.setText("Feature not available please upgrade cli version.");
-//            pbar.setVisibility(View.GONE);
             i = 0;
         }
         else if (gettingJSON) {

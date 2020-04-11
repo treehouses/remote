@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -82,6 +83,14 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
                         servicesDetailsFragment = new ServicesDetailsFragment(services);
                         progressBar.setVisibility(View.GONE);
                         replaceFragment(0);
+                    }
+                    else if(a==0) {
+                        progressBar.setVisibility(View.GONE);
+                        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                                .setTitle("Please update CLI")
+                                .setMessage("Please update to the latest CLI version to access services.")
+                                .create();
+                        alertDialog.show();
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
