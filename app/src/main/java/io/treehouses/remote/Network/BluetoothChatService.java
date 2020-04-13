@@ -278,13 +278,16 @@ public class BluetoothChatService implements Serializable{
     private void connectionFailed() {
         // Send a failure message back to the Activity
         callHandler("Unable to connect to device");
-        BluetoothChatService.this.connect(mDevice, true);
-        //mCurrentState = Constants.STATE_NONE;
-        // Update UI title
-        //updateUserInterfaceTitle();
-
-        // Start the service over to restart listening mode
-        //BluetoothChatService.this.start();
+        if (mDevice != null) {
+            BluetoothChatService.this.start();
+            BluetoothChatService.this.connect(mDevice, true);
+        } else {
+            mCurrentState = Constants.STATE_NONE;
+            // Update UI title
+            updateUserInterfaceTitle();
+            // Start the service over to restart listening mode
+            BluetoothChatService.this.start();
+        }
     }
 
     /**
@@ -293,14 +296,16 @@ public class BluetoothChatService implements Serializable{
     private void connectionLost() {
         // Send a failure message back to the Activity
         callHandler("Device connection was lost");
-
-        BluetoothChatService.this.connect(mDevice, true);
-        /*mCurrentState = Constants.STATE_NONE;
-        // Update UI title
-        updateUserInterfaceTitle();
-
-        // Start the service over to restart listening mode
-        BluetoothChatService.this.start();*/
+        if (mDevice != null) {
+            BluetoothChatService.this.start();
+            BluetoothChatService.this.connect(mDevice, true);
+        } else {
+            mCurrentState = Constants.STATE_NONE;
+            // Update UI title
+            updateUserInterfaceTitle();
+            // Start the service over to restart listening mode
+            BluetoothChatService.this.start();
+        }
     }
 
     public void callHandler(String message) {
