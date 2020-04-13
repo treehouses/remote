@@ -64,7 +64,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
 
         mChatService = listener.getChatService();
         mChatService.updateHandler(handler);
-        writeToRPI("treehouses remote json\n");
+        writeToRPI("treehouses remote allservices\n");
 
         return view;
     }
