@@ -24,7 +24,6 @@ package io.treehouses.remote.Network;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,9 +35,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.UUID;
-
+import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Constants;
-import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -72,6 +70,7 @@ public class BluetoothChatService implements Serializable{
     private ConnectedThread mConnectedThread;
     private int mCurrentState;
     private int mNewState;
+    private boolean bNoReconnect;
 //    private BluetoothSocket socket = null;
 
     /**
@@ -116,7 +115,7 @@ public class BluetoothChatService implements Serializable{
      */
     public synchronized void start() {
         Log.d(TAG, "start");
-
+        bNoReconnect = false;
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -227,7 +226,7 @@ public class BluetoothChatService implements Serializable{
      */
     public synchronized void stop() {
         Log.d(TAG, "stop");
-
+        bNoReconnect = true;
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
@@ -277,15 +276,13 @@ public class BluetoothChatService implements Serializable{
     private void connectionFailed() {
         // Send a failure message back to the Activity
         callHandler("Unable to connect to device");
-        if (mDevice != null) {
-            BluetoothChatService.this.connect(mDevice, true);
-        } else {
-            mCurrentState = Constants.STATE_NONE;
-            // Update UI title
-            updateUserInterfaceTitle();
-            // Start the service over to restart listening mode
-            BluetoothChatService.this.start();
-        }
+
+        mCurrentState = Constants.STATE_NONE;
+        // Update UI title
+        updateUserInterfaceTitle();
+
+        // Start the service over to restart listening mode
+        BluetoothChatService.this.start();
     }
 
     /**
@@ -294,7 +291,7 @@ public class BluetoothChatService implements Serializable{
     private void connectionLost() {
         // Send a failure message back to the Activity
         callHandler("Device connection was lost");
-        if (mDevice != null) {
+        if (mDevice != null && !bNoReconnect) {
             BluetoothChatService.this.connect(mDevice, true);
         } else {
             mCurrentState = Constants.STATE_NONE;
