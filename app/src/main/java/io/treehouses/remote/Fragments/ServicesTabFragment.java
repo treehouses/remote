@@ -26,32 +26,24 @@ import io.treehouses.remote.pojo.ServiceInfo;
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "ServicesTabFragment";
     private View view;
-    private ProgressBar progressBar;
-    public ArrayList<ServiceInfo> services, tmpservices;
+    public ArrayList<ServiceInfo> services;
     private ServicesListAdapter adapter;
-    private TextView tvMessage;
-    private int[] versionIntNumber;
-    private int used = 0, total = 1;
-    private ProgressBar memoryMeter;
     private ListView listView;
     private ServicesListener servicesListener;
-  
-    public ServicesTabFragment() { }
+    private ProgressBar memoryMeter;
+    private int used = 0, total = 1;
+
+
+    public ServicesTabFragment(ArrayList<ServiceInfo> serviceInfos) {
+        this.services = serviceInfos;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mChatService = listener.getChatService();
 
         view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
-        progressBar = view.findViewById(R.id.progress_services);
-        tvMessage = view.findViewById(R.id.tv_message);
         memoryMeter = view.findViewById(R.id.space_left);
-
-        progressBar.setVisibility(View.VISIBLE);
-        services = new ArrayList<ServiceInfo>();
-
-
-        versionIntNumber = new int[3];
 
         listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
@@ -61,18 +53,14 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
         return view;
     }
-
-
-    public final Handler handlerOverview = new Handler() {
+        public final Handler handlerOverview = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
-                    int a = performAction(output, tvMessage, progressBar, services, versionIntNumber, adapter);
-                    if (a == 4) writeToRPI("treehouses memory total \n");
-                    else if (a == -1) moreAction(output);
+                    moreAction(output);
                     break;
                 case Constants.MESSAGE_WRITE:
                     String write_msg = new String((byte[]) msg.obj);
@@ -114,11 +102,14 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (progressBar.getVisibility() != View.VISIBLE) {
-            ServiceInfo selected = services.get(position);
-            if (servicesListener != null) servicesListener.onClick(selected);
-        }
+        ServiceInfo selected = services.get(position);
+        if (servicesListener != null) servicesListener.onClick(selected);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        writeToRPI("treehouses memory total\n");
+    }
 
 }

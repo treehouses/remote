@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,6 +94,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpiListener();
         getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
         testConnectionListener();
+
         return view;
     }
 
