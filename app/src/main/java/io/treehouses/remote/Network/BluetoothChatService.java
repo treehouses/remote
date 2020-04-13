@@ -39,7 +39,6 @@ import java.util.UUID;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
-import io.treehouses.remote.Fragments.HomeFragment;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -59,7 +58,7 @@ public class BluetoothChatService implements Serializable{
 
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
     private static final UUID MY_UUID_SECURE =
-            UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
+            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     //private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String connectedDeviceName = "NULL";
@@ -279,7 +278,6 @@ public class BluetoothChatService implements Serializable{
         // Send a failure message back to the Activity
         callHandler("Unable to connect to device");
         if (mDevice != null) {
-            BluetoothChatService.this.start();
             BluetoothChatService.this.connect(mDevice, true);
         } else {
             mCurrentState = Constants.STATE_NONE;
@@ -297,7 +295,6 @@ public class BluetoothChatService implements Serializable{
         // Send a failure message back to the Activity
         callHandler("Device connection was lost");
         if (mDevice != null) {
-            BluetoothChatService.this.start();
             BluetoothChatService.this.connect(mDevice, true);
         } else {
             mCurrentState = Constants.STATE_NONE;

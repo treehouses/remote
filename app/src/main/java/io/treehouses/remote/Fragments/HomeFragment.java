@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -164,6 +165,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             public void onClick(View v) {
                 if (connectionState) {
                     RPIDialogFragment.getInstance().bluetoothCheck("unregister");
+
                     mChatService.stop();
                     connectionState = false;
                     checkConnectionState();
