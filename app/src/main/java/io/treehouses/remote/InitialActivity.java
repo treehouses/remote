@@ -70,7 +70,7 @@ public class InitialActivity extends PermissionActivity
 
         if (mChatService == (null)) {
             Log.e(TAG, "mChatService Status: NULL");
-            mChatService = new BluetoothChatService(mHandler);
+            mChatService = new BluetoothChatService(mHandler, getApplicationContext());
         } else {
             Log.e(TAG, "mChatService Status: " + mChatService.getState());
             mChatService.updateHandler(mHandler);

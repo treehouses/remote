@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -91,6 +92,11 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         connectRpiListener();
         getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
         testConnectionListener();
+
+        SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (preferences.getBoolean("reconnectBluetooth", true)) {
+            Log.d("HOME", "onCreateView: ");
+        }
         return view;
     }
 

@@ -81,7 +81,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
         initDialog(mView);
 
-        if (mChatService == null) { mChatService = new BluetoothChatService(mHandler); }
+        if (mChatService == null) { mChatService = new BluetoothChatService(mHandler, getActivity().getApplicationContext()); }
 
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         setAdapterNotNull(raspberryDevicesText);
@@ -125,7 +125,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
 
     private void listViewOnClickListener(View mView) {
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            mChatService = new BluetoothChatService(mHandler);
+            mChatService = new BluetoothChatService(mHandler, getActivity().getApplicationContext());
             List<BluetoothDevice> deviceList;
             if (mDiscoverRaspberry.isChecked()) deviceList = raspberry_devices;
             else deviceList = all_devices;
