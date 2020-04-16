@@ -14,13 +14,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import io.treehouses.remote.pojo.ServiceInfo;
+import io.treehouses.remote.pojo.ServicesData;
 
 public class BaseServicesFragment extends BaseFragment {
     private static final int[] MINIMUM_VERSION = {1, 14, 1};
+    private String startJson = "";
+    private boolean gettingJSON = false;
+    protected ServicesData servicesData;
 
     protected void openLocalURL(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + url));
@@ -50,14 +60,6 @@ public class BaseServicesFragment extends BaseFragment {
         }
     }
 
-    protected int getQuoteCount(String s) {
-        int count = 0;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) == '\"') count++;
-        }
-        return count;
-    }
-
     protected boolean checkVersion(int[] versionIntNumber) {
         if (versionIntNumber[0] > MINIMUM_VERSION[0]) return true;
         if (versionIntNumber[0] == MINIMUM_VERSION[0] && versionIntNumber[1] > MINIMUM_VERSION[1]) return true;
@@ -73,39 +75,28 @@ public class BaseServicesFragment extends BaseFragment {
         writeToRPI(command);
     }
 
-    protected void showDeleteDialog(ServiceInfo selected) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("Delete " + selected.name + "?")
-                .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
-                        writeToRPI("treehouses remote services available\n");
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        alertDialog.show();
-    }
-
     protected boolean installedOrRunning(ServiceInfo selected) {
         return selected.serviceStatus == ServiceInfo.SERVICE_INSTALLED || selected.serviceStatus == ServiceInfo.SERVICE_RUNNING;
     }
 
-    protected void updateServiceList(String[] stringList, int identifier, ArrayList<ServiceInfo> services) {
-        for (String name : stringList) {
-            int a = inServiceList(name, services);
-            if (a >= 0 ) services.get(a).serviceStatus = identifier;
-            else if (name.trim().length() > 0) services.add(new ServiceInfo(name, identifier));
+    private void constructServiceList(ServicesData servicesData, ArrayList<ServiceInfo> services) {
+        services.clear();
+        for (String service : servicesData.getAvailable()) {
+            if (inServiceList(service, services) == -1) {
+                services.add(new ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData.getIcon().get(service),
+                        servicesData.getInfo().get(service), servicesData.getAutorun().get(service)));
+            }
         }
+        for (String service : servicesData.getInstalled()) {
+            if (inServiceList(service, services) == -1) continue;
+            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
+        }
+        for (String service : servicesData.getRunning()) {
+            if (inServiceList(service, services) == -1) continue;
+            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_RUNNING;
+        }
+        formatList(services);
 
-        if (identifier == ServiceInfo.SERVICE_RUNNING) formatList(services);
     }
 
     private void formatList(ArrayList<ServiceInfo> services) {
@@ -137,44 +128,42 @@ public class BaseServicesFragment extends BaseFragment {
         return true;
     }
 
-    private boolean isError(String output) {
-        return output.startsWith("Usage:") || output.contains("Error");
-    }
-    protected int performAction(String output, TextView text, ProgressBar pbar, ArrayList<ServiceInfo> services, int[] versionIntNumber, BaseAdapter adapter) {
+    private boolean isError(String output) { return output.toLowerCase().startsWith("usage:") || output.toLowerCase().contains("error") || output.toLowerCase().contains("unknown"); }
+
+    protected int performAction(String output, ArrayList<ServiceInfo> services) {
         int i = -1;
         if (isError(output)) {
-            text.setVisibility(View.VISIBLE);
-            text.setText("Feature not available please upgrade cli version.");
-            pbar.setVisibility(View.GONE);
             i = 0;
-        } else if (isVersionNumber(output, versionIntNumber)) {
-            writeToRPI("treehouses remote services available\n");
-            //text.setText(output);
-            i = 1;
-        } else if (output.contains("Available:")) {
-            pbar.setVisibility(View.VISIBLE);
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_AVAILABLE, services);
-            writeToRPI("treehouses remote services installed\n");
-            i = 2;
-        } else if (output.contains("Installed:")) {
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_INSTALLED, services);
-            writeToRPI("treehouses remote services running\n");
-            i = 3;
-        } else if (output.contains("Running:")) {
-            updateServiceList(output.substring(output.indexOf(":") + 2).split(" "), ServiceInfo.SERVICE_RUNNING, services);
-            adapter.notifyDataSetChanged();
-            pbar.setVisibility(View.GONE);
-            i = 4;
         }
-        return i;
-    }
+        else if (gettingJSON) {
+            startJson += output.trim();
+            if (startJson.endsWith("}}")) {
+                startJson += output.trim();
+                try {
+                    JSONObject jsonObject = new JSONObject(startJson);
+                    servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
+                    constructServiceList(servicesData, services);
 
-    protected boolean containsXML(String output) {
-        return output.contains("xml") || output.contains("xmlns");
+                } catch (JSONException e) { e.printStackTrace(); }
+                gettingJSON = false;
+            }
+            i = 1;
+        }
+        else if (output.trim().startsWith("{")) {
+            Log.d("STARTED", "performAction: ");
+            startJson = output.trim();
+            gettingJSON = true;
+        }
+
+        return i;
     }
 
     protected boolean isTorURL(String output, boolean received) {
         return output.contains(".onion") && !received;
+    }
+
+    protected boolean isLocalUrl(String output, boolean received) {
+        return output.contains(".") && output.contains(":") && output.length() < 25 && !received;
     }
 
 }

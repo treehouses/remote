@@ -16,6 +16,7 @@ import com.mikepenz.materialize.color.Material;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import io.treehouses.remote.R;
@@ -37,11 +38,6 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
     }
 
     @Override
-    public void setNotifyOnChange(boolean notifyOnChange) {
-        super.setNotifyOnChange(notifyOnChange);
-    }
-
-    @Override
     public ServiceInfo getItem(int position) {
         return data.get(position);
     }
@@ -54,6 +50,12 @@ public class ServicesListAdapter extends ArrayAdapter<ServiceInfo> {
             }
         }
         return -1;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        Collections.sort(data);
+        super.notifyDataSetChanged();
     }
 
     @Override
