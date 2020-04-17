@@ -165,7 +165,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         btnSendClickListener();
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        if (mChatService.getState() == Constants.STATE_NONE) mChatService = new BluetoothChatService(mHandler);
+        if (mChatService.getState() == Constants.STATE_NONE) mChatService = new BluetoothChatService(mHandler, getActivity().getApplicationContext());
     }
 
     private void btnSendClickListener() {

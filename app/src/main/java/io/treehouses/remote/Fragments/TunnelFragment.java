@@ -93,7 +93,7 @@ public class TunnelFragment extends BaseTerminalFragment {
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         if (mChatService.getState() == Constants.STATE_NONE) {
-            mChatService = new BluetoothChatService(mHandler);
+            mChatService = new BluetoothChatService(mHandler, getActivity().getApplicationContext());
         }
         // Initialize the buffer for outgoing messages
         new StringBuilder();

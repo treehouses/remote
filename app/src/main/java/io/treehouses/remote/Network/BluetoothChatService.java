@@ -24,22 +24,23 @@ package io.treehouses.remote.Network;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.UUID;
-
-import io.treehouses.remote.Constants;
-import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
+import io.treehouses.remote.Constants;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -65,6 +66,7 @@ public class BluetoothChatService implements Serializable{
     private static String connectedDeviceName = "NULL";
     // Member fields
     private final BluetoothAdapter mAdapter;
+    private BluetoothDevice mDevice;
     private static Handler mHandler;
 //    private AcceptThread mSecureAcceptThread;
     //private AcceptThread mInsecureAcceptThread;
@@ -72,6 +74,9 @@ public class BluetoothChatService implements Serializable{
     private ConnectedThread mConnectedThread;
     private int mCurrentState;
     private int mNewState;
+    private boolean bNoReconnect;
+
+    private Context context;
 //    private BluetoothSocket socket = null;
 
     /**
@@ -80,11 +85,13 @@ public class BluetoothChatService implements Serializable{
      *  The UI Activity Context
      * @param handler A Handler to send messages back to the UI Activity
      */
-    public BluetoothChatService(Handler handler) {
+    public BluetoothChatService(Handler handler, Context applicationContext) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mCurrentState = Constants.STATE_NONE;
         mNewState = mCurrentState;
         mHandler = handler;
+        this.context = applicationContext;
+
     }
 
     public void updateHandler(Handler handler){
@@ -116,7 +123,7 @@ public class BluetoothChatService implements Serializable{
      */
     public synchronized void start() {
         Log.d(TAG, "start");
-
+        bNoReconnect = false;
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -182,6 +189,7 @@ public class BluetoothChatService implements Serializable{
             device, final String socketType) {
         Log.d(TAG, "connected, Socket Type:" + socketType);
         connectedDeviceName = device.getName();
+        mDevice = device;
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
             mConnectThread.cancel();
@@ -226,7 +234,7 @@ public class BluetoothChatService implements Serializable{
      */
     public synchronized void stop() {
         Log.d(TAG, "stop");
-
+        bNoReconnect = true;
         if (mConnectThread != null) {
             mConnectThread.cancel();
             mConnectThread = null;
@@ -291,13 +299,17 @@ public class BluetoothChatService implements Serializable{
     private void connectionLost() {
         // Send a failure message back to the Activity
         callHandler("Device connection was lost");
-
-        mCurrentState = Constants.STATE_NONE;
-        // Update UI title
-        updateUserInterfaceTitle();
-
-        // Start the service over to restart listening mode
-        BluetoothChatService.this.start();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Log.d(TAG, "connectionLost: ");
+        if (mDevice != null && !bNoReconnect && preferences.getBoolean("reconnectBluetooth", true)) {
+            BluetoothChatService.this.connect(mDevice, true);
+        } else {
+            mCurrentState = Constants.STATE_NONE;
+            // Update UI title
+            updateUserInterfaceTitle();
+            // Start the service over to restart listening mode
+            BluetoothChatService.this.start();
+        }
     }
 
     public void callHandler(String message) {

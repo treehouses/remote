@@ -70,4 +70,10 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Advanced">
+        <SwitchPreference android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
+            android:summary="Enable to reconnect to Bluetooth automatically when a connection fails. Warning: this may affect battery life."
+            android:key="reconnectBluetooth"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>
