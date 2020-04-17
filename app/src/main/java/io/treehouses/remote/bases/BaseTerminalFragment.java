@@ -43,7 +43,7 @@ public class BaseTerminalFragment extends BaseFragment{
         byte[] writeBuf = (byte[]) msg.obj;
         // construct a string from the buffer
         String writeMessage = new String(writeBuf);
-        if (!writeMessage.contains("google.com")) {
+        if (!writeMessage.contains("google.com") && !writeMessage.contains("remote")) {
             Log.d(TAG, "writeMessage = " + writeMessage);
             mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
         }
@@ -114,7 +114,7 @@ public class BaseTerminalFragment extends BaseFragment{
             idle(mPingStatus, pingStatusButton);
         }
     }
-    private boolean filterMessages(String readMessage) {
+    private boolean filterMessage(String readMessage) {
         boolean a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty();
         boolean b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands");
         return a && b;
@@ -122,7 +122,7 @@ public class BaseTerminalFragment extends BaseFragment{
 
     protected void filterMessages(String readMessage, ArrayAdapter mConversationArrayAdapter, ArrayList list) {
         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-        if (filterMessages(readMessage)) {
+        if (filterMessage(readMessage)) {
             list.add(readMessage);
             mConversationArrayAdapter.notifyDataSetChanged();
         }
