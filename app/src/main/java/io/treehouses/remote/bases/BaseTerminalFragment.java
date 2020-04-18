@@ -31,6 +31,7 @@ import java.util.Set;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.pojo.CommandsList;
 import io.treehouses.remote.utils.Utils;
 
 public class BaseTerminalFragment extends BaseFragment{
@@ -43,7 +44,7 @@ public class BaseTerminalFragment extends BaseFragment{
         byte[] writeBuf = (byte[]) msg.obj;
         // construct a string from the buffer
         String writeMessage = new String(writeBuf);
-        if (!writeMessage.contains("google.com")) {
+        if (!writeMessage.contains("google.com") && !writeMessage.contains("remote")) {
             Log.d(TAG, "writeMessage = " + writeMessage);
             mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
         }
@@ -114,7 +115,7 @@ public class BaseTerminalFragment extends BaseFragment{
             idle(mPingStatus, pingStatusButton);
         }
     }
-    private boolean filterMessages(String readMessage) {
+    private boolean filterMessage(String readMessage) {
         boolean a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty();
         boolean b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands");
         return a && b;
@@ -122,7 +123,7 @@ public class BaseTerminalFragment extends BaseFragment{
 
     protected void filterMessages(String readMessage, ArrayAdapter mConversationArrayAdapter, ArrayList list) {
         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-        if (filterMessages(readMessage)) {
+        if (filterMessage(readMessage)) {
             list.add(readMessage);
             mConversationArrayAdapter.notifyDataSetChanged();
         }
@@ -168,12 +169,10 @@ public class BaseTerminalFragment extends BaseFragment{
         inSecondLevel = new HashSet<>();
         inThirdLevel = new HashSet<>();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-
+        arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
+        arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+        arrayAdapter3 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         if (preferences.getBoolean("autocomplete", true)) {
-            arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
-            arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-            arrayAdapter3 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-
             autoComplete.setThreshold(0);
             autoComplete.setAdapter(arrayAdapter1);
             addTextChangeListener(autoComplete);
@@ -218,16 +217,19 @@ public class BaseTerminalFragment extends BaseFragment{
         }
         return stringBuilder.toString();
     }
-    protected void updateArrayAdapters(String command) {
-            String s = getRootCommand(command).trim();
+    protected void updateArrayAdapters(CommandsList data) {
+        for (int i = 0;i < data.commands.size();i++) {
+            String s = getRootCommand(data.commands.get(i)).trim();
+            Log.d("TAG", "updateArrayAdapters: "+s);
             if (!inSecondLevel.contains(s)) {
                 arrayAdapter2.add(s);
                 inSecondLevel.add(s);
             }
-            if (!inThirdLevel.contains(command)) {
-                arrayAdapter3.add(command);
-                inThirdLevel.add(command);
+            if (!inThirdLevel.contains(data.commands.get(i))) {
+                arrayAdapter3.add(data.commands.get(i));
+                inThirdLevel.add(data.commands.get(i));
             }
+        }
     }
 
     private void addSpaces(AutoCompleteTextView autoComplete) {

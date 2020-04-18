@@ -23,6 +23,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +41,8 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.pojo.CommandListItem;
+import io.treehouses.remote.pojo.CommandsList;
+import io.treehouses.remote.pojo.ServicesData;
 import io.treehouses.remote.utils.SaveUtils;
 
 public class TerminalFragment extends BaseTerminalFragment {
@@ -50,7 +57,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private ExpandableListView expandableListView;
     private ExpandableListAdapter expandableListAdapter;
     private ArrayList<String> list;
-    private ArrayList<String> commands;
+    private CommandsList commands;
     private int i;
     private String last;
     View view;
@@ -69,6 +76,9 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private static boolean isRead = false;
 
+    private boolean jsonSent, jsonReceiving = false;
+    private String jsonString = "";
+
     public TerminalFragment() { }
 
     @Override
@@ -76,8 +86,8 @@ public class TerminalFragment extends BaseTerminalFragment {
         view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        listener.sendMessage("treehouses remote commands \n");
-        commands = new ArrayList<>();
+        jsonSent = true;
+        listener.sendMessage("treehouses remote commands json\n");
         instance = this;
         expandableListDetail = new HashMap<>();
         expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
@@ -135,7 +145,6 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     @Override
     public void onResume() {
-        Log.e("CHECK STATUS", "" + mChatService.getState());
         checkStatus(mChatService, mPingStatus, pingStatusButton);
         super.onResume();
         setupChat();
@@ -149,15 +158,12 @@ public class TerminalFragment extends BaseTerminalFragment {
      * Set up the UI and background operations for chat.
      */
     public void setupChat() {
-        Log.d(TAG, "setupChat()");
-
         copyToList(mConversationView, getContext());
 
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTerminalList()) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                return getViews(view, isRead);
+                return getViews(super.getView(position, convertView, parent), isRead);
             }
         };
         mConversationView.setAdapter(mConversationArrayAdapter);
@@ -216,7 +222,6 @@ public class TerminalFragment extends BaseTerminalFragment {
             setupChat();
         } else {
             // User did not enable Bluetooth or an error occurred
-            Log.d("TERMINAL", "BT not enabled");
             Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
@@ -239,9 +244,31 @@ public class TerminalFragment extends BaseTerminalFragment {
             //get password change request
             String chPWD = data.getStringExtra("password") == null ? "" : data.getStringExtra("password");
             //store password and command
-            String password = "treehouses password " + chPWD;
             //send password to command line interface
-            listener.sendMessage(password);
+            listener.sendMessage("treehouses password " + chPWD);
+        }
+    }
+
+    private void buildJSON() {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            commands = new Gson().fromJson(jsonObject.toString(), CommandsList.class);
+            updateArrayAdapters(commands);
+        } catch (JSONException e) { e.printStackTrace(); }
+    }
+
+    private void handleJson(String readMessage) {
+        if (jsonReceiving) {
+            jsonString += readMessage.trim();
+            if (jsonString.endsWith("]}")) {
+                jsonString += readMessage.trim();
+                buildJSON();
+                jsonReceiving = false;
+                jsonSent = false;
+            }
+        } else if (readMessage.startsWith("{")) {
+            jsonReceiving = true;
+            jsonString = readMessage.trim();
         }
     }
 
@@ -258,15 +285,15 @@ public class TerminalFragment extends BaseTerminalFragment {
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
-                    String writeMessage = handlerCaseWrite(TAG, mConversationArrayAdapter, msg);
-                    addToCommandList(writeMessage);
+                    addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg));
                     break;
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
                     isRead = true;
-                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
-                    filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
-                    if (readMessage.startsWith("treehouses")) updateArrayAdapters(readMessage.trim());
+                    if (readMessage.contains("unknown")) jsonSent = false;
+                    if (jsonSent) handleJson(readMessage);
+                    else { handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
+                        filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList()); }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     handlerCaseName(msg, getActivity());
