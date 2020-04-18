@@ -69,6 +69,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private AlertDialog testConnectionDialog;
     private int selected_LED;
     private boolean checkVersionSent = false;
+    private boolean internetSent = false;
 
     private String network_ssid = "";
     private FrameLayout layout;
@@ -266,8 +267,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             showUpgradeCLI();
         }
         else if(BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
-            writeToRPI("treehouses remote status\n");
-            writeToRPI("treehouses upgrade --check\n");
+            writeToRPI("treehouses remote check\n");
         }
         else if (output.contains("false")){
             AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -292,11 +292,28 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         try { notificationListener = (NotificationCallback) getContext(); }
         catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
         //Remove in 1 month ( May 4th)
-        if (output.startsWith("version: ") || checkVersionSent) {
+        if (output.contains("unknown")) {
+            showUpgradeCLI();
+            internetSent = false;
+        } else if (output.startsWith("version: ") || checkVersionSent) {
             checkVersion(output);
-        } else if (output.contains(" ") && output.split(" ").length == 5) {
-            checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName(), internetstatus);
-        } else if (notificationListener != null && matchResult(output, "true", "false") && output.length() < 14) {
+        } else if (output.contains(" ") && output.split(" ").length == 4) {
+            checkImageInfo(output.split(" "), mChatService.getConnectedDeviceName());
+            listener.sendMessage("treehouses internet\n");
+            internetSent = true;
+        } else if (internetSent) {
+            internetSent = false;
+            if (output.trim().contains("true")) internetstatus.setImageDrawable(getResources().getDrawable(R.drawable.circle_green));
+            else internetstatus.setImageDrawable(getResources().getDrawable(R.drawable.circle));
+            writeToRPI("treehouses upgrade --check\n");
+        }
+        else {
+            moreActions(output);
+        }
+    }
+
+    private void moreActions(String output) {
+        if (notificationListener != null && matchResult(output, "true", "false") && output.length() < 14) {
             notificationListener.setNotification(output.contains("true"));
         } else if (matchResult(output, "connected", "pirateship")) {
             Toast.makeText(getContext(), "Switched to " + network_ssid, Toast.LENGTH_LONG).show();
