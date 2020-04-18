@@ -294,12 +294,12 @@ public class TerminalFragment extends BaseTerminalFragment {
                 case Constants.MESSAGE_READ:
                     String readMessage = (String) msg.obj;
                     isRead = true;
+                    if (readMessage.contains("unknown")) jsonSent = false;
                     if (jsonSent) handleJson(readMessage);
                     else {
                         handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                         filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList());
                     }
-//                    if (readMessage.startsWith("treehouses")) updateArrayAdapters(readMessage.trim());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     handlerCaseName(msg, getActivity());
