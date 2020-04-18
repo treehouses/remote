@@ -76,8 +76,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private static boolean isRead = false;
 
-    private boolean jsonSent;
-    private boolean jsonReceiving = false;
+    private boolean jsonSent, jsonReceiving = false;
     private String jsonString = "";
 
     public TerminalFragment() { }
