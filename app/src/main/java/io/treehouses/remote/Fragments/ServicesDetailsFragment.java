@@ -140,6 +140,14 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             openTorURL(output.trim());
             progressBar.setVisibility(View.GONE);
         }
+        else if (output.contains("service autorun set")) {
+            setScreenState(true);
+            Toast.makeText(getContext(), "Switched autorun", Toast.LENGTH_SHORT).show();
+        }
+        else if (output.toLowerCase().contains("error")) {
+            setScreenState(true);
+            Toast.makeText(getContext(), "An Error occurred", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -292,6 +300,15 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     public void onClickLink(ServiceInfo s) {
         onLink(s);
         received = false;
+    }
+
+    @Override
+    public void onClickAutorun(ServiceInfo s, boolean newAutoRun) {
+        setScreenState(false);
+        if (newAutoRun) listener.sendMessage("treehouses services "+s.name + " autorun true\n");
+        else listener.sendMessage("treehouses services "+s.name + " autorun false\n");
+
+        Toast.makeText(getContext(), "Switching autorun status to "+s.autorun, Toast.LENGTH_SHORT).show();
     }
 }
 

@@ -90,38 +90,64 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="@dimen/margin_medium"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginRight="@dimen/margin_medium"
+                android:layout_marginEnd="@dimen/margin_medium"
                 android:orientation="horizontal">
                 <Button
                     android:id="@+id/install_button"
+                    android:textAllCaps="false"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/install_service"
+                    android:layout_height="40dp"
+                    android:background="@drawable/service_button"
                     android:layout_weight="1"
                     android:textColor="@color/bg_white"
-                    android:layout_margin="12dp"
+                    android:layout_margin="@dimen/margin_small"
                     android:text="Install" />
 
                 <Button
                     android:id="@+id/start_button"
+                    android:textAllCaps="false"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/install_service"
+                    android:layout_height="40dp"
+                    android:background="@drawable/service_button"
                     android:layout_weight="1"
-                    android:layout_margin="12dp"
+                    android:layout_margin="@dimen/margin_small"
                     android:textColor="@color/bg_white"
                     android:text="Start" />
+                <CheckBox
+                    android:id="@+id/autorun_checked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/service_button"
+                    android:text="Autorun"
+                    android:paddingLeft="12dp"
+                    android:paddingStart="12dp"
+                    android:paddingRight="8dp"
+                    android:paddingEnd="8dp"
+                    android:layout_margin="@dimen/margin_small"
+                    android:padding="8dp"
+                    style="@style/WhiteCheck"/>
+
             </LinearLayout>
+
 
             <Button
                 android:id="@+id/openLink"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_large"
                 android:text="Open Link"
                 android:textColor="@color/bg_white"
-                android:background="@drawable/rounded"/>
+                android:background="@drawable/ripple"/>
+
         </LinearLayout>
     </FrameLayout>
 

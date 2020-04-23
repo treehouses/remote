@@ -6,4 +6,5 @@ public interface ServiceAction {
     void onClickInstall(ServiceInfo s);
     void onClickStart(ServiceInfo s);
     void onClickLink(ServiceInfo s);
+    void onClickAutorun(ServiceInfo s, boolean newAutoRun);
 }

@@ -120,4 +120,11 @@
 
     <style name="MyMaterialTheme.Base.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="WhiteCheck">
+        <item name="colorAccent">#fff</item>
+        <item name="android:color">@color/bg_white</item>
+        <item name="buttonTint">@color/bg_white</item>
+        <item name="android:textColor">@color/bg_white</item>
+    </style>
+
 </resources>
