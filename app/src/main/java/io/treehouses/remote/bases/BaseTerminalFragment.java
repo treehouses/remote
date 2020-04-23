@@ -218,7 +218,6 @@ public class BaseTerminalFragment extends BaseFragment{
         return stringBuilder.toString();
     }
     protected void updateArrayAdapters(CommandsList data) {
-        data.commands = null;
         for (int i = 0;i < data.commands.size();i++) {
             String s = getRootCommand(data.commands.get(i)).trim();
             Log.d("TAG", "updateArrayAdapters: "+s);
