@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.UUID;
+
+import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Constants;
 
@@ -59,8 +61,7 @@ public class BluetoothChatService implements Serializable{
     //private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
-    private static final UUID MY_UUID_SECURE =
-            UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final UUID MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     //private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String connectedDeviceName = "NULL";
@@ -68,6 +69,7 @@ public class BluetoothChatService implements Serializable{
     private final BluetoothAdapter mAdapter;
     private BluetoothDevice mDevice;
     private static Handler mHandler;
+
 //    private AcceptThread mSecureAcceptThread;
     //private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
@@ -225,6 +227,7 @@ public class BluetoothChatService implements Serializable{
         bundle.putString(Constants.DEVICE_NAME, device.getName());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
+
         // Update UI title
         Log.e(TAG,"Connected");
     }
