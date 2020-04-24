@@ -293,7 +293,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         if (newAutoRun) listener.sendMessage("treehouses services "+s.name + " autorun true\n");
         else listener.sendMessage("treehouses services "+s.name + " autorun false\n");
 
-        Toast.makeText(getContext(), "Switching autorun status to "+s.autorun, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Switching autorun status to "+ newAutoRun, Toast.LENGTH_SHORT).show();
     }
 }
 
