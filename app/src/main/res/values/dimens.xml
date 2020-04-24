@@ -21,7 +21,7 @@
     <dimen name="padding_large">16dp</dimen>
     <dimen name="text_size_very_large">24sp</dimen>
     <dimen name="text_size_large">18sp</dimen>
-    <dimen name="text_size_mid">16sp</dimen>
+    <dimen name="text_size_mid">10sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="icon_size_mid">36dp</dimen>
     <dimen name="profile_card">150dp</dimen>
