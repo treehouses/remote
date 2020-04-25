@@ -28,6 +28,7 @@ import com.google.android.material.navigation.NavigationView;
 import io.treehouses.remote.Fragments.AboutFragment;
 import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Fragments.NewNetworkFragment;
+import io.treehouses.remote.Fragments.SSHTunnelFragment;
 import io.treehouses.remote.Fragments.ServicesFragment;
 import io.treehouses.remote.Fragments.SettingsFragment;
 import io.treehouses.remote.Fragments.StatusFragment;
@@ -152,6 +153,8 @@ public class InitialActivity extends PermissionActivity
             openCallFragment(new ServicesFragment());
         } else if (id == R.id.menu_tunnel) {
             openCallFragment(new TunnelFragment());
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(new SSHTunnelFragment());
         } else if (id == R.id.menu_about) {
             openCallFragment((new AboutFragment()));
         } else if (id == R.id.menu_status) {
