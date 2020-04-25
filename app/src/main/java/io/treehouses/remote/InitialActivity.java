@@ -206,14 +206,6 @@ public class InitialActivity extends PermissionActivity
         mChatService.updateHandler(mHandler);
     }
 
-
-    @Override
-    public void setChatService(BluetoothChatService chatService) {
-        mChatService = chatService;
-        mChatService.updateHandler(mHandler);
-        checkStatusNow();
-    }
-
     @Override
     public BluetoothChatService getChatService() {
         return ((MainApplication)this.getApplicationContext()).mChatService;
@@ -273,11 +265,7 @@ public class InitialActivity extends PermissionActivity
         // Check that there's actually something to send
         if (message.length() > 0) {
             // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = message.getBytes();
-            mChatService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
-//            mOutStringBuffer.setLength(0);
+            mChatService.write(message);
         }
     }
 
@@ -309,6 +297,6 @@ public class InitialActivity extends PermissionActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mChatService.destroy();
+        mChatService.disconnect();
     }
 }

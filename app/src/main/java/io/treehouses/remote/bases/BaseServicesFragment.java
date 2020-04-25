@@ -28,8 +28,6 @@ import io.treehouses.remote.pojo.ServicesData;
 
 public class BaseServicesFragment extends BaseFragment {
     private static final int[] MINIMUM_VERSION = {1, 14, 1};
-    private String startJson = "";
-    private boolean gettingJSON = false;
     protected ServicesData servicesData;
 
     protected void openLocalURL(String url) {
@@ -66,7 +64,7 @@ public class BaseServicesFragment extends BaseFragment {
         return (versionIntNumber[0] == MINIMUM_VERSION[0]) && (versionIntNumber[1] == MINIMUM_VERSION[1]) && (versionIntNumber[2] >= MINIMUM_VERSION[2]);
     }
     protected void writeToRPI(String ping) {
-        mChatService.write(ping.getBytes());
+        mChatService.write(ping);
     }
 
     protected void performService(String action, String command, String name) {
@@ -135,26 +133,14 @@ public class BaseServicesFragment extends BaseFragment {
         if (isError(output)) {
             i = 0;
         }
-        else if (gettingJSON) {
-            startJson += output.trim();
-            if (startJson.endsWith("}}")) {
-                startJson += output.trim();
-                try {
-                    JSONObject jsonObject = new JSONObject(startJson);
-                    servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
-                    constructServiceList(servicesData, services);
-
-                } catch (JSONException e) { e.printStackTrace(); }
-                gettingJSON = false;
-            }
-            i = 1;
+        else if (output.startsWith("{")) {
+            try{
+                JSONObject jsonObject = new JSONObject(output);
+                servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
+                constructServiceList(servicesData, services);
+                i = 1;
+            } catch (JSONException e) { e.printStackTrace();i= 0;}
         }
-        else if (output.trim().startsWith("{")) {
-            Log.d("STARTED", "performAction: ");
-            startJson = output.trim();
-            gettingJSON = true;
-        }
-
         return i;
     }
 

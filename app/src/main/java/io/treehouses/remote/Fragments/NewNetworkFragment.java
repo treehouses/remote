@@ -116,7 +116,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
 
     private void updateNetworkMode() {
         String s = "treehouses networkmode";
-        mChatService.write(s.getBytes());
+        mChatService.write(s);
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
     }
 

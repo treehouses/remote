@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -61,8 +62,7 @@ public class StatusFragment extends BaseFragment {
         }
 
         String ping = "hostname";
-        byte[] pSend1 = ping.getBytes();
-        mChatService.write(pSend1);
+        mChatService.write(ping);
         return view;
     }
 
@@ -139,8 +139,7 @@ public class StatusFragment extends BaseFragment {
 
     private void writeToRPI(String ping) {
         lastCommand = ping;
-        byte[] pSend = ping.getBytes();
-        mChatService.write(pSend);
+        mChatService.write(ping);
     }
 
     private void setCard(TextView textView, ImageView tick, String text) {
@@ -159,11 +158,11 @@ public class StatusFragment extends BaseFragment {
     }
     private void checkUpgradeStatus(String readMessage) {
         checkUpgradeNow();
-        if (readMessage.startsWith("false ") && readMessage.length() < 14) {
+        if (readMessage.contains("false")) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             tvUpgrade.setText("Upgrade Status: Latest Version: " + rpiVersion);
             upgrade.setVisibility(View.GONE);
-        } else if (readMessage.startsWith("true ") && readMessage.length() < 14){
+        } else if (readMessage.contains("true")){
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
             tvUpgrade.setText("Upgrade available from " + rpiVersion + " to " + readMessage.substring(4));
             upgrade.setVisibility(View.VISIBLE);
@@ -211,15 +210,16 @@ public class StatusFragment extends BaseFragment {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+    @SuppressLint("HandlerLeak")
     public final Handler mHandler = new Handler() {
+        @SuppressLint("HandlerLeak")
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     break;
                 case Constants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);
+                    String writeMessage = (String) msg.obj;
                     Log.d(TAG, "writeMessage = " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:

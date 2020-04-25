@@ -22,10 +22,8 @@ package io.treehouses.remote.Network;
  * Created by yubo on 7/11/17.
  */
 
-import android.annotation.SuppressLint;
-import android.app.Application;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,19 +31,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.github.ivbaranov.rxbluetooth.BluetoothConnection;
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
-import com.github.ivbaranov.rxbluetooth.events.ConnectionStateEvent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
-import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.treehouses.remote.Fragments.HomeFragment;
@@ -69,6 +66,7 @@ public class BluetoothChatService implements Serializable{
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
     private static final UUID MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private CompositeDisposable compositeDisposable;
+    private BluetoothConnection bluetoothConnection;
 
 
     private static String connectedDeviceName = "NULL";
@@ -93,7 +91,6 @@ public class BluetoothChatService implements Serializable{
         mHandler = handler;
         this.context = applicationContext;
         bluetooth = new RxBluetooth(applicationContext);
-
     }
 
     public void updateHandler(Handler handler){
@@ -102,14 +99,10 @@ public class BluetoothChatService implements Serializable{
 
     private synchronized void updateUserInterfaceTitle() {
         Log.d(TAG, "updateUserInterfaceTitle() " + " -> " + mCurrentState);
-
         // Give the new state to the Handler so the UI Activity can update
         mHandler.sendMessage(mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, mCurrentState, -1));
     }
 
-    /**
-     * Return the current connection state.
-     */
     public synchronized int getState() {
         return mCurrentState;
     }
@@ -118,48 +111,53 @@ public class BluetoothChatService implements Serializable{
 
     public void connectToDevice(BluetoothDevice device) {
         stopDiscovery();
-        compositeDisposable.add(bluetooth.connectAsClient(device, MY_UUID_SECURE).subscribe(
+        mCurrentState = Constants.STATE_CONNECTING;
+        compositeDisposable.add(bluetooth.connectAsClient(device, MY_UUID_SECURE).subscribeOn(Schedulers.computation()).subscribe(
                 bluetoothSocket -> {
                     Log.e(TAG, "connectToDevice: CONNECTED");
                     mCurrentState = Constants.STATE_CONNECTED;
                     bluetooth.cancelDiscovery();
                     updateUserInterfaceTitle();
-                }, throwable -> Log.e(TAG, "connectToDevice: FAILED TO CONNECT")));
-
-        compositeDisposable.add(bluetooth.observeConnectionState()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.computation())
-                .subscribe(event -> {
-                    switch (event.getState()) {
-                        case BluetoothAdapter.STATE_DISCONNECTED:
-                        case BluetoothAdapter.STATE_DISCONNECTING:
-                            mCurrentState = Constants.STATE_NONE;
-                            Log.e(TAG, "BLUETOOTH: DISCONNECTED");
-                            break;
-                        case BluetoothAdapter.STATE_CONNECTING:
-                            mCurrentState = Constants.STATE_CONNECTING;
-                            Log.e(TAG, "BLUETOOTH: CONNECTING");
-                            break;
-                        case BluetoothAdapter.STATE_CONNECTED:
-                            mCurrentState = Constants.STATE_CONNECTED;
-                            Log.e(TAG, "BLUETOOTH: CONNECTED");
-                            break;
-                    }
+                    compositeDisposable.clear();
+                    startChat(bluetoothSocket);
+                }, throwable -> {
+                    Log.e(TAG, "connectToDevice: FAILED TO CONNECT");
+                    mCurrentState = Constants.STATE_NONE;
                     updateUserInterfaceTitle();
-                })
-        );
+                }));
+    }
+
+    private void startChat(BluetoothSocket socket) throws Exception {
+        Log.e(TAG, "startChat: "+"START READING" );
+        bluetoothConnection = new BluetoothConnection(socket);
+        // Or just observe string
+        compositeDisposable.add(bluetoothConnection.observeStringStream()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(s -> {
+                    Log.d(TAG, "READ: " + s);
+                    mHandler.obtainMessage(Constants.MESSAGE_READ, s).sendToTarget();
+                }, throwable -> Log.e(TAG, "startChat: "+ "ERROR OCCURRED WHILE READING")));
     }
 
     public void disconnect() {
+        if (bluetoothConnection != null) {
+            bluetoothConnection.closeConnection();
+            bluetoothConnection = null;
+        }
         mCurrentState = Constants.STATE_NONE;
+        updateUserInterfaceTitle();
         destroy();
     }
 
     public void startDiscovery(BluetoothDeviceCallback callback) {
+        Log.e(TAG, "STARTING DISCOVERY");
         bluetooth.startDiscovery();
+        mCurrentState = Constants.STATE_LISTEN;
+        updateUserInterfaceTitle();
         compositeDisposable.add(bluetooth.observeDevices()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .subscribe(bluetoothDevice -> {
                     callback.onDeviceFound(bluetoothDevice);
                     Log.e(TAG, "DEVICE FOUND: "+ bluetoothDevice.getName()+ " ADDRESS: " + bluetoothDevice.getAddress());
@@ -177,19 +175,24 @@ public class BluetoothChatService implements Serializable{
     public boolean isBluetoothSupported() {
         return bluetooth.isBluetoothAvailable();
     }
+
     public boolean isBluetoothEnabled() {
         return bluetooth.isBluetoothEnabled();
     }
 
-    public void destroy() {
+    private void destroy() {
         if (bluetooth != null) {
             bluetooth.cancelDiscovery();
         }
-        compositeDisposable.dispose();
+        compositeDisposable.clear();
+        mCurrentState = Constants.STATE_NONE;
     }
 
-    public void write(byte[] message) {
-
+    public void write(String message) {
+        if (bluetoothConnection != null) {
+            Log.d(TAG, "write: " + message);
+            bluetoothConnection.send(message);
+        }
     }
 
 

@@ -98,7 +98,7 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mChatService.destroy();
+                mChatService.disconnect();
                 dismiss();
             }
         });
@@ -163,7 +163,6 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mChatService.stopDiscovery();
     }
 
     public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
@@ -218,7 +217,6 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
                         case Constants.STATE_CONNECTED:
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");
                             pDialog.dismiss();
-                            listener.setChatService(mChatService);
                             checkConnectionState.checkConnectionState();
                             Toast.makeText(context, "Bluetooth Connected", LENGTH_LONG).show();
                             break;
@@ -240,6 +238,7 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
 
     @Override
     public void onDeviceFound(BluetoothDevice device) {
+        Log.e("RPIDIALOG", "onDeviceFound: "+ device.getName());
         if (checkPiAddress(device.getAddress())) {
             addToDialog(device, raspberryDevicesText, raspberry_devices, true);
             progressBar.setVisibility(View.INVISIBLE);

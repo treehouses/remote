@@ -166,7 +166,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             @Override
             public void onClick(View v) {
                 if (connectionState) {
-                    mChatService.stopDiscovery();
+                    mChatService.disconnect();
                     connectionState = false;
                     checkConnectionState();
                     return;
@@ -189,7 +189,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             List<String> options = Arrays.asList(getResources().getStringArray(R.array.led_options));
             String[] options_code = getResources().getStringArray(R.array.led_options_commands);
             selected_LED = options.indexOf(preference);
-            writeToRPI(options_code[selected_LED]);
+            mChatService.write(options_code[selected_LED]);
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selected_LED);
             testConnectionDialog.show();
             result = false;
@@ -202,7 +202,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             transitionOnConnected();
             connectionState = true;
             checkVersionSent = true;
-            writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
+            mChatService.write("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
 
         } else {
             transitionDisconnected();
@@ -243,10 +243,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
-    private void writeToRPI(String ping) {
-//        mChatService.write(ping.getBytes());
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -263,7 +259,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             showUpgradeCLI();
         }
         else if(BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
-            writeToRPI("treehouses remote check\n");
+            mChatService.write("treehouses remote check\n");
         }
         else if (output.contains("false")){
             AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -301,7 +297,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             internetSent = false;
             if (output.trim().contains("true")) internetstatus.setImageDrawable(getResources().getDrawable(R.drawable.circle_green));
             else internetstatus.setImageDrawable(getResources().getDrawable(R.drawable.circle));
-            writeToRPI("treehouses upgrade --check\n");
+            mChatService.write("treehouses upgrade --check\n");
         }
         else {
             moreActions(output);
@@ -353,7 +349,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         super.onResume();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             checkVersionSent = true;
-            writeToRPI("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
+            mChatService.write("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
         }
     }
 }

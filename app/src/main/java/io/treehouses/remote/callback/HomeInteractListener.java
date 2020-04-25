@@ -9,5 +9,4 @@ public interface HomeInteractListener {
     void openCallFragment(Fragment f);
    // void updateHandler(Handler handler);
     BluetoothChatService getChatService();
-    void setChatService(BluetoothChatService service);
 }

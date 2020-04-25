@@ -249,26 +249,18 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
-    private void buildJSON() {
+    private void buildJSON(String s) {
         try {
-            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONObject jsonObject = new JSONObject(s);
             commands = new Gson().fromJson(jsonObject.toString(), CommandsList.class);
             updateArrayAdapters(commands);
         } catch (JSONException e) { e.printStackTrace(); }
     }
 
     private void handleJson(String readMessage) {
-        if (jsonReceiving) {
-            jsonString += readMessage.trim();
-            if (jsonString.endsWith("]}")) {
-                jsonString += readMessage.trim();
-                buildJSON();
-                jsonReceiving = false;
-                jsonSent = false;
-            }
-        } else if (readMessage.startsWith("{")) {
-            jsonReceiving = true;
-            jsonString = readMessage.trim();
+        if (readMessage.startsWith("{")) {
+            buildJSON(readMessage);
+            jsonSent = false;
         }
     }
 
