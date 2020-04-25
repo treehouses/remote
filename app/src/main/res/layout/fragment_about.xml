@@ -31,7 +31,7 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="30dp"
             android:gravity="center"
             android:padding="@dimen/padding_normal"
             android:text="@string/initial_textview"
@@ -43,7 +43,7 @@
 
         <Button
             android:id="@+id/btn_image"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_normal"
             android:layout_marginLeft="@dimen/padding_normal"
@@ -63,7 +63,7 @@
 
         <Button
             android:id="@+id/btn_gitter"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_normal"
             android:layout_marginLeft="@dimen/padding_normal"
@@ -80,7 +80,7 @@
 
         <Button
             android:id="@+id/btn_contributors"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -99,7 +99,7 @@
 
         <Button
             android:id="@+id/btn_github"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_normal"
             android:layout_marginLeft="@dimen/padding_normal"
@@ -116,7 +116,7 @@
 
         <Button
             android:id="@+id/btn_version"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
