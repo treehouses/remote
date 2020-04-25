@@ -1,6 +1,7 @@
 package io.treehouses.remote;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,9 +49,9 @@ public class InitialActivity extends PermissionActivity
     private static InitialActivity instance = null;
     private Boolean validBluetoothConnection = false;
     int REQUEST_COARSE_LOCATION = 99;
-    private static BluetoothChatService mChatService = null;
     private String mConnectedDeviceName = null;
     private NavigationView navigationView;
+    private BluetoothChatService mChatService;
     DrawerLayout drawer;
     private String TAG = "InitialActivity";
 
@@ -65,16 +66,10 @@ public class InitialActivity extends PermissionActivity
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
-
+        mChatService = getChatService();
         checkLocationPermission();
-
-        if (mChatService == (null)) {
-            Log.e(TAG, "mChatService Status: NULL");
-            mChatService = new BluetoothChatService(mHandler, getApplicationContext());
-        } else {
-            Log.e(TAG, "mChatService Status: " + mChatService.getState());
-            mChatService.updateHandler(mHandler);
-        }
+        Log.e(TAG, "mChatService Status: " + mChatService.getState());
+        mChatService.updateHandler(mHandler);
 
         checkStatusNow();
 
@@ -90,6 +85,7 @@ public class InitialActivity extends PermissionActivity
 //        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
         new GPSService(this);
     }
+
 
     public static InitialActivity getInstance() {
         return instance;
@@ -220,7 +216,7 @@ public class InitialActivity extends PermissionActivity
 
     @Override
     public BluetoothChatService getChatService() {
-        return mChatService;
+        return ((MainApplication)this.getApplicationContext()).mChatService;
     }
 
     private void checkStatusNow() {
@@ -288,6 +284,7 @@ public class InitialActivity extends PermissionActivity
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
+    @SuppressLint("HandlerLeak")
     public final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -297,12 +294,10 @@ public class InitialActivity extends PermissionActivity
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        Log.e("DEVICE", "" + mConnectedDeviceName);
-                        checkStatusNow();
+                    Log.e("DEVICE", "" + mConnectedDeviceName);
+                    checkStatusNow();
 //                        Toast.makeText(InitialActivity.this, "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
-                    }
-//                    if (null != activity) {
+                    //                    if (null != activity) {
 //                        Toast.makeText(activity, "Connected to "
 //                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
 //                    }
@@ -311,5 +306,9 @@ public class InitialActivity extends PermissionActivity
         }
     };
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mChatService.destroy();
+    }
 }

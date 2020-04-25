@@ -60,7 +60,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     private ExpandableListView network_profiles;
 
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    private BluetoothChatService mChatService = null;
     private Button connectRpi, getStarted, testConnection;
     private Boolean connectionState = false;
     private Boolean result = false;
@@ -79,7 +78,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_home_fragment, container, false);
-        mChatService = listener.getChatService();
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -168,8 +166,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             @Override
             public void onClick(View v) {
                 if (connectionState) {
-                    RPIDialogFragment.getInstance().bluetoothCheck("unregister");
-                    mChatService.stop();
+                    mChatService.stopDiscovery();
                     connectionState = false;
                     checkConnectionState();
                     return;
@@ -200,7 +197,6 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     public void checkConnectionState() {
-        mChatService = listener.getChatService();
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             showLogDialog(preferences);
             transitionOnConnected();
@@ -248,7 +244,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     private void writeToRPI(String ping) {
-        mChatService.write(ping.getBytes());
+//        mChatService.write(ping.getBytes());
     }
 
     @Override

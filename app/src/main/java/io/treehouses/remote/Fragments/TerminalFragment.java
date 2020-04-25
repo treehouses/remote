@@ -138,7 +138,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null && mChatService.getState() == Constants.STATE_NONE) {
-            mChatService.start();
+//            mChatService.start();
             idle(mPingStatus, pingStatusButton);
         }
     }

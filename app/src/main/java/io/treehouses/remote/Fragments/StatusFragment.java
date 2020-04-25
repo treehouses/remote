@@ -59,7 +59,6 @@ public class StatusFragment extends BaseFragment {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             btStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
         }
-        checkStatusNow();
 
         String ping = "hostname";
         byte[] pSend1 = ping.getBytes();
@@ -217,7 +216,6 @@ public class StatusFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    checkStatusNow();
                     break;
                 case Constants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;

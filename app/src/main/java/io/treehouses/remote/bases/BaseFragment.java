@@ -13,8 +13,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.callback.HomeInteractListener;
 
 public class BaseFragment extends Fragment {
-    public BluetoothChatService mChatService = null;
-    public BluetoothAdapter mBluetoothAdapter = null;
+    public BluetoothChatService mChatService;
 
     public HomeInteractListener listener;
 
@@ -25,30 +24,27 @@ public class BaseFragment extends Fragment {
             listener = (HomeInteractListener) context;
         else
             throw new RuntimeException("Implement interface first");
+
+        mChatService = listener.getChatService();
+
+    }
+
+    public void setupChat() {
+
     }
 
     public void onLoad(Handler mHandler) {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // If the adapter is null, then Bluetooth is not supported
-        if (mBluetoothAdapter == null) {
+        if (mChatService.isBluetoothSupported()) {
             Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
             getActivity().finish();
         }
-        checkStatusNow();
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (mChatService.isBluetoothEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
-        } else {
-            setupChat();
         }
-    }
-
-    public void checkStatusNow() {
-    }
-
-    public void setupChat() {
     }
 
 
