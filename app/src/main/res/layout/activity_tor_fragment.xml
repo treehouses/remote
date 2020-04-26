@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="#FFF"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/md_white_1000"
+        android:padding="@dimen/margin_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tor_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="@dimen/margin_medium"
+        android:text="Status: On"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="@dimen/text_size_mid" />
+
+
+    <ImageView
+        android:id="@+id/treehouse_logo"
+        android:layout_width="match_parent"
+        android:layout_height="401dp"
+        android:layout_weight="1"
+        android:padding="@dimen/margin_small"
+        app:srcCompat="@drawable/treehouses2" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_tor_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:text="Start Tor"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <Button
+            android:id="@+id/btn_advance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1"
+
+            android:background="#2196F3"
+            android:text="More"
+            android:textColor="@color/bg_white" />
+
+    </LinearLayout>
+
+
+    <Switch
+        android:id="@+id/switchNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_medium"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="Notification: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="@dimen/text_size_large" />
+
+</LinearLayout>

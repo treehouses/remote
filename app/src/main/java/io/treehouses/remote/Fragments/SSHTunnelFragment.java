@@ -15,8 +15,10 @@ import com.google.android.material.tabs.TabLayout;
 
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseServicesFragment;
+import io.treehouses.remote.callback.ServicesListener;
+import io.treehouses.remote.pojo.ServiceInfo;
 
-public class SSHTunnelFragment extends BaseServicesFragment {
+public class SSHTunnelFragment extends BaseServicesFragment implements ServicesListener {
 
     View view;
     private TabLayout tabLayout;
@@ -39,6 +41,7 @@ public class SSHTunnelFragment extends BaseServicesFragment {
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }
         });
+
         return view;
     }
 
@@ -54,6 +57,7 @@ public class SSHTunnelFragment extends BaseServicesFragment {
                 break;
             case 1:
                 Log.d("2", "Tor");
+                fragment = new TorTabFragment();
                 break;
             case 2:
                 Log.d("3", "SSH");
@@ -74,5 +78,12 @@ public class SSHTunnelFragment extends BaseServicesFragment {
         for(int i = 0; i < tabStrip.getChildCount(); i++) {
             tabStrip.getChildAt(i).setClickable(enabled);
         }
+    }
+    @Override
+    public void onClick(ServiceInfo s) {
+        Log.d("1", "onClick: " + s.name);
+        //servicesDetailsFragment.setSelected(s);
+        tabLayout.getTabAt(1).select();
+        replaceFragment(1);
     }
 }
