@@ -59,9 +59,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
     private boolean scrolled = false;
 
-    public ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){
-        this.services = serviceInfos;
-    }
+    public ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){ this.services = serviceInfos; }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -109,16 +107,12 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     private void matchOutput(String s) {
         selected =((ServiceInfo)serviceSelector.getSelectedItem());
         Log.d("Entered", "matchOutput: "+s);
-        if (s.contains("started")) {
-            selected.serviceStatus = ServiceInfo.SERVICE_RUNNING;
+        if (s.contains("started")) { selected.serviceStatus = ServiceInfo.SERVICE_RUNNING;
         } else if (s.contains("stopped and removed")) {
             selected.serviceStatus = ServiceInfo.SERVICE_AVAILABLE;
             Log.d("STOP", "matchOutput: ");
-        } else if (s.contains("stopped") && !s.contains("removed")) {
-            selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED;
-        } else if (s.contains("installed")) {
-            selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED;
-        }
+        } else if (s.contains("stopped") && !s.contains("removed")) { selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED;
+        } else if (s.contains("installed")) { selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED; }
         else {return;}
         Collections.sort(services);
         serviceCardAdapter.notifyDataSetChanged();
@@ -141,6 +135,14 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             received = true;
             openTorURL(output.trim());
             progressBar.setVisibility(View.GONE);
+        }
+        else if (output.contains("service autorun set")) {
+            setScreenState(true);
+            Toast.makeText(getContext(), "Switched autorun", Toast.LENGTH_SHORT).show();
+        }
+        else if (output.toLowerCase().contains("error")) {
+            setScreenState(true);
+            Toast.makeText(getContext(), "An Error occurred", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -202,13 +204,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
     private int countHeadersBefore(int position) {
         int count = 0;
-        for (int i = 0; i <= position; i++) {
-            if (services.get(i).isHeader()) count++;
-        }
+        for (int i = 0; i <= position; i++) { if (services.get(i).isHeader()) count++; }
         return count;
     }
     private void showDeleteDialog(ServiceInfo selected) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(getContext())
                 .setTitle("Delete " + selected.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -218,15 +218,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
                         wait = true;
                         setScreenState(false);
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                    }
-                })
-                .create();
-        alertDialog.show();
+                    }}).create().show();
     }
 
     private void onInstall(ServiceInfo selected) {
@@ -235,9 +231,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             wait = true;
             setScreenState(false);
         }
-        else if (installedOrRunning(selected)) {
-            showDeleteDialog(selected);
-        }
+        else if (installedOrRunning(selected)) { showDeleteDialog(selected); }
     }
 
     private void onStart(ServiceInfo selected) {
@@ -294,6 +288,15 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     public void onClickLink(ServiceInfo s) {
         onLink(s);
         received = false;
+    }
+
+    @Override
+    public void onClickAutorun(ServiceInfo s, boolean newAutoRun) {
+        setScreenState(false);
+        if (newAutoRun) listener.sendMessage("treehouses services "+s.name + " autorun true\n");
+        else listener.sendMessage("treehouses services "+s.name + " autorun false\n");
+
+        Toast.makeText(getContext(), "Switching autorun status to "+ newAutoRun, Toast.LENGTH_SHORT).show();
     }
 }
 

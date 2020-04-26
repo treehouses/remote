@@ -253,7 +253,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         try {
             JSONObject jsonObject = new JSONObject(s);
             commands = new Gson().fromJson(jsonObject.toString(), CommandsList.class);
-            updateArrayAdapters(commands);
+            if (commands != null) updateArrayAdapters(commands);
         } catch (JSONException e) { e.printStackTrace(); }
     }
 

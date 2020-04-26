@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,7 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
     private TextView serviceInfo;
     private Button install, start, openLink;
     private ServiceAction actionListener;
+    private CheckBox autorunCheck;
 
     public ServiceCardFragment(ServiceInfo serviceData) {
         this.serviceData = serviceData;
@@ -50,16 +53,33 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
         install = view.findViewById(R.id.install_button);
         start = view.findViewById(R.id.start_button);
         openLink = view.findViewById(R.id.openLink);
+        autorunCheck = view.findViewById(R.id.autorun_checked);
+
         if (!serviceData.isHeader()) {
             setServiceInfo(serviceData.info);
             showIcon(serviceData.icon);
             updateButtons(serviceData.serviceStatus);
+            setAutorun(serviceData.autorun);
 
             install.setOnClickListener(this);
             start.setOnClickListener(this);
             openLink.setOnClickListener(this);
+            autorunCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    actionListener.onClickAutorun(serviceData, isChecked);
+                }
+            });
         }
         return view;
+    }
+
+    private void setAutorun(String autorun) {
+        if (autorun.contains("true")) {
+            autorunCheck.setChecked(true);
+        } else {
+            autorunCheck.setChecked(false);
+        }
     }
 
     private void setButtons(boolean started, boolean installed, boolean three) {
@@ -73,10 +93,12 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
         }
         if (installed) {
             install.setText("Uninstall");
-            start.setEnabled(true);
+            start.setVisibility(View.VISIBLE);
+            autorunCheck.setVisibility(View.VISIBLE);
         } else {
             install.setText("Install");
-            start.setEnabled(false);
+            start.setVisibility(View.GONE);
+            autorunCheck.setVisibility(View.GONE);
         }
         //restart.setEnabled(three);
     }
