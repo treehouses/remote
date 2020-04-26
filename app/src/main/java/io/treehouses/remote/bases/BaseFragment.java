@@ -37,11 +37,11 @@ public class BaseFragment extends Fragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         // If the adapter is null, then Bluetooth is not supported
-        if (mChatService.isBluetoothSupported()) {
+        if (!mChatService.isBluetoothSupported()) {
             Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
             getActivity().finish();
         }
-        if (mChatService.isBluetoothEnabled()) {
+        if (!mChatService.isBluetoothEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, Constants.REQUEST_ENABLE_BT);
         }

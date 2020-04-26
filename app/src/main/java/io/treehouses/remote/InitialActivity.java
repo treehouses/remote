@@ -297,6 +297,7 @@ public class InitialActivity extends PermissionActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.e(TAG, "onDestroy: "+"DESTROYED");
         mChatService.disconnect();
     }
 }

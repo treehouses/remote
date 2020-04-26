@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.PictureDrawable;
@@ -86,6 +87,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         return view;
     }
 
+    @SuppressLint("HandlerLeak")
     public final Handler handlerDetails = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -97,7 +99,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
                     break;
 
                 case Constants.MESSAGE_WRITE:
-                    String write_msg = new String((byte[]) msg.obj);
+                    String write_msg = (String) msg.obj;
                     Log.d("WRITE", write_msg);
                     break;
             }

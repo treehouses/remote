@@ -116,7 +116,7 @@ public class StatusFragment extends BaseFragment {
             rpiVersion = res[3];
             writeToRPI("treehouses memory free");
         } else if (lastCommand.equals("treehouses memory free")) {
-            setCard(tvMemory, memoryStatus, "Memory: " + readMessage + "bytes available");
+            setCard(tvMemory, memoryStatus, "Memory: " + readMessage + " bytes available");
             writeToRPI("treehouses internet");
         } else if (lastCommand.equals("treehouses internet")) {
             checkWifiStatus(readMessage);

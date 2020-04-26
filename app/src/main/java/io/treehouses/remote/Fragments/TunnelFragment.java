@@ -91,10 +91,6 @@ public class TunnelFragment extends BaseTerminalFragment {
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        if (mChatService.getState() == Constants.STATE_NONE) {
-            mChatService = new BluetoothChatService(mHandler, getActivity().getApplicationContext());
-        }
         // Initialize the buffer for outgoing messages
         new StringBuilder();
     }
@@ -122,17 +118,10 @@ public class TunnelFragment extends BaseTerminalFragment {
 
     private void configConditions(String readMessage) {
         if (readMessage.trim().contains("Error")) {
-            try {
-                listener.sendMessage("treehouses tor start");
-                Thread.sleep(300);
-                listener.sendMessage("treehouses tor add 80");
-                Thread.sleep(300);
-                listener.sendMessage("treehouses tor add 22");
-                Thread.sleep(300);
-                listener.sendMessage("treehouses tor add 2200");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            listener.sendMessage("treehouses tor start\n");
+            listener.sendMessage("treehouses tor add 80\n");
+            listener.sendMessage("treehouses tor add 22\n");
+            listener.sendMessage("treehouses tor add 2200\n");
         }
     }
 
@@ -154,10 +143,6 @@ public class TunnelFragment extends BaseTerminalFragment {
                     configConditions(readMessage);
                     handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    Activity activity = getActivity();
-                    handlerCaseName(msg, activity);
                     break;
                 case Constants.MESSAGE_TOAST:
                     handlerCaseToast(msg);

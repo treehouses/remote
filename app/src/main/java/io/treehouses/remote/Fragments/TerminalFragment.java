@@ -287,9 +287,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                     else { handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                         filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList()); }
                     break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    handlerCaseName(msg, getActivity());
-                    break;
                 case Constants.MESSAGE_TOAST:
                     handlerCaseToast(msg);
                     break;

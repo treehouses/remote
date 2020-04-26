@@ -46,7 +46,6 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
         serviceInfo = view.findViewById(R.id.service_info);
         serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
         serviceInfo.setFocusable(true);
-//        services = new ArrayList<>();
 
         install = view.findViewById(R.id.install_button);
         start = view.findViewById(R.id.start_button);

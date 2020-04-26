@@ -93,7 +93,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
                     }
                     break;
                 case Constants.MESSAGE_WRITE:
-                    String write_msg = new String((byte[]) msg.obj);
+                    String write_msg = (String) msg.obj;
                     Log.d("WRITE", write_msg);
                     break;
             }

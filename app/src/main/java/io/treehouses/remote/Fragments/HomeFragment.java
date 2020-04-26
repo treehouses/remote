@@ -77,6 +77,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.activity_home_fragment, container, false);
         connectRpi = view.findViewById(R.id.btn_connect);
         getStarted = view.findViewById(R.id.btn_getStarted);
@@ -202,13 +203,13 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             transitionOnConnected();
             connectionState = true;
             checkVersionSent = true;
+            mChatService.updateHandler(mHandler);
             mChatService.write("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
 
         } else {
             transitionDisconnected();
             connectionState = false;
         }
-        mChatService.updateHandler(mHandler);
     }
 
     private void transitionOnConnected() {
@@ -325,6 +326,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         }
     }
 
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -343,13 +345,4 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             }
         }
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mChatService.getState() == Constants.STATE_CONNECTED) {
-            checkVersionSent = true;
-            mChatService.write("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
-        }
-    }
 }

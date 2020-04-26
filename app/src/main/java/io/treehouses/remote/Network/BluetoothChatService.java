@@ -22,30 +22,32 @@ package io.treehouses.remote.Network;
  * Created by yubo on 7/11/17.
  */
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import com.github.ivbaranov.rxbluetooth.BluetoothConnection;
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
+import io.reactivex.FlowableOperator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import io.treehouses.remote.Fragments.HomeFragment;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.callback.BluetoothDeviceCallback;
 
@@ -59,6 +61,7 @@ import io.treehouses.remote.callback.BluetoothDeviceCallback;
 public class BluetoothChatService implements Serializable{
     // Debugging
     private static final String TAG = "BluetoothChatService";
+    private static final int DELIMITER = '~';
 
     // Name for the SDP record when creating server socket
     private static final String NAME_SECURE = "BluetoothChatSecure";
@@ -75,10 +78,14 @@ public class BluetoothChatService implements Serializable{
     private static Handler mHandler;
 
     private int mCurrentState;
-    private boolean bNoReconnect;
     private RxBluetooth bluetooth;
 
     private Context context;
+
+    private Queue<String> sentCommands;
+    private boolean switchedHandler = false;
+    private Handler tempHandler;
+    private Queue<String> tempToSendCommands;
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
@@ -90,11 +97,22 @@ public class BluetoothChatService implements Serializable{
         mCurrentState = Constants.STATE_NONE;
         mHandler = handler;
         this.context = applicationContext;
+        sentCommands = new LinkedList<>();
+        tempToSendCommands = new LinkedList<>();
         bluetooth = new RxBluetooth(applicationContext);
     }
 
     public void updateHandler(Handler handler){
-        mHandler = handler;
+        Log.e(TAG, "updateHandler:");
+        if (!sentCommands.isEmpty()) {
+            Log.e(TAG, "updateHandler: with overflow");
+            switchedHandler = true;
+            tempHandler = handler;
+            tempToSendCommands.clear();
+        } else {
+            Log.e(TAG, "updateHandler: without overflow");
+            mHandler = handler;
+        }
     }
 
     private synchronized void updateUserInterfaceTitle() {
@@ -107,14 +125,18 @@ public class BluetoothChatService implements Serializable{
         return mCurrentState;
     }
 
-    public String getConnectedDeviceName(){return connectedDeviceName;}
+    public String getConnectedDeviceName(){
+        if (mDevice != null) return  mDevice.getName();
+        return "NO DEVICE CONNECTED";
+    }
 
     public void connectToDevice(BluetoothDevice device) {
         stopDiscovery();
         mCurrentState = Constants.STATE_CONNECTING;
         compositeDisposable.add(bluetooth.connectAsClient(device, MY_UUID_SECURE).subscribeOn(Schedulers.computation()).subscribe(
                 bluetoothSocket -> {
-                    Log.e(TAG, "connectToDevice: CONNECTED");
+                    Log.e(TAG, "connectToDevice: CONNECTED to " + device.getName());
+                    mDevice = device;
                     mCurrentState = Constants.STATE_CONNECTED;
                     bluetooth.cancelDiscovery();
                     updateUserInterfaceTitle();
@@ -130,20 +152,42 @@ public class BluetoothChatService implements Serializable{
     private void startChat(BluetoothSocket socket) throws Exception {
         Log.e(TAG, "startChat: "+"START READING" );
         bluetoothConnection = new BluetoothConnection(socket);
-        // Or just observe string
-        compositeDisposable.add(bluetoothConnection.observeStringStream()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+
+        compositeDisposable.add(bluetoothConnection.observeByteStream().lift((FlowableOperator<String, Byte>) this::getWriter).onBackpressureBuffer().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
                 .subscribe(s -> {
+                    // READ COMMAND RESPONSE
                     Log.d(TAG, "READ: " + s);
-                    mHandler.obtainMessage(Constants.MESSAGE_READ, s).sendToTarget();
-                }, throwable -> Log.e(TAG, "startChat: "+ "ERROR OCCURRED WHILE READING")));
+                    //Remove the last command because response has been received
+                    if (!sentCommands.isEmpty()) sentCommands.remove();
+                    //Send the response to the target
+                    if (!switchedHandler) mHandler.obtainMessage(Constants.MESSAGE_READ, s).sendToTarget();
+
+                    //Sent all the waiting commands
+                    if (switchedHandler && sentCommands.isEmpty()) {
+                        Log.e(TAG, "SENT ALL PREVIOUS");
+                        switchedHandler = false;
+                        mHandler = tempHandler;
+                        writeOverflow();
+                    }
+
+                }, throwable -> {
+                    Log.e(TAG, "startChat: "+ "ERROR OCCURRED WHILE READING");
+                    disconnect();
+                }));
+    }
+
+    private void writeOverflow() {
+        while (!tempToSendCommands.isEmpty()) {
+            write(tempToSendCommands.remove());
+        }
     }
 
     public void disconnect() {
+        Log.e(TAG, "DISCONNECTING");
         if (bluetoothConnection != null) {
             bluetoothConnection.closeConnection();
             bluetoothConnection = null;
+            mDevice = null;
         }
         mCurrentState = Constants.STATE_NONE;
         updateUserInterfaceTitle();
@@ -181,6 +225,7 @@ public class BluetoothChatService implements Serializable{
     }
 
     private void destroy() {
+        Log.e(TAG, "DESTROYING");
         if (bluetooth != null) {
             bluetooth.cancelDiscovery();
         }
@@ -190,9 +235,71 @@ public class BluetoothChatService implements Serializable{
 
     public void write(String message) {
         if (bluetoothConnection != null) {
+
             Log.d(TAG, "write: " + message);
-            bluetoothConnection.send(message);
+            if (switchedHandler) {
+                Log.e(TAG, "WRITING TO TEMP: "+message);
+                tempToSendCommands.add(message);
+            } else {
+                Log.e(TAG, "SENDING TO BLUETOOTH: "+message);
+                sentCommands.add(message);
+                bluetoothConnection.send(message);
+            }
+            mHandler.obtainMessage(Constants.MESSAGE_WRITE, message).sendToTarget();
+        } else {
+            Log.e(TAG, "Error while writing to bluetooth");
         }
+    }
+
+    private Subscriber getWriter(Subscriber subscriber) {
+        return new Subscriber<Byte>() {
+            ArrayList<Byte> buffer = new ArrayList<>();
+            @Override
+            public void onSubscribe(Subscription d) {
+                subscriber.onSubscribe(d);
+            }
+
+            @Override
+            public void onComplete() {
+                if (!buffer.isEmpty()) {
+                    emit();
+                }
+                subscriber.onComplete();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (!buffer.isEmpty()) {
+                    emit();
+                }
+                subscriber.onError(e);
+            }
+
+            @Override
+            public void onNext(Byte b) {
+                if (b == DELIMITER) {
+                    emit();
+                } else {
+                    buffer.add(b);
+                }
+            }
+
+            private void emit() {
+                if (buffer.isEmpty()) {
+                    subscriber.onNext("");
+                    return;
+                }
+
+                byte[] bArray = new byte[buffer.size()];
+
+                for (int i = 0; i < buffer.size(); i++) {
+                    bArray[i] = buffer.get(i);
+                }
+
+                subscriber.onNext(new String(bArray));
+                buffer.clear();
+            }
+        };
     }
 
 

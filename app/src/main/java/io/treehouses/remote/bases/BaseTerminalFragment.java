@@ -41,7 +41,7 @@ public class BaseTerminalFragment extends BaseFragment{
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
 
-        byte[] writeBuf = (byte[]) msg.obj;
+        String writeBuf = (String) msg.obj;
         // construct a string from the buffer
         String writeMessage = new String(writeBuf);
         if (!writeMessage.contains("google.com") && !writeMessage.contains("remote")) {
@@ -49,15 +49,6 @@ public class BaseTerminalFragment extends BaseFragment{
             mConversationArrayAdapter.add("\nCommand:  " + writeMessage);
         }
         return writeMessage;
-    }
-
-    public void handlerCaseName(Message msg, Activity activity ) {
-        // save the connected device's name
-        String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-        if (null != activity) {
-            Toast.makeText(activity, "Connected to "
-                    + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-        }
     }
 
     public void handlerCaseToast(Message msg) {
@@ -123,7 +114,7 @@ public class BaseTerminalFragment extends BaseFragment{
 
     protected void filterMessages(String readMessage, ArrayAdapter mConversationArrayAdapter, ArrayList list) {
         //make it so text doesn't show on chat (need a better way to check multiple strings since mConversationArrayAdapter only takes messages line by line)
-        if (filterMessage(readMessage)) {
+        if (filterMessage(readMessage) && mConversationArrayAdapter != null) {
             list.add(readMessage);
             mConversationArrayAdapter.notifyDataSetChanged();
         }
