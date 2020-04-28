@@ -32,10 +32,10 @@
     <ImageView
         android:id="@+id/treehouse_logo"
         android:layout_width="match_parent"
-        android:layout_height="401dp"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="@dimen/margin_small"
-        app:srcCompat="@drawable/treehouses2" />
+        android:padding="@dimen/margin_huge"
+        app:srcCompat="@drawable/tor" />
 
 
     <LinearLayout
@@ -72,7 +72,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="32dp"
             android:layout_weight="1"
 
             android:background="#2196F3"
@@ -81,15 +81,5 @@
 
     </LinearLayout>
 
-
-    <Switch
-        android:id="@+id/switchNotification"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/margin_medium"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="Notification: "
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textSize="@dimen/text_size_large" />
 
 </LinearLayout>
