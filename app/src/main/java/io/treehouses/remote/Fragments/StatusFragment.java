@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class StatusFragment extends BaseFragment {
         mChatService.updateHandler(mHandler);
         deviceName = mChatService.getConnectedDeviceName();
 
-        tvStatus.setText("Bluetooth Connection: " + deviceName);
+        tvStatus.setText(String.format("Bluetooth Connection: %s", deviceName));
 
         Log.e("STATUS", "device name: " + deviceName);
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
@@ -112,7 +113,7 @@ public class StatusFragment extends BaseFragment {
         } else if (readMessage.split(" ").length == 5 && lastCommand.equals("treehouses remote status")) {
             String[] res = readMessage.split(" ");
             setCard(tvStatus1, wifiStatus, "RPI Wifi Connection : " + res[0]);
-            tvImage.setText("Treehouses Image Version: " + res[2]);
+            tvImage.setText(String.format("Treehouses Image Version: %s", res[2]));
             setCard(tvStatus3, rpiType, "RPI Type : " + res[4]);
             rpiVersion = res[3];
             writeToRPI("treehouses memory free");
@@ -127,7 +128,7 @@ public class StatusFragment extends BaseFragment {
     }
 
     private void checkWifiStatus(String readMessage) {
-        tvStatus1.setText("RPI Wifi Connection: " + readMessage);
+        tvStatus1.setText(String.format("RPI Wifi Connection: %s", readMessage));
         if (readMessage.startsWith("true")) {
             wifiStatus.setImageDrawable(getResources().getDrawable(R.drawable.tick));
             writeToRPI("treehouses upgrade --check");
@@ -162,11 +163,11 @@ public class StatusFragment extends BaseFragment {
         checkUpgradeNow();
         if (readMessage.startsWith("false ") && readMessage.length() < 14) {
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick));
-            tvUpgrade.setText("Upgrade Status: Latest Version: " + rpiVersion);
+            tvUpgrade.setText(String.format("Upgrade Status: Latest Version: %s", rpiVersion));
             upgrade.setVisibility(View.GONE);
         } else if (readMessage.startsWith("true ") && readMessage.length() < 14){
             ivUpgrade.setImageDrawable(getResources().getDrawable(R.drawable.tick_png));
-            tvUpgrade.setText("Upgrade available from " + rpiVersion + " to " + readMessage.substring(4));
+            tvUpgrade.setText(String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4)));
             upgrade.setVisibility(View.VISIBLE);
         }
     }
@@ -183,27 +184,23 @@ public class StatusFragment extends BaseFragment {
     private AlertDialog createRenameDialog(View view, EditText mEditText) {
         return new AlertDialog.Builder(getActivity())
                 .setView(view).setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-"))).setIcon(R.drawable.dialog_icon)
-                .setPositiveButton("Rename", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (!mEditText.getText().toString().equals("")) {
-                                    writeToRPI("treehouses rename " + mEditText.getText().toString());
-                                    Toast.makeText(getContext(), "Raspberry Pi Renamed", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(getContext(), "Please enter a new name", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }
+                .setPositiveButton("Rename", (dialog, which) -> {
+                    if (!mEditText.getText().toString().equals("")) {
+                        writeToRPI("treehouses rename " + mEditText.getText().toString());
+                        Toast.makeText(getContext(), "Raspberry Pi Renamed", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Please enter a new name", Toast.LENGTH_LONG).show();
+                    }
+                }
                 )
                 .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                 .create();
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        try {
-            notificationListener = (NotificationCallback) getContext();
+        try { notificationListener = (NotificationCallback) getContext();
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NotificationListener");
         }

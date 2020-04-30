@@ -49,40 +49,28 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
 
         setAddProfileListener();
 
-        searchWifi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWifiDialog(WifiBottomSheet.this, context);
-
-            }
-        });
+        searchWifi.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
 
         return v;
     }
 
     private void setStartConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String ssid = ssidText.getText().toString();
-                String password = passwordText.getText().toString();
-                listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
-                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
-            }
+        startConfig.setOnClickListener(v -> {
+            String ssid = ssidText.getText().toString();
+            String password = passwordText.getText().toString();
+            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
-                Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
-            }
+        addProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
+            Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
 

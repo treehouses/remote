@@ -64,12 +64,7 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
             install.setOnClickListener(this);
             start.setOnClickListener(this);
             openLink.setOnClickListener(this);
-            autorunCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    actionListener.onClickAutorun(serviceData, isChecked);
-                }
-            });
+            autorunCheck.setOnCheckedChangeListener((buttonView, isChecked) -> actionListener.onClickAutorun(serviceData, isChecked));
         }
         return view;
     }

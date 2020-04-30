@@ -50,31 +50,25 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void startConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (passwordText.getText().toString().isEmpty()) {
-                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                } else {
-                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                }
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
+        startConfig.setOnClickListener(v -> {
+            if (passwordText.getText().toString().isEmpty()) {
+                listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            } else {
+                listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
-                Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
-            }
+        addProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
+            Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
 }

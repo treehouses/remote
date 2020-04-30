@@ -175,12 +175,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
     }
 
     public void getListener(final AlertDialog mDialog) {
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                dialogButtonTrueOrFalse(mDialog, false);
-            }
-        });
+        mDialog.setOnShowListener(dialog -> dialogButtonTrueOrFalse(mDialog, false));
     }
     }
 

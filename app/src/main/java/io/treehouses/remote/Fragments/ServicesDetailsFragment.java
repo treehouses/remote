@@ -41,7 +41,7 @@ import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesDetailsFragment extends BaseServicesFragment implements AdapterView.OnItemSelectedListener, ViewPager.OnPageChangeListener, ServiceAction {
 
-    View view;
+    private View view;
     private Spinner serviceSelector;
     private ProgressBar progressBar;
 
@@ -58,7 +58,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
     private boolean scrolled = false;
 
-    public ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){ this.services = serviceInfos; }
+    ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){ this.services = serviceInfos; }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,7 +84,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         return view;
     }
 
-    public final Handler handlerDetails = new Handler() {
+    final Handler handlerDetails = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
@@ -159,7 +159,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     public void onNothingSelected(AdapterView<?> parent) { }
 
 
-    public void setSelected(ServiceInfo s) {
+    void setSelected(ServiceInfo s) {
         Log.d("SELECTED", "setSelected: " + s.name);
         selected = s;
     }
@@ -208,18 +208,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         new AlertDialog.Builder(getContext())
                 .setTitle("Delete " + selected.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
-                        wait = true;
-                        setScreenState(false);
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }}).create().show();
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
+                    wait = true;
+                    setScreenState(false);
+                }).setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).create().show();
     }
 
     private void onInstall(ServiceInfo selected) {
@@ -259,7 +252,6 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         setOnClick(view, R.id.tor_button, "treehouses services " + selected.name + " url tor \n", alertDialog);
 
         alertDialog.show();
-//        received = false;
     }
 
     private void setScreenState(boolean state) {
@@ -270,9 +262,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     }
 
     @Override
-    public void onClickInstall(ServiceInfo s) {
-        onInstall(s);
-    }
+    public void onClickInstall(ServiceInfo s) { onInstall(s); }
 
     @Override
     public void onClickStart(ServiceInfo s) {

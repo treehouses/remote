@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.json.JSONException;
@@ -105,21 +106,18 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                 Arrays.asList(group_labels), SaveUtils.getProfiles(getContext()));
 
         network_profiles.setAdapter(profileAdapter);
-        network_profiles.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                if (groupPosition == 3) {
-                    listener.sendMessage("treehouses default network");
-                    Toast.makeText(getContext(),"Switched to Default Network", Toast.LENGTH_LONG).show();
-                }
-                else if (SaveUtils.getProfiles(getContext()).size() > 0 && SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() > 0) {
-                    if (SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() <= childPosition) return false;
-                    networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
-                    listener.sendMessage("treehouses default network \n");
-                    Toast.makeText(getContext(), "Configuring...", Toast.LENGTH_LONG).show();
-                }
-                return false;
+        network_profiles.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            if (groupPosition == 3) {
+                listener.sendMessage("treehouses default network");
+                Toast.makeText(getContext(),"Switched to Default Network", Toast.LENGTH_LONG).show();
             }
+            else if (SaveUtils.getProfiles(getContext()).size() > 0 && SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() > 0) {
+                if (SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).size() <= childPosition) return false;
+                networkProfile = SaveUtils.getProfiles(getContext()).get(Arrays.asList(group_labels).get(groupPosition)).get(childPosition);
+                listener.sendMessage("treehouses default network \n");
+                Toast.makeText(getContext(), "Configuring...", Toast.LENGTH_LONG).show();
+            }
+            return false;
         });
     }
 
@@ -163,25 +161,22 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
 
-    public void connectRpiListener() {
-        connectRpi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (connectionState) {
-                    RPIDialogFragment.getInstance().bluetoothCheck("unregister");
-                    mChatService.stop();
-                    connectionState = false;
-                    checkConnectionState();
-                    return;
-                }
+    private void connectRpiListener() {
+        connectRpi.setOnClickListener(v -> {
+            if (connectionState) {
+                RPIDialogFragment.getInstance().bluetoothCheck("unregister");
+                mChatService.stop();
+                connectionState = false;
+                checkConnectionState();
+                return;
+            }
 
-                if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog(HomeFragment.this);
-                }
+            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
+            } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                showRPIDialog(HomeFragment.this);
             }
         });
     }
@@ -252,7 +247,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try { notificationListener = (NotificationCallback) getContext();
         } catch (ClassCastException e) { throw new ClassCastException("Activity must implement NotificationListener"); }
@@ -273,15 +268,12 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
             AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                     .setTitle("Update Required")
                     .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
-                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final String appPackageName = getActivity().getPackageName(); // getPackageName() from Context or Activity object
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                            } catch (android.content.ActivityNotFoundException anfe) {
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                            }
+                    .setPositiveButton("Update", (dialog, which) -> {
+                        final String appPackageName = getActivity().getPackageName(); // getPackageName() from Context or Activity object
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        } catch (android.content.ActivityNotFoundException anfe) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
                         }
                     }).create();
             alertDialog.show();

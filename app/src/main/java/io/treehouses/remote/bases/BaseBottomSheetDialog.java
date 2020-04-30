@@ -2,6 +2,8 @@ package io.treehouses.remote.bases;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.treehouses.remote.callback.HomeInteractListener;
@@ -11,7 +13,7 @@ public class BaseBottomSheetDialog extends BottomSheetDialogFragment {
     protected HomeInteractListener listener;
 
     @Override
-    public void onAttach(Context c) {
+    public void onAttach(@NonNull Context c) {
         super.onAttach(c);
         try {
             listener = (HomeInteractListener) c;

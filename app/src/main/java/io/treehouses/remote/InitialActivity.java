@@ -87,7 +87,6 @@ public class InitialActivity extends PermissionActivity
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setItemIconTintList(null);
-//        navigationView.addHeaderView(getResources().getLayout(R.layout.navigation_view_header));
         new GPSService(this);
     }
 
@@ -190,17 +189,12 @@ public class InitialActivity extends PermissionActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 99: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-                    //TODO re-request
-                }
-                break;
-            }
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == 99) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(InitialActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
+            }  //TODO re-request
+
         }
     }
 
@@ -245,8 +239,8 @@ public class InitialActivity extends PermissionActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private AlertDialog showAlertDialog() {
-        return new AlertDialog.Builder(InitialActivity.this)
+    private void showAlertDialog() {
+        new AlertDialog.Builder(InitialActivity.this)
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
                 .setIcon(R.drawable.bluetooth)
@@ -297,15 +291,10 @@ public class InitialActivity extends PermissionActivity
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
+                    if (!mConnectedDeviceName.equals("") || mConnectedDeviceName != null) {
                         Log.e("DEVICE", "" + mConnectedDeviceName);
                         checkStatusNow();
-//                        Toast.makeText(InitialActivity.this, "Connected to "+mConnectedDeviceName, Toast.LENGTH_LONG).show();
                     }
-//                    if (null != activity) {
-//                        Toast.makeText(activity, "Connected to "
-//                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-//                    }
                     break;
             }
         }

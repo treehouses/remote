@@ -22,10 +22,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     }
 
-    public SettingsFragment getInstance() {
-        return new SettingsFragment();
-    }
-
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.app_preferences, rootKey);
@@ -78,17 +74,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         new AlertDialog.Builder(getContext())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(positive, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onClickDialog(ID);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
+                .setPositiveButton(positive, (dialog, which) -> onClickDialog(ID))
+                .setNegativeButton("Cancel", (dialog, which) -> { })
                 .create()
                 .show();
     }
