@@ -65,7 +65,7 @@
 
 
         <Button
-            android:id="@+id/btn_advance"
+            android:id="@+id/btn_tor_more"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
