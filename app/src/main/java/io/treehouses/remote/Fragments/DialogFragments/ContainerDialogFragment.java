@@ -3,7 +3,6 @@ package io.treehouses.remote.Fragments.DialogFragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
@@ -23,18 +23,18 @@ public class ContainerDialogFragment extends DialogFragment {
     private static final String TAG = "ContainerDialogFragment";
 
     // Layout Views
-    protected Spinner mSpinner;
+    private Spinner mSpinner;
 
     public static ContainerDialogFragment newInstance(int num){
 
-        ContainerDialogFragment dialogFragment = new ContainerDialogFragment();
-//        Bundle bundle = new Bundle();
+        //        Bundle bundle = new Bundle();
 //        bundle.putInt("num", num);
 //        dialogFragment.setArguments(bundle);
 
-        return dialogFragment;
+        return new ContainerDialogFragment();
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.d(TAG,"In onCreateDialog()");
@@ -53,34 +53,27 @@ public class ContainerDialogFragment extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
 
-        final AlertDialog mDialog = getAlertDialog(mView);
-        return mDialog;
+        return getAlertDialog(mView);
     }
 
-    protected AlertDialog getAlertDialog(View mView) {
+    private AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
                 .setTitle(R.string.dialog_message)
                 .setIcon(R.drawable.dialog_icon)
                 .setPositiveButton(R.string.start_configuration,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                String container = mSpinner.getSelectedItem().toString();
-                                Intent intent = new Intent();
-                                intent.putExtra("container",container);
-                                intent.putExtra("type", "container");
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                            }
+                        (dialog, whichButton) -> {
+                            String container = mSpinner.getSelectedItem().toString();
+                            Intent intent = new Intent();
+                            intent.putExtra("container",container);
+                            intent.putExtra("type", "container");
+                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                         }
                 )
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
-                    }
-                })
+                .setNegativeButton(R.string.cancel, (dialog, whichButton) -> getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent()))
                 .create();
     }
-    protected void initLayoutView(View mView) {
+    private void initLayoutView(View mView) {
         mSpinner = mView.findViewById(R.id.spinner);
     }
 }

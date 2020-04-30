@@ -1,19 +1,16 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.content.Intent;
-import android.net.Uri;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -29,10 +26,10 @@ import io.treehouses.remote.utils.LogUtils;
 
 
 public class BaseHomeFragment extends BaseFragment {
-    public SharedPreferences preferences;
-    public String imageVersion = "", tresshousesVersion = "", bluetoothMac = "", rpiVersion;
+    protected SharedPreferences preferences;
+    private String imageVersion = "", tresshousesVersion = "", bluetoothMac = "", rpiVersion;
 
-    public void setAnimatorBackgrounds(ImageView green, ImageView red, int option) {
+    private void setAnimatorBackgrounds(ImageView green, ImageView red, int option) {
         if (option == 1) {
             green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
             red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
@@ -55,17 +52,17 @@ public class BaseHomeFragment extends BaseFragment {
 
         if (lastDialogShown < date.getTimeInMillis() && !preferences.getBoolean("send_log", false)) {
             if (connectionCount >= 3) {
-                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).commit();
+                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().getTimeInMillis()).apply();
                 new AlertDialog.Builder(getActivity()).setTitle("Sharing is Caring  " + emoji).setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve."  )
                         .setPositiveButton("Continue", (dialogInterface, i) -> {
-                            preferences.edit().putBoolean("send_log", true).commit();
+                            preferences.edit().putBoolean("send_log", true).apply();
                         }).setNegativeButton("Cancel", (dialogInterface, i) -> MainApplication.showLogDialog = false).setView(v).show();
             }
         }
     }
 
-    public void rate(SharedPreferences preferences) {
+    protected void rate(SharedPreferences preferences) {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean ratingDialog = preferences.getBoolean("ratingDialog", true);
         LogUtils.log(connectionCount + "  " + ratingDialog);
@@ -79,14 +76,14 @@ public class BaseHomeFragment extends BaseFragment {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote"));
                     startActivity(intent);
-                    preferences.edit().putBoolean("ratingDialog", false).commit();
+                    preferences.edit().putBoolean("ratingDialog", false).apply();
                 }).setNeutralButton("REMIND ME LATER", (dialogInterface, i)->{MainApplication.ratingDialog = false;})
-                .setNegativeButton("NO THANKS", (dialogInterface, i) -> { preferences.edit().putBoolean("ratingDialog", false).commit();
+                .setNegativeButton("NO THANKS", (dialogInterface, i) -> { preferences.edit().putBoolean("ratingDialog", false).apply();
                 }).show();
     }}}
 
 
-    public void checkImageInfo(String[] readMessage, String deviceName) {
+    protected void checkImageInfo(String[] readMessage, String deviceName) {
         bluetoothMac = readMessage[0];
         imageVersion = readMessage[1];
         tresshousesVersion = readMessage[2];
@@ -98,7 +95,7 @@ public class BaseHomeFragment extends BaseFragment {
     private void sendLog(String deviceName) {
         int connectionCount = preferences.getInt("connection_count", 0);
         boolean sendLog = preferences.getBoolean("send_log", true);
-        preferences.edit().putInt("connection_count", connectionCount + 1).commit();
+        preferences.edit().putInt("connection_count", connectionCount + 1).apply();
         if (connectionCount >= 3 && sendLog) {
             HashMap<String, String> map = new HashMap<>();
             map.put("imageVersion", imageVersion);
@@ -117,7 +114,7 @@ public class BaseHomeFragment extends BaseFragment {
             showWelcomeDialog();
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("dialogShown", true);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -136,7 +133,7 @@ public class BaseHomeFragment extends BaseFragment {
         return d;
     }
 
-    public AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID, int selected_LED) {
+    protected AlertDialog showTestConnectionDialog(Boolean dismissable, String title, int messageID, int selected_LED) {
         View mView = getLayoutInflater().inflate(R.layout.dialog_test_connection, null);
         ImageView mIndicatorGreen = mView.findViewById(R.id.flash_indicator_green);
         ImageView mIndicatorRed = mView.findViewById(R.id.flash_indicator_red);
@@ -157,7 +154,7 @@ public class BaseHomeFragment extends BaseFragment {
         return a;
     }
 
-    public AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
+    private AlertDialog createTestConnectionDialog(View mView, Boolean dismissable, String title, int messageID) {
         AlertDialog.Builder d = new AlertDialog.Builder(getContext()).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID);
         if (dismissable) d.setNegativeButton("OK", (dialog, which) -> dialog.dismiss());
         return d.create();
@@ -177,20 +174,12 @@ public class BaseHomeFragment extends BaseFragment {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Update Treehouses CLI")
                 .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
-                .setPositiveButton("Upgrade", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listener.sendMessage("treehouses upgrade \n");
-                        Toast.makeText(getContext(), "Upgraded", Toast.LENGTH_LONG).show();
-                        dialog.dismiss();
-                    }
+                .setPositiveButton("Upgrade", (dialog, which) -> {
+                    listener.sendMessage("treehouses upgrade \n");
+                    Toast.makeText(getContext(), "Upgraded", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
                 })
-                .setNegativeButton("Upgrade Later", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton("Upgrade Later", (dialog, which) -> dialog.dismiss())
                 .create();
         alertDialog.show();
     }

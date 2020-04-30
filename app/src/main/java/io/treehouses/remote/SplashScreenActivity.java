@@ -34,13 +34,10 @@ public class SplashScreenActivity extends AppCompatActivity {
             logoText.setAnimation(textAnimation);
 
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(SplashScreenActivity.this, InitialActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+            new Handler().postDelayed(() -> {
+                Intent intent = new Intent(SplashScreenActivity.this, InitialActivity.class);
+                startActivity(intent);
+                finish();
             }, SPLASH_TIME_OUT);
         } else {
             Intent intent = new Intent(SplashScreenActivity.this, InitialActivity.class);
