@@ -34,7 +34,6 @@ public class BaseHomeFragment extends BaseFragment {
     public String imageVersion = "", tresshousesVersion = "", bluetoothMac = "", rpiVersion;
 
     public void setAnimatorBackgrounds(ImageView green, ImageView red, int option) {
-        Log.d("1", String.valueOf(option));
         if (option == 1) {
             green.setBackgroundResource(R.drawable.thanksgiving_anim_green);
             red.setBackgroundResource(R.drawable.thanksgiving_anim_red);
