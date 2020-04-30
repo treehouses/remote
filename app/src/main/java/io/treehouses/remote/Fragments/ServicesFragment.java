@@ -13,10 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -25,11 +23,9 @@ import java.util.Objects;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
-import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServicesListener;
 import io.treehouses.remote.pojo.ServiceInfo;
-import io.treehouses.remote.pojo.ServicesData;
 
 public class ServicesFragment extends BaseServicesFragment implements ServicesListener {
 

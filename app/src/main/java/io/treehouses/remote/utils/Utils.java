@@ -10,8 +10,6 @@ import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.fragment.app.FragmentActivity;
-
 public class Utils {
     public static void copyToClipboard(Context context, String clickedData) {
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {

@@ -1,31 +1,19 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
-
-import com.caverock.androidsvg.SVG;
-import com.caverock.androidsvg.SVGParseException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -233,13 +221,10 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     }
 
     private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
-        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeToRPI(command);
-                alertDialog.dismiss();
-                progressBar.setVisibility(View.VISIBLE);
-            }
+        v.findViewById(id).setOnClickListener(v1 -> {
+            writeToRPI(command);
+            alertDialog.dismiss();
+            progressBar.setVisibility(View.VISIBLE);
         });
     }
 

@@ -1,7 +1,6 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,11 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
-import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 

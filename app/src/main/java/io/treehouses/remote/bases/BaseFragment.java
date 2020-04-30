@@ -28,7 +28,7 @@ public class BaseFragment extends Fragment {
             throw new RuntimeException("Implement interface first");
     }
 
-    public void onLoad(Handler mHandler) {
+    protected void onLoad(Handler mHandler) {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
