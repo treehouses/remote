@@ -115,7 +115,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
 
     private void updateNetworkMode() {
-        String s = "treehouses networkmode";
+        String s = "treehouses networkmode\n";
         mChatService.write(s.getBytes());
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
     }
@@ -139,10 +139,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         if (output.contains("pirateship has anchored successfully") || output.contains("the bridge has been built")) {
             return true;
         }
-        else if (output.contains("open wifi network") || output.contains("password network")) {
-            return true;
-        }
-        return false;
+        else return output.contains("open wifi network") || output.contains("password network");
     }
 
 
@@ -172,12 +169,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
     private void showDialog(String title, String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setTitle(title).setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).create();
         alertDialog.show();
     }
 
@@ -200,18 +192,10 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         AlertDialog a = new AlertDialog.Builder(getContext())
                 .setTitle("Reboot")
                 .setMessage("Are you sure you want to reboot your device?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        rebootHelper();
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    rebootHelper();
+                    dialog.dismiss();
+                }).setNegativeButton("No", (dialog, which) -> dialog.dismiss()).create();
         a.show();
     }
 
@@ -225,12 +209,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
                         listener.sendMessage("treehouses default network");
                         Toast.makeText(getContext(), "Switching to default network...", Toast.LENGTH_LONG).show();
                     }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                }).setNegativeButton("No", (dialog, which) -> dialog.dismiss()).create();
         a.show();
 
     }

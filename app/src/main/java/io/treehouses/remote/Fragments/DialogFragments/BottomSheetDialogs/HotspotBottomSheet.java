@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
     private EditText passwordText;
     private Button startConfig, addProfile;
     private Spinner spinner;
+    private CheckBox hiddenEnabled;
 
     @Nullable
     @Override
@@ -42,6 +44,7 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
         addProfile = v.findViewById(R.id.set_hotspot_profile);
 
         spinner = v.findViewById(R.id.spn_hotspot_type);
+        hiddenEnabled = v.findViewById(R.id.checkBoxHiddenWifi);
 
         startConfigListener();
 
@@ -50,21 +53,19 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void startConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (passwordText.getText().toString().isEmpty()) {
-                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                } else {
-                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                }
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
+        startConfig.setOnClickListener(v -> {
+            String command =  hiddenEnabled.isChecked() ? "treehouses hiddenap " : "treehouses ap ";
+            if (passwordText.getText().toString().isEmpty()) {
+                listener.sendMessage(command + "\"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            } else {
+                listener.sendMessage(command + "\"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
