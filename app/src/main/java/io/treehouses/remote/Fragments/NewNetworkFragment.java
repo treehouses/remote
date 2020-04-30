@@ -158,7 +158,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         }
         //Error occurred
         else if (output.toLowerCase().contains("error")) {
-            showDialog("Error", "An error has occurred.");
+            showDialog("Error", output);
             progressBar.setVisibility(View.GONE);
         }
 

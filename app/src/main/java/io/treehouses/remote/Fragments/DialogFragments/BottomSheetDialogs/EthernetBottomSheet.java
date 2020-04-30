@@ -37,19 +37,16 @@ public class EthernetBottomSheet extends BaseBottomSheetDialog {
 
         startConfig = v.findViewById(R.id.btn_start_config);
 
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String ip = etIP.getText().toString();
-                String dns = DNSText.getText().toString();
-                String gateway = etGateway.getText().toString();
-                String mask = etMask.getText().toString();
-                listener.sendMessage(String.format("treehouses ethernet %s %s %s %s", ip, mask, gateway, dns));
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
-            }
+        startConfig.setOnClickListener(v1 -> {
+            String ip = etIP.getText().toString();
+            String dns = DNSText.getText().toString();
+            String gateway = etGateway.getText().toString();
+            String mask = etMask.getText().toString();
+            listener.sendMessage(String.format("treehouses ethernet %s %s %s %s", ip, mask, gateway, dns));
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
         return v;
     }

@@ -69,12 +69,9 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
-                Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
-            }
+        addProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
+            Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
 }

@@ -60,48 +60,37 @@ public class BridgeBottomSheet extends BaseBottomSheetDialog {
         startConfigListener();
         setAddProfileListener();
 
-        btnWifiSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWifiDialog(BridgeBottomSheet.this, context);
-            }
-        });
+        btnWifiSearch.setOnClickListener(v1 -> openWifiDialog(BridgeBottomSheet.this, context));
 
         return v;
     }
 
     private void startConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String temp = "treehouses bridge \"" + essid.getText().toString() + "\" \"" + hotspotEssid.getText().toString() + "\" ";
-                String overallMessage = TextUtils.isEmpty(password.getText().toString()) ? temp + "\"\"" : temp + "\"" + password.getText().toString() + "\"";
-                overallMessage += " ";
+        startConfig.setOnClickListener(v -> {
+            String temp = "treehouses bridge \"" + essid.getText().toString() + "\" \"" + hotspotEssid.getText().toString() + "\" ";
+            String overallMessage = TextUtils.isEmpty(password.getText().toString()) ? temp + "\"\"" : temp + "\"" + password.getText().toString() + "\"";
+            overallMessage += " ";
 
-                if (!TextUtils.isEmpty(hotspotPassword.getText().toString())) {
-                    overallMessage += "\"" + hotspotPassword.getText().toString() + "\"";
-                }
-                listener.sendMessage(overallMessage);
-
-                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
+            if (!TextUtils.isEmpty(hotspotPassword.getText().toString())) {
+                overallMessage += "\"" + hotspotPassword.getText().toString() + "\"";
             }
+            listener.sendMessage(overallMessage);
+
+            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NetworkProfile networkProfile = new NetworkProfile(essid.getText().toString(), password.getText().toString(),
-                        hotspotEssid.getText().toString(), hotspotPassword.getText().toString());
+        addProfile.setOnClickListener(v -> {
+            NetworkProfile networkProfile = new NetworkProfile(essid.getText().toString(), password.getText().toString(),
+                    hotspotEssid.getText().toString(), hotspotPassword.getText().toString());
 
-                SaveUtils.addProfile(context, networkProfile);
-                Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show();
-            }
+            SaveUtils.addProfile(context, networkProfile);
+            Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show();
         });
     }
 

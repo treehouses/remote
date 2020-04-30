@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
     private EditText ssidText;
     private EditText passwordText;
     private Button startConfig, addProfile, searchWifi;
+    private CheckBox hiddenEnabled;
 
     @Nullable
     @Override
@@ -44,45 +46,35 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
         startConfig = v.findViewById(R.id.btn_start_config);
         addProfile = v.findViewById(R.id.set_wifi_profile);
         searchWifi = v.findViewById(R.id.btnWifiSearch);
+        hiddenEnabled = v.findViewById(R.id.checkBoxHiddenWifi);
 
         setStartConfigListener();
 
         setAddProfileListener();
 
-        searchWifi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWifiDialog(WifiBottomSheet.this, context);
-
-            }
-        });
+        searchWifi.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
 
         return v;
     }
 
     private void setStartConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String ssid = ssidText.getText().toString();
-                String password = passwordText.getText().toString();
-                listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
-                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
-            }
+        startConfig.setOnClickListener(v -> {
+            String ssid = ssidText.getText().toString();
+            String password = passwordText.getText().toString();
+            if (hiddenEnabled.isChecked()) listener.sendMessage(String.format("treehouses wifihidden \"%s\" \"%s\"", ssid, password));
+            else listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
-                Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
-            }
+        addProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
+            Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
 

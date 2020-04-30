@@ -60,6 +60,12 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/checkBoxHiddenWifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_large"
+        android:text="Hidden"/>
     <Button
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
@@ -72,6 +78,8 @@
         android:id="@+id/set_wifi_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add WIFI Profile" />
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="Add WIFI Profile"
+        android:background="@color/md_grey_300"/>
 
 </LinearLayout>
