@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.preference.PreferenceManager;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import io.treehouses.remote.BuildConfig;
 import io.treehouses.remote.Constants;
@@ -164,24 +166,23 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
 
     public void connectRpiListener() {
-        connectRpi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (connectionState) {
-                    RPIDialogFragment.getInstance().bluetoothCheck("unregister");
-                    mChatService.stop();
-                    connectionState = false;
-                    checkConnectionState();
-                    return;
-                }
+        connectRpi.setOnClickListener(v -> {
+            final Vibrator vibe = (Vibrator) Objects.requireNonNull(getContext()).getSystemService(Context.VIBRATOR_SERVICE);
+            vibe.vibrate(10);
+            if (connectionState) {
+                RPIDialogFragment.getInstance().bluetoothCheck("unregister");
+                mChatService.stop();
+                connectionState = false;
+                checkConnectionState();
+                return;
+            }
 
-                if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog(HomeFragment.this);
-                }
+            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
+            } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                showRPIDialog(HomeFragment.this);
             }
         });
     }
@@ -219,7 +220,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         welcome_text.setVisibility(View.GONE);
         testConnection.setVisibility(View.VISIBLE);
         connectRpi.setText("Disconnect");
-        connectRpi.setBackgroundResource(R.drawable.disconnect_rpi);
+        connectRpi.setBackgroundResource(R.drawable.ic_disconnect_rpi);
         background.animate().translationY(150);
         connectRpi.animate().translationY(110);
         getStarted.animate().translationY(70);
@@ -235,7 +236,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         background.animate().translationY(0);
         connectRpi.animate().translationY(0);
         getStarted.animate().translationY(0);
-        connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
+        connectRpi.setBackgroundResource(R.drawable.ic_connect_to_rpi);
         logo.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
     }
