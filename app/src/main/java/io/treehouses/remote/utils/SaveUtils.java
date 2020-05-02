@@ -19,14 +19,14 @@ import io.treehouses.remote.pojo.NetworkProfile;
 public class SaveUtils {
     private static final String DELIMITER = "#/@/#";
 
-    public static final String COMMANDS_TITLES_KEY = "commands_titles";
-    public static final String COMMANDS_VALUES_KEY = "commands_values";
+    private static final String COMMANDS_TITLES_KEY = "commands_titles";
+    private static final String COMMANDS_VALUES_KEY = "commands_values";
 
-    public static final String NETWORK_PROFILES_KEY = "network_profile_keys";
+    private static final String NETWORK_PROFILES_KEY = "network_profile_keys";
 
     public static final String ACTION_KEYWORD = "ACTION";
 
-    public static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
+    private static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
         String strArr = "";
         for (int i=0; i<array.size(); i++) {
             strArr += array.get(i) + DELIMITER;
@@ -37,10 +37,10 @@ public class SaveUtils {
 
         SharedPreferences.Editor e = PreferenceManager.getDefaultSharedPreferences(context).edit();
         e.putString(arrayName, strArr);
-        e.commit();
+        e.apply();
     }
 
-    public static ArrayList<String> getStringArray(Context context, String arrayName) {
+    private static ArrayList<String> getStringArray(Context context, String arrayName) {
         String[] strArr;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String str = prefs.getString(arrayName, null);
@@ -53,23 +53,21 @@ public class SaveUtils {
         return new ArrayList<>(Arrays.asList(strArr));
     }
 
-    public static void addToArrayList(Context context, String arrayName, String toAdd) {
+    private static void addToArrayList(Context context, String arrayName, String toAdd) {
         ArrayList<String> arrayList = getStringArray(context, arrayName);
         arrayList.add(toAdd);
         saveStringArray(context, arrayList, arrayName);
     }
 
-    public static Boolean removeFromArrayList(Context context, String arrayName, String toRemove) {
+    private static void removeFromArrayList(Context context, String arrayName, String toRemove) {
         ArrayList<String> arrayList = getStringArray(context, arrayName);
         if (!arrayList.isEmpty()) {
             arrayList.remove(toRemove);
             saveStringArray(context, arrayList, arrayName);
-            return true;
         }
-        return false;
     }
 
-    public static void clearArrayList(Context context, String arrayName) {
+    private static void clearArrayList(Context context, String arrayName) {
         saveStringArray(context, new ArrayList<>(), arrayName);
     }
 
@@ -94,7 +92,7 @@ public class SaveUtils {
         List<CommandListItem> finalArray = new ArrayList<>();
 
         if (titles.isEmpty() || values.isEmpty()) {
-            return new ArrayList<CommandListItem>();
+            return new ArrayList<>();
         }
         if (titles.size() != values.size()) {
             Log.e("COMMANDLIST", "ERROR SIZE: COMMANDS and VALUES");

@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
@@ -13,11 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -64,12 +60,7 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
             install.setOnClickListener(this);
             start.setOnClickListener(this);
             openLink.setOnClickListener(this);
-            autorunCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    actionListener.onClickAutorun(serviceData, isChecked);
-                }
-            });
+            autorunCheck.setOnCheckedChangeListener((buttonView, isChecked) -> actionListener.onClickAutorun(serviceData, isChecked));
         }
         return view;
     }

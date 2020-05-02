@@ -1,10 +1,7 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +58,7 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
         validation.setAddprofile(addProfile);
         validation.setTextInputLayout(v.findViewById(R.id.textInputLayout));
 
+
         return v;
     }
 
@@ -70,6 +68,7 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
             String password = passwordText.getText().toString();
             if (hiddenEnabled.isChecked()) listener.sendMessage(String.format("treehouses wifihidden \"%s\" \"%s\"", ssid, password));
             else listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
             intent.putExtra(CLICKED_START_CONFIG, true);

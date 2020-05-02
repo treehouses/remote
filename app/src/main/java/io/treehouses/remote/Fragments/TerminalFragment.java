@@ -6,14 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -23,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -31,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment;
@@ -42,7 +41,6 @@ import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
 import io.treehouses.remote.pojo.CommandListItem;
 import io.treehouses.remote.pojo.CommandsList;
-import io.treehouses.remote.pojo.ServicesData;
 import io.treehouses.remote.utils.SaveUtils;
 
 public class TerminalFragment extends BaseTerminalFragment {
@@ -152,7 +150,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     public static TerminalFragment getInstance() { return instance; }
 
-    public ArrayAdapter<String> getmConversationArrayAdapter() { return mConversationArrayAdapter; }
+    private ArrayAdapter<String> getmConversationArrayAdapter() { return mConversationArrayAdapter; }
 
     /**
      * Set up the UI and background operations for chat.
@@ -160,9 +158,10 @@ public class TerminalFragment extends BaseTerminalFragment {
     public void setupChat() {
         copyToList(mConversationView, getContext());
 
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTerminalList()) {
+        mConversationArrayAdapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()), R.layout.message, MainApplication.getTerminalList()) {
+            @NonNull
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 return getViews(super.getView(position, convertView, parent), isRead);
             }
         };

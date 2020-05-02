@@ -1,7 +1,5 @@
 package io.treehouses.remote.pojo;
 
-import io.treehouses.remote.utils.SaveUtils;
-
 public class NetworkProfile {
     public String ssid;
     public String password;

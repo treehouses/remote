@@ -2,7 +2,6 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
@@ -219,12 +218,7 @@ public class TextBoxValidation {
     }
 
     public void getListener(final AlertDialog mDialog) {
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                dialogButtonTrueOrFalse(mDialog, false);
-            }
-        });
+        mDialog.setOnShowListener(dialog -> dialogButtonTrueOrFalse(mDialog, false));
     }
     }
 

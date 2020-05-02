@@ -19,7 +19,7 @@ public class RenameDialogFragment extends DialogFragment {
     private static final String TAG = "RenameDialogFragment";
 
     // Layout Views
-    protected EditText mHostNameEditText;
+    private EditText mHostNameEditText;
     TextBoxValidation textboxValidation = new TextBoxValidation();
 
     public static RenameDialogFragment newInstance(int num){
@@ -50,7 +50,7 @@ public class RenameDialogFragment extends DialogFragment {
         return mDialog;
     }
 
-    protected AlertDialog getAlertDialog(View mView) {
+    private AlertDialog getAlertDialog(View mView) {
         return new AlertDialog.Builder(getActivity())
                 .setView(mView)
                 .setTitle(R.string.dialog_message)
