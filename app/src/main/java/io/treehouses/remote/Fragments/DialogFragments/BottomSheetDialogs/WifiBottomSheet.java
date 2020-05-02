@@ -1,10 +1,7 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
@@ -49,40 +44,28 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
 
         setAddProfileListener();
 
-        searchWifi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWifiDialog(WifiBottomSheet.this, context);
-
-            }
-        });
+        searchWifi.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
 
         return v;
     }
 
     private void setStartConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String ssid = ssidText.getText().toString();
-                String password = passwordText.getText().toString();
-                listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
-                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
-            }
+        startConfig.setOnClickListener(v -> {
+            String ssid = ssidText.getText().toString();
+            String password = passwordText.getText().toString();
+            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
-                Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
-            }
+        addProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
+            Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
 

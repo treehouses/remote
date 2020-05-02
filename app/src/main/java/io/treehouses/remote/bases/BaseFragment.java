@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import io.treehouses.remote.Constants;
@@ -19,7 +20,7 @@ public class BaseFragment extends Fragment {
     public HomeInteractListener listener;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof HomeInteractListener)
             listener = (HomeInteractListener) context;
@@ -27,7 +28,7 @@ public class BaseFragment extends Fragment {
             throw new RuntimeException("Implement interface first");
     }
 
-    public void onLoad(Handler mHandler) {
+    protected void onLoad(Handler mHandler) {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

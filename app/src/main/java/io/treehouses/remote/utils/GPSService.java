@@ -79,8 +79,8 @@ public class GPSService extends Service implements LocationListener {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 Log.d("LOCATION", "getLastKnownLocation: " + latitude + " " + longitude);
-                pref.edit().putString("last_lat", String.valueOf(latitude)).commit();
-                pref.edit().putString("last_lng", String.valueOf(longitude)).commit();
+                pref.edit().putString("last_lat", String.valueOf(latitude)).apply();
+                pref.edit().putString("last_lng", String.valueOf(longitude)).apply();
             }
         }
     }
@@ -130,8 +130,8 @@ public class GPSService extends Service implements LocationListener {
         if(location!=null) {
             this.location = location;
             Log.d("", "onLocationChanged: " + location.getLongitude() + " " + location.getLatitude());
-            pref.edit().putString("last_lat", String.valueOf(location.getLatitude())).commit();
-            pref.edit().putString("last_lng", String.valueOf(location.getLongitude())).commit();
+            pref.edit().putString("last_lat", String.valueOf(location.getLatitude())).apply();
+            pref.edit().putString("last_lng", String.valueOf(location.getLongitude())).apply();
         }
     }
 

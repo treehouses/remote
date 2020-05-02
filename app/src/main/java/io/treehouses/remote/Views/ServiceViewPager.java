@@ -1,5 +1,6 @@
 package io.treehouses.remote.Views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -21,6 +22,7 @@ public class ServiceViewPager extends ViewPager {
         setPageTransformer(true, new ZoomOutPageTransformer());
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return this.isPagingEnabled && super.onTouchEvent(event);
@@ -35,7 +37,7 @@ public class ServiceViewPager extends ViewPager {
         this.isPagingEnabled = b;
     }
 
-    public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+    public static class ZoomOutPageTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.85f;
         private static final float MIN_ALPHA = 0.5f;
 

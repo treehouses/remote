@@ -5,11 +5,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
@@ -62,12 +63,7 @@ public class WifiDialogFragment extends DialogFragment {
                 .setView(mView)
                 .setIcon(R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).create();
 
         Log.e("TAG", "SSID = " +  wifiList.toString());
 
@@ -115,6 +111,7 @@ public class WifiDialogFragment extends DialogFragment {
 
     private BroadcastReceiver wifiBroadcastReceiver() {
         return new BroadcastReceiver() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onReceive(Context c, Intent intent) {
                 boolean success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false);

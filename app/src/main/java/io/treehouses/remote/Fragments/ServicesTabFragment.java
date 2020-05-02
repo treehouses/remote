@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -83,13 +84,13 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
                         .setDuration(600)
                         .start();
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
         Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total) * 100) + "%");
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
             servicesListener = (ServicesListener) getParentFragment();

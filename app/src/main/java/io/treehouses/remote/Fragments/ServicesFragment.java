@@ -13,22 +13,19 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
-import io.treehouses.remote.bases.BaseFragment;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServicesListener;
 import io.treehouses.remote.pojo.ServiceInfo;
-import io.treehouses.remote.pojo.ServicesData;
 
 public class ServicesFragment extends BaseServicesFragment implements ServicesListener {
 
@@ -40,7 +37,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
 
     private ArrayList<ServiceInfo> services;
 
-    View view;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,7 +98,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
         }
     };
 
-    public void setTabEnabled(boolean enabled) {
+    private void setTabEnabled(boolean enabled) {
         LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
         tabStrip.setEnabled(enabled);
         for(int i = 0; i < tabStrip.getChildCount(); i++) {
@@ -109,7 +106,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
         }
     }
 
-    public void replaceFragment(int position) {
+    private void replaceFragment(int position) {
         if (services.isEmpty()) return;
         setTabEnabled(true);
 
@@ -140,7 +137,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
     public void onClick(ServiceInfo s) {
         Log.d(TAG, "onClick: " + s.name);
         servicesDetailsFragment.setSelected(s);
-        tabLayout.getTabAt(1).select();
+        Objects.requireNonNull(tabLayout.getTabAt(1)).select();
         replaceFragment(1);
     }
 

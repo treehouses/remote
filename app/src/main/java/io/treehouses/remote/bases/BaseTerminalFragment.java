@@ -2,7 +2,6 @@ package io.treehouses.remote.bases;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -11,7 +10,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -26,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import io.treehouses.remote.Constants;
@@ -55,8 +54,7 @@ public class BaseTerminalFragment extends BaseFragment{
         // save the connected device's name
         String mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
         if (null != activity) {
-            Toast.makeText(activity, "Connected to "
-                    + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -82,7 +80,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgShape.setColor(color);
     }
 
-    protected void offline(TextView mPingStatus, Button pingStatusButton) {
+    private void offline(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusOffline);
         bgResource(pingStatusButton, Color.RED);
     }
@@ -92,7 +90,7 @@ public class BaseTerminalFragment extends BaseFragment{
         bgResource(pingStatusButton, Color.YELLOW);
     }
 
-    public void connect(TextView mPingStatus, Button pingStatusButton) {
+    private void connect(TextView mPingStatus, Button pingStatusButton) {
         mPingStatus.setText(R.string.bStatusConnected);
         bgResource(pingStatusButton, Color.GREEN);
     }
@@ -106,7 +104,7 @@ public class BaseTerminalFragment extends BaseFragment{
         });
     }
 
-    public void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
+    protected void checkStatus(BluetoothChatService mChatService, TextView mPingStatus, Button pingStatusButton) {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
             connect(mPingStatus, pingStatusButton);
         } else if (mChatService.getState() == Constants.STATE_NONE) {
@@ -129,7 +127,7 @@ public class BaseTerminalFragment extends BaseFragment{
         }
     }
 
-    protected void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
+    private void isPingSuccesfull(String readMessage, TextView mPingStatus, Button pingStatusButton) {
         readMessage = readMessage.trim();
 
         //check if ping was successful
@@ -168,10 +166,10 @@ public class BaseTerminalFragment extends BaseFragment{
     protected void setUpAutoComplete(AutoCompleteTextView autoComplete) {
         inSecondLevel = new HashSet<>();
         inThirdLevel = new HashSet<>();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        arrayAdapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
-        arrayAdapter2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-        arrayAdapter3 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(Objects.requireNonNull(getContext()));
+        arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
+        arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+        arrayAdapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         if (preferences.getBoolean("autocomplete", true)) {
             autoComplete.setThreshold(0);
             autoComplete.setAdapter(arrayAdapter1);
@@ -233,17 +231,9 @@ public class BaseTerminalFragment extends BaseFragment{
     }
 
     private void addSpaces(AutoCompleteTextView autoComplete) {
-        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                autoComplete.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        autoComplete.showDropDown();
-                    }
-                },100);
-                autoComplete.append(" ");
-            }
+        autoComplete.setOnItemClickListener((parent, view, position, id) -> {
+            autoComplete.postDelayed(autoComplete::showDropDown,100);
+            autoComplete.append(" ");
         });
     }
 }

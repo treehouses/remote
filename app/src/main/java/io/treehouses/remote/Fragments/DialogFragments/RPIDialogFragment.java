@@ -26,10 +26,13 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import io.treehouses.remote.Constants;
@@ -69,6 +72,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         return rpiDialogFragment;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         instance = this;
@@ -77,7 +81,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         bluetoothCheck();
         if (mBluetoothAdapter.isDiscovering()) { mBluetoothAdapter.cancelDiscovery(); }
         mBluetoothAdapter.startDiscovery();
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
         initDialog(mView);
 
@@ -102,12 +106,9 @@ public class RPIDialogFragment extends BaseDialogFragment {
         mDialog.setTitle(R.string.select_device);
         listViewOnClickListener(mView);
         Button mCloseButton = mView.findViewById(R.id.rpi_close_button);
-        mCloseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bluetoothCheck("unregister");
-                dismiss();
-            }
+        mCloseButton.setOnClickListener(v -> {
+            bluetoothCheck("unregister");
+            dismiss();
         });
         mDiscoverRaspberry = mView.findViewById(R.id.rpi_switch);
         mDiscoverRaspberry.setChecked(true);
@@ -181,7 +182,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
         try { if (mBluetoothAdapter == null) context.unregisterReceiver(mReceiver); } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
+    private AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
         return new AlertDialog.Builder(context).setView(mView).setIcon(R.drawable.dialog_icon).create();
     }
 
