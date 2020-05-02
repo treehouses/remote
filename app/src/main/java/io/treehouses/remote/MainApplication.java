@@ -6,6 +6,7 @@ import com.parse.Parse;
 
 import java.util.ArrayList;
 
+import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.utils.SaveUtils;
 
 public class MainApplication extends Application {
@@ -13,9 +14,12 @@ public class MainApplication extends Application {
     private static ArrayList terminalList, tunnelList, commandList;
     public static boolean showLogDialog = true;
     public static boolean ratingDialog = true;
+
+    public BluetoothChatService mChatService;
     @Override
     public void onCreate() {
         super.onCreate();
+        mChatService = new BluetoothChatService(null, getApplicationContext());
         terminalList = new ArrayList();
         tunnelList = new ArrayList();
         commandList = new ArrayList();

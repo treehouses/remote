@@ -64,7 +64,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
                     moreAction(output);
                     break;
                 case Constants.MESSAGE_WRITE:
-                    String write_msg = new String((byte[]) msg.obj);
+                    String write_msg = (String) msg.obj;
                     Log.d("WRITE", write_msg);
                     break;
 

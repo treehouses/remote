@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import io.treehouses.remote.MainApplication;
+import io.treehouses.remote.Network.BluetoothChatService;
+
 public abstract class PermissionActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_WIFI = 111;
     private static final int PERMISSION_REQUEST_CODE_CAMERA = 112;

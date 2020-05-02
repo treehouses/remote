@@ -136,7 +136,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null && mChatService.getState() == Constants.STATE_NONE) {
-            mChatService.start();
+//            mChatService.start();
             idle(mPingStatus, pingStatusButton);
         }
     }
@@ -248,26 +248,18 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
 
-    private void buildJSON() {
+    private void buildJSON(String s) {
         try {
-            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONObject jsonObject = new JSONObject(s);
             commands = new Gson().fromJson(jsonObject.toString(), CommandsList.class);
             if (commands != null) updateArrayAdapters(commands);
         } catch (JSONException e) { e.printStackTrace(); }
     }
 
     private void handleJson(String readMessage) {
-        if (jsonReceiving) {
-            jsonString += readMessage.trim();
-            if (jsonString.endsWith("]}")) {
-                jsonString += readMessage.trim();
-                buildJSON();
-                jsonReceiving = false;
-                jsonSent = false;
-            }
-        } else if (readMessage.startsWith("{")) {
-            jsonReceiving = true;
-            jsonString = readMessage.trim();
+        if (readMessage.startsWith("{")) {
+            buildJSON(readMessage);
+            jsonSent = false;
         }
     }
 
@@ -293,9 +285,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                     if (jsonSent) handleJson(readMessage);
                     else { handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                         filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList()); }
-                    break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    handlerCaseName(msg, getActivity());
                     break;
                 case Constants.MESSAGE_TOAST:
                     handlerCaseToast(msg);
