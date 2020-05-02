@@ -19,8 +19,8 @@ public class TextBoxValidation {
 
     private AlertDialog mDialog;
     private EditText textWatcher;
-    private EditText SSID;
-    private EditText PWD;
+    public EditText SSID;
+    public EditText PWD;
     private Button start, addprofile;
     private TextInputLayout textInputLayout;
 
@@ -34,9 +34,6 @@ public class TextBoxValidation {
     EditText PasswordEditText;
     EditText HotspotPasswordEditText;
 
-    public EditText getSSID() {
-        return SSID;
-    }
 
     public void setmDialog(AlertDialog mDialog) {
         this.mDialog = mDialog;
@@ -46,18 +43,10 @@ public class TextBoxValidation {
         this.textWatcher = textWatcher;
     }
 
-    public void setSSID(EditText SSID) {
-        this.SSID = SSID;
-    }
-
-    public void setPWD(EditText PWD) {
-        this.PWD = PWD;
-    }
-
     public TextBoxValidation(Context context, EditText e1, EditText e2, String type) {
         if (type.equals("wifi")) {
-            setSSID(e1);
-            setPWD(e2);
+            this.SSID = e1;
+            this.PWD = e2;
             textboxValidation(context, type, e1);
             textboxValidation(context, type, e2);
         }
@@ -98,7 +87,7 @@ public class TextBoxValidation {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(type.equals("ethernet")){
-                    validateETHERNET(context);
+//                    validateETHERNET(context);
                 }else if(type.equals("wifi")){
                     validateWIFI(context);
                 }else if(type.equals("bridge")){
@@ -177,13 +166,13 @@ public class TextBoxValidation {
      * ETHERNET dialog validator
      *
      */
-    private void validateETHERNET(final Context context) {
-        if (IpAddressEditText.length() == 0 || MaskEditText.length() == 0 || GateWayEditText.length() == 0 || DNSEditText.length() == 0) {
-            dialogButtonTrueOrFalse(start,addprofile, false);
-        }else {
-            dialogButtonTrueOrFalse(start, addprofile,true);
-        }
-    }
+//    private void validateETHERNET(final Context context) {
+//        if (IpAddressEditText.length() == 0 || MaskEditText.length() == 0 || GateWayEditText.length() == 0 || DNSEditText.length() == 0) {
+//            dialogButtonTrueOrFalse(start,addprofile, false);
+//        }else {
+//            dialogButtonTrueOrFalse(start, addprofile,true);
+//        }
+//    }
 
     /**
      * ETHERNET dialog validator
