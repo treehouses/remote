@@ -93,18 +93,22 @@ public class BluetoothChatService implements Serializable{
      * @param handler A Handler to send messages back to the UI Activity
      */
     public BluetoothChatService(Handler handler, Context applicationContext) {
-        compositeDisposable = new CompositeDisposable();
-        mCurrentState = Constants.STATE_NONE;
-        mHandler = handler;
         this.context = applicationContext;
-        sentCommands = new LinkedList<>();
-        tempToSendCommands = new LinkedList<>();
-        bluetooth = new RxBluetooth(applicationContext);
+        init();
     }
 
-    public void updateHandler(Handler handler){
+    private void init() {
+        compositeDisposable = new CompositeDisposable();
+        mCurrentState = Constants.STATE_NONE;
+        mHandler = null;
+        sentCommands = new LinkedList<>();
+        tempToSendCommands = new LinkedList<>();
+        bluetooth = new RxBluetooth(context);
+    }
+
+    public void updateHandler(Handler handler, boolean... args){
         Log.e(TAG, "updateHandler:");
-        if (!sentCommands.isEmpty()) {
+        if (!sentCommands.isEmpty() && mCurrentState == Constants.STATE_CONNECTED) {
             Log.e(TAG, "updateHandler: with overflow");
             switchedHandler = true;
             tempHandler = handler;
@@ -146,6 +150,7 @@ public class BluetoothChatService implements Serializable{
                     Log.e(TAG, "connectToDevice: FAILED TO CONNECT");
                     mCurrentState = Constants.STATE_NONE;
                     updateUserInterfaceTitle();
+                    init();
                 }));
     }
 
@@ -192,6 +197,7 @@ public class BluetoothChatService implements Serializable{
         mCurrentState = Constants.STATE_NONE;
         updateUserInterfaceTitle();
         destroy();
+        init();
     }
 
     public void startDiscovery(BluetoothDeviceCallback callback) {

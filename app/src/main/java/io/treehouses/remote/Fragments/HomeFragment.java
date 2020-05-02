@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -47,6 +48,7 @@ import io.treehouses.remote.callback.NotificationCallback;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
+import static android.widget.Toast.LENGTH_LONG;
 import static io.treehouses.remote.Constants.REQUEST_ENABLE_BT;
 
 
@@ -163,23 +165,20 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
 
     public void connectRpiListener() {
-        connectRpi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (connectionState) {
-                    mChatService.disconnect();
-                    connectionState = false;
-                    checkConnectionState();
-                    return;
-                }
+        connectRpi.setOnClickListener(v -> {
+            if (connectionState) {
+                mChatService.disconnect();
+                connectionState = false;
+                checkConnectionState();
+                return;
+            }
 
-                if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                    Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
-                } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
-                    showRPIDialog(HomeFragment.this);
-                }
+            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "Bluetooth is disabled", Toast.LENGTH_LONG).show();
+            } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                showRPIDialog(HomeFragment.this);
             }
         });
     }
@@ -199,11 +198,11 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     public void checkConnectionState() {
         if (mChatService.getState() == Constants.STATE_CONNECTED) {
+            mChatService.updateHandler(mHandler);
             showLogDialog(preferences);
             transitionOnConnected();
             connectionState = true;
             checkVersionSent = true;
-            mChatService.updateHandler(mHandler);
             mChatService.write("treehouses remote version " + BuildConfig.VERSION_CODE + "\n");
 
         } else {
@@ -330,7 +329,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -340,6 +339,18 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
                     String output = (String) msg.obj;
                     if (!output.isEmpty()) {
                         readMessage(output);
+                    }
+                    break;
+                case Constants.MESSAGE_STATE_CHANGE:
+                    checkConnectionState();
+                    switch (msg.arg1) {
+                        case Constants.STATE_CONNECTED:
+                            Log.e("Home Fragment", "Bluetooth Connection Status Change: State Connected");
+                            Toast.makeText(getContext(), "Bluetooth Connected", LENGTH_LONG).show();
+                            break;
+                        case Constants.STATE_NONE:
+                            Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
+                            break;
                     }
                     break;
             }

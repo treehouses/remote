@@ -167,7 +167,7 @@ public class BaseHomeFragment extends BaseFragment {
         androidx.fragment.app.DialogFragment dialogFrag = RPIDialogFragment.newInstance(123);
         ((RPIDialogFragment) dialogFrag).setCheckConnectionState(s);
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT);
-        dialogFrag.show(getFragmentManager().beginTransaction(), "rpiDialog");
+        dialogFrag.show(getParentFragmentManager().beginTransaction(), "rpiDialog");
     }
 
     protected boolean matchResult(String output, String option1, String option2) { return output.contains(option1) || output.contains(option2); }

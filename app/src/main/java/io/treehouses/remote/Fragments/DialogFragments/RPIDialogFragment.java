@@ -71,12 +71,11 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         instance = this;
         context = getContext();
-
         bluetoothCheck();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View mView = inflater.inflate(R.layout.activity_rpi_dialog_fragment, null);
         initDialog(mView);
-
+        mChatService.updateHandler(mHandler);
         mChatService.startDiscovery(this);
         pairedDevices = mChatService.getPairedDevices();
         setAdapterNotNull(raspberryDevicesText);
@@ -213,15 +212,17 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
 
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
+                    checkConnectionState.checkConnectionState();
                     switch (msg.arg1) {
                         case Constants.STATE_CONNECTED:
-                            Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen");
+                            Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Connected");
                             pDialog.dismiss();
-                            checkConnectionState.checkConnectionState();
+                            dismiss();
                             Toast.makeText(context, "Bluetooth Connected", LENGTH_LONG).show();
                             break;
                         case Constants.STATE_NONE:
                             pDialog.dismiss();
+                            dismiss();
                             Toast.makeText(context, "Connection Failed: Please Try Again", LENGTH_LONG).show();
                             Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None");
                             break;
