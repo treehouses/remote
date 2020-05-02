@@ -10,12 +10,10 @@ import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.fragment.app.FragmentActivity;
-
 public class Utils {
     public static void copyToClipboard(Context context, String clickedData) {
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
-            clickedData = clickedData.substring(10, clickedData.length());
+            clickedData = clickedData.substring(10);
         }
 
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -31,14 +29,13 @@ public class Utils {
                 if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
                 return getAddress(nif);
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return "";
     }
 
     public static String  getAndroidId(Context context){
-         return Secure.getString(context.getContentResolver(),
-                Secure.ANDROID_ID);
+         return Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
 
     }
 

@@ -38,7 +38,7 @@ public class SystemFragment extends BaseFragment {
 
     private boolean retry= false;
 
-    View view;
+    private View view;
 
     public SystemFragment() {
     }

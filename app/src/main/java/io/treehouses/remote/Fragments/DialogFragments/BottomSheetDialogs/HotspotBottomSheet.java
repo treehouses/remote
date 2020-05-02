@@ -1,7 +1,6 @@
 package io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,11 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
-import io.treehouses.remote.callback.HomeInteractListener;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
@@ -50,31 +46,25 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void startConfigListener() {
-        startConfig.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (passwordText.getText().toString().isEmpty()) {
-                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                } else {
-                    listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
-                    Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
-                }
-                Intent intent = new Intent();
-                intent.putExtra(CLICKED_START_CONFIG, true);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                dismiss();
+        startConfig.setOnClickListener(v -> {
+            if (passwordText.getText().toString().isEmpty()) {
+                listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
+            } else {
+                listener.sendMessage("treehouses ap \"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
+                Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
+            Intent intent = new Intent();
+            intent.putExtra(CLICKED_START_CONFIG, true);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+            dismiss();
         });
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
-                Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
-            }
+        addProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
+            Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
 }

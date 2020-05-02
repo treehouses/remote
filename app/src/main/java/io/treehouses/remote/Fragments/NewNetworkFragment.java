@@ -200,18 +200,10 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         AlertDialog a = new AlertDialog.Builder(getContext())
                 .setTitle("Reboot")
                 .setMessage("Are you sure you want to reboot your device?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        rebootHelper();
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    rebootHelper();
+                    dialog.dismiss();
+                }).setNegativeButton("No", (dialog, which) -> dialog.dismiss()).create();
         a.show();
     }
 
@@ -219,18 +211,10 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         AlertDialog a = new AlertDialog.Builder(getContext())
                 .setTitle("Reset Network")
                 .setMessage("Are you sure you want to reset the network to default?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listener.sendMessage("treehouses default network");
-                        Toast.makeText(getContext(), "Switching to default network...", Toast.LENGTH_LONG).show();
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    listener.sendMessage("treehouses default network");
+                    Toast.makeText(getContext(), "Switching to default network...", Toast.LENGTH_LONG).show();
+                }).setNegativeButton("No", (dialog, which) -> dialog.dismiss()).create();
         a.show();
 
     }

@@ -2,6 +2,7 @@ package io.treehouses.remote.bases;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import io.treehouses.remote.Network.BluetoothChatService;
@@ -12,7 +13,7 @@ public class BaseDialogFragment extends DialogFragment {
     public BluetoothChatService mChatService;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof HomeInteractListener)
             listener = (HomeInteractListener) context;

@@ -2,31 +2,19 @@ package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
-
-import com.caverock.androidsvg.SVG;
-import com.caverock.androidsvg.SVGParseException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +30,7 @@ import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesDetailsFragment extends BaseServicesFragment implements AdapterView.OnItemSelectedListener, ViewPager.OnPageChangeListener, ServiceAction {
 
-    View view;
+    private View view;
     private Spinner serviceSelector;
     private ProgressBar progressBar;
 
@@ -59,7 +47,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
     private boolean scrolled = false;
 
-    public ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){ this.services = serviceInfos; }
+    ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){ this.services = serviceInfos; }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -162,7 +150,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     public void onNothingSelected(AdapterView<?> parent) { }
 
 
-    public void setSelected(ServiceInfo s) {
+    void setSelected(ServiceInfo s) {
         Log.d("SELECTED", "setSelected: " + s.name);
         selected = s;
     }
@@ -211,18 +199,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         new AlertDialog.Builder(getContext())
                 .setTitle("Delete " + selected.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
-                        wait = true;
-                        setScreenState(false);
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }}).create().show();
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    performService("Uninstalling", "treehouses services " + selected.name + " cleanup\n", selected.name);
+                    wait = true;
+                    setScreenState(false);
+                }).setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()).create().show();
     }
 
     private void onInstall(ServiceInfo selected) {
@@ -243,13 +224,10 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     }
 
     private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
-        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeToRPI(command);
-                alertDialog.dismiss();
-                progressBar.setVisibility(View.VISIBLE);
-            }
+        v.findViewById(id).setOnClickListener(v1 -> {
+            writeToRPI(command);
+            alertDialog.dismiss();
+            progressBar.setVisibility(View.VISIBLE);
         });
     }
 
@@ -262,7 +240,6 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         setOnClick(view, R.id.tor_button, "treehouses services " + selected.name + " url tor \n", alertDialog);
 
         alertDialog.show();
-//        received = false;
     }
 
     private void setScreenState(boolean state) {
@@ -273,9 +250,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     }
 
     @Override
-    public void onClickInstall(ServiceInfo s) {
-        onInstall(s);
-    }
+    public void onClickInstall(ServiceInfo s) { onInstall(s); }
 
     @Override
     public void onClickStart(ServiceInfo s) {

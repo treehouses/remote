@@ -48,6 +48,7 @@ import io.reactivex.FlowableOperator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.callback.BluetoothDeviceCallback;
 

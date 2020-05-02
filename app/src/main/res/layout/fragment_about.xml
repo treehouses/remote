@@ -31,7 +31,7 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="30dp"
             android:gravity="center"
             android:padding="@dimen/padding_normal"
             android:text="@string/initial_textview"
@@ -53,17 +53,15 @@
             android:background="@color/colorPrimary"
             android:paddingLeft="@dimen/margin_medium"
             android:paddingRight="@dimen/margin_medium"
-            
             android:text="Treehouses Image"
             android:textColor="@color/bg_white"
-            android:textSize="@dimen/text_size_mid"
             app:layout_constraintBottom_toTopOf="@+id/btn_version"
             app:layout_constraintEnd_toStartOf="@+id/btn_gitter"
             app:layout_constraintStart_toEndOf="@+id/btn_github" />
 
         <Button
             android:id="@+id/btn_gitter"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_normal"
             android:layout_marginLeft="@dimen/padding_normal"
@@ -73,14 +71,14 @@
             android:text="gitter"
             android:textColor="@color/bg_white"
             android:gravity="center"
-            android:textSize="@dimen/text_size_mid"
+            android:textSize="@dimen/text_size_small"
             app:layout_constraintBaseline_toBaselineOf="@+id/btn_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_image" />
 
         <Button
             android:id="@+id/btn_contributors"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -99,7 +97,7 @@
 
         <Button
             android:id="@+id/btn_github"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_normal"
             android:layout_marginLeft="@dimen/padding_normal"
@@ -109,14 +107,14 @@
             android:background="@color/colorPrimary"
             android:text="GitHub"
             android:textColor="@color/bg_white"
-            android:textSize="@dimen/text_size_mid"
+            android:textSize="@dimen/text_size_small"
             app:layout_constraintBaseline_toBaselineOf="@+id/btn_image"
             app:layout_constraintEnd_toStartOf="@+id/btn_image"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btn_version"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"

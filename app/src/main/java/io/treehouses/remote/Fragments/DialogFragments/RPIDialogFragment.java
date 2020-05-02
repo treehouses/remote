@@ -26,10 +26,13 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import io.treehouses.remote.Constants;
@@ -67,6 +70,7 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
         return rpiDialogFragment;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         instance = this;
@@ -165,7 +169,7 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
         super.onDestroy();
     }
 
-    public AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
+    private AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
         return new AlertDialog.Builder(context).setView(mView).setIcon(R.drawable.dialog_icon).create();
     }
 

@@ -1,16 +1,12 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
-import android.view.View;
-import android.widget.BaseAdapter;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +17,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import io.treehouses.remote.pojo.ServiceInfo;
 import io.treehouses.remote.pojo.ServicesData;
