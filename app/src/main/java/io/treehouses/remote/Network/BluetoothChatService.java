@@ -62,8 +62,6 @@ import io.treehouses.remote.callback.BluetoothDeviceCallback;
 public class BluetoothChatService implements Serializable{
     // Debugging
     private static final String TAG = "BluetoothChatService";
-    private static final int DELIMITER = '~';
-
     // Name for the SDP record when creating server socket
     private static final String NAME_SECURE = "BluetoothChatSecure";
 
@@ -262,56 +260,7 @@ public class BluetoothChatService implements Serializable{
     }
 
     private Subscriber getWriter(Subscriber subscriber) {
-        return new Subscriber<Byte>() {
-            ArrayList<Byte> buffer = new ArrayList<>();
-            @Override
-            public void onSubscribe(Subscription d) {
-                subscriber.onSubscribe(d);
-            }
-
-            @Override
-            public void onComplete() {
-                if (!buffer.isEmpty()) {
-                    emit();
-                }
-                subscriber.onComplete();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                if (!buffer.isEmpty()) {
-                    emit();
-                }
-                subscriber.onError(e);
-            }
-
-            @Override
-            public void onNext(Byte b) {
-                if (b == DELIMITER) {
-                    emit();
-                } else {
-                    buffer.add(b);
-                }
-            }
-
-            private void emit() {
-                if (buffer.isEmpty()) {
-                    subscriber.onNext("");
-                    return;
-                }
-
-                byte[] bArray = new byte[buffer.size()];
-
-                for (int i = 0; i < buffer.size(); i++) {
-                    bArray[i] = buffer.get(i);
-                }
-
-                subscriber.onNext(new String(bArray));
-                buffer.clear();
-            }
-        };
+        return new MyWriter(subscriber);
     }
-
-
 
 }
