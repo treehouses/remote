@@ -148,7 +148,7 @@ public class BluetoothChatService implements Serializable{
                     startChat(bluetoothSocket);
                 }, throwable -> {
                     Log.e(TAG, "connectToDevice: FAILED TO CONNECT");
-                    mCurrentState = Constants.STATE_NONE;
+                    mCurrentState = Constants.STATE_FAILED;
                     updateUserInterfaceTitle();
                     init();
                 }));
@@ -177,6 +177,8 @@ public class BluetoothChatService implements Serializable{
 
                 }, throwable -> {
                     Log.e(TAG, "startChat: "+ "ERROR OCCURRED WHILE READING");
+                    mCurrentState = Constants.STATE_FAILED;
+                    updateUserInterfaceTitle();
                     disconnect();
                 }));
     }
@@ -202,6 +204,7 @@ public class BluetoothChatService implements Serializable{
 
     public void startDiscovery(BluetoothDeviceCallback callback) {
         Log.e(TAG, "STARTING DISCOVERY");
+        if (bluetooth.isDiscovering()) bluetooth.cancelDiscovery();
         bluetooth.startDiscovery();
         mCurrentState = Constants.STATE_LISTEN;
         updateUserInterfaceTitle();

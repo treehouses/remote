@@ -97,6 +97,7 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkConnectionState.checkConnectionState();
                 mChatService.disconnect();
                 dismiss();
             }
@@ -220,7 +221,7 @@ public class RPIDialogFragment extends BaseDialogFragment implements BluetoothDe
                             dismiss();
                             Toast.makeText(context, "Bluetooth Connected", LENGTH_LONG).show();
                             break;
-                        case Constants.STATE_NONE:
+                        case Constants.STATE_FAILED:
                             pDialog.dismiss();
                             dismiss();
                             Toast.makeText(context, "Connection Failed: Please Try Again", LENGTH_LONG).show();
