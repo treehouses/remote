@@ -73,7 +73,6 @@ public class RenameDialogFragment extends DialogFragment {
         textboxValidation.setmDialog(mDialog);
         textboxValidation.setTextWatcher(mHostNameEditText);
         textboxValidation.setSSID(mHostNameEditText);
-        textboxValidation.textboxValidation(getActivity(), "rename");
     }
 
     private void initLayoutView(View mView) {

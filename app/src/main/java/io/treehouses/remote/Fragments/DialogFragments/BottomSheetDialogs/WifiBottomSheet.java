@@ -17,9 +17,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.textfield.TextInputLayout;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
+import io.treehouses.remote.Fragments.TextBoxValidation;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.pojo.NetworkProfile;
@@ -53,6 +55,11 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
         setAddProfileListener();
 
         searchWifi.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
+
+        TextBoxValidation validation = new TextBoxValidation(getContext(), ssidText, passwordText, "wifi");
+        validation.setStart(startConfig);
+        validation.setAddprofile(addProfile);
+        validation.setTextInputLayout(v.findViewById(R.id.textInputLayout));
 
         return v;
     }

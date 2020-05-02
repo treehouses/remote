@@ -21,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
+import io.treehouses.remote.Fragments.TextBoxValidation;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.callback.HomeInteractListener;
@@ -62,6 +63,9 @@ public class BridgeBottomSheet extends BaseBottomSheetDialog {
 
         btnWifiSearch.setOnClickListener(v1 -> openWifiDialog(BridgeBottomSheet.this, context));
 
+        TextBoxValidation validation = new TextBoxValidation(getContext(), essid, hotspotEssid, "bridge");
+        validation.setStart(startConfig);
+        validation.setAddprofile(addProfile);
         return v;
     }
 

@@ -1,6 +1,7 @@
 package io.treehouses.remote.bases;
 
 import android.content.Context;
+import android.view.WindowManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
