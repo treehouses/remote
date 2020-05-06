@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACTION_PICK_WIFI_NETWORK" />
     <uses-permission android:name="android.Manifest.permission.OVERRIDE_WIFI_CONFIG" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->

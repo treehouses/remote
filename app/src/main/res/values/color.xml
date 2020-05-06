@@ -24,4 +24,7 @@
     <color name="material_drawer_background">@color/colorPrimary</color>
     <color name="color_course_dark">#6A2915</color>
     <color name="color_course">#D5562E</color>
+
+    <color name="disconnect_button">#BC5C5C</color>
+    <color name="disconnect_button_light">#c48787</color>
 </resources>
