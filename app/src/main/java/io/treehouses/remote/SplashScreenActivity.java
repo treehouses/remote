@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
+import io.treehouses.remote.bluetoothv2.RemoteActivity;
+
 public class SplashScreenActivity extends AppCompatActivity {
 
     private static final int SPLASH_TIME_OUT = 2000;
@@ -35,12 +37,12 @@ public class SplashScreenActivity extends AppCompatActivity {
 
 
             new Handler().postDelayed(() -> {
-                Intent intent = new Intent(SplashScreenActivity.this, InitialActivity.class);
+                Intent intent = new Intent(SplashScreenActivity.this, RemoteActivity.class);
                 startActivity(intent);
                 finish();
             }, SPLASH_TIME_OUT);
         } else {
-            Intent intent = new Intent(SplashScreenActivity.this, InitialActivity.class);
+            Intent intent = new Intent(SplashScreenActivity.this, RemoteActivity.class);
             startActivity(intent);
             finish();
         }

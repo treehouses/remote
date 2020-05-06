@@ -135,6 +135,11 @@
 
     <!--Add Command Dialog-->
     <string name="add_command_title">Add a Command</string>
+    <string name="error_bluetooth_not_available">Bluetooth not available</string>
+    <string name="error_bluetooth_disabled">Bluetooth disabled</string>
+    <string name="error_location_permission_missing">Location permission missing</string>
+    <string name="error_location_services_disabled">Location service disables</string>
+    <string name="error_scan_failed_already_started">Scan failed already started</string>
 
     <!--Settings-->
     <string-array name="led_options">
