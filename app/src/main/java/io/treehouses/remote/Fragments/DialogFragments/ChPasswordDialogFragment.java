@@ -77,7 +77,7 @@ public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragme
     private void setTextChangeListener(final AlertDialog mDialog) {
         textBoxValidation.setmDialog(mDialog);
         textBoxValidation.setTextWatcher(passwordEditText);
-        textBoxValidation.setPWD(passwordEditText);
+        textBoxValidation.PWD = passwordEditText;
         textBoxValidation.changePWValidation(confirmPassEditText, getActivity());
     }
 }
