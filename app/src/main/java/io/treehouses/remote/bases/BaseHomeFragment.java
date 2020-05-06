@@ -36,7 +36,10 @@ public class BaseHomeFragment extends BaseFragment {
         } else if (option == 2) {
             green.setBackgroundResource(R.drawable.newyear_anim_green);
             red.setBackgroundResource(R.drawable.newyear_anim_red);
-        } else {
+        } else if(option == 3){
+            green.setBackgroundResource(R.drawable.heavymetal_anim_green);
+            red.setBackgroundResource(R.drawable.heavymetal_anim_red);
+        } else{
             green.setBackgroundResource(R.drawable.dance_anim_green);
             red.setBackgroundResource(R.drawable.dance_anim_red);
         }
@@ -144,6 +147,7 @@ public class BaseHomeFragment extends BaseFragment {
             mIndicatorGreen.setVisibility(View.INVISIBLE);
             mIndicatorRed.setVisibility(View.INVISIBLE);
         }
+
         setAnimatorBackgrounds(mIndicatorGreen, mIndicatorRed, selected_LED);
         AnimationDrawable animationDrawableGreen = (AnimationDrawable) mIndicatorGreen.getBackground();
         AnimationDrawable animationDrawableRed = (AnimationDrawable) mIndicatorRed.getBackground();

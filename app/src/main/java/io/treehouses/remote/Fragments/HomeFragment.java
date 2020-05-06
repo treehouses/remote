@@ -177,7 +177,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     public void testConnectionListener() {
         testConnection.setOnClickListener(v -> {
-            String preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getString("led_pattern", "LED Dance");
+            String preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getString("led_pattern", "LED Heavy Metal");
             List<String> options = Arrays.asList(getResources().getStringArray(R.array.led_options));
             String[] options_code = getResources().getStringArray(R.array.led_options_commands);
             selected_LED = options.indexOf(preference);
