@@ -265,7 +265,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             internetSent = false
         } else if (output.startsWith("version: ") || checkVersionSent) {
             checkVersion(output)
-        } else if (output.contains(" ") && output.trim().split(" ").size == 4) {
+        } else if (output.contains(" ") && output.trim().split(" ").size == 4 && !matchResult(output, "pirateship", "bridge") && !output.contains("network")) {
             checkImageInfo(output.trim().split(" "), mChatService.connectedDeviceName)
             listener.sendMessage("treehouses internet\n")
             internetSent = true
