@@ -45,10 +45,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         drawer = findViewById(R.id.drawer_layout)
         checkLocationPermission()
         if (mChatService == null) {
-            Log.e(TAG, "mChatService Status: NULL")
             mChatService = BluetoothChatService(mHandler, applicationContext)
         } else {
-            Log.e(TAG, "mChatService Status: " + mChatService!!.state)
             mChatService!!.updateHandler(mHandler)
         }
         checkStatusNow()

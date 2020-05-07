@@ -106,11 +106,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             }
             networkProfile.isHotspot -> {
                 //Hotspot
-                if (networkProfile.password.isEmpty()) {
-                    listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid)
-                } else {
-                    listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid + " " + networkProfile.password)
-                }
+                if (networkProfile.password.isEmpty()) listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid)
+                else listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid + " " + networkProfile.password)
                 network_ssid = networkProfile.ssid
             }
             networkProfile.isBridge -> {
@@ -120,9 +117,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 if (!TextUtils.isEmpty(networkProfile.hotspot_password)) overallMessage += " " + networkProfile.hotspot_password + " "
                 listener.sendMessage(overallMessage)
             }
-            else -> {
-                Log.e("Home", "UNKNOWN TYPE")
-            }
+            else -> {}
         }
     }
 
@@ -138,11 +133,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         connectRpi!!.setOnClickListener {
             val vibe = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             if (vibe.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibe.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
-                } else {
-                    vibe.vibrate(10)
-                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibe.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
+                else vibe.vibrate(10)
             }
             if (connectionState) {
                 RPIDialogFragment.getInstance().bluetoothCheck("unregister")
