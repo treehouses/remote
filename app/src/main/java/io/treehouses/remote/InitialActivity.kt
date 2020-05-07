@@ -200,7 +200,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
                 .setIcon(R.drawable.bluetooth)
-                .setNegativeButton("OK") { dialog, which -> dialog.cancel() }
+                .setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
                 .show()
     }
 

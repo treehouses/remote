@@ -135,7 +135,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun connectRpiListener() {
-        connectRpi!!.setOnClickListener { v: View? ->
+        connectRpi!!.setOnClickListener {
             val vibe = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             if (vibe.hasVibrator()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -151,18 +151,18 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 checkConnectionState()
                 return@setOnClickListener
             }
-            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_OFF) {
+            if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
                 Toast.makeText(context, "Bluetooth is disabled", Toast.LENGTH_LONG).show()
-            } else if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) {
                 showRPIDialog(this@HomeFragment)
             }
         }
     }
 
-    private fun testConnectionListener() {
-        testConnection!!.setOnClickListener { v: View? ->
+    fun testConnectionListener() {
+        testConnection!!.setOnClickListener {
             val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
             val options = listOf(*resources.getStringArray(R.array.led_options))
             val optionsCode = resources.getStringArray(R.array.led_options_commands)
