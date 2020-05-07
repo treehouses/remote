@@ -7,6 +7,7 @@
     android:background="#FFF">
 
     <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -16,9 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_large"
-            app:contentPadding="@dimen/margin_large"
             app:cardElevation="@dimen/margin_small"
             app:cardUseCompatPadding="true"
+            app:contentPadding="@dimen/margin_large"
             app:layout_constraintBottom_toTopOf="@+id/listView">
 
             <TextView
@@ -162,13 +163,13 @@
                 android:id="@+id/editName"
                 android:layout_width="35dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_small"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:scaleType="fitXY"
                 android:layout_gravity="end"
+                android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginEnd="@dimen/margin_small"
                 android:layout_marginRight="@dimen/margin_small"
-                android:background="@drawable/ic_edit_black_24dp" />
+                android:layout_marginBottom="@dimen/margin_small"
+                android:background="@drawable/ic_edit_black_24dp"
+                android:scaleType="fitXY" />
 
         </androidx.cardview.widget.CardView>
 
@@ -273,7 +274,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
-                    android:text="RPI Upgrade Status"/>
+                    android:text="RPI Upgrade Status" />
 
             </LinearLayout>
 
@@ -295,13 +296,25 @@
             android:id="@+id/image_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Treehouses Image Version: "
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingStart="10dp"
             android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:text="Treehouses Image Version: "
             android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
