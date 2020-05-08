@@ -216,6 +216,10 @@ public class BaseTerminalFragment extends BaseFragment{
         return stringBuilder.toString();
     }
     protected void updateArrayAdapters(CommandsList data) {
+        if (data.commands == null) {
+            Toast.makeText(requireContext(), "Error has occurred. Please Refresh", Toast.LENGTH_SHORT).show();
+            return;
+        }
         for (int i = 0;i < data.commands.size();i++) {
             String s = getRootCommand(data.commands.get(i)).trim();
             Log.d("TAG", "updateArrayAdapters: "+s);
