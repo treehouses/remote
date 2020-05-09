@@ -158,7 +158,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     public void setupChat() {
         copyToList(mConversationView, getContext());
 
-        mConversationArrayAdapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()), R.layout.message, MainApplication.getTerminalList()) {
+        mConversationArrayAdapter = new ArrayAdapter<String>(requireActivity(), R.layout.message, (List<String>) MainApplication.getTerminalList()) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
