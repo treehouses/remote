@@ -61,6 +61,7 @@ public class InitialActivity extends PermissionActivity
         instance = this;
         setContentView(R.layout.activity_initial2);
         requestPermission();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

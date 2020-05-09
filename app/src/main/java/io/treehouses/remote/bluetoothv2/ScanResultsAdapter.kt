@@ -1,4 +1,5 @@
 package io.treehouses.remote.bluetoothv2
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.polidea.rxandroidble2.scan.ScanResult
 
 internal class ScanResultsAdapter(
-    private val onClickListener: (ScanResult) -> Unit
+        private val onClickListener: (ScanResult) -> Unit
 ) : RecyclerView.Adapter<ScanResultsAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -18,22 +19,19 @@ internal class ScanResultsAdapter(
     private val data = mutableListOf<ScanResult>()
 
     fun addScanResult(bleScanResult: ScanResult) {
-        // Not the best way to ensure distinct devices, just for the sake of the demo.
         data.withIndex()
-            .firstOrNull { it.value.bleDevice == bleScanResult.bleDevice }
-            ?.let {
-                // device already in data list => update
-                data[it.index] = bleScanResult
-                notifyItemChanged(it.index)
-            }
-            ?: run {
-                // new device => add to data list
-                with(data) {
-                    add(bleScanResult)
-                    sortBy { it.bleDevice.macAddress }
+                .firstOrNull { it.value.bleDevice == bleScanResult.bleDevice }
+                ?.let {
+                    data[it.index] = bleScanResult
+                    notifyItemChanged(it.index)
                 }
-                notifyDataSetChanged()
-            }
+                ?: run {
+                    with(data) {
+                        add(bleScanResult)
+                        sortBy { it.bleDevice.macAddress }
+                    }
+                    notifyDataSetChanged()
+                }
     }
 
     fun clearScanResults() {
@@ -52,7 +50,7 @@ internal class ScanResultsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.two_line_list_item, parent, false)
-            .let { ViewHolder(it) }
+            LayoutInflater.from(parent.context)
+                    .inflate(android.R.layout.two_line_list_item, parent, false)
+                    .let { ViewHolder(it) }
 }
