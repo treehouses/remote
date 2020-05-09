@@ -51,7 +51,6 @@ public class InitialActivity extends PermissionActivity
 
     private static InitialActivity instance = null;
     private Boolean validBluetoothConnection = false;
-    int REQUEST_COARSE_LOCATION = 99;
     private static BluetoothChatService mChatService = null;
     private String mConnectedDeviceName = null;
     private NavigationView navigationView;
@@ -65,26 +64,20 @@ public class InitialActivity extends PermissionActivity
         instance = this;
         setContentView(R.layout.activity_initial2);
         requestPermission();
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         drawer = findViewById(R.id.drawer_layout);
 
         checkLocationPermission();
 
-        if (mChatService == (null)) {
-            Log.e(TAG, "mChatService Status: NULL");
-            mChatService = new BluetoothChatService(mHandler, getApplicationContext());
-        } else {
-            Log.e(TAG, "mChatService Status: " + mChatService.getState());
-            mChatService.updateHandler(mHandler);
-        }
+        if (mChatService == (null)) mChatService = new BluetoothChatService(mHandler, getApplicationContext());
+        else mChatService.updateHandler(mHandler);
 
         checkStatusNow();
 
         openCallFragment(new HomeFragment());
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 ((InputMethodManager)InitialActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
@@ -189,16 +182,6 @@ public class InitialActivity extends PermissionActivity
         else navigationView.getMenu().getItem(7).setIcon(R.drawable.status);
     }
 
-    protected void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_COARSE_LOCATION);
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == 99) {
@@ -244,9 +227,7 @@ public class InitialActivity extends PermissionActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
-            openCallFragment(new SettingsFragment());
-        }
+        if (item.getItemId() == R.id.action_settings) { openCallFragment(new SettingsFragment()); }
         return super.onOptionsItemSelected(item);
     }
 
