@@ -8,3 +8,4 @@ import com.polidea.rxandroidble2.exceptions.BleScanException
 
 internal fun Activity.debug(messsage: String?) = Log.d("treeshouses", messsage)
 internal fun Activity.error(exception: String?) = Log.e("treeshouses", exception)
+internal fun String.log(exception: String?) = Log.d("treeshouses", exception)

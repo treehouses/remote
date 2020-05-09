@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="8dp"
     android:orientation="vertical"
-    tools:context=".bluetoothv2.RemoteActivity">
+    tools:context=".bluetoothv2.ui.RemoteActivity">
 
 
     <Button

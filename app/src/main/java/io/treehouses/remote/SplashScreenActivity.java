@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
-import io.treehouses.remote.bluetoothv2.RemoteActivity;
+import io.treehouses.remote.bluetoothv2.ui.RemoteActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
