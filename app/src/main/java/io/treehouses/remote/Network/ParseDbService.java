@@ -25,7 +25,6 @@ public class ParseDbService {
         testObject.put("deviceName", Build.DEVICE);
         testObject.put("deviceManufacturer", Build.MANUFACTURER);
         testObject.put("deviceModel", Build.MODEL);
-        testObject.put("deviceSerialNumber", Utils.getAndroidId(context));
         testObject.put("macAddress", Utils.getMacAddr());
         testObject.put("androidVersion", Build.VERSION.SDK_INT + "");
         testObject.put("gps_latitude", preferences.getString("last_lat", ""));
