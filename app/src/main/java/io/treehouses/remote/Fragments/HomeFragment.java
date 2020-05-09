@@ -91,7 +91,10 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         showDialogOnce(preferences);
         checkConnectionState();
         connectRpiListener();
-        getStarted.setOnClickListener(v -> InitialActivity.getInstance().openCallFragment(new AboutFragment()));
+        getStarted.setOnClickListener(v -> {
+            InitialActivity.getInstance().openCallFragment(new AboutFragment());
+            requireActivity().setTitle("About");
+        });
         testConnectionListener();
         return view;
     }

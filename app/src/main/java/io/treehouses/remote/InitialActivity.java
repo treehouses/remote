@@ -79,6 +79,7 @@ public class InitialActivity extends PermissionActivity
         checkStatusNow();
 
         openCallFragment(new HomeFragment());
+        setTitle("Home");
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -101,7 +102,8 @@ public class InitialActivity extends PermissionActivity
         } else {
             Fragment f = (getSupportFragmentManager()).findFragmentById(R.id.fragment_container);
             if(f instanceof HomeFragment) finish();
-            super.onBackPressed();
+            else if (f instanceof SettingsFragment) (getSupportFragmentManager()).popBackStack();
+//            super.onBackPressed();
         }
     }
 
@@ -115,6 +117,7 @@ public class InitialActivity extends PermissionActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        boolean flag = true;
         checkStatusNow();
         if (validBluetoothConnection) {
             onNavigationItemClicked(id);
@@ -125,8 +128,10 @@ public class InitialActivity extends PermissionActivity
                 openCallFragment(new HomeFragment());
             } else {
                 showAlertDialog();
+                flag = false;
             }
         }
+        if (flag) setTitle(item.getTitle());
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -167,7 +172,7 @@ public class InitialActivity extends PermissionActivity
         fragmentTransaction.addToBackStack("");
         fragmentTransaction.commit();
 //        menuItem.setChecked(true);
-        setTitle("Treehouses Remote");
+//        setTitle("Treehouses Remote ");
 //        drawer.closeDrawers();
 
     }
