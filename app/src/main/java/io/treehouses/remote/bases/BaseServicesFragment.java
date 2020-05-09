@@ -75,6 +75,10 @@ public class BaseServicesFragment extends BaseFragment {
     }
 
     private void constructServiceList(ServicesData servicesData, ArrayList<ServiceInfo> services) {
+        if (servicesData == null || servicesData.getAvailable() == null) {
+            Toast.makeText(getContext(), "Error Occurred. Please Refresh", Toast.LENGTH_SHORT).show();
+            return;
+        }
         services.clear();
         for (String service : servicesData.getAvailable()) {
             if (inServiceList(service, services) == -1) {
