@@ -155,12 +155,14 @@
         <item>LED Dance</item>
         <item>LED Thanksgiving</item>
         <item>LED New Years</item>
+        <item>LED Heavy Metal</item>
     </string-array>
 
     <string-array name="led_options_commands">
         <item>treehouses led dance</item>
         <item>treehouses led thanksgiving</item>
         <item>treehouses led newyear</item>
+        <item>treehouses led heavymetal</item>
     </string-array>
 
 </resources>

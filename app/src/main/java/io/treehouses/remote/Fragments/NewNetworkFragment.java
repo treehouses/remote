@@ -115,7 +115,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
 
     private void updateNetworkMode() {
-        String s = "treehouses networkmode";
+        String s = "treehouses networkmode\n";
         mChatService.write(s.getBytes());
         Toast.makeText(getContext(), "Network Mode updated", Toast.LENGTH_LONG).show();
     }
@@ -139,10 +139,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         if (output.contains("pirateship has anchored successfully") || output.contains("the bridge has been built")) {
             return true;
         }
-        else if (output.contains("open wifi network") || output.contains("password network")) {
-            return true;
-        }
-        return false;
+        else return output.contains("open wifi network") || output.contains("password network");
     }
 
 
@@ -158,7 +155,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
         }
         //Error occurred
         else if (output.toLowerCase().contains("error")) {
-            showDialog("Error", "An error has occurred.");
+            showDialog("Error", output);
             progressBar.setVisibility(View.GONE);
         }
 
@@ -172,12 +169,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
     }
     private void showDialog(String title, String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setTitle(title).setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).create();
         alertDialog.show();
     }
 

@@ -11,7 +11,7 @@
         android:layout_marginTop="@dimen/_16dp"
         android:padding="8dp"
 
-        android:background="@drawable/get_started"
+        android:background="@drawable/ic_get_started"
         android:layout_marginStart="@dimen/margin_huge"
         android:layout_marginLeft="@dimen/margin_huge"
         android:layout_marginRight="@dimen/margin_huge"

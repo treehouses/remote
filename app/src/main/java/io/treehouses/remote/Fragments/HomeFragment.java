@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,6 +28,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import io.treehouses.remote.BuildConfig;
 import io.treehouses.remote.Constants;
@@ -155,8 +157,10 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
     }
 
 
-    private void connectRpiListener() {
+    public void connectRpiListener() {
         connectRpi.setOnClickListener(v -> {
+            final Vibrator vibe = (Vibrator) Objects.requireNonNull(getContext()).getSystemService(Context.VIBRATOR_SERVICE);
+            vibe.vibrate(10);
             if (connectionState) {
                 RPIDialogFragment.getInstance().bluetoothCheck("unregister");
                 mChatService.stop();
@@ -177,7 +181,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
 
     public void testConnectionListener() {
         testConnection.setOnClickListener(v -> {
-            String preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getString("led_pattern", "LED Dance");
+            String preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getString("led_pattern", "LED Heavy Metal");
             List<String> options = Arrays.asList(getResources().getStringArray(R.array.led_options));
             String[] options_code = getResources().getStringArray(R.array.led_options_commands);
             selected_LED = options.indexOf(preference);
@@ -208,7 +212,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         welcome_text.setVisibility(View.GONE);
         testConnection.setVisibility(View.VISIBLE);
         connectRpi.setText("Disconnect");
-        connectRpi.setBackgroundResource(R.drawable.disconnect_rpi);
+        connectRpi.setBackgroundResource(R.drawable.ic_disconnect_rpi);
         background.animate().translationY(150);
         connectRpi.animate().translationY(110);
         getStarted.animate().translationY(70);
@@ -224,7 +228,7 @@ public class HomeFragment extends BaseHomeFragment implements SetDisconnect {
         background.animate().translationY(0);
         connectRpi.animate().translationY(0);
         getStarted.animate().translationY(0);
-        connectRpi.setBackgroundResource(R.drawable.connect_to_rpi);
+        connectRpi.setBackgroundResource(R.drawable.ic_connect_to_rpi);
         logo.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
     }

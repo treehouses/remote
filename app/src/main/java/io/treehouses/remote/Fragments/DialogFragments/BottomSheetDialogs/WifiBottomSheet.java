@@ -7,13 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.textfield.TextInputLayout;
+
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
+import io.treehouses.remote.Fragments.TextBoxValidation;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.pojo.NetworkProfile;
@@ -28,6 +33,7 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
     private EditText ssidText;
     private EditText passwordText;
     private Button startConfig, addProfile, searchWifi;
+    private CheckBox hiddenEnabled;
 
     @Nullable
     @Override
@@ -39,12 +45,19 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
         startConfig = v.findViewById(R.id.btn_start_config);
         addProfile = v.findViewById(R.id.set_wifi_profile);
         searchWifi = v.findViewById(R.id.btnWifiSearch);
+        hiddenEnabled = v.findViewById(R.id.checkBoxHiddenWifi);
 
         setStartConfigListener();
 
         setAddProfileListener();
 
         searchWifi.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
+
+        TextBoxValidation validation = new TextBoxValidation(getContext(), ssidText, passwordText, "wifi");
+        validation.setStart(startConfig);
+        validation.setAddprofile(addProfile);
+        validation.setTextInputLayout(v.findViewById(R.id.textInputLayout));
+
 
         return v;
     }
@@ -53,7 +66,9 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
         startConfig.setOnClickListener(v -> {
             String ssid = ssidText.getText().toString();
             String password = passwordText.getText().toString();
-            listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+            if (hiddenEnabled.isChecked()) listener.sendMessage(String.format("treehouses wifihidden \"%s\" \"%s\"", ssid, password));
+            else listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
+
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
             intent.putExtra(CLICKED_START_CONFIG, true);
