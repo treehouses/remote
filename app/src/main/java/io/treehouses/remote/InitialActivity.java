@@ -123,8 +123,6 @@ public class InitialActivity extends PermissionActivity
         } else {
             if (id == R.id.menu_about) {
                 openCallFragment((new AboutFragment()));
-            }else if (id == R.id.menu_tunnel2) {
-                openCallFragment(new SSHTunnelFragment());
             }else if (id == R.id.menu_home) {
                 openCallFragment(new HomeFragment());
             } else {
