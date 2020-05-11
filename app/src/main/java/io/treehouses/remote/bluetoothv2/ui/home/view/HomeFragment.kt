@@ -1,7 +1,6 @@
 package io.treehouses.remote.bluetoothv2.ui.home.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.polidea.rxandroidble2.scan.ScanResult
 
 import io.treehouses.remote.R
-import io.treehouses.remote.bluetoothv2.ScanResultsAdapter
 import io.treehouses.remote.bluetoothv2.base.view.BaseFragment
 import io.treehouses.remote.bluetoothv2.ui.home.interactor.HomeMVPInterator
 import io.treehouses.remote.bluetoothv2.ui.home.presenter.HomeMVPPresenter

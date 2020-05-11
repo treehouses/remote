@@ -4,4 +4,5 @@ import javax.inject.Inject
 
 
 class BluetoothReadWriteService @Inject constructor() {
+
 }

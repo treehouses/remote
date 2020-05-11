@@ -1,4 +1,4 @@
-package io.treehouses.remote.bluetoothv2
+package io.treehouses.remote.bluetoothv2.ui.home.view
 
 import android.view.LayoutInflater
 import android.view.View
