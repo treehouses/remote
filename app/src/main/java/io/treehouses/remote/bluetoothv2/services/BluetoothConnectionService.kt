@@ -9,8 +9,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.bluetoothv2.util.isConnected
+import javax.inject.Inject
 
-class BluetoothConnectionService {
+class BluetoothConnectionService @Inject constructor() {
     public interface ScanBluetoothCallback {
         fun onDeviceFound(device: ScanResult)
         fun onScanFailure(message: String)
@@ -38,7 +39,7 @@ class BluetoothConnectionService {
     public val isConnected : Boolean
             get() = bleDevice != null
 
-    public fun ScanDevices(callback: ScanBluetoothCallback) {
+    public fun scanDevices(callback: ScanBluetoothCallback) {
         if (isScanning) {
             scanDisposable?.dispose()
         } else {
