@@ -6,6 +6,10 @@
     tools:context=".bluetoothv2.ui.home.view.HomeFragment">
 
 
+    <Button
+        android:layout_width="wrap_content"
+        android:text="Connnect"
+        android:layout_height="wrap_content"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:id="@+id/rv_devices"
