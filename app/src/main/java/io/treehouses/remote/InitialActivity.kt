@@ -60,6 +60,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         GPSService(this)
     }
 
+
     override fun onBackPressed() {
         if (drawer!!.isDrawerOpen(GravityCompat.START)) {
             drawer!!.closeDrawer(GravityCompat.START)
@@ -68,7 +69,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             if (f is HomeFragment) finish()
             else {
                 (supportFragmentManager).popBackStack();
-                title = "Treehouses Remote"
+                title = "Home"
             }
         }
 
