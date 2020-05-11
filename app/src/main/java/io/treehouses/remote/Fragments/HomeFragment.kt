@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +19,8 @@ import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
-import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.MainApplication
-import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.bases.BaseHomeFragment
@@ -58,10 +55,10 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         mChatService = listener.chatService
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         connectRpi = view.findViewById(R.id.btn_connect)
-        getStarted = view.findViewById(R.id.btn_getStarted)
         preferences = PreferenceManager.getDefaultSharedPreferences(activity)
         testConnection = view.findViewById(R.id.test_connection)
         welcome_text = view.findViewById(R.id.welcome_home)
+        getStarted = view.findViewById(R.id.btn_getStarted)
         background = view.findViewById(R.id.background_home)
         network_profiles = view.findViewById(R.id.network_profiles)
         logo = view.findViewById(R.id.logo_home)
@@ -71,7 +68,10 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         showDialogOnce(preferences!!)
         checkConnectionState()
         connectRpiListener()
-        getStarted?.setOnClickListener { instance!!.openCallFragment(AboutFragment()) }
+        getStarted?.setOnClickListener {
+            instance!!.openCallFragment(AboutFragment())
+            activity?.let { it.title = "About" }
+        }
         testConnectionListener()
         return view
     }
@@ -117,7 +117,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 if (!TextUtils.isEmpty(networkProfile.hotspot_password)) overallMessage += " " + networkProfile.hotspot_password + " "
                 listener.sendMessage(overallMessage)
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -257,8 +258,11 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun readMessage(output: String) {
-        notificationListener = try { context as NotificationCallback?
-        } catch (e: ClassCastException) { throw ClassCastException("Activity must implement NotificationListener") }
+        notificationListener = try {
+            context as NotificationCallback?
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Activity must implement NotificationListener")
+        }
         //Remove in 1 month ( May 4th)
         if (output.contains("unknown")) {
             showUpgradeCLI()
