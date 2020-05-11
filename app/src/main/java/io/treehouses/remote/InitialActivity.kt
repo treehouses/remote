@@ -67,199 +67,200 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
-            else {
+            else if (f is SettingsFragment){
                 (supportFragmentManager).popBackStack();
                 title = "Home"
-            }
-        }
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.initial, menu)
-        return true
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        var flag = true
-        val id = item.itemId
-        checkStatusNow()
-        if (validBluetoothConnection) {
-            onNavigationItemClicked(id)
-        } else {
-            if (id == R.id.menu_about) {
-                openCallFragment(AboutFragment())
-            } else if (id == R.id.menu_home) {
-                openCallFragment(HomeFragment())
-            } else {
-                showAlertDialog()
-                flag = false;
-            }
-        }
-        if (flag) title = item.title;
-        drawer!!.closeDrawer(GravityCompat.START)
-        return true
-    }
-
-    private fun onNavigationItemClicked(id: Int) {
-        if (id == R.id.menu_home) {
-            openCallFragment(HomeFragment())
-        } else if (id == R.id.menu_network) {
-            openCallFragment(NewNetworkFragment())
-        } else if (id == R.id.menu_system) {
-            openCallFragment(SystemFragment())
-        } else if (id == R.id.menu_terminal) {
-            openCallFragment(TerminalFragment())
-        } else {
-            checkMore(id)
         }
     }
 
-    private fun checkMore(id: Int) {
-        if (id == R.id.menu_services) {
-            openCallFragment(ServicesFragment())
-        } else if (id == R.id.menu_tunnel) {
-            openCallFragment(TunnelFragment())
-        } else if (id == R.id.menu_about) {
+}
+
+override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.initial, menu)
+    return true
+}
+
+override fun onNavigationItemSelected(item: MenuItem): Boolean {
+    // Handle navigation view item clicks here.
+    var flag = true
+    val id = item.itemId
+    checkStatusNow()
+    if (validBluetoothConnection) {
+        onNavigationItemClicked(id)
+    } else {
+        if (id == R.id.menu_about) {
             openCallFragment(AboutFragment())
-        } else if (id == R.id.menu_status) {
-            openCallFragment(StatusFragment())
-        } else {
+        } else if (id == R.id.menu_home) {
             openCallFragment(HomeFragment())
+        } else {
+            showAlertDialog()
+            flag = false;
         }
     }
+    if (flag) title = item.title;
+    drawer!!.closeDrawer(GravityCompat.START)
+    return true
+}
 
-    override fun openCallFragment(newfragment: Fragment) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, newfragment)
-        fragmentTransaction.addToBackStack("")
-        fragmentTransaction.commit()
-        //        menuItem.setChecked(true);
+private fun onNavigationItemClicked(id: Int) {
+    if (id == R.id.menu_home) {
+        openCallFragment(HomeFragment())
+    } else if (id == R.id.menu_network) {
+        openCallFragment(NewNetworkFragment())
+    } else if (id == R.id.menu_system) {
+        openCallFragment(SystemFragment())
+    } else if (id == R.id.menu_terminal) {
+        openCallFragment(TerminalFragment())
+    } else {
+        checkMore(id)
+    }
+}
+
+private fun checkMore(id: Int) {
+    if (id == R.id.menu_services) {
+        openCallFragment(ServicesFragment())
+    } else if (id == R.id.menu_tunnel) {
+        openCallFragment(TunnelFragment())
+    } else if (id == R.id.menu_about) {
+        openCallFragment(AboutFragment())
+    } else if (id == R.id.menu_status) {
+        openCallFragment(StatusFragment())
+    } else {
+        openCallFragment(HomeFragment())
+    }
+}
+
+override fun openCallFragment(newfragment: Fragment) {
+    val fragmentTransaction = supportFragmentManager.beginTransaction()
+    fragmentTransaction.replace(R.id.fragment_container, newfragment)
+    fragmentTransaction.addToBackStack("")
+    fragmentTransaction.commit()
+    //        menuItem.setChecked(true);
 //        title = "Treehouses Remote"
-        //        drawer.closeDrawers();
-    }
+    //        drawer.closeDrawers();
+}
 
-    //
-    override fun setNotification(b: Boolean) {
-        if (b) navigationView!!.menu.getItem(7).setIcon(R.drawable.status_notification) else navigationView!!.menu.getItem(7).setIcon(R.drawable.status)
-    }
+//
+override fun setNotification(b: Boolean) {
+    if (b) navigationView!!.menu.getItem(7).setIcon(R.drawable.status_notification) else navigationView!!.menu.getItem(7).setIcon(R.drawable.status)
+}
 
-    protected fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                    REQUEST_COARSE_LOCATION)
+protected fun checkLocationPermission() {
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                REQUEST_COARSE_LOCATION)
+    }
+}
+
+override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    if (requestCode == 99) {
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
+        } //TODO re-request
+    }
+}
+
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    mChatService!!.updateHandler(mHandler)
+}
+
+override fun setChatService(chatService: BluetoothChatService) {
+    mChatService = chatService
+    mChatService!!.updateHandler(mHandler)
+    checkStatusNow()
+}
+
+override fun getChatService(): BluetoothChatService {
+    return mChatService!!
+}
+
+private fun checkStatusNow() {
+    validBluetoothConnection = when (mChatService!!.state) {
+        Constants.STATE_CONNECTED -> {
+            LogUtils.mConnect()
+            true
         }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (requestCode == 99) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
-            } //TODO re-request
+        Constants.STATE_NONE -> {
+            LogUtils.mOffline()
+            false
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        mChatService!!.updateHandler(mHandler)
-    }
-
-    override fun setChatService(chatService: BluetoothChatService) {
-        mChatService = chatService
-        mChatService!!.updateHandler(mHandler)
-        checkStatusNow()
-    }
-
-    override fun getChatService(): BluetoothChatService {
-        return mChatService!!
-    }
-
-    private fun checkStatusNow() {
-        validBluetoothConnection = when (mChatService!!.state) {
-            Constants.STATE_CONNECTED -> {
-                LogUtils.mConnect()
-                true
-            }
-            Constants.STATE_NONE -> {
-                LogUtils.mOffline()
-                false
-            }
-            else -> {
-                LogUtils.mIdle()
-                false
-            }
-        }
-        Log.e("BOOLEAN", "" + validBluetoothConnection)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_settings) {
-            openCallFragment(SettingsFragment())
-            title = "Settings"
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun showAlertDialog() {
-        AlertDialog.Builder(this@InitialActivity)
-                .setTitle("ALERT:")
-                .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
-                .setIcon(R.drawable.bluetooth)
-                .setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
-                .show()
-    }
-
-    /**
-     * Sends a message.
-     *
-     * @param message A string of text to send.
-     */
-    override fun sendMessage(message: String) {
-        // Check that we're actually connected before trying anything
-        LogUtils.log(message)
-        if (mChatService!!.state != Constants.STATE_CONNECTED) {
-            Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
+        else -> {
             LogUtils.mIdle()
-            return
-        }
-
-        // Check that there's actually something to send
-        if (message.isNotEmpty()) {
-            // Get the message bytes and tell the BluetoothChatService to write
-            val send = message.toByteArray()
-            mChatService!!.write(send)
-
-            // Reset out string buffer to zero and clear the edit text field
-//            mOutStringBuffer.setLength(0);
+            false
         }
     }
+    Log.e("BOOLEAN", "" + validBluetoothConnection)
+}
 
-    /**
-     * The Handler that gets information back from the BluetoothChatService
-     */
-    val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
+override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == R.id.action_settings) {
+        openCallFragment(SettingsFragment())
+        title = "Settings"
+    }
+    return super.onOptionsItemSelected(item)
+}
+
+private fun showAlertDialog() {
+    AlertDialog.Builder(this@InitialActivity)
+            .setTitle("ALERT:")
+            .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
+            .setIcon(R.drawable.bluetooth)
+            .setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
+            .show()
+}
+
+/**
+ * Sends a message.
+ *
+ * @param message A string of text to send.
+ */
+override fun sendMessage(message: String) {
+    // Check that we're actually connected before trying anything
+    LogUtils.log(message)
+    if (mChatService!!.state != Constants.STATE_CONNECTED) {
+        Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
+        LogUtils.mIdle()
+        return
+    }
+
+    // Check that there's actually something to send
+    if (message.isNotEmpty()) {
+        // Get the message bytes and tell the BluetoothChatService to write
+        val send = message.toByteArray()
+        mChatService!!.write(send)
+
+        // Reset out string buffer to zero and clear the edit text field
+//            mOutStringBuffer.setLength(0);
+    }
+}
+
+/**
+ * The Handler that gets information back from the BluetoothChatService
+ */
+val mHandler: Handler = object : Handler() {
+    override fun handleMessage(msg: Message) {
 //            FragmentActivity activity = getActivity();
-            //InitialActivity activity = InitialActivity.this;
-            when (msg.what) {
-                Constants.MESSAGE_DEVICE_NAME -> {
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
-                    if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        Log.e("DEVICE", "" + mConnectedDeviceName)
-                        checkStatusNow()
-                    }
+        //InitialActivity activity = InitialActivity.this;
+        when (msg.what) {
+            Constants.MESSAGE_DEVICE_NAME -> {
+                // save the connected device's name
+                mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
+                if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
+                    Log.e("DEVICE", "" + mConnectedDeviceName)
+                    checkStatusNow()
                 }
             }
         }
     }
+}
 
-    companion object {
-        @JvmStatic
-        var instance: InitialActivity? = null
-            private set
-        private var mChatService: BluetoothChatService? = null
-    }
+companion object {
+    @JvmStatic
+    var instance: InitialActivity? = null
+        private set
+    private var mChatService: BluetoothChatService? = null
+}
 }
