@@ -23,12 +23,13 @@ public abstract class PermissionActivity extends AppCompatActivity {
     }
 
 
+
+
     public void statusCheck() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
-
         }
     }
 

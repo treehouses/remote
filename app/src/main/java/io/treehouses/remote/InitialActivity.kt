@@ -45,7 +45,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         drawer = findViewById(R.id.drawer_layout)
-        checkLocationPermission()
         if (mChatService == null) {
             mChatService = BluetoothChatService(mHandler, applicationContext)
         } else {
@@ -53,7 +52,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
         checkStatusNow()
         openCallFragment(HomeFragment())
+        setUpDrawer()
         title = "Home";
+        GPSService(this)
+    }
+
+    private fun setUpDrawer() {
         val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, drawer, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             override fun onDrawerOpened(drawerView: View) {
                 (this@InitialActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(window.decorView.windowToken, 0)
@@ -64,7 +68,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         navigationView = findViewById(R.id.nav_view)
         navigationView?.setNavigationItemSelectedListener(this)
         navigationView?.itemIconTintList = null
-        GPSService(this)
     }
 
 
@@ -153,12 +156,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     //
     override fun setNotification(b: Boolean) {
         if (b) navigationView!!.menu.getItem(7).setIcon(R.drawable.status_notification) else navigationView!!.menu.getItem(7).setIcon(R.drawable.status)
-    }
-
-    override fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_COARSE_LOCATION)
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
