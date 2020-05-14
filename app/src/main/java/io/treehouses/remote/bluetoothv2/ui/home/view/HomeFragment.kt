@@ -11,6 +11,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bluetoothv2.base.view.BaseFragment
 import io.treehouses.remote.bluetoothv2.ui.home.interactor.HomeMVPInterator
 import io.treehouses.remote.bluetoothv2.ui.home.presenter.HomeMVPPresenter
+import kotlinx.android.synthetic.main.activity_home_fragment.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
@@ -32,7 +33,9 @@ class HomeFragment : BaseFragment(), HomeMVPView, (ScanResult) -> Unit {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         presenter.onAttach(this)
-        presenter.onConnectClicked()
+        btn_connect.setOnClickListener {
+            presenter.onConnectClicked()
+        }
         rv_devices.apply {
             layoutManager = LinearLayoutManager(activity)
             adapter = resultsAdapter

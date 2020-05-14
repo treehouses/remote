@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import dagger.android.support.AndroidSupportInjection
 
 abstract class BaseFragment : Fragment(), MVPView {
 
@@ -21,9 +22,12 @@ abstract class BaseFragment : Fragment(), MVPView {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        performDependencyInjection()
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(false)
     }
+
+    private fun performDependencyInjection() = AndroidSupportInjection.inject(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
