@@ -18,16 +18,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--dontwarn retrofit.**
--keep class retrofit.** { *; }
--dontwarn sun.misc.Unsafe
--dontwarn com.octo.android.robospice.retrofit.RetrofitJackson**
--dontwarn retrofit.appengine.UrlFetchClient
--keepattributes Signature
--keepattributes Exceptions
--keepclasseswithmembers class * {
-    @retrofit.http.* <methods>;
-}
 -dontwarn javax.annotation.**
 -keep class com.google.gson.** { *; }
 -keep class com.google.inject.** { *; }
@@ -65,8 +55,6 @@
 -dontwarn com.google.android.**
 
 
--keep class com.kabmart.pojo.** { *; }
-
 
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
@@ -97,11 +85,6 @@
 -keep class android.support.design.widget.** { *; }
 -keep class android.support.**{*;}
 -dontwarn android.support.**
-
--keep class butterknife.*
--keepclasseswithmembernames class * { @butterknife.* <methods>; }
--keepclasseswithmembernames class * { @butterknife.* <fields>; }
-
 
 -keepattributes Signature
 -keepattributes Annotation
@@ -136,8 +119,6 @@
 -keep class de.hdodenhof.** { *; }
 -dontwarn de.hdodenhof.**
 
--keep class com.kabmart.app.** { *; }
--dontwarn com.kabmart.app.**
 
 -keep class com.miguelcatalan.** { *; }
 -dontwarn com.miguelcatalan.**
@@ -147,14 +128,15 @@
 -dontwarn org.joda.time.**
 -keep class org.joda.time.** { *; }
 -keep interface org.joda.time.** { *; }
--keep class com.github.keyrunHORNET.** { *; }
--keep interface com.github.keyrunHORNET.** { *; }
 
 -keep class com.github.hkk595.** { *; }
 -keep interface com.github.hkk595.** { *; }
 
 -keep class com.github.AnkitKiet.** { *; }
 -keep interface com.github.AnkitKiet.** { *; }
+
+-keep class com.mikepenz.** { *; }
+-keep interface com.mikepenz.** { *; }
 
 -keep class com.github.nkzawa.** { *; }
 -keep interface com.github.nkzawa.** { *; }
