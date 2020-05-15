@@ -57,6 +57,7 @@ after_success:
   - sh set_tags.sh
 before_deploy:
   - cp $TRAVIS_BUILD_DIR/treehouses-remote.jks $HOME
+  - cp app/build/outputs/mapping/release/mapping.txt app/build/outputs/apk/release/mapping.txt
   - cd app/build/outputs/apk/release
   - ls
   - cp remote-$TRAVIS_BUILD_NUMBER.apk remote-unaligned.apk
