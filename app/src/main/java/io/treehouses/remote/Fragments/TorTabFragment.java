@@ -40,16 +40,16 @@ public class TorTabFragment extends BaseFragment {
     private ProgressDialog nDialog;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        nDialog = new ProgressDialog(getActivity());
-        nDialog.setMessage("Talking to raspberry");
-        nDialog.setTitle("Getting Tor Status");
-        nDialog.setIndeterminate(false);
-        nDialog.setCancelable(true);
-        nDialog.show();
-        mChatService = listener.getChatService();
-        mChatService.updateHandler(mHandler);
-
-        listener.sendMessage("treehouses tor status");
+//        nDialog = new ProgressDialog(getActivity());
+//        nDialog.setMessage("Talking to raspberry");
+//        nDialog.setTitle("Getting Tor Status");
+//        nDialog.setIndeterminate(false);
+//        nDialog.setCancelable(true);
+//        nDialog.show();
+//        mChatService = listener.getChatService();
+//        mChatService.updateHandler(mHandler);
+//
+//        listener.sendMessage("treehouses tor status");
 
 
 
