@@ -13,11 +13,14 @@ import androidx.core.content.ContextCompat;
 import java.util.List;
 
 import io.treehouses.remote.R;
+import io.treehouses.remote.databinding.ListRpiItemBinding;
 import io.treehouses.remote.pojo.DeviceInfo;
 
 public class RPIListAdapter extends ArrayAdapter<DeviceInfo> {
     private List<DeviceInfo> data;
     private Context context;
+
+    private ListRpiItemBinding bind;
     public RPIListAdapter(Context context, List<DeviceInfo> data) {
         super(context, 0, data);
         this.data = data;
@@ -30,24 +33,21 @@ public class RPIListAdapter extends ArrayAdapter<DeviceInfo> {
         String deviceText = data.get(position).getDeviceName();
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_rpi_item, parent, false);
+            bind = ListRpiItemBinding.inflate(LayoutInflater.from(getContext()), parent, false);
         }
 
-        TextView text = convertView.findViewById(R.id.device_info);
-        ImageView pairedImage = convertView.findViewById(R.id.paired_icon);
-
-        text.setText(deviceText);
-        pairedImage.setVisibility(View.INVISIBLE);
+        bind.deviceInfo.setText(deviceText);
+        bind.pairedIcon.setVisibility(View.INVISIBLE);
         if (data.get(position).isPaired()) {
-            pairedImage.setVisibility(View.VISIBLE);
+            bind.pairedIcon.setVisibility(View.VISIBLE);
             if (data.get(position).isInRange()) {
-                pairedImage.setColorFilter(ContextCompat.getColor(context, R.color.md_green_500));
+                bind.pairedIcon.setColorFilter(ContextCompat.getColor(context, R.color.md_green_500));
             } else {
-                pairedImage.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_400));
+                bind.pairedIcon.setColorFilter(ContextCompat.getColor(context, R.color.md_grey_400));
             }
         }
 
         // Return the completed view to render on screen
-        return convertView;
+        return bind.getRoot();
     }
 }

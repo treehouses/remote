@@ -25,13 +25,10 @@ import io.treehouses.remote.adapter.ServiceCardAdapter;
 import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServiceAction;
+import io.treehouses.remote.databinding.ActivityServicesDetailsBinding;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesDetailsFragment extends BaseServicesFragment implements AdapterView.OnItemSelectedListener, ViewPager.OnPageChangeListener, ServiceAction {
-
-    private View view;
-    private Spinner serviceSelector;
-    private ProgressBar progressBar;
 
     private boolean received = false;
     private boolean wait = false;
@@ -41,10 +38,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
     private ServiceInfo selected;
 
-    private ServiceViewPager serviceCards;
     private ServiceCardAdapter serviceCardAdapter;
 
     private boolean scrolled = false;
+
+    private ActivityServicesDetailsBinding binding;
 
     ServicesDetailsFragment(ArrayList<ServiceInfo> serviceInfos){ this.services = serviceInfos; }
 
@@ -52,24 +50,19 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mChatService = listener.getChatService();
-//        mChatService.updateHandler(mHandler);
-
-        view = inflater.inflate(R.layout.activity_services_details, container, false);
-        serviceSelector = view.findViewById(R.id.pickService);
-        progressBar = view.findViewById(R.id.progressBar);
+        binding = ActivityServicesDetailsBinding.inflate(inflater, container, false);
 
         spinnerAdapter = new ServicesListAdapter(getContext(), services, getResources().getColor(R.color.md_grey_600));
-        serviceSelector.setAdapter(spinnerAdapter);
-        serviceSelector.setSelection(1);
-        serviceSelector.setOnItemSelectedListener(this);
+        binding.pickService.setAdapter(spinnerAdapter);
+        binding.pickService.setSelection(1);
+        binding.pickService.setOnItemSelectedListener(this);
 
-        serviceCards = view.findViewById(R.id.services_cards);
         serviceCardAdapter = new ServiceCardAdapter(getChildFragmentManager(), services);
-        serviceCards.setAdapter(serviceCardAdapter);
+        binding.servicesCards.setAdapter(serviceCardAdapter);
 
-        serviceCards.addOnPageChangeListener(this);
+        binding.servicesCards.addOnPageChangeListener(this);
 
-        return view;
+        return binding.getRoot();
     }
 
     final Handler handlerDetails = new Handler() {
@@ -90,7 +83,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     };
 
     private void matchOutput(String s) {
-        selected =((ServiceInfo)serviceSelector.getSelectedItem());
+        selected =((ServiceInfo) binding.pickService.getSelectedItem());
         Log.d("Entered", "matchOutput: "+s);
         if (s.contains("started")) { selected.serviceStatus = ServiceInfo.SERVICE_RUNNING;
         } else if (s.contains("stopped and removed")) {
@@ -114,12 +107,12 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         else if (isLocalUrl(output, received)) {
             received = true;
             openLocalURL(output.trim());
-            progressBar.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
         }
         else if (isTorURL(output, received)) {
             received = true;
             openTorURL(output.trim());
-            progressBar.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
         }
         else if (output.contains("service autorun set")) {
             setScreenState(true);
@@ -139,7 +132,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return;
 
             int count = countHeadersBefore(position);
-            serviceCards.setCurrentItem(position-count);
+            binding.servicesCards.setCurrentItem(position-count);
         }
     }
 
@@ -153,11 +146,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     }
 
     private void goToSelected() {
-        if (selected != null && serviceSelector != null) {
+        if (selected != null && binding.pickService != null) {
             int pos = inServiceList(selected.name, services);
             int count = countHeadersBefore(pos);
-            serviceCards.setCurrentItem(pos-count);
-            serviceSelector.setSelection(pos);
+            binding.servicesCards.setCurrentItem(pos-count);
+            binding.pickService.setSelection(pos);
         }
     }
     @Override
@@ -169,7 +162,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     @Override
     public void onPause() {
         super.onPause();
-        selected = (ServiceInfo) serviceSelector.getSelectedItem();
+        selected = (ServiceInfo) binding.pickService.getSelectedItem();
     }
 
     @Override
@@ -180,7 +173,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         Log.d("SELECTED", "onPageSelected: ");
         scrolled = true;
         int pos = position+countHeadersBefore(position+1);
-        serviceSelector.setSelection(pos);
+        binding.pickService.setSelection(pos);
         scrolled = false;
     }
 
@@ -224,7 +217,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         v.findViewById(id).setOnClickListener(v1 -> {
             writeToRPI(command);
             alertDialog.dismiss();
-            progressBar.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.VISIBLE);
         });
     }
 
@@ -240,10 +233,10 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     }
 
     private void setScreenState(boolean state) {
-        serviceCards.setPagingEnabled(state);
-        serviceSelector.setEnabled(state);
-        if (state) progressBar.setVisibility(View.GONE);
-        else progressBar.setVisibility(View.VISIBLE);
+        binding.servicesCards.setPagingEnabled(state);
+        binding.pickService.setEnabled(state);
+        if (state) binding.progressBar.setVisibility(View.GONE);
+        else binding.progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override

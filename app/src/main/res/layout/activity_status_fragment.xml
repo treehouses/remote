@@ -23,7 +23,7 @@
             app:layout_constraintBottom_toTopOf="@+id/listView">
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -32,19 +32,6 @@
                 android:textSize="@dimen/text_size_very_large"
                 android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
-
-        <!--<ListView-->
-        <!--android:id="@+id/listView"-->
-        <!--android:layout_width="368dp"-->
-        <!--android:layout_height="484dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginLeft="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginRight="8dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent" />-->
 
 
         <androidx.cardview.widget.CardView
@@ -58,14 +45,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView1">
 
-            <!--<Button-->
-            <!--android:id="@+id/btStatus"-->
-            <!--android:layout_width="57dp"-->
-            <!--android:layout_height="61dp"-->
-            <!--android:background="@drawable/circle"-->
-            <!--android:text="Button"-->
-            <!--tools:layout_editor_absoluteX="136dp"-->
-            <!--tools:layout_editor_absoluteY="16dp" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,7 +57,7 @@
                     app:srcCompat="@drawable/tick_png" />
 
                 <TextView
-                    android:id="@+id/tvStatus"
+                    android:id="@+id/tvBluetooth"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -95,7 +74,7 @@
             android:layout_height="wrap_content"
             app:cardElevation="@dimen/margin_small"
             app:cardUseCompatPadding="true"
-            app:layout_constraintBottom_toTopOf="@+id/cardView"
+            app:layout_constraintBottom_toTopOf="@+id/rpiNameCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -113,7 +92,7 @@
                     app:srcCompat="@drawable/tick_png" />
 
                 <TextView
-                    android:id="@+id/tvStatus1"
+                    android:id="@+id/tvWifi"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -127,7 +106,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
+            android:id="@+id/rpiNameCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardElevation="@dimen/margin_small"
@@ -150,7 +129,7 @@
                     app:srcCompat="@drawable/tick_png" />
 
                 <TextView
-                    android:id="@+id/tvStatus2"
+                    android:id="@+id/tvRpiName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -181,7 +160,7 @@
             app:cardUseCompatPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView">
+            app:layout_constraintTop_toBottomOf="@+id/rpiNameCard">
 
 
             <LinearLayout
@@ -195,7 +174,7 @@
                     app:srcCompat="@drawable/tick_png" />
 
                 <TextView
-                    android:id="@+id/tvStatus3"
+                    android:id="@+id/tvRpiType"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"

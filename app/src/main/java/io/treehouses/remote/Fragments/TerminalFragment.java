@@ -11,11 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +25,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment;
@@ -39,6 +34,7 @@ import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.CommandListAdapter;
 import io.treehouses.remote.bases.BaseTerminalFragment;
+import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding;
 import io.treehouses.remote.pojo.CommandListItem;
 import io.treehouses.remote.pojo.CommandsList;
 import io.treehouses.remote.utils.SaveUtils;
@@ -48,17 +44,11 @@ public class TerminalFragment extends BaseTerminalFragment {
     private static final String TAG = "BluetoothChatFragment";
     private static final String TITLE_EXPANDABLE = "Commands";
     private static TerminalFragment instance = null;
-    private ListView mConversationView;
-    private TextView mPingStatus;
-    private AutoCompleteTextView mOutEditText;
-    private Button mSendButton, pingStatusButton, mPrevious;
-    private ExpandableListView expandableListView;
     private ExpandableListAdapter expandableListAdapter;
     private ArrayList<String> list;
     private CommandsList commands;
     private int i;
     private String last;
-    View view;
     private List<String> expandableListTitle;
     private HashMap<String, List<CommandListItem>> expandableListDetail;
 
@@ -77,11 +67,13 @@ public class TerminalFragment extends BaseTerminalFragment {
     private boolean jsonSent, jsonReceiving = false;
     private String jsonString = "";
 
+    private ActivityTerminalFragmentBinding bind;
+
     public TerminalFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_terminal_fragment, container, false);
+        bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
         jsonSent = true;
@@ -89,18 +81,16 @@ public class TerminalFragment extends BaseTerminalFragment {
         instance = this;
         expandableListDetail = new HashMap<>();
         expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
-        Log.e("TERMINAL mChatService", "" + mChatService.getState());
         setHasOptionsMenu(true);
         setupList();
-        return view;
+        return bind.getRoot();
     }
 
     public void setupList() {
-        expandableListView = view.findViewById(R.id.terminalList);
         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
         expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
-        expandableListView.setAdapter(expandableListAdapter);
-        expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+        bind.terminalList.setAdapter(expandableListAdapter);
+        bind.terminalList.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             if (childPosition < expandableListDetail.get("Commands").size()) {
                 String title = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTitle();
                 if (title.equalsIgnoreCase("CLEAR")) {
@@ -120,13 +110,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mConversationView = view.findViewById(R.id.in);
-        mOutEditText = view.findViewById(R.id.edit_text_out);
-        setUpAutoComplete(mOutEditText);
-        mSendButton = view.findViewById(R.id.button_send);
-        mPingStatus = view.findViewById(R.id.pingStatus);
-        pingStatusButton = view.findViewById(R.id.PING);
-        mPrevious = view.findViewById(R.id.btnPrevious);
+        setUpAutoComplete(bind.editTextOut);
     }
 
     @Override
@@ -137,13 +121,13 @@ public class TerminalFragment extends BaseTerminalFragment {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService != null && mChatService.getState() == Constants.STATE_NONE) {
             mChatService.start();
-            idle(mPingStatus, pingStatusButton);
+            idle(bind.pingStatus, bind.PING);
         }
     }
 
     @Override
     public void onResume() {
-        checkStatus(mChatService, mPingStatus, pingStatusButton);
+        checkStatus(mChatService, bind.pingStatus, bind.PING);
         super.onResume();
         setupChat();
     }
@@ -156,16 +140,16 @@ public class TerminalFragment extends BaseTerminalFragment {
      * Set up the UI and background operations for chat.
      */
     public void setupChat() {
-        copyToList(mConversationView, getContext());
+        copyToList(bind.in, getContext());
 
-        mConversationArrayAdapter = new ArrayAdapter<String>(requireActivity(), R.layout.message, (List<String>) MainApplication.getTerminalList()) {
+        mConversationArrayAdapter = new ArrayAdapter<String>(requireActivity(), R.layout.message, MainApplication.getTerminalList()) {
             @NonNull
             @Override
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 return getViews(super.getView(position, convertView, parent), isRead);
             }
         };
-        mConversationView.setAdapter(mConversationArrayAdapter);
+        bind.in.setAdapter(mConversationArrayAdapter);
 
         btnSendClickListener();
 
@@ -175,7 +159,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private void btnSendClickListener() {
         // Initialize the send button with a listener that for click events
-        mSendButton.setOnClickListener(v -> {
+        bind.buttonSend.setOnClickListener(v -> {
             // Send a message using content of the edit text widget
             View view = getView();
             if (null != view) {
@@ -184,11 +168,11 @@ public class TerminalFragment extends BaseTerminalFragment {
                 consoleInput.setText("");
             }
         });
-        mPrevious.setOnClickListener(v -> {
+        bind.btnPrevious.setOnClickListener(v -> {
             try {
                 last = list.get(--i);
-                mOutEditText.setText(last);
-                mOutEditText.setSelection(mOutEditText.length());
+                bind.editTextOut.setText(last);
+                bind.editTextOut.setSelection(bind.editTextOut.length());
             } catch (Exception e) { e.printStackTrace(); } });
     }
 
@@ -207,8 +191,8 @@ public class TerminalFragment extends BaseTerminalFragment {
                     expandableListDetail.put(TITLE_EXPANDABLE, SaveUtils.getCommandsList(getContext()));
                     expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
                     expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
-                    expandableListView.setAdapter(expandableListAdapter);
-                    expandableListView.expandGroup(0,true);
+                    bind.terminalList.setAdapter(expandableListAdapter);
+                    bind.terminalList.expandGroup(0,true);
                 }
                 break;
         }
@@ -280,7 +264,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(mPingStatus, pingStatusButton); }
+                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(bind.pingStatus, bind.PING); }
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
@@ -291,7 +275,7 @@ public class TerminalFragment extends BaseTerminalFragment {
                     isRead = true;
                     if (readMessage.contains("unknown")) jsonSent = false;
                     if (jsonSent) handleJson(readMessage);
-                    else { handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
+                    else { handlerCaseRead(readMessage, bind.pingStatus, bind.PING);
                         filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTerminalList()); }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:

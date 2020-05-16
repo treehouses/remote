@@ -5,12 +5,12 @@ def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
 def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0")
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 29
         multiDexEnabled true
         versionCode appVersionCode
         versionName appVersionName + ""
@@ -20,6 +20,9 @@ android {
                 outputFileName = new File("remote-" + android.defaultConfig.versionCode + ".apk")
             }
         }
+    }
+    viewBinding {
+        enabled = true
     }
     buildTypes {
         release {
@@ -51,7 +54,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'

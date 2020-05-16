@@ -25,6 +25,8 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServicesListener;
+import io.treehouses.remote.databinding.ActivityServicesDetailsBinding;
+import io.treehouses.remote.databinding.ActivityServicesFragmentBinding;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesFragment extends BaseServicesFragment implements ServicesListener {
@@ -32,20 +34,19 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
     private static final String TAG = "ServicesFragment";
     private ServicesTabFragment servicesTabFragment;
     private ServicesDetailsFragment servicesDetailsFragment;
-    private ProgressBar progressBar;
-    private TabLayout tabLayout;
 
     private ArrayList<ServiceInfo> services;
 
     private View view;
 
+    ActivityServicesFragmentBinding bind;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_services_fragment, container, false);
+        bind = ActivityServicesFragmentBinding.inflate(inflater, container, false);
         services = new ArrayList<>();
-        tabLayout = view.findViewById(R.id.tab_layout);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+        bind.tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        bind.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 replaceFragment(tab.getPosition());
@@ -57,13 +58,11 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
         });
         setTabEnabled(false);
 
-        progressBar = view.findViewById(R.id.progressBar2);
-
         mChatService = listener.getChatService();
         mChatService.updateHandler(handler);
         writeToRPI("treehouses remote allservices\n");
 
-        return view;
+        return bind.getRoot();
     }
 
     @SuppressLint("HandlerLeak")
@@ -78,11 +77,11 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
                     if (a == 1) {
                         servicesTabFragment = new ServicesTabFragment(services);
                         servicesDetailsFragment = new ServicesDetailsFragment(services);
-                        progressBar.setVisibility(View.GONE);
+                        bind.progressBar2.setVisibility(View.GONE);
                         replaceFragment(0);
                     }
                     else if(a==0) {
-                        progressBar.setVisibility(View.GONE);
+                        bind.progressBar2.setVisibility(View.GONE);
                         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                                 .setTitle("Please update CLI")
                                 .setMessage("Please update to the latest CLI version to access services.")
@@ -99,7 +98,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
     };
 
     private void setTabEnabled(boolean enabled) {
-        LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
+        LinearLayout tabStrip = ((LinearLayout)bind.tabLayout.getChildAt(0));
         tabStrip.setEnabled(enabled);
         for(int i = 0; i < tabStrip.getChildCount(); i++) {
             tabStrip.getChildAt(i).setClickable(enabled);
@@ -135,9 +134,8 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
 
     @Override
     public void onClick(ServiceInfo s) {
-        Log.d(TAG, "onClick: " + s.name);
         servicesDetailsFragment.setSelected(s);
-        Objects.requireNonNull(tabLayout.getTabAt(1)).select();
+        Objects.requireNonNull(bind.tabLayout.getTabAt(1)).select();
         replaceFragment(1);
     }
 
