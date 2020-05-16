@@ -19,6 +19,7 @@ import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.Fragments.TextBoxValidation;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
+import io.treehouses.remote.databinding.DialogBridgeBinding;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
@@ -27,27 +28,17 @@ import static io.treehouses.remote.Fragments.NewNetworkFragment.openWifiDialog;
 
 public class BridgeBottomSheet extends BaseBottomSheetDialog {
 
-    private EditText essid, password, hotspotEssid, hotspotPassword;
-    private Button startConfig, addProfile, btnWifiSearch;
 
+    private DialogBridgeBinding bind;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_bridge, container, false);
-
-        essid = v.findViewById(R.id.et_essid);
-        password = v.findViewById(R.id.et_password);
-        hotspotEssid = v.findViewById(R.id.et_hotspot_essid);
-        hotspotPassword = v.findViewById(R.id.et_hotspot_password);
-
-        startConfig = v.findViewById(R.id.btn_start_config);
-        addProfile = v.findViewById(R.id.add_bridge_profile);
-        btnWifiSearch = v.findViewById(R.id.btnWifiSearch);
+        bind = DialogBridgeBinding.inflate(inflater, container, false);
 
         try {
-            essid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-            hotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            bind.etEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            bind.etHotspotEssid.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,22 +46,22 @@ public class BridgeBottomSheet extends BaseBottomSheetDialog {
         startConfigListener();
         setAddProfileListener();
 
-        btnWifiSearch.setOnClickListener(v1 -> openWifiDialog(BridgeBottomSheet.this, context));
+        bind.btnWifiSearch.setOnClickListener(v1 -> openWifiDialog(BridgeBottomSheet.this, context));
 
-        TextBoxValidation validation = new TextBoxValidation(getContext(), essid, hotspotEssid, "bridge");
-        validation.setStart(startConfig);
-        validation.setAddprofile(addProfile);
-        return v;
+        TextBoxValidation validation = new TextBoxValidation(getContext(), bind.etEssid, bind.etHotspotEssid, "bridge");
+        validation.setStart(bind.btnStartConfig);
+        validation.setAddprofile(bind.addBridgeProfile);
+        return bind.getRoot();
     }
 
     private void startConfigListener() {
-        startConfig.setOnClickListener(v -> {
-            String temp = "treehouses bridge \"" + essid.getText().toString() + "\" \"" + hotspotEssid.getText().toString() + "\" ";
-            String overallMessage = TextUtils.isEmpty(password.getText().toString()) ? temp + "\"\"" : temp + "\"" + password.getText().toString() + "\"";
+        bind.btnStartConfig.setOnClickListener(v -> {
+            String temp = "treehouses bridge \"" + bind.etEssid.getText().toString() + "\" \"" + bind.etHotspotEssid.getText().toString() + "\" ";
+            String overallMessage = TextUtils.isEmpty(bind.etPassword.getText().toString()) ? temp + "\"\"" : temp + "\"" + bind.etPassword.getText().toString() + "\"";
             overallMessage += " ";
 
-            if (!TextUtils.isEmpty(hotspotPassword.getText().toString())) {
-                overallMessage += "\"" + hotspotPassword.getText().toString() + "\"";
+            if (!TextUtils.isEmpty(bind.etHotspotPassword.getText().toString())) {
+                overallMessage += "\"" + bind.etHotspotPassword.getText().toString() + "\"";
             }
             listener.sendMessage(overallMessage);
 
@@ -83,9 +74,9 @@ public class BridgeBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(v -> {
-            NetworkProfile networkProfile = new NetworkProfile(essid.getText().toString(), password.getText().toString(),
-                    hotspotEssid.getText().toString(), hotspotPassword.getText().toString());
+        bind.addBridgeProfile.setOnClickListener(v -> {
+            NetworkProfile networkProfile = new NetworkProfile(bind.etEssid.getText().toString(), bind.etPassword.getText().toString(),
+                    bind.etHotspotEssid.getText().toString(), bind.etHotspotPassword.getText().toString());
 
             SaveUtils.addProfile(context, networkProfile);
             Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show();
@@ -99,7 +90,7 @@ public class BridgeBottomSheet extends BaseBottomSheetDialog {
         }
         if( requestCode == Constants.REQUEST_DIALOG_WIFI ) {
             String ssid = data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY);
-            essid.setText(ssid);
+            bind.etEssid.setText(ssid);
         }
     }
 }

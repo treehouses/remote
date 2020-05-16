@@ -16,46 +16,36 @@ import androidx.annotation.Nullable;
 
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
+import io.treehouses.remote.databinding.DialogHotspotBinding;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
 import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
 public class HotspotBottomSheet extends BaseBottomSheetDialog {
-    private EditText essidText;
-    private EditText passwordText;
-    private Button startConfig, addProfile;
-    private Spinner spinner;
-    private CheckBox hiddenEnabled;
+
+    private DialogHotspotBinding bind;
 
     @Nullable
     @Override
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_hotspot, container, false);
-
-        essidText = v.findViewById(R.id.et_hotspot_ssid);
-        passwordText = v.findViewById(R.id.et_hotspot_password);
-        startConfig = v.findViewById(R.id.btn_start_config);
-        addProfile = v.findViewById(R.id.set_hotspot_profile);
-
-        spinner = v.findViewById(R.id.spn_hotspot_type);
-        hiddenEnabled = v.findViewById(R.id.checkBoxHiddenWifi);
+        bind = DialogHotspotBinding.inflate(inflater, container, false);
 
         startConfigListener();
 
         setAddProfileListener();
-        return v;
+        return bind.getRoot();
     }
 
     private void startConfigListener() {
-        startConfig.setOnClickListener(v -> {
-            String command =  hiddenEnabled.isChecked() ? "treehouses hiddenap " : "treehouses ap ";
-            if (passwordText.getText().toString().isEmpty()) {
-                listener.sendMessage(command + "\"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\"");
+        bind.btnStartConfig.setOnClickListener(v -> {
+            String command =  bind.checkBoxHiddenWifi.isChecked() ? "treehouses hiddenap " : "treehouses ap ";
+            if (bind.etHotspotPassword.getText().toString().isEmpty()) {
+                listener.sendMessage(command + "\"" + bind.spnHotspotType.getSelectedItem().toString() + "\" \"" + bind.etHotspotSsid.getText().toString() + "\"");
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             } else {
-                listener.sendMessage(command + "\"" + spinner.getSelectedItem().toString() + "\" \"" + essidText.getText().toString() + "\" \"" + passwordText.getText().toString() + "\"");
+                listener.sendMessage(command + "\"" + bind.spnHotspotType.getSelectedItem().toString() + "\" \"" + bind.etHotspotSsid.getText().toString() + "\" \"" + bind.etHotspotPassword.getText().toString() + "\"");
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
             }
             Intent intent = new Intent();
@@ -66,8 +56,8 @@ public class HotspotBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(v -> {
-            SaveUtils.addProfile(context, new NetworkProfile(essidText.getText().toString(), passwordText.getText().toString(), spinner.getSelectedItem().toString()));
+        bind.setHotspotProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(bind.etHotspotSsid.getText().toString(), bind.etHotspotPassword.getText().toString(), bind.spnHotspotType.getSelectedItem().toString()));
             Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show();
         });
     }

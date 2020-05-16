@@ -20,6 +20,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
+import io.treehouses.remote.databinding.DialogRenameStatusBinding
 
 class StatusFragment : BaseFragment() {
 
@@ -131,10 +132,9 @@ class StatusFragment : BaseFragment() {
 
     private fun showRenameDialog() {
         val inflater = requireActivity().layoutInflater
-        val mView = inflater.inflate(R.layout.dialog_rename_status, null)
-        val mHostNameEditText = mView.findViewById<EditText>(R.id.hostname)
-        mHostNameEditText.hint = "New Name"
-        val alertDialog = createRenameDialog(mView, mHostNameEditText)
+        val dialogBinding = DialogRenameStatusBinding.inflate(inflater)
+        dialogBinding.hostname.hint = "New Name"
+        val alertDialog = createRenameDialog(dialogBinding.root, dialogBinding.hostname)
         alertDialog.show()
     }
 
