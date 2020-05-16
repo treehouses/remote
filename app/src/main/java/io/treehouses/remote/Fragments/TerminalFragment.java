@@ -163,9 +163,8 @@ public class TerminalFragment extends BaseTerminalFragment {
             // Send a message using content of the edit text widget
             View view = getView();
             if (null != view) {
-                TextView consoleInput = view.findViewById(R.id.edit_text_out);
-                listener.sendMessage(consoleInput.getText().toString());
-                consoleInput.setText("");
+                listener.sendMessage(bind.editTextOut.getText().toString());
+                bind.editTextOut.setText("");
             }
         });
         bind.btnPrevious.setOnClickListener(v -> {

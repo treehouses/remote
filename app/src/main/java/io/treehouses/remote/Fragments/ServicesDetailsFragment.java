@@ -26,6 +26,7 @@ import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServiceAction;
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding;
+import io.treehouses.remote.databinding.DialogChooseUrlBinding;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesDetailsFragment extends BaseServicesFragment implements AdapterView.OnItemSelectedListener, ViewPager.OnPageChangeListener, ServiceAction {
@@ -73,10 +74,6 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
                     moreActions(output);
-                    break;
-
-                case Constants.MESSAGE_WRITE:
-                    String write_msg = new String((byte[]) msg.obj);
                     break;
             }
         }
@@ -213,8 +210,8 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         }
     }
 
-    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
-        v.findViewById(id).setOnClickListener(v1 -> {
+    private void setOnClick(View v, String command, AlertDialog alertDialog) {
+        v.setOnClickListener(v1 -> {
             writeToRPI(command);
             alertDialog.dismiss();
             binding.progressBar.setVisibility(View.VISIBLE);
@@ -223,11 +220,11 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
 
     private void onLink(ServiceInfo selected) {
         //reqUrls();
-        View view = getLayoutInflater().inflate(R.layout.dialog_choose_url, null);
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(view).setTitle("Select URL type").create();
+        DialogChooseUrlBinding chooseBind = DialogChooseUrlBinding.inflate(getLayoutInflater());
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(chooseBind.getRoot()).setTitle("Select URL type").create();
 
-        setOnClick(view, R.id.local_button, "treehouses services " + selected.name + " url local \n", alertDialog);
-        setOnClick(view, R.id.tor_button, "treehouses services " + selected.name + " url tor \n", alertDialog);
+        setOnClick(chooseBind.localButton, "treehouses services " + selected.name + " url local \n", alertDialog);
+        setOnClick(chooseBind.torButton, "treehouses services " + selected.name + " url tor \n", alertDialog);
 
         alertDialog.show();
     }
