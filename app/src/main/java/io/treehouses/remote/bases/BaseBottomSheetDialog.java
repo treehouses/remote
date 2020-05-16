@@ -1,7 +1,6 @@
 package io.treehouses.remote.bases;
 
 import android.content.Context;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 

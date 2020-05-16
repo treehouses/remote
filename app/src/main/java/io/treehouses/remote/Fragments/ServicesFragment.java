@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -25,7 +24,6 @@ import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServicesListener;
-import io.treehouses.remote.databinding.ActivityServicesDetailsBinding;
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding;
 import io.treehouses.remote.pojo.ServiceInfo;
 

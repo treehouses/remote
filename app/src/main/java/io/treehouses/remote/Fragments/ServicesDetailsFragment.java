@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
@@ -20,7 +18,6 @@ import java.util.Collections;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
-import io.treehouses.remote.Views.ServiceViewPager;
 import io.treehouses.remote.adapter.ServiceCardAdapter;
 import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;

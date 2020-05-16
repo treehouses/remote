@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -21,7 +20,6 @@ import java.util.Collections;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderTether;
 import io.treehouses.remote.adapter.ViewHolderVnc;

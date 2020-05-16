@@ -6,12 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 
-import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.databinding.DialogEthernetBinding;
 

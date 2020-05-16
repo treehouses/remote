@@ -3,7 +3,6 @@ package io.treehouses.remote.utils;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.provider.Settings.Secure;
 import android.widget.Toast;
 
 import java.net.NetworkInterface;

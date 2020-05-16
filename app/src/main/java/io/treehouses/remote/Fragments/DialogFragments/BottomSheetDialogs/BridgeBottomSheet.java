@@ -8,8 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -17,7 +15,6 @@ import androidx.annotation.Nullable;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.Fragments.TextBoxValidation;
-import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
 import io.treehouses.remote.databinding.DialogBridgeBinding;
 import io.treehouses.remote.pojo.NetworkProfile;

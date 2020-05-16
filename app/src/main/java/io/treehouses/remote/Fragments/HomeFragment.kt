@@ -14,7 +14,8 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ExpandableListView
+import android.widget.Toast
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
@@ -27,7 +28,6 @@ import io.treehouses.remote.bases.BaseHomeFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
-import io.treehouses.remote.databinding.FragmentAboutBinding
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.SaveUtils
 import kotlinx.android.synthetic.main.activity_home_fragment.*

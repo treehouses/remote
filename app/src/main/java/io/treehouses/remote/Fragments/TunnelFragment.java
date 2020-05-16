@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.MainApplication;

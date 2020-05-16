@@ -6,9 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import io.treehouses.remote.Fragments.TextBoxValidation;
 import io.treehouses.remote.R;
