@@ -79,7 +79,13 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
             showBottomSheet(new BridgeBottomSheet(), "bridge");
         } else if (binding.networkEthernet.equals(v)) {
             showBottomSheet(new EthernetBottomSheet(), "ethernet");
-        } else if (binding.buttonNetworkMode.equals(v)) {
+        } else {
+            checkMoreButtons(v);
+        }
+    }
+
+    private void checkMoreButtons(View v) {
+        if (binding.buttonNetworkMode.equals(v)) {
             updateNetworkMode();
         } else if (binding.rebootRaspberry.equals(v)) {
             reboot();
