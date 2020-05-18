@@ -9,11 +9,24 @@ import io.treehouses.remote.bluetoothv2.util.SchedulerProvider
 
 class HomePresenter<V : HomeMVPView, I : HomeMVPInterator> @Inject internal constructor(interator: I, schedulerProvider: SchedulerProvider, compositeDisposable: CompositeDisposable) : BasePresenter<V, I>(interactor = interator, schedulerProvider = schedulerProvider, compositeDisposable = compositeDisposable), HomeMVPPresenter<V, I> {
     override fun onConnectClicked() {
-        interactor?.scanDevices()
+        interactor?.connectToDevice("")
     }
 
     override fun onDisconnectClicked() {
         interactor?.disconnectDevice()
+    }
+
+    override fun onScanClicked() {
+        getView()?.showProgress()
+        interactor?.let {
+            compositeDisposable.add(it.scanDevices()
+                    .compose(schedulerProvider.ioToMainObservableScheduler())
+                    .subscribe({ result ->
+                        getView()?.showDevice(result)
+                        getView()?.hideProgress()
+                    }, { err -> getView()?.hideProgress() }))
+        }
+
     }
 
 }

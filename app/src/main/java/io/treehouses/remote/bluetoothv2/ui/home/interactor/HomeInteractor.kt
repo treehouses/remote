@@ -8,14 +8,10 @@ import javax.inject.Inject
 
 class HomeInteractor @Inject internal constructor(bluetoothHelper: BluetoothHelper) : BaseInteractor(bluetoothHelper = bluetoothHelper), HomeMVPInterator {
 
-    override fun scanDevices() {
-        //   bluetoothConnectionService.scanDevices()
-        //todo : return observable from this method
-    }
+    override fun scanDevices() = bluetoothHelper.scanDevices()
 
-    override fun connectToDevice(mac: String) {
-    }
+    override fun connectToDevice(mac: String) = bluetoothHelper.connectDevice()
 
-    override fun disconnectDevice() {}
+    override fun disconnectDevice() = bluetoothHelper.disconnectDevice()
 
 }

@@ -8,7 +8,7 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:text="Connnect"
+        android:text="Scan"
         android:id="@+id/btn_connect"
         android:layout_height="wrap_content"/>
     <androidx.recyclerview.widget.RecyclerView
