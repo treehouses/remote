@@ -1,9 +1,11 @@
 package io.treehouses.remote.pojo;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public class ServicesData {
+
+public class ServicesData implements Serializable {
     private List<String> available;
     private List<String> installed;
     private List<String> running;

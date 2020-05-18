@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 public abstract class PermissionActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_WIFI = 111;
     private static final int PERMISSION_REQUEST_CODE_CAMERA = 112;
+    private static final int REQUEST_COARSE_LOCATION = 99;
 
     public boolean checkPermission(String strPermission) {
         int result = ContextCompat.checkSelfPermission(this, strPermission);
@@ -22,12 +23,13 @@ public abstract class PermissionActivity extends AppCompatActivity {
     }
 
 
+
+
     public void statusCheck() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
-
         }
     }
 
@@ -61,6 +63,12 @@ public abstract class PermissionActivity extends AppCompatActivity {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 statusCheck();
             }
+        }
+    }
+
+    protected void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_COARSE_LOCATION);
         }
     }
 }

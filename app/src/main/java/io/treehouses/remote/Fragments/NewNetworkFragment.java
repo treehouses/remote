@@ -180,6 +180,7 @@ public class NewNetworkFragment extends BaseFragment implements View.OnClickList
             if (mChatService.getState() != Constants.STATE_CONNECTED) {
                 Toast.makeText(getContext(), "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show();
                 listener.openCallFragment(new HomeFragment());
+                requireActivity().setTitle("Home");
             } else {
                 Toast.makeText(getContext(), "Reboot Unsuccessful", Toast.LENGTH_LONG).show();
             }

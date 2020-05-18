@@ -192,13 +192,11 @@ public class RPIDialogFragment extends BaseDialogFragment {
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
             context.unregisterReceiver(mReceiver);
         }
-        if (args.length >= 1) {
-            if (args[0].equals("unregister")) {
-                context.unregisterReceiver(mReceiver);
-                Intent intent = new Intent();
-                intent.putExtra("mChatService", mChatService);
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-            }
+        if (args.length >= 1 && args[0].equals("unregister")) {
+            context.unregisterReceiver(mReceiver);
+            Intent intent = new Intent();
+            intent.putExtra("mChatService", mChatService);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
         }
     }
 
@@ -226,9 +224,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
             mDevices.add(device);
             textList.add(new DeviceInfo(device.getName() + "\n" + device.getAddress(), pairedDevices.contains(device), inRange));
         }
-        else {
-            textList.get(mDevices.indexOf(device)).setInRange(true);
-        }
+        else textList.get(mDevices.indexOf(device)).setInRange(true);
         mArrayAdapter.notifyDataSetChanged();
     }
 

@@ -34,10 +34,10 @@ public class Utils {
         return "";
     }
 
-    public static String  getAndroidId(Context context){
-         return Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-
-    }
+//    public static String  getAndroidId(Context context){
+//         return Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+//
+//    }
 
     private static String getAddress(NetworkInterface nif) throws Exception {
         byte[] macBytes = nif.getHardwareAddress();

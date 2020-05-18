@@ -41,6 +41,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         }
     }
 
+
     @Override
     public boolean onPreferenceClick(Preference preference) {
         switch (preference.getKey()) {
