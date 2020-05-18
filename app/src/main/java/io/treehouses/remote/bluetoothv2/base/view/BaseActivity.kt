@@ -4,8 +4,9 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dagger.android.AndroidInjection
+import dagger.android.support.DaggerAppCompatActivity
 
-abstract class BaseActivity : AppCompatActivity(), MVPView, BaseFragment.CallBack {
+abstract class BaseActivity : DaggerAppCompatActivity(), MVPView, BaseFragment.CallBack {
 
     private var progressDialog: ProgressDialog? = null
 

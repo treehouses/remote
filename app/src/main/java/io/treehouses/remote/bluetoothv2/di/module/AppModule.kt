@@ -6,7 +6,9 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 import io.treehouses.remote.bluetoothv2.services.BluetoothConnectionService
+import io.treehouses.remote.bluetoothv2.services.BluetoothHelper
 import io.treehouses.remote.bluetoothv2.services.BluetoothReadWriteService
+import io.treehouses.remote.bluetoothv2.services.BluetoothService
 import io.treehouses.remote.bluetoothv2.util.SchedulerProvider
 import javax.inject.Singleton
 
@@ -24,13 +26,8 @@ class AppModule {
     @Provides
     internal fun provideSchedulerProvider(): SchedulerProvider = SchedulerProvider()
 
-
     @Provides
     @Singleton
-    internal fun provideBluetoothConnectionService(blutoothConnenctionService: BluetoothConnectionService): BluetoothConnectionService = blutoothConnenctionService
-
-    @Provides
-    @Singleton
-    internal fun provideBluetoothReadWriteService(bluetoothReadWriteService: BluetoothReadWriteService): BluetoothReadWriteService = bluetoothReadWriteService
+    internal fun provideBluetoothService(bluetoothHelper: BluetoothService): BluetoothHelper = bluetoothHelper
 
 }

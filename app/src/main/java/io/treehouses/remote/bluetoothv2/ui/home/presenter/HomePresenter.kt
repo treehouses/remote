@@ -13,7 +13,7 @@ class HomePresenter<V : HomeMVPView, I : HomeMVPInterator> @Inject internal cons
     }
 
     override fun onDisconnectClicked() {
-        interactor?.disconnect()
+        interactor?.disconnectDevice()
     }
 
 }

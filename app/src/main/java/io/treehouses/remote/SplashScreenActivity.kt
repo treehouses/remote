@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.SplashScreenActivity
+import io.treehouses.remote.bluetoothv2.ui.RemoteActivity
 
 class SplashScreenActivity : AppCompatActivity() {
     var logoAnimation: Animation? = null
@@ -30,12 +31,12 @@ class SplashScreenActivity : AppCompatActivity() {
             textAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_text_anim)
             logoText?.animation = textAnimation
             Handler().postDelayed({
-                val intent = Intent(this@SplashScreenActivity, InitialActivity::class.java)
+                val intent = Intent(this@SplashScreenActivity, RemoteActivity::class.java)
                 startActivity(intent)
                 finish()
             }, SPLASH_TIME_OUT.toLong())
         } else {
-            val intent = Intent(this@SplashScreenActivity, InitialActivity::class.java)
+            val intent = Intent(this@SplashScreenActivity, RemoteActivity::class.java)
             startActivity(intent)
             finish()
         }

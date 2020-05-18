@@ -17,4 +17,6 @@ class HomeFragmentModule {
     @Provides
     internal fun provideHomePresenter(presenter: HomePresenter<HomeMVPView, HomeMVPInterator>)
             : HomeMVPPresenter<HomeMVPView, HomeMVPInterator> = presenter
+
+
 }

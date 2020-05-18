@@ -24,7 +24,7 @@ class BluetoothConnectionService @Inject constructor() {
         fun onConnectionFailed(string: String?)
     }
 
-    private val rxBleClient = MainApplication.rxBleClient
+//    private val rxBleClient = MainApplication.rxBleClient
 
     private var scanDisposable: Disposable? = null
     private val isScanning: Boolean
@@ -43,15 +43,15 @@ class BluetoothConnectionService @Inject constructor() {
         if (isScanning) {
             scanDisposable?.dispose()
         } else {
-            if (rxBleClient.isScanRuntimePermissionGranted) {
-                return scanBleDevices()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doFinally { scanDisposable = null }
-                        .subscribe({ callback.onDeviceFound(it) }, { callback.onScanFailure("Unable to search devices") })
-                        .let { scanDisposable = it }
-            } else {
-                callback.requestLocationPermission()
-            }
+//            if (rxBleClient.isScanRuntimePermissionGranted) {
+//                return scanBleDevices()
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .doFinally { scanDisposable = null }
+//                        .subscribe({ callback.onDeviceFound(it) }, { callback.onScanFailure("Unable to search devices") })
+//                        .let { scanDisposable = it }
+//            } else {
+//                callback.requestLocationPermission()
+//            }
         }
     }
 
@@ -59,16 +59,16 @@ class BluetoothConnectionService @Inject constructor() {
         if (isScanning) scanDisposable?.dispose()
     }
 
-    private fun scanBleDevices(): Observable<ScanResult> {
-        val scanSettings = ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
-                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-                .build()
-
-        val scanFilter = ScanFilter.Builder()
-                .build()
-        return rxBleClient.scanBleDevices(scanSettings, scanFilter)
-    }
+//    private fun scanBleDevices(): Observable<ScanResult> {
+//        val scanSettings = ScanSettings.Builder()
+//                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+//                .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+//                .build()
+//
+//        val scanFilter = ScanFilter.Builder()
+//                .build()
+//        return rxBleClient.scanBleDevices(scanSettings, scanFilter)
+//    }
 
     private fun observeConnectionChange(device: RxBleDevice) {
         device.observeConnectionStateChanges()

@@ -8,5 +8,5 @@ import io.treehouses.remote.bluetoothv2.ui.home.view.HomeFragment
 abstract class HomeFragmentProvider {
 
     @ContributesAndroidInjector(modules = [HomeFragmentModule::class])
-    internal abstract fun provideHomeFragment(): HomeFragment
+    internal abstract fun provideHomeFragmentFactory(): HomeFragment
 }
