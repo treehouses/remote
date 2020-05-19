@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.InitialActivity
-import io.treehouses.remote.SplashScreenActivity
 
 class SplashScreenActivity : AppCompatActivity() {
     var logoAnimation: Animation? = null

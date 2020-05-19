@@ -10,10 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,17 +17,15 @@ import androidx.fragment.app.Fragment;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
 
-import io.treehouses.remote.R;
 import io.treehouses.remote.callback.ServiceAction;
+import io.treehouses.remote.databinding.ServiceCardBinding;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServiceCardFragment extends Fragment implements View.OnClickListener {
     private ServiceInfo serviceData;
-    private ImageView logo;
-    private TextView serviceInfo;
-    private Button install, start, openLink;
     private ServiceAction actionListener;
-    private CheckBox autorunCheck;
+
+    private ServiceCardBinding binding;
 
     public ServiceCardFragment(ServiceInfo serviceData) {
         this.serviceData = serviceData;
@@ -39,17 +33,11 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.service_card, container, false);
+        binding = ServiceCardBinding.inflate(inflater, container, false);
 
-        logo = view.findViewById(R.id.service_logo);
-        serviceInfo = view.findViewById(R.id.service_info);
-        serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
-        serviceInfo.setFocusable(true);
+        binding.serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.serviceInfo.setFocusable(true);
 
-        install = view.findViewById(R.id.install_button);
-        start = view.findViewById(R.id.start_button);
-        openLink = view.findViewById(R.id.openLink);
-        autorunCheck = view.findViewById(R.id.autorun_checked);
 
         if (!serviceData.isHeader()) {
             setServiceInfo(serviceData.info);
@@ -57,39 +45,35 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
             updateButtons(serviceData.serviceStatus);
             setAutorun(serviceData.autorun);
 
-            install.setOnClickListener(this);
-            start.setOnClickListener(this);
-            openLink.setOnClickListener(this);
-            autorunCheck.setOnCheckedChangeListener((buttonView, isChecked) -> actionListener.onClickAutorun(serviceData, isChecked));
+            binding.installButton.setOnClickListener(this);
+            binding.startButton.setOnClickListener(this);
+            binding.openLink.setOnClickListener(this);
+            binding.autorunChecked.setOnCheckedChangeListener((buttonView, isChecked) -> actionListener.onClickAutorun(serviceData, isChecked));
         }
-        return view;
+        return binding.getRoot();
     }
 
     private void setAutorun(String autorun) {
-        if (autorun.contains("true")) {
-            autorunCheck.setChecked(true);
-        } else {
-            autorunCheck.setChecked(false);
-        }
+        binding.autorunChecked.setChecked(autorun.contains("true"));
     }
 
     private void setButtons(boolean started, boolean installed, boolean three) {
         if (started) {
-            start.setText("Stop");
-            openLink.setVisibility(View.VISIBLE);
+            binding.startButton.setText("Stop");
+            binding.openLink.setVisibility(View.VISIBLE);
         }
         else {
-            start.setText("Start");
-            openLink.setVisibility(View.GONE);
+            binding.startButton.setText("Start");
+            binding.openLink.setVisibility(View.GONE);
         }
         if (installed) {
-            install.setText("Uninstall");
-            start.setVisibility(View.VISIBLE);
-            autorunCheck.setVisibility(View.VISIBLE);
+            binding.installButton.setText("Uninstall");
+            binding.startButton.setVisibility(View.VISIBLE);
+            binding.autorunChecked.setVisibility(View.VISIBLE);
         } else {
-            install.setText("Install");
-            start.setVisibility(View.GONE);
-            autorunCheck.setVisibility(View.GONE);
+            binding.installButton.setText("Install");
+            binding.startButton.setVisibility(View.GONE);
+            binding.autorunChecked.setVisibility(View.GONE);
         }
         //restart.setEnabled(three);
     }
@@ -113,7 +97,7 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
             Log.d(serviceData.name, "showIcon:" + serviceData.icon);
             SVG svg = SVG.getFromString(s);
             PictureDrawable pd = new PictureDrawable(svg.renderToPicture());
-            logo.setImageDrawable(pd);
+            binding.serviceLogo.setImageDrawable(pd);
         } catch (SVGParseException e) {
             e.printStackTrace();
         }
@@ -122,8 +106,8 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
     private void setServiceInfo(String s) {
         SpannableString spannableString = new SpannableString(s);
         Linkify.addLinks(spannableString, Linkify.ALL);
-        serviceInfo.setText(s);
-        serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.serviceInfo.setText(s);
+        binding.serviceInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 //    private void onClickRestart(ServiceInfo selected) {
@@ -144,16 +128,12 @@ public class ServiceCardFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.install_button:
-                actionListener.onClickInstall(serviceData);
-                break;
-            case R.id.start_button:
-                actionListener.onClickStart(serviceData);
-                break;
-            case R.id.openLink:
-                actionListener.onClickLink(serviceData);
-                break;
+        if (binding.installButton.equals(v)) {
+            actionListener.onClickInstall(serviceData);
+        } else if (binding.startButton.equals(v)) {
+            actionListener.onClickStart(serviceData);
+        } else if (binding.openLink.equals(v)) {
+            actionListener.onClickLink(serviceData);
         }
     }
 

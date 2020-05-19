@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
@@ -22,6 +20,7 @@ import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServicesListener;
+import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding;
 import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
@@ -29,10 +28,10 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     private View view;
     public ArrayList<ServiceInfo> services;
     private ServicesListAdapter adapter;
-    private ListView listView;
     private ServicesListener servicesListener;
-    private ProgressBar memoryMeter;
     private int used = 0, total = 1;
+
+    private ActivityServicesTabFragmentBinding bind;
 
 
     public ServicesTabFragment(ArrayList<ServiceInfo> serviceInfos) {
@@ -43,16 +42,14 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mChatService = listener.getChatService();
 
-        view = inflater.inflate(R.layout.activity_services_tab_fragment, container, false);
-        memoryMeter = view.findViewById(R.id.space_left);
+        bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false);
 
-        listView = view.findViewById(R.id.listView);
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
-        listView.setAdapter(adapter);
+        bind.listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(this);
+        bind.listView.setOnItemClickListener(this);
 
-        return view;
+        return bind.getRoot();
     }
         public final Handler handlerOverview = new Handler() {
         @Override
@@ -80,7 +77,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
                 writeToRPI("treehouses memory used");
             } else {
                 used = i;
-                ObjectAnimator.ofInt(memoryMeter, "progress", (int) (((float) used / total) * 100))
+                ObjectAnimator.ofInt(bind.spaceLeft, "progress", (int) (((float) used / total) * 100))
                         .setDuration(600)
                         .start();
             }

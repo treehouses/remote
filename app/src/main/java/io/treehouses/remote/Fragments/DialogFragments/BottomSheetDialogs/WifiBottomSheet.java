@@ -6,21 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.textfield.TextInputLayout;
-
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment;
 import io.treehouses.remote.Fragments.TextBoxValidation;
-import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
+import io.treehouses.remote.databinding.DialogWifiBinding;
 import io.treehouses.remote.pojo.NetworkProfile;
 import io.treehouses.remote.utils.SaveUtils;
 
@@ -30,43 +24,33 @@ import static io.treehouses.remote.Fragments.NewNetworkFragment.openWifiDialog;
 
 public class WifiBottomSheet extends BaseBottomSheetDialog {
 
-    private EditText ssidText;
-    private EditText passwordText;
-    private Button startConfig, addProfile, searchWifi;
-    private CheckBox hiddenEnabled;
-
+    private DialogWifiBinding bind;
     @Nullable
     @Override
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_wifi, container, false);
-        ssidText = v.findViewById(R.id.editTextSSID);
-        passwordText = v.findViewById(R.id.wifipassword);
-        startConfig = v.findViewById(R.id.btn_start_config);
-        addProfile = v.findViewById(R.id.set_wifi_profile);
-        searchWifi = v.findViewById(R.id.btnWifiSearch);
-        hiddenEnabled = v.findViewById(R.id.checkBoxHiddenWifi);
+        bind = DialogWifiBinding.inflate(inflater, container, false);
 
         setStartConfigListener();
 
         setAddProfileListener();
 
-        searchWifi.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
+        bind.btnWifiSearch.setOnClickListener(v1 -> openWifiDialog(WifiBottomSheet.this, context));
 
-        TextBoxValidation validation = new TextBoxValidation(getContext(), ssidText, passwordText, "wifi");
-        validation.setStart(startConfig);
-        validation.setAddprofile(addProfile);
-        validation.setTextInputLayout(v.findViewById(R.id.textInputLayout));
+        TextBoxValidation validation = new TextBoxValidation(getContext(), bind.editTextSSID, bind.wifipassword, "wifi");
+        validation.setStart(bind.btnStartConfig);
+        validation.setAddprofile(bind.setWifiProfile);
+        validation.setTextInputLayout(bind.textInputLayout);
 
 
-        return v;
+        return bind.getRoot();
     }
 
     private void setStartConfigListener() {
-        startConfig.setOnClickListener(v -> {
-            String ssid = ssidText.getText().toString();
-            String password = passwordText.getText().toString();
-            if (hiddenEnabled.isChecked()) listener.sendMessage(String.format("treehouses wifihidden \"%s\" \"%s\"", ssid, password));
+        bind.btnStartConfig.setOnClickListener(v -> {
+            String ssid = bind.editTextSSID.getText().toString();
+            String password = bind.wifipassword.getText().toString();
+            if (bind.checkBoxHiddenWifi.isChecked()) listener.sendMessage(String.format("treehouses wifihidden \"%s\" \"%s\"", ssid, password));
             else listener.sendMessage(String.format("treehouses wifi \"%s\" \"%s\"", ssid, password));
 
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show();
@@ -78,8 +62,8 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
     }
 
     private void setAddProfileListener() {
-        addProfile.setOnClickListener(v -> {
-            SaveUtils.addProfile(context, new NetworkProfile(ssidText.getText().toString(), passwordText.getText().toString()));
+        bind.setWifiProfile.setOnClickListener(v -> {
+            SaveUtils.addProfile(context, new NetworkProfile(bind.editTextSSID.getText().toString(), bind.wifipassword.getText().toString()));
             Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show();
         });
     }
@@ -88,7 +72,7 @@ public class WifiBottomSheet extends BaseBottomSheetDialog {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if((resultCode == Activity.RESULT_OK) && (requestCode == Constants.REQUEST_DIALOG_WIFI) ) {
-            ssidText.setText(data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY));
+            bind.editTextSSID.setText(data.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY));
         }
     }
     

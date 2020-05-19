@@ -14,7 +14,8 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ExpandableListView
+import android.widget.Toast
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
@@ -26,61 +27,46 @@ import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.bases.BaseHomeFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
+import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.SaveUtils
+import kotlinx.android.synthetic.main.activity_home_fragment.*
 import java.util.*
 
 class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private var notificationListener: NotificationCallback? = null
     private var progressDialog: ProgressDialog? = null
-    private var network_profiles: ExpandableListView? = null
-    private var connectRpi: Button? = null
-    private var getStarted: Button? = null
-    private var testConnection: Button? = null
     private var connectionState = false
     private var result = false
-    private var welcome_text: TextView? = null
-    private var background: ImageView? = null
-    private var logo: ImageView? = null
-    private var internetstatus: ImageView? = null
     private var testConnectionDialog: AlertDialog? = null
     private var selected_LED = 0
     private var checkVersionSent = false
     private var internetSent = false
     private var network_ssid = ""
-    private var layout: FrameLayout? = null
     private var networkProfile: NetworkProfile? = null
+
+    private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.activity_home_fragment, container, false)
+        bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
         mChatService = listener.chatService
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        connectRpi = view.findViewById(R.id.btn_connect)
-        preferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        testConnection = view.findViewById(R.id.test_connection)
-        welcome_text = view.findViewById(R.id.welcome_home)
-        getStarted = view.findViewById(R.id.btn_getStarted)
-        background = view.findViewById(R.id.background_home)
-        network_profiles = view.findViewById(R.id.network_profiles)
-        logo = view.findViewById(R.id.logo_home)
-        layout = view.findViewById(R.id.layout_back)
-        internetstatus = view.findViewById(R.id.internetstatus)
+        preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupProfiles()
         showDialogOnce(preferences!!)
         checkConnectionState()
         connectRpiListener()
-        getStarted?.setOnClickListener {
+        bind.btnGetStarted.setOnClickListener {
             instance!!.openCallFragment(AboutFragment())
             activity?.let { it.title = "About" }
         }
         testConnectionListener()
-        return view
+        return bind.root
     }
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context,
-                listOf(*group_labels), SaveUtils.getProfiles(context))
-        network_profiles!!.setAdapter(profileAdapter)
-        network_profiles!!.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
+        val profileAdapter = ProfilesListAdapter(context, listOf(*group_labels), SaveUtils.getProfiles(context))
+        bind.networkProfiles.setAdapter(profileAdapter)
+        bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
                 listener.sendMessage("treehouses default network")
                 Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
@@ -131,7 +117,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun connectRpiListener() {
-        connectRpi!!.setOnClickListener {
+        bind.btnConnect.setOnClickListener {
             val vibe = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
             if (vibe.hasVibrator()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibe.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -155,7 +141,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     fun testConnectionListener() {
-        testConnection!!.setOnClickListener {
+        bind.testConnection.setOnClickListener {
             val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
             val options = listOf(*resources.getStringArray(R.array.led_options))
             val optionsCode = resources.getStringArray(R.array.led_options_commands)
@@ -174,10 +160,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             transitionOnConnected()
             connectionState = true
             checkVersionSent = true
-            writeToRPI("""
-    treehouses remote version ${BuildConfig.VERSION_CODE}
-
-    """.trimIndent())
+            writeToRPI("""treehouses remote version ${BuildConfig.VERSION_CODE}""".trimIndent())
         } else {
             transitionDisconnected()
             connectionState = false
@@ -186,28 +169,28 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun transitionOnConnected() {
-        welcome_text!!.visibility = View.GONE
-        testConnection!!.visibility = View.VISIBLE
-        connectRpi!!.text = "Disconnect"
-        connectRpi!!.setBackgroundResource(R.drawable.ic_disconnect_rpi)
-        background!!.animate().translationY(150f)
-        connectRpi!!.animate().translationY(110f)
-        getStarted!!.animate().translationY(70f)
-        testConnection!!.visibility = View.VISIBLE
-        layout!!.visibility = View.VISIBLE
-        logo!!.visibility = View.GONE
+        bind.welcomeHome.visibility = View.GONE
+        bind.testConnection.visibility = View.VISIBLE
+        bind.btnConnect.text = "Disconnect"
+        bind.btnConnect.setBackgroundResource(R.drawable.ic_disconnect_rpi)
+        bind.backgroundHome.animate().translationY(150f)
+        bind.btnConnect.animate().translationY(110f)
+        bind.btnGetStarted.animate().translationY(70f)
+        bind.testConnection.visibility = View.VISIBLE
+        bind.layoutBack.visibility = View.VISIBLE
+        bind.logoHome.visibility = View.GONE
     }
 
     private fun transitionDisconnected() {
-        connectRpi!!.text = "Connect to RPI"
-        testConnection!!.visibility = View.GONE
-        welcome_text!!.visibility = View.VISIBLE
-        background!!.animate().translationY(0f)
-        connectRpi!!.animate().translationY(0f)
-        getStarted!!.animate().translationY(0f)
-        connectRpi!!.setBackgroundResource(R.drawable.ic_connect_to_rpi)
-        logo!!.visibility = View.VISIBLE
-        layout!!.visibility = View.GONE
+        bind.btnConnect.text = "Connect to RPI"
+        bind.testConnection.visibility = View.GONE
+        bind.welcomeHome.visibility = View.VISIBLE
+        bind.backgroundHome.animate().translationY(0f)
+        bind.btnConnect.animate().translationY(0f)
+        bind.btnGetStarted.animate().translationY(0f)
+        bind.btnConnect.setBackgroundResource(R.drawable.ic_connect_to_rpi)
+        bind.logoHome.visibility = View.VISIBLE
+        bind.layoutBack.visibility = View.GONE
     }
 
     private fun dismissTestConnection() {

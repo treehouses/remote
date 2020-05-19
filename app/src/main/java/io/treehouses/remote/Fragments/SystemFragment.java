@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -21,11 +20,11 @@ import java.util.Collections;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
-import io.treehouses.remote.R;
 import io.treehouses.remote.adapter.NetworkListAdapter;
 import io.treehouses.remote.adapter.ViewHolderTether;
 import io.treehouses.remote.adapter.ViewHolderVnc;
 import io.treehouses.remote.bases.BaseFragment;
+import io.treehouses.remote.databinding.ActivitySystemFragmentBinding;
 import io.treehouses.remote.pojo.NetworkListItem;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -38,7 +37,7 @@ public class SystemFragment extends BaseFragment {
 
     private boolean retry= false;
 
-    private View view;
+    ActivitySystemFragmentBinding bind;
 
     public SystemFragment() {
     }
@@ -46,15 +45,14 @@ public class SystemFragment extends BaseFragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_system_fragment, container, false);
+        bind = ActivitySystemFragmentBinding.inflate(inflater, container, false);
         BluetoothChatService mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        ExpandableListView listView = view.findViewById(R.id.listView);
         NetworkListAdapter adapter = new NetworkListAdapter(getContext(), NetworkListItem.getSystemList(), mChatService);
         adapter.setListener(listener);
 
-        listView.setOnGroupExpandListener(groupPosition -> {
+        bind.listView.setOnGroupExpandListener(groupPosition -> {
             if (groupPosition == 1) {
                 listener.sendMessage("treehouses networkmode info\n");
                 tether = true;
@@ -63,8 +61,8 @@ public class SystemFragment extends BaseFragment {
             listener.sendMessage("treehouses networkmode info\n");
         });
 
-        listView.setAdapter(adapter);
-        return view;
+        bind.listView.setAdapter(adapter);
+        return bind.getRoot();
     }
 
     @Override

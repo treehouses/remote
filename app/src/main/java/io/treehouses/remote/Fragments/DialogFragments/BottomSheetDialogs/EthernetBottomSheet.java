@@ -6,44 +6,39 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 
-import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseBottomSheetDialog;
+import io.treehouses.remote.databinding.DialogEthernetBinding;
 
 import static io.treehouses.remote.Fragments.NewNetworkFragment.CLICKED_START_CONFIG;
 
 public class EthernetBottomSheet extends BaseBottomSheetDialog {
 
-    private EditText etIP, etMask, etGateway, DNSText;
-    private Button startConfig;
-
+    private DialogEthernetBinding bind;
     @Nullable
     @Override
-
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_ethernet, container, false);
-        etIP = v.findViewById(R.id.ip);
-        etMask = v.findViewById(R.id.mask);
-        etGateway = v.findViewById(R.id.gateway);
-        DNSText = v.findViewById(R.id.dns);
+        bind = DialogEthernetBinding.inflate(inflater, container, false);
+//        etIP = v.findViewById(R.id.ip);
+//        etMask = v.findViewById(R.id.mask);
+//        etGateway = v.findViewById(R.id.gateway);
+//        DNSText = v.findViewById(R.id.dns);
+//
+//        startConfig = v.findViewById(R.id.btn_start_config);
 
-        startConfig = v.findViewById(R.id.btn_start_config);
-
-        startConfig.setOnClickListener(v1 -> {
-            String ip = etIP.getText().toString();
-            String dns = DNSText.getText().toString();
-            String gateway = etGateway.getText().toString();
-            String mask = etMask.getText().toString();
+        bind.btnStartConfig.setOnClickListener(v1 -> {
+            String ip = bind.ip.getText().toString();
+            String dns = bind.dns.getText().toString();
+            String gateway = bind.gateway.getText().toString();
+            String mask = bind.mask.getText().toString();
             listener.sendMessage(String.format("treehouses ethernet %s %s %s %s", ip, mask, gateway, dns));
             Intent intent = new Intent();
             intent.putExtra(CLICKED_START_CONFIG, true);
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
             dismiss();
         });
-        return v;
+        return bind.getRoot();
     }
 }

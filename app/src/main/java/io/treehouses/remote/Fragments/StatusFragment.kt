@@ -11,104 +11,72 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.cardview.widget.CardView
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
+import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
+import io.treehouses.remote.databinding.DialogRenameStatusBinding
 
 class StatusFragment : BaseFragment() {
-    private var mView: View? = null
-    private var wifiStatus: ImageView? = null
-    private var btRPIName: ImageView? = null
-    private var rpiType: ImageView? = null
-    private var memoryStatus: ImageView? = null
-    private var btStatus: ImageView? = null
-    private var ivUpgrade: ImageView? = null
-    private var tvStatus: TextView? = null
-    private var tvStatus1: TextView? = null
-    private var tvStatus2: TextView? = null
-    private var tvStatus3: TextView? = null
-    private var tvUpgrade: TextView? = null
-    private var tvMemory: TextView? = null
-    private var tvImage: TextView? = null
-    private var upgrade: Button? = null
-    private var pd: ProgressBar? = null
+
     private var updateRightNow = false
-    private var cardRPIName: CardView? = null
     private var notificationListener: NotificationCallback? = null
     private var lastCommand = "hostname"
     private var deviceName = ""
     private var rpiVersion = ""
+
+    private lateinit var bind: ActivityStatusFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mView = inflater.inflate(R.layout.activity_status_fragment, container, false)
-        initializeUIElements(mView)
+        bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
         mChatService = listener.chatService
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
-        tvStatus!!.text = String.format("Bluetooth Connection: %s", deviceName)
+        bind.tvBluetooth.text = String.format("Bluetooth Connection: %s", deviceName)
         Log.e("STATUS", "device name: $deviceName")
         if (mChatService.state == Constants.STATE_CONNECTED) {
-            btStatus!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
+            bind.btStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
         }
         checkStatusNow()
         writeToRPI("hostname")
-        return mView
-    }
-
-    private fun initializeUIElements(view: View?) {
-        btStatus = view?.findViewById(R.id.btStatus)
-        wifiStatus = view?.findViewById(R.id.wifiStatus)
-        btRPIName = view?.findViewById(R.id.rpiName)
-        rpiType = view?.findViewById(R.id.rpiType)
-        pd = view?.findViewById(R.id.progressBar)
-        memoryStatus = view?.findViewById(R.id.memoryStatus)
-        ivUpgrade = view?.findViewById(R.id.upgradeCheck)
-        tvStatus = view?.findViewById(R.id.tvStatus)
-        tvStatus1 = view?.findViewById(R.id.tvStatus1)
-        tvStatus2 = view?.findViewById(R.id.tvStatus2)
-        tvStatus3 = view?.findViewById(R.id.tvStatus3)
-        tvUpgrade = view?.findViewById(R.id.tvUpgradeCheck)
-        tvMemory = view?.findViewById(R.id.tvMemoryStatus)
-        tvImage = view?.findViewById(R.id.image_text)
-        upgrade = view?.findViewById(R.id.upgrade)
-        upgrade?.visibility = View.GONE
-        cardRPIName = view?.findViewById(R.id.cardView)
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
+        return bind.root
     }
 
     private fun upgradeOnViewClickListener() {
-        upgrade!!.setOnClickListener {
+        bind.upgrade.setOnClickListener {
             writeToRPI("treehouses upgrade")
             updateRightNow = true
-            pd?.visibility = View.VISIBLE
+            bind.progressBar.visibility = View.VISIBLE
         }
     }
 
     private fun rpiNameOnViewClickListener() {
-        cardRPIName!!.setOnClickListener { showRenameDialog() }
+        bind.rpiNameCard.setOnClickListener { showRenameDialog() }
     }
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
         if (lastCommand == "hostname") {
-            Log.e("ENtERED", "YAY")
-            setCard(tvStatus2, btRPIName, "Connected RPI Name: $readMessage")
+            setCard(bind.tvRpiName, bind.rpiName, "Connected RPI Name: $readMessage")
             writeToRPI("treehouses remote status")
         } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
             val res = readMessage.trim().split(" ")
-            setCard(tvStatus1, wifiStatus, "RPI Wifi Connection : " + res[0])
-            tvImage!!.text = String.format("Treehouses Image Version: %s", res[2])
-            setCard(tvStatus3, rpiType, "RPI Type : " + res[4])
+            setCard(bind.tvWifi, bind.wifiStatus, "RPI Wifi Connection : " + res[0])
+            bind.imageText.text = String.format("Treehouses Image Version: %s", res[2])
+            setCard(bind.tvRpiType, bind.rpiType, "RPI Type : " + res[4])
             rpiVersion = res[3]
             Log.e("REACHED", "YAYY")
             writeToRPI("treehouses memory free")
         } else if (lastCommand == "treehouses memory free") {
-            setCard(tvMemory, memoryStatus, "Memory: " + readMessage + "bytes available")
+            setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
             writeToRPI("treehouses internet")
         } else if (lastCommand == "treehouses internet") {
             checkWifiStatus(readMessage)
@@ -118,14 +86,14 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun checkWifiStatus(readMessage: String) {
-        tvStatus1!!.text = String.format("RPI Wifi Connection: %s", readMessage)
+        bind.tvWifi.text = String.format("RPI Wifi Connection: %s", readMessage)
         if (readMessage.startsWith("true")) {
-            wifiStatus!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
+            bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
             writeToRPI("treehouses upgrade --check")
         } else {
-            wifiStatus!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-            tvUpgrade!!.text = "Upgrade Status: NO INTERNET"
-            upgrade!!.visibility = View.GONE
+            bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
+            bind.tvUpgradeCheck.text = "Upgrade Status: NO INTERNET"
+            bind.upgrade.visibility = View.GONE
         }
     }
 
@@ -135,15 +103,15 @@ class StatusFragment : BaseFragment() {
         mChatService.write(pSend)
     }
 
-    private fun setCard(textView: TextView?, tick: ImageView?, text: String) {
-        textView!!.text = text
+    private fun setCard(textView: TextView, tick: ImageView?, text: String) {
+        textView.text = text
         tick!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
     }
 
     private fun checkUpgradeNow() {
         if (updateRightNow) {
             updateRightNow = false
-            pd?.visibility = View.GONE
+            bind.progressBar.visibility = View.GONE
             Toast.makeText(context, "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show()
             notificationListener!!.setNotification(false)
             requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, StatusFragment()).commit()
@@ -153,22 +121,21 @@ class StatusFragment : BaseFragment() {
     private fun checkUpgradeStatus(readMessage: String) {
         checkUpgradeNow()
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
-            ivUpgrade!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
-            tvUpgrade!!.text = String.format("Upgrade Status: Latest Version: %s", rpiVersion)
-            upgrade!!.visibility = View.GONE
+            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
+            bind.tvUpgradeCheck.text = String.format("Upgrade Status: Latest Version: %s", rpiVersion)
+            bind.upgrade.visibility = View.GONE
         } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
-            ivUpgrade!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-            tvUpgrade!!.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
-            upgrade!!.visibility = View.VISIBLE
+            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
+            bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
+            bind.upgrade.visibility = View.VISIBLE
         }
     }
 
     private fun showRenameDialog() {
         val inflater = requireActivity().layoutInflater
-        val mView = inflater.inflate(R.layout.dialog_rename_status, null)
-        val mHostNameEditText = mView.findViewById<EditText>(R.id.hostname)
-        mHostNameEditText.hint = "New Name"
-        val alertDialog = createRenameDialog(mView, mHostNameEditText)
+        val dialogBinding = DialogRenameStatusBinding.inflate(inflater)
+        dialogBinding.hostname.hint = "New Name"
+        val alertDialog = createRenameDialog(dialogBinding.root, dialogBinding.hostname)
         alertDialog.show()
     }
 

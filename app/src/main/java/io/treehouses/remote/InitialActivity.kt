@@ -1,6 +1,5 @@
 package io.treehouses.remote
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -16,10 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
@@ -27,6 +23,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
+import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
 
@@ -34,17 +31,16 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var validBluetoothConnection = false
     var REQUEST_COARSE_LOCATION = 99
     private var mConnectedDeviceName: String? = null
-    private var navigationView: NavigationView? = null
-    var drawer: DrawerLayout? = null
+    private lateinit var bind: ActivityInitial2Binding
     private val TAG = "InitialActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        bind = ActivityInitial2Binding.inflate(layoutInflater)
         instance = this
-        setContentView(R.layout.activity_initial2)
+        setContentView(bind.root)
         requestPermission()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        drawer = findViewById(R.id.drawer_layout)
         if (mChatService == null) {
             mChatService = BluetoothChatService(mHandler, applicationContext)
         } else {
@@ -58,22 +54,21 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     private fun setUpDrawer() {
-        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, drawer, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             override fun onDrawerOpened(drawerView: View) {
                 (this@InitialActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(window.decorView.windowToken, 0)
             }
         }
-        drawer?.addDrawerListener(toggle)
+        bind.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        navigationView = findViewById(R.id.nav_view)
-        navigationView?.setNavigationItemSelectedListener(this)
-        navigationView?.itemIconTintList = null
+        bind.navView.setNavigationItemSelectedListener(this)
+        bind.navView.itemIconTintList = null
     }
 
 
     override fun onBackPressed() {
-        if (drawer!!.isDrawerOpen(GravityCompat.START)) {
-            drawer!!.closeDrawer(GravityCompat.START)
+        if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            bind.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
@@ -109,7 +104,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             }
         }
         if (flag) title = item.title;
-        drawer!!.closeDrawer(GravityCompat.START)
+        bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -155,7 +150,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     //
     override fun setNotification(b: Boolean) {
-        if (b) navigationView!!.menu.getItem(7).setIcon(R.drawable.status_notification) else navigationView!!.menu.getItem(7).setIcon(R.drawable.status)
+        if (b) bind.navView.menu.getItem(7).setIcon(R.drawable.status_notification) else bind.navView.menu.getItem(7).setIcon(R.drawable.status)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
