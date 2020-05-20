@@ -19,6 +19,7 @@
         android:layout_marginBottom="@dimen/margin_medium"
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/edit_text_out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
