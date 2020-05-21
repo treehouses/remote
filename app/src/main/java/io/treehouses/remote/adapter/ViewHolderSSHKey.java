@@ -43,11 +43,9 @@ public class ViewHolderSSHKey {
                 listener.sendMessage("treehouses sshkey add" + " \"" +  editTextSSHKey.getText().toString() + "\"");
             }
             else{
-                Toast.makeText(c, "Incorrect ssh key input", Toast.LENGTH_LONG).show();
+                Toast.makeText(c, "Incorrect SSH Key Input", Toast.LENGTH_LONG).show();
             }
 //            listener.sendMessage("ssh-keygen -lf /dev/stdin <<< \"fdf\"");
-
-//            listener.sendMessage("")
         });
 
     }
