@@ -50,28 +50,6 @@ public class ViewHolderSSHKey {
 
     }
 
-
-
-    private void openVnc(Context context, View v, TextInputEditText in) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")));
-        List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
-        if (activities.size() == 0) {
-            Snackbar.make(v, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install", view -> {
-                Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"));
-                context.startActivity(intent1);
-            }).show();
-            return;
-        }
-        String ip = in.getText().toString();
-        if (TextUtils.isEmpty(ip)) {
-            Toast.makeText(context, "Invalid ip address", Toast.LENGTH_LONG).show();
-            return;
-        }
-        try {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", ip))));
-        } catch (Exception e) { }
-    }
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
