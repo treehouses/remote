@@ -101,6 +101,7 @@ open class BaseHomeFragment : BaseFragment() {
             map["bluetoothMacAddress"] = bluetoothMac
             map["rpiVersion"] = rpiVersion
             ParseDbService.sendLog(activity, deviceName, map, preferences)
+            MainApplication.logSent = true
         }
     }
 
