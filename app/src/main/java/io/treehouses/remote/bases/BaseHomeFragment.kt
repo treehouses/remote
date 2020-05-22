@@ -167,9 +167,6 @@ https://github.com/treehouses/cli""")
         dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "rpiDialog")
     }
 
-    protected fun matchResult(output: String, option1: String?, option2: String?): Boolean {
-        return output.contains(option1!!) || output.contains(option2!!)
-    }
 
     protected fun showUpgradeCLI() {
         val alertDialog = AlertDialog.Builder(context)
