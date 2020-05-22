@@ -58,8 +58,12 @@ public class SystemFragment extends BaseFragment {
                 tether = true;
                 return;
             }
+            else if(groupPosition == 2){
+                Log.d("3", "onCreateView: ");
+            }
             listener.sendMessage("treehouses networkmode info\n");
         });
+
 
         bind.listView.setAdapter(adapter);
         return bind.getRoot();
