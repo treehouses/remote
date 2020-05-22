@@ -35,5 +35,7 @@ class MainApplication : Application() {
         @JvmField
         var ratingDialog = true
 
+        var logSent = false
+
     }
 }

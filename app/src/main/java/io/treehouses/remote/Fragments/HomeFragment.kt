@@ -161,9 +161,13 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             connectionState = true
             checkVersionSent = true
             writeToRPI("""treehouses remote version ${BuildConfig.VERSION_CODE}""".trimIndent())
+            if (!MainApplication.logSent) {
+                writeToRPI("treehouses remote check\n")
+            }
         } else {
             transitionDisconnected()
             connectionState = false
+            MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
     }
@@ -223,7 +227,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             //CLI Needs Upgrade
             showUpgradeCLI()
         } else if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
-            writeToRPI("treehouses remote check\n")
+            listener.sendMessage("treehouses internet\n")
+            internetSent = true
         } else if (output.contains("false")) {
             val alertDialog = AlertDialog.Builder(context)
                     .setTitle("Update Required")
@@ -252,10 +257,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             internetSent = false
         } else if (output.startsWith("version: ") || checkVersionSent) {
             checkVersion(output)
-        } else if (output.contains(" ") && output.trim().split(" ").size == 4 && !matchResult(output, "pirateship", "bridge") && !output.contains("network")) {
+        } else if (output.contains(" ") && output.trim().split(" ").size == 4 && !MainApplication.logSent) {
             checkImageInfo(output.trim().split(" "), mChatService.connectedDeviceName)
-            listener.sendMessage("treehouses internet\n")
-            internetSent = true
         } else if (internetSent) {
             internetSent = false
             if (output.trim { it <= ' ' }.contains("true")) internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle_green)) else internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle))
