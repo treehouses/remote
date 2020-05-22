@@ -5,14 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SnapHelper
+import com.google.android.material.snackbar.Snackbar
 import com.polidea.rxandroidble2.scan.ScanResult
 
 import io.treehouses.remote.R
 import io.treehouses.remote.bluetoothv2.base.view.BaseFragment
+import io.treehouses.remote.bluetoothv2.ui.ReadWriteActivity
 import io.treehouses.remote.bluetoothv2.ui.home.interactor.HomeMVPInterator
 import io.treehouses.remote.bluetoothv2.ui.home.presenter.HomeMVPPresenter
 import io.treehouses.remote.utils.Utils
 import kotlinx.android.synthetic.main.fragment_home.*
+import java.util.*
 import javax.inject.Inject
 
 class HomeFragment : BaseFragment(), HomeMVPView, (ScanResult) -> Unit {
@@ -25,6 +29,7 @@ class HomeFragment : BaseFragment(), HomeMVPView, (ScanResult) -> Unit {
     override fun setUp() {
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -34,7 +39,7 @@ class HomeFragment : BaseFragment(), HomeMVPView, (ScanResult) -> Unit {
         super.onActivityCreated(savedInstanceState)
         presenter.onAttach(this)
         btn_connect.setOnClickListener {
-            presenter.onConnectClicked()
+            presenter.onScanClicked()
         }
         rv_devices.apply {
             layoutManager = LinearLayoutManager(activity)
@@ -46,7 +51,12 @@ class HomeFragment : BaseFragment(), HomeMVPView, (ScanResult) -> Unit {
         resultsAdapter.addScanResult(scanResult)
     }
 
-    override fun invoke(p1: ScanResult) {
+    override fun showError(message: String) {
+        Snackbar.make(btn_connect, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun invoke(res: ScanResult) {
+        startActivity(ReadWriteActivity.newInstance(requireContext(), res.bleDevice.macAddress, UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")))
 
     }
 

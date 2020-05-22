@@ -2,6 +2,8 @@ package io.treehouses.remote.bluetoothv2.services
 
 import android.content.Context
 import com.polidea.rxandroidble2.RxBleClient
+import com.polidea.rxandroidble2.RxBleConnection
+import com.polidea.rxandroidble2.RxBleDevice
 import com.polidea.rxandroidble2.scan.ScanFilter
 import com.polidea.rxandroidble2.scan.ScanResult
 import com.polidea.rxandroidble2.scan.ScanSettings
@@ -10,6 +12,7 @@ import javax.inject.Inject
 
 class BluetoothService @Inject constructor(context: Context) : BluetoothHelper {
     private val rxBleClient = RxBleClient.create(context)
+
     override fun scanDevices(): Observable<ScanResult> {
         val scanSettings = ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
@@ -21,17 +24,22 @@ class BluetoothService @Inject constructor(context: Context) : BluetoothHelper {
 
     }
 
-    override fun connectDevice(): Observable<String> {
-        return Observable.ambArray();
+    override fun observeStateChange(bleDevice: RxBleDevice): Observable<RxBleConnection.RxBleConnectionState> {
+        return bleDevice.observeConnectionStateChanges()
     }
 
-    override fun disconnectDevice(): Observable<String> {
-        return Observable.ambArray();
+
+    override fun connectDevice(bleDevice: RxBleDevice): Observable<RxBleConnection> {
+        return bleDevice.establishConnection(true)
     }
 
-    override fun getConnectionState(): Observable<String> {
-        return Observable.ambArray();
-    }
+//    override fun disconnectDevice(): Observable<String> {
+//        return Observable.ambArray();
+//    }
+//
+//    override fun getConnectionState(): Observable<String> {
+//        return Observable.ambArray();
+//    }
 
     override fun readMessage(): Observable<String> {
         return Observable.ambArray();

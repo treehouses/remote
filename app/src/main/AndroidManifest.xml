@@ -54,6 +54,7 @@
             android:windowSoftInputMode="stateHidden|adjustResize"></activity>
 
         <service android:name=".utils.GPSService" />
+        <activity  android:theme="@style/MyMaterialTheme.Base"  android:name=".bluetoothv2.ui.ReadWriteActivity"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

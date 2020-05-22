@@ -5,4 +5,5 @@ import io.treehouses.remote.bluetoothv2.base.view.MVPView
 
 interface HomeMVPView : MVPView {
     fun showDevice(scanResult: ScanResult)
+    fun showError(message:String)
 }

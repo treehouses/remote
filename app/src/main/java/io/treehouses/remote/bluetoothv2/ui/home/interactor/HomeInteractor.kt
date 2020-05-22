@@ -1,5 +1,6 @@
 package io.treehouses.remote.bluetoothv2.ui.home.interactor
 
+import com.polidea.rxandroidble2.RxBleDevice
 import com.polidea.rxandroidble2.scan.ScanResult
 import io.treehouses.remote.bluetoothv2.base.interactor.BaseInteractor
 import io.treehouses.remote.bluetoothv2.services.BluetoothConnectionService
@@ -10,8 +11,8 @@ class HomeInteractor @Inject internal constructor(bluetoothHelper: BluetoothHelp
 
     override fun scanDevices() = bluetoothHelper.scanDevices()
 
-    override fun connectToDevice(mac: String) = bluetoothHelper.connectDevice()
+    override fun connectToDevice(bleDevice: RxBleDevice) = bluetoothHelper.connectDevice(bleDevice)
 
-    override fun disconnectDevice() = bluetoothHelper.disconnectDevice()
+//    override fun disconnectDevice() = compo
 
 }
