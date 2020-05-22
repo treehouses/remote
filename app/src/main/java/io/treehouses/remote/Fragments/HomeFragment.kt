@@ -160,9 +160,11 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             connectionState = true
             checkVersionSent = true
             writeToRPI(requireContext().getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+
         } else {
             transitionDisconnected()
             connectionState = false
+            MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
     }
@@ -218,7 +220,9 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun checkVersion(output: String) {
         checkVersionSent = false
-        if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
+        if (output.contains("Usage") || output.contains("command")) {
+            showUpgradeCLI()
+        } else if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
             writeToRPI(requireContext().getString(R.string.TREEHOUSES_REMOTE_CHECK))
         } else if (output.contains("false")) {
             val alertDialog = AlertDialog.Builder(context)
@@ -233,6 +237,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                         }
                     }.create()
             alertDialog.show()
+
         }
     }
 
@@ -242,6 +247,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
+
         val s = match(output)
         when {
             s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
@@ -263,6 +269,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             else -> moreActions(output, s)
         }
     }
+
 
     private fun moreActions(output: String, result: RESULTS) {
         when {
