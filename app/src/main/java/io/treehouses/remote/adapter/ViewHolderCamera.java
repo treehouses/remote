@@ -57,10 +57,10 @@ public class ViewHolderCamera {
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
                 String readMessage = msg.obj.toString();
-                if (readMessage.contains("Camera settings which are currently enabled") || readMessage.contains("have been enabled")){
+                if (readMessage.contains("Camera settings which are currently enabled")){
                     toggleCamera(true);
                 }
-                else if(readMessage.contains("currently disabled") || readMessage.contains("has been disabled")){
+                else if(readMessage.contains("currently disabled")){
                     toggleCamera(false);
                 }
             }
