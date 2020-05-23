@@ -29,6 +29,7 @@ public class ViewHolderCamera {
     private BluetoothChatService mChatService;
     private Context c;
     private Switch cameraSwitch;
+    private String readMessage;
 
     ViewHolderCamera(View v, Context context, HomeInteractListener listener) {
         c = context;
@@ -56,7 +57,7 @@ public class ViewHolderCamera {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
-                String readMessage = (String) msg.obj;
+                readMessage = (String) msg.obj;
                 if (readMessage.contains("Camera settings which are currently enabled") || readMessage.contains("have been enabled")){
                     toggleCamera(true);
                 }
