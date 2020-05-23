@@ -1,0 +1,19 @@
+{
+  "buildFiles": [
+    "/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/sriharivishnu/AndroidStudioProjects/remote/app/CMakeLists.txt",
+    "/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/x86\" clean"
+  ],
+  "buildTargetsCommand": "/Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/x86\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "com_google_ase_Exec-Release-x86": {
+      "artifactName": "com_google_ase_Exec",
+      "buildCommand": "/Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/x86\" com_google_ase_Exec",
+      "abi": "x86",
+      "output": "/Users/sriharivishnu/AndroidStudioProjects/remote/app/build/intermediates/cmake/release/obj/x86/libcom_google_ase_Exec.so"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+Executable : /Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+arguments : 
+-C
+/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/debug/x86_64
+com_google_ase_Exec
+jvmArgs : 
+

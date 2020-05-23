@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/arm64-v8a",
+  "command": "/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=aarch64-none-linux-android21 --gcc-toolchain=/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dcom_google_ase_Exec_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -DNDEBUG  -fPIC   -o CMakeFiles/com_google_ase_Exec.dir/src/main/cpp/com_google_ase_Exec.cpp.o -c /Users/sriharivishnu/AndroidStudioProjects/remote/app/src/main/cpp/com_google_ase_Exec.cpp",
+  "file": "/Users/sriharivishnu/AndroidStudioProjects/remote/app/src/main/cpp/com_google_ase_Exec.cpp"
+}
+]

@@ -20,6 +20,9 @@ android {
                 outputFileName = new File("remote-" + android.defaultConfig.versionCode + ".apk")
             }
         }
+        ndk {
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
     viewBinding {
         enabled = true
@@ -43,6 +46,11 @@ android {
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
+    }
+    externalNativeBuild {
+        cmake {
+            path file('CMakeLists.txt')
+        }
     }
 }
 
@@ -83,6 +91,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.connectbot:sshlib:2.2.9'
+
 
 }
 repositories {

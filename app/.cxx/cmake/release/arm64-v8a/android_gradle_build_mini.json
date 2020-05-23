@@ -1,0 +1,19 @@
+{
+  "buildFiles": [
+    "/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/sriharivishnu/AndroidStudioProjects/remote/app/CMakeLists.txt",
+    "/Users/sriharivishnu/Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/arm64-v8a\" clean"
+  ],
+  "buildTargetsCommand": "/Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "com_google_ase_Exec-Release-arm64-v8a": {
+      "artifactName": "com_google_ase_Exec",
+      "buildCommand": "/Users/sriharivishnu/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/arm64-v8a\" com_google_ase_Exec",
+      "abi": "arm64-v8a",
+      "output": "/Users/sriharivishnu/AndroidStudioProjects/remote/app/build/intermediates/cmake/release/obj/arm64-v8a/libcom_google_ase_Exec.so"
+    }
+  }
+}

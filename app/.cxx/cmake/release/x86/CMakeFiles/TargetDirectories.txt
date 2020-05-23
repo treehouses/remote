@@ -1,0 +1,3 @@
+/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/x86/CMakeFiles/rebuild_cache.dir
+/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/x86/CMakeFiles/edit_cache.dir
+/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/release/x86/CMakeFiles/com_google_ase_Exec.dir
