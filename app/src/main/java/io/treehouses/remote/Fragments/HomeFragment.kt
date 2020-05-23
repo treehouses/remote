@@ -70,12 +70,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
-                listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
+                listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
             } else if (SaveUtils.getProfiles(context).size > 0 && SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!!.size > 0) {
                 if (SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
                 networkProfile = SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!![childPosition]
-                listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
+                listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 Toast.makeText(context, "Configuring...", Toast.LENGTH_LONG).show()
             }
             false
@@ -89,20 +89,18 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         when {
             networkProfile.isWifi -> {
                 //WIFI
-                listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_WIFI, networkProfile.ssid, networkProfile.password))
+                listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, networkProfile.ssid, networkProfile.password))
                 network_ssid = networkProfile.ssid
             }
             networkProfile.isHotspot -> {
                 //Hotspot
-                if (networkProfile.password.isEmpty()) listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_AP, networkProfile.option, networkProfile.ssid, "\"\""))
-                else listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_AP, networkProfile.option, networkProfile.ssid, networkProfile.password))
+                listener.sendMessage(getString(R.string.TREEHOUSES_AP, networkProfile.option, networkProfile.ssid, networkProfile.password))
                 network_ssid = networkProfile.ssid
             }
             networkProfile.isBridge -> {
                 //Bridge
-                val password = if (networkProfile.password.isEmpty()) "\"\"" else networkProfile.password
-                val hotspotPass = if (networkProfile.hotspot_password.isEmpty()) "\"\"" else networkProfile.password
-                listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_BRIDGE, networkProfile.ssid, networkProfile.hotspot_ssid, password, hotspotPass))
+                listener.sendMessage(getString(R.string.TREEHOUSES_BRIDGE, networkProfile.ssid, networkProfile.hotspot_ssid,
+                        networkProfile.password, networkProfile.hotspot_password))
             }
         }
     }
@@ -159,7 +157,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             transitionOnConnected()
             connectionState = true
             checkVersionSent = true
-            writeToRPI(requireContext().getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
 
         } else {
             transitionDisconnected()
@@ -223,7 +221,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         if (output.contains("Usage") || output.contains("command")) {
             showUpgradeCLI()
         } else if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
-            writeToRPI(requireContext().getString(R.string.TREEHOUSES_REMOTE_CHECK))
+            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_CHECK))
         } else if (output.contains("false")) {
             val alertDialog = AlertDialog.Builder(context)
                     .setTitle("Update Required")
@@ -242,8 +240,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun readMessage(output: String) {
-        notificationListener = try {
-            context as NotificationCallback?
+        notificationListener = try { context as NotificationCallback?
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
@@ -257,14 +254,14 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             s == RESULTS.VERSION && checkVersionSent -> checkVersion(output)
             s == RESULTS.REMOTE_CHECK -> {
                 checkImageInfo(output.trim().split(" "), mChatService.connectedDeviceName)
-                listener.sendMessage(requireContext().getString(R.string.TREEHOUSES_INTERNET))
+                listener.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                 internetSent = true
             }
             s == RESULTS.BOOLEAN && internetSent -> {
                 internetSent = false
                 if (output.contains("true")) internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle_green))
                 else internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle))
-                writeToRPI(requireContext().getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+                writeToRPI(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
             }
             else -> moreActions(output, s)
         }
@@ -274,7 +271,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private fun moreActions(output: String, result: RESULTS) {
         when {
             notificationListener != null && result == RESULTS.UPGRADE_CHECK -> notificationListener!!.setNotification(output.contains("true"))
-            result == RESULTS.HOTSPOT_OR_WIFI -> {
+            result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
                 dismissPDialog()
                 Toast.makeText(context, "Switched to $network_ssid", Toast.LENGTH_LONG).show()
             }
@@ -314,7 +311,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         super.onResume()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             checkVersionSent = true
-            writeToRPI(requireContext().getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }
     }
 

@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
+
+    <string name="REBOOT">reboot\n</string>
+
     <string name="TREEHOUSES_INTERNET">treehouses internet\n</string>
     <string name="TREEHOUSES_REMOTE_CHECK">treehouses remote check\n</string>
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
     <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
+    <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
 
-    <string name="TREEHOUSES_WIFI">treehouses wifi %1$s %2$s\n</string>
-    <string name="TREEHOUSES_AP">treehouses ap %1$s %2$s %3$s\n</string>
-    <string name="TREEHOUSES_BRIDGE">treehouses bridge %1$s %2$s %3$s %4$s\n</string>
+    <string name="TREEHOUSES_NETWORKMODE">treehouses networkmode\n</string>
+    <string name="TREEHOUSES_WIFI">treehouses wifi \"%1$s\" \"%2$s\"\n</string>
+    <string name="TREEHOUSES_WIFI_HIDDEN">treehouses wifihidden \"%1$s\" \"%2$s\"\n</string>
+    <string name="TREEHOUSES_AP">treehouses ap \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
+    <string name="TREEHOUSES_AP_HIDDEN">treehouses aphidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
+    <string name="TREEHOUSES_BRIDGE">treehouses bridge \"%1$s\" \"%2$s\" \"%3$s\" \"%4$s\"\n</string>
+    <string name="TREEHOUSES_ETHERNET">treehouses ethernet \"%1$s\" \"%2$s\" \"%3$s\" \"%4$s\"\n</string>
 
 
 </resources>
