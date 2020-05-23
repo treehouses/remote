@@ -119,9 +119,12 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             new ViewHolderVnc(convertView, context, listener);
         } else if (layout == R.layout.configure_tethering) {
             new ViewHolderTether(convertView, listener, context);
-        }  else if (layout == R.layout.configure_ssh_key) {
+        } else if (layout == R.layout.configure_ssh_key) {
             new ViewHolderSSHKey(convertView, context, listener);
+        } else if (layout == R.layout.configure_camera) {
+            new ViewHolderCamera(convertView, context, listener);
         }
+
         views[i] = convertView;
         return convertView;
     }
