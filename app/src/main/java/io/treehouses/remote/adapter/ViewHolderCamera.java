@@ -56,23 +56,17 @@ public class ViewHolderCamera {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == Constants.MESSAGE_READ) {
-                String readMessage = msg.obj.toString();
-                if (readMessage.contains("Camera settings which are currently enabled")){
-                    toggleCamera(true);
-                }
-                else if(readMessage.contains("currently disabled")){
-                    toggleCamera(false);
-                }
+                readCameraReply(msg.obj.toString());
             }
         }
     };
-    private void toggleCamera(boolean isOn){
-        if(isOn) {
+    private void readCameraReply(String readMessage){
+        if (readMessage.contains("Camera settings which are currently enabled") || readMessage.contains("have been enabled")){
             Toast.makeText(c, "Camera is enabled", Toast.LENGTH_LONG).show();
             cameraSwitch.setChecked(true);
             cameraSwitch.setEnabled(true);
         }
-        else{
+        else if(readMessage.contains("currently disabled") || readMessage.contains("has been disabled")){
             Toast.makeText(c, "Camera is disabled", Toast.LENGTH_LONG).show();
             cameraSwitch.setEnabled(true);
             cameraSwitch.setChecked(false);
