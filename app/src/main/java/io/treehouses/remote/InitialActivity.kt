@@ -109,30 +109,24 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     private fun onNavigationItemClicked(id: Int) {
-        if (id == R.id.menu_home) {
-            openCallFragment(HomeFragment())
-        } else if (id == R.id.menu_network) {
-            openCallFragment(NewNetworkFragment())
-        } else if (id == R.id.menu_system) {
-            openCallFragment(SystemFragment())
-        } else if (id == R.id.menu_terminal) {
-            openCallFragment(TerminalFragment())
-        } else {
-            checkMore(id)
+        when (id) {
+            R.id.menu_home -> openCallFragment(HomeFragment())
+            R.id.menu_network -> openCallFragment(NewNetworkFragment())
+            R.id.menu_system -> openCallFragment(SystemFragment())
+            R.id.menu_terminal -> openCallFragment(TerminalFragment())
+            else -> checkMore(id)
         }
     }
 
     private fun checkMore(id: Int) {
-        if (id == R.id.menu_services) {
-            openCallFragment(ServicesFragment())
-        } else if (id == R.id.menu_tunnel) {
-            openCallFragment(TunnelFragment())
-        } else if (id == R.id.menu_about) {
-            openCallFragment(AboutFragment())
-        } else if (id == R.id.menu_status) {
-            openCallFragment(StatusFragment())
-        } else {
-            openCallFragment(HomeFragment())
+        when (id) {
+            R.id.menu_services -> openCallFragment(ServicesFragment())
+            R.id.menu_tunnel -> openCallFragment(TunnelFragment())
+            R.id.menu_about -> openCallFragment(AboutFragment())
+            R.id.menu_status -> openCallFragment(StatusFragment())
+            R.id.menu_ssh -> openCallFragment(SSHConsole())
+            else -> openCallFragment(HomeFragment())
+
         }
     }
 

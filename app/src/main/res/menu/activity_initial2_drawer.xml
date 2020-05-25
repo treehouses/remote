@@ -36,6 +36,10 @@
             android:id="@+id/menu_status"
             android:icon="@drawable/status"
             android:title="@string/menu_status" />
+        <item
+            android:id="@+id/menu_ssh"
+            android:title="@string/menu_ssh"
+            android:icon="@drawable/ic_menu_share" />
     </group>
 
     <!--<item android:title="Communicate">-->

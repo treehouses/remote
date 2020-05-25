@@ -2,3 +2,5 @@
 0	12	0	clean	93e7e719940eb6a7
 0	169	1590199661	CMakeFiles/com_google_ase_Exec.dir/src/main/cpp/com_google_ase_Exec.cpp.o	6fbfce7ad371fbda
 170	241	1590199661	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libcom_google_ase_Exec.so	accd810ac5635ded
+0	292	1590429589	CMakeFiles/com_google_ase_Exec.dir/src/main/cpp/com_google_ase_Exec.cpp.o	6fbfce7ad371fbda
+292	368	1590429589	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libcom_google_ase_Exec.so	accd810ac5635ded

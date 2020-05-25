@@ -126,5 +126,16 @@
         <item name="buttonTint">@color/bg_white</item>
         <item name="android:textColor">@color/bg_white</item>
     </style>
+    <style name="KeyboardKey">
+        <item name="android:layout_width">45dip</item>
+        <item name="android:layout_height">30dip</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="KeyboardButton" parent="KeyboardKey">
+        <item name="android:background">@drawable/keyboard_button_selector</item>
+    </style>
 
 </resources>
