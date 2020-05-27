@@ -1,5 +1,6 @@
 package io.treehouses.remote.utils
 
+import android.util.Log
 import java.util.*
 
 
@@ -7,16 +8,20 @@ enum class RESULTS {
     //Errors
     ERROR,
     RESULT_NOT_FOUND,
-    UNKNOWN,
     //Command returns
     BOOLEAN,
     VERSION,
     REMOTE_CHECK,
     UPGRADE_CHECK,
-    HOTSPOT_OR_WIFI,
+    HOTSPOT_CONNECTED,
+    WIFI_CONNECTED,
     BRIDGE_CONNECTED,
-    DEFAULT_NETWORK
-
+    DEFAULT_CONNECTED,
+    DEFAULT_NETWORK,
+    NETWORKMODE,
+    START_JSON,
+    END_JSON_SERVICES,
+    END_JSON_COMMANDS,
 }
 
 fun match (output: String) : RESULTS {
@@ -25,18 +30,23 @@ fun match (output: String) : RESULTS {
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
         Matcher.isVersion(output) -> return RESULTS.VERSION
         Matcher.isRemoteCheck(output) -> return RESULTS.REMOTE_CHECK
-        Matcher.isBridge(output) -> return RESULTS.BRIDGE_CONNECTED
+        Matcher.isBridgeConnected(output) -> return RESULTS.BRIDGE_CONNECTED
+        Matcher.isHotspotConnected(output) -> return RESULTS.HOTSPOT_CONNECTED
+        Matcher.isWifiConnected(output) -> return RESULTS.WIFI_CONNECTED
         Matcher.isUpgradeCheck(output) -> return RESULTS.UPGRADE_CHECK
-        Matcher.isHotspotOrWifi(output) -> return RESULTS.HOTSPOT_OR_WIFI
         Matcher.isDefaultNetwork(output) -> return RESULTS.DEFAULT_NETWORK
+        Matcher.isDefaultConnected(output) -> return RESULTS.DEFAULT_CONNECTED
+        Matcher.isNetworkModeReturned(output) -> return RESULTS.NETWORKMODE
+        Matcher.isStartJSON(output) -> return RESULTS.START_JSON
+        Matcher.isEndAllServicesJson(output) -> return RESULTS.END_JSON_SERVICES
+        Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
+
     }
     return RESULTS.RESULT_NOT_FOUND
 }
 
 object Matcher {
-    private fun toLC(string: String) : String {
-        return string.toLowerCase(Locale.ROOT).trim();
-    }
+    private fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
 
     fun isError(output: String): Boolean {
         val keys = listOf("error", "unknown", "usage", "command")
@@ -44,9 +54,7 @@ object Matcher {
         return false
     }
 
-    fun isBoolean(output: String): Boolean {
-        return toLC(output) == "true" || toLC(output) == "false"
-    }
+    fun isBoolean(output: String): Boolean { return toLC(output) == "true" || toLC(output) == "false" }
 
     fun isVersion(output: String): Boolean {
         return toLC(output) == "version: false" || toLC(output) == "version: true"
@@ -57,25 +65,31 @@ object Matcher {
                 && !output.contains("network") && !output.contains("pirateship") && !output.contains("bridge")
     }
 
-    fun isBridge(output: String): Boolean {return output.contains("bridge has been built")}
 
     fun isUpgradeCheck(output: String): Boolean {
-        val regexTrue = """true \d{1,2}[.]\d{1,2}[.]\d{1,2}""".toRegex()
-        val regexFalse = """false \d{1,2}[.]\d{1,2}[.]\d{1,2}""".toRegex()
+        val regexTrue = """(true|false) \d{1,2}[.]\d{1,2}[.]\d{1,2}""".toRegex()
+        return regexTrue.matches(toLC(output))
+    }
+    fun isDefaultConnected(output: String): Boolean {return output.startsWith("Success: the network mode has")}
+    fun isBridgeConnected(output: String): Boolean {return output.contains("bridge has been built")}
 
-        return regexTrue.matches(toLC(output)) || regexFalse.matches(toLC(output))
+    fun isHotspotConnected (output: String): Boolean {return toLC(output).contains("pirateship has anchored successfully")}
+
+    fun isWifiConnected (output: String): Boolean {return output.contains("open wifi network") || output.contains("password network")}
+
+    fun isDefaultNetwork(output: String): Boolean {return toLC(output).contains("default")}
+
+    fun isNetworkModeReturned(output: String): Boolean {
+        return when (toLC(output)) {
+            "wifi", "bridge", "ap local", "ap internet", "static wifi", "static ethernet", "default" -> true
+            else -> false
+        }
     }
 
-    fun isHotspotOrWifi(output: String): Boolean {
-        return toLC(output).contains("connected") || output.contains("pirateship")
-    }
+    fun isStartJSON(output: String): Boolean { return output.startsWith("{") }
 
-    fun isDefaultNetwork(output: String): Boolean {
-        return toLC(output).contains("default")
-    }
+    fun isEndCommandsJson(output: String): Boolean { return output.endsWith("]}") }
 
-
-
-
+    fun isEndAllServicesJson(output: String): Boolean { return output.endsWith("}}") }
 
 }
