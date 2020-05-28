@@ -18,5 +18,8 @@
     <string name="TREEHOUSES_BRIDGE">treehouses bridge \"%1$s\" \"%2$s\" \"%3$s\" \"%4$s\"\n</string>
     <string name="TREEHOUSES_ETHERNET">treehouses ethernet \"%1$s\" \"%2$s\" \"%3$s\" \"%4$s\"\n</string>
 
+    <string name="TREEHOUSES_COMMANDS_JSON">treehouses remote commands json\n</string>
+    <string name="TREEHOUSES_PASSWORD">treehouses password %1$s</string>
+
 
 </resources>

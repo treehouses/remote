@@ -28,7 +28,7 @@ class MainApplication : Application() {
         var tunnelList: ArrayList<String>? = null
             private set
         @JvmStatic
-        var commandList: ArrayList<String>? = null
+        lateinit var commandList: ArrayList<String>
             private set
         @JvmField
         var showLogDialog = true
