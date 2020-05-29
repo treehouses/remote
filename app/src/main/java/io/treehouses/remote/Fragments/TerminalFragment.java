@@ -2,6 +2,7 @@ package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.gson.Gson;
 
@@ -27,6 +29,7 @@ import java.util.List;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment;
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
+import io.treehouses.remote.Fragments.DialogFragments.HelpDialog;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -84,6 +87,8 @@ public class TerminalFragment extends BaseTerminalFragment {
         return bind.getRoot();
     }
 
+
+
     public void setupList() {
         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
         expandableListAdapter = new CommandListAdapter(getContext(), expandableListTitle, expandableListDetail);
@@ -126,6 +131,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     @Override
     public void onResume() {
         checkStatus(mChatService, bind.pingStatus, bind.PING);
+        onLoad(mHandler);
         super.onResume();
         setupChat();
     }

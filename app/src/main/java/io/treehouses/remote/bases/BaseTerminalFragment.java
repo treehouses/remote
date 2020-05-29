@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
 import org.json.JSONException;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.Fragments.DialogFragments.HelpDialog;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.CommandsList;
@@ -232,6 +234,9 @@ public class BaseTerminalFragment extends BaseFragment{
                 inThirdLevel.add(data.commands.get(i));
             }
         }
+        DialogFragment dialogFrag = new HelpDialog();
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_WIFI);
+        dialogFrag.show(this.requireActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     private void addSpaces(AutoCompleteTextView autoComplete) {
