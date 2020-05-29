@@ -11,7 +11,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
-    override fun onCreatePreferences(savedInstanceState: Bundle, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.app_preferences, rootKey)
         val clearCommandsList = findPreference<Preference>("clear_commands")
         val resetCommandsList = findPreference<Preference>("reset_commands")
