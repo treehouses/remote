@@ -161,8 +161,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener(v -> {
             // Send a message using content of the edit text widget
-            View view = getView();
-            if (null != view) {
+            if (null != getView()) {
                 listener.sendMessage(bind.editTextOut.getText().toString());
                 bind.editTextOut.setText("");
             }
