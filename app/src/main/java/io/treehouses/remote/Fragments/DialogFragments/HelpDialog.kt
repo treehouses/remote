@@ -1,33 +1,27 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import io.treehouses.remote.Constants
-import io.treehouses.remote.R
-import io.treehouses.remote.bases.BaseDialogFragment
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.treehouses.remote.Views.RecyclerViewClickListener
+import io.treehouses.remote.adapter.HelpAdapter
 import io.treehouses.remote.databinding.DialogHelpBinding
-import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.match
+import io.treehouses.remote.pojo.HelpCommand
+import org.json.JSONObject
 
 
-class HelpDialog : BaseDialogFragment() {
-    lateinit var bind: DialogHelpBinding
-    var jsonString = ""
-    var jsonReceiving = false
+class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListener {
+    private lateinit var bind: DialogHelpBinding
+    private var jsonString = ""
+    private val items = mutableListOf<HelpCommand>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogHelpBinding.inflate(inflater, container, false)
-        listener.chatService.updateHandler(mHandler)
-        listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
-        jsonReceiving = true
         bind.progressBar.visibility = View.VISIBLE
         return bind.root
     }
@@ -35,7 +29,41 @@ class HelpDialog : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind.closeButton.setOnClickListener { dismiss() }
+        bind.results.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = HelpAdapter()
+        }
+        bind.searchBar.setOnQueryTextListener(this)
+        bind.results.addOnItemTouchListener(RecyclerViewClickListener(context, bind.results, object: RecyclerViewClickListener.ClickListener {
+            override fun onClick(view: View?, position: Int) {
+                val item = (bind.results.adapter as HelpAdapter).getitem(position)
+                transitionDescription(item)
+            }
+            override fun onLongClick(view: View?, position: Int) {}
+        }))
 
+        bind.backButton.setOnClickListener { transitionSearch() }
+
+        jsonString = arguments?.getString("jsonString")!!
+        createJson(jsonString)
+
+
+    }
+
+    private fun transitionDescription(item: HelpCommand) {
+        bind.results.visibility = View.GONE
+        bind.searchBar.visibility = View.GONE
+        bind.showHelp.visibility = View.VISIBLE
+        bind.backButton.visibility = View.VISIBLE
+        bind.titleDescription.text = item.title
+        bind.description.text = item.preview
+    }
+
+    private fun transitionSearch() {
+        bind.results.visibility = View.VISIBLE
+        bind.searchBar.visibility = View.VISIBLE
+        bind.showHelp.visibility = View.GONE
+        bind.backButton.visibility = View.GONE
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -51,34 +79,22 @@ class HelpDialog : BaseDialogFragment() {
         }
     }
 
-    private val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            if (msg.what == Constants.MESSAGE_READ) {
-                val output = msg.obj as String
-                if (output.isNotEmpty()) readMessage(output)
-
-            }
+    private fun createJson(jsonStr: String) {
+        val obj = JSONObject(jsonStr)
+        obj.keys().forEach {
+            (bind.results.adapter as HelpAdapter).add(HelpCommand(it, obj.get(it) as String))
+            items.add(HelpCommand(it, obj.get(it) as String))
         }
     }
 
-    private fun readMessage(output: String) {
-        if (jsonReceiving) {
-            jsonString += output
-        }
-        Log.e("WHAT", jsonString.takeLast(500) + "|")
-        when {
-            jsonReceiving && jsonString.trim().endsWith("\" } ") -> {
-                jsonReceiving = false
-                jsonString += output
-                bind.progressBar.visibility = View.GONE
-                Log.e("HERE", "WE HERE")
-            }
-            match(output) == RESULTS.START_JSON -> {
-                jsonString = ""
-                jsonReceiving = true
-            }
-        }
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
 
+    override fun onQueryTextChange(newText: String): Boolean {
+        val filteredList = items.filter { it.title.contains(newText) || it.preview.contains(newText) }
+        (bind.results.adapter as HelpAdapter).replaceAll(filteredList)
+        bind.results.scrollToPosition(0)
+        return false
     }
 }

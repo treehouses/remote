@@ -2,6 +2,7 @@ package io.treehouses.remote.bases;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.HelpDialog;
+import io.treehouses.remote.Fragments.TerminalFragment;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.CommandsList;
@@ -39,6 +41,8 @@ public class BaseTerminalFragment extends BaseFragment{
     private final String[] array2 = {"treehouses", "docker"};
     private Set<String> inSecondLevel, inThirdLevel;
     private ArrayAdapter<String> arrayAdapter1, arrayAdapter2, arrayAdapter3;
+    protected boolean jsonSent, jsonReceiving = false;
+
 
     public String handlerCaseWrite(String TAG, ArrayAdapter<String> mConversationArrayAdapter, Message msg) {
 
@@ -117,7 +121,7 @@ public class BaseTerminalFragment extends BaseFragment{
     }
     private boolean filterMessage(String readMessage) {
         boolean a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim().isEmpty();
-        boolean b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands");
+        boolean b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands") && !jsonSent;
         return a && b;
     }
 
@@ -152,11 +156,8 @@ public class BaseTerminalFragment extends BaseFragment{
     }
 
     private boolean isJson(String readMessage) {
-        try {
-            new JSONObject(readMessage);
-        } catch (JSONException ex) {
-            return false;
-        }
+        try { new JSONObject(readMessage);
+        } catch (JSONException ex) { return false; }
         return true;
     }
     private int countSpaces(String s) {
@@ -168,7 +169,7 @@ public class BaseTerminalFragment extends BaseFragment{
     protected void setUpAutoComplete(AutoCompleteTextView autoComplete) {
         inSecondLevel = new HashSet<>();
         inThirdLevel = new HashSet<>();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(Objects.requireNonNull(getContext()));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
         arrayAdapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, array2);
         arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         arrayAdapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
@@ -234,9 +235,6 @@ public class BaseTerminalFragment extends BaseFragment{
                 inThirdLevel.add(data.commands.get(i));
             }
         }
-        DialogFragment dialogFrag = new HelpDialog();
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_WIFI);
-        dialogFrag.show(this.requireActivity().getSupportFragmentManager().beginTransaction(), "wifiDialog");
     }
 
     private void addSpaces(AutoCompleteTextView autoComplete) {

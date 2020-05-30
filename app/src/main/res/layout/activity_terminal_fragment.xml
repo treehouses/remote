@@ -57,6 +57,15 @@
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/ic_history_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/infoButton" />
+
+    <Button
+        android:id="@+id/infoButton"
+        android:layout_width="@dimen/icon_size_mid"
+        android:layout_height="@dimen/icon_size_mid"
+        android:layout_margin="@dimen/margin_medium"
+        android:background="@drawable/help"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
