@@ -112,9 +112,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        setUpAutoComplete(bind.editTextOut);
-    }
+    public void onViewCreated(View view, Bundle savedInstanceState) { setUpAutoComplete(bind.editTextOut); }
 
     @Override
     public void onDestroy() {
@@ -135,8 +133,6 @@ public class TerminalFragment extends BaseTerminalFragment {
         super.onResume();
         setupChat();
     }
-
-    public static TerminalFragment getInstance() { return instance; }
 
     private ArrayAdapter<String> getmConversationArrayAdapter() { return mConversationArrayAdapter; }
 
@@ -213,10 +209,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     protected void onResultCaseEnable(int resultCode) {
         // When the request to enable Bluetooth returns
-        if (resultCode == Activity.RESULT_OK) {
-            // Bluetooth is now enabled, so set up a chat session
-            setupChat();
-        } else {
+        if (resultCode == Activity.RESULT_OK) { setupChat(); } else {
             // User did not enable Bluetooth or an error occurred
             Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
             getActivity().finish();
@@ -249,8 +242,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             commands = new Gson().fromJson(jsonObject.toString(), CommandsList.class);
-            if (commands != null) updateArrayAdapters(commands);
-        } catch (JSONException e) { e.printStackTrace(); }
+            if (commands != null) updateArrayAdapters(commands); } catch (JSONException e) { e.printStackTrace(); }
     }
 
     private void handleJson(String readMessage) {
@@ -261,7 +253,6 @@ public class TerminalFragment extends BaseTerminalFragment {
                 jsonSend(false);
             }
             else if (jsonString.trim().endsWith("\" }")) {
-                Log.e("SHOWING", "HELP with "+ jsonString);
                 showHelpDialog(jsonString);
                 helpJsonString = jsonString;
                 jsonSend(false);
@@ -272,15 +263,10 @@ public class TerminalFragment extends BaseTerminalFragment {
         }
     }
     private void jsonSend(boolean sent) {
-        if (sent) {
-            bind.progressBar.setVisibility(View.VISIBLE);
-            jsonSent = true;
-        }
-        else {
-            bind.progressBar.setVisibility(View.GONE);
-            jsonReceiving = false;
-            jsonSent =false;
-        }
+        jsonSent = sent;
+        if (sent) { bind.progressBar.setVisibility(View.VISIBLE); }
+        else { bind.progressBar.setVisibility(View.GONE);
+            jsonReceiving = false; }
     }
     private void showHelpDialog(String jsonString) {
         Bundle b = new Bundle();

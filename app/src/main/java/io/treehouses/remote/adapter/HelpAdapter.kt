@@ -11,7 +11,9 @@ import io.treehouses.remote.pojo.HelpCommand
 class HelpAdapter : RecyclerView.Adapter<HelpViewHolder>() {
 
     private val sortedList: SortedList<HelpCommand> = SortedList(HelpCommand::class.java, object : SortedList.Callback<HelpCommand>() {
-        override fun areItemsTheSame(item1: HelpCommand?, item2: HelpCommand?): Boolean { return areSame(item1, item2) }
+        override fun areItemsTheSame(item1: HelpCommand?, item2: HelpCommand?): Boolean {
+            return item1?.title == item2?.title && item1?.preview == item2?.preview
+        }
 
         override fun onMoved(fromPosition: Int, toPosition: Int) { notifyItemMoved(fromPosition, toPosition)}
 
@@ -23,11 +25,9 @@ class HelpAdapter : RecyclerView.Adapter<HelpViewHolder>() {
 
         override fun compare(o1: HelpCommand, o2: HelpCommand): Int { return o1.title.compareTo(o2.title) }
 
-        override fun areContentsTheSame(oldItem: HelpCommand?, newItem: HelpCommand?): Boolean { return areSame(oldItem, newItem) }
+        override fun areContentsTheSame(oldItem: HelpCommand?, newItem: HelpCommand?): Boolean { return areItemsTheSame(oldItem, newItem) }
     })
-    private fun areSame(hC1: HelpCommand?, hC2: HelpCommand?) : Boolean {
-        return hC1?.title == hC2?.title && hC1?.preview == hC2?.preview
-    }
+
     fun add(model: HelpCommand?) { sortedList.add(model) }
 
     fun remove(model: HelpCommand?) { sortedList.remove(model) }
