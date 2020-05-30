@@ -63,14 +63,18 @@ class HelpDialog : BaseDialogFragment() {
     }
 
     private fun readMessage(output: String) {
+        if (jsonReceiving) {
+            jsonString += output
+        }
+        Log.e("WHAT", jsonString.takeLast(500) + "|")
         when {
-            jsonReceiving -> jsonString += output
-            jsonReceiving && jsonString.trim().endsWith("\" }") -> {
+            jsonReceiving && jsonString.trim().endsWith("\" } ") -> {
                 jsonReceiving = false
+                jsonString += output
                 bind.progressBar.visibility = View.GONE
+                Log.e("HERE", "WE HERE")
             }
             match(output) == RESULTS.START_JSON -> {
-                Log.d("JSON", output)
                 jsonString = ""
                 jsonReceiving = true
             }
