@@ -16,6 +16,7 @@ import io.reactivex.subjects.PublishSubject
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bluetoothv2.util.*
+import io.treehouses.remote.utils.LogUtils.log
 import kotlinx.android.synthetic.main.activity_read_write.*
 import java.util.UUID
 
@@ -51,8 +52,9 @@ class ReadWriteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_read_write)
 
         val macAddress = intent.getStringExtra(EXTRA_MAC_ADDRESS)
-//        characteristicUuid = intent.getSerializableExtra(EXTRA_CHARACTERISTIC_UUID) as UUID
-        characteristicUuid =UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        characteristicUuid = intent.getSerializableExtra(EXTRA_CHARACTERISTIC_UUID) as UUID
+       log( characteristicUuid.toString());
+//        characteristicUuid =UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
         bleDevice = MainApplication.rxBleClient.getBleDevice(macAddress)
         connectionObservable = prepareConnectionObservable()
 //        supportActionBar!!.subtitle = "Mac address"
