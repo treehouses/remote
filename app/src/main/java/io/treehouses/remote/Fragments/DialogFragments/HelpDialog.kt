@@ -85,6 +85,7 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
             (bind.results.adapter as HelpAdapter).add(HelpCommand(it, obj.get(it) as String))
             items.add(HelpCommand(it, obj.get(it) as String))
         }
+        bind.progressBar.visibility = View.GONE
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
