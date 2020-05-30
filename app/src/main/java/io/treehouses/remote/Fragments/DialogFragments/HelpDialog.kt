@@ -34,6 +34,7 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
             adapter = HelpAdapter()
         }
         bind.searchBar.setOnQueryTextListener(this)
+        bind.searchBar.isIconifiedByDefault = false
         bind.results.addOnItemTouchListener(RecyclerViewClickListener(context, bind.results, object: RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
                 val item = (bind.results.adapter as HelpAdapter).getitem(position)

@@ -2,8 +2,6 @@ package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -68,6 +66,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     private static boolean isRead = false;
 
     private String jsonString = "";
+    private String helpJsonString = "";
 
     private ActivityTerminalFragmentBinding bind;
 
@@ -78,7 +77,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        jsonSent = true;
+        jsonSend(true);
         listener.sendMessage("treehouses remote commands json\n");
         instance = this;
         expandableListDetail = new HashMap<>();
@@ -180,8 +179,12 @@ public class TerminalFragment extends BaseTerminalFragment {
             } catch (Exception e) { e.printStackTrace(); } });
 
         bind.infoButton.setOnClickListener(v -> {
-            listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON));
-            jsonSent = true;
+            if (jsonSent) Toast.makeText(getContext(), "Please Wait", Toast.LENGTH_SHORT).show();
+            else if (!helpJsonString.isEmpty()) showHelpDialog(helpJsonString);
+            else {
+                listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON));
+                jsonSend(true);
+            }
         });
 
     }
@@ -255,21 +258,31 @@ public class TerminalFragment extends BaseTerminalFragment {
             jsonString += readMessage;
             if (jsonString.trim().endsWith("]}")) {
                 buildJSON();
-                jsonReceiving = false;
-                jsonSent = false;
+                jsonSend(false);
             }
             else if (jsonString.trim().endsWith("\" }")) {
                 Log.e("SHOWING", "HELP with "+ jsonString);
-                showHelpDialog();
-                jsonReceiving = false;
-                jsonSent = false;
+                showHelpDialog(jsonString);
+                helpJsonString = jsonString;
+                jsonSend(false);
             }
         } else if (readMessage.startsWith("{")) {
             jsonReceiving = true;
             jsonString = readMessage.trim();
         }
     }
-    private void showHelpDialog() {
+    private void jsonSend(boolean sent) {
+        if (sent) {
+            bind.progressBar.setVisibility(View.VISIBLE);
+            jsonSent = true;
+        }
+        else {
+            bind.progressBar.setVisibility(View.GONE);
+            jsonReceiving = false;
+            jsonSent =false;
+        }
+    }
+    private void showHelpDialog(String jsonString) {
         Bundle b = new Bundle();
         b.putString("jsonString", jsonString);
         DialogFragment dialogFrag = new HelpDialog();
