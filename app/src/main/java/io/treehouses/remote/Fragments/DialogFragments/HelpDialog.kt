@@ -37,13 +37,14 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
         bind.searchBar.isIconifiedByDefault = false
         bind.results.addOnItemTouchListener(RecyclerViewClickListener(context, bind.results, object: RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
-                val item = (bind.results.adapter as HelpAdapter).getitem(position)
-                transitionDescription(item)
+                fullTransitionDescription((bind.results.adapter as HelpAdapter).getitem(position))
             }
-            override fun onLongClick(view: View?, position: Int) {}
+            override fun onLongClick(view: View?, position: Int) {
+                transitionDescription((bind.results.adapter as HelpAdapter).getitem(position))
+            }
         }))
 
-        bind.backButton.setOnClickListener { transitionSearch() }
+        bind.backButton.setOnClickListener { fullTransitionSearch() }
 
         jsonString = arguments?.getString("jsonString")!!
         createJson(jsonString)
@@ -51,21 +52,26 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
 
     }
 
-    private fun transitionDescription(item: HelpCommand) {
+    private fun fullTransitionDescription(item: HelpCommand) {
         bind.results.visibility = View.GONE
         bind.searchBar.visibility = View.GONE
-        bind.showHelp.visibility = View.VISIBLE
         bind.backButton.visibility = View.VISIBLE
-        bind.titleDescription.text = item.title
-        bind.description.text = item.preview
+
+        transitionDescription(item)
     }
 
-    private fun transitionSearch() {
+    private fun fullTransitionSearch() {
         bind.results.visibility = View.VISIBLE
         bind.searchBar.visibility = View.VISIBLE
         bind.showHelp.visibility = View.GONE
         bind.backButton.visibility = View.GONE
     }
+    private fun transitionDescription(item: HelpCommand) {
+        bind.showHelp.visibility = View.VISIBLE
+        bind.titleDescription.text = item.title
+        bind.description.text = item.preview
+    }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog: Dialog = super.onCreateDialog(savedInstanceState)
@@ -75,9 +81,7 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
 
     override fun onStart() {
         super.onStart()
-        if (dialog != null) {
-            dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        }
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     private fun createJson(jsonStr: String) {

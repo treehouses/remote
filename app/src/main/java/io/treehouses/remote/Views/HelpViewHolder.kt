@@ -8,6 +8,6 @@ class HelpViewHolder(binding: RowHelpBinding) : RecyclerView.ViewHolder(binding.
     private val mBinding: RowHelpBinding = binding
     fun bind(data: HelpCommand) {
         mBinding.helpCommand.text = data.title
-        mBinding.commandPreview.text = data.preview
+        mBinding.commandPreview.text = data.preview.trim()
     }
 }
