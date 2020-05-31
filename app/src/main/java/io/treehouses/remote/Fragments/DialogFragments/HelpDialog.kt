@@ -37,10 +37,10 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
         bind.searchBar.isIconifiedByDefault = false
         bind.results.addOnItemTouchListener(RecyclerViewClickListener(context, bind.results, object: RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
-                fullTransitionDescription((bind.results.adapter as HelpAdapter).getitem(position))
+                fullTransitionDescription(getItemAtPosition(position))
             }
             override fun onLongClick(view: View?, position: Int) {
-                transitionDescription((bind.results.adapter as HelpAdapter).getitem(position))
+                transitionDescription(getItemAtPosition(position))
             }
         }))
 
@@ -48,8 +48,10 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
 
         jsonString = arguments?.getString("jsonString")!!
         createJson(jsonString)
+    }
 
-
+    fun getItemAtPosition(pos: Int): HelpCommand {
+        return (bind.results.adapter as HelpAdapter).getitem(pos)
     }
 
     private fun fullTransitionDescription(item: HelpCommand) {
