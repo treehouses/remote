@@ -77,17 +77,17 @@ class ReadWriteActivity : AppCompatActivity() {
             triggerDisconnect()
         } else {
             connectionObservable
-//                    .flatMapSingle { it.discoverServices() }
-//                    .flatMapSingle { it.getCharacteristic(UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e")) }
+                    .flatMapSingle { it.discoverServices() }
+                    .flatMapSingle { it.getCharacteristic(characteristicUuid) }
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { connect.setText("Connecting") }
                     .subscribe(
                             { characteristic ->
-                                updateUI(true)
+                                updateUI(characteristic)
                                 Log.i(javaClass.simpleName, "Hey, connection has been established!")
                             },
                             { onConnectionFailure(it) },
-                            { updateUI(false) }
+                            { updateUI(null) }
                     )
                     .let { connectionDisposable.add(it) }
         }
@@ -97,7 +97,7 @@ class ReadWriteActivity : AppCompatActivity() {
         if (bleDevice.isConnected) {
             connectionObservable
                     .firstOrError()
-                    .flatMap { it.readCharacteristic(UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e")) }
+                    .flatMap { it.readCharacteristic(characteristicUuid) }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ bytes ->
                         read_output.text = String(bytes)
@@ -112,12 +112,13 @@ class ReadWriteActivity : AppCompatActivity() {
         if (bleDevice.isConnected) {
             connectionObservable
                     .firstOrError()
-                    .flatMap { it.writeCharacteristic(UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e"), inputBytes) }
+                    .flatMap { it.writeCharacteristic(characteristicUuid, inputBytes) }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ onWriteSuccess() }, { onWriteFailure(it) })
                     .let { connectionDisposable.add(it) }
         }
     }
+
 
     private fun onNotifyClick() {
         if (bleDevice.isConnected) {
@@ -136,7 +137,7 @@ class ReadWriteActivity : AppCompatActivity() {
     private fun onConnectionFailure(throwable: Throwable) {
         throwable.printStackTrace()
         showSnackbarShort("Connection error: $throwable", connect)
-        updateUI(false)
+        updateUI(null)
     }
 
     private fun onReadFailure(throwable: Throwable) = showSnackbarShort("Read error: $throwable", connect)
@@ -155,23 +156,20 @@ class ReadWriteActivity : AppCompatActivity() {
     private fun triggerDisconnect() = disconnectTriggerSubject.onNext(Unit)
 
 
-    private fun updateUI(boolean: Boolean) {
-        if (!boolean) {
+    private fun updateUI(characteristic: BluetoothGattCharacteristic?) {
+        if (characteristic == null) {
             connect.setText("Connect")
             read.isEnabled = false
             write.isEnabled = false
+            notify.isEnabled = false
+        } else {
+            connect.setText("Disconnect")
+            with(characteristic) {
+                read.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_READ)
+                write.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_WRITE)
+                notify.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+            }
         }
-        else {
-            connect.setText("Diconnnect")
-            read.isEnabled = true
-            write.isEnabled = true
-        }
-//            with(characteristic) {
-//                read.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_READ)
-//                write.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_WRITE)
-//                notify.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
-//            }
-//        }
     }
 
     override fun onPause() {
