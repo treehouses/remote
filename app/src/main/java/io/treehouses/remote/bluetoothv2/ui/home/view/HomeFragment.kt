@@ -58,14 +58,18 @@ class HomeFragment : BaseFragment(), HomeMVPView, (ScanResult) -> Unit {
     }
 
     override fun invoke(res: ScanResult) {
-        var a = res.bleDevice.establishConnection(false).flatMapSingle { it.discoverServices() }
-                .take(1)
-                .subscribe(
-                        { t ->
-                            startActivity(ReadWriteActivity.newInstance(requireContext(), res.bleDevice.macAddress, t.bluetoothGattServices[0].uuid))
-                        }, // Print services
-                        { Log.e("ERROR", "WHOOPS!", it) }
-                )
+//        var a = res.bleDevice.establishConnection(false).flatMapSingle { it.discoverServices() }
+//                .take(1)
+//                .subscribe(
+//                        { t ->
+//                            for (bluetoothGattService in t.bluetoothGattServices) {
+//                                print(bluetoothGattService.uuid.toString())
+//                            }
+//                        }, // Print services
+//                        { Log.e("ERROR", "WHOOPS!", it) }
+//                )
+
+        startActivity(ReadWriteActivity.newInstance(requireContext(), res.bleDevice.macAddress, UUID.randomUUID()))
 
 
     }

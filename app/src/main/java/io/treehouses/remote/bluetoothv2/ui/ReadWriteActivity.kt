@@ -28,10 +28,10 @@ class ReadWriteActivity : AppCompatActivity() {
 
     companion object {
         fun newInstance(context: Context, macAddress: String, uuid: UUID) =
-            Intent(context, ReadWriteActivity::class.java).apply {
-                putExtra(EXTRA_MAC_ADDRESS, macAddress)
-                putExtra(EXTRA_CHARACTERISTIC_UUID, uuid)
-            }
+                Intent(context, ReadWriteActivity::class.java).apply {
+                    putExtra(EXTRA_MAC_ADDRESS, macAddress)
+                    putExtra(EXTRA_CHARACTERISTIC_UUID, uuid)
+                }
     }
 
     private lateinit var characteristicUuid: UUID
@@ -53,7 +53,7 @@ class ReadWriteActivity : AppCompatActivity() {
 
         val macAddress = intent.getStringExtra(EXTRA_MAC_ADDRESS)
         characteristicUuid = intent.getSerializableExtra(EXTRA_CHARACTERISTIC_UUID) as UUID
-       log( characteristicUuid.toString());
+        log(characteristicUuid.toString());
 //        characteristicUuid =UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
         bleDevice = MainApplication.rxBleClient.getBleDevice(macAddress)
         connectionObservable = prepareConnectionObservable()
@@ -66,113 +66,112 @@ class ReadWriteActivity : AppCompatActivity() {
     }
 
     private fun prepareConnectionObservable(): Observable<RxBleConnection> =
-        bleDevice
-            .establishConnection(false)
-            .takeUntil(disconnectTriggerSubject)
-             .observeOn(Schedulers.io())
-             .subscribeOn(AndroidSchedulers.mainThread())
+            bleDevice
+                    .establishConnection(false)
+                    .takeUntil(disconnectTriggerSubject)
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
 
     private fun onConnectToggleClick() {
         if (bleDevice.isConnected) {
             triggerDisconnect()
         } else {
             connectionObservable
-                .flatMapSingle { it.discoverServices() }
-                .flatMapSingle { it.getCharacteristic(characteristicUuid) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { connect.setText("Connecting") }
-                .subscribe(
-                    { characteristic ->
-                        updateUI(characteristic)
-                        Log.i(javaClass.simpleName, "Hey, connection has been established!")
-                    },
-                    { onConnectionFailure(it) },
-                    { updateUI(null) }
-                )
-                .let { connectionDisposable.add(it) }
+//                    .flatMapSingle { it.discoverServices() }
+//                    .flatMapSingle { it.getCharacteristic(UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e")) }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { connect.setText("Connecting") }
+                    .subscribe(
+                            { characteristic ->
+                                updateUI(true)
+                                Log.i(javaClass.simpleName, "Hey, connection has been established!")
+                            },
+                            { onConnectionFailure(it) },
+                            { updateUI(false) }
+                    )
+                    .let { connectionDisposable.add(it) }
         }
     }
 
     private fun onReadClick() {
         if (bleDevice.isConnected) {
             connectionObservable
-                .firstOrError()
-                .flatMap { it.readCharacteristic(characteristicUuid) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ bytes ->
-                    read_output.text = String(bytes)
-                    read_hex_output.text = bytes?.toHex()
-                    write_input.setText(bytes?.toHex())
-                }, { onReadFailure(it) })
-                .let { connectionDisposable.add(it) }
+                    .firstOrError()
+                    .flatMap { it.readCharacteristic(UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e")) }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ bytes ->
+                        read_output.text = String(bytes)
+                        read_hex_output.text = bytes?.toHex()
+                        write_input.setText(bytes?.toHex())
+                    }, { onReadFailure(it) })
+                    .let { connectionDisposable.add(it) }
         }
     }
 
     private fun onWriteClick() {
         if (bleDevice.isConnected) {
             connectionObservable
-                .firstOrError()
-                .flatMap { it.writeCharacteristic(characteristicUuid, inputBytes) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ onWriteSuccess() }, { onWriteFailure(it) })
-                .let { connectionDisposable.add(it) }
+                    .firstOrError()
+                    .flatMap { it.writeCharacteristic(UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e"), inputBytes) }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ onWriteSuccess() }, { onWriteFailure(it) })
+                    .let { connectionDisposable.add(it) }
         }
     }
 
     private fun onNotifyClick() {
         if (bleDevice.isConnected) {
             connectionObservable
-                .flatMap { it.setupNotification(characteristicUuid) }
-                .doOnNext { runOnUiThread { notificationHasBeenSetUp() } }
-                // we have to flatmap in order to get the actual notification observable
-                // out of the enclosing observable, which only performed notification setup
-                .flatMap { it }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ onNotificationReceived(it) }, { onNotificationSetupFailure(it) })
-                .let { connectionDisposable.add(it) }
+                    .flatMap { it.setupNotification(characteristicUuid) }
+                    .doOnNext { runOnUiThread { notificationHasBeenSetUp() } }
+                    // we have to flatmap in order to get the actual notification observable
+                    // out of the enclosing observable, which only performed notification setup
+                    .flatMap { it }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ onNotificationReceived(it) }, { onNotificationSetupFailure(it) })
+                    .let { connectionDisposable.add(it) }
         }
     }
 
     private fun onConnectionFailure(throwable: Throwable) {
         throwable.printStackTrace()
-        showSnackbarShort("Connection error: $throwable",  connect)
-        updateUI(null)
+        showSnackbarShort("Connection error: $throwable", connect)
+        updateUI(false)
     }
 
-    private fun onReadFailure(throwable: Throwable) = showSnackbarShort("Read error: $throwable",  connect)
+    private fun onReadFailure(throwable: Throwable) = showSnackbarShort("Read error: $throwable", connect)
 
-    private fun onWriteSuccess() = showSnackbarShort("Write success",  connect)
+    private fun onWriteSuccess() = showSnackbarShort("Write success", connect)
 
-    private fun onWriteFailure(throwable: Throwable) = showSnackbarShort("Write error: $throwable",  connect)
+    private fun onWriteFailure(throwable: Throwable) = showSnackbarShort("Write error: $throwable", connect)
 
-    private fun onNotificationReceived(bytes: ByteArray) = showSnackbarShort("Change: ${bytes.toHex()}",  connect)
+    private fun onNotificationReceived(bytes: ByteArray) = showSnackbarShort("Change: ${bytes.toHex()}", connect)
 
     private fun onNotificationSetupFailure(throwable: Throwable) =
-        showSnackbarShort("Notifications error", connect)
+            showSnackbarShort("Notifications error", connect)
 
-    private fun notificationHasBeenSetUp() = showSnackbarShort("Notifications has been set up",  connect)
+    private fun notificationHasBeenSetUp() = showSnackbarShort("Notifications has been set up", connect)
 
     private fun triggerDisconnect() = disconnectTriggerSubject.onNext(Unit)
 
-    /**
-     * This method updates the UI to a proper state.
-     *
-     * @param characteristic a nullable [BluetoothGattCharacteristic]. If it is null then UI is assuming a disconnected state.
-     */
-    private fun updateUI(characteristic: BluetoothGattCharacteristic?) {
-        if (characteristic == null) {
+
+    private fun updateUI(boolean: Boolean) {
+        if (!boolean) {
             connect.setText("Connect")
             read.isEnabled = false
             write.isEnabled = false
-            notify.isEnabled = false
-        } else {
-            connect.setText("Diconnnect")
-            with(characteristic) {
-                read.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_READ)
-                write.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_WRITE)
-                notify.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
-            }
         }
+        else {
+            connect.setText("Diconnnect")
+            read.isEnabled = true
+            write.isEnabled = true
+        }
+//            with(characteristic) {
+//                read.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_READ)
+//                write.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_WRITE)
+//                notify.isEnabled = hasProperty(BluetoothGattCharacteristic.PROPERTY_NOTIFY)
+//            }
+//        }
     }
 
     override fun onPause() {
