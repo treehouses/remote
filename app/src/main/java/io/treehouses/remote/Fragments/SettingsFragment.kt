@@ -60,6 +60,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
                 .show()
     }
 
+    private fun clearNetworkProfiles() {
+        SaveUtils.clearProfiles(context)
+        Toast.makeText(context, "Network Profiles have been reset", Toast.LENGTH_LONG).show()
+    }
+
     private fun onClickDialog(id: Int) {
         when (id) {
             CLEAR_COMMANDS_ID -> {
@@ -71,10 +76,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
                 SaveUtils.initCommandsList(context)
                 Toast.makeText(context, "Commands has been reset to default", Toast.LENGTH_LONG).show()
             }
-            NETWORK_PROFILES_ID -> {
-                SaveUtils.clearProfiles(context)
-                Toast.makeText(context, "Network Profiles have been reset", Toast.LENGTH_LONG).show()
-            }
+            NETWORK_PROFILES_ID -> clearNetworkProfiles()
         }
     }
 

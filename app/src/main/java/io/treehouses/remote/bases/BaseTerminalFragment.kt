@@ -62,25 +62,11 @@ open class BaseTerminalFragment : BaseFragment() {
         return view
     }
 
-    private fun bgResource(pingStatusButton: Button, color: Int) {
+    protected fun updatePingStatus(mPingStatus: TextView, pingStatusButton: Button, text: String, color: Int) {
+        mPingStatus.text = text
         pingStatusButton.setBackgroundResource(R.drawable.circle)
         val bgShape = pingStatusButton.background as GradientDrawable
         bgShape.setColor(color)
-    }
-
-    private fun offline(mPingStatus: TextView, pingStatusButton: Button) {
-        mPingStatus.setText(R.string.bStatusOffline)
-        bgResource(pingStatusButton, Color.RED)
-    }
-
-    protected fun idle(mPingStatus: TextView, pingStatusButton: Button) {
-        mPingStatus.setText(R.string.bStatusIdle)
-        bgResource(pingStatusButton, Color.YELLOW)
-    }
-
-    private fun connect(mPingStatus: TextView, pingStatusButton: Button) {
-        mPingStatus.setText(R.string.bStatusConnected)
-        bgResource(pingStatusButton, Color.GREEN)
     }
 
     protected fun copyToList(mConversationView: ListView, context: Context?) {
@@ -92,9 +78,9 @@ open class BaseTerminalFragment : BaseFragment() {
 
     protected fun checkStatus(mChatService: BluetoothChatService, mPingStatus: TextView, pingStatusButton: Button) {
         when (mChatService.state) {
-            Constants.STATE_CONNECTED -> connect(mPingStatus, pingStatusButton)
-            Constants.STATE_NONE -> offline(mPingStatus, pingStatusButton)
-            else -> idle(mPingStatus, pingStatusButton)
+            Constants.STATE_CONNECTED -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusConnected), Color.GREEN)
+            Constants.STATE_NONE -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusOffline), Color.RED)
+            else -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusIdle), Color.YELLOW)
         }
     }
 
@@ -108,34 +94,6 @@ open class BaseTerminalFragment : BaseFragment() {
             list?.add(readMessage)
             mConversationArrayAdapter?.notifyDataSetChanged()
         }
-    }
-
-    private fun isPingSuccesfull(readMessage: String, mPingStatus: TextView, pingStatusButton: Button) {
-        var readMessage = readMessage
-        readMessage = readMessage.trim { it <= ' ' }
-
-        //check if ping was successful
-        if (readMessage.contains("1 packets")) {
-            connect(mPingStatus, pingStatusButton)
-        }
-        if (readMessage.contains("Unreachable") || readMessage.contains("failure")) {
-            offline(mPingStatus, pingStatusButton)
-        }
-    }
-
-    protected fun handlerCaseRead(readMessage: String, mPingStatus: TextView, pingStatusButton: Button) {
-        Log.d("TAG", "readMessage = $readMessage")
-
-        //TODO: if message is json -> callback from RPi
-        if (!isJson(readMessage)) {
-            isPingSuccesfull(readMessage, mPingStatus, pingStatusButton)
-        }
-    }
-
-    private fun isJson(readMessage: String): Boolean {
-        try { JSONObject(readMessage)
-        } catch (ex: JSONException) { return false }
-        return true
     }
 
     private fun countSpaces(s: String): Int {

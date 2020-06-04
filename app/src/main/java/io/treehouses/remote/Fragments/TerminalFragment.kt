@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -103,7 +104,7 @@ class TerminalFragment : BaseTerminalFragment() {
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService.state == Constants.STATE_NONE) {
             mChatService.start()
-            idle(bind.pingStatus, bind.PING)
+            updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
         }
     }
 
@@ -237,9 +238,7 @@ class TerminalFragment : BaseTerminalFragment() {
     private val mHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) {
-                    idle(bind.pingStatus, bind.PING)
-                }
+                Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
                 Constants.MESSAGE_WRITE -> {
                     isRead = false
                     addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
@@ -250,7 +249,6 @@ class TerminalFragment : BaseTerminalFragment() {
                     isRead = true
                     if (s == RESULTS.ERROR) jsonSent = false
                     if (jsonSent) handleJson(readMessage) else {
-                        handlerCaseRead(readMessage, bind.pingStatus, bind.PING)
                         filterMessages(readMessage, mConversationArrayAdapter, terminalList)
                     }
                 }
