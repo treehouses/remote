@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
@@ -168,9 +169,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun transitionOnConnected() {
-        bind.welcomeHome.visibility = View.GONE
-        bind.testConnection.visibility = View.VISIBLE
         bind.btnConnect.text = "Disconnect"
+        bind.welcomeHome.visibility = View.GONE
         bind.btnConnect.setBackgroundResource(R.drawable.ic_disconnect_rpi)
         bind.backgroundHome.animate().translationY(150f)
         bind.btnConnect.animate().translationY(110f)
@@ -182,14 +182,14 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun transitionDisconnected() {
         bind.btnConnect.text = "Connect to RPI"
-        bind.testConnection.visibility = View.GONE
         bind.welcomeHome.visibility = View.VISIBLE
+        bind.btnConnect.setBackgroundResource(R.drawable.ic_connect_to_rpi)
         bind.backgroundHome.animate().translationY(0f)
         bind.btnConnect.animate().translationY(0f)
         bind.btnGetStarted.animate().translationY(0f)
-        bind.btnConnect.setBackgroundResource(R.drawable.ic_connect_to_rpi)
-        bind.logoHome.visibility = View.VISIBLE
+        bind.testConnection.visibility = View.GONE
         bind.layoutBack.visibility = View.GONE
+        bind.logoHome.visibility = View.VISIBLE
     }
 
     private fun dismissTestConnection() {
@@ -205,8 +205,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        notificationListener = try {
-            getContext() as NotificationCallback?
+        notificationListener = try { getContext() as NotificationCallback?
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
@@ -259,8 +258,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             }
             s == RESULTS.BOOLEAN && internetSent -> {
                 internetSent = false
-                if (output.contains("true")) internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle_green))
-                else internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle))
+                if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+                else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
                 writeToRPI(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
             }
             else -> moreActions(output, s)
@@ -270,7 +269,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun moreActions(output: String, result: RESULTS) {
         when {
-            notificationListener != null && result == RESULTS.UPGRADE_CHECK -> notificationListener!!.setNotification(output.contains("true"))
+            result == RESULTS.UPGRADE_CHECK -> notificationListener?.setNotification(output.contains("true"))
             result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
                 dismissPDialog()
                 Toast.makeText(context, "Switched to $network_ssid", Toast.LENGTH_LONG).show()
@@ -299,7 +298,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
-                    if (!output.isEmpty()) {
+                    if (output.isNotEmpty()) {
                         readMessage(output)
                     }
                 }
