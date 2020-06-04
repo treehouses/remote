@@ -10,7 +10,7 @@
             android:defaultValue="true" />
 
         <ListPreference
-            android:defaultValue="LED Dance"
+            android:defaultValue="LED Heavy Metal"
             android:entries="@array/led_options"
             android:entryValues="@array/led_options"
             android:key="led_pattern"
