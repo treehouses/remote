@@ -5,15 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
 
-        android:text="wifi country" />
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInput"
         android:layout_width="match_parent"
@@ -21,13 +13,15 @@
         android:padding="@dimen/margin_small">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText22"
+            android:id="@+id/country_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:clickable="true"
             android:drawableRight="@drawable/keyboard_arrow_down_24px"
+            android:gravity="center"
+            android:text="Getting Country from Pi"
             android:hint="" />
     </com.google.android.material.textfield.TextInputLayout>
 
