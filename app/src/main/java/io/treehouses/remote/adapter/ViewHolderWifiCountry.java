@@ -66,7 +66,9 @@ public class ViewHolderWifiCountry implements SearchView.OnQueryTextListener{
                  countryList.setAdapter(adapter);
                  countryList.setTextFilterEnabled(true);
                  countryList.setOnItemClickListener((a,v2,p,id)->{
-                     listener.sendMessage("treehouses wificountry " +countriesCode[p]);
+                     String selectedString = countryList.getItemAtPosition(p).toString();
+                     selectedString = selectedString.substring(selectedString.length()-4,selectedString.length()-2);
+                     listener.sendMessage("treehouses wificountry " +selectedString);
                      textBar.setEnabled(false);
                      textBar.setText("Changing country");
                      dialog.dismiss();
@@ -88,8 +90,8 @@ public class ViewHolderWifiCountry implements SearchView.OnQueryTextListener{
                 String readMessage = (String) msg.obj;
                 if (readMessage.contains("country=") || readMessage.contains("set to")){
                     int len = readMessage.length()-3;
-                    String country22 = readMessage.substring(len).trim();
-                    textBar.setText(getCountryName(country22));
+                    String country = readMessage.substring(len).trim();
+                    textBar.setText(getCountryName(country));
                     textBar.setEnabled(true);
                 }
                 else if(readMessage.contains("Error when")){
