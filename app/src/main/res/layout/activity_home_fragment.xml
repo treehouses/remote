@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_white">
+    android:background = "@color/windowBackground">
 
     <ImageView
         android:id="@+id/logo_home"
@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.223"
-        app:srcCompat="@drawable/treehouses_image" />
+        app:srcCompat="@drawable/treehouses2" />
 
     <ImageView
         android:id="@+id/background_home"
@@ -91,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome &#128513;"
-        android:textColor="@color/md_grey_700"
+        android:textColor="@color/home_welcome"
         android:textStyle="bold"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
