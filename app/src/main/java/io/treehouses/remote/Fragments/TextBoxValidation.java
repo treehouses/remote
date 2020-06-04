@@ -104,14 +104,19 @@ public class TextBoxValidation {
      * Textwatcher for the change password dialog
      *
      */
-    public void changePWValidation(final EditText confirmPWD, final Context context) {
-        textWatcher.addTextChangedListener(new TextWatcher() {
+    public void changePWValidation(final EditText confirmPWD, final TextInputLayout layout, final Context context) {
+        addTextChangedListener(layout, textWatcher, confirmPWD, context);
+        addTextChangedListener(layout, confirmPWD, confirmPWD, context);
+    }
+
+    private void addTextChangedListener(TextInputLayout layout, EditText toWatch, EditText confirmPWD, Context context) {
+        toWatch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                validateChangedPassword(confirmPWD, context);
+                validateChangedPassword(layout, confirmPWD, context);
             }
 
             @Override
@@ -195,19 +200,18 @@ public class TextBoxValidation {
      * Change password validator
      *
      */
-    private void validateChangedPassword(final EditText confirmPWD, final Context context) {
+    private void validateChangedPassword(final TextInputLayout layout, final EditText confirmPWD, final Context context) {
         if (confirmPWD.getText().toString().equals(PWD.getText().toString())) {
             dialogButtonTrueOrFalse(mDialog, true);
-        } else if (!confirmPWD.getText().toString().equals(PWD.getText().toString())) {
-            dialogButtonTrueOrFalse(mDialog, false);
-            confirmPWD.setError(context.getString(R.string.error_pwd_confirm));
+            layout.setError(null);
         } else {
-            dialogButtonTrueOrFalse(mDialog, true);
+            dialogButtonTrueOrFalse(mDialog, false);
+            layout.setError(context.getString(R.string.error_pwd_confirm));
         }
     }
 
     public void getListener(final AlertDialog mDialog) {
         mDialog.setOnShowListener(dialog -> dialogButtonTrueOrFalse(mDialog, false));
     }
-    }
+}
 
