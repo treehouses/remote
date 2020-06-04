@@ -129,22 +129,19 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 return@setOnClickListener
             }
             if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT)
                 Toast.makeText(context, "Bluetooth is disabled", Toast.LENGTH_LONG).show()
-            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) {
-                showRPIDialog(this@HomeFragment)
-            }
+            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog(this@HomeFragment)
         }
     }
 
-    fun testConnectionListener() {
+    private fun testConnectionListener() {
         bind.testConnection.setOnClickListener {
             val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
             val options = listOf(*resources.getStringArray(R.array.led_options))
             val optionsCode = resources.getStringArray(R.array.led_options_commands)
             selected_LED = options.indexOf(preference)
-            writeToRPI(optionsCode[selected_LED])
+            listener.sendMessage(optionsCode[selected_LED])
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selected_LED)
             testConnectionDialog?.show()
             testConnectionResult = false
@@ -155,41 +152,31 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         mChatService = listener.chatService
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
-            transitionOnConnected()
+            transition(true, arrayOf(150f, 110f, 70f))
             connectionState = true
             checkVersionSent = true
-            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
 
         } else {
-            transitionDisconnected()
+            transition(false, arrayOf(0f, 0f, 0f))
             connectionState = false
             MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
     }
 
-    private fun transitionOnConnected() {
-        bind.btnConnect.text = "Disconnect"
-        bind.welcomeHome.visibility = View.GONE
-        bind.btnConnect.setBackgroundResource(R.drawable.ic_disconnect_rpi)
-        bind.backgroundHome.animate().translationY(150f)
-        bind.btnConnect.animate().translationY(110f)
-        bind.btnGetStarted.animate().translationY(70f)
-        bind.testConnection.visibility = View.VISIBLE
-        bind.layoutBack.visibility = View.VISIBLE
-        bind.logoHome.visibility = View.GONE
-    }
-
-    private fun transitionDisconnected() {
-        bind.btnConnect.text = "Connect to RPI"
-        bind.welcomeHome.visibility = View.VISIBLE
-        bind.btnConnect.setBackgroundResource(R.drawable.ic_connect_to_rpi)
-        bind.backgroundHome.animate().translationY(0f)
-        bind.btnConnect.animate().translationY(0f)
-        bind.btnGetStarted.animate().translationY(0f)
-        bind.testConnection.visibility = View.GONE
-        bind.layoutBack.visibility = View.GONE
-        bind.logoHome.visibility = View.VISIBLE
+    private fun transition(connected: Boolean, values: Array<Float>) {
+        bind.btnConnect.text = if (connected) "Disconnect" else "Connect to RPI"
+        bind.btnConnect.setBackgroundResource(if (connected) R.drawable.ic_disconnect_rpi else R.drawable.ic_connect_to_rpi)
+        bind.backgroundHome.animate().translationY(values[0])
+        bind.btnConnect.animate().translationY(values[1])
+        bind.btnGetStarted.animate().translationY(values[2])
+        val b1 = if (connected) View.GONE else View.VISIBLE     //Show on Boot
+        val b2 = if (connected) View.VISIBLE else View.GONE     //Show when connected
+        bind.welcomeHome.visibility = b1
+        bind.logoHome.visibility = b1
+        bind.testConnection.visibility = b2
+        bind.layoutBack.visibility = b2
     }
 
     private fun dismissTestConnection() {
@@ -197,10 +184,6 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             testConnectionDialog!!.cancel()
             showTestConnectionDialog(true, "Process Finished", R.string.test_finished, selected_LED)
         }
-    }
-
-    private fun writeToRPI(ping: String) {
-        mChatService.write(ping.toByteArray())
     }
 
     override fun onAttach(context: Context) {
@@ -220,7 +203,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         if (output.contains("Usage") || output.contains("command")) {
             showUpgradeCLI()
         } else if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
-            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_CHECK))
+            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_CHECK))
         } else if (output.contains("false")) {
             val alertDialog = AlertDialog.Builder(context)
                     .setTitle("Update Required")
@@ -260,7 +243,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 internetSent = false
                 if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
                 else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-                writeToRPI(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+                listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
             }
             else -> moreActions(output, s)
         }
@@ -310,7 +293,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         super.onResume()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             checkVersionSent = true
-            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }
     }
 
