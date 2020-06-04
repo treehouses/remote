@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2196f3</color>
-    <color name="colorPrimaryDark">#1976D2</color>
-    <color name="colorPrimaryLight">#42A5F5</color>
+    <color name="colorPrimary">#303030</color>
+    <color name="colorPrimaryDark">#212121</color>
+    <color name="colorPrimaryLight">#424242</color>
     <color name="colorPrimaryTransparent">#9F75c1ff</color>
     <color name="colorAccent">@color/md_red_500</color>
     <color name="textColorPrimary">#ffffff</color>
-    <color name="windowBackground">#FFFFFF</color>
+    <color name="windowBackground">#000000</color>
     <color name="navigationBarColor">#000000</color>
-    <color name="daynight_textColor">#000000</color>
-    <color name="home_welcome">#616161</color>
+    <color name="daynight_textColor">#FFFFFF</color>
+    <color name="home_welcome">#FFFFFF</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>

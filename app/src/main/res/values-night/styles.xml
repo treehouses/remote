@@ -33,9 +33,9 @@
         <item name="overlapAnchor">false</item>
         <!--<item name="android:dropDownVerticalOffset">5dp</item>-->
     </style>
-
-
     <!-- Base application theme. -->
+
+    <!-- Base application theme. values-night.xml -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -44,7 +44,7 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
-    <style name="MyDialog" parent="Theme.AppCompat.Light.Dialog.Alert"/>
+    <style name="MyDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
 
     <style name="MySwitch">
         <item name="colorControlActivated">@color/colorPrimary</item>

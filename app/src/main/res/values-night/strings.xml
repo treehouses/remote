@@ -144,12 +144,6 @@
         <item>LED Heavy Metal</item>
     </string-array>
 
-    <string-array name="night_mode_options">
-        <item>OFF</item>
-        <item>ON</item>
-        <item>Automatic</item>
-    </string-array>
-
     <string-array name="led_options_commands">
         <item>treehouses led dance</item>
         <item>treehouses led thanksgiving</item>
