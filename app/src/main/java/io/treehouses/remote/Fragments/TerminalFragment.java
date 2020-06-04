@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,10 +45,8 @@ public class TerminalFragment extends BaseTerminalFragment {
     private static final String TITLE_EXPANDABLE = "Commands";
     private static TerminalFragment instance = null;
     private ExpandableListAdapter expandableListAdapter;
-    private ArrayList<String> list;
     private CommandsList commands;
     private int i;
-    private String last;
     private List<String> expandableListTitle;
     private HashMap<String, List<CommandListItem>> expandableListDetail;
 
@@ -168,8 +165,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         });
         bind.btnPrevious.setOnClickListener(v -> {
             try {
-                last = list.get(--i);
-                bind.editTextOut.setText(last);
+                if (i >= 0) bind.editTextOut.setText(MainApplication.getCommandList().get(--i).trim());
                 bind.editTextOut.setSelection(bind.editTextOut.length());
             } catch (Exception e) { e.printStackTrace(); } });
 
@@ -224,8 +220,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private void addToCommandList(String writeMessage) {
         MainApplication.getCommandList().add(writeMessage);
-        list = MainApplication.getCommandList();
-        i = list.size();
+        i = MainApplication.getCommandList().size();
     }
     private void onResultCaseDialogChpass(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
