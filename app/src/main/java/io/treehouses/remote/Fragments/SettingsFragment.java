@@ -1,7 +1,6 @@
 package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,10 +19,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     public SettingsFragment() {
 
-    }
-
-    public SettingsFragment getInstance() {
-        return new SettingsFragment();
     }
 
     @Override
@@ -45,6 +40,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             Log.e("SETTINGS", "Unknown key");
         }
     }
+
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
@@ -78,17 +74,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         new AlertDialog.Builder(getContext())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(positive, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onClickDialog(ID);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
+                .setPositiveButton(positive, (dialog, which) -> onClickDialog(ID))
+                .setNegativeButton("Cancel", (dialog, which) -> { })
                 .create()
                 .show();
     }

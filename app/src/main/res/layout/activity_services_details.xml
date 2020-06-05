@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/md_grey_300"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,7 +11,7 @@
         android:layout_marginTop="@dimen/_16dp"
         android:padding="8dp"
 
-        android:background="@drawable/get_started"
+        android:background="@drawable/ic_get_started"
         android:layout_marginStart="@dimen/margin_huge"
         android:layout_marginLeft="@dimen/margin_huge"
         android:layout_marginRight="@dimen/margin_huge"

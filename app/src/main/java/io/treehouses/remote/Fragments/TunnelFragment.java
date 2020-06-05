@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 import io.treehouses.remote.Constants;
@@ -43,7 +45,7 @@ public class TunnelFragment extends BaseTerminalFragment {
         ListView terminallist = view.findViewById(R.id.list_command);
         terminallist.setDivider(null);
         terminallist.setDividerHeight(0);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.tunnel_commands_list, R.id.command_textView, listview);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireActivity(), R.layout.tunnel_commands_list, R.id.command_textView, listview);
         terminallist.setAdapter(adapter);
 
         aSwitch = view.findViewById(R.id.switchNotification);
@@ -100,9 +102,9 @@ public class TunnelFragment extends BaseTerminalFragment {
     }
 
     private void getViewFunction() {
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message, MainApplication.getTunnelList()) {
+        mConversationArrayAdapter = new ArrayAdapter<String>(requireActivity(), R.layout.message, MainApplication.getTunnelList()) {
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 view = getViews(view, isRead);
                 return view;

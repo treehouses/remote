@@ -47,6 +47,8 @@ public class NetworkListItem {
         List<NetworkListItem> systemList = new ArrayList();
         systemList.add(new NetworkListItem("Open VNC", R.layout.open_vnc));
         systemList.add(new NetworkListItem("Configure Tethering (beta)", R.layout.configure_tethering));
+        systemList.add(new NetworkListItem("Add SSH Key", R.layout.configure_ssh_key));
+        systemList.add(new NetworkListItem("Toggle Camera", R.layout.configure_camera));
         return systemList;
     }
 }

@@ -5,21 +5,6 @@
     android:background="@color/md_white_1000"
     android:orientation="vertical">
 
-    <TextView
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/bg_white"
-        android:editable="false"
-        android:minHeight="@dimen/header_height"
-        android:layout_margin="@dimen/margin_large"
-        android:gravity="center"
-        android:text="System"
-        android:textColor="@color/md_grey_800"
-        android:textSize="@dimen/text_size_very_large"
-      />
-
     <ExpandableListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

@@ -22,8 +22,9 @@
         android:orientation="horizontal">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_essid"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:hint="ESSID"
             />
         <Button
@@ -31,8 +32,6 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end"
-            android:layout_marginLeft="-40dp"
-            android:layout_marginStart="-40dp"
             android:scaleType="fitXY"
             android:background="@drawable/wificon"/>
     </LinearLayout>
@@ -61,7 +60,6 @@
         android:id="@+id/et_hotspot_essid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:editable="true"
         android:fontFamily="sans-serif"
         android:hint="Hotspot ESSID"
       />
@@ -89,8 +87,9 @@
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:textColor="@color/bg_white"
+        android:background="@drawable/start_config"
+        android:textColor="@color/start_config_text"
+        android:enabled="false"
         android:layout_marginTop="8dp"
         android:text="Start Configuration" />
 
@@ -98,6 +97,9 @@
         android:id="@+id/add_bridge_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Bridge Profile" />
+        android:enabled="false"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="Add Bridge Profile"
+        android:background="@color/md_grey_300"/>
 
 </LinearLayout>

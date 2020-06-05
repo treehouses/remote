@@ -1,16 +1,12 @@
 package io.treehouses.remote.bases;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
-import android.view.View;
-import android.widget.BaseAdapter;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +17,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import io.treehouses.remote.pojo.ServiceInfo;
 import io.treehouses.remote.pojo.ServicesData;
@@ -80,6 +75,10 @@ public class BaseServicesFragment extends BaseFragment {
     }
 
     private void constructServiceList(ServicesData servicesData, ArrayList<ServiceInfo> services) {
+        if (servicesData == null || servicesData.getAvailable() == null) {
+            Toast.makeText(getContext(), "Error Occurred. Please Refresh", Toast.LENGTH_SHORT).show();
+            return;
+        }
         services.clear();
         for (String service : servicesData.getAvailable()) {
             if (inServiceList(service, services) == -1) {

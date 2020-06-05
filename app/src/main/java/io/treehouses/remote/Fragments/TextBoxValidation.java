@@ -2,10 +2,12 @@ package io.treehouses.remote.Fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import io.treehouses.remote.R;
 
@@ -13,12 +15,14 @@ import io.treehouses.remote.R;
  * This class is the hotspot and wifi dialog validator
  */
 
-public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
+public class TextBoxValidation {
 
     private AlertDialog mDialog;
     private EditText textWatcher;
-    private EditText SSID;
-    private EditText PWD;
+    public EditText SSID;
+    public EditText PWD;
+    private Button start, addprofile;
+    private TextInputLayout textInputLayout;
 
     //TODO: this file needs to be refactored and maybe make it usable for the future
     private EditText IpAddressEditText;
@@ -30,9 +34,6 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
     EditText PasswordEditText;
     EditText HotspotPasswordEditText;
 
-    public EditText getSSID() {
-        return SSID;
-    }
 
     public void setmDialog(AlertDialog mDialog) {
         this.mDialog = mDialog;
@@ -42,12 +43,35 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
         this.textWatcher = textWatcher;
     }
 
-    public void setSSID(EditText SSID) {
-        this.SSID = SSID;
+    public TextBoxValidation(Context context, EditText e1, EditText e2, String type) {
+        if (type.equals("wifi")) {
+            this.SSID = e1;
+            this.PWD = e2;
+            textboxValidation(context, type, e1);
+            textboxValidation(context, type, e2);
+        }
+        else if (type.equals("bridge")) {
+            this.ESSIDEditText = e1;
+            this.HotspotESSIDEditText = e2;
+            textboxValidation(context, type, ESSIDEditText);
+            textboxValidation(context, type, HotspotESSIDEditText);
+        }
     }
 
-    public void setPWD(EditText PWD) {
-        this.PWD = PWD;
+    public void setStart(Button start) {
+        this.start = start;
+    }
+
+    public void setAddprofile(Button addprofile) {
+        this.addprofile = addprofile;
+    }
+
+    public void setTextInputLayout(TextInputLayout textInputLayout) {
+        this.textInputLayout = textInputLayout;
+    }
+
+    public TextBoxValidation() {
+
     }
 
 
@@ -55,17 +79,15 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
      * Textwatcher for most dialogs
      *
      */
-    public void textboxValidation(final Context context, final String type) {
-        textWatcher.addTextChangedListener(new TextWatcher() {
+    public void textboxValidation(final Context context, final String type, final EditText toWatch) {
+        toWatch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(type.equals("ethernet")){
-                    validateETHERNET(context);
+//                    validateETHERNET(context);
                 }else if(type.equals("wifi")){
                     validateWIFI(context);
                 }else if(type.equals("bridge")){
@@ -74,9 +96,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) { }
         });
     }
 
@@ -87,9 +107,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
     public void changePWValidation(final EditText confirmPWD, final Context context) {
         textWatcher.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -97,9 +115,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) { }
         });
     }
 
@@ -107,28 +123,42 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
      * Method that sets the dialog positive button to true or false
      */
     public void dialogButtonTrueOrFalse(AlertDialog mDialog, Boolean button){
-        if (button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(true);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-        }else if (!button){
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(false);
-            mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        if (mDialog == null) return;
+        mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setClickable(button);
+        mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(button);
+    }
+
+    public void dialogButtonTrueOrFalse(Button button1, Button button2, boolean enabled){
+        if (button1 != null) {
+            button1.setClickable(enabled);
+            button1.setEnabled(enabled);
+        }
+        if (button2 != null) {
+            button2.setEnabled(enabled);
+            button2.setEnabled(enabled);
         }
     }
+
 
     /**
      * WiFi dialog validator
      *
      */
-    private void validateWIFI(final Context context) {
+    private void validateWIFI(Context context) {
+        boolean flag = true;
         if (SSID.length() == 0 ) {
-            dialogButtonTrueOrFalse(mDialog, false);
+            dialogButtonTrueOrFalse(start, addprofile, false);
             SSID.setError(context.getString(R.string.error_ssid_empty));
-        }else if (PWD.length() > 0 && PWD.length() < 8) {
-            dialogButtonTrueOrFalse(mDialog, false);
-            PWD.setError(context.getString(R.string.error_pwd_length));
-        }else {
-            dialogButtonTrueOrFalse(mDialog,true);
+            flag = false;
+        }
+        if (PWD.length() > 0 && PWD.length() < 8) {
+            dialogButtonTrueOrFalse(start,addprofile, false);
+            textInputLayout.setError(context.getString(R.string.error_pwd_length));
+            flag = false;
+        }
+        if (flag){
+            dialogButtonTrueOrFalse(start, addprofile,true);
+            textInputLayout.setError(null);
         }
     }
 
@@ -136,27 +166,29 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
      * ETHERNET dialog validator
      *
      */
-    private void validateETHERNET(final Context context) {
-        if (IpAddressEditText.length() == 0 || MaskEditText.length() == 0 || GateWayEditText.length() == 0 || DNSEditText.length() == 0) {
-            dialogButtonTrueOrFalse(mDialog, false);
-        }else {
-            dialogButtonTrueOrFalse(mDialog,true);
-        }
-    }
+//    private void validateETHERNET(final Context context) {
+//        if (IpAddressEditText.length() == 0 || MaskEditText.length() == 0 || GateWayEditText.length() == 0 || DNSEditText.length() == 0) {
+//            dialogButtonTrueOrFalse(start,addprofile, false);
+//        }else {
+//            dialogButtonTrueOrFalse(start, addprofile,true);
+//        }
+//    }
 
     /**
      * ETHERNET dialog validator
      *
      */
     private void validateBridge(final Context context) {
-        if (ESSIDEditText.length() == 0 || HotspotESSIDEditText.length() == 0) {
-
-            dialogButtonTrueOrFalse(mDialog, false);
-            //PasswordEditText.setError(context.getString(R.string.error_pwd_length));
-            //HotspotPasswordEditText.setError(context.getString(R.string.error_pwd_length));
-        }else {
-            dialogButtonTrueOrFalse(mDialog,true);
+        boolean flag = true;
+        if (ESSIDEditText.length() == 0) {
+            flag = false;
+            ESSIDEditText.setError("This field cannot be empty");
         }
+        if (HotspotESSIDEditText.length() == 0) {
+            flag = false;
+            HotspotESSIDEditText.setError("This field cannot be empty");
+        }
+        dialogButtonTrueOrFalse(start, addprofile, flag);
     }
 
     /**
@@ -164,7 +196,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
      *
      */
     private void validateChangedPassword(final EditText confirmPWD, final Context context) {
-        if (confirmPWD.getText().toString() == PWD.getText().toString()) {
+        if (confirmPWD.getText().toString().equals(PWD.getText().toString())) {
             dialogButtonTrueOrFalse(mDialog, true);
         } else if (!confirmPWD.getText().toString().equals(PWD.getText().toString())) {
             dialogButtonTrueOrFalse(mDialog, false);
@@ -175,12 +207,7 @@ public class TextBoxValidation extends androidx.fragment.app.DialogFragment {
     }
 
     public void getListener(final AlertDialog mDialog) {
-        mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                dialogButtonTrueOrFalse(mDialog, false);
-            }
-        });
+        mDialog.setOnShowListener(dialog -> dialogButtonTrueOrFalse(mDialog, false));
     }
     }
 
