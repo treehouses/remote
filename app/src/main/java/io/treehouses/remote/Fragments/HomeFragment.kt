@@ -226,7 +226,6 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
-
         val s = match(output)
         when {
             s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
@@ -248,7 +247,6 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             else -> moreActions(output, s)
         }
     }
-
 
     private fun moreActions(output: String, result: RESULTS) {
         when {
