@@ -9,6 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -123,7 +124,10 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
             new ViewHolderSSHKey(convertView, context, listener);
         } else if (layout == R.layout.configure_camera) {
             new ViewHolderCamera(convertView, context, listener);
+        } else if (layout == R.layout.configure_wificountry) {
+            new ViewHolderWifiCountry(convertView, context, listener);
         }
+
 
         views[i] = convertView;
         return convertView;
