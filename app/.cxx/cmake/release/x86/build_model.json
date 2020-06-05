@@ -159,7 +159,7 @@
         "X86",
         "X86_64"
       ],
-      "ndkVersion": "21.1.6352462",
+      "ndkVersion": "21.2.6472646",
       "project": {
         "compilerSettingsCacheFolder": "/Users/sriharivishnu/AndroidStudioProjects/remote/.cxx",
         "cxxFolder": "/Users/sriharivishnu/AndroidStudioProjects/remote/.cxx",

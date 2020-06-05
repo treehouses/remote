@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
 import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
@@ -124,7 +126,17 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             R.id.menu_tunnel -> openCallFragment(TunnelFragment())
             R.id.menu_about -> openCallFragment(AboutFragment())
             R.id.menu_status -> openCallFragment(StatusFragment())
-            R.id.menu_ssh -> openCallFragment(SSHConsole())
+            R.id.menu_ssh -> {
+                val host = HostBean()
+                // launch off to console details
+
+                val contents = Intent(Intent.ACTION_VIEW, host.getUri())
+                contents.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+                // otherwise just launch activity to show this host
+                contents.setClass(this@InitialActivity, SSHConsole::class.java)
+                this@InitialActivity.startActivity(contents)
+            }
             else -> openCallFragment(HomeFragment())
 
         }

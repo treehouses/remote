@@ -71,10 +71,10 @@ public class TerminalBridge implements VDUDisplay {
 	private float displayDensity;
 	private float systemFontScale;
 
-	public int[] color = {7, 0};
+	public int[] color = Colors.defaults;
 
-	public int defaultFg = Colors.defaults[7];
-	public int defaultBg = Colors.defaults[0];
+	public int defaultFg = 7;
+	public int defaultBg = 0;
 
 	protected final TerminalManager manager;
 
@@ -406,8 +406,10 @@ public class TerminalBridge implements VDUDisplay {
 //			((vt320) buffer).setBackspace(vt320.DELETE_IS_BACKSPACE);
 //		else
 		((vt320) buffer).setBackspace(vt320.DELETE_IS_DEL);
+		Log.e("ENTERED", "HERE3");
 
 		if (isSessionOpen()) {
+			Log.e("ENTERED", "HERE");
 			// create thread to relay incoming connection data to buffer
 			relay = new Relay(this, transport, (vt320) buffer, host.getEncoding());
 			Thread relayThread = new Thread(relay);
