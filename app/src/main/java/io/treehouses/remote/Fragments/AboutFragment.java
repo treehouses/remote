@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import io.treehouses.remote.BuildConfig;
 import io.treehouses.remote.R;
 
@@ -25,6 +26,7 @@ public class AboutFragment extends androidx.fragment.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_about, container, false);
+
         Button gitHub = view.findViewById(R.id.btn_github);
         Button images = view.findViewById(R.id.btn_image);
         Button gitter = view.findViewById(R.id.btn_gitter);

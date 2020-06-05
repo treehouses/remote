@@ -10,12 +10,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
@@ -149,6 +149,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             testConnectionResult = false
         }
     }
+
 
     override fun checkConnectionState() {
         mChatService = listener.chatService
