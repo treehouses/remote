@@ -71,7 +71,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
 
     private fun updateNetworkMode() {
         listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE))
-        Toast.makeText(context, "Network Mode updated", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Network Mode retrieved", Toast.LENGTH_LONG).show()
     }
 
     private fun performAction(output: String) {
