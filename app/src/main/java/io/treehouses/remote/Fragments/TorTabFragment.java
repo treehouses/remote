@@ -40,16 +40,16 @@ public class TorTabFragment extends BaseFragment {
     private ProgressDialog nDialog;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-//        nDialog = new ProgressDialog(getActivity());
-//        nDialog.setMessage("Talking to raspberry");
-//        nDialog.setTitle("Getting Tor Status");
-//        nDialog.setIndeterminate(false);
-//        nDialog.setCancelable(true);
-//        nDialog.show();
-//        mChatService = listener.getChatService();
-//        mChatService.updateHandler(mHandler);
-//
-//        listener.sendMessage("treehouses tor status");
+        nDialog = new ProgressDialog(getActivity());
+        nDialog.setMessage("Talking to raspberry");
+        nDialog.setTitle("Getting Tor Status");
+        nDialog.setIndeterminate(false);
+        nDialog.setCancelable(true);
+        nDialog.show();
+        mChatService = listener.getChatService();
+        mChatService.updateHandler(mHandler);
+
+        listener.sendMessage("treehouses tor status");
 
 
 
@@ -128,21 +128,37 @@ public class TorTabFragment extends BaseFragment {
                     logo.setColorFilter(filter);
                     startButton.setText("Start Tor");
                     textStatus.setText("-");
-
                 }
-                else if(readMessage.contains("the tor service has been started") || readMessage.contains("active")){
-                    if(nDialog.isShowing()){
-                        nDialog.dismiss();
-                    }
-                    ColorMatrix matrix2 = new ColorMatrix();
-                    ColorMatrixColorFilter filter2 = new ColorMatrixColorFilter(matrix2);
-                    logo.setColorFilter(filter2);
-                    startButton.setText("Stop Tor");
-                    listener.sendMessage("treehouses tor");
+                else if(readMessage.contains("the tor service has been started")){
 
+                    listener.sendMessage("treehouses tor status");
                 }
                 else if(readMessage.contains(".onion")){
                     textStatus.setText(readMessage);
+                }
+                else if(readMessage.contains("Error")){
+                    textStatus.setText("Check if tor is setup");
+                    nDialog.dismiss();
+                    nDialog.show();
+                    nDialog.setTitle("Setting up tor");
+                    listener.sendMessage("treehouses tor add 80");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    listener.sendMessage("treehouses tor add 22");
+                }
+                else if(readMessage.contains("the port has been added")){
+                    listener.sendMessage("treehouses tor");
+                }
+                else if(readMessage.contains("active")){
+                    ColorMatrix matrix = new ColorMatrix();
+                    ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                    logo.setColorFilter(filter);
+                    startButton.setText("Stop Tor");
+                    listener.sendMessage("treehouses tor ports");
+                    nDialog.dismiss();
                 }
 
 

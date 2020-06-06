@@ -117,6 +117,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             openCallFragment(SystemFragment())
         } else if (id == R.id.menu_terminal) {
             openCallFragment(TerminalFragment())
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(SSHTunnelFragment())
         } else {
             checkMore(id)
         }
@@ -131,6 +133,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             openCallFragment(AboutFragment())
         } else if (id == R.id.menu_status) {
             openCallFragment(StatusFragment())
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(SSHTunnelFragment())
         } else {
             openCallFragment(HomeFragment())
         }

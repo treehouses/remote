@@ -34,7 +34,7 @@
             android:layout_marginRight="8dp"
 
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:background="@drawable/connect_to_rpi"
+            android:background="@drawable/service_button"
             android:text="Start Tor"
             android:layout_weight="1"
             android:textColor="@color/bg_white" />

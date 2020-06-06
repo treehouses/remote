@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import io.treehouses.remote.Fragments.AboutFragment;
-import io.treehouses.remote.Fragments.ServiceCardFragment;
 import io.treehouses.remote.Fragments.TorTabFragment;
-import io.treehouses.remote.Fragments.TunnelOverviewFragment;
 import io.treehouses.remote.Fragments.TunnelSSHFragment;
 import io.treehouses.remote.pojo.ServiceInfo;
 
@@ -52,15 +49,11 @@ public class TunnelPageAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
-        if (position == 0)
-        {
-            fragment = new TunnelOverviewFragment();
-        }
-        else if (position == 1)
+  if (position == 0)
         {
             fragment = new TorTabFragment();
         }
-        else if (position == 2)
+        else if (position == 1)
         {
             fragment = new TunnelSSHFragment();
         }

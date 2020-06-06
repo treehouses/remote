@@ -65,14 +65,10 @@ public class SSHTunnelFragment extends BaseServicesFragment implements ServicesL
         Fragment fragment = null;
         switch (position) {
             case 0:
-                Log.d("1", "Overview");
-                fragment = new TunnelOverviewFragment();
-                break;
-            case 1:
                 Log.d("2", "Tor");
                 fragment = new TorTabFragment();
                 break;
-            case 2:
+            case 1:
                 Log.d("3", "SSH");
             default:
                 break;
