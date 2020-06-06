@@ -1,2 +1,3 @@
 ninja: Entering directory `/Users/sriharivishnu/AndroidStudioProjects/remote/app/.cxx/cmake/debug/arm64-v8a'
-ninja: no work to do.
+[1/2] Building CXX object CMakeFiles/com_google_ase_Exec.dir/src/main/cpp/com_google_ase_Exec.cpp.o
+[2/2] Linking CXX shared library ../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libcom_google_ase_Exec.so

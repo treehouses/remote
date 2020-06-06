@@ -80,6 +80,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import de.mud.terminal.vt320;
 import io.treehouses.remote.BuildConfig;
+import io.treehouses.remote.InitialActivity;
 import io.treehouses.remote.PreferenceConstants;
 import io.treehouses.remote.R;
 import io.treehouses.remote.SSH.PromptHelper;
@@ -799,19 +800,6 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
             return true;
         });
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            copy = menu.add("Copy");
-            if (hardKeyboard)
-                copy.setAlphabeticShortcut('c');
-            MenuItemCompat.setShowAsAction(copy, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-            copy.setEnabled(activeTerminal);
-            copy.setOnMenuItemClickListener(item -> {
-                adapter.getCurrentTerminalView().startPreHoneycombCopyMode();
-                Toast.makeText(SSHConsole.this, "COPYING", Toast.LENGTH_LONG).show();
-                return true;
-            });
-        }
-
         paste = menu.add("Paste");
         if (hardKeyboard)
             paste.setAlphabeticShortcut('v');
@@ -917,9 +905,9 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-//                Intent intent = new Intent(this, HostListActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivity(intent);
+                Intent intent = new Intent(this, InitialActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1076,6 +1064,7 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
             // we dont have an active view, so hide any prompts
             return;
         }
+        Log.e("GOT", "HERE");
 
         PromptHelper prompt = view.bridge.promptHelper;
         if (String.class.equals(prompt.promptRequested)) {

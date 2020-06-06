@@ -19,15 +19,15 @@
     },
     {
       "level": "INFO",
-      "message": "NDK side-by-side folder from sdkFolder /Users/sriharivishnu/Library/Android/sdk/ndk does not exist"
-    },
-    {
-      "level": "INFO",
       "message": "Considering /Users/sriharivishnu/Library/Android/sdk/ndk-bundle by ndk.dir"
     },
     {
       "level": "INFO",
       "message": "Considering /Users/sriharivishnu/Library/Android/sdk/ndk-bundle in SDK ndk-bundle folder"
+    },
+    {
+      "level": "INFO",
+      "message": "Considering /Users/sriharivishnu/Library/Android/sdk/ndk/21.0.6113669 in SDK ndk folder"
     },
     {
       "level": "INFO",

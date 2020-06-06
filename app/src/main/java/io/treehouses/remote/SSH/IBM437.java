@@ -62,22 +62,6 @@ public class IBM437 extends Charset {
 		@Override
 		protected CoderResult decodeLoop(ByteBuffer bb, CharBuffer cb){
                         int cbRemaining = cb.remaining();
-/* TODO: support direct byte buffers
-		        if(CharsetProviderImpl.hasLoadedNatives() && bb.isDirect() && bb.hasRemaining() && cb.hasArray()){
-		            int toProceed = bb.remaining();
-		            int cbPos = cb.position();
-		            int bbPos = bb.position();
-		            boolean throwOverflow = false; 
-		            if( cbRemaining < toProceed ) { 
-		                toProceed = cbRemaining;
-                                throwOverflow = true;
-                            }
-                            int res = nDecode(cb.array(), cb.arrayOffset()+cbPos, toProceed, AddressUtil.getDirectBufferAddress(bb), bbPos);
-                            bb.position(bbPos+res);
-                            cb.position(cbPos+res);
-                            if(throwOverflow) return CoderResult.OVERFLOW;
-                        }else{
-*/
                             if(bb.hasArray() && cb.hasArray()) {
                                 int rem = bb.remaining();
                                 rem = cbRemaining >= rem ? rem : cbRemaining;

@@ -27,15 +27,12 @@ public class HostBean {
         this.protocol = protocol;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+    public void setPort(int port) { this.port = port; }
 
     private String protocol = "ssh";
     private int port = 22;
 
     private long id = -1;
-
 
     public String getEncoding() {
         return Charset.defaultCharset().name();
@@ -49,9 +46,7 @@ public class HostBean {
         return false;
     }
 
-    public boolean getStayConnected() {
-        return true;
-    }
+    public boolean getStayConnected() { return false; }
 
     public int getFontSize() {
         return fontSize;
@@ -65,9 +60,7 @@ public class HostBean {
         return nickname;
     }
 
-    public boolean getWantSession() {
-        return true;
-    }
+    public boolean getWantSession() { return true; }
 
     public boolean getCompression() {
         return false;

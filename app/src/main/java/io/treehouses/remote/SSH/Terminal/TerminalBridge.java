@@ -475,7 +475,7 @@ public class TerminalBridge implements VDUDisplay {
 				return;
 			}
 			Thread disconnectPromptThread = new Thread(() -> {
-				Boolean result = promptHelper.requestBooleanPrompt(null, "Host has been Disconnected");
+				Boolean result = promptHelper.requestBooleanPrompt(null, "Host has been Disconnected. Close session?");
 				if (result == null || result) {
 					awaitingClose = true;
 					triggerDisconnectListener();
