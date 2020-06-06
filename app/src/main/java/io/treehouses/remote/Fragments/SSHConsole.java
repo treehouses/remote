@@ -181,7 +181,6 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
             if (requestedBridge != null)
                 requestedBridge.promptHelper.setHandler(promptHandler);
 
-
             if (requestedIndex != -1) {
                 pager.post(() -> setDisplayedTerminal(requestedIndex));
             }
@@ -215,7 +214,7 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
         }
     }
 
-    protected OnClickListener emulatedKeysListener = v -> onEmulatedKeyClicked(v);
+    protected OnClickListener emulatedKeysListener = this::onEmulatedKeyClicked;
 
     protected Handler keyRepeatHandler = new Handler();
 
@@ -501,6 +500,7 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
             if (uri != null) {
                 requested = Uri.parse(uri);
             }
+
         }
 
         inflater = LayoutInflater.from(this);
@@ -524,25 +524,22 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
         stringPromptGroup = findViewById(R.id.console_password_group);
         stringPromptInstructions = findViewById(R.id.console_password_instructions);
         stringPrompt = findViewById(R.id.console_password);
-        stringPrompt.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP) return false;
-                if (keyCode != KeyEvent.KEYCODE_ENTER) return false;
+        stringPrompt.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP) return false;
+            if (keyCode != KeyEvent.KEYCODE_ENTER) return false;
 
-                // pass collected password down to current terminal
-                String value = stringPrompt.getText().toString();
+            // pass collected password down to current terminal
+            String value = stringPrompt.getText().toString();
 
-                PromptHelper helper = getCurrentPromptHelper();
-                if (helper == null) return false;
-                helper.setResponse(value);
+            PromptHelper helper = getCurrentPromptHelper();
+            if (helper == null) return false;
+            helper.setResponse(value);
 
-                // finally clear password for next user
-                stringPrompt.setText("");
-                updatePromptVisible();
+            // finally clear password for next user
+            stringPrompt.setText("");
+            updatePromptVisible();
 
-                return true;
-            }
+            return true;
         });
 
         booleanPromptGroup = findViewById(R.id.console_boolean_group);
@@ -653,16 +650,8 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
             showEmulatedKeys(false);
             keyboardScroll.postDelayed(() -> {
                 final int xscroll = findViewById(R.id.button_f12).getRight();
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "smoothScrollBy(toEnd[" + xscroll + "])");
-                }
                 keyboardScroll.smoothScrollBy(xscroll, 0);
-                keyboardScroll.postDelayed(() -> {
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "smoothScrollBy(toStart[" + -xscroll + "])");
-                    }
-                    keyboardScroll.smoothScrollBy(-xscroll, 0);
-                }, 500);
+                keyboardScroll.postDelayed(() -> keyboardScroll.smoothScrollBy(-xscroll, 0), 500);
             }, 500);
         }
 
@@ -967,7 +956,6 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Log.d(TAG, "onNewIntent called");
 
         requested = intent.getData();
 
@@ -994,7 +982,6 @@ public class SSHConsole extends AppCompatActivity implements BridgeDisconnectedL
                     bound.openConnection(requested);
                 } catch (Exception e) {
                     Log.e(TAG, "Problem while trying to create new requested bridge from URI", e);
-                    // TODO: We should display an error dialog here.
                     return;
                 }
 

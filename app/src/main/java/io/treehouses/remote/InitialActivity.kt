@@ -2,10 +2,8 @@ package io.treehouses.remote
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -21,13 +19,12 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
+import io.treehouses.remote.Fragments.DialogFragments.SSHDialog
 import io.treehouses.remote.Network.BluetoothChatService
-import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityInitial2Binding
-import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
 
@@ -101,7 +98,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
-                R.id.menu_ssh -> launchSSH()
+                R.id.menu_ssh -> getSSH()
                 else -> {
                     showAlertDialog()
                     flag = false;
@@ -123,24 +120,9 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
-    private fun launchSSH() {
-        val bind = DialogSshBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(this)
-                .setTitle("Start SSH Connection")
-                .setView(bind.root)
-                .setPositiveButton("Connect") { _, _ ->
-                    val host = HostBean()
 
-                    host.username = bind.sshTextInput.text.toString().split("@")[0]
-                    host.hostname = bind.sshTextInput.text.toString().split("@")[1]
-                    val contents = Intent(Intent.ACTION_VIEW, host.uri)
-                    contents.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    contents.setClass(this@InitialActivity, SSHConsole::class.java)
-                    this@InitialActivity.startActivity(contents)
-                }
-                .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}
-                .setIcon(R.drawable.dialog_icon)
-        alertDialog.show()
+    private fun getSSH() {
+        SSHDialog(this)
     }
 
     private fun checkMore(id: Int) {
@@ -149,9 +131,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             R.id.menu_tunnel -> openCallFragment(TunnelFragment())
             R.id.menu_about -> openCallFragment(AboutFragment())
             R.id.menu_status -> openCallFragment(StatusFragment())
-            R.id.menu_ssh -> {
-                launchSSH()
-            }
+            R.id.menu_ssh -> getSSH()
             else -> openCallFragment(HomeFragment())
 
         }

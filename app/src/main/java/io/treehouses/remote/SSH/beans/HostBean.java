@@ -1,6 +1,7 @@
 package io.treehouses.remote.SSH.beans;
 
 import android.net.Uri;
+import android.util.Log;
 
 import java.nio.charset.Charset;
 
@@ -101,6 +102,24 @@ public class HostBean {
                 .append("/#")
                 .append(getNickname());
         return Uri.parse(sb.toString());
+    }
+    private String log(String s) {
+        if (s == null) return "null";
+        else return s;
+    }
+
+    public void setHostFromUri(Uri uri) throws Exception {
+        if (uri == null) return;
+        try {
+            setProtocol(uri.getScheme());
+            setUsername(uri.getUserInfo());
+            setHostname(uri.getHost());
+            setPort(uri.getPort());
+            setNickname(uri.getFragment());
+        } catch (Exception e) {
+            throw new Exception("Not A Valid URI");
+        }
+
     }
 
     @Override

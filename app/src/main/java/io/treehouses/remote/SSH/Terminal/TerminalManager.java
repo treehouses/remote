@@ -89,8 +89,6 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 
 //	private ConnectivityReceiver connectivityManager;
 
-	private MediaPlayer mediaPlayer;
-
 	private Timer pubkeyTimer;
 
 	private Timer idleTimer;
@@ -99,8 +97,6 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 	private Vibrator vibrator;
 	private volatile boolean wantKeyVibration;
 	public static final long VIBRATE_DURATION = 30;
-
-	private boolean wantBellVibration;
 
 	private boolean resizeAllowed = true;
 
@@ -141,17 +137,14 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		wantKeyVibration = prefs.getBoolean(PreferenceConstants.BUMPY_ARROWS, true);
 
-		wantBellVibration = prefs.getBoolean(PreferenceConstants.BELL_VIBRATE, true);
 //		enableMediaPlayer();
 
-		hardKeyboardHidden = (res.getConfiguration().hardKeyboardHidden ==
-			Configuration.HARDKEYBOARDHIDDEN_YES);
+		hardKeyboardHidden = (res.getConfiguration().hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES);
 
 		final boolean lockingWifi = prefs.getBoolean(PreferenceConstants.WIFI_LOCK, true);
 
 //		connectivityManager = new ConnectivityReceiver(this, lockingWifi);
 
-//		ProviderLoader.load(this, this);
 	}
 
 	private void updateSavingKeys() {
@@ -263,6 +256,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 	public TerminalBridge openConnection(Uri uri) throws Exception {
 //		HostBean host = TransportFactory.findHost(hostdb, uri);
 		HostBean host = new HostBean();
+		host.setHostFromUri(uri);
 
 //		if (host == null)
 //			host = TransportFactory.getTransport(uri.getScheme()).createHost(uri);
@@ -541,44 +535,6 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 			vibrator.vibrate(VIBRATE_DURATION);
 	}
 
-//	private void enableMediaPlayer() {
-//		mediaPlayer = new MediaPlayer();
-//
-//		float volume = prefs.getFloat(PreferenceConstants.BELL_VOLUME,
-//				PreferenceConstants.DEFAULT_BELL_VOLUME);
-//
-//		mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
-//
-//		AssetFileDescriptor file = res.openRawResourceFd(R.raw.bell);
-//		try {
-//			mediaPlayer.setLooping(false);
-//			mediaPlayer.setDataSource(file.getFileDescriptor(), file
-//					.getStartOffset(), file.getLength());
-//			file.close();
-//			mediaPlayer.setVolume(volume, volume);
-//			mediaPlayer.prepare();
-//		} catch (IOException e) {
-//			Log.e(TAG, "Error setting up bell media player", e);
-//		}
-//	}
-//
-//	private void disableMediaPlayer() {
-//		if (mediaPlayer != null) {
-//			mediaPlayer.release();
-//			mediaPlayer = null;
-//		}
-//	}
-//
-//	public void playBeep() {
-//		if (mediaPlayer != null) {
-//			mediaPlayer.seekTo(0);
-//			mediaPlayer.start();
-//		}
-//
-//		if (wantBellVibration)
-//			vibrate();
-//	}
-
 	/**
 	 * Send system notification to user for a certain host. When user selects
 	 * the notification, it will bring them directly to the ConsoleActivity
@@ -599,24 +555,7 @@ public class TerminalManager extends Service implements BridgeDisconnectedListen
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-		if (PreferenceConstants.BELL.equals(key)) {
-			boolean wantAudible = sharedPreferences.getBoolean(
-					PreferenceConstants.BELL, true);
-//			if (wantAudible && mediaPlayer == null)
-//				enableMediaPlayer();
-//			else if (!wantAudible && mediaPlayer != null)
-//				disableMediaPlayer();
-		} else if (PreferenceConstants.BELL_VOLUME.equals(key)) {
-			if (mediaPlayer != null) {
-				float volume = sharedPreferences.getFloat(
-						PreferenceConstants.BELL_VOLUME,
-						PreferenceConstants.DEFAULT_BELL_VOLUME);
-				mediaPlayer.setVolume(volume, volume);
-			}
-		} else if (PreferenceConstants.BELL_VIBRATE.equals(key)) {
-			wantBellVibration = sharedPreferences.getBoolean(
-					PreferenceConstants.BELL_VIBRATE, true);
-		} else if (PreferenceConstants.BUMPY_ARROWS.equals(key)) {
+		if (PreferenceConstants.BUMPY_ARROWS.equals(key)) {
 			wantKeyVibration = sharedPreferences.getBoolean(
 					PreferenceConstants.BUMPY_ARROWS, true);
 		} else if (PreferenceConstants.WIFI_LOCK.equals(key)) {

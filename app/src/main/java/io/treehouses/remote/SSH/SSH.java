@@ -153,16 +153,11 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
             String fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey);
 
             String algorithmName;
-            if ("ssh-rsa".equals(serverHostKeyAlgorithm))
-                algorithmName = "RSA";
-            else if ("ssh-dss".equals(serverHostKeyAlgorithm))
-                algorithmName = "DSA";
-            else if (serverHostKeyAlgorithm.startsWith("ecdsa-"))
-                algorithmName = "EC";
-            else if ("ssh-ed25519".equals(serverHostKeyAlgorithm))
-                algorithmName = "Ed25519";
-            else
-                algorithmName = serverHostKeyAlgorithm;
+            if ("ssh-rsa".equals(serverHostKeyAlgorithm)) algorithmName = "RSA";
+            else if ("ssh-dss".equals(serverHostKeyAlgorithm)) algorithmName = "DSA";
+            else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) algorithmName = "EC";
+            else if ("ssh-ed25519".equals(serverHostKeyAlgorithm)) algorithmName = "Ed25519";
+            else algorithmName = serverHostKeyAlgorithm;
 
             switch (hosts.verifyHostkey(matchName, serverHostKeyAlgorithm, serverHostKey)) {
                 case KnownHosts.HOSTKEY_IS_OK:
@@ -857,29 +852,10 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         return host;
     }
 
-//    @Override
-//    public void getSelectionArgs(Uri uri, Map<String, String> selection) {
-//        selection.put(HostDatabase.FIELD_HOST_PROTOCOL, PROTOCOL);
-//        selection.put(HostDatabase.FIELD_HOST_NICKNAME, uri.getFragment());
-//        selection.put(HostDatabase.FIELD_HOST_HOSTNAME, uri.getHost());
-//
-//        int port = uri.getPort();
-//        if (port < 0)
-//            port = DEFAULT_PORT;
-//        selection.put(HostDatabase.FIELD_HOST_PORT, Integer.toString(port));
-//        selection.put(HostDatabase.FIELD_HOST_USERNAME, uri.getUserInfo());
-//    }
 
     @Override
     public void setCompression(boolean compression) {
         this.compression = compression;
-    }
-
-    public static String getFormatHint(Context context) {
-        return String.format("%s@%s:%s",
-                context.getString(R.string.format_username),
-                context.getString(R.string.format_hostname),
-                context.getString(R.string.format_port));
     }
 
     @Override

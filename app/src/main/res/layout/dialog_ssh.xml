@@ -2,22 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textinput_layout"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/ssh_text_input"
         android:layout_width="match_parent"
-        app:startIconDrawable="@drawable/ic_keyboard"
-        android:layout_height="match_parent">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ssh_text_input"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/padding_normal"
-            android:background="@drawable/rectangle_border"
-            android:layout_margin="@dimen/margin_medium"
-            android:hint="pi@192.168.1.29"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_height="match_parent"
+        android:background="@drawable/rectangle_border"
+        android:padding="@dimen/padding_normal"
+        android:layout_margin="@dimen/margin_large"
+        android:hint="pi@192.168.1.29"
+        />
+
+    <Button
+        android:id="@+id/connect_ssh"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/bg_white"
+        android:background="@drawable/ripple"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:text="Connect"
+         />
 
 </LinearLayout>
