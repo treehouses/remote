@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -92,7 +93,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     }
 
     private void initDialog() {
-        pDialog = new ProgressDialog(getActivity(), ProgressDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        pDialog = new ProgressDialog(new ContextThemeWrapper(context, R.style.CustomAlertDialogStyle));
         mDialog = getAlertDialog(bind.getRoot(), context, false);
         mDialog.setTitle(R.string.select_device);
         listViewOnClickListener(bind.listView);
@@ -168,7 +169,7 @@ public class RPIDialogFragment extends BaseDialogFragment {
     }
 
     private AlertDialog getAlertDialog(View mView, Context context, Boolean wifi) {
-        return new AlertDialog.Builder(context).setView(mView).setIcon(R.drawable.dialog_icon).create();
+        return new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle)).setView(mView).setIcon(R.drawable.dialog_icon).create();
     }
 
     public void bluetoothCheck(String... args) {
