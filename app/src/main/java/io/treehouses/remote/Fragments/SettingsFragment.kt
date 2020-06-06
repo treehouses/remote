@@ -2,23 +2,45 @@ package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.R
 import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
+    var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+
         setPreferencesFromResource(R.xml.app_preferences, rootKey)
         val clearCommandsList = findPreference<Preference>("clear_commands")
         val resetCommandsList = findPreference<Preference>("reset_commands")
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
+
+
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
+
+        preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "night_mode") {
+                nightMode(sharedPreferences.getString(key, "").toString())
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     private fun setClickListener(preference: Preference?) {
@@ -26,6 +48,16 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             preference.onPreferenceClickListener = this
         } else {
             Log.e("SETTINGS", "Unknown key")
+        }
+    }
+
+    fun nightMode(key: String) {
+        if (key == "ON") {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else if (key == "OFF") {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else if (key == "Automatic") {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 
