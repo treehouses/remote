@@ -46,6 +46,11 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
+    <style name="PreferenceTheme" parent="@style/AppTheme">
+        <item name="android:colorBackground">#000000</item>
+
+    </style>
+
     <style name="MyDialog" parent="Theme.AppCompat.Light.Dialog.Alert"/>
 
     <style name="MySwitch">
