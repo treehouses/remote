@@ -44,7 +44,16 @@
         <item name="android:background">@color/windowBackground</item>
         <item name="android:textColor">@color/daynight_textColor</item>
         <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:windowBackground">@color/card_background</item>
+        <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
     </style>
+
+    <style name="CustomAlertDialogStyle">
+        <item name="android:background">@color/card_background</item>
+        <item name="android:textColorPrimary">@color/daynight_textColor</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+    </style>
+
 
     <style name="PreferenceTheme" parent="@style/AppTheme">
         <item name="android:colorBackground">@color/windowBackground</item>
