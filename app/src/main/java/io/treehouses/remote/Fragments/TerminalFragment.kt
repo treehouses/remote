@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment
+import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
 import io.treehouses.remote.MainApplication.Companion.commandList
 import io.treehouses.remote.MainApplication.Companion.terminalList
 import io.treehouses.remote.Network.BluetoothChatService
@@ -38,10 +39,8 @@ import java.util.*
 
 class TerminalFragment : BaseTerminalFragment() {
     private lateinit var expandableListAdapter: ExpandableListAdapter
-    private lateinit var list: ArrayList<String>
     private lateinit var commands: CommandsList
     private var i = 0
-    private lateinit var last: String
     private lateinit var expandableListTitle: List<String>
     private lateinit var expandableListDetail: HashMap<String, List<CommandListItem>>
 
@@ -53,15 +52,17 @@ class TerminalFragment : BaseTerminalFragment() {
     /**
      * Member object for the chat services
      */
-    private var jsonSent = false
-    private var jsonReceiving = false
+
     private var jsonString = ""
+    private var helpJsonString = ""
+
 
     private lateinit var bind: ActivityTerminalFragmentBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false)
         onLoad(mHandler)
-        jsonSent = true
+        jsonSend(true)
         listener.sendMessage(getString(R.string.TREEHOUSES_COMMANDS_JSON))
         instance = this
         expandableListDetail = HashMap()
@@ -99,9 +100,6 @@ class TerminalFragment : BaseTerminalFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
         if (mChatService.state == Constants.STATE_NONE) {
             mChatService.start()
             updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
@@ -147,13 +145,31 @@ class TerminalFragment : BaseTerminalFragment() {
         }
         bind.btnPrevious.setOnClickListener { v: View? ->
             try {
-                last = list[--i]
-                bind.editTextOut.setText(last)
+                bind.editTextOut.setText(commandList[--i].trim())
                 bind.editTextOut.setSelection(bind.editTextOut.length())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+        bind.infoButton.setOnClickListener {
+            when {
+                jsonSent -> Toast.makeText(context, "Please Wait", Toast.LENGTH_SHORT).show()
+                helpJsonString.isNotEmpty() -> showHelpDialog(helpJsonString)
+                else -> {
+                    jsonSend(true)
+                    listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
+                }
+            }
+        }
+    }
+
+    private fun showHelpDialog(jsonString: String) {
+        val b = Bundle()
+        b.putString(Constants.JSON_STRING, jsonString)
+        val dialogFrag: DialogFragment = HelpDialog()
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
+        dialogFrag.arguments = b
+        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "helpDialog")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -191,16 +207,13 @@ class TerminalFragment : BaseTerminalFragment() {
 
     private fun addToCommandList(writeMessage: String) {
         commandList.add(writeMessage)
-        list = commandList
-        i = list.size
+        i = commandList.size
     }
 
     private fun onResultCaseDialogChpass(resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             //get password change request
             val chPWD = if (data!!.getStringExtra("password") == null) "" else data.getStringExtra("password")
-            //store password and command
-            //send password to command line interface
             listener.sendMessage(getString(R.string.TREEHOUSES_PASSWORD, chPWD))
         }
     }
@@ -218,16 +231,28 @@ class TerminalFragment : BaseTerminalFragment() {
     private fun handleJson(readMessage: String) {
         val s = match(readMessage)
         if (jsonReceiving) {
-            jsonString += readMessage.trim()
+            jsonString += readMessage
             if (s == RESULTS.END_JSON_COMMANDS) {
-                jsonString += readMessage.trim()
                 buildJSON()
-                jsonReceiving = false
-                jsonSent = false
+                jsonSend(false)
+            } else if (s == RESULTS.END_HELP) {
+                showHelpDialog(jsonString)
+                helpJsonString = jsonString
+                jsonSend(false)
             }
-        } else if (jsonSent && s == RESULTS.START_JSON) {
+        } else if (s == RESULTS.START_JSON) {
             jsonReceiving = true
             jsonString = readMessage.trim()
+        }
+    }
+
+    private fun jsonSend(sent: Boolean) {
+        jsonSent = sent
+        if (sent) {
+            bind.progressBar.visibility = View.VISIBLE
+        } else {
+            bind.progressBar.visibility = View.GONE
+            jsonReceiving = false
         }
     }
 
@@ -247,8 +272,9 @@ class TerminalFragment : BaseTerminalFragment() {
                     val readMessage = msg.obj as String
                     val s = match(readMessage)
                     isRead = true
-                    if (s == RESULTS.ERROR) jsonSent = false
-                    if (jsonSent) handleJson(readMessage) else {
+                    if (readMessage.contains("unknown")) jsonSend(false)
+                    if (jsonSent) handleJson(readMessage)
+                    else {
                         filterMessages(readMessage, mConversationArrayAdapter, terminalList)
                     }
                 }

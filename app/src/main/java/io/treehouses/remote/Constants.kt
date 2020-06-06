@@ -58,4 +58,7 @@ object Constants {
     // Key names received from the BluetoothChatService Handler
     const val DEVICE_NAME = "device_name"
     const val TOAST = "toast"
+
+    //JSON String bundle
+    const val JSON_STRING = "jsonString"
 }

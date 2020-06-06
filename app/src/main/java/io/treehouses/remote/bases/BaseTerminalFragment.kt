@@ -19,8 +19,6 @@ import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.match
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.*
 
 open class BaseTerminalFragment : BaseFragment() {
@@ -30,11 +28,15 @@ open class BaseTerminalFragment : BaseFragment() {
     private var arrayAdapter1: ArrayAdapter<String>? = null
     private var arrayAdapter2: ArrayAdapter<String>? = null
     private var arrayAdapter3: ArrayAdapter<String>? = null
+
+    protected var jsonSent = false
+    protected  var jsonReceiving = false
+
     fun handlerCaseWrite(TAG: String?, mConversationArrayAdapter: ArrayAdapter<String>?, msg: Message): String {
         val writeBuf = msg.obj as ByteArray
         // construct a string from the buffer
         val writeMessage = String(writeBuf)
-        if (match(writeMessage) != RESULTS.PING_OUTPUT && !writeMessage.contains(getString(R.string.TREEHOUSES_COMMANDS_JSON).trim())) {
+        if (match(writeMessage) != RESULTS.PING_OUTPUT && !jsonSent) {
             Log.d(TAG, "writeMessage = $writeMessage")
             mConversationArrayAdapter?.add("\nCommand:  $writeMessage")
         }
@@ -85,7 +87,9 @@ open class BaseTerminalFragment : BaseFragment() {
     }
 
     private fun filterMessage(readMessage: String): Boolean {
-        return !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && readMessage.trim().isNotEmpty()
+        val a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim { it <= ' ' }.isEmpty()
+        val b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands") && !jsonSent
+        return a && b
     }
 
     protected fun filterMessages(readMessage: String, mConversationArrayAdapter: ArrayAdapter<String>?, list: ArrayList<String>?) {
