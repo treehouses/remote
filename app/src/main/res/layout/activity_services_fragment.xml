@@ -19,21 +19,23 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/bg_white"
+        android:background="@color/services_tab_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabIndicatorColor="@color/primary"
-        app:tabTextColor="@color/md_blue_grey_800">
+        app:tabIndicatorColor="@color/tab_indicator_color"
+        app:tabTextColor="@color/tab_text_color">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
             android:text="Overview" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
             android:text="Details" />
     </com.google.android.material.tabs.TabLayout>
 

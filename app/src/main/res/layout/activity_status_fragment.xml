@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#FFF">
+    android:background="@color/windowBackground">
 
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/windowBackground">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView1"
@@ -20,6 +21,7 @@
             app:cardElevation="@dimen/margin_small"
             app:cardUseCompatPadding="true"
             app:contentPadding="@dimen/margin_large"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintBottom_toTopOf="@+id/listView">
 
             <TextView
@@ -28,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:textColor="@color/daynight_textColor"
                 android:text="Connection Status:"
                 android:textSize="@dimen/text_size_very_large"
                 android:textStyle="bold" />
@@ -43,6 +46,7 @@
             app:layout_constraintBottom_toTopOf="@+id/cardView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@+id/cardView1">
 
 
@@ -62,6 +66,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
+                    android:textColor="@color/daynight_textColor"
                     android:gravity="center_vertical"
                     android:text="Bluetooth RPI Connection" />
 
@@ -78,6 +83,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
 
@@ -96,6 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:textColor="@color/daynight_textColor"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
                     android:text="RPI Wifi Connection" />
@@ -114,6 +121,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@+id/cardView4">
 
 
@@ -133,6 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:textColor="@color/daynight_textColor"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
                     android:text="Connected RPI Name:" />
@@ -160,6 +169,7 @@
             app:cardUseCompatPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@+id/rpiNameCard">
 
 
@@ -178,6 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:textColor="@color/daynight_textColor"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
                     android:text="RPI Type" />
@@ -197,6 +208,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@+id/cardView3">
 
 
@@ -216,6 +228,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
+                    android:textColor="@color/daynight_textColor"
                     android:gravity="center_vertical"
                     android:text="Memory: " />
 
@@ -233,6 +246,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/upgrade"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@+id/cardView3">
 
 
@@ -253,6 +267,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_huge"
                     android:gravity="center_vertical"
+                    android:textColor="@color/daynight_textColor"
                     android:text="RPI Upgrade Status" />
 
             </LinearLayout>
@@ -280,6 +295,7 @@
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:text="Treehouses Image Version: "
+            android:textColor="@color/daynight_textColor"
             android:textSize="18sp"
             android:textStyle="bold" />
 

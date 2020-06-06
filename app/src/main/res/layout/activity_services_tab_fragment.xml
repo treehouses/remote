@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_grey_300">
+    android:background="@color/services_detail_background">
 
     <ListView
         android:id="@+id/listView"
@@ -54,6 +54,7 @@
             android:layout_gravity="center_vertical"
             app:fontFamily="@font/roboto_bold"
             android:text="Memory Used"
+            android:textColor="@color/daynight_textColor"
             android:textSize="@dimen/text_size_mid"/>
 
         <ProgressBar

@@ -6,7 +6,8 @@
     android:id="@+id/cardView8"
     android:layout_margin="@dimen/margin_large"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/pickService">
+    app:layout_constraintTop_toBottomOf="@id/pickService"
+    android:theme="@style/AppTheme">
 
     <FrameLayout
         android:layout_width="match_parent"
