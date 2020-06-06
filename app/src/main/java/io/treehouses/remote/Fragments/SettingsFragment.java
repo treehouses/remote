@@ -5,8 +5,13 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.preference.Preference;
@@ -20,14 +25,25 @@ public class SettingsFragment extends PreferenceFragmentCompat  {
     private static final int RESET_COMMANDS_ID = 2;
     private static final int NETWORK_PROFILES_ID = 3;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
-
+    View view;
     public SettingsFragment() {
 
     }
 
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        addPreferencesFromResource(R.xml.app_preferences);
+    }
+
+
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        getListView().setBackgroundColor(Color.TRANSPARENT);
+
         setPreferencesFromResource(R.xml.app_preferences, rootKey);
         Preference clearCommandsList = findPreference("clear_commands");
         Preference resetCommandsList = findPreference("reset_commands");
