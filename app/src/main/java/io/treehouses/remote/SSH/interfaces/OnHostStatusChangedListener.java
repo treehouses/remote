@@ -18,7 +18,7 @@
 package io.treehouses.remote.SSH.interfaces;
 
 /**
- * Used to notify interested parties when a {@link TerminalBridge} has changed materially
+ * Used to notify interested parties when a {@link io.treehouses.remote.SSH.Terminal.TerminalBridge} has changed materially
  * changed status (e.g., connected, disconnected, name changed, etc).
  */
 public interface OnHostStatusChangedListener {
