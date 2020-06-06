@@ -144,7 +144,7 @@ public class TunnelFragment extends BaseTerminalFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
-                    if (msg.arg1 == Constants.STATE_LISTEN || msg.arg1 == Constants.STATE_NONE) { idle(mPingStatus, pingStatusButton); }
+                    checkStatus(mChatService, mPingStatus, pingStatusButton);
                     break;
                 case Constants.MESSAGE_WRITE:
                     isRead = false;
@@ -154,7 +154,6 @@ public class TunnelFragment extends BaseTerminalFragment {
                     String readMessage = (String) msg.obj;
                     isRead = true;
                     configConditions(readMessage);
-                    handlerCaseRead(readMessage, mPingStatus, pingStatusButton);
                     filterMessages(readMessage, mConversationArrayAdapter, MainApplication.getTunnelList());
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:

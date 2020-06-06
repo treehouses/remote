@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
@@ -274,7 +275,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private val mHandler: Handler = object : Handler() {
+    private val mHandler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
