@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:textColor="@color/bg_white"
     android:textSize="16sp"
+
     android:paddingTop="@dimen/padding_normal"
     android:paddingBottom="@dimen/padding_normal"
     android:background="@android:color/transparent"
