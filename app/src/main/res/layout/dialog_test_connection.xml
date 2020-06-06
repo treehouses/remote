@@ -3,6 +3,8 @@
     android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@color/card_background"
+    android:textColor="@color/daynight_textColor"
     android:gravity="end">
 
     <ImageView
