@@ -58,7 +58,6 @@
 
         <service android:name=".utils.GPSService" />
 
-
         <activity
             android:name=".InitialActivity"
             android:label="@string/app_name"
