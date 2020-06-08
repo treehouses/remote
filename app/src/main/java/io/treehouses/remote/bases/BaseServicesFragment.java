@@ -97,21 +97,13 @@ public class BaseServicesFragment extends BaseFragment {
     }
 
     private void getServices(ArrayList<ServiceInfo> services){
-        getServicesInstalled(services);
-        getServicesRunning(services);
-    }
-
-    private void getServicesInstalled(ArrayList<ServiceInfo> services){
         for (String service : servicesData.getRunning()) {
             if (inServiceList(service, services) == -1) continue;
-            runningOrInstalled(service, services, true);
+                runningOrInstalled(service, services, true);
         }
-    }
-
-    private void getServicesRunning(ArrayList<ServiceInfo> services){
         for (String service : servicesData.getRunning()) {
             if (inServiceList(service, services) == -1) continue;
-            runningOrInstalled(service, services, false);
+                runningOrInstalled(service, services, false);
         }
     }
 
