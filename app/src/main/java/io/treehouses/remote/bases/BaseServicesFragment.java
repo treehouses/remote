@@ -80,22 +80,38 @@ public class BaseServicesFragment extends BaseFragment {
             return;
         }
         services.clear();
+
+        addServicesToList(services);
+        getServices(services);
+
+        formatList(services);
+    }
+
+    private void addServicesToList( ArrayList<ServiceInfo> services){
         for (String service : servicesData.getAvailable()) {
             if (inServiceList(service, services) == -1) {
                 services.add(new ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData.getIcon().get(service),
                         servicesData.getInfo().get(service), servicesData.getAutorun().get(service)));
             }
-        }
-        for (String service : servicesData.getInstalled()) {
-            if (inServiceList(service, services) == -1) continue;
-            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
-        }
-        for (String service : servicesData.getRunning()) {
-            if (inServiceList(service, services) == -1) continue;
-            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_RUNNING;
-        }
-        formatList(services);
 
+        }
+    }
+
+    private void getServices(ArrayList<ServiceInfo> services){
+        for (String service : servicesData.getRunning()) { // 1
+            if (inServiceList(service, services) == -1) continue; // 2
+                runningOrInstalled(service, services, true);
+        }
+        for (String service : servicesData.getRunning()) { // 1
+            if (inServiceList(service, services) == -1) continue; // 2
+                runningOrInstalled(service, services, false);
+        }
+    }
+    private void runningOrInstalled(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
+        if(installedOrRunning)
+            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
+        else
+            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_RUNNING;
     }
 
     private void formatList(ArrayList<ServiceInfo> services) {
@@ -167,5 +183,4 @@ public class BaseServicesFragment extends BaseFragment {
     protected boolean isLocalUrl(String output, boolean received) {
         return output.contains(".") && output.contains(":") && output.length() < 25 && !received;
     }
-
 }
