@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
@@ -16,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
@@ -29,7 +31,9 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.NetworkProfile
+import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.match
 import kotlinx.android.synthetic.main.activity_home_fragment.*
 import java.util.*
 
@@ -37,7 +41,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private var notificationListener: NotificationCallback? = null
     private var progressDialog: ProgressDialog? = null
     private var connectionState = false
-    private var result = false
+    private var testConnectionResult = false
     private var testConnectionDialog: AlertDialog? = null
     private var selected_LED = 0
     private var checkVersionSent = false
@@ -68,12 +72,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
-                listener.sendMessage("treehouses default network")
+                listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
             } else if (SaveUtils.getProfiles(context).size > 0 && SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!!.size > 0) {
                 if (SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
                 networkProfile = SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!![childPosition]
-                listener.sendMessage("treehouses default network \n")
+                listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 Toast.makeText(context, "Configuring...", Toast.LENGTH_LONG).show()
             }
             false
@@ -87,23 +91,18 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         when {
             networkProfile.isWifi -> {
                 //WIFI
-                listener.sendMessage(String.format("treehouses wifi %s %s", networkProfile.ssid, networkProfile.password))
+                listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, networkProfile.ssid, networkProfile.password))
                 network_ssid = networkProfile.ssid
             }
             networkProfile.isHotspot -> {
                 //Hotspot
-                if (networkProfile.password.isEmpty()) listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid)
-                else listener.sendMessage("treehouses ap " + networkProfile.option + " " + networkProfile.ssid + " " + networkProfile.password)
+                listener.sendMessage(getString(R.string.TREEHOUSES_AP, networkProfile.option, networkProfile.ssid, networkProfile.password))
                 network_ssid = networkProfile.ssid
             }
             networkProfile.isBridge -> {
                 //Bridge
-                val temp = "treehouses bridge " + networkProfile.ssid + " " + networkProfile.hotspot_ssid + " "
-                var overallMessage = if (TextUtils.isEmpty(networkProfile.password)) "$temp " else temp + " " + networkProfile.password
-                if (!TextUtils.isEmpty(networkProfile.hotspot_password)) overallMessage += " " + networkProfile.hotspot_password + " "
-                listener.sendMessage(overallMessage)
-            }
-            else -> {
+                listener.sendMessage(getString(R.string.TREEHOUSES_BRIDGE, networkProfile.ssid, networkProfile.hotspot_ssid,
+                        networkProfile.password, networkProfile.hotspot_password))
             }
         }
     }
@@ -131,25 +130,22 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 return@setOnClickListener
             }
             if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
-                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT)
                 Toast.makeText(context, "Bluetooth is disabled", Toast.LENGTH_LONG).show()
-            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) {
-                showRPIDialog(this@HomeFragment)
-            }
+            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog(this@HomeFragment)
         }
     }
 
-    fun testConnectionListener() {
+    private fun testConnectionListener() {
         bind.testConnection.setOnClickListener {
             val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
             val options = listOf(*resources.getStringArray(R.array.led_options))
             val optionsCode = resources.getStringArray(R.array.led_options_commands)
             selected_LED = options.indexOf(preference)
-            writeToRPI(optionsCode[selected_LED])
+            listener.sendMessage(optionsCode[selected_LED])
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selected_LED)
             testConnectionDialog?.show()
-            result = false
+            testConnectionResult = false
         }
     }
 
@@ -157,40 +153,31 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         mChatService = listener.chatService
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
-            transitionOnConnected()
+            transition(true, arrayOf(150f, 110f, 70f))
             connectionState = true
             checkVersionSent = true
-            writeToRPI("""treehouses remote version ${BuildConfig.VERSION_CODE}""".trimIndent())
+            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+
         } else {
-            transitionDisconnected()
+            transition(false, arrayOf(0f, 0f, 0f))
             connectionState = false
+            MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
     }
 
-    private fun transitionOnConnected() {
-        bind.welcomeHome.visibility = View.GONE
-        bind.testConnection.visibility = View.VISIBLE
-        bind.btnConnect.text = "Disconnect"
-        bind.btnConnect.setBackgroundResource(R.drawable.ic_disconnect_rpi)
-        bind.backgroundHome.animate().translationY(150f)
-        bind.btnConnect.animate().translationY(110f)
-        bind.btnGetStarted.animate().translationY(70f)
-        bind.testConnection.visibility = View.VISIBLE
-        bind.layoutBack.visibility = View.VISIBLE
-        bind.logoHome.visibility = View.GONE
-    }
-
-    private fun transitionDisconnected() {
-        bind.btnConnect.text = "Connect to RPI"
-        bind.testConnection.visibility = View.GONE
-        bind.welcomeHome.visibility = View.VISIBLE
-        bind.backgroundHome.animate().translationY(0f)
-        bind.btnConnect.animate().translationY(0f)
-        bind.btnGetStarted.animate().translationY(0f)
-        bind.btnConnect.setBackgroundResource(R.drawable.ic_connect_to_rpi)
-        bind.logoHome.visibility = View.VISIBLE
-        bind.layoutBack.visibility = View.GONE
+    private fun transition(connected: Boolean, values: Array<Float>) {
+        bind.btnConnect.text = if (connected) "Disconnect" else "Connect to RPI"
+        bind.btnConnect.setBackgroundResource(if (connected) R.drawable.ic_disconnect_rpi else R.drawable.ic_connect_to_rpi)
+        bind.backgroundHome.animate().translationY(values[0])
+        bind.btnConnect.animate().translationY(values[1])
+        bind.btnGetStarted.animate().translationY(values[2])
+        val b1 = if (connected) View.GONE else View.VISIBLE     //Show on Boot
+        val b2 = if (connected) View.VISIBLE else View.GONE     //Show when connected
+        bind.welcomeHome.visibility = b1
+        bind.logoHome.visibility = b1
+        bind.testConnection.visibility = b2
+        bind.layoutBack.visibility = b2
     }
 
     private fun dismissTestConnection() {
@@ -200,14 +187,9 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         }
     }
 
-    private fun writeToRPI(ping: String) {
-        mChatService.write(ping.toByteArray())
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        notificationListener = try {
-            getContext() as NotificationCallback?
+        notificationListener = try { getContext() as NotificationCallback?
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
@@ -220,10 +202,9 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private fun checkVersion(output: String) {
         checkVersionSent = false
         if (output.contains("Usage") || output.contains("command")) {
-            //CLI Needs Upgrade
             showUpgradeCLI()
         } else if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
-            writeToRPI("treehouses remote check\n")
+            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_CHECK))
         } else if (output.contains("false")) {
             val alertDialog = AlertDialog.Builder(context)
                     .setTitle("Update Required")
@@ -237,64 +218,70 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                         }
                     }.create()
             alertDialog.show()
+
         }
     }
 
     private fun readMessage(output: String) {
-        notificationListener = try {
-            context as NotificationCallback?
+        notificationListener = try { context as NotificationCallback?
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
-        //Remove in 1 month ( May 4th)
-        if (output.contains("unknown")) {
-            showUpgradeCLI()
-            internetSent = false
-        } else if (output.startsWith("version: ") || checkVersionSent) {
-            checkVersion(output)
-        } else if (output.contains(" ") && output.trim().split(" ").size == 4 && !matchResult(output, "pirateship", "bridge") && !output.contains("network")) {
-            checkImageInfo(output.trim().split(" "), mChatService.connectedDeviceName)
-            listener.sendMessage("treehouses internet\n")
-            internetSent = true
-        } else if (internetSent) {
-            internetSent = false
-            if (output.trim { it <= ' ' }.contains("true")) internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle_green)) else internetstatus!!.setImageDrawable(resources.getDrawable(R.drawable.circle))
-            writeToRPI("treehouses upgrade --check\n")
-        } else {
-            moreActions(output)
+        val s = match(output)
+        when {
+            s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
+                showUpgradeCLI()
+                internetSent = false
+            }
+            s == RESULTS.VERSION && checkVersionSent -> checkVersion(output)
+            s == RESULTS.REMOTE_CHECK -> {
+                checkImageInfo(output.trim().split(" "), mChatService.connectedDeviceName)
+                listener.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
+                internetSent = true
+            }
+            s == RESULTS.BOOLEAN && internetSent -> {
+                internetSent = false
+                if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+                else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+                listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+            }
+            else -> moreActions(output, s)
         }
     }
 
-    private fun moreActions(output: String) {
-        if (notificationListener != null && matchResult(output, "true", "false") && output.length < 14) {
-            notificationListener!!.setNotification(output.contains("true"))
-        } else if (matchResult(output, "connected", "pirateship")) {
-            Toast.makeText(context, "Switched to $network_ssid", Toast.LENGTH_LONG).show()
-            dismissPDialog()
-        } else if (output.toLowerCase(Locale.ROOT).contains("bridge has been built")) {
-            dismissPDialog()
-            Toast.makeText(context, "Bridge Has Been Built", Toast.LENGTH_LONG).show()
-        } else if (output.toLowerCase(Locale.ROOT).contains("default")) {
-            switchProfile(networkProfile)
-        } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-            dismissPDialog()
-            Toast.makeText(context, "Network Not Found", Toast.LENGTH_LONG).show()
-        } else if (!result) {
-            //Test Connection
-            result = true
-            dismissTestConnection()
+    private fun moreActions(output: String, result: RESULTS) {
+        when {
+            result == RESULTS.UPGRADE_CHECK -> notificationListener?.setNotification(output.contains("true"))
+            result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
+                dismissPDialog()
+                Toast.makeText(context, "Switched to $network_ssid", Toast.LENGTH_LONG).show()
+            }
+            result == RESULTS.BRIDGE_CONNECTED -> {
+                dismissPDialog()
+                Toast.makeText(context, "Bridge Has Been Built", Toast.LENGTH_LONG).show()
+            }
+            result == RESULTS.DEFAULT_NETWORK -> switchProfile(networkProfile)
+            result == RESULTS.ERROR -> {
+                dismissPDialog()
+                Toast.makeText(context, "Network Not Found", Toast.LENGTH_LONG).show()
+            }
+            testConnectionResult -> {
+                testConnectionResult = true
+                dismissTestConnection()
+            }
         }
     }
 
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private val mHandler: Handler = object : Handler() {
+    private val mHandler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
-                    if (!output.isEmpty()) {
+                    if (output.isNotEmpty()) {
                         readMessage(output)
                     }
                 }
@@ -306,10 +293,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         super.onResume()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             checkVersionSent = true
-            writeToRPI("""
-    treehouses remote version ${BuildConfig.VERSION_CODE}
-
-    """.trimIndent())
+            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }
     }
 

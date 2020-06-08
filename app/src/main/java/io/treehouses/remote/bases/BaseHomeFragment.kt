@@ -29,18 +29,23 @@ open class BaseHomeFragment : BaseFragment() {
     private var bluetoothMac = ""
     private var rpiVersion: String? = null
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
-        if (option == 1) {
-            green.setBackgroundResource(R.drawable.thanksgiving_anim_green)
-            red.setBackgroundResource(R.drawable.thanksgiving_anim_red)
-        } else if (option == 2) {
-            green.setBackgroundResource(R.drawable.newyear_anim_green)
-            red.setBackgroundResource(R.drawable.newyear_anim_red)
-        } else if (option == 3) {
-            green.setBackgroundResource(R.drawable.heavymetal_anim_green)
-            red.setBackgroundResource(R.drawable.heavymetal_anim_red)
-        } else {
-            green.setBackgroundResource(R.drawable.dance_anim_green)
-            red.setBackgroundResource(R.drawable.dance_anim_red)
+        when (option) {
+            1 -> {
+                green.setBackgroundResource(R.drawable.thanksgiving_anim_green)
+                red.setBackgroundResource(R.drawable.thanksgiving_anim_red)
+            }
+            2 -> {
+                green.setBackgroundResource(R.drawable.newyear_anim_green)
+                red.setBackgroundResource(R.drawable.newyear_anim_red)
+            }
+            3 -> {
+                green.setBackgroundResource(R.drawable.heavymetal_anim_green)
+                red.setBackgroundResource(R.drawable.heavymetal_anim_red)
+            }
+            else -> {
+                green.setBackgroundResource(R.drawable.dance_anim_green)
+                red.setBackgroundResource(R.drawable.dance_anim_red)
+            }
         }
     }
 
@@ -101,6 +106,7 @@ open class BaseHomeFragment : BaseFragment() {
             map["bluetoothMacAddress"] = bluetoothMac
             map["rpiVersion"] = rpiVersion
             ParseDbService.sendLog(activity, deviceName, map, preferences)
+            MainApplication.logSent = true
         }
     }
 
@@ -166,16 +172,13 @@ https://github.com/treehouses/cli""")
         dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "rpiDialog")
     }
 
-    protected fun matchResult(output: String, option1: String?, option2: String?): Boolean {
-        return output.contains(option1!!) || output.contains(option2!!)
-    }
 
     protected fun showUpgradeCLI() {
         val alertDialog = AlertDialog.Builder(context)
                 .setTitle("Update Treehouses CLI")
                 .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
                 .setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
-                    listener.sendMessage("treehouses upgrade \n")
+                    listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE))
                     Toast.makeText(context, "Upgraded", Toast.LENGTH_LONG).show()
                     dialog.dismiss()
                 }
