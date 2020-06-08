@@ -93,20 +93,28 @@ public class BaseServicesFragment extends BaseFragment {
                 services.add(new ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData.getIcon().get(service),
                         servicesData.getInfo().get(service), servicesData.getAutorun().get(service)));
             }
-
         }
     }
 
     private void getServices(ArrayList<ServiceInfo> services){
-        for (String service : servicesData.getRunning()) { // 1
-            if (inServiceList(service, services) == -1) continue; // 2
-                runningOrInstalled(service, services, true);
-        }
-        for (String service : servicesData.getRunning()) { // 1
-            if (inServiceList(service, services) == -1) continue; // 2
-                runningOrInstalled(service, services, false);
+        getServicesInstalled(services);
+        getServicesRunning(services);
+    }
+
+    private void getServicesInstalled(ArrayList<ServiceInfo> services){
+        for (String service : servicesData.getRunning()) {
+            if (inServiceList(service, services) == -1) continue;
+            runningOrInstalled(service, services, true);
         }
     }
+
+    private void getServicesRunning(ArrayList<ServiceInfo> services){
+        for (String service : servicesData.getRunning()) {
+            if (inServiceList(service, services) == -1) continue;
+            runningOrInstalled(service, services, false);
+        }
+    }
+
     private void runningOrInstalled(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
         if(installedOrRunning)
             services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
