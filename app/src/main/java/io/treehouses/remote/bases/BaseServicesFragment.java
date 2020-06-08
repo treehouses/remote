@@ -127,25 +127,29 @@ public class BaseServicesFragment extends BaseFragment {
         return true;
     }
 
-    private boolean isError(String output) { return output.toLowerCase().startsWith("usage:") || output.toLowerCase().contains("error") || output.toLowerCase().contains("unknown"); }
+    private int isError(String output) {
+        if(output.toLowerCase().startsWith("usage:") ||
+                output.toLowerCase().contains("error") ||
+                output.toLowerCase().contains("unknown"))
+            return 0;
+        else
+            return -1;
+    }
 
     protected int performAction(String output, ArrayList<ServiceInfo> services) {
-        int i = -1;
-        if (isError(output)) {
-            i = 0;
-        }
-        else if (gettingJSON) {
-            startJson += output.trim();
-            if (startJson.endsWith("}}")) {
-                startJson += output.trim();
-                try {
-                    JSONObject jsonObject = new JSONObject(startJson);
-                    servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
-                    constructServiceList(servicesData, services);
+        int i = isError(output);
+        startJson += output.trim();
 
-                } catch (JSONException e) { e.printStackTrace(); }
-                gettingJSON = false;
+        if (gettingJSON && startJson.endsWith("}}") ) {
+            startJson += output.trim();
+            try {
+                JSONObject jsonObject = new JSONObject(startJson);
+                servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
+                constructServiceList(servicesData, services);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            gettingJSON = false;
             i = 1;
         }
         else if (output.trim().startsWith("{")) {
@@ -153,7 +157,6 @@ public class BaseServicesFragment extends BaseFragment {
             startJson = output.trim();
             gettingJSON = true;
         }
-
         return i;
     }
 
