@@ -580,5 +580,5 @@ public class BluetoothChatService implements Serializable{
         }
     }
 
-    
+
 }

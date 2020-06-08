@@ -40,7 +40,7 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
 
     private fun setAddProfileListener() {
         bind.setHotspotProfile.setOnClickListener {
-            SaveUtils.addProfile(context, NetworkProfile(bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString(), bind.spnHotspotType.selectedItem.toString()))
+            SaveUtils.addProfile(requireContext(), NetworkProfile(bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString(), bind.spnHotspotType.selectedItem.toString()))
             Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show()
         }
     }
