@@ -49,9 +49,7 @@ public class ServiceViewPager extends ViewPager {
             float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
             float vertMargin = pageHeight * (1 - scaleFactor) / 2;
             float horzMargin = pageWidth * (1 - scaleFactor) / 2;
-            final float alpha = MIN_ALPHA +
-                    (scaleFactor - MIN_SCALE) /
-                            (1 - MIN_SCALE) * (1 - MIN_ALPHA);
+            final float alpha = MIN_ALPHA + (scaleFactor - MIN_SCALE) / (1 - MIN_SCALE) * (1 - MIN_ALPHA);
 
             if (position < -1) { // [-Infinity,-1)
                 // This page is way off-screen to the left.
