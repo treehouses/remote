@@ -116,18 +116,18 @@ public class NetworkListAdapter extends BaseExpandableListAdapter {
 
         position = i;
 
-        if (layout == R.layout.open_vnc) {
-            new ViewHolderVnc(convertView, context, listener);
-        } else if (layout == R.layout.configure_tethering) {
-            new ViewHolderTether(convertView, listener, context);
-        } else if (layout == R.layout.configure_ssh_key) {
-            new ViewHolderSSHKey(convertView, context, listener);
-        } else if (layout == R.layout.configure_camera) {
-            new ViewHolderCamera(convertView, context, listener);
-        } else if (layout == R.layout.configure_wificountry) {
-            new ViewHolderWifiCountry(convertView, context, listener);
+        switch(layout){
+            case R.layout.open_vnc:
+                new ViewHolderVnc(convertView, context, listener);
+            case R.layout.configure_tethering:
+                new ViewHolderTether(convertView, listener, context);
+            case R.layout.configure_ssh_key:
+                new ViewHolderSSHKey(convertView, context, listener);
+            case R.layout.configure_camera:
+                new ViewHolderCamera(convertView, context, listener);
+            case R.layout.configure_wificountry:
+                new ViewHolderWifiCountry(convertView, context, listener);
         }
-
 
         views[i] = convertView;
         return convertView;

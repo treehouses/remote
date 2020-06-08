@@ -46,6 +46,9 @@
         android:screenOrientation="portrait"
         android:theme="@style/MyMaterialTheme.Base"
         android:usesCleartextTraffic="true">
+
+        <activity android:name=".IntroActivity"
+            android:label="My Custom AppIntro" />
         <activity
             android:name=".SplashScreenActivity"
             android:screenOrientation="portrait">
@@ -56,6 +59,7 @@
         </activity>
 
         <service android:name=".utils.GPSService" />
+
 
         <activity
             android:name=".InitialActivity"
