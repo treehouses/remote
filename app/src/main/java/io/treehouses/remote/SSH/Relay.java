@@ -45,7 +45,7 @@ public class Relay implements Runnable {
 	private Charset currentCharset;
 	private CharsetDecoder decoder;
 
-	private AbsTransport transport;
+	private SSH transport;
 
 	private vt320 buffer;
 
@@ -55,7 +55,7 @@ public class Relay implements Runnable {
 	private byte[] byteArray;
 	private char[] charArray;
 
-	public Relay(TerminalBridge bridge, AbsTransport transport, vt320 buffer, String encoding) {
+	public Relay(TerminalBridge bridge, SSH transport, vt320 buffer, String encoding) {
 		Log.e("REACHED", "HERE123");
 		setCharset(encoding);
 		this.bridge = bridge;

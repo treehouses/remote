@@ -17,11 +17,30 @@
 
 package io.treehouses.remote.SSH;
 
+import android.net.Uri;
+import android.util.Log;
+
+import com.trilead.ssh2.AuthAgentCallback;
+import com.trilead.ssh2.ChannelCondition;
+import com.trilead.ssh2.Connection;
+import com.trilead.ssh2.ConnectionInfo;
+import com.trilead.ssh2.ConnectionMonitor;
+import com.trilead.ssh2.ExtendedServerHostKeyVerifier;
+import com.trilead.ssh2.InteractiveCallback;
+import com.trilead.ssh2.KnownHosts;
+import com.trilead.ssh2.Session;
+import com.trilead.ssh2.crypto.PEMDecoder;
+import com.trilead.ssh2.signature.DSASHA1Verify;
+import com.trilead.ssh2.signature.ECDSASHA2Verify;
+import com.trilead.ssh2.signature.Ed25519Verify;
+import com.trilead.ssh2.signature.RSASHA1Verify;
+
+import net.i2p.crypto.eddsa.EdDSAPrivateKey;
+import net.i2p.crypto.eddsa.EdDSAPublicKey;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -33,8 +52,8 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,29 +61,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
-import net.i2p.crypto.eddsa.EdDSAPrivateKey;
-import net.i2p.crypto.eddsa.EdDSAPublicKey;
-
-import com.trilead.ssh2.AuthAgentCallback;
-import com.trilead.ssh2.ChannelCondition;
-import com.trilead.ssh2.Connection;
-import com.trilead.ssh2.ConnectionInfo;
-import com.trilead.ssh2.ConnectionMonitor;
-import com.trilead.ssh2.DynamicPortForwarder;
-import com.trilead.ssh2.ExtendedServerHostKeyVerifier;
-import com.trilead.ssh2.InteractiveCallback;
-import com.trilead.ssh2.KnownHosts;
-import com.trilead.ssh2.LocalPortForwarder;
-import com.trilead.ssh2.Session;
-import com.trilead.ssh2.crypto.PEMDecoder;
-import com.trilead.ssh2.signature.DSASHA1Verify;
-import com.trilead.ssh2.signature.ECDSASHA2Verify;
-import com.trilead.ssh2.signature.Ed25519Verify;
-import com.trilead.ssh2.signature.RSASHA1Verify;
 
 import io.treehouses.remote.R;
 import io.treehouses.remote.SSH.Terminal.TerminalBridge;
@@ -76,7 +72,45 @@ import io.treehouses.remote.SSH.beans.PubKeyBean;
  * @author Kenny Root
  *
  */
-public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
+public class SSH implements ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
+    HostBean host;
+    TerminalBridge bridge;
+    TerminalManager manager;
+
+    public HostBean getHost() {
+        return host;
+    }
+
+    public void setHost(HostBean host) {
+        this.host = host;
+    }
+
+    public TerminalBridge getBridge() {
+        return bridge;
+    }
+
+    public void setBridge(TerminalBridge bridge) {
+        this.bridge = bridge;
+    }
+
+    public TerminalManager getManager() {
+        return manager;
+    }
+
+    public void setManager(TerminalManager manager) {
+        this.manager = manager;
+    }
+
+    public String getEmulation() {
+        return emulation;
+    }
+
+    public void setEmulation(String emulation) {
+        this.emulation = emulation;
+    }
+
+    String emulation;
+
     static {
         // Since this class deals with EdDSA keys, we need to make sure this is available.
 		Ed25519Provider.insertIfNeeded();
@@ -92,7 +126,9 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
      * @param manager
      */
     public SSH(HostBean host, TerminalBridge bridge, TerminalManager manager) {
-        super(host, bridge, manager);
+        this.host = host;
+        this.bridge = bridge;
+        this.manager = manager;
     }
 
     private static final String PROTOCOL = "ssh";
@@ -414,7 +450,7 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
             if (!useAuthAgent.equals("no"))
                 session.requestAuthAgentForwarding(this);
 
-            session.requestPTY(getEmulation(), columns, rows, width, height, null);
+            session.requestPTY(emulation, columns, rows, width, height, null);
             session.startShell();
 
             stdin = session.getStdin();
@@ -430,7 +466,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 
     }
 
-    @Override
     public void connect() {
         connection = new Connection(host.getHostname(), host.getPort());
         connection.addConnectionMonitor(this);
@@ -505,7 +540,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         }
     }
 
-    @Override
     public void close() {
         connected = false;
 
@@ -524,13 +558,11 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         bridge.dispatchDisconnect(false);
     }
 
-    @Override
     public void flush() throws IOException {
         if (stdin != null)
             stdin.flush();
     }
 
-    @Override
     public int read(byte[] buffer, int start, int len) throws IOException {
         int bytesRead = 0;
 
@@ -559,19 +591,16 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         return bytesRead;
     }
 
-    @Override
     public void write(byte[] buffer) throws IOException {
         if (stdin != null)
             stdin.write(buffer);
     }
 
-    @Override
     public void write(int c) throws IOException {
         if (stdin != null)
             stdin.write(c);
     }
 
-    @Override
     public Map<String, String> getOptions() {
         Map<String, String> options = new HashMap<>();
 
@@ -580,7 +609,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         return options;
     }
 
-    @Override
     public void setOptions(Map<String, String> options) {
         if (options.containsKey("compression"))
             compression = Boolean.parseBoolean(options.get("compression"));
@@ -590,12 +618,10 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         return PROTOCOL;
     }
 
-    @Override
     public boolean isSessionOpen() {
         return sessionOpen;
     }
 
-    @Override
     public boolean isConnected() {
         return connected;
     }
@@ -605,7 +631,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         onDisconnect();
     }
 
-    @Override
     public boolean canForwardPorts() {
         return true;
     }
@@ -744,7 +769,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
 //        }
 //    }
 
-    @Override
     public void setDimensions(int columns, int rows, int width, int height) {
         this.columns = columns;
         this.rows = rows;
@@ -758,12 +782,10 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         }
     }
 
-    @Override
     public int getDefaultPort() {
         return DEFAULT_PORT;
     }
 
-    @Override
     public String getDefaultNickname(String username, String hostname, int port) {
         if (port == DEFAULT_PORT) {
             return String.format(Locale.US, "%s@%s", username, hostname);
@@ -826,7 +848,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
         return responses;
     }
 
-    @Override
     public HostBean createHost(Uri uri) {
         HostBean host = new HostBean();
 
@@ -853,12 +874,10 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
     }
 
 
-    @Override
     public void setCompression(boolean compression) {
         this.compression = compression;
     }
 
-    @Override
     public void setUseAuthAgent(String useAuthAgent) {
         this.useAuthAgent = useAuthAgent;
     }
@@ -968,7 +987,6 @@ public class SSH extends AbsTransport implements ConnectionMonitor, InteractiveC
     /* (non-Javadoc)
      * @see org.connectbot.transport.AbsTransport#usesNetwork()
      */
-    @Override
     public boolean usesNetwork() {
         return true;
     }

@@ -42,7 +42,6 @@ import de.mud.terminal.VDUBuffer;
 import de.mud.terminal.VDUDisplay;
 import de.mud.terminal.vt320;
 import io.treehouses.remote.R;
-import io.treehouses.remote.SSH.AbsTransport;
 import io.treehouses.remote.SSH.Colors;
 import io.treehouses.remote.SSH.PromptHelper;
 import io.treehouses.remote.SSH.Relay;
@@ -80,7 +79,7 @@ public class TerminalBridge implements VDUDisplay {
 
 	public HostBean host;
 
-	/* package */ AbsTransport transport;
+	/* package */ SSH transport;
 
 	final Paint defaultPaint;
 

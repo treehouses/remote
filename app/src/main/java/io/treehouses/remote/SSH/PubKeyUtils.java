@@ -99,21 +99,21 @@ public class PubKeyUtils {
                 ", bytes=" + encoded.length + "]";
     }
 
-    private static byte[] encrypt(byte[] cleartext, String secret) throws Exception {
-        byte[] salt = new byte[SALT_SIZE];
-
-        byte[] ciphertext = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext);
-
-        byte[] complete = new byte[salt.length + ciphertext.length];
-
-        System.arraycopy(salt, 0, complete, 0, salt.length);
-        System.arraycopy(ciphertext, 0, complete, salt.length, ciphertext.length);
-
-        Arrays.fill(salt, (byte) 0x00);
-        Arrays.fill(ciphertext, (byte) 0x00);
-
-        return complete;
-    }
+//    private static byte[] encrypt(byte[] cleartext, String secret) throws Exception {
+//        byte[] salt = new byte[SALT_SIZE];
+//
+//        byte[] ciphertext = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext);
+//
+//        byte[] complete = new byte[salt.length + ciphertext.length];
+//
+//        System.arraycopy(salt, 0, complete, 0, salt.length);
+//        System.arraycopy(ciphertext, 0, complete, salt.length, ciphertext.length);
+//
+//        Arrays.fill(salt, (byte) 0x00);
+//        Arrays.fill(ciphertext, (byte) 0x00);
+//
+//        return complete;
+//    }
 
     private static byte[] decrypt(byte[] saltAndCiphertext, String secret) throws Exception {
         byte[] salt = new byte[SALT_SIZE];
@@ -125,13 +125,13 @@ public class PubKeyUtils {
         return Encryptor.decrypt(salt, ITERATIONS, secret, ciphertext);
     }
 
-    public static byte[] getEncodedPrivate(PrivateKey pk, String secret) throws Exception {
-        final byte[] encoded = pk.getEncoded();
-        if (secret == null || secret.length() == 0) {
-            return encoded;
-        }
-        return encrypt(pk.getEncoded(), secret);
-    }
+//    public static byte[] getEncodedPrivate(PrivateKey pk, String secret) throws Exception {
+//        final byte[] encoded = pk.getEncoded();
+//        if (secret == null || secret.length() == 0) {
+//            return encoded;
+//        }
+//        return encrypt(pk.getEncoded(), secret);
+//    }
 
     public static PrivateKey decodePrivate(byte[] encoded, String keyType) throws NoSuchAlgorithmException, InvalidKeySpecException {
         PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(encoded);
@@ -169,165 +169,165 @@ public class PubKeyUtils {
         return kf.generatePublic(pubKeySpec);
     }
 
-    static String getAlgorithmForOid(String oid) throws NoSuchAlgorithmException {
-        if ("1.2.840.10045.2.1".equals(oid)) {
-            return "EC";
-        } else if ("1.2.840.113549.1.1.1".equals(oid)) {
-            return "RSA";
-        } else if ("1.2.840.10040.4.1".equals(oid)) {
-            return "DSA";
-        } else {
-            throw new NoSuchAlgorithmException("Unknown algorithm OID " + oid);
-        }
-    }
+//    static String getAlgorithmForOid(String oid) throws NoSuchAlgorithmException {
+//        if ("1.2.840.10045.2.1".equals(oid)) {
+//            return "EC";
+//        } else if ("1.2.840.113549.1.1.1".equals(oid)) {
+//            return "RSA";
+//        } else if ("1.2.840.10040.4.1".equals(oid)) {
+//            return "DSA";
+//        } else {
+//            throw new NoSuchAlgorithmException("Unknown algorithm OID " + oid);
+//        }
+//    }
+//
+//    static String getOidFromPkcs8Encoded(byte[] encoded) throws NoSuchAlgorithmException {
+//        if (encoded == null) {
+//            throw new NoSuchAlgorithmException("encoding is null");
+//        }
+//
+//        try {
+//            SimpleDERReader reader = new SimpleDERReader(encoded);
+//            reader.resetInput(reader.readSequenceAsByteArray());
+//            reader.readInt();
+//            reader.resetInput(reader.readSequenceAsByteArray());
+//            return reader.readOid();
+//        } catch (IOException e) {
+//            Log.w(TAG, "Could not read OID", e);
+//            throw new NoSuchAlgorithmException("Could not read key", e);
+//        }
+//    }
 
-    static String getOidFromPkcs8Encoded(byte[] encoded) throws NoSuchAlgorithmException {
-        if (encoded == null) {
-            throw new NoSuchAlgorithmException("encoding is null");
-        }
+//    static BigInteger getRSAPublicExponentFromPkcs8Encoded(byte[] encoded) throws InvalidKeySpecException {
+//        if (encoded == null) {
+//            throw new InvalidKeySpecException("encoded key is null");
+//        }
+//
+//        try {
+//            SimpleDERReader reader = new SimpleDERReader(encoded);
+//            reader.resetInput(reader.readSequenceAsByteArray());
+//            if (!reader.readInt().equals(BigInteger.ZERO)) {
+//                throw new InvalidKeySpecException("PKCS#8 is not version 0");
+//            }
+//
+//            reader.readSequenceAsByteArray();  // OID sequence
+//            reader.resetInput(reader.readOctetString());  // RSA key bytes
+//            reader.resetInput(reader.readSequenceAsByteArray());  // RSA key sequence
+//
+//            if (!reader.readInt().equals(BigInteger.ZERO)) {
+//                throw new InvalidKeySpecException("RSA key is not version 0");
+//            }
+//
+//            reader.readInt();  // modulus
+//            return reader.readInt();  // public exponent
+//        } catch (IOException e) {
+//            Log.w(TAG, "Could not read public exponent", e);
+//            throw new InvalidKeySpecException("Could not read key", e);
+//        }
+//    }
 
-        try {
-            SimpleDERReader reader = new SimpleDERReader(encoded);
-            reader.resetInput(reader.readSequenceAsByteArray());
-            reader.readInt();
-            reader.resetInput(reader.readSequenceAsByteArray());
-            return reader.readOid();
-        } catch (IOException e) {
-            Log.w(TAG, "Could not read OID", e);
-            throw new NoSuchAlgorithmException("Could not read key", e);
-        }
-    }
-
-    static BigInteger getRSAPublicExponentFromPkcs8Encoded(byte[] encoded) throws InvalidKeySpecException {
-        if (encoded == null) {
-            throw new InvalidKeySpecException("encoded key is null");
-        }
-
-        try {
-            SimpleDERReader reader = new SimpleDERReader(encoded);
-            reader.resetInput(reader.readSequenceAsByteArray());
-            if (!reader.readInt().equals(BigInteger.ZERO)) {
-                throw new InvalidKeySpecException("PKCS#8 is not version 0");
-            }
-
-            reader.readSequenceAsByteArray();  // OID sequence
-            reader.resetInput(reader.readOctetString());  // RSA key bytes
-            reader.resetInput(reader.readSequenceAsByteArray());  // RSA key sequence
-
-            if (!reader.readInt().equals(BigInteger.ZERO)) {
-                throw new InvalidKeySpecException("RSA key is not version 0");
-            }
-
-            reader.readInt();  // modulus
-            return reader.readInt();  // public exponent
-        } catch (IOException e) {
-            Log.w(TAG, "Could not read public exponent", e);
-            throw new InvalidKeySpecException("Could not read key", e);
-        }
-    }
-
-    public static KeyPair convertToKeyPair(PubKeyBean keybean, String password) throws BadPasswordException {
-//        if (PubkeyDatabase.KEY_TYPE_IMPORTED.equals(keybean.getType())) {
-//            // load specific key using pem format
+//    public static KeyPair convertToKeyPair(PubKeyBean keybean, String password) throws BadPasswordException {
+////        if (PubkeyDatabase.KEY_TYPE_IMPORTED.equals(keybean.getType())) {
+////            // load specific key using pem format
+////            try {
+////                return PEMDecoder.decode(new String(keybean.getPrivateKey(), "UTF-8").toCharArray(), password);
+////            } catch (Exception e) {
+////                Log.e(TAG, "Cannot decode imported key", e);
+////                throw new BadPasswordException();
+////            }
+////        } else {
+//            // load using internal generated format
 //            try {
-//                return PEMDecoder.decode(new String(keybean.getPrivateKey(), "UTF-8").toCharArray(), password);
+//                PrivateKey privKey = PubKeyUtils.decodePrivate(keybean.getPrivateKey(), keybean.getType(), password);
+//                PublicKey pubKey = PubKeyUtils.decodePublic(keybean.getPublicKey(), keybean.getType());
+//                Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey));
+//
+//                return new KeyPair(pubKey, privKey);
 //            } catch (Exception e) {
-//                Log.e(TAG, "Cannot decode imported key", e);
+//                Log.e(TAG, "Cannot decode pubkey from database", e);
 //                throw new BadPasswordException();
 //            }
+////        }
+//    }
+
+//    public static KeyPair recoverKeyPair(byte[] encoded) throws NoSuchAlgorithmException,
+//            InvalidKeySpecException {
+//        final String algo = getAlgorithmForOid(getOidFromPkcs8Encoded(encoded));
+//
+//        final KeySpec privKeySpec = new PKCS8EncodedKeySpec(encoded);
+//
+//        final KeyFactory kf = KeyFactory.getInstance(algo);
+//        final PrivateKey priv = kf.generatePrivate(privKeySpec);
+//
+//        return new KeyPair(recoverPublicKey(kf, priv), priv);
+//    }
+//
+//    static PublicKey recoverPublicKey(KeyFactory kf, PrivateKey priv)
+//            throws NoSuchAlgorithmException, InvalidKeySpecException {
+//        if (priv instanceof RSAPrivateCrtKey) {
+//            RSAPrivateCrtKey rsaPriv = (RSAPrivateCrtKey) priv;
+//            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), rsaPriv
+//                    .getPublicExponent()));
+//        } else if (priv instanceof RSAPrivateKey) {
+//            BigInteger publicExponent = getRSAPublicExponentFromPkcs8Encoded(priv.getEncoded());
+//            RSAPrivateKey rsaPriv = (RSAPrivateKey) priv;
+//            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), publicExponent));
+//        } else if (priv instanceof DSAPrivateKey) {
+//            DSAPrivateKey dsaPriv = (DSAPrivateKey) priv;
+//            DSAParams params = dsaPriv.getParams();
+//
+//            // Calculate public key Y
+//            BigInteger y = params.getG().modPow(dsaPriv.getX(), params.getP());
+//
+//            return kf.generatePublic(new DSAPublicKeySpec(y, params.getP(), params.getQ(), params
+//                    .getG()));
+//        } else if (priv instanceof ECPrivateKey) {
+//            ECPrivateKey ecPriv = (ECPrivateKey) priv;
+//            ECParameterSpec params = ecPriv.getParams();
+//
+//            // Calculate public key Y
+//            ECPoint generator = params.getGenerator();
+//            BigInteger[] wCoords = EcCore.multiplyPointA(new BigInteger[] { generator.getAffineX(),
+//                    generator.getAffineY() }, ecPriv.getS(), params);
+//            ECPoint w = new ECPoint(wCoords[0], wCoords[1]);
+//
+//            return kf.generatePublic(new ECPublicKeySpec(w, params));
 //        } else {
-            // load using internal generated format
-            try {
-                PrivateKey privKey = PubKeyUtils.decodePrivate(keybean.getPrivateKey(), keybean.getType(), password);
-                PublicKey pubKey = PubKeyUtils.decodePublic(keybean.getPublicKey(), keybean.getType());
-                Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey));
-
-                return new KeyPair(pubKey, privKey);
-            } catch (Exception e) {
-                Log.e(TAG, "Cannot decode pubkey from database", e);
-                throw new BadPasswordException();
-            }
+//            throw new NoSuchAlgorithmException("Key type must be RSA, DSA, or EC");
 //        }
-    }
-
-    public static KeyPair recoverKeyPair(byte[] encoded) throws NoSuchAlgorithmException,
-            InvalidKeySpecException {
-        final String algo = getAlgorithmForOid(getOidFromPkcs8Encoded(encoded));
-
-        final KeySpec privKeySpec = new PKCS8EncodedKeySpec(encoded);
-
-        final KeyFactory kf = KeyFactory.getInstance(algo);
-        final PrivateKey priv = kf.generatePrivate(privKeySpec);
-
-        return new KeyPair(recoverPublicKey(kf, priv), priv);
-    }
-
-    static PublicKey recoverPublicKey(KeyFactory kf, PrivateKey priv)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        if (priv instanceof RSAPrivateCrtKey) {
-            RSAPrivateCrtKey rsaPriv = (RSAPrivateCrtKey) priv;
-            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), rsaPriv
-                    .getPublicExponent()));
-        } else if (priv instanceof RSAPrivateKey) {
-            BigInteger publicExponent = getRSAPublicExponentFromPkcs8Encoded(priv.getEncoded());
-            RSAPrivateKey rsaPriv = (RSAPrivateKey) priv;
-            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), publicExponent));
-        } else if (priv instanceof DSAPrivateKey) {
-            DSAPrivateKey dsaPriv = (DSAPrivateKey) priv;
-            DSAParams params = dsaPriv.getParams();
-
-            // Calculate public key Y
-            BigInteger y = params.getG().modPow(dsaPriv.getX(), params.getP());
-
-            return kf.generatePublic(new DSAPublicKeySpec(y, params.getP(), params.getQ(), params
-                    .getG()));
-        } else if (priv instanceof ECPrivateKey) {
-            ECPrivateKey ecPriv = (ECPrivateKey) priv;
-            ECParameterSpec params = ecPriv.getParams();
-
-            // Calculate public key Y
-            ECPoint generator = params.getGenerator();
-            BigInteger[] wCoords = EcCore.multiplyPointA(new BigInteger[] { generator.getAffineX(),
-                    generator.getAffineY() }, ecPriv.getS(), params);
-            ECPoint w = new ECPoint(wCoords[0], wCoords[1]);
-
-            return kf.generatePublic(new ECPublicKeySpec(w, params));
-        } else {
-            throw new NoSuchAlgorithmException("Key type must be RSA, DSA, or EC");
-        }
-    }
+//    }
 
     /*
      * OpenSSH compatibility methods
      */
 
-    public static String convertToOpenSSHFormat(PublicKey pk, String origNickname) throws IOException, InvalidKeyException {
-        String nickname = origNickname;
-        if (nickname == null)
-            nickname = "connectbot@android";
-
-        if (pk instanceof RSAPublicKey) {
-            String data = "ssh-rsa ";
-            data += String.valueOf(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey((RSAPublicKey) pk)));
-            return data + " " + nickname;
-        } else if (pk instanceof DSAPublicKey) {
-            String data = "ssh-dss ";
-            data += String.valueOf(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey((DSAPublicKey) pk)));
-            return data + " " + nickname;
-        } else if (pk instanceof ECPublicKey) {
-            ECPublicKey ecPub = (ECPublicKey) pk;
-            String keyType = ECDSASHA2Verify.getCurveName(ecPub.getParams().getCurve().getField().getFieldSize());
-            String keyData = String.valueOf(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(ecPub)));
-            return ECDSASHA2Verify.ECDSA_SHA2_PREFIX + keyType + " " + keyData + " " + nickname;
-        } else if (pk instanceof EdDSAPublicKey) {
-            EdDSAPublicKey edPub = (EdDSAPublicKey) pk;
-            return Ed25519Verify.ED25519_ID + " " +
-                    String.valueOf(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(edPub))) +
-                    " " + nickname;
-        }
-
-        throw new InvalidKeyException("Unknown key type");
-    }
+//    public static String convertToOpenSSHFormat(PublicKey pk, String origNickname) throws IOException, InvalidKeyException {
+//        String nickname = origNickname;
+//        if (nickname == null)
+//            nickname = "connectbot@android";
+//
+//        if (pk instanceof RSAPublicKey) {
+//            String data = "ssh-rsa ";
+//            data += String.valueOf(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey((RSAPublicKey) pk)));
+//            return data + " " + nickname;
+//        } else if (pk instanceof DSAPublicKey) {
+//            String data = "ssh-dss ";
+//            data += String.valueOf(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey((DSAPublicKey) pk)));
+//            return data + " " + nickname;
+//        } else if (pk instanceof ECPublicKey) {
+//            ECPublicKey ecPub = (ECPublicKey) pk;
+//            String keyType = ECDSASHA2Verify.getCurveName(ecPub.getParams().getCurve().getField().getFieldSize());
+//            String keyData = String.valueOf(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(ecPub)));
+//            return ECDSASHA2Verify.ECDSA_SHA2_PREFIX + keyType + " " + keyData + " " + nickname;
+//        } else if (pk instanceof EdDSAPublicKey) {
+//            EdDSAPublicKey edPub = (EdDSAPublicKey) pk;
+//            return Ed25519Verify.ED25519_ID + " " +
+//                    String.valueOf(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(edPub))) +
+//                    " " + nickname;
+//        }
+//
+//        throw new InvalidKeyException("Unknown key type");
+//    }
 
     /*
      * OpenSSH compatibility methods
@@ -356,69 +356,69 @@ public class PubKeyUtils {
         }
     }
 
-    public static String exportPEM(PrivateKey key, String secret) throws NoSuchAlgorithmException, InvalidParameterSpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException, IllegalBlockSizeException, IOException {
-        StringBuilder sb = new StringBuilder();
+//    public static String exportPEM(PrivateKey key, String secret) throws NoSuchAlgorithmException, InvalidParameterSpecException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException, IllegalBlockSizeException, IOException {
+//        StringBuilder sb = new StringBuilder();
+//
+//        byte[] data = key.getEncoded();
+//
+//        sb.append(PKCS8_START);
+//        sb.append('\n');
+//
+//        if (secret != null) {
+//            byte[] salt = new byte[8];
+//            SecureRandom random = new SecureRandom();
+//            random.nextBytes(salt);
+//
+//            PBEParameterSpec defParams = new PBEParameterSpec(salt, 1);
+//            AlgorithmParameters params = AlgorithmParameters.getInstance(key.getAlgorithm());
+//
+//            params.init(defParams);
+//
+//            PBEKeySpec pbeSpec = new PBEKeySpec(secret.toCharArray());
+//
+//            SecretKeyFactory keyFact = SecretKeyFactory.getInstance(key.getAlgorithm());
+//            Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+//            cipher.init(Cipher.WRAP_MODE, keyFact.generateSecret(pbeSpec), params);
+//
+//            byte[] wrappedKey = cipher.wrap(key);
+//
+//            EncryptedPrivateKeyInfo pinfo = new EncryptedPrivateKeyInfo(params, wrappedKey);
+//
+//            data = pinfo.getEncoded();
+//
+//            sb.append("Proc-Type: 4,ENCRYPTED\n");
+//            sb.append("DEK-Info: DES-EDE3-CBC,");
+//            sb.append(encodeHex(salt));
+//            sb.append("\n\n");
+//        }
+//
+//        int i = sb.length();
+//        sb.append(Base64.encode(data));
+//        for (i += 63; i < sb.length(); i += 64) {
+//            sb.insert(i, "\n");
+//        }
+//
+//        sb.append('\n');
+//        sb.append(PKCS8_END);
+//        sb.append('\n');
+//
+//        return sb.toString();
+//    }
 
-        byte[] data = key.getEncoded();
-
-        sb.append(PKCS8_START);
-        sb.append('\n');
-
-        if (secret != null) {
-            byte[] salt = new byte[8];
-            SecureRandom random = new SecureRandom();
-            random.nextBytes(salt);
-
-            PBEParameterSpec defParams = new PBEParameterSpec(salt, 1);
-            AlgorithmParameters params = AlgorithmParameters.getInstance(key.getAlgorithm());
-
-            params.init(defParams);
-
-            PBEKeySpec pbeSpec = new PBEKeySpec(secret.toCharArray());
-
-            SecretKeyFactory keyFact = SecretKeyFactory.getInstance(key.getAlgorithm());
-            Cipher cipher = Cipher.getInstance(key.getAlgorithm());
-            cipher.init(Cipher.WRAP_MODE, keyFact.generateSecret(pbeSpec), params);
-
-            byte[] wrappedKey = cipher.wrap(key);
-
-            EncryptedPrivateKeyInfo pinfo = new EncryptedPrivateKeyInfo(params, wrappedKey);
-
-            data = pinfo.getEncoded();
-
-            sb.append("Proc-Type: 4,ENCRYPTED\n");
-            sb.append("DEK-Info: DES-EDE3-CBC,");
-            sb.append(encodeHex(salt));
-            sb.append("\n\n");
-        }
-
-        int i = sb.length();
-        sb.append(Base64.encode(data));
-        for (i += 63; i < sb.length(); i += 64) {
-            sb.insert(i, "\n");
-        }
-
-        sb.append('\n');
-        sb.append(PKCS8_END);
-        sb.append('\n');
-
-        return sb.toString();
-    }
-
-    private static final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6',
-            '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-    static String encodeHex(byte[] bytes) {
-        final char[] hex = new char[bytes.length * 2];
-
-        int i = 0;
-        for (byte b : bytes) {
-            hex[i++] = HEX_DIGITS[(b >> 4) & 0x0f];
-            hex[i++] = HEX_DIGITS[b & 0x0f];
-        }
-
-        return String.valueOf(hex);
-    }
-
-    public static class BadPasswordException extends Exception {
-    }
+//    private static final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6',
+//            '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+//    static String encodeHex(byte[] bytes) {
+//        final char[] hex = new char[bytes.length * 2];
+//
+//        int i = 0;
+//        for (byte b : bytes) {
+//            hex[i++] = HEX_DIGITS[(b >> 4) & 0x0f];
+//            hex[i++] = HEX_DIGITS[b & 0x0f];
+//        }
+//
+//        return String.valueOf(hex);
+//    }
+//
+//    public static class BadPasswordException extends Exception {
+//    }
 }
