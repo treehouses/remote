@@ -14,6 +14,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.gson.Gson;
 
@@ -27,6 +28,7 @@ import java.util.List;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment;
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment;
+import io.treehouses.remote.Fragments.DialogFragments.HelpDialog;
 import io.treehouses.remote.MainApplication;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
@@ -43,10 +45,8 @@ public class TerminalFragment extends BaseTerminalFragment {
     private static final String TITLE_EXPANDABLE = "Commands";
     private static TerminalFragment instance = null;
     private ExpandableListAdapter expandableListAdapter;
-    private ArrayList<String> list;
     private CommandsList commands;
     private int i;
-    private String last;
     private List<String> expandableListTitle;
     private HashMap<String, List<CommandListItem>> expandableListDetail;
 
@@ -62,8 +62,8 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private static boolean isRead = false;
 
-    private boolean jsonSent, jsonReceiving = false;
     private String jsonString = "";
+    private String helpJsonString = "";
 
     private ActivityTerminalFragmentBinding bind;
 
@@ -74,7 +74,7 @@ public class TerminalFragment extends BaseTerminalFragment {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false);
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
-        jsonSent = true;
+        jsonSend(true);
         listener.sendMessage("treehouses remote commands json\n");
         instance = this;
         expandableListDetail = new HashMap<>();
@@ -83,6 +83,8 @@ public class TerminalFragment extends BaseTerminalFragment {
         setupList();
         return bind.getRoot();
     }
+
+
 
     public void setupList() {
         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
@@ -107,9 +109,7 @@ public class TerminalFragment extends BaseTerminalFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        setUpAutoComplete(bind.editTextOut);
-    }
+    public void onViewCreated(View view, Bundle savedInstanceState) { setUpAutoComplete(bind.editTextOut); }
 
     @Override
     public void onDestroy() {
@@ -126,11 +126,10 @@ public class TerminalFragment extends BaseTerminalFragment {
     @Override
     public void onResume() {
         checkStatus(mChatService, bind.pingStatus, bind.PING);
+        onLoad(mHandler);
         super.onResume();
         setupChat();
     }
-
-    public static TerminalFragment getInstance() { return instance; }
 
     private ArrayAdapter<String> getmConversationArrayAdapter() { return mConversationArrayAdapter; }
 
@@ -159,18 +158,26 @@ public class TerminalFragment extends BaseTerminalFragment {
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener(v -> {
             // Send a message using content of the edit text widget
-            View view = getView();
-            if (null != view) {
+            if (null != getView()) {
                 listener.sendMessage(bind.editTextOut.getText().toString());
                 bind.editTextOut.setText("");
             }
         });
         bind.btnPrevious.setOnClickListener(v -> {
             try {
-                last = list.get(--i);
-                bind.editTextOut.setText(last);
+                if (i >= 0) bind.editTextOut.setText(MainApplication.getCommandList().get(--i).trim());
                 bind.editTextOut.setSelection(bind.editTextOut.length());
             } catch (Exception e) { e.printStackTrace(); } });
+
+        bind.infoButton.setOnClickListener(v -> {
+            if (jsonSent) Toast.makeText(getContext(), "Please Wait", Toast.LENGTH_SHORT).show();
+            else if (!helpJsonString.isEmpty()) showHelpDialog(helpJsonString);
+            else {
+                listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON));
+                jsonSend(true);
+            }
+        });
+
     }
 
     @Override
@@ -197,10 +204,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     protected void onResultCaseEnable(int resultCode) {
         // When the request to enable Bluetooth returns
-        if (resultCode == Activity.RESULT_OK) {
-            // Bluetooth is now enabled, so set up a chat session
-            setupChat();
-        } else {
+        if (resultCode == Activity.RESULT_OK) { setupChat(); } else {
             // User did not enable Bluetooth or an error occurred
             Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
             getActivity().finish();
@@ -216,8 +220,7 @@ public class TerminalFragment extends BaseTerminalFragment {
 
     private void addToCommandList(String writeMessage) {
         MainApplication.getCommandList().add(writeMessage);
-        list = MainApplication.getCommandList();
-        i = list.size();
+        i = MainApplication.getCommandList().size();
     }
     private void onResultCaseDialogChpass(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
@@ -233,23 +236,39 @@ public class TerminalFragment extends BaseTerminalFragment {
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             commands = new Gson().fromJson(jsonObject.toString(), CommandsList.class);
-            if (commands != null) updateArrayAdapters(commands);
-        } catch (JSONException e) { e.printStackTrace(); }
+            if (commands != null) updateArrayAdapters(commands); } catch (JSONException e) { e.printStackTrace(); }
     }
 
     private void handleJson(String readMessage) {
         if (jsonReceiving) {
-            jsonString += readMessage.trim();
-            if (jsonString.endsWith("]}")) {
-                jsonString += readMessage.trim();
+            jsonString += readMessage;
+            if (jsonString.trim().endsWith("]}")) {
                 buildJSON();
-                jsonReceiving = false;
-                jsonSent = false;
+                jsonSend(false);
+            }
+            else if (jsonString.trim().endsWith("\" }")) {
+                showHelpDialog(jsonString);
+                helpJsonString = jsonString;
+                jsonSend(false);
             }
         } else if (readMessage.startsWith("{")) {
             jsonReceiving = true;
             jsonString = readMessage.trim();
         }
+    }
+    private void jsonSend(boolean sent) {
+        jsonSent = sent;
+        if (sent) { bind.progressBar.setVisibility(View.VISIBLE); }
+        else { bind.progressBar.setVisibility(View.GONE);
+            jsonReceiving = false; }
+    }
+    private void showHelpDialog(String jsonString) {
+        Bundle b = new Bundle();
+        b.putString("jsonString", jsonString);
+        DialogFragment dialogFrag = new HelpDialog();
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT);
+        dialogFrag.setArguments(b);
+        dialogFrag.show(this.requireActivity().getSupportFragmentManager().beginTransaction(), "helpDialog");
     }
 
     /**

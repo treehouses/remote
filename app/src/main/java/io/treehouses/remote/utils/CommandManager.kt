@@ -22,10 +22,12 @@ enum class RESULTS {
     START_JSON,
     END_JSON_SERVICES,
     END_JSON_COMMANDS,
+    END_HELP
 }
 
 fun match (output: String) : RESULTS {
     when {
+        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isError(output) ->  return RESULTS.ERROR
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
         Matcher.isVersion(output) -> return RESULTS.VERSION
@@ -40,16 +42,17 @@ fun match (output: String) : RESULTS {
         Matcher.isStartJSON(output) -> return RESULTS.START_JSON
         Matcher.isEndAllServicesJson(output) -> return RESULTS.END_JSON_SERVICES
         Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
-
     }
     return RESULTS.RESULT_NOT_FOUND
 }
 
+//Could remove IDs and simply use these functions
 object Matcher {
     private fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
 
     fun isError(output: String): Boolean {
         val keys = listOf("error", "unknown", "usage", "command")
+        if (output.contains("{") || output.contains("}")) return false
         for (k in keys) if (toLC(output).contains(k)) return true
         return false
     }
@@ -88,8 +91,10 @@ object Matcher {
 
     fun isStartJSON(output: String): Boolean { return output.startsWith("{") }
 
-    fun isEndCommandsJson(output: String): Boolean { return output.endsWith("]}") }
+    fun isEndCommandsJson(output: String): Boolean { return toLC(output).endsWith("]}") }
 
-    fun isEndAllServicesJson(output: String): Boolean { return output.endsWith("}}") }
+    fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
+
+    fun isEndHelpJson(output: String): Boolean { return output.trim().endsWith("\" }")}
 
 }
