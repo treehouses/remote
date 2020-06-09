@@ -14,12 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import java.util.ArrayList;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.EthernetBottomSheet;
@@ -33,6 +37,8 @@ public class TorTabFragment extends BaseFragment {
     private BluetoothChatService mChatService;
     private Button startButton, moreButton;
     private TextView textStatus;
+    private ArrayList<String> countriesName;
+    private ArrayAdapter<String> adapter;
     View view;
     private ImageView background, logo, internetstatus;
     private ClipboardManager myClipboard;
@@ -44,11 +50,17 @@ public class TorTabFragment extends BaseFragment {
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        listener.sendMessage("treehouses tor status");
+        listener.sendMessage("treehouses tor list");
 
+        countriesName = new ArrayList<String>();
+
+        adapter = new ArrayAdapter<String>
+                (requireContext(), android.R.layout.select_dialog_item,countriesName);
 
 
         view = inflater.inflate(R.layout.activity_tor_fragment, container, false);
+        ListView countryList = view.findViewById(R.id.countries);
+        countryList.setAdapter(adapter);
         logo = view.findViewById(R.id.treehouse_logo);
         startButton = view.findViewById(R.id.btn_tor_start);
         startButton.setEnabled(false);
@@ -135,7 +147,7 @@ public class TorTabFragment extends BaseFragment {
 
                 }
                 else if(readMessage.contains("Error")){
-                    textStatus.setText("Check if tor is setup");
+                    textStatus.setText("Check if tor is setup. Add a port to setup");
                 }
                 else if(readMessage.contains("active")){
                     ColorMatrix matrix = new ColorMatrix();
@@ -144,6 +156,15 @@ public class TorTabFragment extends BaseFragment {
                     startButton.setText("Stop Tor");
                     listener.sendMessage("treehouses tor");
                     startButton.setEnabled(true);
+                }
+                else if(readMessage.contains("<=>")){
+                    countriesName.add(readMessage);
+                    adapter = new ArrayAdapter<String>
+                            (requireContext(), android.R.layout.select_dialog_item,countriesName);
+                    ListView countryList = view.findViewById(R.id.countries);
+                    countryList.setAdapter(adapter);
+                    listener.sendMessage("treehouses tor status");
+
                 }
 
                 }
