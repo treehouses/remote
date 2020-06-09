@@ -38,7 +38,7 @@ public class SSHTunnelFragment extends BaseServicesFragment implements ServicesL
         view = inflater.inflate(R.layout.activity_ssh_tunnel_fragment, container, false);
         tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 replaceFragment(tab.getPosition());
@@ -50,37 +50,21 @@ public class SSHTunnelFragment extends BaseServicesFragment implements ServicesL
         });
 
         tunnelView = view.findViewById(R.id.tab_viewpager);
+
         tunnelPageAdapter = new TunnelPageAdapter(getChildFragmentManager());
         tunnelView.setAdapter(tunnelPageAdapter);
 
         tunnelView.addOnPageChangeListener(this);
-
         return view;
     }
 
 
     public void replaceFragment(int position) {
-        setTabEnabled(true);
-
-        Fragment fragment = null;
-        switch (position) {
-            case 0:
-                Log.d("2", "Tor");
-                fragment = new TorTabFragment();
-                break;
-            case 1:
-                Log.d("3", "SSH");
-            default:
-                break;
-        }
-        if (fragment != null) {
-            FragmentManager fragmentManager = getChildFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.main_content, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
+        Log.d("dasd", String.valueOf(position));
+        tunnelView.setCurrentItem(position);
     }
+//
+
     public void setTabEnabled(boolean enabled) {
         LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
         tabStrip.setEnabled(enabled);
