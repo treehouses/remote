@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
@@ -226,7 +227,6 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
-
         val s = match(output)
         when {
             s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
@@ -248,7 +248,6 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             else -> moreActions(output, s)
         }
     }
-
 
     private fun moreActions(output: String, result: RESULTS) {
         when {
@@ -276,7 +275,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private val mHandler: Handler = object : Handler() {
+    private val mHandler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {

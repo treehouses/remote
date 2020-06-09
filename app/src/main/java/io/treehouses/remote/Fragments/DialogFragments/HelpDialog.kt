@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.treehouses.remote.Constants
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.HelpAdapter
 import io.treehouses.remote.databinding.DialogHelpBinding
@@ -46,7 +47,7 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
 
         bind.backButton.setOnClickListener { fullTransitionSearch() }
 
-        jsonString = arguments?.getString("jsonString")!!
+        jsonString = arguments?.getString(Constants.JSON_STRING)!!
         createJson(jsonString)
     }
 
