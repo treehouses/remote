@@ -46,6 +46,7 @@
         android:screenOrientation="portrait"
         android:theme="@style/MyMaterialTheme.Base"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".SplashScreenActivity"
             android:screenOrientation="portrait">
