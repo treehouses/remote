@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF"
+    android:background="@color/windowBackground"
     tools:context=".Fragments.TerminalFragment">
 
     <ListView
@@ -31,6 +31,8 @@
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/rectangle_border"
         android:hint="Enter Treehouse Commands"
+        android:textColorHint="#BABABA"
+        android:textColor="@color/daynight_textColor"
         android:paddingStart="@dimen/margin_medium"
         android:paddingLeft="@dimen/margin_medium"
         android:paddingTop="@dimen/margin_medium"
@@ -57,13 +59,22 @@
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/ic_history_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/infoButton" />
+
+    <Button
+        android:id="@+id/infoButton"
+        android:layout_width="@dimen/icon_size_mid"
+        android:layout_height="@dimen/icon_size_mid"
+        android:layout_margin="@dimen/margin_medium"
+        android:background="@drawable/help"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/md_white_1000"
+        android:background="@color/windowBackground"
         android:padding="@dimen/margin_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -86,6 +97,7 @@
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:gravity="center_vertical"
+            android:textColor="@color/daynight_textColor"
             android:padding="@dimen/margin_small"
             android:text="Bluetooth Status"
             android:textSize="@dimen/text_size_small" />
@@ -115,11 +127,21 @@
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginRight="@dimen/margin_medium"
             android:layout_marginBottom="100dp"
-            android:background="@color/bg_white"
+            android:background="@color/windowBackground"
             android:descendantFocusability="beforeDescendants"
             android:divider="@android:color/transparent"
             android:dividerHeight="3dp" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/margin_medium"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -43,7 +44,7 @@
         android:elevation="2dp"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600"
-       >
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_password"
@@ -62,7 +63,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:hint="Hotspot ESSID"
-      />
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout5"
@@ -71,7 +72,7 @@
         android:elevation="2dp"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600"
-      >
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_hotspot_password"

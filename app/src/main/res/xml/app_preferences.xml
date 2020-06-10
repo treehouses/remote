@@ -10,12 +10,20 @@
             android:defaultValue="true" />
 
         <ListPreference
-            android:defaultValue="LED Dance"
+            android:defaultValue="LED Heavy Metal"
             android:entries="@array/led_options"
             android:entryValues="@array/led_options"
             android:key="led_pattern"
             android:title="LED Pattern"
             android:summary="Set the Test Connection LED Pattern"/>
+
+        <ListPreference
+            android:defaultValue="OFF"
+            android:entries="@array/night_mode_options"
+            android:entryValues="@array/night_mode_options"
+            android:key="night_mode"
+            android:title="Night Mode"
+            android:summary="Set the Night Mode Preference"/>
 
     </PreferenceCategory>
 

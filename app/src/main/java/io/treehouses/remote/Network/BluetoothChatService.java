@@ -465,11 +465,11 @@ public class BluetoothChatService implements Serializable{
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
                 mmSocket.connect();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // Close the socket
                 try {
                     mmSocket.close();
-                } catch (IOException e2) {
+                } catch (Exception e2) {
                     Log.e(TAG, "unable to close() " + mSocketType +
                             " socket during connection failure", e2);
                 }

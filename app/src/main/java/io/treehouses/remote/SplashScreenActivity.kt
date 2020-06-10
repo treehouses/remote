@@ -8,6 +8,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.InitialActivity
 
@@ -20,6 +21,7 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this@SplashScreenActivity)
+        nightMode()
         if (preferences.getBoolean("splashScreen", true)) {
             setContentView(R.layout.activity_splash_screen)
             logo = findViewById(R.id.splash_logo)
@@ -42,5 +44,17 @@ class SplashScreenActivity : AppCompatActivity() {
 
     companion object {
         private const val SPLASH_TIME_OUT = 2000
+    }
+
+    fun nightMode() {
+        val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getString("night_mode", "OFF")
+        val options = listOf(*resources.getStringArray(R.array.night_mode_options))
+        val optionsCode = resources.getStringArray(R.array.led_options_commands)
+        val selected_mode = options.indexOf(preference)
+        when (selected_mode) {
+            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
     }
 }

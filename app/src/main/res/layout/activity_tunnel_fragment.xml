@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#FFF"
+    android:background="@color/windowBackground"
     android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/md_white_1000"
+        android:background="@color/windowBackground"
         android:padding="@dimen/margin_small"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -37,6 +37,7 @@
             android:layout_marginLeft="@dimen/margin_small"
             android:gravity="center_vertical"
             android:padding="@dimen/margin_small"
+            android:textColor="@color/daynight_textColor"
             android:text="Bluetooth Status"
             android:textSize="@dimen/text_size_small" />
     </LinearLayout>
@@ -49,6 +50,7 @@
         android:gravity="center"
         android:padding="@dimen/margin_medium"
         android:text="Tor Service Tunnel"
+        android:textColor="@color/daynight_textColor"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="@dimen/text_size_mid" />
 
@@ -79,6 +81,7 @@
         android:gravity="center"
         android:padding="@dimen/margin_medium"
         android:text="Tor Service Commands"
+        android:textColor="@color/daynight_textColor"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="@dimen/text_size_small" />
 
@@ -159,6 +162,7 @@
         android:padding="@dimen/margin_medium"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="Notification: "
+        android:textColor="@color/daynight_textColor"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textSize="@dimen/text_size_large" />
 
