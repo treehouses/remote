@@ -81,7 +81,7 @@ object Matcher {
 
     fun isHotspotConnected (output: String): Boolean {return toLC(output).contains("pirateship has anchored successfully")}
 
-    fun isWifiConnected (output: String): Boolean {return output.contains("open wifi network") || output.contains("password network")}
+    fun isWifiConnected (output: String): Boolean {return output.contains("open network") || output.contains("password network")}
 
     fun isDefaultNetwork(output: String): Boolean {return toLC(output).contains("the network mode has been reset to default")}
 
