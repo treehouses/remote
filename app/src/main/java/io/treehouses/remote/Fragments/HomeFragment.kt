@@ -84,25 +84,27 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         }
     }
 
-    private fun switchProfile(networkProfile: NetworkProfile?) {
-        if (networkProfile == null) return
-        progressDialog = ProgressDialog.show(context, "Connecting...", "Switching to " + networkProfile.ssid, true)
+    private fun switchProfile(profile: NetworkProfile?) {
+        if (profile == null) return
+        progressDialog = ProgressDialog.show(context, "Connecting...", "Switching to " + profile.ssid, true)
         progressDialog?.show()
         when {
-            networkProfile.isWifi -> {
+            profile.isWifi -> {
                 //WIFI
-                listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, networkProfile.ssid, networkProfile.password))
-                network_ssid = networkProfile.ssid
+                if (profile.isHidden) listener.sendMessage(getString(R.string.TREEHOUSES_WIFI_HIDDEN, profile.ssid, profile.password))
+                else listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, profile.ssid, profile.password))
+                network_ssid = profile.ssid
             }
-            networkProfile.isHotspot -> {
+            profile.isHotspot -> {
                 //Hotspot
-                listener.sendMessage(getString(R.string.TREEHOUSES_AP, networkProfile.option, networkProfile.ssid, networkProfile.password))
-                network_ssid = networkProfile.ssid
+                if (profile.isHidden) listener.sendMessage(getString(R.string.TREEHOUSES_AP_HIDDEN, profile.option, profile.ssid, profile.password))
+                else listener.sendMessage(getString(R.string.TREEHOUSES_AP, profile.option, profile.ssid, profile.password))
+                network_ssid = profile.ssid
             }
-            networkProfile.isBridge -> {
+            profile.isBridge -> {
                 //Bridge
-                listener.sendMessage(getString(R.string.TREEHOUSES_BRIDGE, networkProfile.ssid, networkProfile.hotspot_ssid,
-                        networkProfile.password, networkProfile.hotspot_password))
+                listener.sendMessage(getString(R.string.TREEHOUSES_BRIDGE, profile.ssid, profile.hotspot_ssid,
+                        profile.password, profile.hotspot_password))
             }
         }
     }

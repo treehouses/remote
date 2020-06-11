@@ -27,16 +27,16 @@ public class SaveUtils {
     public static final String ACTION_KEYWORD = "ACTION";
 
     private static void saveStringArray(Context context, ArrayList<String> array, String arrayName) {
-        String strArr = "";
+        StringBuilder strArr = new StringBuilder();
         for (int i=0; i<array.size(); i++) {
-            strArr += array.get(i) + DELIMITER;
+            strArr.append(array.get(i)).append(DELIMITER);
         }
         if (strArr.length() != 0) {
-            strArr = strArr.substring(0, strArr.length() - DELIMITER.length());
+            strArr = new StringBuilder(strArr.substring(0, strArr.length() - DELIMITER.length()));
         }
 
         SharedPreferences.Editor e = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        e.putString(arrayName, strArr);
+        e.putString(arrayName, strArr.toString());
         e.apply();
     }
 

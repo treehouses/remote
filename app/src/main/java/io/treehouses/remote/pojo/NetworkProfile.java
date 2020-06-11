@@ -9,20 +9,24 @@ public class NetworkProfile {
     public String hotspot_ssid;
     public String hotspot_password;
 
+    public boolean isHidden = false;
+
     private int profileType;
 
     //Wifi
-    public NetworkProfile(String ssid, String password) {
+    public NetworkProfile(String ssid, String password, boolean isHidden) {
         this.ssid = ssid;
         this.password = password;
+        this.isHidden = isHidden;
         this.profileType = 0;
     }
 
     //Hotspot
-    public NetworkProfile(String ssid, String password, String option) {
+    public NetworkProfile(String ssid, String password, String option, boolean isHidden) {
         this.ssid = ssid;
         this.password = password;
         this.option = option;
+        this.isHidden = isHidden;
         this.profileType = 1;
     }
 

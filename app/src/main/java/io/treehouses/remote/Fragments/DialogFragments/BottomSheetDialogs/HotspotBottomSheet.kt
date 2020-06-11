@@ -25,7 +25,7 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
 
     private fun startConfigListener() {
         bind.btnStartConfig.setOnClickListener {
-            if (bind.checkBoxHiddenWifi.isChecked) listener.sendMessage(getString(R.string.TREEHOUSES_AP_HIDDEN, bind.spnHotspotType.selectedItem.toString(),
+            if (bind.checkBoxHiddenHotspot.isChecked) listener.sendMessage(getString(R.string.TREEHOUSES_AP_HIDDEN, bind.spnHotspotType.selectedItem.toString(),
                     bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
             else listener.sendMessage(getString(R.string.TREEHOUSES_AP, bind.spnHotspotType.selectedItem.toString(),
                     bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
@@ -40,7 +40,12 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
 
     private fun setAddProfileListener() {
         bind.setHotspotProfile.setOnClickListener {
-            SaveUtils.addProfile(context, NetworkProfile(bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString(), bind.spnHotspotType.selectedItem.toString()))
+            SaveUtils.addProfile(context,
+                    NetworkProfile(
+                            bind.etHotspotSsid.text.toString(),
+                            bind.etHotspotPassword.text.toString(),
+                            bind.spnHotspotType.selectedItem.toString(),
+                            bind.checkBoxHiddenHotspot.isChecked))
             Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show()
         }
     }
