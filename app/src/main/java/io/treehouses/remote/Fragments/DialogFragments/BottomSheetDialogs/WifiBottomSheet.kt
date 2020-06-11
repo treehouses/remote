@@ -24,8 +24,9 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
         bind = DialogWifiBinding.inflate(inflater, container, false)
         setStartConfigListener()
         setAddProfileListener()
+        hiddenOrEnterprise()
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@WifiBottomSheet, context) }
-        val validation = TextBoxValidation(getContext(), bind.editTextSSID, bind.wifipassword, "wifi")
+        val validation = TextBoxValidation(context, bind.editTextSSID, bind.wifipassword, "wifi")
         validation.setStart(bind.btnStartConfig)
         validation.setAddprofile(bind.setWifiProfile)
         validation.setTextInputLayout(bind.textInputLayout)
@@ -36,13 +37,42 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
         bind.btnStartConfig.setOnClickListener {
             val ssid = bind.editTextSSID.text.toString()
             val password = bind.wifipassword.text.toString()
-            if (bind.checkBoxHiddenWifi.isChecked) listener.sendMessage(getString(R.string.TREEHOUSES_WIFI_HIDDEN, ssid, password))
-            else listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, ssid, password))
-            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
+            val username = bind.wifiUsername.text.toString()
+            if (bind.checkBoxEnterprise.isChecked && bind.wifiUsername.text.isNullOrEmpty()) {
+                bind.wifiUsername.error = "Please enter a username"
+                return@setOnClickListener
+            }
+            sendMessage(ssid, password, username)
+
             val intent = Intent()
             intent.putExtra(NewNetworkFragment.CLICKED_START_CONFIG, true)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
+        }
+    }
+
+    private fun sendMessage(ssid:String, password: String, username: String) {
+        when {
+            bind.checkBoxHiddenWifi.isChecked -> listener.sendMessage(getString(R.string.TREEHOUSES_WIFI_HIDDEN, ssid, password))
+            bind.checkBoxEnterprise.isChecked -> listener.sendMessage(getString(R.string.TREEHOUSES_ENTERPRISE, ssid, password, username))
+            else -> listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, ssid, password))
+        }
+        Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
+    }
+
+    private fun hiddenOrEnterprise() {
+        bind.checkBoxHiddenWifi.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                bind.checkBoxEnterprise.isChecked = false
+            }
+        }
+        bind.checkBoxEnterprise.setOnCheckedChangeListener {_, isChecked ->
+            if (isChecked) {
+                bind.checkBoxHiddenWifi.isChecked = false
+                bind.enterpriseLayout.visibility = View.VISIBLE
+            } else {
+                bind.enterpriseLayout.visibility = View.GONE
+            }
         }
     }
 
@@ -55,7 +85,7 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_DIALOG_WIFI) {
-            bind.editTextSSID.setText(data!!.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY))
+            bind.editTextSSID.setText(data?.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY))
         }
     }
 }
