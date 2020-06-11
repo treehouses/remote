@@ -15,28 +15,27 @@ public class NetworkProfile {
 
     //Wifi
     public NetworkProfile(String ssid, String password, boolean isHidden) {
-        this.ssid = ssid;
-        this.password = password;
-        this.isHidden = isHidden;
-        this.profileType = 0;
+        setCommon(ssid, password, isHidden, 0);
     }
 
     //Hotspot
     public NetworkProfile(String ssid, String password, String option, boolean isHidden) {
-        this.ssid = ssid;
-        this.password = password;
+        setCommon(ssid, password, isHidden, 1);
         this.option = option;
-        this.isHidden = isHidden;
-        this.profileType = 1;
     }
 
     //Bridge
     public NetworkProfile(String ssid, String password, String hotspotSSID, String hotspotPassword) {
-        this.ssid = ssid;
-        this.password = password;
+        setCommon(ssid, password, false, 2);
         this.hotspot_ssid = hotspotSSID;
         this.hotspot_password = hotspotPassword;
-        this.profileType = 2;
+    }
+
+    private void setCommon(String ssid, String password, boolean isHidden, int profileType) {
+        this.ssid = ssid;
+        this.password = password;
+        this.isHidden = isHidden;
+        this.profileType = profileType;
     }
 
     public boolean isWifi() {
