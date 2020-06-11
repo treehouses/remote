@@ -52,27 +52,18 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
     }
 
     private fun sendMessage(ssid:String, password: String, username: String) {
+        val hidden = bind.checkBoxHiddenWifi.isChecked
+        val enterprise = bind.checkBoxEnterprise.isChecked
         when {
-            bind.checkBoxHiddenWifi.isChecked -> listener.sendMessage(getString(R.string.TREEHOUSES_WIFI_HIDDEN, ssid, password))
-            bind.checkBoxEnterprise.isChecked -> listener.sendMessage(getString(R.string.TREEHOUSES_ENTERPRISE, ssid, password, username))
-            else -> listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, ssid, password))
+            !enterprise -> listener.sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI, ssid, password))
+            enterprise -> listener.sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN_ENTERPRISE else R.string.TREEHOUSES_WIFI_ENTERPRISE, ssid, password, username))
         }
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
     private fun hiddenOrEnterprise() {
-        bind.checkBoxHiddenWifi.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                bind.checkBoxEnterprise.isChecked = false
-            }
-        }
         bind.checkBoxEnterprise.setOnCheckedChangeListener {_, isChecked ->
-            if (isChecked) {
-                bind.checkBoxHiddenWifi.isChecked = false
-                bind.enterpriseLayout.visibility = View.VISIBLE
-            } else {
-                bind.enterpriseLayout.visibility = View.GONE
-            }
+            bind.enterpriseLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
     }
 
