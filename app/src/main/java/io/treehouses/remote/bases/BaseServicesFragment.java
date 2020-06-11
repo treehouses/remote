@@ -20,6 +20,8 @@ import java.util.Collections;
 
 import io.treehouses.remote.pojo.ServiceInfo;
 import io.treehouses.remote.pojo.ServicesData;
+import io.treehouses.remote.utils.CommandManagerKt;
+import io.treehouses.remote.utils.Matcher;
 
 public class BaseServicesFragment extends BaseFragment {
     private static final int[] MINIMUM_VERSION = {1, 14, 1};
@@ -97,17 +99,20 @@ public class BaseServicesFragment extends BaseFragment {
     }
 
     private void getServices(ArrayList<ServiceInfo> services){
-        for (String service : servicesData.getRunning()) {
-            if (inServiceList(service, services) == -1) continue;
-                runningOrInstalled(service, services, true);
+        for (String service : servicesData.getInstalled()) {
+            checkInServicesList(service, services, true);
         }
         for (String service : servicesData.getRunning()) {
-            if (inServiceList(service, services) == -1) continue;
-                runningOrInstalled(service, services, false);
+            checkInServicesList(service, services, false);
         }
     }
 
-    private void runningOrInstalled(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
+    private void checkInServicesList(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
+        if(inServiceList(service, services) != -1)
+            installedOrRunning(service, services, installedOrRunning);
+    }
+
+    private void installedOrRunning(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
         if(installedOrRunning)
             services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
         else
@@ -144,6 +149,7 @@ public class BaseServicesFragment extends BaseFragment {
     }
 
     private int isError(String output) {
+        CommandManagerKt.match(output);
         if(output.toLowerCase().startsWith("usage:") ||
                 output.toLowerCase().contains("error") ||
                 output.toLowerCase().contains("unknown"))
