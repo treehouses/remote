@@ -450,7 +450,6 @@ public class BluetoothChatService implements Serializable{
                 mCurrentState = Constants.STATE_NONE;
             }
             mmSocket = tmp;
-
         }
 
         public void run() {
@@ -467,13 +466,15 @@ public class BluetoothChatService implements Serializable{
                 mmSocket.connect();
             } catch (Exception e) {
                 // Close the socket
-                try {
-                    mmSocket.close();
-                } catch (Exception e2) {
-                    Log.e(TAG, "unable to close() " + mSocketType +
-                            " socket during connection failure", e2);
-                }
-                connectionFailed();
+                //if(mmSocket != null) {
+                    try {
+                        mmSocket.close();
+                    } catch (Exception e2) {
+                        Log.e(TAG, "unable to close() " + mSocketType +
+                                " socket during connection failure", e2);
+                    }
+                    connectionFailed();
+                //}
                 return;
             }
 
@@ -487,10 +488,13 @@ public class BluetoothChatService implements Serializable{
         }
 
         public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
+            if(mmSocket != null) {
+                try {
+                    //if(mmSocket != null) //Device disconnected
+                    mmSocket.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
+                }
             }
         }
     }
@@ -572,10 +576,12 @@ public class BluetoothChatService implements Serializable{
         }
 
         public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
+            if(mmSocket != null) {
+                try {
+                    mmSocket.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "close() of connect socket failed", e);
+                }
             }
         }
     }
