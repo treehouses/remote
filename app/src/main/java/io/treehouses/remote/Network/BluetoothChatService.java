@@ -466,7 +466,7 @@ public class BluetoothChatService implements Serializable{
                 mmSocket.connect();
             } catch (Exception e) {
                 // Close the socket
-                //if(mmSocket != null) {
+                if(mmSocket != null) {
                     try {
                         mmSocket.close();
                     } catch (Exception e2) {
@@ -474,7 +474,7 @@ public class BluetoothChatService implements Serializable{
                                 " socket during connection failure", e2);
                     }
                     connectionFailed();
-                //}
+                }
                 return;
             }
 
