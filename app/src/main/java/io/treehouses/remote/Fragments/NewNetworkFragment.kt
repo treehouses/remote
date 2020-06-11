@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,6 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.NewNetworkBinding
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
-import java.util.*
 
 class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     private lateinit var binding: NewNetworkBinding
@@ -96,7 +96,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun showDialog(title: String, message: String) {
-        val alertDialog = AlertDialog.Builder(context).setTitle(title).setMessage(message)
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle(title).setMessage(message)
                 .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         alertDialog.show()
     }
@@ -118,7 +118,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun reboot() {
-        val a = AlertDialog.Builder(context)
+        val a = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle("Reboot")
                 .setMessage("Are you sure you want to reboot your device?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
@@ -129,7 +129,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun resetNetwork() {
-        val a = AlertDialog.Builder(context)
+        val a = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle("Reset Network")
                 .setMessage("Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->

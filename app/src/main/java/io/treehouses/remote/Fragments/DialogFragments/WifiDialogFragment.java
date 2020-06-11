@@ -12,6 +12,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -59,7 +60,7 @@ public class WifiDialogFragment extends DialogFragment {
 
         setupWifi();
 
-        mDialog = new AlertDialog.Builder(context)
+        mDialog = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setView(mView)
                 .setIcon(R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")

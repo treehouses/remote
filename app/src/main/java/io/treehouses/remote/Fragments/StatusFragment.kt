@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,7 +141,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun createRenameDialog(view: View, mEditText: EditText): AlertDialog {
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                 .setView(view).setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-"))).setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Rename"
                 ) { _: DialogInterface?, _: Int ->

@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
@@ -83,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive) { dialog: DialogInterface?, which: Int -> onClickDialog(ID) }

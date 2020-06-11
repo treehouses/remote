@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import io.treehouses.remote.R;
 import io.treehouses.remote.pojo.ServiceInfo;
 import io.treehouses.remote.pojo.ServicesData;
 
@@ -48,7 +50,7 @@ public class BaseServicesFragment extends BaseFragment {
             final String s = "Please install Tor Browser from: \n\n https://play.google.com/store/apps/details?id=org.torproject.torbrowser";
             final SpannableString spannableString = new SpannableString(s);
             Linkify.addLinks(spannableString, Linkify.ALL);
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setTitle("Tor Browser Not Found").setMessage(spannableString).create();
+            AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle)).setTitle("Tor Browser Not Found").setMessage(spannableString).create();
             alertDialog.show();
             TextView alertTextView = (TextView) alertDialog.findViewById(android.R.id.message);
             alertTextView.setMovementMethod(LinkMovementMethod.getInstance());

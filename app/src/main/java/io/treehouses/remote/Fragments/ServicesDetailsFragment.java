@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -180,7 +181,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
         return count;
     }
     private void showDeleteDialog(ServiceInfo selected) {
-        new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle))
                 .setTitle("Delete " + selected.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete", (dialog, which) -> {
@@ -218,7 +219,7 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     private void onLink(ServiceInfo selected) {
         //reqUrls();
         DialogChooseUrlBinding chooseBind = DialogChooseUrlBinding.inflate(getLayoutInflater());
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).setView(chooseBind.getRoot()).setTitle("Select URL type").create();
+        AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle)).setView(chooseBind.getRoot()).setTitle("Select URL type").create();
 
         setOnClick(chooseBind.localButton, "treehouses services " + selected.name + " url local \n", alertDialog);
         setOnClick(chooseBind.torButton, "treehouses services " + selected.name + " url tor \n", alertDialog);
