@@ -27,8 +27,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         setClickListener(clearNetworkProfiles)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == "night_mode") {
-                nightMode(sharedPreferences.getString(key, "").toString())
+            if (key == "dark_mode") {
+                darkMode(sharedPreferences.getString(key, "").toString())
             }
         }
     }
@@ -51,7 +51,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         }
     }
 
-    fun nightMode(key: String) {
+    fun darkMode(key: String) {
         if (key == "ON") {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else if (key == "OFF") {
