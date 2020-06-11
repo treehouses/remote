@@ -56,7 +56,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else if (key == "OFF") {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        } else if (key == "Automatic") {
+        } else if (key == "Follow System") {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }

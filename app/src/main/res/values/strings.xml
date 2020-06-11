@@ -154,7 +154,7 @@
     <string-array name="dark_mode_options">
         <item>OFF</item>
         <item>ON</item>
-        <item>Automatic</item>
+        <item>Follow System</item>
     </string-array>
 
 </resources>

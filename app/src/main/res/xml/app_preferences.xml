@@ -18,7 +18,7 @@
             android:summary="Set the Test Connection LED Pattern"/>
 
         <ListPreference
-            android:defaultValue="Automatic"
+            android:defaultValue="Follow System"
             android:entries="@array/dark_mode_options"
             android:entryValues="@array/dark_mode_options"
             android:key="dark_mode"
