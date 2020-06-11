@@ -22,6 +22,7 @@ import io.treehouses.remote.pojo.ServiceInfo;
 import io.treehouses.remote.pojo.ServicesData;
 import io.treehouses.remote.utils.CommandManagerKt;
 import io.treehouses.remote.utils.Matcher;
+import io.treehouses.remote.utils.RESULTS;
 
 public class BaseServicesFragment extends BaseFragment {
     private static final int[] MINIMUM_VERSION = {1, 14, 1};
@@ -149,10 +150,7 @@ public class BaseServicesFragment extends BaseFragment {
     }
 
     private int isError(String output) {
-        CommandManagerKt.match(output);
-        if(output.toLowerCase().startsWith("usage:") ||
-                output.toLowerCase().contains("error") ||
-                output.toLowerCase().contains("unknown"))
+        if(CommandManagerKt.match(output) == RESULTS.ERROR)
             return 0;
         else
             return -1;
