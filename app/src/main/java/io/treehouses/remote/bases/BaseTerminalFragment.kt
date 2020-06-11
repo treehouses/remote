@@ -74,7 +74,7 @@ open class BaseTerminalFragment : BaseFragment() {
     protected fun copyToList(mConversationView: ListView, context: Context?) {
         mConversationView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
             val clickedData = mConversationView.getItemAtPosition(position) as String
-            Utils.copyToClipboard(context, clickedData)
+            Utils.copyToClipboard(requireContext(), clickedData)
         }
     }
 
