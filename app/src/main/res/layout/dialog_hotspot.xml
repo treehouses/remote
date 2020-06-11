@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:padding="@dimen/margin_medium"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -42,7 +43,7 @@
             android:fontFamily="sans-serif"
             android:hint="@string/password"
             android:inputType="textPassword"
-          />
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
