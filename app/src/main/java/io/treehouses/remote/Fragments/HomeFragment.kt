@@ -91,14 +91,16 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         when {
             profile.isWifi -> {
                 //WIFI
-                if (profile.isHidden) listener.sendMessage(getString(R.string.TREEHOUSES_WIFI_HIDDEN, profile.ssid, profile.password))
-                else listener.sendMessage(getString(R.string.TREEHOUSES_WIFI, profile.ssid, profile.password))
+                listener.sendMessage(
+                        getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
+                        profile.ssid, profile.password))
                 network_ssid = profile.ssid
             }
             profile.isHotspot -> {
                 //Hotspot
-                if (profile.isHidden) listener.sendMessage(getString(R.string.TREEHOUSES_AP_HIDDEN, profile.option, profile.ssid, profile.password))
-                else listener.sendMessage(getString(R.string.TREEHOUSES_AP, profile.option, profile.ssid, profile.password))
+                listener.sendMessage(
+                        getString(if (profile.isHidden) R.string.TREEHOUSES_AP_HIDDEN else R.string.TREEHOUSES_AP,
+                        profile.option, profile.ssid, profile.password))
                 network_ssid = profile.ssid
             }
             profile.isBridge -> {
