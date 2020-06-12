@@ -66,7 +66,6 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     final Handler handlerDetails = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
             switch (msg.what) {
                 case Constants.MESSAGE_READ:
                     String output = (String) msg.obj;
@@ -79,13 +78,19 @@ public class ServicesDetailsFragment extends BaseServicesFragment implements Ada
     private void matchOutput(String s) {
         selected =((ServiceInfo) binding.pickService.getSelectedItem());
         Log.d("Entered", "matchOutput: "+s);
-        if (s.contains("started")) { selected.serviceStatus = ServiceInfo.SERVICE_RUNNING;
-        } else if (s.contains("stopped and removed")) {
+        if (s.contains("started")) {
+            selected.serviceStatus = ServiceInfo.SERVICE_RUNNING;
+        }
+        else if (s.contains("stopped and removed")) {
             selected.serviceStatus = ServiceInfo.SERVICE_AVAILABLE;
             Log.d("STOP", "matchOutput: ");
-        } else if (s.contains("stopped") && !s.contains("removed")) { selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED;
-        } else if (s.contains("installed")) { selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED; }
-        else {return;}
+        }
+        else if (s.contains("stopped") || s.contains("installed")) {
+            selected.serviceStatus = ServiceInfo.SERVICE_INSTALLED;
+        }
+        else {
+            return;
+        }
         Collections.sort(services);
         serviceCardAdapter.notifyDataSetChanged();
         spinnerAdapter.notifyDataSetChanged();
