@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:hint="SSID"
+            android:textColor="@color/daynight_textColor"
             android:inputType="textPersonName" />
 
         <Button
@@ -56,6 +57,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:hint="@string/password"
+            android:textColor="@color/daynight_textColor"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>

@@ -24,7 +24,8 @@
         android:fontFamily="sans-serif"
         android:hint="ESSID"
         android:inputType="textEmailAddress"
-        android:padding="@dimen/margin_medium" />
+        android:padding="@dimen/margin_medium"
+        android:textColor="@color/daynight_textColor"/>
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -43,6 +44,7 @@
             android:fontFamily="sans-serif"
             android:hint="@string/password"
             android:inputType="textPassword"
+            android:textColor="@color/daynight_textColor"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
