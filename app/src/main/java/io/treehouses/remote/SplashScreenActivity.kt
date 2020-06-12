@@ -47,8 +47,8 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     fun nightMode() {
-        val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getString("night_mode", "OFF")
-        val options = listOf(*resources.getStringArray(R.array.night_mode_options))
+        val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getString("dark_mode", "Follow System")
+        val options = listOf(*resources.getStringArray(R.array.dark_mode_options))
         val optionsCode = resources.getStringArray(R.array.led_options_commands)
         val selected_mode = options.indexOf(preference)
         when (selected_mode) {
