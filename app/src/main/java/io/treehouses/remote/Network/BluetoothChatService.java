@@ -466,15 +466,13 @@ public class BluetoothChatService implements Serializable{
                 mmSocket.connect();
             } catch (Exception e) {
                 // Close the socket
-                if(mmSocket != null) {
-                    try {
-                        mmSocket.close();
-                    } catch (Exception e2) {
-                        Log.e(TAG, "unable to close() " + mSocketType +
-                                " socket during connection failure", e2);
-                    }
-                    connectionFailed();
+                try {
+                    mmSocket.close();
+                } catch (Exception e2) {
+                    Log.e(TAG, "unable to close() " + mSocketType +
+                            " socket during connection failure", e2);
                 }
+                connectionFailed();
                 return;
             }
 
@@ -488,13 +486,10 @@ public class BluetoothChatService implements Serializable{
         }
 
         public void cancel() {
-            if(mmSocket != null) {
-                try {
-                    //if(mmSocket != null) //Device disconnected
-                    mmSocket.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
-                }
+            try {
+                mmSocket.close();
+            } catch (Exception e) {
+                Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
             }
         }
     }
@@ -576,12 +571,10 @@ public class BluetoothChatService implements Serializable{
         }
 
         public void cancel() {
-            if(mmSocket != null) {
-                try {
-                    mmSocket.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "close() of connect socket failed", e);
-                }
+            try {
+                mmSocket.close();
+            } catch (Exception e) {
+                Log.e(TAG, "close() of connect socket failed", e);
             }
         }
     }
