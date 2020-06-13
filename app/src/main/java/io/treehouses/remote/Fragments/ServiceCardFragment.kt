@@ -43,22 +43,33 @@ class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), Vi
     }
 
     private fun setButtons(started: Boolean, installed: Boolean, three: Boolean) {
+        var string1 = "Start"
+        var visibility1 = View.GONE
+
         if (started) {
-            binding!!.startButton.text = "Stop"
-            binding!!.openLink.visibility = View.VISIBLE
-        } else {
-            binding!!.startButton.text = "Start"
-            binding!!.openLink.visibility = View.GONE
+            string1 = "Stop"
+            visibility1 = View.VISIBLE
         }
+
+        var string2 = "Install"
+        var visibility2 = View.GONE
+        var visibility3 = View.GONE
+
+        binding!!.startButton.text = string1
+        binding!!.openLink.visibility = visibility1
+
         if (installed) {
-            binding!!.installButton.text = "Uninstall"
-            binding!!.startButton.visibility = View.VISIBLE
-            binding!!.autorunChecked.visibility = View.VISIBLE
-        } else {
-            binding!!.installButton.text = "Install"
-            binding!!.startButton.visibility = View.GONE
-            binding!!.autorunChecked.visibility = View.GONE
+            string2 = "Uninstall"
+            visibility2 = View.VISIBLE
+            visibility3 = View.VISIBLE
         }
+
+        binding!!.installButton.text = string2
+        binding!!.startButton.visibility = visibility2
+        binding!!.autorunChecked.visibility = visibility3
+
+
+
         //restart.setEnabled(three);
     }
 
