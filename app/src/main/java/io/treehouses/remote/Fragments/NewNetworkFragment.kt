@@ -118,26 +118,34 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun reboot() {
-        val a = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Reboot")
-                .setMessage("Are you sure you want to reboot your device?")
+
+        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
+                "Are you sure you want to reboot your device?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
-                    rebootHelper()
-                    dialog.dismiss()
-                }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+            rebootHelper()
+            dialog.dismiss()
+        }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+
         a.show()
     }
 
     private fun resetNetwork() {
-        val a = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Reset Network")
-                .setMessage("Are you sure you want to reset the network to default?")
+        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
+                "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                    Toast.makeText(context, "Switching to default network...", Toast.LENGTH_LONG).show()
-                }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+            listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
+            Toast.makeText(context, "Switching to default network...", Toast.LENGTH_LONG).show()
+        }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+
         a.show()
     }
+
+    private fun CreateAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id))
+                .setTitle(title)
+                .setMessage(message)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
