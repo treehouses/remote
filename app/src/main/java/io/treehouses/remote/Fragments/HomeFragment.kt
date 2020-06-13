@@ -86,7 +86,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun switchProfile(networkProfile: NetworkProfile?) {
         if (networkProfile == null) return
-        progressDialog = ProgressDialog.show(context, "Connecting...", "Switching to " + networkProfile.ssid, true)
+        progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + networkProfile.ssid, true)
         progressDialog?.show()
         when {
             networkProfile.isWifi -> {
