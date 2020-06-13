@@ -99,20 +99,6 @@ class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), Vi
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
     }
 
-    //    private void onClickRestart(ServiceInfo selected) {
-    //        if (selected.serviceStatus != ServiceInfo.SERVICE_AVAILABLE) performService("Restarting", "treehouses services " + selected.name + " restart\n", selected.name);
-    //
-    //    }
-    //    private void setOnClick(View v, int id, String command, AlertDialog alertDialog) {
-    //        v.findViewById(id).setOnClickListener(new View.OnClickListener() {
-    //            @Override
-    //            public void onClick(View v) {
-    //                writeToRPI(command);
-    //                alertDialog.dismiss();
-    ////                progressBar.setVisibility(View.VISIBLE);
-    //            }
-    //        });
-    //    }
     override fun onClick(v: View) {
         if (binding!!.installButton == v) {
             actionListener!!.onClickInstall(serviceData)
