@@ -129,8 +129,7 @@ https://treehouses.io/#!pages/download.md
 https://github.com/treehouses/control
 https://github.com/treehouses/cli""")
         Linkify.addLinks(s, Linkify.ALL)
-        val d = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Friendly Reminder")
+        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder")
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                 .setMessage(s)
@@ -176,8 +175,7 @@ https://github.com/treehouses/cli""")
 
 
     protected fun showUpgradeCLI() {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Update Treehouses CLI")
+        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,"Update Treehouses CLI")
                 .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!").setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
                     listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE))
                     Toast.makeText(context, "Upgraded", Toast.LENGTH_LONG).show()
