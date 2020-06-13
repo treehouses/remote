@@ -1,6 +1,7 @@
 package io.treehouses.remote.bases
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
@@ -175,9 +176,8 @@ https://github.com/treehouses/cli""")
 
 
     protected fun showUpgradeCLI() {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Update Treehouses CLI")
-                .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
+        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Update Treehouses CLI",
+                "Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
                 .setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
                     listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE))
                     Toast.makeText(context, "Upgraded", Toast.LENGTH_LONG).show()
@@ -186,5 +186,11 @@ https://github.com/treehouses/cli""")
                 .setNegativeButton("Upgrade Later") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .create()
         alertDialog.show()
+    }
+
+    private fun CreateAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id))
+                .setTitle(title)
+                .setMessage(message)
     }
 }
