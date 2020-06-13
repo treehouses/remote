@@ -81,20 +81,19 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     private fun moreActions(output: String) {
         if (wait) {
             matchOutput(output.trim { it <= ' ' })
-        } else if (isLocalUrl(output, received)) {
+        } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
             received = true
             openLocalURL(output.trim { it <= ' ' })
             binding!!.progressBar.visibility = View.GONE
-        } else if (isTorURL(output, received)) {
-            received = true
-            openTorURL(output.trim { it <= ' ' })
-            binding!!.progressBar.visibility = View.GONE
-        } else if (output.contains("service autorun set")) {
+        } else {
             setScreenState(true)
-            Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
-        } else if (output.toLowerCase().contains("error")) {
-            setScreenState(true)
-            Toast.makeText(context, "An Error occurred", Toast.LENGTH_SHORT).show()
+            var msg:String = ""
+            if (output.contains("service autorun set")) {
+                msg = "Switched autorun"
+            } else if (output.toLowerCase().contains("error")) {
+                msg = "An Error occurred"
+            }
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
     }
 
