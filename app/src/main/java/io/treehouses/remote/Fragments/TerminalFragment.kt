@@ -140,6 +140,12 @@ class TerminalFragment : BaseTerminalFragment() {
             val view = view
             if (null != view) {
                 listener.sendMessage(bind.editTextOut.text.toString())
+                if(bind.editTextOut.text.toString() == "reboot") {
+                    Thread.sleep(1000)
+                    listener.openCallFragment(HomeFragment())
+                    Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
+                    requireActivity().title = "Home"
+                }
                 bind.editTextOut.setText("")
             }
         }

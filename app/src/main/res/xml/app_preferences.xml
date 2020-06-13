@@ -18,12 +18,12 @@
             android:summary="Set the Test Connection LED Pattern"/>
 
         <ListPreference
-            android:defaultValue="OFF"
-            android:entries="@array/night_mode_options"
-            android:entryValues="@array/night_mode_options"
-            android:key="night_mode"
-            android:title="Night Mode"
-            android:summary="Set the Night Mode Preference"/>
+            android:defaultValue="Follow System"
+            android:entries="@array/dark_mode_options"
+            android:entryValues="@array/dark_mode_options"
+            android:key="dark_mode"
+            android:title="Dark Mode"
+            android:summary="Set the Dark Mode Preference"/>
 
     </PreferenceCategory>
 
