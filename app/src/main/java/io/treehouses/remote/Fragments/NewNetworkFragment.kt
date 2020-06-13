@@ -96,7 +96,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun showDialog(title: String, message: String) {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle(title).setMessage(message)
+        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
                 .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         alertDialog.show()
     }
