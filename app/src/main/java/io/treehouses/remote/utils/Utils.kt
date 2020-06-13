@@ -8,8 +8,8 @@ import java.net.NetworkInterface
 import java.util.*
 
 object Utils {
-    fun String.copyToClipboard(context: Context) {
-        var clickedData = this
+    fun copyToClipboard(context: Context, clickedData: String) {
+        var clickedData = clickedData
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
             clickedData = clickedData.substring(10)
         }
@@ -17,7 +17,7 @@ object Utils {
         val clip = ClipData.newPlainText("label", clickedData)
         clipboard.setPrimaryClip(clip)
 
-        "Copied to clipboard: $clickedData".toast(context)
+        context.toast("Copied to clipboard: $clickedData", Toast.LENGTH_LONG)
     }
 
     @JvmStatic
@@ -34,10 +34,6 @@ object Utils {
             return ""
         }
 
-    //    public static String  getAndroidId(Context context){
-    //         return Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-    //
-    //    }
     @Throws(Exception::class)
     private fun getAddress(nif: NetworkInterface): String {
         val macBytes = nif.hardwareAddress ?: return ""
@@ -51,7 +47,7 @@ object Utils {
         return res1.toString()
     }
 
-    fun Any.toast(context: Context, duration: Int = Toast.LENGTH_LONG): Toast {
-        return Toast.makeText(context, this.toString(), duration).apply { show() }
+    fun Context?.toast(s: String, duration: Int = Toast.LENGTH_LONG):Toast {
+        return Toast.makeText(this, s, duration).apply { show() }
     }
 }
