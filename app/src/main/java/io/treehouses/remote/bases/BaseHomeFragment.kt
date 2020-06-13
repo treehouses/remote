@@ -61,7 +61,7 @@ open class BaseHomeFragment : BaseFragment() {
         if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
             if (connectionCount >= 3) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
-                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle,"Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
                         .setPositiveButton("Continue") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show()
             }
@@ -129,7 +129,7 @@ https://treehouses.io/#!pages/download.md
 https://github.com/treehouses/control
 https://github.com/treehouses/cli""")
         Linkify.addLinks(s, Linkify.ALL)
-        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder")
+        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder" )
                 .setIcon(R.drawable.dialog_icon)
                 .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
                 .setMessage(s)
@@ -161,7 +161,7 @@ https://github.com/treehouses/cli""")
     }
 
     private fun createTestConnectionDialog(mView: View, dismissable: Boolean, title: String, messageID: Int): AlertDialog {
-        val d = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID)
+        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID)
         if (dismissable) d.setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         return d.create()
     }
@@ -175,7 +175,7 @@ https://github.com/treehouses/cli""")
 
 
     protected fun showUpgradeCLI() {
-        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,"Update Treehouses CLI")
+        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Update Treehouses CLI")
                 .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!").setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
                     listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE))
                     Toast.makeText(context, "Upgraded", Toast.LENGTH_LONG).show()
@@ -186,8 +186,7 @@ https://github.com/treehouses/cli""")
         alertDialog.show()
     }
 
-    private fun CreateAlertDialog(context: Context?, id:Int, title:String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, id))
-                .setTitle(title)
+    private fun CreateAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
     }
 }
