@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
@@ -35,7 +38,7 @@ import io.treehouses.remote.bases.BaseFragment;
 
 public class TorTabFragment extends BaseFragment {
     private BluetoothChatService mChatService;
-    private Button startButton, moreButton;
+    private Button startButton, moreButton, addPortButton;
     private TextView textStatus;
     private ArrayList<String> countriesName;
     private ArrayAdapter<String> adapter;
@@ -63,6 +66,7 @@ public class TorTabFragment extends BaseFragment {
         countryList.setAdapter(adapter);
         logo = view.findViewById(R.id.treehouse_logo);
         startButton = view.findViewById(R.id.btn_tor_start);
+        addPortButton = view.findViewById(R.id.btn_add_port);
         startButton.setEnabled(false);
         startButton.setText("Getting Tor Status from raspberry pi");
         textStatus = view.findViewById(R.id.tor_status_text);
@@ -89,6 +93,29 @@ public class TorTabFragment extends BaseFragment {
 
 
             });
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_tor_ports);
+        TextInputEditText inputExternal = dialog.findViewById(R.id.ExternalTextInput);
+        TextInputEditText inputInternal = dialog.findViewById(R.id.InternalTextInput);
+        Button addingPortButton = dialog.findViewById(R.id.btn_adding_port);
+
+            addPortButton.setOnClickListener(v -> {
+                dialog.show();
+                Log.d("dasd", inputInternal.getText().toString());
+
+            });
+        addingPortButton.setOnClickListener(v ->{
+            if(inputExternal.getText().toString() != "" && inputInternal.getText().toString() != ""){
+                String s1 = inputInternal.getText().toString();
+                String s2 = inputExternal.getText().toString();
+                listener.sendMessage("treehouses tor add " + s2 + " " + s1);
+                dialog.dismiss();
+
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        });
+
 
         textStatus.setOnClickListener(v -> {
 
@@ -147,7 +174,7 @@ public class TorTabFragment extends BaseFragment {
 
                 }
                 else if(readMessage.contains("Error")){
-                    textStatus.setText("Check if tor is setup. Add a port to setup");
+                    textStatus.setText("Error");
                 }
                 else if(readMessage.contains("active")){
                     ColorMatrix matrix = new ColorMatrix();
@@ -165,6 +192,12 @@ public class TorTabFragment extends BaseFragment {
                     countryList.setAdapter(adapter);
                     listener.sendMessage("treehouses tor status");
 
+                }
+                else if (readMessage.contains("the port has been added")){
+                    listener.sendMessage("treehouses tor list");
+                    countriesName = new ArrayList<String>();
+                    addPortButton.setText("Add Port");
+                    Toast.makeText(requireContext(), "Port added. Retrieving ports list again",Toast.LENGTH_SHORT).show();
                 }
 
                 }
