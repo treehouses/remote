@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -13,8 +15,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
@@ -49,7 +53,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         checkStatusNow()
         openCallFragment(HomeFragment())
         setUpDrawer()
-        title = "Home";
+        title = "Home"
         GPSService(this)
     }
 
@@ -73,7 +77,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
             else if (f is SettingsFragment) {
-                (supportFragmentManager).popBackStack();
+                (supportFragmentManager).popBackStack()
                 title = "Home"
 
             }
@@ -100,10 +104,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 openCallFragment(HomeFragment())
             } else {
                 showAlertDialog()
-                flag = false;
+                flag = false
             }
         }
-        if (flag) title = item.title;
+        if (flag) title = item.title
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -159,6 +163,21 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
             } //TODO re-request
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        checkStatusNow()
+        for (x in 1 until bind.navView.menu.size() - 2) {
+            var item = bind.navView.menu.getItem(x)
+            item.isEnabled = validBluetoothConnection
+            if(validBluetoothConnection)
+                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.material_drawer_dark_primary_text))
+            else
+                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.material_drawer_unavailable))
+        }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

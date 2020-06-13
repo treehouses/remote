@@ -13,8 +13,10 @@ import android.os.*
 import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -117,6 +119,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             rate(preferences!!)
             showLogDialog(preferences!!)
         }
+        activity?.invalidateOptionsMenu()
     }
 
     private fun connectRpiListener() {
@@ -182,6 +185,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.logoHome.visibility = b1
         bind.testConnection.visibility = b2
         bind.layoutBack.visibility = b2
+        activity?.invalidateOptionsMenu()
     }
 
     private fun dismissTestConnection() {

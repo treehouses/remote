@@ -24,6 +24,7 @@
         app:headerLayout="@layout/navigation_view_header"
         app:menu="@menu/activity_initial2_drawer"
         android:background="@color/colorPrimary"
-        app:itemTextColor="@color/md_white_1000" />
+        app:itemTextColor="@color/navigation_menu"
+        app:itemIconTint="@color/navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
