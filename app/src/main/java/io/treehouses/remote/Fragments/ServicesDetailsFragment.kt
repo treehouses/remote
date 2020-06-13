@@ -156,8 +156,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
                 .setPositiveButton("Delete") { dialog: DialogInterface?, which: Int ->
                     performService("Uninstalling", """treehouses services ${selected.name} cleanup
 """, selected.name)
-                    wait = true
-                    setScreenState(false)
+                    performServiceWait()
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }.create().show()
     }
 
@@ -165,11 +164,15 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
             performService("Installing", """treehouses services ${selected.name} install
 """, selected.name)
-            wait = true
-            setScreenState(false)
+            performServiceWait()
         } else if (installedOrRunning(selected)) {
             showDeleteDialog(selected)
         }
+    }
+
+    private fun performServiceWait(){
+        wait = true
+        setScreenState(false)
     }
 
     private fun onStart(selected: ServiceInfo?) {
