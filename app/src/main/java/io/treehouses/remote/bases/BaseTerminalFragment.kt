@@ -18,7 +18,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.utils.Utils.copyToClipboard
 import io.treehouses.remote.utils.match
 import java.util.*
 
