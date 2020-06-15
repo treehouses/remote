@@ -44,13 +44,13 @@ class TextBoxValidation {
         if (type == "wifi") {
             SSID = e1
             PWD = e2
-            textboxValidation(context, type, e1)
-            textboxValidation(context, type, e2)
         } else if (type == "bridge") {
             ESSIDEditText = e1
             HotspotESSIDEditText = e2
-            textboxValidation(context, type, ESSIDEditText)
-            textboxValidation(context, type, HotspotESSIDEditText)
+        }
+        if(type == "wifi" || type == "bridge") {
+            textboxValidation(context, type, e1)
+            textboxValidation(context, type, e2)
         }
     }
 
@@ -135,46 +135,38 @@ class TextBoxValidation {
      */
     private fun validateWIFI(context: Context) {
         var flag = true
-        if (SSID!!.length() == 0) {
-            dialogButtonTrueOrFalse(start, addprofile, false)
-            SSID!!.error = context.getString(R.string.error_ssid_empty)
+        if(SSID!!.length() == 0 || PWD!!.length() > 0 && PWD!!.length() < 8){
             flag = false
-        }
-        if (PWD!!.length() > 0 && PWD!!.length() < 8) {
             dialogButtonTrueOrFalse(start, addprofile, false)
-            textInputLayout!!.error = context.getString(R.string.error_pwd_length)
-            flag = false
+            if (SSID!!.length() == 0) {
+                SSID!!.error = context.getString(R.string.error_ssid_empty)
+            }
+            if (PWD!!.length() > 0 && PWD!!.length() < 8) {
+                textInputLayout!!.error = context.getString(R.string.error_pwd_length)
+            }
         }
         if (flag) {
             dialogButtonTrueOrFalse(start, addprofile, true)
             textInputLayout!!.error = null
         }
     }
-    /**
-     * ETHERNET dialog validator
-     *
-     */
-    //    private void validateETHERNET(final Context context) {
-    //        if (IpAddressEditText.length() == 0 || MaskEditText.length() == 0 || GateWayEditText.length() == 0 || DNSEditText.length() == 0) {
-    //            dialogButtonTrueOrFalse(start,addprofile, false);
-    //        }else {
-    //            dialogButtonTrueOrFalse(start, addprofile,true);
-    //        }
-    //    }
+
     /**
      * ETHERNET dialog validator
      *
      */
     private fun validateBridge(context: Context) {
         var flag = true
-        if (ESSIDEditText!!.length() == 0) {
+        if(ESSIDEditText!!.length() == 0 || HotspotESSIDEditText!!.length() == 0){
             flag = false
-            ESSIDEditText!!.error = "This field cannot be empty"
+            if (ESSIDEditText!!.length() == 0) {
+                ESSIDEditText!!.error = "This field cannot be empty"
+            }
+            if (HotspotESSIDEditText!!.length() == 0) {
+                HotspotESSIDEditText!!.error = "This field cannot be empty"
+            }
         }
-        if (HotspotESSIDEditText!!.length() == 0) {
-            flag = false
-            HotspotESSIDEditText!!.error = "This field cannot be empty"
-        }
+
         dialogButtonTrueOrFalse(start, addprofile, flag)
     }
 
