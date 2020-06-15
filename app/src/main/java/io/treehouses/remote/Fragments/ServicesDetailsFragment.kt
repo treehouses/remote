@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,7 +66,9 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         } else if (s.contains("stopped and removed")) {
             selected!!.serviceStatus = ServiceInfo.SERVICE_AVAILABLE
             Log.d("STOP", "matchOutput: ")
-        } else if (s.contains("stopped") || s.contains("installed")) {
+        } else if (s.contains("stopped") && !s.contains("removed")) {
+            selected!!.serviceStatus = ServiceInfo.SERVICE_INSTALLED
+        } else if (s.contains("installed")) {
             selected!!.serviceStatus = ServiceInfo.SERVICE_INSTALLED
         } else {
             return
@@ -81,19 +84,20 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     private fun moreActions(output: String) {
         if (wait) {
             matchOutput(output.trim { it <= ' ' })
-        } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
+        } else if (isLocalUrl(output, received)) {
             received = true
             openLocalURL(output.trim { it <= ' ' })
             binding!!.progressBar.visibility = View.GONE
-        } else {
+        } else if (isTorURL(output, received)) {
+            received = true
+            openTorURL(output.trim { it <= ' ' })
+            binding!!.progressBar.visibility = View.GONE
+        } else if (output.contains("service autorun set")) {
             setScreenState(true)
-            var msg:String = ""
-            if (output.contains("service autorun set")) {
-                msg = "Switched autorun"
-            } else if (output.toLowerCase().contains("error")) {
-                msg = "An Error occurred"
-            }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
+        } else if (output.toLowerCase().contains("error")) {
+            setScreenState(true)
+            Toast.makeText(context, "An Error occurred", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -150,13 +154,14 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     }
 
     private fun showDeleteDialog(selected: ServiceInfo?) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { dialog: DialogInterface?, which: Int ->
                     performService("Uninstalling", """treehouses services ${selected.name} cleanup
 """, selected.name)
-                    performServiceWait()
+                    wait = true
+                    setScreenState(false)
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }.create().show()
     }
 
@@ -164,15 +169,11 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
             performService("Installing", """treehouses services ${selected.name} install
 """, selected.name)
-            performServiceWait()
+            wait = true
+            setScreenState(false)
         } else if (installedOrRunning(selected)) {
             showDeleteDialog(selected)
         }
-    }
-
-    private fun performServiceWait(){
-        wait = true
-        setScreenState(false)
     }
 
     private fun onStart(selected: ServiceInfo?) {
@@ -196,7 +197,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     private fun onLink(selected: ServiceInfo?) {
         //reqUrls();
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(context).setView(chooseBind.root).setTitle("Select URL type").create()
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
         setOnClick(chooseBind.localButton, """treehouses services ${selected!!.name} url local
 """, alertDialog)
         setOnClick(chooseBind.torButton, """treehouses services ${selected.name} url tor
@@ -233,4 +234,4 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         Toast.makeText(context, "Switching autorun status to $newAutoRun", Toast.LENGTH_SHORT).show()
     }
 
-} 
+}
