@@ -1,11 +1,13 @@
 package io.treehouses.remote.Fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
@@ -15,7 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,14 +25,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
 import io.treehouses.remote.Constants;
-import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.EthernetBottomSheet;
-import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.TorBottomSheet;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
 import io.treehouses.remote.bases.BaseFragment;
@@ -40,30 +41,55 @@ public class TorTabFragment extends BaseFragment {
     private BluetoothChatService mChatService;
     private Button startButton, moreButton, addPortButton;
     private TextView textStatus;
-    private ArrayList<String> countriesName;
+    private ArrayList<String> portsName;
     private ArrayAdapter<String> adapter;
     View view;
     private ImageView background, logo, internetstatus;
     private ClipboardManager myClipboard;
     private ClipData myClip;
     private ProgressDialog nDialog;
+    private ListView portList;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
         mChatService = listener.getChatService();
         mChatService.updateHandler(mHandler);
 
-        listener.sendMessage("treehouses tor list");
+        listener.sendMessage("treehouses tor ports");
 
-        countriesName = new ArrayList<String>();
+        portsName = new ArrayList<String>();
 
         adapter = new ArrayAdapter<String>
-                (requireContext(), android.R.layout.select_dialog_item,countriesName);
+                (requireContext(), android.R.layout.select_dialog_item,portsName);
 
 
         view = inflater.inflate(R.layout.activity_tor_fragment, container, false);
-        ListView countryList = view.findViewById(R.id.countries);
-        countryList.setAdapter(adapter);
+        portList = view.findViewById(R.id.countries);
+        portList.setAdapter(adapter);
+        portList.setOnItemClickListener((parent, view, position, id) -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Delete Port " + portsName.get(position) + " ?");
+
+//            builder.setMessage("Would you like to delete?");
+
+            // add the buttons
+
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    listener.sendMessage("treehouses tor delete " +portsName.get(position).split(":", 2)[0]);
+                    addPortButton.setText("deleting port .....");
+                    portList.setEnabled(false);
+                    addPortButton.setEnabled(false);
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+
+            // create and show the alert dialog
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
         logo = view.findViewById(R.id.treehouse_logo);
         startButton = view.findViewById(R.id.btn_tor_start);
         addPortButton = view.findViewById(R.id.btn_add_port);
@@ -95,13 +121,14 @@ public class TorTabFragment extends BaseFragment {
             });
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_tor_ports);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         TextInputEditText inputExternal = dialog.findViewById(R.id.ExternalTextInput);
         TextInputEditText inputInternal = dialog.findViewById(R.id.InternalTextInput);
         Button addingPortButton = dialog.findViewById(R.id.btn_adding_port);
 
             addPortButton.setOnClickListener(v -> {
                 dialog.show();
-                Log.d("dasd", inputInternal.getText().toString());
+
 
             });
         addingPortButton.setOnClickListener(v ->{
@@ -109,10 +136,12 @@ public class TorTabFragment extends BaseFragment {
                 String s1 = inputInternal.getText().toString();
                 String s2 = inputExternal.getText().toString();
                 listener.sendMessage("treehouses tor add " + s2 + " " + s1);
+                addPortButton.setText("Adding port, please wait for a while ............");
+                portList.setEnabled(false);
+                addPortButton.setEnabled(false);
                 dialog.dismiss();
 
-                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             }
         });
 
@@ -174,7 +203,12 @@ public class TorTabFragment extends BaseFragment {
 
                 }
                 else if(readMessage.contains("Error")){
-                    textStatus.setText("Error");
+                    Toast.makeText(requireContext(), "Error",Toast.LENGTH_SHORT).show();
+                    addPortButton.setText("add ports");
+                    addPortButton.setEnabled(true);
+                    portList.setEnabled(true);
+
+
                 }
                 else if(readMessage.contains("active")){
                     ColorMatrix matrix = new ColorMatrix();
@@ -184,20 +218,32 @@ public class TorTabFragment extends BaseFragment {
                     listener.sendMessage("treehouses tor");
                     startButton.setEnabled(true);
                 }
-                else if(readMessage.contains("<=>")){
-                    countriesName.add(readMessage);
+                else if(readMessage.contains(":") && !readMessage.contains("release") && !readMessage.contains("Success")){
+                    addPortButton.setText("Add Port");
+                    portList.setEnabled(true);
+                    addPortButton.setEnabled(true);
+                    String[] ports = readMessage.split(" ");
+                    for (int i = 0; i < ports.length; i++) {
+                        portsName.add(ports[i]);
+                    }
                     adapter = new ArrayAdapter<String>
-                            (requireContext(), android.R.layout.select_dialog_item,countriesName);
-                    ListView countryList = view.findViewById(R.id.countries);
-                    countryList.setAdapter(adapter);
+                            (requireContext(), android.R.layout.select_dialog_item,portsName);
+                    ListView portList = view.findViewById(R.id.countries);
+                    portList.setAdapter(adapter);
                     listener.sendMessage("treehouses tor status");
 
                 }
                 else if (readMessage.contains("the port has been added")){
-                    listener.sendMessage("treehouses tor list");
-                    countriesName = new ArrayList<String>();
-                    addPortButton.setText("Add Port");
+                    listener.sendMessage("treehouses tor ports");
+                    portsName = new ArrayList<String>();
+                    addPortButton.setText("Retrieving port.... Please wait");
                     Toast.makeText(requireContext(), "Port added. Retrieving ports list again",Toast.LENGTH_SHORT).show();
+                }
+                else if (readMessage.contains("has been deleted")){
+                    listener.sendMessage("treehouses tor ports");
+                    portsName = new ArrayList<String>();
+                    addPortButton.setText("Retrieving port..... Please wait");
+                    Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again",Toast.LENGTH_SHORT).show();
                 }
 
                 }
