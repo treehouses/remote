@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -39,7 +40,7 @@ public class AddCommandDialogFragment extends androidx.fragment.app.DialogFragme
     }
 
     private AlertDialog getAlertDialog(View mView) {
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.CustomAlertDialogStyle))
                 .setView(mView)
                 .setTitle(R.string.change_password)
                 .setIcon(android.R.drawable.ic_dialog_alert)

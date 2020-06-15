@@ -4,6 +4,7 @@ package io.treehouses.remote.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +112,7 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
     }
 
     private void showConfirmation(String name, int groupPosition, int childPosition) {
-        AlertDialog alertDialog = new AlertDialog.Builder(context)
+        AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle("Delete Profile?")
                 .setMessage("Are you sure you want to delete the following Network Profile: " + name)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -150,7 +151,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     }
 
     private fun showDeleteDialog(selected: ServiceInfo?) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { dialog: DialogInterface?, which: Int ->
@@ -196,7 +197,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     private fun onLink(selected: ServiceInfo?) {
         //reqUrls();
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(context).setView(chooseBind.root).setTitle("Select URL type").create()
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
         setOnClick(chooseBind.localButton, """treehouses services ${selected!!.name} url local
 """, alertDialog)
         setOnClick(chooseBind.torButton, """treehouses services ${selected.name} url tor
