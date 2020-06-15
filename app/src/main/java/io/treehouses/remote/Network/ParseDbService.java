@@ -43,7 +43,7 @@ public class ParseDbService {
         obj.put("name", map.get("name") + "");
         obj.put("email", map.get("email") + "");
         obj.put("phoneNumber", map.get("phoneNumber") + "");
-//        obj.put("feedbackType", s);
+        obj.put("feedbackType", map.get("type") + "");
         obj.put("message", map.get("message") + "");
         obj.saveEventually();
     }
