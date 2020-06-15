@@ -18,6 +18,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
+import io.treehouses.remote.utils.Utils.copyToClipboard
 import io.treehouses.remote.utils.match
 import java.util.*
 
@@ -74,7 +75,7 @@ open class BaseTerminalFragment : BaseFragment() {
     protected fun copyToList(mConversationView: ListView, context: Context?) {
         mConversationView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
             val clickedData = mConversationView.getItemAtPosition(position) as String
-            Utils.copyToClipboard(requireContext(), clickedData)
+            requireContext().copyToClipboard( clickedData)
         }
     }
 

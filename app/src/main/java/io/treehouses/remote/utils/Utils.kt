@@ -8,16 +8,16 @@ import java.net.NetworkInterface
 import java.util.*
 
 object Utils {
-    fun copyToClipboard(context: Context, clickedData: String) {
+    fun Context.copyToClipboard(clickedData: String) {
         var clickedData = clickedData
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
             clickedData = clickedData.substring(10)
         }
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipboard = this.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("label", clickedData)
         clipboard.setPrimaryClip(clip)
 
-        context.toast("Copied to clipboard: $clickedData", Toast.LENGTH_LONG)
+        this.toast("Copied to clipboard: $clickedData", Toast.LENGTH_LONG)
     }
 
     @JvmStatic
@@ -47,7 +47,7 @@ object Utils {
         return res1.toString()
     }
 
-    fun Context?.toast(s: String, duration: Int = Toast.LENGTH_LONG):Toast {
+    fun Context?.toast(s: String, duration: Int = Toast.LENGTH_LONG): Toast {
         return Toast.makeText(this, s, duration).apply { show() }
     }
 }
