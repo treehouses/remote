@@ -20,6 +20,9 @@ import java.util.Collections;
 
 import io.treehouses.remote.pojo.ServiceInfo;
 import io.treehouses.remote.pojo.ServicesData;
+import io.treehouses.remote.utils.CommandManagerKt;
+import io.treehouses.remote.utils.Matcher;
+import io.treehouses.remote.utils.RESULTS;
 
 public class BaseServicesFragment extends BaseFragment {
     private static final int[] MINIMUM_VERSION = {1, 14, 1};
@@ -80,22 +83,41 @@ public class BaseServicesFragment extends BaseFragment {
             return;
         }
         services.clear();
+
+        addServicesToList(services);
+        getServices(services);
+
+        formatList(services);
+    }
+
+    private void addServicesToList( ArrayList<ServiceInfo> services){
         for (String service : servicesData.getAvailable()) {
             if (inServiceList(service, services) == -1) {
                 services.add(new ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData.getIcon().get(service),
                         servicesData.getInfo().get(service), servicesData.getAutorun().get(service)));
             }
         }
+    }
+
+    private void getServices(ArrayList<ServiceInfo> services){
         for (String service : servicesData.getInstalled()) {
-            if (inServiceList(service, services) == -1) continue;
-            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
+            checkInServicesList(service, services, true);
         }
         for (String service : servicesData.getRunning()) {
-            if (inServiceList(service, services) == -1) continue;
-            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_RUNNING;
+            checkInServicesList(service, services, false);
         }
-        formatList(services);
+    }
 
+    private void checkInServicesList(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
+        if(inServiceList(service, services) != -1)
+            installedOrRunning(service, services, installedOrRunning);
+    }
+
+    private void installedOrRunning(String service, ArrayList<ServiceInfo> services, boolean installedOrRunning){
+        if(installedOrRunning)
+            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_INSTALLED;
+        else
+            services.get(inServiceList(service, services)).serviceStatus = ServiceInfo.SERVICE_RUNNING;
     }
 
     private void formatList(ArrayList<ServiceInfo> services) {
@@ -127,25 +149,27 @@ public class BaseServicesFragment extends BaseFragment {
         return true;
     }
 
-    private boolean isError(String output) { return output.toLowerCase().startsWith("usage:") || output.toLowerCase().contains("error") || output.toLowerCase().contains("unknown"); }
+    private int isError(String output) {
+        if(CommandManagerKt.match(output) == RESULTS.ERROR)
+            return 0;
+        else
+            return -1;
+    }
 
     protected int performAction(String output, ArrayList<ServiceInfo> services) {
-        int i = -1;
-        if (isError(output)) {
-            i = 0;
-        }
-        else if (gettingJSON) {
-            startJson += output.trim();
-            if (startJson.endsWith("}}")) {
-                startJson += output.trim();
-                try {
-                    JSONObject jsonObject = new JSONObject(startJson);
-                    servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
-                    constructServiceList(servicesData, services);
+        int i = isError(output);
+        startJson += output.trim();
 
-                } catch (JSONException e) { e.printStackTrace(); }
-                gettingJSON = false;
+        if (gettingJSON && startJson.endsWith("}}") ) {
+            startJson += output.trim();
+            try {
+                JSONObject jsonObject = new JSONObject(startJson);
+                servicesData = new Gson().fromJson(jsonObject.toString(), ServicesData.class);
+                constructServiceList(servicesData, services);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            gettingJSON = false;
             i = 1;
         }
         else if (output.trim().startsWith("{")) {
@@ -153,7 +177,6 @@ public class BaseServicesFragment extends BaseFragment {
             startJson = output.trim();
             gettingJSON = true;
         }
-
         return i;
     }
 
@@ -164,5 +187,4 @@ public class BaseServicesFragment extends BaseFragment {
     protected boolean isLocalUrl(String output, boolean received) {
         return output.contains(".") && output.contains(":") && output.length() < 25 && !received;
     }
-
 }

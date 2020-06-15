@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:hint="SSID"
+            android:textColor="@color/daynight_textColor"
             android:inputType="textPersonName" />
 
         <Button
@@ -42,6 +43,24 @@
         </Button>
 
     </LinearLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/enterprise_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_huge"
+        android:layout_marginRight="@dimen/margin_huge"
+        android:visibility="gone"
+        app:passwordToggleTint="@color/md_blue_600">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/wifiUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:fontFamily="sans-serif"
+            android:hint="Username"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -54,18 +73,32 @@
             android:id="@+id/wifipassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
+            app:fontFamily="sans-serif"
             android:hint="@string/password"
+            android:textColor="@color/daynight_textColor"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/checkBoxHiddenWifi"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_large"
-        android:text="Hidden"/>
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkBoxHiddenWifi"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="@dimen/padding_large"
+            android:text="Hidden"/>
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkBoxEnterprise"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_large"
+            android:text="Enterprise"/>
+    </LinearLayout>
     <Button
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
