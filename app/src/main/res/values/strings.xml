@@ -104,6 +104,13 @@
     <string name="copyright">&#169; %s Open Learning Exchange</string>
     <string name="rights_reserved">All Rights Reserved</string>
     <string name="give_feedback">Give Feedback</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="message">Message</string>
+    <string name="bug">Bug</string>
+    <string name="suggestion">Suggestion</string>
+    <string name="send_feedback">Send Feedback</string>
     <string name="contributors">Contributors</string>
     <string name="version_text">Version</string>
     <string name="bStatusOffline">Bluetooth Status: Offline</string>
