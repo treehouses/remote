@@ -34,6 +34,17 @@ public class ParseDbService {
         testObject.put("treehousesVersion", map.get("treehousesVersion") + "");
         testObject.put("bluetoothMacAddress", map.get("bluetoothMacAddress") + "");
         testObject.saveInBackground();
+
+
     }
 
+    public static void sendFeedback(Context context, HashMap<String, String> map){
+        ParseObject obj = new ParseObject("feedback");
+        obj.put("name", map.get("name") + "");
+        obj.put("email", map.get("email") + "");
+        obj.put("phoneNumber", map.get("phoneNumber") + "");
+//        obj.put("feedbackType", s);
+        obj.put("message", map.get("message") + "");
+        obj.saveEventually();
+    }
 }
