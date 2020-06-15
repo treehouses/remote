@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/material_drawer_dark_primary_text" android:state_enabled="true"/>
-    <item android:color="@color/material_drawer_unavailable" android:state_enabled="false"/>
-</selector>

@@ -165,16 +165,15 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         checkStatusNow()
-        for (x in 1 until bind.navView.menu.size() - 2) {
+        for (x in 1 until bind.navView.menu.size() - 1) {
             var item = bind.navView.menu.getItem(x)
             item.isEnabled = validBluetoothConnection
-            if(validBluetoothConnection)
-                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.material_drawer_dark_primary_text))
-            else
-                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.material_drawer_unavailable))
+//            if(validBluetoothConnection)
+//                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.md_dark_primary_text))
+//            else
+//                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.material_drawer_unavailable_text))
         }
 
         return super.onPrepareOptionsMenu(menu)

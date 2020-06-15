@@ -25,7 +25,8 @@
 
     <color name="material_drawer_selected_text">@color/colorPrimary</color>
     <color name="material_drawer_dark_selected_text">@color/colorPrimary</color>
-    <color name="material_drawer_unavailable">#463E41</color>
+    <color name="material_drawer_unavailable_bg">@color/black_overlay</color>
+    <color name="material_drawer_unavailable_text">@color/daynight_textColor</color>
     <color name="offwhite">#fafafa</color>
 
     <!-- changes logout button area background from white to whatever the background color for the drawer is.

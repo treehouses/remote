@@ -29,13 +29,13 @@
             android:icon="@drawable/ssh"
             android:title="@string/menu_tunnel" />
         <item
-            android:id="@+id/menu_about"
-            android:icon="@drawable/about"
-            android:title="@string/menu_about" />
-        <item
             android:id="@+id/menu_status"
             android:icon="@drawable/status"
             android:title="@string/menu_status" />
+        <item
+            android:id="@+id/menu_about"
+            android:icon="@drawable/about"
+            android:title="@string/menu_about" />
     </group>
 
     <!--<item android:title="Communicate">-->
