@@ -450,7 +450,6 @@ public class BluetoothChatService implements Serializable{
                 mCurrentState = Constants.STATE_NONE;
             }
             mmSocket = tmp;
-
         }
 
         public void run() {
@@ -489,7 +488,7 @@ public class BluetoothChatService implements Serializable{
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
             }
         }
@@ -574,7 +573,7 @@ public class BluetoothChatService implements Serializable{
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "close() of connect socket failed", e);
             }
         }
