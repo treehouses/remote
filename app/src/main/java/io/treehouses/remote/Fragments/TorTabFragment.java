@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -122,6 +123,8 @@ public class TorTabFragment extends BaseFragment {
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_tor_ports);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         TextInputEditText inputExternal = dialog.findViewById(R.id.ExternalTextInput);
         TextInputEditText inputInternal = dialog.findViewById(R.id.InternalTextInput);
         Button addingPortButton = dialog.findViewById(R.id.btn_adding_port);
