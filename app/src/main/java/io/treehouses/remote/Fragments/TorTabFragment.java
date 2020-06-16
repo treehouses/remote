@@ -21,8 +21,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +52,7 @@ public class TorTabFragment extends BaseFragment {
     private ClipData myClip;
     private ProgressDialog nDialog;
     private ListView portList;
+    private Switch notification;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
@@ -65,6 +68,20 @@ public class TorTabFragment extends BaseFragment {
 
 
         view = inflater.inflate(R.layout.activity_tor_fragment, container, false);
+        notification = (Switch) view.findViewById(R.id.switchNotification);
+        notification.setEnabled(false);
+        notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    notification.setEnabled(false);
+                    listener.sendMessage("treehouses tor notice on");
+                }
+                else{
+                    notification.setEnabled(false);
+                    listener.sendMessage("treehouses tor notice off");
+                }
+            }
+        });
         portList = view.findViewById(R.id.countries);
         portList.setAdapter(adapter);
         portList.setOnItemClickListener((parent, view, position, id) -> {
@@ -196,6 +213,7 @@ public class TorTabFragment extends BaseFragment {
                     startButton.setText("Start Tor");
                     textStatus.setText("-");
                     startButton.setEnabled(true);
+                    listener.sendMessage("treehouses tor notice");
                 }
                 else if(readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")){
 
@@ -203,6 +221,7 @@ public class TorTabFragment extends BaseFragment {
                 }
                 else if(readMessage.contains(".onion")){
                     textStatus.setText(readMessage);
+                    listener.sendMessage("treehouses tor notice");
 
                 }
                 else if(readMessage.contains("Error")){
@@ -220,8 +239,20 @@ public class TorTabFragment extends BaseFragment {
                     startButton.setText("Stop Tor");
                     listener.sendMessage("treehouses tor");
                     startButton.setEnabled(true);
+
                 }
-                else if(readMessage.contains(":") && !readMessage.contains("release") && !readMessage.contains("Success")){
+                else if (readMessage.contains("OK.")){
+                    listener.sendMessage("treehouses tor notice");
+                }
+                else if (readMessage.contains("Status: on")){
+                    notification.setChecked(true);
+                    notification.setEnabled(true);
+                }
+                else if (readMessage.contains("Status: off")){
+                    notification.setChecked(false);
+                    notification.setEnabled(true);
+                }
+                else if(readMessage.contains(":") && !readMessage.contains("release") && !readMessage.contains("Success") && !readMessage.contains("version:")){
                     addPortButton.setText("Add Port");
                     portList.setEnabled(true);
                     addPortButton.setEnabled(true);
@@ -248,6 +279,7 @@ public class TorTabFragment extends BaseFragment {
                     addPortButton.setText("Retrieving port..... Please wait");
                     Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again",Toast.LENGTH_SHORT).show();
                 }
+
 
                 }
 
