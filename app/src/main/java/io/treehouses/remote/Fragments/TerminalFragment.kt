@@ -66,7 +66,7 @@ class TerminalFragment : BaseTerminalFragment() {
         listener.sendMessage(getString(R.string.TREEHOUSES_COMMANDS_JSON))
         instance = this
         expandableListDetail = HashMap()
-        expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(context)
+        expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
         setHasOptionsMenu(true)
         setupList()
         return bind.root
@@ -184,7 +184,7 @@ class TerminalFragment : BaseTerminalFragment() {
             Constants.REQUEST_DIALOG_FRAGMENT_CHPASS -> onResultCaseDialogChpass(resultCode, data)
             Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND -> if (resultCode == Activity.RESULT_OK) {
                 expandableListDetail.clear()
-                expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(context)
+                expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
                 expandableListTitle = ArrayList(expandableListDetail.keys)
                 expandableListAdapter = CommandListAdapter(requireContext(), expandableListTitle, expandableListDetail)
                 bind.terminalList.setAdapter(expandableListAdapter)
