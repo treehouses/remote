@@ -26,7 +26,7 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
         setAddProfileListener()
         hiddenOrEnterprise()
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@WifiBottomSheet, context) }
-        val validation = TextBoxValidation(context, bind.editTextSSID, bind.wifipassword, "wifi")
+        val validation = TextBoxValidation(requireContext(), bind.editTextSSID, bind.wifipassword, "wifi")
         validation.setStart(bind.btnStartConfig)
         validation.setAddprofile(bind.setWifiProfile)
         validation.setTextInputLayout(bind.textInputLayout)

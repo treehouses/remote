@@ -33,7 +33,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         startConfigListener()
         setAddProfileListener()
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
-        val validation = TextBoxValidation(getContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
+        val validation = TextBoxValidation(requireContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
         validation.setStart(bind.btnStartConfig)
         validation.setAddprofile(bind.addBridgeProfile)
         return bind.root
