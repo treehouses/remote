@@ -74,7 +74,7 @@ class TerminalFragment : BaseTerminalFragment() {
 
     fun setupList() {
         expandableListTitle = ArrayList(expandableListDetail.keys)
-        expandableListAdapter = CommandListAdapter(context, expandableListTitle, expandableListDetail)
+        expandableListAdapter = CommandListAdapter(requireContext(), expandableListTitle, expandableListDetail)
         bind.terminalList.setAdapter(expandableListAdapter)
         bind.terminalList.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (childPosition < expandableListDetail["Commands"]!!.size) {
@@ -186,7 +186,7 @@ class TerminalFragment : BaseTerminalFragment() {
                 expandableListDetail.clear()
                 expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(context)
                 expandableListTitle = ArrayList(expandableListDetail.keys)
-                expandableListAdapter = CommandListAdapter(context, expandableListTitle, expandableListDetail)
+                expandableListAdapter = CommandListAdapter(requireContext(), expandableListTitle, expandableListDetail)
                 bind.terminalList.setAdapter(expandableListAdapter)
                 bind.terminalList.expandGroup(0, true)
             }
