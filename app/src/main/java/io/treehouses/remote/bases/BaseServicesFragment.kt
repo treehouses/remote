@@ -107,9 +107,13 @@ open class BaseServicesFragment : BaseFragment() {
     }
 
     private fun formatList(services: ArrayList<ServiceInfo>) {
-        if (inServiceList("Installed", services) == -1) services.add(0, ServiceInfo("Installed", ServiceInfo.SERVICE_HEADER_INSTALLED))
-        if (inServiceList("Available", services) == -1) services.add(0, ServiceInfo("Available", ServiceInfo.SERVICE_HEADER_AVAILABLE))
+        if (inServiceList("Installed", services) == -1) addToServices(services, "Installed", ServiceInfo.SERVICE_HEADER_INSTALLED)
+        if (inServiceList("Available", services) == -1) addToServices(services, "Available", ServiceInfo.SERVICE_HEADER_AVAILABLE)
         Collections.sort(services)
+    }
+
+    private fun addToServices(services: ArrayList<ServiceInfo>, str:String, flag:Int){
+        services.add(0, ServiceInfo(str, flag))
     }
 
     protected fun inServiceList(name: String, services: ArrayList<ServiceInfo>): Int {
