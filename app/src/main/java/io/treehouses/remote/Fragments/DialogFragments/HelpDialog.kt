@@ -20,6 +20,7 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
     private lateinit var bind: DialogHelpBinding
     private var jsonString = ""
     private val items = mutableListOf<HelpCommand>()
+    private val excludedHelpItems = listOf<String>("anime")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogHelpBinding.inflate(inflater, container, false)
@@ -90,8 +91,10 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
     private fun createJson(jsonStr: String) {
         val obj = JSONObject(jsonStr)
         obj.keys().forEach {
-            (bind.results.adapter as HelpAdapter).add(HelpCommand(it, obj.get(it) as String))
-            items.add(HelpCommand(it, obj.get(it) as String))
+            if(excludedHelpItems.indexOf(it) == -1) {
+                (bind.results.adapter as HelpAdapter).add(HelpCommand(it, obj.get(it) as String))
+                items.add(HelpCommand(it, obj.get(it) as String))
+            }
         }
         bind.progressBar.visibility = View.GONE
     }
