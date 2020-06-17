@@ -104,11 +104,6 @@ object SaveUtils {
         addToArrayList(context, COMMANDS_VALUES_KEY, commandListItem.command)
     }
 
-    fun removeFromCommandsList(context: Context, commandListItem: CommandListItem) {
-        removeFromArrayList(context, COMMANDS_TITLES_KEY, commandListItem.title)
-        removeFromArrayList(context, COMMANDS_VALUES_KEY, commandListItem.command)
-    }
-
     fun clearCommandsList(context: Context) {
         clearArrayList(context, COMMANDS_TITLES_KEY)
         clearArrayList(context, COMMANDS_VALUES_KEY)
