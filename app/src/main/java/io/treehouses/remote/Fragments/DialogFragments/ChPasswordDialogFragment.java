@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 
 import io.treehouses.remote.Fragments.TextBoxValidation;
@@ -46,7 +47,7 @@ public class ChPasswordDialogFragment extends androidx.fragment.app.DialogFragme
     }
     //creates the dialog for the change password dialog
     protected AlertDialog getAlertDialog(View mView) {
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.CustomAlertDialogStyle))
                 .setView(mView)
                 .setTitle(R.string.change_password)
                 .setIcon(android.R.drawable.ic_dialog_alert)

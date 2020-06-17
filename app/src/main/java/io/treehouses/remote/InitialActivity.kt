@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -203,7 +204,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     private fun showAlertDialog() {
-        AlertDialog.Builder(this@InitialActivity)
+        AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
                 .setIcon(R.drawable.bluetooth)
