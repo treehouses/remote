@@ -60,8 +60,13 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         checkConnectionState()
         connectRpiListener()
         bind.btnGetStarted.setOnClickListener {
-            instance!!.openCallFragment(AboutFragment())
-            activity?.let { it.title = "About" }
+            instance!!.checkStatusNow()
+            if (instance!!.hasValidConnection()) {
+                instance!!.openCallFragment(TerminalFragment())
+                activity?.let { it.title = "Terminal" }
+            } else {
+                instance!!.showAlertDialog()
+            }
         }
         testConnectionListener()
         return bind.root
