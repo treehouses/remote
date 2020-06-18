@@ -25,10 +25,8 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
 
     private fun startConfigListener() {
         bind.btnStartConfig.setOnClickListener {
-            if (bind.checkBoxHiddenHotspot.isChecked) listener.sendMessage(getString(R.string.TREEHOUSES_AP_HIDDEN, bind.spnHotspotType.selectedItem.toString(),
-                    bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
-            else listener.sendMessage(getString(R.string.TREEHOUSES_AP, bind.spnHotspotType.selectedItem.toString(),
-                    bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
+            if (bind.checkBoxHiddenHotspot.isChecked) sendMessage(R.string.TREEHOUSES_AP_HIDDEN)
+            else sendMessage(R.string.TREEHOUSES_AP)
 
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
             val intent = Intent()
@@ -36,6 +34,11 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }
+    }
+
+    private fun sendMessage(command : Int) {
+        listener.sendMessage(getString(command, bind.spnHotspotType.selectedItem.toString(),
+                bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
     }
 
     private fun setAddProfileListener() {
