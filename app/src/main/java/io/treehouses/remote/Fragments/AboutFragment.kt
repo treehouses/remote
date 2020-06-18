@@ -30,6 +30,7 @@ class AboutFragment : Fragment() {
         val version = view.findViewById<Button>(R.id.btn_version)
         val contributors = view.findViewById<Button>(R.id.btn_contributors)
         val tvCopyright = view.findViewById<TextView>(R.id.tv_copyright)
+
         hyperLinks(gitHub, "https://github.com/treehouses/remote")
         hyperLinks(images, "https://treehouses.io/#!pages/download.md")
         hyperLinks(gitter, "https://gitter.im/open-learning-exchange/raspberrypi")
@@ -59,11 +60,4 @@ class AboutFragment : Fragment() {
             startActivity(i)
         }
     }
-
-    private fun showDialog(dialogFrag: DialogFragment, requestCode: Int, tag: String) {
-        // Create an instance of the dialog fragment and show it
-        dialogFrag.setTargetFragment(this, requestCode)
-        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), tag)
-    }
-
-} 
+}
