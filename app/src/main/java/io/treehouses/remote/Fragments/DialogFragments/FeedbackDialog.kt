@@ -41,7 +41,7 @@ class FeedbackDialog : DialogFragment() {
         })
 
         bind.btnSendFeedback.setOnClickListener {
-            if (notBlank() && bind.editEmail.error != null && bind.editPhoneNumber.error != null) {
+            if (notBlank() && bind.editEmail.error == null && bind.editPhoneNumber.error == null) {
                 val map = HashMap<String, String?>()
                 map["name"] = bind.editName.text.toString()
                 map["email"] = bind.editEmail.text.toString()
