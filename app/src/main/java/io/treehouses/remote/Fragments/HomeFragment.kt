@@ -258,23 +258,25 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         when {
             result == RESULTS.UPGRADE_CHECK -> notificationListener?.setNotification(output.contains("true"))
             result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
-                dismissPDialog()
-                Toast.makeText(context, "Switched to $network_ssid", Toast.LENGTH_LONG).show()
+                updateStatus("Switched to $network_ssid")
             }
             result == RESULTS.BRIDGE_CONNECTED -> {
-                dismissPDialog()
-                Toast.makeText(context, "Bridge Has Been Built", Toast.LENGTH_LONG).show()
+                updateStatus("Bridge Has Been Built")
             }
             result == RESULTS.DEFAULT_NETWORK -> switchProfile(networkProfile)
             result == RESULTS.ERROR -> {
-                dismissPDialog()
-                Toast.makeText(context, "Network Not Found", Toast.LENGTH_LONG).show()
+                updateStatus("Network Not Found")
             }
             testConnectionResult -> {
                 testConnectionResult = true
                 dismissTestConnection()
             }
         }
+    }
+
+    private fun updateStatus(message : String) {
+        dismissPDialog()
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     /**
