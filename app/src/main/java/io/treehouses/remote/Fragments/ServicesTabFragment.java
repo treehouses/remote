@@ -77,9 +77,10 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
                 writeToRPI("treehouses memory used");
             } else {
                 used = i;
-                String memoryPercentage = ((int)(((float) used / total) * 100)) + "%";
-                bind.memoryPercentage.setText(memoryPercentage);
-                ObjectAnimator.ofInt(bind.spaceLeft, "progress", (int) (((float) used / total) * 100))
+                int memoryPercentage = (int)(((float) used / total) * 100);
+                String strMemoryPercentage = memoryPercentage + "";
+                bind.memoryPercentage.setText(strMemoryPercentage);
+                ObjectAnimator.ofInt(bind.spaceLeft, "progress", memoryPercentage)
                         .setDuration(600)
                         .start();
             }
