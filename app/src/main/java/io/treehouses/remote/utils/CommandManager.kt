@@ -60,10 +60,14 @@ object Matcher {
         return false
     }
 
-    fun isBoolean(output: String): Boolean { return toLC(output) == "true" || toLC(output) == "false" }
+    fun isValidOutput(output : String, str1: String, str2: String) : Boolean {
+        return toLC(output) == str1 || toLC(output) == str2
+    }
+
+    fun isBoolean(output: String): Boolean { return isValidOutput(output, "true", "false")}
 
     fun isVersion(output: String): Boolean {
-        return toLC(output) == "version: false" || toLC(output) == "version: true"
+        return isValidOutput(output,"version: false", "version: true")
     }
 
     fun isRemoteCheck(output: String): Boolean {
