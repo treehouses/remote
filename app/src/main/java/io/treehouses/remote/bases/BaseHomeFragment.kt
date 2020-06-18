@@ -33,22 +33,23 @@ open class BaseHomeFragment : BaseFragment() {
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
         when (option) {
             1 -> {
-                green.setBackgroundResource(R.drawable.thanksgiving_anim_green)
-                red.setBackgroundResource(R.drawable.thanksgiving_anim_red)
+                setBackground(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
             }
             2 -> {
-                green.setBackgroundResource(R.drawable.newyear_anim_green)
-                red.setBackgroundResource(R.drawable.newyear_anim_red)
+                setBackground(green, red, R.drawable.newyear_anim_green, R.drawable.newyear_anim_red)
             }
             3 -> {
-                green.setBackgroundResource(R.drawable.heavymetal_anim_green)
-                red.setBackgroundResource(R.drawable.heavymetal_anim_red)
+                setBackground(green, red, R.drawable.heavymetal_anim_green, R.drawable.heavymetal_anim_red)
             }
             else -> {
-                green.setBackgroundResource(R.drawable.dance_anim_green)
-                red.setBackgroundResource(R.drawable.dance_anim_red)
+                setBackground(green, red, R.drawable.dance_anim_green, R.drawable.dance_anim_red)
             }
         }
+    }
+
+    private fun setBackground(green: ImageView, red: ImageView, greenDrawable: Int, redDrawable: Int) {
+        green.setBackgroundResource(greenDrawable)
+        red.setBackgroundResource(redDrawable)
     }
 
     protected fun showLogDialog(preferences: SharedPreferences) {
