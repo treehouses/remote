@@ -14,7 +14,7 @@ object SaveUtils {
     private const val COMMANDS_TITLES_KEY = "commands_titles"
     private const val COMMANDS_VALUES_KEY = "commands_values"
     private const val NETWORK_PROFILES_KEY = "network_profile_keys"
-    const val ACTION_KEYWORD = "ACTION"
+
     private fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
         var strArr = StringBuilder()
         for (i in array.indices) {
@@ -87,16 +87,6 @@ object SaveUtils {
         return finalArray
     }
 
-    fun saveCommandsList(context: Context, newCommandList: List<CommandListItem>) {
-        val titles = ArrayList<String>()
-        val commands = ArrayList<String>()
-        for (commandListItem in newCommandList) {
-            titles.add(commandListItem.title)
-            commands.add(commandListItem.command)
-        }
-        saveStringArray(context, titles, COMMANDS_TITLES_KEY)
-        saveStringArray(context, commands, COMMANDS_VALUES_KEY)
-    }
 
     @JvmStatic
     fun addToCommandsList(context: Context, commandListItem: CommandListItem) {
