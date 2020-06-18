@@ -40,6 +40,10 @@ class FeedbackDialog : DialogFragment() {
             }
         })
 
+        feedbackFormButtonListeners()
+    }
+
+    private fun feedbackFormButtonListeners(){
         bind.btnSendFeedback.setOnClickListener {
             if (notBlank() && bind.editEmail.error == null && bind.editPhoneNumber.error == null) {
                 val map = HashMap<String, String?>()
@@ -54,6 +58,7 @@ class FeedbackDialog : DialogFragment() {
                 Toast.makeText(context, "Name, email, type, and message are required fields", Toast.LENGTH_LONG).show()
             }
         }
+
         bind.btnCancel.setOnClickListener {
             dismiss()
         }
