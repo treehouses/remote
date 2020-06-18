@@ -11,11 +11,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
-import android.text.TextUtils
-import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -32,6 +28,7 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.NetworkProfile
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
@@ -183,6 +180,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.logoHome.visibility = b1
         bind.testConnection.visibility = b2
         bind.layoutBack.visibility = b2
+        if (connected) Tutorials.homeTutorials(bind, requireActivity())
     }
 
     private fun dismissTestConnection() {
