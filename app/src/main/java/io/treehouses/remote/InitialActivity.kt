@@ -66,7 +66,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
-        bind.navView.itemIconTintList = null
     }
 
 
@@ -170,12 +169,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         for (x in 1 until bind.navView.menu.size() - 1) {
             var item = bind.navView.menu.getItem(x)
             item.isEnabled = validBluetoothConnection
-//            if(validBluetoothConnection)
-//                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.md_dark_primary_text))
-//            else
-//                item.setIconTintList(ContextCompat.getColorStateList(baseContext, R.color.material_drawer_unavailable_text))
         }
-
         return super.onPrepareOptionsMenu(menu)
     }
 

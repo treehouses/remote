@@ -25,7 +25,7 @@
         app:menu="@menu/activity_initial2_drawer"
         android:background="@color/colorPrimary"
         app:itemBackground="@drawable/navigation_menu_bg"
-        app:itemIconTint="@color/black_overlay"
+        app:itemIconTint="@color/navigation_menu_text"
         app:itemTextColor="@color/navigation_menu_text" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
