@@ -20,7 +20,7 @@ open class BaseFragment : Fragment() {
     }
 
     protected fun onLoad(mHandler: Handler?) {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
