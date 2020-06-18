@@ -198,7 +198,6 @@ public class TorTabFragment extends BaseFragment {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-
             if (msg.what == Constants.MESSAGE_READ) {
                 String readMessage = (String) msg.obj;
                 Log.d("Tor reply", "" + readMessage);
@@ -251,8 +250,8 @@ public class TorTabFragment extends BaseFragment {
                 else if (readMessage.contains("Status: off")){
                     notification.setChecked(false);
                     notification.setEnabled(true);
-                }
-                else if(readMessage.contains(":") && !readMessage.contains("release") && !readMessage.contains("Success") && !readMessage.contains("version:")){
+                } //regex to match ports text
+                else if(readMessage.matches("(([0-9]+:[0-9]+)\\s?)+")){
                     addPortButton.setText("Add Port");
                     portList.setEnabled(true);
                     addPortButton.setEnabled(true);
