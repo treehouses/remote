@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     private lateinit var binding: NewNetworkBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = NewNetworkBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
         //Listeners
@@ -96,7 +97,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun showDialog(title: String, message: String) {
-        val alertDialog = AlertDialog.Builder(context).setTitle(title).setMessage(message)
+        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
                 .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         alertDialog.show()
     }
@@ -118,9 +119,8 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun reboot() {
-        val a = AlertDialog.Builder(context)
-                .setTitle("Reboot")
-                .setMessage("Are you sure you want to reboot your device?")
+        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
+                "Are you sure you want to reboot your device?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
                     rebootHelper()
                     dialog.dismiss()
@@ -129,14 +129,19 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun resetNetwork() {
-        val a = AlertDialog.Builder(context)
-                .setTitle("Reset Network")
-                .setMessage("Are you sure you want to reset the network to default?")
+        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
+                "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                     Toast.makeText(context, "Switching to default network...", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         a.show()
+    }
+
+    private fun CreateAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id))
+                .setTitle(title)
+                .setMessage(message)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

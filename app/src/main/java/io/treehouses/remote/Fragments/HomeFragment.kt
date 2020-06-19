@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
 import android.text.TextUtils
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +53,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupProfiles()
@@ -86,7 +87,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun switchProfile(profile: NetworkProfile?) {
         if (profile == null) return
-        progressDialog = ProgressDialog.show(context, "Connecting...", "Switching to " + profile.ssid, true)
+        progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + profile.ssid, true)
         progressDialog?.show()
         when {
             profile.isWifi -> {
@@ -154,7 +155,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     override fun checkConnectionState() {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
             transition(true, arrayOf(150f, 110f, 70f))
@@ -210,7 +211,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         } else if (BuildConfig.VERSION_CODE == 2 || output.contains("true")) {
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_CHECK))
         } else if (output.contains("false")) {
-            val alertDialog = AlertDialog.Builder(context)
+            val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                     .setTitle("Update Required")
                     .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
                     .setPositiveButton("Update") { _: DialogInterface?, _: Int ->
