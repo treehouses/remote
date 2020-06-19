@@ -59,6 +59,7 @@ object SaveUtils {
     }
 
     //TERMINAL COMMAND LIST UTILS
+    @JvmStatic
     fun initCommandsList(context: Context) {
         if (getStringArray(context, COMMANDS_TITLES_KEY).isEmpty() || getStringArray(context, COMMANDS_VALUES_KEY).isEmpty()) {
             val titles = arrayOf("CHANGE PASSWORD", "HELP", "DOCKER PS", "DETECT RPI", "EXPAND FS",
