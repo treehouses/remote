@@ -98,6 +98,7 @@
     <string name="menu_terminal">Terminal</string>
     <string name="menu_services">Services</string>
     <string name="menu_ssh">SSH</string>
+    <string name="menu_ssh_tunnel">Tunnel</string>
     <string name="menu_about">About</string>
     <string name="menu_status">Status</string>
     <string name="initial_textview">Treehouses Remote is an Android App that communicates with headless Rasberry Pi Mobile Server running Treehouses image via Bluetooth. \n \n To start using Treehouses Remote, you will need to install the Treehouses Image on your Raspberry Pi; the download link is found below. </string>
