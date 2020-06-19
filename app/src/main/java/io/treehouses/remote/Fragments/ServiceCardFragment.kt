@@ -17,6 +17,7 @@ import com.caverock.androidsvg.SVGParseException
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import java.lang.Exception
 
 class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), View.OnClickListener {
     private var actionListener: ServiceAction? = null
@@ -87,7 +88,7 @@ class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), Vi
             val svg = SVG.getFromString(s)
             val pd = PictureDrawable(svg.renderToPicture())
             binding!!.serviceLogo.setImageDrawable(pd)
-        } catch (e: SVGParseException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
