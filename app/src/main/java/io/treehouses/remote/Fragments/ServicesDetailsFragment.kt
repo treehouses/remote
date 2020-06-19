@@ -34,7 +34,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     private var scrolled = false
     private var binding: ActivityServicesDetailsBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
         spinnerAdapter = ServicesListAdapter(context, services, resources.getColor(R.color.md_grey_600))
         binding?.pickService?.adapter = spinnerAdapter
