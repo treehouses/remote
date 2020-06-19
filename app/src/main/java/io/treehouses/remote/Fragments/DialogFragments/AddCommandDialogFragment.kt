@@ -33,7 +33,7 @@ class AddCommandDialogFragment : DialogFragment() {
                 .setPositiveButton("Add Command"
                 ) { dialog: DialogInterface?, which: Int ->
                     if (bind!!.commandName.text.toString().length > 0 && bind!!.commandValue.text.toString().length > 0) {
-                        SaveUtils.addToCommandsList(context,
+                        SaveUtils.addToCommandsList(requireContext(),
                                 CommandListItem(bind!!.commandName.text.toString(), bind!!.commandValue.text.toString()))
                         done()
                         dismiss()
