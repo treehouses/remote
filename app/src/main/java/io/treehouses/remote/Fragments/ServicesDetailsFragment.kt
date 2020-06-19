@@ -37,13 +37,13 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         mChatService = listener.chatService
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
         spinnerAdapter = ServicesListAdapter(context, services, resources.getColor(R.color.md_grey_600))
-        binding!!.pickService.adapter = spinnerAdapter
-        binding!!.pickService.setSelection(1)
-        binding!!.pickService.onItemSelectedListener = this
+        binding?.pickService?.adapter = spinnerAdapter
+        binding?.pickService?.setSelection(1)
+        binding?.pickService?.onItemSelectedListener = this
         serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
-        binding!!.servicesCards.adapter = serviceCardAdapter
-        binding!!.servicesCards.addOnPageChangeListener(this)
-        return binding!!.root
+        binding?.servicesCards?.adapter = serviceCardAdapter
+        binding?.servicesCards?.addOnPageChangeListener(this)
+        return binding?.root
     }
 
     @JvmField
@@ -98,7 +98,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         }
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
             val statusCode = services[position].serviceStatus
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
