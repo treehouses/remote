@@ -34,7 +34,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     private lateinit var binding: NewNetworkBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = NewNetworkBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
         //Listeners

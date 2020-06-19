@@ -107,6 +107,7 @@ open class BaseHomeFragment : BaseFragment() {
             map["treehousesVersion"] = tresshousesVersion
             map["bluetoothMacAddress"] = bluetoothMac
             map["rpiVersion"] = rpiVersion
+            val preferences:SharedPreferences = preferences!!
             ParseDbService.sendLog(activity, deviceName, map, preferences)
             MainApplication.logSent = true
         }
