@@ -118,7 +118,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             openCallFragment(SystemFragment())
         } else if (id == R.id.menu_tunnel2) {
             openCallFragment(SSHTunnelFragment())
-        } else {
+        } else if (id == R.id.menu_terminal) {
+            openCallFragment(TerminalFragment())
+        }
+        else {
             checkMore(id)
         }
     }
