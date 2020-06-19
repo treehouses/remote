@@ -40,7 +40,7 @@ class ViewHolderCamera internal constructor(v: View, private val c: Context, lis
     }
 
     init {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         cameraSwitch = v.findViewById(R.id.CameraSwitch)
         listener.sendMessage("treehouses camera")
