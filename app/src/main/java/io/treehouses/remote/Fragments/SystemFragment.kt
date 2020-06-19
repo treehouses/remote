@@ -33,7 +33,7 @@ class SystemFragment : BaseFragment() {
     @RequiresApi(api = Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySystemFragmentBinding.inflate(inflater, container, false)
-        val mChatService = listener.chatService
+        val mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         val adapter = NetworkListAdapter(context, NetworkListItem.getSystemList(), mChatService)
         adapter.setListener(listener)

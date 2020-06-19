@@ -53,7 +53,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupProfiles()
@@ -155,7 +155,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     override fun checkConnectionState() {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
             transition(true, arrayOf(150f, 110f, 70f))
