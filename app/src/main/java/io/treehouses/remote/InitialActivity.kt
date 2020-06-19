@@ -118,7 +118,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             openCallFragment(SystemFragment())
         } else if (id == R.id.menu_terminal) {
             openCallFragment(TerminalFragment())
-        } else {
+        }
+        else {
             checkMore(id)
         }
     }
@@ -126,12 +127,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private fun checkMore(id: Int) {
         if (id == R.id.menu_services) {
             openCallFragment(ServicesFragment())
-        } else if (id == R.id.menu_tunnel) {
-            openCallFragment(TunnelFragment())
         } else if (id == R.id.menu_about) {
             openCallFragment(AboutFragment())
         } else if (id == R.id.menu_status) {
             openCallFragment(StatusFragment())
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(SSHTunnelFragment())
         } else {
             openCallFragment(HomeFragment())
         }
