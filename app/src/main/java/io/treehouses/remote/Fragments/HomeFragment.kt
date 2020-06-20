@@ -159,7 +159,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             connectionState = true
             checkVersionSent = true
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-
+            Tutorials.homeTutorials(bind, requireActivity())
         } else {
             transition(false, arrayOf(0f, 0f, 0f))
             connectionState = false
@@ -180,7 +180,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.logoHome.visibility = b1
         bind.testConnection.visibility = b2
         bind.layoutBack.visibility = b2
-        if (connected) Tutorials.homeTutorials(bind, requireActivity())
+
     }
 
     private fun dismissTestConnection() {

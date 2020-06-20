@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,11 +13,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.R;
+import io.treehouses.remote.Tutorials;
 import io.treehouses.remote.adapter.ServicesListAdapter;
 import io.treehouses.remote.bases.BaseServicesFragment;
 import io.treehouses.remote.callback.ServicesListener;
@@ -25,7 +28,6 @@ import io.treehouses.remote.pojo.ServiceInfo;
 
 public class ServicesTabFragment extends BaseServicesFragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "ServicesTabFragment";
-    private View view;
     public ArrayList<ServiceInfo> services;
     private ServicesListAdapter adapter;
     private ServicesListener servicesListener;
@@ -39,7 +41,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mChatService = listener.getChatService();
 
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false);
@@ -47,11 +49,18 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         adapter = new ServicesListAdapter(getActivity(), services, getResources().getColor(R.color.bg_white));
         bind.listView.setAdapter(adapter);
 
-        bind.listView.setOnItemClickListener(this);
-
         return bind.getRoot();
     }
-        public final Handler handlerOverview = new Handler() {
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        bind.listView.setOnItemClickListener(this);
+        Tutorials.INSTANCE.servicesOverviewTutorials(bind, requireActivity());
+    }
+
+    @SuppressLint("HandlerLeak")
+    public final Handler handlerOverview = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
@@ -91,8 +100,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         super.onAttach(context);
         try {
             servicesListener = (ServicesListener) getParentFragment();
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
 
