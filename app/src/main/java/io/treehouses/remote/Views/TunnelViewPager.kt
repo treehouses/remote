@@ -15,7 +15,7 @@ class TunnelViewPager : ViewPager {
         setPageTransformer(true, ZoomOutPageTransformer())
     }
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {
+    constructor(mContext: Context?, attrs: AttributeSet?) : super(mContext!!, attrs) {
         setPageTransformer(true, ZoomOutPageTransformer())
     }
 
