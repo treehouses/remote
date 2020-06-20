@@ -70,6 +70,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
     };
 
     private void moreAction(String output) {
+        int memoryPercentage = 0;
         try {
             int i = Integer.parseInt(output.trim());
             if (i >= total) {
@@ -77,8 +78,8 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
                 writeToRPI("treehouses memory used");
             } else {
                 used = i;
-                int memoryPercentage = (int)(((float) used / total) * 100);
-                String strMemoryPercentage = memoryPercentage + "";
+                memoryPercentage = (int)(((float) used / total) * 100);
+                String strMemoryPercentage = memoryPercentage + "%";
                 bind.memoryPercentage.setText(strMemoryPercentage);
                 ObjectAnimator.ofInt(bind.spaceLeft, "progress", memoryPercentage)
                         .setDuration(600)
@@ -86,7 +87,7 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
             }
         } catch (NumberFormatException ignored) {
         }
-        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (int) (((float) used / total) * 100) + "%");
+        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + memoryPercentage + "%");
     }
 
     @Override
