@@ -22,6 +22,9 @@ package io.treehouses.remote.Network;
  * Created by yubo on 7/11/17.
  */
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import io.treehouses.remote.Fragments.HomeFragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -41,6 +44,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import io.treehouses.remote.Constants;
+import io.treehouses.remote.R;
 
 /**
  * This class does all the work for setting up and managing Bluetooth
@@ -49,7 +53,7 @@ import io.treehouses.remote.Constants;
  * thread for performing data transmissions when connected.
  */
 
-public class BluetoothChatService implements Serializable{
+public class BluetoothChatService extends Fragment implements Serializable {
 
     // Debugging
     private static final String TAG = "BluetoothChatService";
@@ -310,6 +314,23 @@ public class BluetoothChatService implements Serializable{
             // Start the service over to restart listening mode
             BluetoothChatService.this.start();
         }
+        redirectHomeFragment();
+    }
+
+    public void redirectHomeFragment() {
+        Fragment newFragment = new HomeFragment();
+        FragmentTransaction transaction;
+        try {
+            transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        }
+        catch (Exception e) {
+            Log.e(TAG, "Transaction error");
+            return;
+        }
+
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     public void callHandler(String message) {
