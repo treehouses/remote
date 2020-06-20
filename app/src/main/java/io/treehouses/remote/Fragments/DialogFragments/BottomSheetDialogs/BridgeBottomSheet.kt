@@ -55,7 +55,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         bind.addBridgeProfile.setOnClickListener { v: View? ->
             val networkProfile = NetworkProfile(bind.etEssid.text.toString(), bind.etPassword.text.toString(),
                     bind.etHotspotEssid.text.toString(), bind.etHotspotPassword.text.toString())
-            SaveUtils.addProfile(context, networkProfile)
+            SaveUtils.addProfile(requireContext(), networkProfile)
             Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
         }
     }

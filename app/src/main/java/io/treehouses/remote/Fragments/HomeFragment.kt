@@ -50,7 +50,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupProfiles()
@@ -66,17 +66,17 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context, listOf(*group_labels), SaveUtils.getProfiles(context))
+        val profileAdapter = ProfilesListAdapter(context, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
-            } else if (SaveUtils.getProfiles(context).size > 0 && SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!!.size > 0) {
-                if (SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
-                networkProfile = SaveUtils.getProfiles(context)[listOf(*group_labels)[groupPosition]]!![childPosition]
+            } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size > 0) {
+                if (SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
+                networkProfile = SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!![childPosition]
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                Toast.makeText(context, "Configuring...", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Configuring...", Toast.LENGTH_LONG).show()
             }
             false
         }
@@ -152,7 +152,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     override fun checkConnectionState() {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
             transition(true, arrayOf(150f, 110f, 70f))

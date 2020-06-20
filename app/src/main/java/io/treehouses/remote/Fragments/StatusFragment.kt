@@ -36,7 +36,7 @@ class StatusFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         bind.tvBluetooth.text = String.format("Bluetooth Connection: %s", deviceName)

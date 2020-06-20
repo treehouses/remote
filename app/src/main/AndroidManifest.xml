@@ -63,8 +63,7 @@
             android:name=".InitialActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/MyMaterialTheme.Base"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:theme="@style/MyMaterialTheme.Base" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
