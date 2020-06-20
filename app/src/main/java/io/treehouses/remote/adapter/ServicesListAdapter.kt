@@ -43,7 +43,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     override fun isEnabled(position: Int): Boolean {
-        return data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED && data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE
+        return flag(position)
     }
 
     private fun findViews(view: View) {
@@ -74,7 +74,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
     private fun initView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
-        convertView = if (data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED) {
+        convertView = if (flag(position)) {
             LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false)
         } else {
             LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false)
@@ -83,6 +83,10 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
         name!!.text = data[position].name
         setStatus(data[position].serviceStatus)
         return convertView
+    }
+
+    private fun flag(position:Int):Boolean {
+        return data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED
     }
 
 }
