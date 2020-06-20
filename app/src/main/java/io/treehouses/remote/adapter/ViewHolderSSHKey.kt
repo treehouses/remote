@@ -12,6 +12,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.Utils.toast
 
 class ViewHolderSSHKey internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
     private val mChatService: BluetoothChatService
@@ -20,7 +21,7 @@ class ViewHolderSSHKey internal constructor(v: View, private val c: Context, lis
             if (msg.what == Constants.MESSAGE_READ) {
                 val readMessage = msg.obj as String
                 if (readMessage.contains("Added to 'pi' and 'root' user's authorized_keys")) {
-                    Toast.makeText(c, "Added to 'pi' and 'root' user's authorized_keys", Toast.LENGTH_LONG).show()
+                    c.toast("Added to 'pi' and 'root' user's authorized_keys", Toast.LENGTH_LONG)
                 }
             }
         }
