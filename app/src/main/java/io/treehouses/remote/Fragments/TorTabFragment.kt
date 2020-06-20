@@ -207,16 +207,15 @@ class TorTabFragment : BaseFragment() {
                     val portList = view!!.findViewById<ListView>(R.id.countries)
                     portList.adapter = adapter
                     listener.sendMessage("treehouses tor status")
-                } else if (readMessage.contains("the port has been added")) {
+                }else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
                     listener.sendMessage("treehouses tor ports")
                     portsName = ArrayList()
                     addPortButton!!.text = "Retrieving port.... Please wait"
-                    Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-                } else if (readMessage.contains("has been deleted")) {
-                    listener.sendMessage("treehouses tor ports")
-                    portsName = ArrayList()
-                    addPortButton!!.text = "Retrieving port..... Please wait"
-                    Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
+                    if (readMessage.contains("the port has been added")) {
+                        Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
+                    } else if (readMessage.contains("has been deleted")) {
+                        Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
