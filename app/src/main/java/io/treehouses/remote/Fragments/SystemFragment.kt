@@ -49,12 +49,8 @@ class SystemFragment : BaseFragment() {
             listener.sendMessage("treehouses networkmode info\n")
         }
         bind.listView.setAdapter(adapter)
-        return bind.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         Tutorials.systemTutorials(bind, requireActivity())
+        return bind.root
     }
 
     override fun onResume() {
