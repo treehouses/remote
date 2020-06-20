@@ -78,7 +78,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             else if (f is SettingsFragment) {
                 (supportFragmentManager).popBackStack()
                 title = "Home"
-
             }
         }
 
@@ -91,7 +90,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        var flag = true
         val id = item.itemId
         checkStatusNow()
         if (validBluetoothConnection) {
@@ -101,12 +99,9 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 openCallFragment(AboutFragment())
             } else if (id == R.id.menu_home) {
                 openCallFragment(HomeFragment())
-            } else {
-                showAlertDialog()
-                flag = false
             }
         }
-        if (flag) title = item.title
+        title = item.title
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -167,7 +162,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         checkStatusNow()
         for (x in 1 until bind.navView.menu.size() - 1) {
-            var item = bind.navView.menu.getItem(x)
+            val item = bind.navView.menu.getItem(x)
             item.isEnabled = validBluetoothConnection
         }
         return super.onPrepareOptionsMenu(menu)
@@ -212,15 +207,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             title = "Settings"
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun showAlertDialog() {
-        AlertDialog.Builder(this@InitialActivity)
-                .setTitle("ALERT:")
-                .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
-                .setIcon(R.drawable.bluetooth)
-                .setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
-                .show()
     }
 
     /**
