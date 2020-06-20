@@ -91,8 +91,8 @@ object SaveUtils {
 
     @JvmStatic
     fun addToCommandsList(context: Context, commandListItem: CommandListItem) {
-        addToArrayList(context, COMMANDS_TITLES_KEY, commandListItem.title)
-        addToArrayList(context, COMMANDS_VALUES_KEY, commandListItem.command)
+        addToArrayList(context, COMMANDS_TITLES_KEY, commandListItem.getTitle())
+        addToArrayList(context, COMMANDS_VALUES_KEY, commandListItem.getCommand())
     }
 
     fun clearCommandsList(context: Context) {
