@@ -16,7 +16,7 @@ import io.treehouses.remote.databinding.DialogFeedbackBinding
 import java.util.HashMap
 
 
-class FeedbackDialog : DialogFragment() {
+class FeedbackDialogFragment : DialogFragment() {
     private lateinit var bind: DialogFeedbackBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

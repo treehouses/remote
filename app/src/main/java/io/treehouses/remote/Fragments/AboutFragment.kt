@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialog
+import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,9 +37,9 @@ class AboutFragment : Fragment() {
         hyperLinks(contributors, "https://github.com/treehouses/remote/graphs/contributors")
 
         giveFeedback.setOnClickListener {
-            val dialogFrag: DialogFragment = FeedbackDialog()
+            val dialogFrag: DialogFragment = FeedbackDialogFragment()
             dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
-            dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "feedbackDialog")
+            dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
         }
         version.setOnClickListener { v: View? ->
             var versionName = BuildConfig.VERSION_NAME
