@@ -53,21 +53,23 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     private fun setStatus(statusCode: Int) {
-        if (statusCode == ServiceInfo.SERVICE_AVAILABLE) {
-
-            //setButtons(false, false, false);
-            name!!.setTextColor(context.resources.getColor(R.color.md_grey_600))
-            status!!.setImageDrawable(context.resources.getDrawable(R.drawable.circle_red))
-        } else if (statusCode == ServiceInfo.SERVICE_INSTALLED) {
-
-            //setButtons(false, true, false);
-            name!!.setTextColor(context.resources.getColor(R.color.md_grey_600))
-            status!!.setImageDrawable(context.resources.getDrawable(R.drawable.circle_yellow))
-        } else if (statusCode == ServiceInfo.SERVICE_RUNNING) {
-            //setButtons(true, true, true);
-            name!!.setTextColor(context.resources.getColor(R.color.md_green_500))
-            status!!.setImageDrawable(context.resources.getDrawable(R.drawable.circle_green))
+        var color:Int = 0
+        var drawable:Int = 0
+        if(statusCode == ServiceInfo.SERVICE_AVAILABLE || statusCode == ServiceInfo.SERVICE_INSTALLED || statusCode == ServiceInfo.SERVICE_RUNNING){
+            if (statusCode == ServiceInfo.SERVICE_AVAILABLE) {
+                color = R.color.md_grey_600
+                drawable = R.drawable.circle_red
+            } else if (statusCode == ServiceInfo.SERVICE_INSTALLED) {
+                color = R.color.md_grey_600
+                drawable = R.drawable.circle_yellow
+            } else if (statusCode == ServiceInfo.SERVICE_RUNNING) {
+                color = R.color.md_green_500
+                drawable = R.drawable.circle_green
+            }
+            name!!.setTextColor(context.resources.getColor(color))
+            status!!.setImageDrawable(context.resources.getDrawable(drawable))
         }
+
     }
 
     private fun initView(position: Int, convertView: View?, parent: ViewGroup): View {
