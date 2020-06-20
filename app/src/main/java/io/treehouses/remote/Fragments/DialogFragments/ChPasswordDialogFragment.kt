@@ -36,10 +36,7 @@ class ChPasswordDialogFragment : DialogFragment() {
 
     //creates the dialog for the change password dialog
     protected fun getAlertDialog(mView: View?): AlertDialog {
-        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-                .setView(mView)
-                .setTitle(R.string.change_password)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+        return createAlertDialog(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle), mView, R.string.change_password, android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.change_password
                 ) { dialog: DialogInterface, whichButton: Int ->
                     dialog.dismiss()
@@ -51,6 +48,13 @@ class ChPasswordDialogFragment : DialogFragment() {
                 }
                 .setNegativeButton(R.string.cancel) { dialog: DialogInterface?, whichButton: Int -> targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent) }
                 .create()
+    }
+
+    private fun createAlertDialog(con:ContextThemeWrapper, mView: View?, title:Int, icon:Int):AlertDialog.Builder{
+        return AlertDialog.Builder(con)
+                .setView(mView)
+                .setTitle(title)
+                .setIcon(icon)
     }
 
     //listener for text change within this dialog
