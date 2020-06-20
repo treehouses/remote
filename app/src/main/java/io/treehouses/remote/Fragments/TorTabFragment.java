@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +87,7 @@ public class TorTabFragment extends BaseFragment {
         portList.setAdapter(adapter);
         portList.setOnItemClickListener((parent, view, position, id) -> {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle));
             builder.setTitle("Delete Port " + portsName.get(position) + " ?");
 
 //            builder.setMessage("Would you like to delete?");
