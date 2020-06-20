@@ -87,7 +87,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
      */
     @Synchronized
     fun start() {
-        Log.d(TAG, "start")
         bNoReconnect = false
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
@@ -198,7 +197,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
      */
     @Synchronized
     fun stop() {
-        Log.d(TAG, "stop")
         bNoReconnect = true
         if (mConnectThread != null) {
             mConnectThread!!.cancel()
@@ -263,7 +261,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         // Send a failure message back to the Activity
         callHandler("Device connection was lost")
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        Log.d(TAG, "connectionLost: ")
         if (mDevice != null && !bNoReconnect && preferences.getBoolean("reconnectBluetooth", true)) {
             connect(mDevice!!, true)
         } else {
@@ -435,8 +432,7 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
             // given BluetoothDevice
             try {
 //                if (secure) {
-                tmp = mmDevice.createRfcommSocketToServiceRecord(
-                        MY_UUID_SECURE)
+                tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
                 //                } else {
 //                    tmp = device.createInsecureRfcommSocketToServiceRecord(
 //                            MY_UUID_INSECURE);
@@ -459,7 +455,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         private val mmInStream: InputStream?
         private val mmOutStream: OutputStream?
         override fun run() {
-            Log.i(TAG, "BEGIN mConnectedThread")
             val buffer = ByteArray(10000)
             var bytes: Int
             var out: String
@@ -471,8 +466,7 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
                     bytes = mmInStream!!.read(buffer)
                     out = String(buffer, 0, bytes)
                     Log.d(TAG, "out = " + out + "size of out = " + out.length + ", bytes = " + bytes)
-                    mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)
-                            ?.sendToTarget()
+                    mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
                     //                    mEmulatorView.write(buffer, bytes);
                     // Send the obtained bytes to the UI Activity
                     //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
@@ -489,17 +483,15 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
          *
          * @param buffer The bytes to write
          */
-        fun write(buffer: ByteArray?) {
+        fun write(buffer: ByteArray) {
             try {
                 Log.d(TAG, "write: I am in inside write method")
                 mmOutStream!!.write(buffer)
 
                 // Share the sent message back to the UI Activity
-                mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
-                        ?.sendToTarget()
+                mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)?.sendToTarget()
             } catch (e: IOException) {
                 Log.e(TAG, "Exception during write", e)
-                Log.d(TAG, "write: i am in inside write method exception")
             }
         }
 
@@ -536,15 +528,10 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         // Debugging
         private const val TAG = "BluetoothChatService"
 
-        // Name for the SDP record when creating server socket
-        private const val NAME_SECURE = "BluetoothChatSecure"
-
         //private static final String NAME_INSECURE = "BluetoothChatInsecure";
         // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
         private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-        //private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-        private var connectedDeviceName = "NULL"
         private var mHandler: Handler? = null
     }
     //    private BluetoothSocket socket = null;
