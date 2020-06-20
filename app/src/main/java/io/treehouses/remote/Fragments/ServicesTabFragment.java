@@ -33,7 +33,6 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
 
     private ActivityServicesTabFragmentBinding bind;
 
-
     public ServicesTabFragment(ArrayList<ServiceInfo> serviceInfos) {
         this.services = serviceInfos;
     }
@@ -110,4 +109,5 @@ public class ServicesTabFragment extends BaseServicesFragment implements Adapter
         writeToRPI("treehouses memory total\n");
     }
 
+    public ServicesTabFragment() {}
 }
