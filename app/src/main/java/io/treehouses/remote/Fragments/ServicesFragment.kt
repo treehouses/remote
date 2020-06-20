@@ -61,9 +61,9 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                         replaceFragment(0)
                     } else if (a == 0) {
                         bind!!.progressBar2.visibility = View.GONE
-                        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                                .setTitle("Please update CLI")
-                                .setMessage("Please update to the latest CLI version to access services.")
+                        val alertDialog = createDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle),
+                                "Please update CLI",
+                                "Please update to the latest CLI version to access services.")
                                 .create()
                         alertDialog.show()
                     }
@@ -74,6 +74,10 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 }
             }
         }
+    }
+
+    private fun createDialog(con:ContextThemeWrapper,  title:String,  message:String):AlertDialog.Builder {
+        return AlertDialog.Builder(con).setTitle(title).setMessage(message)
     }
 
     private fun setTabEnabled(enabled: Boolean) {
