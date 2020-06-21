@@ -1,0 +1,67 @@
+
+In order to use treehouses remote, it is required to download a custom Raspbian image that can be found [here](https://treehouses.io/#!pages/download.md) and flash it onto an SD card to be inserted into your Raspberry Pi.
+
+With treehouses remote, you can:
+* Get detailed software and hardware information of a Raspberry Pi
+* Configure a Raspberry Pi through user-friendly interface
+* Easily install and access services such as Nextcloud, Netdata, Transmission, MongoDB, MariaDB and Moodle on your RPi
+* And utilize many more features!
+
+Usage:
+```
+treehouses [command]
+treehouses help [command]
+```
+Example Commands:
+
+help --- gives you a more detailed info about the command or will output this
+expandfs --- expands the partition of the RPi image to the maximum of the SD card
+rename --- changes hostname
+password --- changes the password for 'pi' user
+sshkey --- used for adding or removing ssh keys for authentication
+version --- returns the version of cli.sh command
+image --- returns version of the system image installed
+detectrpi --- detects the hardware version of a Raspberry Pi
+detect --- detects the hardware version of any device
+ethernet --- configures rpi network interface to a static IP address
+discover --- performs network scan and discovers all Raspberry Pis on the network
+wifi --- connects to a wifi network
+wifihidden --- connects to a hidden wifi network
+staticwifi --- configures RPi wifi interface to a static ip address
+wifistatus --- displays signal strength in dBm and layman nomenclature
+bridge --- configures the RPi to bridge the WLAN interface over a hotspot
+container docker balena --- enables (and start) the desired container
+bluetooth --- switches bluetooth from regular to hotspot mode and shows id or MAC address
+ap --- creates a mobile ap, which has two modes: local (no eth0 bridging), internet (eth0 bridging)
+apchannel --- sets or prints the current ap channel
+timezone --- sets the timezone of the system
+locale --- sets the system locale
+ssh --- enables or disables the SSH service
+vnc --- enables or disables the VNC server service
+default --- sets a raspbian back to default configuration
+wificountry --- sets the wifi country
+upgrade --- upgrades cli.sh package using npm
+sshtunnel --- helps adding an sshtunnel
+led --- sets the led mode
+rtc --- sets up the rtc clock specified
+ntp --- sets rpi to host timing locally or to get timing from a remote server
+networkmode --- outputs the current network mode
+button --- gives the gpio pin 18 an action
+feedback --- sends feedback
+clone --- clones the current SDCard onto a secondary SD card or specified device
+restore --- restores a treehouses image to an SD card or specified device
+burn --- download and burns the latest treehouses image to the SD card or specified device
+rebootneeded --- shows if reboot is required to apply changes
+reboots --- reboots at given frequency | removes it if reboot task active
+internet --- checks if the RPi has access to internet
+services --- executes the given command on the specified service
+tor --- deals with services on tor hidden network
+bootoption --- sets the boot mode
+openvpn --- helps setting up an openvpn client
+coralenv --- plays with the coral environmental board
+memory --- displays the total memory of the device, the memory used as well as the available free memory
+temperature --- displays Raspberry Pi's CPU temperature
+speedtest --- tests internet download and upload speed
+camera --- enables camera, disables camera, captures png photo
+cron --- adds, deletes a custom cron job or deletes, lists all cron jobs
+usb --- turns usb ports on or off

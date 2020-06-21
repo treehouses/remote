@@ -13,6 +13,7 @@ import android.util.Patterns
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.databinding.DialogFeedbackBinding
+import io.treehouses.remote.utils.Utils
 import java.util.HashMap
 
 
@@ -46,13 +47,14 @@ class FeedbackDialogFragment : DialogFragment() {
     private fun feedbackFormButtonListeners(){
         bind.btnSendFeedback.setOnClickListener {
             if (notBlank() && bind.editEmail.error == null && bind.editPhoneNumber.error == null) {
-                val map = HashMap<String, String?>()
+                val map = HashMap<String, String>()
                 map["name"] = bind.editName.text.toString()
                 map["email"] = bind.editEmail.text.toString()
                 map["phoneNumber"] = bind.editPhoneNumber.text.toString()
                 map["feedbackType"] = if (bind.radioButtonBug.isChecked) "bug" else "suggestion"
                 map["message"] = bind.editMessage.text.toString()
-                ParseDbService.sendFeedback(activity, map)
+                ParseDbService.sendFeedback(map)
+                Toast.makeText(context, "Feedback send successfully", Toast.LENGTH_LONG).show()
                 dismiss()
             } else {
                 Toast.makeText(context, "Name, email, type, and message are required fields", Toast.LENGTH_LONG).show()
