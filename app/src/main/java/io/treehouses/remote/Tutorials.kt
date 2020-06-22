@@ -79,7 +79,21 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
         //Put animations here
+        val a = FancyShowCaseView.Builder(activity)
+                .focusCircleAtPosition(1225,2325, 200)
+                .title("Tap to update CLI to newest version")
+                .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
+                .delay(500)
+                .enableAutoTextPosition()
+                .build()
 
-
+        val b = FancyShowCaseView.Builder(activity)
+                .focusCircleAtPosition(1325, 1300, 100)
+                .title("Tap to change your Raspberry Pi name")
+                .delay(50)
+                .enableAutoTextPosition()
+                .build()
+        val queue = FancyShowCaseQueue().add(a).add(b)
+        queue.show()
     }
 }
