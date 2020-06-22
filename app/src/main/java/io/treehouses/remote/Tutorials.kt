@@ -82,7 +82,6 @@ object Tutorials {
         val a = FancyShowCaseView.Builder(activity)
                 .focusCircleAtPosition(1225,2325, 200)
                 .title("Tap to update CLI to newest version")
-                .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
                 .delay(500)
                 .enableAutoTextPosition()
                 .build()
