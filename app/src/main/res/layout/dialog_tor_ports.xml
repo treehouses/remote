@@ -28,6 +28,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
+            android:textColor="@color/daynight_textColor"
             android:hint="External"
             android:inputType="textPersonName" />
 
@@ -43,6 +44,7 @@
             android:id="@+id/InternalTextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
             android:fontFamily="sans-serif"
             android:hint="Internal"
             />

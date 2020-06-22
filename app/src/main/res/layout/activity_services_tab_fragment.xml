@@ -68,5 +68,15 @@
             android:minHeight="25dp"
             android:progress="0"
             android:progressDrawable="@drawable/custom_progress_bar" />
+
+        <TextView
+            android:id="@+id/memory_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_gravity="center_vertical"
+            app:fontFamily="@font/roboto_bold"
+            android:textColor="@color/daynight_textColor"
+            android:textSize="@dimen/text_size_mid" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextIp"
+            android:textColor="@color/daynight_textColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
