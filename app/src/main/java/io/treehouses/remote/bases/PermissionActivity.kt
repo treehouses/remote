@@ -7,10 +7,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.provider.Settings
+import android.view.ContextThemeWrapper
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import io.treehouses.remote.R
 
 abstract class PermissionActivity : AppCompatActivity() {
     fun checkPermission(strPermission: String?): Boolean {
@@ -26,7 +28,7 @@ abstract class PermissionActivity : AppCompatActivity() {
     }
 
     private fun buildAlertMessageNoGps() {
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Yes") { dialog: DialogInterface?, id: Int -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }

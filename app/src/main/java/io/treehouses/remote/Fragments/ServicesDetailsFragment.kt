@@ -1,11 +1,13 @@
 package io.treehouses.remote.Fragments
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ import android.widget.Toast
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServiceCardAdapter
 import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseServicesFragment
@@ -31,22 +34,28 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     private var selected: ServiceInfo? = null
     private var serviceCardAdapter: ServiceCardAdapter? = null
     private var scrolled = false
-    private var binding: ActivityServicesDetailsBinding? = null
+    private lateinit var binding: ActivityServicesDetailsBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
         spinnerAdapter = ServicesListAdapter(context, services, resources.getColor(R.color.md_grey_600))
-        binding!!.pickService.adapter = spinnerAdapter
-        binding!!.pickService.setSelection(1)
-        binding!!.pickService.onItemSelectedListener = this
+        binding.pickService.adapter = spinnerAdapter
+        binding.pickService.setSelection(1)
+        binding.pickService.onItemSelectedListener = this
         serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
-        binding!!.servicesCards.adapter = serviceCardAdapter
-        binding!!.servicesCards.addOnPageChangeListener(this)
-        return binding!!.root
+        binding.servicesCards.adapter = serviceCardAdapter
+        binding.servicesCards.addOnPageChangeListener(this)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Tutorials.servicesDetailsTutorials(binding, requireActivity())
     }
 
     @JvmField
-    val handlerDetails: Handler = object : Handler() {
+    val handlerDetails: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
@@ -58,7 +67,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     }
 
     private fun matchOutput(s: String) {
-        selected = binding!!.pickService.selectedItem as ServiceInfo
+        selected = binding.pickService.selectedItem as ServiceInfo
         Log.d("Entered", "matchOutput: $s")
         if (s.contains("started")) {
             selected!!.serviceStatus = ServiceInfo.SERVICE_RUNNING
@@ -70,7 +79,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         } else {
             return
         }
-        Collections.sort(services)
+        services.sort()
         serviceCardAdapter!!.notifyDataSetChanged()
         spinnerAdapter!!.notifyDataSetChanged()
         setScreenState(true)
@@ -84,25 +93,25 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
             received = true
             openLocalURL(output.trim { it <= ' ' })
-            binding!!.progressBar.visibility = View.GONE
+            binding.progressBar.visibility = View.GONE
         } else {
             setScreenState(true)
-            var msg:String = ""
+            var msg: String = ""
             if (output.contains("service autorun set")) {
                 msg = "Switched autorun"
-            } else if (output.toLowerCase().contains("error")) {
+            } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
                 msg = "An Error occurred"
             }
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
             val statusCode = services[position].serviceStatus
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
             val count = countHeadersBefore(position)
-            binding!!.servicesCards.currentItem = position - count
+            binding.servicesCards.currentItem = position - count
         }
     }
 
@@ -113,11 +122,11 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     }
 
     private fun goToSelected() {
-        if (selected != null && binding!!.pickService != null) {
+        if (selected != null) {
             val pos = inServiceList(selected!!.name, services)
             val count = countHeadersBefore(pos)
-            binding!!.servicesCards.currentItem = pos - count
-            binding!!.pickService.setSelection(pos)
+            binding.servicesCards.currentItem = pos - count
+            binding.pickService.setSelection(pos)
         }
     }
 
@@ -128,7 +137,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
 
     override fun onPause() {
         super.onPause()
-        selected = binding!!.pickService.selectedItem as ServiceInfo
+        selected = binding.pickService.selectedItem as ServiceInfo
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -136,7 +145,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         Log.d("SELECTED", "onPageSelected: ")
         scrolled = true
         val pos = position + countHeadersBefore(position + 1)
-        binding!!.pickService.setSelection(pos)
+        binding.pickService.setSelection(pos)
         scrolled = false
     }
 
@@ -150,7 +159,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     }
 
     private fun showDeleteDialog(selected: ServiceInfo?) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { dialog: DialogInterface?, which: Int ->
@@ -170,7 +179,7 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         }
     }
 
-    private fun performServiceWait(){
+    private fun performServiceWait() {
         wait = true
         setScreenState(false)
     }
@@ -189,14 +198,14 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
         v.setOnClickListener { v1: View? ->
             writeToRPI(command)
             alertDialog.dismiss()
-            binding!!.progressBar.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
         }
     }
 
     private fun onLink(selected: ServiceInfo?) {
         //reqUrls();
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(context).setView(chooseBind.root).setTitle("Select URL type").create()
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
         setOnClick(chooseBind.localButton, """treehouses services ${selected!!.name} url local
 """, alertDialog)
         setOnClick(chooseBind.torButton, """treehouses services ${selected.name} url tor
@@ -205,9 +214,9 @@ class ServicesDetailsFragment internal constructor(private val services: ArrayLi
     }
 
     private fun setScreenState(state: Boolean) {
-        binding!!.servicesCards.setPagingEnabled(state)
-        binding!!.pickService.isEnabled = state
-        if (state) binding!!.progressBar.visibility = View.GONE else binding!!.progressBar.visibility = View.VISIBLE
+        binding.servicesCards.setPagingEnabled(state)
+        binding.pickService.isEnabled = state
+        if (state) binding.progressBar.visibility = View.GONE else binding.progressBar.visibility = View.VISIBLE
     }
 
     override fun onClickInstall(s: ServiceInfo?) {

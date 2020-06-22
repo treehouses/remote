@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -117,7 +118,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             openCallFragment(SystemFragment())
         } else if (id == R.id.menu_terminal) {
             openCallFragment(TerminalFragment())
-        } else {
+        }
+        else {
             checkMore(id)
         }
     }
@@ -125,12 +127,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private fun checkMore(id: Int) {
         if (id == R.id.menu_services) {
             openCallFragment(ServicesFragment())
-        } else if (id == R.id.menu_tunnel) {
-            openCallFragment(TunnelFragment())
         } else if (id == R.id.menu_about) {
             openCallFragment(AboutFragment())
         } else if (id == R.id.menu_status) {
             openCallFragment(StatusFragment())
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(SSHTunnelFragment())
         } else {
             openCallFragment(HomeFragment())
         }
@@ -203,7 +205,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     fun showAlertDialog() {
-        AlertDialog.Builder(this@InitialActivity)
+        AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
                 .setIcon(R.drawable.bluetooth)

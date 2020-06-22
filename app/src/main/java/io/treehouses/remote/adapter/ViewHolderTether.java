@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -62,7 +63,7 @@ public class ViewHolderTether {
     }
 
     private AlertDialog showAlertDialog(Context context) {
-        return new AlertDialog.Builder(context)
+        return new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle("OUTPUT:")
                 .setMessage("Hotspot is disabled, open hotspot settings?")
                 .setIcon(R.drawable.wificon)

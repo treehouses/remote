@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class ServicesFragment extends BaseServicesFragment implements ServicesLi
                     }
                     else if(a==0) {
                         bind.progressBar2.setVisibility(View.GONE);
-                        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                        AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle))
                                 .setTitle("Please update CLI")
                                 .setMessage("Please update to the latest CLI version to access services.")
                                 .create();

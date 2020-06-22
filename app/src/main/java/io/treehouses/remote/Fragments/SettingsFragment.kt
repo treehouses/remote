@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
@@ -83,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive) { dialog: DialogInterface?, which: Int -> onClickDialog(ID) }
@@ -93,19 +94,19 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun clearNetworkProfiles() {
-        SaveUtils.clearProfiles(context)
+        SaveUtils.clearProfiles(requireContext())
         Toast.makeText(context, "Network Profiles have been reset", Toast.LENGTH_LONG).show()
     }
 
     private fun onClickDialog(id: Int) {
         when (id) {
             CLEAR_COMMANDS_ID -> {
-                SaveUtils.clearCommandsList(context)
+                SaveUtils.clearCommandsList(requireContext())
                 Toast.makeText(context, "Commands List has been Cleared", Toast.LENGTH_LONG).show()
             }
             RESET_COMMANDS_ID -> {
-                SaveUtils.clearCommandsList(context)
-                SaveUtils.initCommandsList(context)
+                SaveUtils.clearCommandsList(requireContext())
+                SaveUtils.initCommandsList(requireContext())
                 Toast.makeText(context, "Commands has been reset to default", Toast.LENGTH_LONG).show()
             }
             NETWORK_PROFILES_ID -> clearNetworkProfiles()
