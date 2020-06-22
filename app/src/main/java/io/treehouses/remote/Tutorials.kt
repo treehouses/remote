@@ -6,6 +6,7 @@ import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
+import me.toptas.fancyshowcase.FocusShape
 
 object Tutorials {
 
@@ -56,15 +57,32 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW, false)
         //Put animations here
+        val a = FancyShowCaseView.Builder(activity)
+                .focusOn(bind.listView)
+                .title("Install and use a variety of services")
+                .delay(750)
+                .disableFocusAnimation()
+                .enableAutoTextPosition()
+                .build()
 
-
+        val queue = FancyShowCaseQueue().add(a)
+        queue.show()
     }
 
     fun servicesDetailsTutorials(bind: ActivityServicesDetailsBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS, false)
         //Put animations here
+        val a = FancyShowCaseView.Builder(activity)
+                .focusOn(bind.pickService)
+                .focusBorderSize(80)
+                .title("Pick any service from this list")
+                .delay(750)
+                .enableAutoTextPosition()
+                .build()
 
+        val queue = FancyShowCaseQueue().add(a)
+        queue.show()
     }
 
     fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
