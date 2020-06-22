@@ -36,7 +36,7 @@ class SystemFragment : BaseFragment() {
         bind = ActivitySystemFragmentBinding.inflate(inflater, container, false)
         val mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-        val adapter = NetworkListAdapter(context, NetworkListItem.getSystemList(), mChatService)
+        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.getSystemList(), mChatService)
         adapter.setListener(listener)
         bind.listView.setOnGroupExpandListener { groupPosition: Int ->
             if (groupPosition == 1) {
