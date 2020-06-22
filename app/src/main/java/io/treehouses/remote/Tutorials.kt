@@ -77,7 +77,7 @@ object Tutorials {
                 .focusOn(bind.pickService)
                 .focusBorderSize(80)
                 .title("Pick any service from this list")
-                .delay(750)
+                .delay(500)
                 .enableAutoTextPosition()
                 .build()
 
