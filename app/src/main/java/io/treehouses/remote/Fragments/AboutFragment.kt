@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.R
-import io.treehouses.remote.callback.NotificationCallback
 import java.text.SimpleDateFormat
 import java.util.*
 

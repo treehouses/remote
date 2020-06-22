@@ -16,10 +16,11 @@ import io.treehouses.remote.pojo.ServiceInfo;
 public class TunnelPageAdapter extends FragmentStatePagerAdapter {
     private ArrayList<ServiceInfo> data;
 
-    public TunnelPageAdapter(FragmentManager fm){
+    public TunnelPageAdapter(FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
     }
+
     public TunnelPageAdapter(FragmentManager fm, ArrayList<ServiceInfo> data) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.data = removeHeaders(data);
@@ -49,12 +50,9 @@ public class TunnelPageAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
-  if (position == 0)
-        {
+        if (position == 0) {
             fragment = new TorTabFragment();
-        }
-        else if (position == 1)
-        {
+        } else if (position == 1) {
             fragment = new TunnelSSHFragment();
         }
         return fragment;

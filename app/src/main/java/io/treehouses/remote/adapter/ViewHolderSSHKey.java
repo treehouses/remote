@@ -1,22 +1,14 @@
 package io.treehouses.remote.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.List;
 
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;

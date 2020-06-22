@@ -1,8 +1,8 @@
 package io.treehouses.remote.utils
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.pojo.CommandListItem

@@ -22,7 +22,6 @@ import android.widget.AdapterView.OnItemClickListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
-import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
