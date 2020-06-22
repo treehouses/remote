@@ -54,7 +54,7 @@ class FeedbackDialogFragment : DialogFragment() {
                 map["feedbackType"] = if (bind.radioButtonBug.isChecked) "bug" else "suggestion"
                 map["message"] = bind.editMessage.text.toString()
                 ParseDbService.sendFeedback(map)
-                Toast.makeText(context, "Feedback send successfully", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Feedback sent successfully", Toast.LENGTH_LONG).show()
                 dismiss()
             } else {
                 Toast.makeText(context, "Name, email, type, and message are required fields", Toast.LENGTH_LONG).show()
