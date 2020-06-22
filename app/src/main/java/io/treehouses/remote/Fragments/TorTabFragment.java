@@ -29,6 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import io.treehouses.remote.Constants;
 import io.treehouses.remote.Network.BluetoothChatService;
 import io.treehouses.remote.R;
+import io.treehouses.remote.Tutorials;
 import io.treehouses.remote.bases.BaseFragment;
 
 
@@ -188,7 +192,11 @@ public class TorTabFragment extends BaseFragment {
         return view;
     }
 
-
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+//        Tutorials.INSTANCE.tunnelTutorials(bind, requireActivity());
+    }
 
     private void showBottomSheet(BottomSheetDialogFragment fragment, String tag) {
         fragment.setTargetFragment(TorTabFragment.this, Constants.NETWORK_BOTTOM_SHEET);

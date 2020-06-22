@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.NetworkListAdapter
 import io.treehouses.remote.adapter.ViewHolderTether
 import io.treehouses.remote.adapter.ViewHolderVnc
@@ -28,7 +29,7 @@ class SystemFragment : BaseFragment() {
     private var hostname = false
     private var tether = false
     private var retry = false
-    var bind: ActivitySystemFragmentBinding? = null
+    private lateinit var bind: ActivitySystemFragmentBinding
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,7 +38,7 @@ class SystemFragment : BaseFragment() {
         mChatService.updateHandler(mHandler)
         val adapter = NetworkListAdapter(context, NetworkListItem.getSystemList(), mChatService)
         adapter.setListener(listener)
-        bind!!.listView.setOnGroupExpandListener { groupPosition: Int ->
+        bind.listView.setOnGroupExpandListener { groupPosition: Int ->
             if (groupPosition == 1) {
                 listener.sendMessage("treehouses networkmode info\n")
                 tether = true
@@ -47,8 +48,9 @@ class SystemFragment : BaseFragment() {
             }
             listener.sendMessage("treehouses networkmode info\n")
         }
-        bind!!.listView.setAdapter(adapter)
-        return bind!!.root
+        bind.listView.setAdapter(adapter)
+        Tutorials.systemTutorials(bind, requireActivity())
+        return bind.root
     }
 
     override fun onResume() {

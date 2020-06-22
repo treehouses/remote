@@ -16,6 +16,7 @@
             android:id="@+id/editTextSSHKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
             android:hint="SSH Key" />
     </com.google.android.material.textfield.TextInputLayout>
 
