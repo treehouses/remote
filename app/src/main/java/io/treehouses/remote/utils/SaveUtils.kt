@@ -1,7 +1,7 @@
 package io.treehouses.remote.utils
 
 import android.content.Context
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.util.Log
 import com.google.gson.Gson
 import io.treehouses.remote.Fragments.HomeFragment
@@ -14,6 +14,10 @@ object SaveUtils {
     private const val COMMANDS_TITLES_KEY = "commands_titles"
     private const val COMMANDS_VALUES_KEY = "commands_values"
     private const val NETWORK_PROFILES_KEY = "network_profile_keys"
+
+    enum class Screens {
+        HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
+    }
 
     private fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
         var strArr = StringBuilder()
@@ -140,5 +144,16 @@ object SaveUtils {
 
     fun clearProfiles(context: Context) {
         clearArrayList(context, NETWORK_PROFILES_KEY)
+    }
+
+    fun getFragmentFirstTime(context: Context, which: Screens) : Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return prefs.getBoolean(which.name, true)
+    }
+
+    fun setFragmentFirstTime(context: Context, which: Screens, firstTime: Boolean) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        prefs.putBoolean(which.name, firstTime)
+        prefs.apply()
     }
 }
