@@ -25,6 +25,7 @@ import io.treehouses.remote.MainApplication.Companion.commandList
 import io.treehouses.remote.MainApplication.Companion.terminalList
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.CommandListAdapter
 import io.treehouses.remote.bases.BaseTerminalFragment
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
@@ -68,7 +69,6 @@ class TerminalFragment : BaseTerminalFragment() {
         expandableListDetail = HashMap()
         expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
         setHasOptionsMenu(true)
-        setupList()
         return bind.root
     }
 
@@ -95,7 +95,9 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupList()
         setUpAutoComplete(bind.editTextOut)
+        Tutorials.terminalTutorials(bind, requireActivity())
     }
 
     override fun onDestroy() {
