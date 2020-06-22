@@ -60,7 +60,7 @@ object Tutorials {
         val a = FancyShowCaseView.Builder(activity)
                 .focusOn(bind.listView)
                 .title("Install and use a variety of services")
-                .delay(750)
+                .delay(500)
                 .disableFocusAnimation()
                 .enableAutoTextPosition()
                 .build()
