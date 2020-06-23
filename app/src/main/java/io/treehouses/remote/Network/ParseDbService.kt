@@ -29,4 +29,13 @@ object ParseDbService {
         testObject.put("bluetoothMacAddress", map["bluetoothMacAddress"].toString() + "")
         testObject.saveInBackground()
     }
+    fun sendFeedback(map: HashMap<String, String>) {
+        val obj = ParseObject("feedback")
+        obj.put("name", map["name"].toString() + "")
+        obj.put("email", map["email"].toString() + "")
+        obj.put("phoneNumber", map["phoneNumber"].toString() + "")
+        obj.put("feedbackType", map["feedbackType"].toString() + "")
+        obj.put("message", map["message"].toString() + "")
+        obj.saveEventually()
+    }
 }
