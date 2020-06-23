@@ -267,7 +267,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 dismissPDialog()
                 Toast.makeText(context, "Network Not Found", Toast.LENGTH_LONG).show()
             }
-            testConnectionResult -> {
+            !testConnectionResult -> {
                 testConnectionResult = true
                 dismissTestConnection()
             }

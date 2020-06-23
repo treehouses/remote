@@ -77,14 +77,14 @@ class TerminalFragment : BaseTerminalFragment() {
         bind.terminalList.setAdapter(expandableListAdapter)
         bind.terminalList.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (childPosition < expandableListDetail["Commands"]!!.size) {
-                val title = expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].title
+                val title = expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].getTitle()
                 when {
                     title.equals("CLEAR", ignoreCase = true) -> {
                         terminalList!!.clear()
                         getmConversationArrayAdapter()!!.notifyDataSetChanged()
                     }
                     title.equals("CHANGE PASSWORD", ignoreCase = true) -> showDialog(ChPasswordDialogFragment.newInstance(), Constants.REQUEST_DIALOG_FRAGMENT_CHPASS, "ChangePassDialog")
-                    else -> listener.sendMessage(expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].command)
+                    else -> listener.sendMessage(expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].getCommand())
                 }
             } else {
                 showDialog(AddCommandDialogFragment.newInstance(), Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND, "AddCommandDialog")
