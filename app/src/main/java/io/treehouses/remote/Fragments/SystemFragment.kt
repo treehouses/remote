@@ -158,7 +158,7 @@ class SystemFragment : BaseFragment() {
     private fun elementConditions(element: String) {
         if (element.contains("ip")) {
             try {
-                ViewHolderVnc.getEditTextIp().setText(element.substring(4).trim { it <= ' ' })
+                ViewHolderVnc.editTextIp.setText(element.substring(4).trim { it <= ' ' })
             } catch (e: Exception) {
                 e.printStackTrace()
             }
