@@ -13,11 +13,9 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
 import com.caverock.androidsvg.SVG
-import com.caverock.androidsvg.SVGParseException
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
-import java.lang.Exception
 
 class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), View.OnClickListener {
     private var actionListener: ServiceAction? = null

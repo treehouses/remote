@@ -1,6 +1,5 @@
 package io.treehouses.remote.utils
 
-import android.util.Log
 import java.util.*
 
 
