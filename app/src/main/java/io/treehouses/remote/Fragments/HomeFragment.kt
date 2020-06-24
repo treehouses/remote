@@ -57,8 +57,13 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         checkConnectionState()
         connectRpiListener()
         bind.btnGetStarted.setOnClickListener {
-            instance!!.openCallFragment(AboutFragment())
-            activity?.let { it.title = "About" }
+            instance!!.checkStatusNow()
+            if (instance!!.hasValidConnection()) {
+                instance!!.openCallFragment(TerminalFragment())
+                activity?.let { it.title = "Terminal" }
+            } else {
+                instance!!.showAlertDialog()
+            }
         }
         testConnectionListener()
         return bind.root
@@ -169,6 +174,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun transition(connected: Boolean, values: Array<Float>) {
         bind.btnConnect.text = if (connected) "Disconnect" else "Connect to RPI"
+        bind.btnGetStarted.text = if (connected) "Go to Terminal" else "Get Started"
         bind.btnConnect.setBackgroundResource(if (connected) R.drawable.ic_disconnect_rpi else R.drawable.ic_connect_to_rpi)
         bind.backgroundHome.animate().translationY(values[0])
         bind.btnConnect.animate().translationY(values[1])
