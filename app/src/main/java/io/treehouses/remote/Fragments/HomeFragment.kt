@@ -11,11 +11,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
-import android.text.TextUtils
-import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -32,6 +28,7 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.NetworkProfile
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
@@ -162,7 +159,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             connectionState = true
             checkVersionSent = true
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-
+            Tutorials.homeTutorials(bind, requireActivity())
         } else {
             transition(false, arrayOf(0f, 0f, 0f))
             connectionState = false
@@ -183,6 +180,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.logoHome.visibility = b1
         bind.testConnection.visibility = b2
         bind.layoutBack.visibility = b2
+
     }
 
     private fun dismissTestConnection() {
@@ -270,7 +268,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 dismissPDialog()
                 Toast.makeText(context, "Network Not Found", Toast.LENGTH_LONG).show()
             }
-            testConnectionResult -> {
+            !testConnectionResult -> {
                 testConnectionResult = true
                 dismissTestConnection()
             }
