@@ -76,7 +76,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
         when (layout) {
             R.layout.open_vnc -> ViewHolderVnc(convertView, context, listener)
             R.layout.configure_tethering -> ViewHolderTether(convertView, listener, context)
-            R.layout.configure_ssh_key -> ViewHolderSSHKey(convertView, context, listener)
+            R.layout.configure_ssh_key -> ViewHolderSSHKey(convertView, context, listener!!)
             R.layout.configure_camera -> ViewHolderCamera(convertView, context, listener!!)
             R.layout.configure_wificountry -> ViewHolderWifiCountry(convertView, context, listener!!)
         }
