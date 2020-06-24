@@ -55,7 +55,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                     val output = msg.obj as String
                     val a = performAction(output, services!!)
                     if (a == 1) {
-                        servicesTabFragment = ServicesTabFragment(services)
+                        servicesTabFragment = ServicesTabFragment(services!!)
                         servicesDetailsFragment = ServicesDetailsFragment(services!!)
                         bind!!.progressBar2.visibility = View.GONE
                         replaceFragment(0)
