@@ -11,7 +11,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
 
 open class BaseFragment : Fragment() {
-    lateinit var mChatService: BluetoothChatService
+    open lateinit var mChatService: BluetoothChatService
     var mBluetoothAdapter: BluetoothAdapter? = null
     lateinit var listener: HomeInteractListener
     override fun onAttach(context: Context) {
@@ -21,7 +21,7 @@ open class BaseFragment : Fragment() {
 
     protected fun onLoad(mHandler: Handler?) {
         mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler!!)
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
         // If the adapter is null, then Bluetooth is not supported

@@ -20,7 +20,6 @@
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:textColor="@color/daynight_textColor"
-            android:background="@color/card_background"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,7 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/daynight_textColor"
-            android:background="@color/card_background"
             android:hint="@string/confirm_password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>

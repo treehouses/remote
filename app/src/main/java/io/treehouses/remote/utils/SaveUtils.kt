@@ -1,8 +1,8 @@
 package io.treehouses.remote.utils
 
 import android.content.Context
-import android.preference.PreferenceManager
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.pojo.CommandListItem
@@ -14,6 +14,10 @@ object SaveUtils {
     private const val COMMANDS_TITLES_KEY = "commands_titles"
     private const val COMMANDS_VALUES_KEY = "commands_values"
     private const val NETWORK_PROFILES_KEY = "network_profile_keys"
+
+    enum class Screens {
+        HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
+    }
 
     private fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
         var strArr = StringBuilder()
@@ -91,8 +95,8 @@ object SaveUtils {
 
     @JvmStatic
     fun addToCommandsList(context: Context, commandListItem: CommandListItem) {
-        addToArrayList(context, COMMANDS_TITLES_KEY, commandListItem.title)
-        addToArrayList(context, COMMANDS_VALUES_KEY, commandListItem.command)
+        addToArrayList(context, COMMANDS_TITLES_KEY, commandListItem.getTitle())
+        addToArrayList(context, COMMANDS_VALUES_KEY, commandListItem.getCommand())
     }
 
     fun clearCommandsList(context: Context) {
@@ -140,5 +144,16 @@ object SaveUtils {
 
     fun clearProfiles(context: Context) {
         clearArrayList(context, NETWORK_PROFILES_KEY)
+    }
+
+    fun getFragmentFirstTime(context: Context, which: Screens) : Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return prefs.getBoolean(which.name, true)
+    }
+
+    fun setFragmentFirstTime(context: Context, which: Screens, firstTime: Boolean) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        prefs.putBoolean(which.name, firstTime)
+        prefs.apply()
     }
 }

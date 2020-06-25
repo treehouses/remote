@@ -17,7 +17,6 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.copyToClipboard
 import io.treehouses.remote.utils.match
 import java.util.*
@@ -158,16 +157,16 @@ open class BaseTerminalFragment : BaseFragment() {
             Toast.makeText(requireContext(), "Error has occurred. Please Refresh", Toast.LENGTH_SHORT).show()
             return
         }
-        for (i in data.commands.indices) {
-            val s = getRootCommand(data.commands[i]).trim { it <= ' ' }
+        for (i in data.commands!!.indices) {
+            val s = getRootCommand(data.commands!![i]).trim { it <= ' ' }
             Log.d("TAG", "updateArrayAdapters: $s")
             if (!inSecondLevel!!.contains(s)) {
-                arrayAdapter2!!.add(s)
-                inSecondLevel!!.add(s)
+                arrayAdapter2?.add(s)
+                inSecondLevel?.add(s)
             }
-            if (!inThirdLevel!!.contains(data.commands[i])) {
-                arrayAdapter3!!.add(data.commands[i])
-                inThirdLevel!!.add(data.commands[i])
+            if (!inThirdLevel!!.contains(data.commands!![i])) {
+                arrayAdapter3?.add(data.commands!![i])
+                inThirdLevel?.add(data.commands!![i])
             }
         }
     }
