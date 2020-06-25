@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape
-    android:innerRadius="0dp"
-    android:shape="oval"
-    android:thickness="4dp"
-    android:useLevel="false"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/colorAccent"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape
+            android:innerRadius="0dp"
+            android:shape="ring"
+            android:thickness="7dp"
+            android:useLevel="false">
+            <solid android:color="@color/bg_white"/>
+        </shape>
+    </item>
+</layer-list>

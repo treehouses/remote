@@ -10,17 +10,15 @@ import android.net.Uri
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import io.treehouses.remote.Constants
+import io.treehouses.remote.*
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
-import io.treehouses.remote.InitialActivity
-import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.ParseDbService
-import io.treehouses.remote.R
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
@@ -118,32 +116,34 @@ open class BaseHomeFragment : BaseFragment() {
 
     protected fun showDialogOnce(preferences: SharedPreferences) {
         val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
+        Log.e("REACHED HERE", firstTime.toString())
         if (firstTime) {
 //            showWelcomeDialog()
-            val i = Intent(activity, InitialActivity::class.java)
-
+            Log.e("FIRST", "TIME")
+            val i = Intent(activity, IntroActivity::class.java)
+            startActivity(i)
             val editor = preferences.edit()
             editor.putBoolean(Screens.FIRST_TIME.name, false)
             editor.apply()
         }
     }
 
-    private fun showWelcomeDialog(): AlertDialog {
-        val s = SpannableString("""Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by "control" and "cli". There is more information under "Get Started"
-
-https://treehouses.io/#!pages/download.md
-https://github.com/treehouses/control
-https://github.com/treehouses/cli""")
-        Linkify.addLinks(s, Linkify.ALL)
-        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder" )
-                .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .setMessage(s)
-                .create()
-        d.show()
-        (d.findViewById<View>(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
-        return d
-    }
+//    private fun showWelcomeDialog(): AlertDialog {
+//        val s = SpannableString("""Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by "control" and "cli". There is more information under "Get Started"
+//
+//https://treehouses.io/#!pages/download.md
+//https://github.com/treehouses/control
+//https://github.com/treehouses/cli""")
+//        Linkify.addLinks(s, Linkify.ALL)
+//        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder" )
+//                .setIcon(R.drawable.dialog_icon)
+//                .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+//                .setMessage(s)
+//                .create()
+//        d.show()
+//        (d.findViewById<View>(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
+//        return d
+//    }
 
     protected fun showTestConnectionDialog(dismissable: Boolean, title: String, messageID: Int, selected_LED: Int): AlertDialog {
         val mView = layoutInflater.inflate(R.layout.dialog_test_connection, null)
