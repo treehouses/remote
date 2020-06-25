@@ -27,7 +27,7 @@ import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
-class ServicesDetailsFragment internal constructor(private val services: ArrayList<ServiceInfo>) : BaseServicesFragment(), OnItemSelectedListener, OnPageChangeListener, ServiceAction {
+class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener, OnPageChangeListener, ServiceAction {
     private var received = false
     private var wait = false
     private var spinnerAdapter: ServicesListAdapter? = null
