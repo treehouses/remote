@@ -129,7 +129,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 else vibe.vibrate(10)
             }
             if (connectionState) {
-                RPIDialogFragment.getInstance().bluetoothCheck("unregister")
+                RPIDialogFragment.instance!!.bluetoothCheck("unregister")
                 mChatService.stop()
                 connectionState = false
                 checkConnectionState()
