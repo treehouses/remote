@@ -1,75 +1,42 @@
 package io.treehouses.remote.adapter
 
 import android.app.Dialog
-import android.bluetooth.BluetoothAdapter
+
 import android.content.Context
 import android.os.Handler
 import android.os.Message
-import android.renderscript.ScriptGroup
 import android.text.TextUtils
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import androidx.core.view.get
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.TerminalFragment
-import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
-import io.treehouses.remote.databinding.ConfigureWificountryBinding
-import io.treehouses.remote.databinding.DialogWificountryBinding
-import io.treehouses.remote.utils.match
-import kotlinx.android.synthetic.main.dialog_listview.view.*
-import kotlinx.android.synthetic.main.dialog_wificountry.*
 import java.util.*
-import kotlin.math.log
-
 
 class ViewHolderWifiCountry internal constructor(v: View, context: Context, listener: HomeInteractListener) : SearchView.OnQueryTextListener {
+    lateinit var textBar: TextInputEditText
     private val mChatService: BluetoothChatService
-    private val countryList: ListView? = null
-    private val searchView: SearchView? = null
-    private lateinit var binding: ConfigureWificountryBinding
-    private lateinit var dialogBinding: DialogWificountryBinding
-
+    lateinit var c: Context
+    var countryList: ListView? = null
+    var searchView: SearchView? = null
     private val mHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
-            Log.d("new", msg.toString())
-            when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    Log.d("mymessage", readMessage.contains("country=").toString())
-                    if (readMessage.contains("country=")) {
-                        val len = readMessage.length - 3
-                        val country = readMessage.substring(len).trim { it <= ' ' }
-                        binding.countryDisplay.setText(getCountryName(country))
-                        binding.countryDisplay.isEnabled = true
-                    }
-                    else if(readMessage.contains("error")) {
-
-                    }
+            if (msg.what == Constants.MESSAGE_READ) {
+                val readMessage = msg.obj as String
+                if (readMessage.contains("country=") || readMessage.contains("set to")) {
+                    val len = readMessage.length - 3
+                    val country = readMessage.substring(len).trim { it <= ' ' }
+                    textBar.setText(getCountryName(country))
+                    textBar.isEnabled = true
+                } else if (readMessage.contains("Error when")) {
+                    textBar.setText("try again")
+                    textBar.isEnabled = true
+                    Toast.makeText(c, "Error when changing country", Toast.LENGTH_LONG).show()
                 }
-
-                }
-//            if (msg.what == Constants.MESSAGE_READ) {
-//                val readMessage = msg.obj as String
-//
-//                if (readMessage.contains("country=") || readMessage.contains("set to")) {
-//                    val len = readMessage.length - 3
-//                    val country = readMessage.substring(len).trim { it <= ' ' }
-//                    binding.countryDisplay.setText(getCountryName(country))
-//                    binding.countryDisplay.isEnabled = true
-//                } else if (readMessage.contains("Error when")) {
-//                    binding.countryDisplay.setText("try again")
-//                    binding.countryDisplay.isEnabled = true
-//                    Toast.makeText(context, "Error when changing country", Toast.LENGTH_LONG).show()
-//                }
-//            }
+            }
         }
     }
 
@@ -95,7 +62,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
 
     init {
 
-        binding = ConfigureWificountryBinding.bind(v);
+
         listener.sendMessage("treehouses wificountry")
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
@@ -103,38 +70,31 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
             countriesName[i] = getCountryName(countriesCode[i])
         }
 
-
-
+        val adapter = ArrayAdapter(context, android.R.layout.select_dialog_item, countriesName)
+        c = context
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-
-
-        binding.countryDisplay.isEnabled = false
-            binding.countryDisplay.setOnClickListener { v3: View? ->
-                Log.d("TAG", "my Message")
-                val dialog = Dialog(context)
-                dialog.setContentView(R.layout.dialog_wificountry)
-                val adapter = ArrayAdapter(dialog.context, android.R.layout.select_dialog_item, countriesName)
+        textBar = v.findViewById(R.id.country_display)
+        textBar.isEnabled = false
+        textBar.setOnClickListener { v3: View? ->
+            val dialog = Dialog(context)
+            dialog.setContentView(R.layout.dialog_wificountry)
+            countryList = dialog.findViewById(R.id.countries)
             adapter.filter.filter("")
-            dialogBinding = DialogWificountryBinding.inflate(LayoutInflater.from(dialog.context))
-
-            dialogBinding.countries.adapter = ArrayAdapter(dialog.context, android.R.layout.select_dialog_item, countriesName)
-
-
-               var control = dialog.findViewById<ListView>(R.id.countries)
-                control.adapter = adapter
-            dialogBinding.countries.isTextFilterEnabled = true
-            dialogBinding.countries.onItemClickListener = OnItemClickListener { a: AdapterView<*>?, v2: View?, p: Int, id: Long ->
-                var selectedString = dialogBinding.countries.getItemAtPosition(p).toString()
+            countryList!!.setAdapter(adapter)
+            countryList!!.setTextFilterEnabled(true)
+            countryList!!.setOnItemClickListener(OnItemClickListener { a: AdapterView<*>?, v2: View?, p: Int, id: Long ->
+                var selectedString = countryList!!.getItemAtPosition(p).toString()
                 selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
                 listener.sendMessage("treehouses wificountry $selectedString")
-                binding.countryDisplay.isEnabled = false
-                binding.countryDisplay.setText("Changing country")
+                textBar.isEnabled = false
+                textBar.setText("Changing country")
                 dialog.dismiss()
-            }
+            })
+            searchView = dialog.findViewById(R.id.search_bar)
+            searchView!!.setIconifiedByDefault(false)
+            searchView!!.setOnQueryTextListener(this)
 
-            dialogBinding.searchBar.isIconifiedByDefault = false
-            dialogBinding.searchBar.setOnQueryTextListener(this)
             dialog.show()
         }
     }

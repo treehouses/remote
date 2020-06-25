@@ -3,6 +3,7 @@ package io.treehouses.remote.bases
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
@@ -21,10 +22,21 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
-open class BaseServicesFragment : BaseFragment() {
+open class BaseServicesFragment() : BaseFragment() {
     private var startJson = ""
     private var gettingJSON = false
+    lateinit var services: ArrayList<ServiceInfo>
     protected var servicesData: ServicesData? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            if (it.containsKey("services"))
+                services = it.getSerializable("services") as ArrayList<ServiceInfo>
+        }
+    }
+
     protected fun openLocalURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
         Log.d("OPENING: ", "http://$url||")
@@ -112,7 +124,7 @@ open class BaseServicesFragment : BaseFragment() {
         Collections.sort(services)
     }
 
-    private fun addToServices(services: ArrayList<ServiceInfo>, str:String, flag:Int){
+    private fun addToServices(services: ArrayList<ServiceInfo>, str: String, flag: Int) {
         services.add(0, ServiceInfo(str, flag))
     }
 
