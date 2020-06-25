@@ -15,16 +15,16 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        fun fancyShowCaseViewBuilderHome(activity: FragmentActivity, view:View, title:String, delay:Int):FancyShowCaseView.Builder {
+        fun fancyShowCaseViewBuilderHome(view:View, title:String, delay:Int):FancyShowCaseView.Builder {
             return FancyShowCaseView.Builder(activity)
                     .focusOn(view)
                     .title(title)
                     .delay(delay)
         }
-        val a = fancyShowCaseViewBuilderHome(activity, bind.testConnection,"Test Bluetooth Connection to RPI", 750 )
+        val a = fancyShowCaseViewBuilderHome(bind.testConnection,"Test Bluetooth Connection to RPI", 750 )
                 .build()
 
-        val b = fancyShowCaseViewBuilderHome(activity, bind.networkProfiles,"Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500 )
+        val b = fancyShowCaseViewBuilderHome(bind.networkProfiles,"Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500 )
                 .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
                 .focusCircleRadiusFactor(1.25)
                 .build()
@@ -49,7 +49,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL, false)
         //Put animations here
-        fun fancyShowCaseViewBuilderTerminal(activity: FragmentActivity, view:View, title:String, delay:Int, focusShape:FocusShape):FancyShowCaseView {
+        fun fancyShowCaseViewBuilderTerminal(view:View, title:String, delay:Int, focusShape:FocusShape):FancyShowCaseView {
             return FancyShowCaseView.Builder(activity)
                     .focusOn(view)
                     .title(title)
@@ -61,13 +61,13 @@ object Tutorials {
                     .build()
         }
 
-        val a = fancyShowCaseViewBuilderTerminal(activity, bind.editTextOut,"Enter Commands here to run on Pi Remotely", 750, FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilderTerminal(bind.editTextOut,"Enter Commands here to run on Pi Remotely", 750, FocusShape.ROUNDED_RECTANGLE)
 
-        val b = fancyShowCaseViewBuilderTerminal(activity, bind.terminalList,"You can Save your Commands here to use them without typing again", 500, FocusShape.ROUNDED_RECTANGLE)
+        val b = fancyShowCaseViewBuilderTerminal(bind.terminalList,"You can Save your Commands here to use them without typing again", 500, FocusShape.ROUNDED_RECTANGLE)
 
-        val c = fancyShowCaseViewBuilderTerminal(activity, bind.btnPrevious,"Access Recently used Commands on Successive taps of this button", 500, FocusShape.CIRCLE)
+        val c = fancyShowCaseViewBuilderTerminal(bind.btnPrevious,"Access Recently used Commands on Successive taps of this button", 500, FocusShape.CIRCLE)
 
-        val d = fancyShowCaseViewBuilderTerminal(activity, bind.infoButton,"Get Information on what Treehouses Commands are Available and how to use them", 500, FocusShape.CIRCLE)
+        val d = fancyShowCaseViewBuilderTerminal(bind.infoButton,"Get Information on what Treehouses Commands are Available and how to use them", 500, FocusShape.CIRCLE)
 
         val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
         queue.show()
