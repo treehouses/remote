@@ -50,34 +50,34 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL, false)
         //Put animations here
-        fun fancyShowCaseViewBuilderTerminal(activity: FragmentActivity, title:String, delay:Int):FancyShowCaseView.Builder {
+        fun fancyShowCaseViewBuilderTerminal(activity: FragmentActivity, title:String, delay:Int, focusShape:FocusShape):FancyShowCaseView.Builder {
             return FancyShowCaseView.Builder(activity)
                     .title(title)
                     .delay(delay)
                     .enableAutoTextPosition()
                     .backgroundColor(R.color.focusColor)
+                    .focusShape(focusShape)
                     .fitSystemWindows(true)
         }
-        val a = fancyShowCaseViewBuilderTerminal(activity,"Enter Commands here to run on Pi Remotely", 750 )
+
+        val a = fancyShowCaseViewBuilderTerminal(activity,"Enter Commands here to run on Pi Remotely", 750, FocusShape.ROUNDED_RECTANGLE)
                 .focusOn(bind.editTextOut)
-                .focusShape(FocusShape.ROUNDED_RECTANGLE)
                 .build()
 
-        val b = fancyShowCaseViewBuilderTerminal(activity,"You can Save your Commands here to use them without typing again", 500 )
-                .focusOn(bind.terminalList).focusShape(FocusShape.ROUNDED_RECTANGLE)
+        val b = fancyShowCaseViewBuilderTerminal(activity,"You can Save your Commands here to use them without typing again", 500, FocusShape.ROUNDED_RECTANGLE)
+                .focusOn(bind.terminalList)
                 .build()
 
-        val c = fancyShowCaseViewBuilderTerminal(activity,"Access Recently used Commands on Successive taps of this button", 500 )
+        val c = fancyShowCaseViewBuilderTerminal(activity,"Access Recently used Commands on Successive taps of this button", 500, FocusShape.CIRCLE)
                 .focusOn(bind.btnPrevious)
                 .build()
 
-        val d = fancyShowCaseViewBuilderTerminal(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500 )
+        val d = fancyShowCaseViewBuilderTerminal(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500, FocusShape.CIRCLE)
                 .build()
 
         val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
         queue.show()
-
-
+        
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
