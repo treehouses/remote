@@ -12,6 +12,7 @@
         android:layout_marginTop="@dimen/margin_large"
         android:text="Current Network Mode: "
         android:textSize="@dimen/text_size_mid"
+        android:textColor="@color/home_welcome"
         app:fontFamily="@font/roboto_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -11,24 +11,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
-import android.view.*
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import io.treehouses.remote.BuildConfig
-import io.treehouses.remote.Constants
+import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
-import io.treehouses.remote.MainApplication
-import io.treehouses.remote.R
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.bases.BaseHomeFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.NetworkProfile
-import io.treehouses.remote.Tutorials
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
@@ -58,8 +57,13 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         checkConnectionState()
         connectRpiListener()
         bind.btnGetStarted.setOnClickListener {
-            instance!!.openCallFragment(AboutFragment())
-            activity?.let { it.title = "About" }
+            instance!!.checkStatusNow()
+            if (instance!!.hasValidConnection()) {
+                instance!!.openCallFragment(TerminalFragment())
+                activity?.let { it.title = "Terminal" }
+            } else {
+                instance!!.showAlertDialog()
+            }
         }
         testConnectionListener()
         return bind.root
@@ -170,6 +174,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun transition(connected: Boolean, values: Array<Float>) {
         bind.btnConnect.text = if (connected) "Disconnect" else "Connect to RPI"
+        bind.btnGetStarted.text = if (connected) "Go to Terminal" else "Get Started"
         bind.btnConnect.setBackgroundResource(if (connected) R.drawable.ic_disconnect_rpi else R.drawable.ic_connect_to_rpi)
         bind.backgroundHome.animate().translationY(values[0])
         bind.btnConnect.animate().translationY(values[1])

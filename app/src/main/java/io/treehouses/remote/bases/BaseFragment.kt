@@ -21,7 +21,7 @@ open class BaseFragment : Fragment() {
 
     protected fun onLoad(mHandler: Handler?) {
         mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler!!)
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
         // If the adapter is null, then Bluetooth is not supported

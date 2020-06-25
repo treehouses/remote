@@ -29,7 +29,6 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.NewNetworkBinding
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
-import java.util.*
 
 class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     private lateinit var binding: NewNetworkBinding

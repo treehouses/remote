@@ -180,7 +180,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return mChatService!!
     }
 
-    private fun checkStatusNow() {
+    fun checkStatusNow() {
         validBluetoothConnection = when (mChatService!!.state) {
             Constants.STATE_CONNECTED -> {
                 LogUtils.mConnect()
@@ -208,7 +208,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showAlertDialog() {
+    fun showAlertDialog() {
         AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
@@ -260,6 +260,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
+    }
+
+    fun hasValidConnection() : Boolean {
+        return validBluetoothConnection
     }
 
     companion object {

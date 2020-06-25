@@ -34,6 +34,7 @@ class ServicesTabFragment(var services: ArrayList<ServiceInfo>) : BaseServicesFr
         bind!!.listView.onItemClickListener = this
         return bind!!.root
     }
+    fun ServicesTabFragment() {}
 
     @JvmField
     val handlerOverview: Handler = object : Handler() {
