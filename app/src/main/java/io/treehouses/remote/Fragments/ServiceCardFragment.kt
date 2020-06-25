@@ -13,15 +13,23 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
 import com.caverock.androidsvg.SVG
-import com.caverock.androidsvg.SVGParseException
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
-import java.lang.Exception
 
-class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), View.OnClickListener {
+class ServiceCardFragment : Fragment(), View.OnClickListener {
     private var actionListener: ServiceAction? = null
     private var binding: ServiceCardBinding? = null
+    private lateinit var serviceData: ServiceInfo
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            if (it.containsKey("serviceData"))
+                serviceData = it.getSerializable("serviceData") as ServiceInfo
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ServiceCardBinding.inflate(inflater, container, false)
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
@@ -68,7 +76,6 @@ class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), Vi
         binding!!.installButton.text = string2
         binding!!.startButton.visibility = visibility2
         binding!!.autorunChecked.visibility = visibility3
-
 
 
         //restart.setEnabled(three);

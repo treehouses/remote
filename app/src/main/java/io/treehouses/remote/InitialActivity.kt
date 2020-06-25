@@ -17,9 +17,11 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
+import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
@@ -87,6 +89,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return true
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         var flag = true
@@ -118,8 +121,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             openCallFragment(SystemFragment())
         } else if (id == R.id.menu_terminal) {
             openCallFragment(TerminalFragment())
-        }
-        else {
+        } else {
             checkMore(id)
         }
     }
@@ -178,7 +180,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return mChatService!!
     }
 
-    private fun checkStatusNow() {
+    fun checkStatusNow() {
         validBluetoothConnection = when (mChatService!!.state) {
             Constants.STATE_CONNECTED -> {
                 LogUtils.mConnect()
@@ -200,11 +202,13 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (item.itemId == R.id.action_settings) {
             openCallFragment(SettingsFragment())
             title = "Settings"
+        } else if (item.itemId == R.id.action_feedback) {
+            FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showAlertDialog() {
+    fun showAlertDialog() {
         AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
@@ -256,6 +260,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
+    }
+
+    fun hasValidConnection() : Boolean {
+        return validBluetoothConnection
     }
 
     companion object {

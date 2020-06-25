@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +24,7 @@ import io.treehouses.remote.MainApplication.Companion.commandList
 import io.treehouses.remote.MainApplication.Companion.terminalList
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.CommandListAdapter
 import io.treehouses.remote.bases.BaseTerminalFragment
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
@@ -68,7 +68,6 @@ class TerminalFragment : BaseTerminalFragment() {
         expandableListDetail = HashMap()
         expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
         setHasOptionsMenu(true)
-        setupList()
         return bind.root
     }
 
@@ -78,14 +77,14 @@ class TerminalFragment : BaseTerminalFragment() {
         bind.terminalList.setAdapter(expandableListAdapter)
         bind.terminalList.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (childPosition < expandableListDetail["Commands"]!!.size) {
-                val title = expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].title
+                val title = expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].getTitle()
                 when {
                     title.equals("CLEAR", ignoreCase = true) -> {
                         terminalList!!.clear()
                         getmConversationArrayAdapter()!!.notifyDataSetChanged()
                     }
                     title.equals("CHANGE PASSWORD", ignoreCase = true) -> showDialog(ChPasswordDialogFragment.newInstance(), Constants.REQUEST_DIALOG_FRAGMENT_CHPASS, "ChangePassDialog")
-                    else -> listener.sendMessage(expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].command)
+                    else -> listener.sendMessage(expandableListDetail[expandableListTitle[groupPosition]]!![childPosition].getCommand())
                 }
             } else {
                 showDialog(AddCommandDialogFragment.newInstance(), Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND, "AddCommandDialog")
@@ -95,7 +94,9 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupList()
         setUpAutoComplete(bind.editTextOut)
+        Tutorials.terminalTutorials(bind, requireActivity())
     }
 
     override fun onDestroy() {
