@@ -46,28 +46,25 @@ object Tutorials {
         //Put animations here
         val a = FancyShowCaseViewBuilder(activity,"Enter Commands here to run on Pi Remotely", 750 )
                 .focusOn(bind.editTextOut)
-                .focusShape(FocusShape.ROUNDED_RECTANGLE)
                 .backgroundColor(R.color.focusColor)
+                .focusShape(FocusShape.ROUNDED_RECTANGLE)
                 .fitSystemWindows(true)
                 .build()
-
         val b = FancyShowCaseViewBuilder(activity,"You can Save your Commands here to use them without typing again", 500 )
                 .focusOn(bind.terminalList)
                 .focusShape(FocusShape.ROUNDED_RECTANGLE)
                 .backgroundColor(R.color.focusColor)
                 .fitSystemWindows(true)
                 .build()
-
         val c = FancyShowCaseViewBuilder(activity,"Access Recently used Commands on Successive taps of this button", 500 )
                 .focusOn(bind.btnPrevious)
                 .backgroundColor(R.color.focusColor)
                 .fitSystemWindows(true)
                 .build()
-
         val d = FancyShowCaseViewBuilder(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500 )
                 .focusOn(bind.infoButton)
-                .backgroundColor(R.color.focusColor)
                 .fitSystemWindows(true)
+                .backgroundColor(R.color.focusColor)
                 .build()
 
         val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
