@@ -6,6 +6,7 @@ import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
+import me.toptas.fancyshowcase.FocusShape
 
 object Tutorials {
 
@@ -13,20 +14,14 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = FancyShowCaseView.Builder(activity)
+        val a = FancyShowCaseViewBuilder(activity,"Test Bluetooth Connection to RPI", 750 )
                 .focusOn(bind.testConnection)
-                .title("Test Bluetooth Connection to RPI")
-                .delay(750)
-                .enableAutoTextPosition()
                 .build()
 
-        val b = FancyShowCaseView.Builder(activity)
+        val b = FancyShowCaseViewBuilder(activity,"Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500 )
                 .focusOn(bind.networkProfiles)
-                .title("Configure Network Profiles in the Network Screen to quickly switch between network configurations")
                 .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
-                .delay(500)
                 .focusCircleRadiusFactor(1.25)
-                .enableAutoTextPosition()
                 .build()
         val queue = FancyShowCaseQueue().add(a).add(b)
         queue.show()
@@ -49,7 +44,34 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL, false)
         //Put animations here
+        val a = FancyShowCaseViewBuilder(activity,"Enter Commands here to run on Pi Remotely", 750 )
+                .focusOn(bind.editTextOut)
+                .focusShape(FocusShape.ROUNDED_RECTANGLE)
+                .backgroundColor(R.color.focusColor)
+                .fitSystemWindows(true)
+                .build()
 
+        val b = FancyShowCaseViewBuilder(activity,"You can Save your Commands here to use them without typing again", 500 )
+                .focusOn(bind.terminalList)
+                .focusShape(FocusShape.ROUNDED_RECTANGLE)
+                .backgroundColor(R.color.focusColor)
+                .fitSystemWindows(true)
+                .build()
+
+        val c = FancyShowCaseViewBuilder(activity,"Access Recently used Commands on Successive taps of this button", 500 )
+                .focusOn(bind.btnPrevious)
+                .backgroundColor(R.color.focusColor)
+                .fitSystemWindows(true)
+                .build()
+
+        val d = FancyShowCaseViewBuilder(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500 )
+                .focusOn(bind.infoButton)
+                .backgroundColor(R.color.focusColor)
+                .fitSystemWindows(true)
+                .build()
+
+        val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
+        queue.show()
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
@@ -81,5 +103,12 @@ object Tutorials {
         //Put animations here
 
 
+    }
+
+    fun FancyShowCaseViewBuilder(activity: FragmentActivity, title:String, delay:Int):FancyShowCaseView.Builder {
+        return FancyShowCaseView.Builder(activity)
+                .title(title)
+                .delay(delay)
+                .enableAutoTextPosition()
     }
 }
