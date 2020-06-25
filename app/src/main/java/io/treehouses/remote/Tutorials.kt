@@ -81,7 +81,7 @@ object Tutorials {
         //Put animations here
         val a = FancyShowCaseView.Builder(activity)
                 .focusOn(bind.upgrade)
-                .focusCircleRadiusFactor(1.5)
+                .fitSystemWindows(true)
                 .title("Tap to update CLI to newest version")
                 .delay(500)
                 .enableAutoTextPosition()
@@ -89,7 +89,7 @@ object Tutorials {
 
         val b = FancyShowCaseView.Builder(activity)
                 .focusOn(bind.editName)
-                .focusCircleRadiusFactor(2.5)
+                .fitSystemWindows(true)
                 .title("Tap to change your Raspberry Pi name")
                 .delay(50)
                 .enableAutoTextPosition()
