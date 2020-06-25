@@ -14,11 +14,17 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = FancyShowCaseViewBuilder(activity,"Test Bluetooth Connection to RPI", 750 )
+        fun fancyShowCaseViewBuilderHome(activity: FragmentActivity, title:String, delay:Int):FancyShowCaseView.Builder {
+            return FancyShowCaseView.Builder(activity)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+        }
+        val a = fancyShowCaseViewBuilderHome(activity,"Test Bluetooth Connection to RPI", 750 )
                 .focusOn(bind.testConnection)
                 .build()
 
-        val b = FancyShowCaseViewBuilder(activity,"Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500 )
+        val b = fancyShowCaseViewBuilderHome(activity,"Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500 )
                 .focusOn(bind.networkProfiles)
                 .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
                 .focusCircleRadiusFactor(1.25)
@@ -44,28 +50,34 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL, false)
         //Put animations here
-        val a = FancyShowCaseViewBuilder(activity,"Enter Commands here to run on Pi Remotely", 750 )
-                .focusOn(bind.editTextOut).backgroundColor(R.color.focusColor)
-                .focusShape(FocusShape.ROUNDED_RECTANGLE).fitSystemWindows(true)
+        fun fancyShowCaseViewBuilderTerminal(activity: FragmentActivity, title:String, delay:Int):FancyShowCaseView.Builder {
+            return FancyShowCaseView.Builder(activity)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+                    .backgroundColor(R.color.focusColor)
+                    .fitSystemWindows(true)
+        }
+        val a = fancyShowCaseViewBuilderTerminal(activity,"Enter Commands here to run on Pi Remotely", 750 )
+                .focusOn(bind.editTextOut)
+                .focusShape(FocusShape.ROUNDED_RECTANGLE)
                 .build()
-        
-        val b = FancyShowCaseViewBuilder(activity,"You can Save your Commands here to use them without typing again", 500 )
+
+        val b = fancyShowCaseViewBuilderTerminal(activity,"You can Save your Commands here to use them without typing again", 500 )
                 .focusOn(bind.terminalList).focusShape(FocusShape.ROUNDED_RECTANGLE)
-                .backgroundColor(R.color.focusColor).fitSystemWindows(true)
                 .build()
 
-        val c = FancyShowCaseViewBuilder(activity,"Access Recently used Commands on Successive taps of this button", 500 )
-                .focusOn(bind.btnPrevious).backgroundColor(R.color.focusColor)
-                .fitSystemWindows(true)
+        val c = fancyShowCaseViewBuilderTerminal(activity,"Access Recently used Commands on Successive taps of this button", 500 )
+                .focusOn(bind.btnPrevious)
                 .build()
 
-        val d = FancyShowCaseViewBuilder(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500 )
-                .focusOn(bind.infoButton).fitSystemWindows(true)
-                .backgroundColor(R.color.focusColor)
+        val d = fancyShowCaseViewBuilderTerminal(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500 )
                 .build()
 
         val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
         queue.show()
+
+
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
@@ -99,10 +111,5 @@ object Tutorials {
 
     }
 
-    fun FancyShowCaseViewBuilder(activity: FragmentActivity, title:String, delay:Int):FancyShowCaseView.Builder {
-        return FancyShowCaseView.Builder(activity)
-                .title(title)
-                .delay(delay)
-                .enableAutoTextPosition()
-    }
+
 }
