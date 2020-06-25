@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
@@ -36,19 +37,24 @@ class StatusFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
+        checkStatusNow()
+        writeToRPI("hostname")
+        return bind.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         bind.tvBluetooth.text = String.format("Bluetooth Connection: %s", deviceName)
         Log.e("STATUS", "device name: $deviceName")
         if (mChatService.state == Constants.STATE_CONNECTED) {
             bind.btStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
         }
-        checkStatusNow()
-        writeToRPI("hostname")
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
-        return bind.root
+        Tutorials.statusTutorials(bind, requireActivity())
     }
 
     private fun upgradeOnViewClickListener() {

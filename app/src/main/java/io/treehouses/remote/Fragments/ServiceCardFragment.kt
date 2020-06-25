@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
 import com.caverock.androidsvg.SVG
-import com.caverock.androidsvg.SVGParseException
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
@@ -87,7 +86,7 @@ class ServiceCardFragment(private val serviceData: ServiceInfo) : Fragment(), Vi
             val svg = SVG.getFromString(s)
             val pd = PictureDrawable(svg.renderToPicture())
             binding!!.serviceLogo.setImageDrawable(pd)
-        } catch (e: SVGParseException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 
 import androidx.core.app.ActivityCompat;
+
 import io.treehouses.remote.R;
 
 public class GPSService extends Service implements LocationListener {
