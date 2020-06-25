@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,9 +21,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
+import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
@@ -88,6 +91,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return true
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         val id = item.itemId
@@ -123,12 +127,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private fun checkMore(id: Int) {
         if (id == R.id.menu_services) {
             openCallFragment(ServicesFragment())
-        } else if (id == R.id.menu_tunnel) {
-            openCallFragment(TunnelFragment())
         } else if (id == R.id.menu_about) {
             openCallFragment(AboutFragment())
         } else if (id == R.id.menu_status) {
             openCallFragment(StatusFragment())
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(SSHTunnelFragment())
         } else {
             openCallFragment(HomeFragment())
         }
@@ -183,7 +187,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return mChatService!!
     }
 
-    private fun checkStatusNow() {
+    fun checkStatusNow() {
         validBluetoothConnection = when (mChatService!!.state) {
             Constants.STATE_CONNECTED -> {
                 LogUtils.mConnect()
@@ -205,6 +209,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (item.itemId == R.id.action_settings) {
             openCallFragment(SettingsFragment())
             title = "Settings"
+        } else if (item.itemId == R.id.action_feedback) {
+            FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
         }
         return super.onOptionsItemSelected(item)
     }
@@ -252,6 +258,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
+    }
+
+    fun hasValidConnection() : Boolean {
+        return validBluetoothConnection
     }
 
     companion object {

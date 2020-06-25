@@ -51,6 +51,18 @@
         <item name="android:textColor">@color/daynight_textColor</item>
     </style>
 
+    <style name="CardTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/card_background</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
+    </style>
+
     <style name="FullscreenTheme" parent="MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">false</item>

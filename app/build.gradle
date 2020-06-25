@@ -1,8 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
-def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0")
 
 android {
     compileSdkVersion 29
@@ -12,8 +10,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode appVersionCode
-        versionName appVersionName + ""
+        versionCode Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
+        versionName (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0") + ""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         applicationVariants.all { variant ->
             variant.outputs.all { output ->
@@ -32,8 +30,8 @@ android {
         }
         //Uncomment for debugging
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -81,6 +79,8 @@ dependencies {
     implementation 'com.caverock:androidsvg-aar:1.4'
     implementation "androidx.core:core-ktx:1.2.0"
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.1.5'
+
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

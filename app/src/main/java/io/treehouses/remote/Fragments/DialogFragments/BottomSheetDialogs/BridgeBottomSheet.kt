@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +32,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         startConfigListener()
         setAddProfileListener()
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
-        val validation = TextBoxValidation(getContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
+        val validation = TextBoxValidation(requireContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
         validation.setStart(bind.btnStartConfig)
         validation.setAddprofile(bind.addBridgeProfile)
         return bind.root
@@ -55,7 +54,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         bind.addBridgeProfile.setOnClickListener { v: View? ->
             val networkProfile = NetworkProfile(bind.etEssid.text.toString(), bind.etPassword.text.toString(),
                     bind.etHotspotEssid.text.toString(), bind.etHotspotPassword.text.toString())
-            SaveUtils.addProfile(context, networkProfile)
+            SaveUtils.addProfile(requireContext(), networkProfile)
             Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
         }
     }
