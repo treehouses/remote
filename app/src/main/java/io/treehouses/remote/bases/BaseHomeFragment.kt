@@ -17,11 +17,14 @@ import android.widget.TextView
 import android.widget.Toast
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
+import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.SaveUtils.Screens
 import java.util.*
 
 open class BaseHomeFragment : BaseFragment() {
@@ -114,11 +117,13 @@ open class BaseHomeFragment : BaseFragment() {
     }
 
     protected fun showDialogOnce(preferences: SharedPreferences) {
-        val dialogShown = preferences.getBoolean("dialogShown", false)
-        if (!dialogShown) {
-            showWelcomeDialog()
+        val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
+        if (firstTime) {
+//            showWelcomeDialog()
+            val i = Intent(activity, InitialActivity::class.java)
+
             val editor = preferences.edit()
-            editor.putBoolean("dialogShown", true)
+            editor.putBoolean(Screens.FIRST_TIME.name, false)
             editor.apply()
         }
     }

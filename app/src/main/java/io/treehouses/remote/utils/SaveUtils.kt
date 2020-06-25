@@ -16,7 +16,7 @@ object SaveUtils {
     private const val NETWORK_PROFILES_KEY = "network_profile_keys"
 
     enum class Screens {
-        HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
+        FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
     }
 
     private fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
