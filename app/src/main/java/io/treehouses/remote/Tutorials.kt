@@ -73,11 +73,12 @@ object Tutorials {
                 .build()
 
         val d = fancyShowCaseViewBuilderTerminal(activity,"Get Information on what Treehouses Commands are Available and how to use them", 500, FocusShape.CIRCLE)
+                .focusOn(bind.infoButton)
                 .build()
 
         val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
         queue.show()
-        
+
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
