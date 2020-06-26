@@ -78,17 +78,14 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             else if (f is SettingsFragment) {
                 (supportFragmentManager).popBackStack();
                 title = "Home"
-
             }
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.initial, menu)
         return true
     }
-
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -260,6 +257,11 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
+    }
+
+    override fun redirectHome() {
+        val menu = bind.navView.menu.findItem(R.id.menu_home)
+        onNavigationItemSelected(menu)
     }
 
     fun hasValidConnection() : Boolean {

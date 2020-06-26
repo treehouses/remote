@@ -174,21 +174,18 @@ class StatusFragment : BaseFragment() {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> checkStatusNow()
-                Constants.MESSAGE_WRITE -> {
-                    val writeBuf = msg.obj as ByteArray
-                    val writeMessage = String(writeBuf)
-                    Log.d(TAG, "writeMessage = $writeMessage")
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    Log.d(TAG, "readMessage = $readMessage")
-                    updateStatus(readMessage)
-                }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_STATE_CHANGE -> checkStatusNow()
+            Constants.MESSAGE_WRITE -> {
+                val writeBuf = msg.obj as ByteArray
+                val writeMessage = String(writeBuf)
+                Log.d(TAG, "writeMessage = $writeMessage")
+            }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                Log.d(TAG, "readMessage = $readMessage")
+                updateStatus(readMessage)
             }
         }
     }

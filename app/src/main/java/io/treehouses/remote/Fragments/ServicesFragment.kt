@@ -41,36 +41,33 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         })
         setTabEnabled(false)
         mChatService = listener.getChatService()
-        mChatService.updateHandler(handler)
+        mChatService.updateHandler(mHandler)
         writeToRPI("treehouses remote allservices\n")
         return bind!!.root
     }
 
-    @SuppressLint("HandlerLeak")
-    private val handler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    val output = msg.obj as String
-                    val a = performAction(output, services!!)
-                    if (a == 1) {
-                        servicesTabFragment = ServicesTabFragment()
-                        servicesDetailsFragment = ServicesDetailsFragment()
-                        var bundle = Bundle()
-                        bundle.putSerializable("services", services)
-                        servicesTabFragment?.arguments = bundle
-                        servicesDetailsFragment?.arguments = bundle
-                        bind!!.progressBar2.visibility = View.GONE
-                        replaceFragment(0)
-                    } else if (a == 0) {
-                        bind!!.progressBar2.visibility = View.GONE
-                        showUpdateCliAlert()
-                    }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_READ -> {
+                val output = msg.obj as String
+                val a = performAction(output, services!!)
+                if (a == 1) {
+                    servicesTabFragment = ServicesTabFragment()
+                    servicesDetailsFragment = ServicesDetailsFragment()
+                    var bundle = Bundle()
+                    bundle.putSerializable("services", services)
+                    servicesTabFragment?.arguments = bundle
+                    servicesDetailsFragment?.arguments = bundle
+                    bind!!.progressBar2.visibility = View.GONE
+                    replaceFragment(0)
+                } else if (a == 0) {
+                    bind!!.progressBar2.visibility = View.GONE
+                    showUpdateCliAlert()
                 }
-                Constants.MESSAGE_WRITE -> {
-                    val write_msg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", write_msg)
-                }
+            }
+            Constants.MESSAGE_WRITE -> {
+                val write_msg = String((msg.obj as ByteArray))
+                Log.d("WRITE", write_msg)
             }
         }
     }

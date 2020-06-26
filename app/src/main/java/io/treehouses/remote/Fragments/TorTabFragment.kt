@@ -152,69 +152,66 @@ class TorTabFragment : BaseFragment() {
         fragment.show(requireFragmentManager(), tag)
     }
 
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            if (msg.what == Constants.MESSAGE_READ) {
-                val readMessage:String = msg.obj as String
-                Log.d("Tor reply", "" + readMessage)
-                if (readMessage.contains("inactive")) {
-                    val matrix = ColorMatrix()
-                    matrix.setSaturation(0f)
-                    textStatus!!.text = "-"
-                    val filter = ColorMatrixColorFilter(matrix)
-                    logo!!.colorFilter = filter
-                    startButton!!.text = "Start Tor"
-                    textStatus!!.text = "-"
-                    startButton!!.isEnabled = true
-                    listener.sendMessage("treehouses tor notice")
-                } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
-                    listener.sendMessage("treehouses tor status")
-                } else if (readMessage.contains(".onion")) {
-                    textStatus!!.text = readMessage
-                    listener.sendMessage("treehouses tor notice")
-                } else if (readMessage.contains("Error")) {
-                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
-                    addPortButton!!.text = "add ports"
-                    addPortButton!!.isEnabled = true
-                    portList!!.isEnabled = true
-                } else if (readMessage.contains("active")) {
-                    val matrix = ColorMatrix()
-                    val filter = ColorMatrixColorFilter(matrix)
-                    logo!!.colorFilter = filter
-                    startButton!!.text = "Stop Tor"
-                    listener.sendMessage("treehouses tor")
-                    startButton!!.isEnabled = true
-                } else if (readMessage.contains("OK.")) {
-                    listener.sendMessage("treehouses tor notice")
-                } else if (readMessage.contains("Status: on")) {
-                    notification!!.isChecked = true
-                    notification!!.isEnabled = true
-                } else if (readMessage.contains("Status: off")) {
-                    notification!!.isChecked = false
-                    notification!!.isEnabled = true
-                } //regex to match ports text
-                else if (readMessage.matches("(([0-9]+:[0-9]+)\\s?)+".toRegex())) {
-                    addPortButton!!.text = "Add Port"
-                    portList!!.isEnabled = true
-                    addPortButton!!.isEnabled = true
-                    val ports = readMessage.split(" ".toRegex()).toTypedArray()
-                    for (i in ports.indices) {
-                        portsName!!.add(ports[i])
-                    }
-                    adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
-                    val portList = view!!.findViewById<ListView>(R.id.countries)
-                    portList.adapter = adapter
-                    listener.sendMessage("treehouses tor status")
-                }else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
-                    listener.sendMessage("treehouses tor ports")
-                    portsName = ArrayList()
-                    addPortButton!!.text = "Retrieving port.... Please wait"
-                    if (readMessage.contains("the port has been added")) {
-                        Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-                    } else if (readMessage.contains("has been deleted")) {
-                        Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-                    }
+    override fun getMessage(msg: Message) {
+        if (msg.what == Constants.MESSAGE_READ) {
+            val readMessage:String = msg.obj as String
+            Log.d("Tor reply", "" + readMessage)
+            if (readMessage.contains("inactive")) {
+                val matrix = ColorMatrix()
+                matrix.setSaturation(0f)
+                textStatus!!.text = "-"
+                val filter = ColorMatrixColorFilter(matrix)
+                logo!!.colorFilter = filter
+                startButton!!.text = "Start Tor"
+                textStatus!!.text = "-"
+                startButton!!.isEnabled = true
+                listener.sendMessage("treehouses tor notice")
+            } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
+                listener.sendMessage("treehouses tor status")
+            } else if (readMessage.contains(".onion")) {
+                textStatus!!.text = readMessage
+                listener.sendMessage("treehouses tor notice")
+            } else if (readMessage.contains("Error")) {
+                Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                addPortButton!!.text = "add ports"
+                addPortButton!!.isEnabled = true
+                portList!!.isEnabled = true
+            } else if (readMessage.contains("active")) {
+                val matrix = ColorMatrix()
+                val filter = ColorMatrixColorFilter(matrix)
+                logo!!.colorFilter = filter
+                startButton!!.text = "Stop Tor"
+                listener.sendMessage("treehouses tor")
+                startButton!!.isEnabled = true
+            } else if (readMessage.contains("OK.")) {
+                listener.sendMessage("treehouses tor notice")
+            } else if (readMessage.contains("Status: on")) {
+                notification!!.isChecked = true
+                notification!!.isEnabled = true
+            } else if (readMessage.contains("Status: off")) {
+                notification!!.isChecked = false
+                notification!!.isEnabled = true
+            } //regex to match ports text
+            else if (readMessage.matches("(([0-9]+:[0-9]+)\\s?)+".toRegex())) {
+                addPortButton!!.text = "Add Port"
+                portList!!.isEnabled = true
+                addPortButton!!.isEnabled = true
+                val ports = readMessage.split(" ".toRegex()).toTypedArray()
+                for (i in ports.indices) {
+                    portsName!!.add(ports[i])
+                }
+                adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+                val portList = view!!.findViewById<ListView>(R.id.countries)
+                portList.adapter = adapter
+                listener.sendMessage("treehouses tor status")
+            }else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
+                listener.sendMessage("treehouses tor ports")
+                portsName = ArrayList()
+                addPortButton!!.text = "Retrieving port.... Please wait"
+                if (readMessage.contains("the port has been added")) {
+                    Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
+                } else if (readMessage.contains("has been deleted")) {
+                    Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
                 }
             }
         }

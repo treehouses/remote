@@ -141,12 +141,6 @@ class TerminalFragment : BaseTerminalFragment() {
             val view = view
             if (null != view) {
                 listener.sendMessage(bind.editTextOut.text.toString())
-                if(bind.editTextOut.text.toString() == "reboot") {
-                    Thread.sleep(1000)
-                    listener.openCallFragment(HomeFragment())
-                    Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
-                    requireActivity().title = "Home"
-                }
                 bind.editTextOut.setText("")
             }
         }
@@ -266,28 +260,25 @@ class TerminalFragment : BaseTerminalFragment() {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
-                Constants.MESSAGE_WRITE -> {
-                    isRead = false
-                    addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    val s = match(readMessage)
-                    isRead = true
-                    if (readMessage.contains("unknown")) jsonSend(false)
-                    if (jsonSent) handleJson(readMessage)
-                    else {
-                        filterMessages(readMessage, mConversationArrayAdapter, terminalList)
-                    }
-                }
-                Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
-                Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
+            Constants.MESSAGE_WRITE -> {
+                isRead = false
+                addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
             }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                val s = match(readMessage)
+                isRead = true
+                if (readMessage.contains("unknown")) jsonSend(false)
+                if (jsonSent) handleJson(readMessage)
+                else {
+                    filterMessages(readMessage, mConversationArrayAdapter, terminalList)
+                }
+            }
+            Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
+            Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
         }
     }
 
