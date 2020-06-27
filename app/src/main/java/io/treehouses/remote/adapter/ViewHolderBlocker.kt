@@ -15,29 +15,35 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
             when (i) {
                 R.id.radioButton1 -> {
                     listener.sendMessage("treehouses blocker 0")
-                    Toast.makeText(context, "Blocker Disabled", Toast.LENGTH_SHORT).show()
+                    context.toast("Blocker Disabled")
                 }
                 R.id.radioButton2 -> {
                     listener.sendMessage("treehouses blocker 1")
-                    Toast.makeText(context, "Blocker set to level 1", Toast.LENGTH_SHORT).show()
+                    context.toast("Blocker set to level 1")
                 }
                 R.id.radioButton3 -> {
                     listener.sendMessage("treehouses blocker 2")
-                    Toast.makeText(context, "Blocker set to level 2", Toast.LENGTH_SHORT).show()
+                    context.toast("Blocker set to level 2")
                 }
                 R.id.radioButton4 -> {
                     listener.sendMessage("treehouses blocker 3")
-                    Toast.makeText(context, "Blocker set to level 3", Toast.LENGTH_SHORT).show()
+                    context.toast("Blocker set to level 3")
                 }
                 R.id.radioButton5 -> {
                     listener.sendMessage("treehouses blocker 4")
-                    Toast.makeText(context, "Blocker set to level 4", Toast.LENGTH_SHORT).show()
+                    context.toast("Blocker set to level 4")
                 }
                 R.id.radioButton6 -> {
                     listener.sendMessage("treehouses blocker max")
-                    Toast.makeText(context, "Blocker set to maximum level", Toast.LENGTH_SHORT).show()
+                    context.toast("Blocker set to maximum level")
                 }
             }
         }
     }
+
+    fun Context?.toast(s: String): Toast {
+        return Toast.makeText(this, s, Toast.LENGTH_SHORT).apply { show() }
+    }
+
+
 }
