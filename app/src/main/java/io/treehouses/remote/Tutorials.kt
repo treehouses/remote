@@ -19,6 +19,8 @@ object Tutorials {
             return FancyShowCaseView.Builder(activity)
                     .focusOn(view)
                     .title(title)
+                    .enableAutoTextPosition()
+                    .fitSystemWindows(true)
                     .delay(delay)
         }
         val a = fancyShowCaseViewBuilderHome(bind.testConnection,"Test Bluetooth Connection to RPI", 750 )
