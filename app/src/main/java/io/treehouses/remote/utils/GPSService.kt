@@ -74,45 +74,6 @@ class GPSService(private val mContext: Context) : Service(), LocationListener {
             }
         }
 
-    fun stopUsingGPS() {
-        if (locationManager != null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return
-            }
-            locationManager!!.removeUpdates(this@GPSService)
-        }
-    }
-
-    fun getLatitude(): Double {
-        if (location != null) {
-            latitude = location!!.latitude
-        }
-        return latitude
-    }
-
-    fun getLongitude(): Double {
-        if (location != null) {
-            longitude = location!!.longitude
-        }
-        return longitude
-    }
-
-    fun canGetLocation(): Boolean {
-        return canGetLocation
-    }
-
-    fun showSettingsAlert() {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(mContext, R.style.CustomAlertDialogStyle))
-        alertDialog.setTitle("GPS is settings")
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
-        alertDialog.setPositiveButton("Settings") { dialog: DialogInterface?, which: Int ->
-            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            mContext.startActivity(intent)
-        }
-        alertDialog.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.cancel() }
-        alertDialog.show()
-    }
-
     override fun onLocationChanged(location: Location) {
         if (location != null) {
             this.location = location
