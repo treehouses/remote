@@ -12,7 +12,7 @@ job:
     - sed -i "s#versionName appVersionName#versionName $version#" app/build.gradle
     - git add app/build.gradle
     - git commit -m "update to $version"
-    - git push "https://${GITLAB_USER_NAME}:3ozBDRjysM2dXsDMN4tX@${CI_REPOSITORY_URL#*@}"
+    - git push "https://${GITLAB_USER_NAME}:{PERSONAL_ACCESS_TOKEN}${CI_REPOSITORY_URL#*@}"
     - cat app/build.gradle
   only:
     - tags
