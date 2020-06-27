@@ -1,5 +1,6 @@
 package io.treehouses.remote.adapter
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -24,7 +25,11 @@ class ServiceCardAdapter(fm: FragmentManager?, data: ArrayList<ServiceInfo>) : F
     }
 
     override fun getItem(position: Int): Fragment {
-        return ServiceCardFragment(data[position])
+        val b = Bundle()
+        b.putSerializable("serviceData", data[position])
+        val f: Fragment = ServiceCardFragment()
+        f.arguments = b
+        return f
     }
 
     override fun getItemPosition(o: Any): Int {
