@@ -6,7 +6,7 @@ job:
     - git fetch
     - var=$(git describe --tags)
     - version=${var:1}
-    - git push "https://${GITLAB_USER_NAME}:3ozBDRjysM2dXsDMN4tX@${CI_REPOSITORY_URL#*@}" --delete f-droid
+    - git push "https://${GITLAB_USER_NAME}:{PERSONAL_ACCESS_TOKEN}${CI_REPOSITORY_URL#*@}" --delete f-droid
     - git checkout -b f-droid
     - sed -i "s#versionCode appVersionCode#versionCode $version#" app/build.gradle
     - sed -i "s#versionName appVersionName#versionName $version#" app/build.gradle
