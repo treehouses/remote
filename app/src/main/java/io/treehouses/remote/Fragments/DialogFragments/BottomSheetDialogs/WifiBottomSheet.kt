@@ -69,7 +69,7 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
 
     private fun setAddProfileListener() {
         bind.setWifiProfile.setOnClickListener {
-            SaveUtils.addProfile(context, NetworkProfile(
+            SaveUtils.addProfile(requireContext(), NetworkProfile(
                     bind.editTextSSID.text.toString(),
                     bind.wifipassword.text.toString(),
                     bind.checkBoxHiddenWifi.isChecked))

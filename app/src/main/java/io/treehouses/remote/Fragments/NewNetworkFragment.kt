@@ -24,19 +24,25 @@ import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.Hotspot
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.WifiBottomSheet
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.NewNetworkBinding
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
-import java.util.*
 
 class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     private lateinit var binding: NewNetworkBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = NewNetworkBinding.inflate(inflater, container, false)
-        mChatService = listener.chatService
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
+        updateNetworkMode()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         //Listeners
         binding.networkWifi.setOnClickListener(this)
         binding.networkHotspot.setOnClickListener(this)
@@ -45,8 +51,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         binding.buttonNetworkMode.setOnClickListener(this)
         binding.rebootRaspberry.setOnClickListener(this)
         binding.resetNetwork.setOnClickListener(this)
-        updateNetworkMode()
-        return binding.root
+        Tutorials.networkTutorials(binding, requireActivity())
     }
 
     private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
