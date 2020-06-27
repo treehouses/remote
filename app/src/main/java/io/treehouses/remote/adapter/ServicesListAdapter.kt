@@ -38,7 +38,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
         return initView(position, convertView, parent)
     }
 
-    override fun getDropDownView(position: Int, convertView: View, parent: ViewGroup): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         return initView(position, convertView, parent)
     }
 

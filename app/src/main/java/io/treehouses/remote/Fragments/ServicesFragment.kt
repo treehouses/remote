@@ -25,7 +25,6 @@ import java.util.*
 class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesTabFragment: ServicesTabFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
-    private var services: ArrayList<ServiceInfo>? = null
 
     var bind: ActivityServicesFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,17 +54,17 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                     val output = msg.obj as String
                     val a = performAction(output, services!!)
                     if (a == 1) {
-                        servicesTabFragment = ServicesTabFragment(services!!)
-                        servicesDetailsFragment = ServicesDetailsFragment(services!!)
+                        servicesTabFragment = ServicesTabFragment()
+                        servicesDetailsFragment = ServicesDetailsFragment()
+                        var bundle = Bundle()
+                        bundle.putSerializable("services", services)
+                        servicesTabFragment?.arguments = bundle
+                        servicesDetailsFragment?.arguments = bundle
                         bind!!.progressBar2.visibility = View.GONE
                         replaceFragment(0)
                     } else if (a == 0) {
                         bind!!.progressBar2.visibility = View.GONE
-                        val alertDialog = createDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle),
-                                "Please update CLI",
-                                "Please update to the latest CLI version to access services.")
-                                .create()
-                        alertDialog.show()
+                        showUpdateCliAlert()
                     }
                 }
                 Constants.MESSAGE_WRITE -> {
@@ -74,6 +73,14 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 }
             }
         }
+    }
+
+    private fun showUpdateCliAlert() {
+        val alertDialog = createDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle),
+                "Please update CLI",
+                "Please update to the latest CLI version to access services.")
+                .create()
+        alertDialog.show()
     }
 
     private fun createDialog(con:ContextThemeWrapper,  title:String,  message:String):AlertDialog.Builder {

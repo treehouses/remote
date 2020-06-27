@@ -20,21 +20,24 @@ import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
-class ServicesTabFragment(var services: ArrayList<ServiceInfo>) : BaseServicesFragment(), OnItemClickListener {
+class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
     private var servicesListener: ServicesListener? = null
     private var used = 0
+
     private var total = 1
     private var bind: ActivityServicesTabFragmentBinding? = null
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
-        adapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.bg_white))
+        adapter = ServicesListAdapter(requireContext(), services!!, resources.getColor(R.color.bg_white))
         bind!!.listView.adapter = adapter
         bind!!.listView.onItemClickListener = this
         return bind!!.root
     }
-    fun ServicesTabFragment() {}
+
 
     @JvmField
     val handlerOverview: Handler = object : Handler() {
