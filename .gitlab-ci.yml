@@ -1,0 +1,20 @@
+job:
+  before_script:
+    - git config --global user.email "${GITLAB_USER_EMAIL}"
+    - git config --global user.name "${GITLAB_USER_NAME}"
+  script:
+    - var=$(git describe --tags)
+    - git fetch
+    - if [ -n `git rev-parse --verify --quiet f-droid` ]; then 
+    - echo "F-Droid branch exists already..."
+    - git checkout f-droid
+    - else
+    - echo "Creating new F-Droid branch..."
+    - git checkout -b f-droid
+    - fi
+    - echo -e "versionCode $var\nversionName $var" > version.txt
+    - git add version.txt
+    - git commit -m "update to $var"
+    - git push "https://${GITLAB_USER_NAME}:{PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
+  only:
+    - tags
