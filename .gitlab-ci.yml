@@ -3,18 +3,23 @@ job:
     - git config --global user.email "${GITLAB_USER_EMAIL}"
     - git config --global user.name "${GITLAB_USER_NAME}"
   script:
-    - var=$(git describe --tags)
     - git fetch
-    - if [ -n `git rev-parse --verify --quiet f-droid` ]; then 
-    - echo "F-Droid branch exists already..."
-    - git checkout f-droid
-    - else
+    - var=$(git describe --tags)
+    - version=${var:1}
+    - exists=$(git ls-remote --heads origin f-droid)
+    - if [[ -z $exists ]]; then 
     - echo "Creating new F-Droid branch..."
-    - git checkout -b f-droid
+    - git checkout -b f-droid-$var
+    - else
+    - echo "F-Droid branch exists already..."
+    - git merge -s ours f-droid
+    - git checkout f-droid
+    - git merge master
     - fi
-    - echo -e "versionCode $var\nversionName $var" > version.txt
-    - git add version.txt
+    - sed -i "s#versionCode appVersionCode#versionCode $version#" app/build.gradle
+    - sed -i "s#versionName appVersionName#versionName $version#" app/build.gradle
+    - git add app/build.gradle
     - git commit -m "update to $var"
-    - git push "https://${GITLAB_USER_NAME}:{PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
+    - git push "https://${GITLAB_USER_NAME}:3ozBDRjysM2dXsDMN4tX@${CI_REPOSITORY_URL#*@}"
   only:
     - tags
