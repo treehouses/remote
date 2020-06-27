@@ -1,6 +1,8 @@
 package io.treehouses.remote.pojo
 
-class ServiceInfo : Comparable<ServiceInfo> {
+import java.io.Serializable
+
+class ServiceInfo : Comparable<ServiceInfo>, Serializable {
     @JvmField
     var name: String
     @JvmField

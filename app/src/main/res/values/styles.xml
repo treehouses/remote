@@ -82,6 +82,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:itemBackground">@color/card_background</item>
+        <item name="android:itemTextAppearance">@style/MenuTextStyle</item>
+    </style>
+
+    <style name="MenuTextStyle">
+        <item name="android:textColor">@color/daynight_textColor</item>
     </style>
 
     <style name="MyAppTheme.TextInputLayout" parent="@android:style/TextAppearance">

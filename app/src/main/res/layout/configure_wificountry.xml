@@ -21,6 +21,7 @@
             android:focusable="false"
             android:clickable="true"
             android:drawableRight="@drawable/keyboard_arrow_down_24px"
+            android:textColor="@color/daynight_textColor"
             android:gravity="center"
             android:text="Getting Country from Pi"
             android:hint="" />
