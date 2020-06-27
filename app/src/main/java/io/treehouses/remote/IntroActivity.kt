@@ -35,6 +35,7 @@ class IntroActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.introPager.adapter = IntroPageAdapter(supportFragmentManager)
         TabLayoutMediator(binding.tabDots, binding.introPager) { _, _ -> }.attach()
+        binding.skipButton.setOnClickListener { callback.goToMain() }
 
     }
     inner class IntroPageAdapter(fragmentManager: FragmentManager) : FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -61,7 +62,6 @@ class IntroActivity : AppCompatActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             bind.nextBtn.setOnClickListener { listener.goToPosition(1) }
-            bind.topBar.skipButton.setOnClickListener { listener.goToMain() }
         }
     }
 
@@ -78,7 +78,6 @@ class IntroActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://treehouses.io/#!pages/download.md"))
                 startActivity(intent)
             }
-            bind.topBar.skipButton.setOnClickListener { listener.goToMain() }
 
         }
     }
@@ -93,7 +92,6 @@ class IntroActivity : AppCompatActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             bind.nextBtn.setOnClickListener { listener.goToMain() }
-            bind.topBar.skipButton.setOnClickListener { listener.goToMain() }
         }
     }
 

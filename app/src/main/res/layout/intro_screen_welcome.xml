@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/md_blue_grey_800">
 
-    <include
-        layout="@layout/intro_top_bar"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/topBar"/>
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
