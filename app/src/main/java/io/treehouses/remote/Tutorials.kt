@@ -80,15 +80,34 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW, false)
         //Put animations here
+        val a = FancyShowCaseView.Builder(activity)
+                .focusOn(bind.listView)
+                .title("Install and use a variety of services")
+                .focusShape(FocusShape.ROUNDED_RECTANGLE)
+                .roundRectRadius(90)
+                .delay(500)
+                .disableFocusAnimation()
+                .enableAutoTextPosition()
+                .build()
 
-
+        val queue = FancyShowCaseQueue().add(a)
+        queue.show()
     }
 
     fun servicesDetailsTutorials(bind: ActivityServicesDetailsBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS, false)
         //Put animations here
+        val a = FancyShowCaseView.Builder(activity)
+                .focusOn(bind.pickService)
+                .focusBorderSize(80)
+                .title("Pick any service from this list")
+                .delay(500)
+                .enableAutoTextPosition()
+                .build()
 
+        val queue = FancyShowCaseQueue().add(a)
+        queue.show()
     }
 
     fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
@@ -103,9 +122,22 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
         //Put animations here
+        val a = FancyShowCaseView.Builder(activity)
+                .focusOn(bind.upgrade)
+                .fitSystemWindows(true)
+                .title("Tap to update CLI to newest version")
+                .delay(500)
+                .enableAutoTextPosition()
+                .build()
 
-
+        val b = FancyShowCaseView.Builder(activity)
+                .focusOn(bind.editName)
+                .fitSystemWindows(true)
+                .title("Tap to change your Raspberry Pi name")
+                .delay(50)
+                .enableAutoTextPosition()
+                .build()
+        val queue = FancyShowCaseQueue().add(a).add(b)
+        queue.show()
     }
 
-
-}
