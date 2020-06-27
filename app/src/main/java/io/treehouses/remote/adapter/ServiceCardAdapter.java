@@ -1,5 +1,7 @@
 package io.treehouses.remote.adapter;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -34,7 +36,6 @@ public class ServiceCardAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return data.size();
     }
-
     public ArrayList<ServiceInfo> getData() {
         return data;
     }
@@ -43,7 +44,11 @@ public class ServiceCardAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return new ServiceCardFragment(data.get(position));
+        Bundle b = new Bundle();
+        b.putSerializable("serviceData",data.get(position));
+        Fragment f = new ServiceCardFragment();
+        f.setArguments(b);
+        return f;
     }
 
     @Override

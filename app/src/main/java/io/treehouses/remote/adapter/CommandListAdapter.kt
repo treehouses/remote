@@ -14,7 +14,7 @@ class CommandListAdapter(private val context: Context, private val expandableLis
                          private val expandableListDetail: HashMap<String, List<CommandListItem>>) : BaseExpandableListAdapter() {
     override fun getChild(listPosition: Int, expandedListPosition: Int): Any {
         return if (expandedListPosition < expandableListDetail[expandableListTitle[listPosition]]!!.size) {
-            expandableListDetail[expandableListTitle[listPosition]]!![expandedListPosition].title
+            expandableListDetail[expandableListTitle[listPosition]]!![expandedListPosition].getTitle()
         } else "Add"
     }
 
