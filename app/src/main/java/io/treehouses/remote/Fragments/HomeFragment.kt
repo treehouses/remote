@@ -13,10 +13,8 @@ import android.os.*
 import android.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -64,7 +62,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 instance!!.openCallFragment(TerminalFragment())
                 activity?.let { it.title = "Terminal" }
             } else {
-                instance!!.showAlertDialog()
+                Toast.makeText(context,"Please connect to the Raspberry Pi", Toast.LENGTH_SHORT).show()
             }
         }
         testConnectionListener()
