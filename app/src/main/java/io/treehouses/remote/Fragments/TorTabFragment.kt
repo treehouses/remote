@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
@@ -10,7 +9,6 @@ import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
