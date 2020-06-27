@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
@@ -52,7 +51,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         checkStatusNow()
         openCallFragment(HomeFragment())
         setUpDrawer()
-        title = "Home";
+        title = "Home"
         GPSService(this)
     }
 
@@ -76,7 +75,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
             else if (f is SettingsFragment) {
-                (supportFragmentManager).popBackStack();
+                (supportFragmentManager).popBackStack()
                 title = "Home"
             }
         }
@@ -101,10 +100,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 openCallFragment(HomeFragment())
             } else {
                 showAlertDialog()
-                flag = false;
+                flag = false
             }
         }
-        if (flag) title = item.title;
+        if (flag) title = item.title
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -262,6 +261,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     override fun redirectHome() {
         val menu = bind.navView.menu.findItem(R.id.menu_home)
         onNavigationItemSelected(menu)
+        bind.navView.setCheckedItem(menu)
     }
 
     fun hasValidConnection() : Boolean {
