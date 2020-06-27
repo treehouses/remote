@@ -9,267 +9,81 @@
 
     <LinearLayout
         android:id="@+id/cliVersionBox"
-        android:layout_width="148dp"
-        android:layout_height="251dp"
-        android:orientation="vertical"
+        android:layout_width="161dp"
+        android:layout_height="233dp"
+        android:layout_marginBottom="109dp"
         android:background="@drawable/lightrounded"
-        tools:layout_editor_absoluteX="249dp"
-        tools:layout_editor_absoluteY="448dp">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/tvWifi"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/tvUpgradeCheck"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/margin_huge"
-            android:gravity="center_vertical"
-            android:text="RPI Upgrade Status"
-            android:textColor="@color/daynight_textColor" />
-    </LinearLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardElevation="@dimen/margin_small"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintBottom_toTopOf="@+id/cardView4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView1">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/btStatus"
-                android:layout_width="@dimen/image_size_home_card"
-                android:layout_height="@dimen/image_size_home_card"
-                app:srcCompat="@drawable/tick_png" />
-
-            <TextView
-                android:id="@+id/tvBluetooth"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/margin_huge"
-                android:gravity="center_vertical"
-                android:text="Bluetooth RPI Connection"
-                android:textColor="@color/daynight_textColor" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_large"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardElevation="@dimen/margin_small"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="@dimen/margin_large"
-        app:layout_constraintBottom_toTopOf="@+id/listView">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Connection Status:"
-            android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_very_large"
-            android:textStyle="bold" />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardElevation="@dimen/margin_small"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/upgrade"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView3">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/upgradeCheck"
-                android:layout_width="@dimen/image_size_home_card"
-                android:layout_height="@dimen/image_size_home_card"
-                app:srcCompat="@drawable/tick_png" />
-
-        </LinearLayout>
-
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardElevation="@dimen/margin_small"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintBottom_toTopOf="@+id/cardView5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView3">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/memoryStatus"
-                android:layout_width="@dimen/image_size_home_card"
-                android:layout_height="@dimen/image_size_home_card"
-                app:srcCompat="@drawable/tick_png" />
-
-            <TextView
-                android:id="@+id/tvMemoryStatus"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/margin_huge"
-                android:gravity="center_vertical"
-                android:text="Memory: "
-                android:textColor="@color/daynight_textColor" />
-
-        </LinearLayout>
-
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/rpiNameCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardElevation="@dimen/margin_small"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView4">
-
-
-        <ImageView
-            android:id="@+id/editName"
-            android:layout_width="35dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_marginEnd="@dimen/margin_small"
-            android:layout_marginRight="@dimen/margin_small"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:background="@drawable/ic_edit_black_24dp"
-            android:scaleType="fitXY" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/rpiName"
-                android:layout_width="@dimen/image_size_home_card"
-                android:layout_height="@dimen/image_size_home_card"
-                app:srcCompat="@drawable/tick_png" />
+                android:id="@+id/upgradeCheck"
+                android:layout_width="94dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                app:srcCompat="@android:drawable/stat_sys_warning" />
 
             <TextView
-                android:id="@+id/tvRpiName"
+                android:id="@+id/textView8"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/margin_huge"
-                android:gravity="center_vertical"
-                android:text="Connected RPI Name:"
-                android:textColor="@color/daynight_textColor" />
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardElevation="@dimen/margin_small"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintBottom_toTopOf="@+id/rpiNameCard"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/wifiStatus"
-                android:layout_width="@dimen/image_size_home_card"
-                android:layout_height="@dimen/image_size_home_card"
-                app:srcCompat="@drawable/tick_png" />
-
-            <TextView
-                android:id="@+id/tvWifi"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/margin_huge"
-                android:gravity="center_vertical"
-                android:text="RPI Wifi Connection"
-                android:textColor="@color/daynight_textColor" />
+                android:layout_height="wrap_content"
+                android:text="CLI Version" />
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvUpgradeCheck"
+            android:layout_width="193dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:text="... to ..."
+            android:textColor="@color/daynight_textColor"
+            tools:layout_editor_absoluteX="210dp"
+            tools:layout_editor_absoluteY="627dp" />
 
-    </androidx.cardview.widget.CardView>
+        <Button
+            android:id="@+id/upgrade"
+            android:layout_width="124dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/margin_medium"
+            android:text="Upgrade?"
+            android:theme="@style/PrimaryButton"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="174dp"
+            tools:layout_editor_absoluteY="597dp" />
 
-    <Button
-        android:id="@+id/upgrade"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="@dimen/margin_medium"
-        android:text="Upgrade?"
-        android:theme="@style/PrimaryButton"
-        android:visibility="visible"
-        tools:layout_editor_absoluteX="310dp"
-        tools:layout_editor_absoluteY="8dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:text="RPI Details"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="407dp" />
+        android:textColor="@color/daynight_textColor"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/rpiDetailBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.09"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/rpiDetailBox"
         android:layout_width="225dp"
         android:layout_height="252dp"
+        android:layout_marginBottom="44dp"
         android:background="@drawable/lightrounded"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="447dp">
+        app:layout_constraintBottom_toTopOf="@+id/tvWifi"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/image_text"
@@ -280,12 +94,21 @@
             android:paddingLeft="10dp"
             android:text="Treehouses Image: "
             android:textColor="@color/daynight_textColor"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvRpiName"
+            android:layout_width="219dp"
+            android:layout_height="142dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/margin_huge"
+            android:gravity="center_vertical"
+            android:text="hostname:"
+            android:textColor="@color/daynight_textColor" />
 
         <TextView
             android:id="@+id/tvRpiType"
-            android:layout_width="match_parent"
+            android:layout_width="218dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/margin_huge"
@@ -306,4 +129,116 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bluetoothBox"
+        android:layout_width="351dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/lightrounded"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvBluetooth"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:text="Bluetooth RPI Connection"
+                    android:textColor="@color/daynight_textColor"
+                    tools:layout_editor_absoluteX="-22dp"
+                    tools:layout_editor_absoluteY="397dp" />
+
+                <TextView
+                    android:id="@+id/deviceAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/bluetoothText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Bluetooth"
+        android:textColor="@color/daynight_textColor"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/remoteVersionBox"
+        android:layout_width="352dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/lightrounded"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bluetoothBox">
+
+        <TextView
+            android:id="@+id/remoteVersionText"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:text="TreeHouses Remote Version:" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/editName"
+        android:layout_width="46dp"
+        android:layout_height="67dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="300dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/ic_edit_black_24dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvMemoryStatus"
+        android:layout_width="343dp"
+        android:layout_height="51dp"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:text="Memory: "
+        android:textColor="@color/daynight_textColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvWifi"
+        android:layout_width="355dp"
+        android:layout_height="51dp"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:text="RPI Wifi Connection"
+        android:textColor="@color/daynight_textColor"
+        app:layout_constraintBottom_toTopOf="@+id/tvMemoryStatus"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
