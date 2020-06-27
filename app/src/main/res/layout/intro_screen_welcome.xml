@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:background="@color/md_blue_grey_800">
 
+    <include
+        layout="@layout/intro_top_bar"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/topBar"/>
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -57,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_large"
         android:background="@drawable/service_button"
-        android:text="Get Started"
+        android:text="Next"
         android:textAllCaps="false"
         android:textColor="@color/bg_white"
         app:layout_constraintEnd_toEndOf="parent"

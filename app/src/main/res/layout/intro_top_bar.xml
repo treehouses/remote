@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#00000000">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:textColor="#AAFFFFFF"
+        android:text="Treehouses"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/text_size_mid"
+        app:fontFamily="@font/roboto_medium"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/margin_medium" />
+    <Button
+        android:id="@+id/skipButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip"
+        android:textAllCaps="false"
+        android:textColor="@color/bg_white"
+        style="@style/Widget.AppCompat.Button.Borderless"/>
+</LinearLayout>

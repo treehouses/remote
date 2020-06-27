@@ -45,7 +45,7 @@ class IntroActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> IntroSlideWelcome(callback)
-                1 -> IntroSlideDownload()
+                1 -> IntroSlideDownload(callback)
                 2 -> IntroSlideBluetooth(callback)
                 else -> throw IllegalStateException("Nonexistent fragment")
             }
@@ -61,10 +61,11 @@ class IntroActivity : AppCompatActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             bind.nextBtn.setOnClickListener { listener.goToPosition(1) }
+            bind.topBar.skipButton.setOnClickListener { listener.goToMain() }
         }
     }
 
-    class IntroSlideDownload : Fragment() {
+    class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenDownloadBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             bind = IntroScreenDownloadBinding.inflate(inflater, container, false)
@@ -77,6 +78,8 @@ class IntroActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://treehouses.io/#!pages/download.md"))
                 startActivity(intent)
             }
+            bind.topBar.skipButton.setOnClickListener { listener.goToMain() }
+
         }
     }
 
@@ -90,6 +93,7 @@ class IntroActivity : AppCompatActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             bind.nextBtn.setOnClickListener { listener.goToMain() }
+            bind.topBar.skipButton.setOnClickListener { listener.goToMain() }
         }
     }
 
