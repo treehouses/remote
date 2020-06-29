@@ -15,7 +15,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/profiles_background"
+        android:background="@drawable/profiles_back"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
         android:padding="28dp"
