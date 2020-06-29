@@ -14,23 +14,20 @@
         android:layout_gravity="end"
         android:background="@drawable/ic_edit_black_24dp"
         android:scaleType="fitXY"
-        tools:layout_editor_absoluteX="146dp"
-        tools:layout_editor_absoluteY="356dp" />
+        tools:layout_editor_absoluteX="194dp"
+        tools:layout_editor_absoluteY="340dp" />
 
     <LinearLayout
         android:id="@+id/cliVersionBox"
         android:layout_width="154dp"
         android:layout_height="130dp"
-        android:layout_marginTop="112dp"
-        android:layout_marginBottom="220dp"
+        android:layout_marginTop="44dp"
         android:background="@drawable/lightrounded"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/measurablesBox"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.817"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/networkBox"
-        app:layout_constraintVertical_bias="0.612">
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toEndOf="@+id/rpiDetailBox"
+        app:layout_constraintTop_toBottomOf="@+id/networkBox">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,7 +54,7 @@
 
         <TextView
             android:id="@+id/tvUpgradeCheck"
-            android:layout_width="105dp"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_vertical"
@@ -84,16 +81,13 @@
         android:id="@+id/rpiDetailBox"
         android:layout_width="156dp"
         android:layout_height="129dp"
-        android:layout_marginTop="109dp"
-        android:layout_marginBottom="128dp"
+        android:layout_marginTop="44dp"
         android:background="@drawable/lightrounded"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/measurablesBox"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.141"
+        app:layout_constraintHorizontal_bias="0.149"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/networkBox"
-        app:layout_constraintVertical_bias="0.681">
+        app:layout_constraintTop_toBottomOf="@+id/networkBox">
 
         <TextView
             android:id="@+id/tvRpiName"
@@ -256,24 +250,82 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/tvMemoryStatus"
-            android:layout_width="371dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="60dp"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Memory: "
-            android:textStyle="bold" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/temperature"
-            android:layout_width="391dp"
+            <TextView
+                android:id="@+id/tvMemoryStatus"
+                android:layout_width="0dp"
+                android:layout_height="43dp"
+                android:layout_marginBottom="60dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Memory: "
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/memoryBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="353dp"
+                    android:layout_height="33dp"
+                    android:layout_weight="1"
+                    tools:layout_editor_absoluteX="36dp"
+                    tools:layout_editor_absoluteY="613dp" />
+
+                <TextView
+                    android:id="@+id/memory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="GB" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Temperature:"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="235dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Temperature"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/temperatureBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="208dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/temperature"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="C" />
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

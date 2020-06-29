@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
@@ -32,7 +33,8 @@ class StatusFragment : BaseFragment() {
     private var lastCommand = "hostname"
     private var deviceName = ""
     private var rpiVersion = ""
-
+    private var usedMemory = 0
+    private var totalMemory = 0
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,22 +71,28 @@ class StatusFragment : BaseFragment() {
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
         if (lastCommand == "hostname") {
-            bind.tvRpiName.text = readMessage
+            bind.tvRpiName.text = "hostname: " + readMessage
             writeToRPI("treehouses remote status")
         } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
             val res = readMessage.trim().split(" ")
             //setCard(bind.tvWifi, bind.wifiStatus, "RPI Wifi Connection : " + res[0])
             bind.imageText.text = String.format("Treehouses Image: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
-            bind.tvRpiType.text = res[4]
+            bind.tvRpiType.text = "Mode: " + res[4]
             rpiVersion = res[3]
             Log.e("REACHED", "YAYY")
-            writeToRPI("treehouses memory free")
-        } else if (lastCommand == "treehouses memory free") {
+            writeToRPI("treehouses memory used")
+        } else if (lastCommand == "treehouses memory used") {
             //setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
+            usedMemory = readMessage.trim { it <= ' ' }.toInt()
+            writeToRPI("treehouses memory total")
+        } else if (lastCommand == "treehouses memory total") {
+            totalMemory = readMessage.trim { it <= ' ' }.toInt()
+            ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory.toFloat()/totalMemory*100).toInt()).setDuration(600).start()
             writeToRPI("treehouses temperature celsius")
         } else if (lastCommand == "treehouses temperature celsius") {
-            bind.temperature.text = "Temperature: " + readMessage
+            bind.temperature.text = readMessage
+            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat()/80*100).toInt()).setDuration(600).start()
             writeToRPI("treehouses remote version")
         } else if (lastCommand == "treehouses remote version") {
             bind.remoteVersionText.text = "    TreeHouses Remote Version: " + readMessage
