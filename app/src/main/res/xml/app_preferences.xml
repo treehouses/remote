@@ -1,91 +1,100 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <io.treehouses.remote.Views.CustomPrefCategory android:title="General">
-        <io.treehouses.remote.Views.CustomSwitchPref
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="General" app:layout="@layout/custom_pref_category">
+        <SwitchPreferenceCompat
             android:title="Splash Screen"
-            android:layout="@layout/custom_switch_preference"
+            android:layout="@layout/custom_pref"
             android:key="splashScreen"
             android:defaultValue="true"/>
-        <io.treehouses.remote.Views.CustomPrefCheckbox
+        <CheckBoxPreference
             android:title="Terminal Autocomplete"
-            android:layout="@layout/custom_checkbox_preference"
+            android:layout="@layout/custom_pref"
             android:key="autocomplete"
             android:defaultValue="true" />
 
-        <io.treehouses.remote.Views.CustomListPref
+        <ListPreference
             android:defaultValue="LED Heavy Metal"
             android:entries="@array/led_options"
             android:entryValues="@array/led_options"
             android:key="led_pattern"
             android:title="LED Pattern"
+            android:layout="@layout/custom_pref"
             android:summary="Set the Test Connection LED Pattern"/>
 
-        <io.treehouses.remote.Views.CustomListPref
+        <ListPreference
             android:defaultValue="Follow System"
             android:entries="@array/dark_mode_options"
             android:entryValues="@array/dark_mode_options"
+            android:layout="@layout/custom_pref"
             android:key="dark_mode"
             android:title="Dark Mode"
             android:summary="Set the Dark Mode Preference"/>
 
-    </io.treehouses.remote.Views.CustomPrefCategory>
+    </PreferenceCategory>
 
-    <io.treehouses.remote.Views.CustomPrefCategory android:title="User Customization">
-        <io.treehouses.remote.Views.CustomPref
+    <PreferenceCategory android:title="User Customization" android:layout="@layout/custom_pref_category">
+        <Preference
             android:title="Clear Commands List"
             android:key="clear_commands"
+            android:layout="@layout/custom_pref"
             android:summary="Clear the customizable commands list in terminal">
-        </io.treehouses.remote.Views.CustomPref>
+        </Preference>
 
-        <io.treehouses.remote.Views.CustomPref
+        <Preference
             android:title="Default Commands List"
             android:key="reset_commands"
+            android:layout="@layout/custom_pref"
             android:summary="Reset list to the default commands in terminal">
-        </io.treehouses.remote.Views.CustomPref>
+        </Preference>
 
-        <io.treehouses.remote.Views.CustomPref
+        <Preference
             android:title="Clear Network Profiles"
             android:key="network_profiles"
+            android:layout="@layout/custom_pref"
             android:summary="Clear all Network Profiles (WIFI, Hotspot, Bridge)">
-        </io.treehouses.remote.Views.CustomPref>
-    </io.treehouses.remote.Views.CustomPrefCategory>
+        </Preference>
+    </PreferenceCategory>
 
-    <io.treehouses.remote.Views.CustomPrefCategory android:title="Privacy">
-        <io.treehouses.remote.Views.CustomSwitchPref
+    <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">
+        <SwitchPreferenceCompat
             android:title="Share Data"
-            android:layout="@layout/custom_switch_preference"
+            android:layout="@layout/custom_pref"
             android:summary="Please enable to share data with the Treehouses Remote Team. This will help us to improve our services to give you the best possible experience!"
             android:key="send_log"
             />
 
-    </io.treehouses.remote.Views.CustomPrefCategory>
+    </PreferenceCategory>
 
-    <io.treehouses.remote.Views.CustomPrefCategory android:title="About">
-        <io.treehouses.remote.Views.CustomPref
+    <PreferenceCategory android:title="About" android:layout="@layout/custom_pref_category">
+        <Preference
             android:title="Contributors"
-            android:key="contributors">
+            android:key="contributors"
+            android:layout="@layout/custom_pref">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/treehouses/remote/graphs/contributors" />
-        </io.treehouses.remote.Views.CustomPref>
-        <io.treehouses.remote.Views.CustomPref
+        </Preference>
+        <Preference
             android:title="Help"
-            android:key="help_button">
+            android:key="help_button"
+            android:layout="@layout/custom_pref">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://treehouses.io/#!index.md" />
-        </io.treehouses.remote.Views.CustomPref>
-        <io.treehouses.remote.Views.CustomPref
+        </Preference>
+        <Preference
             android:title="Report an Issue"
-            android:key="reportIssue">
+            android:key="reportIssue"
+            android:layout="@layout/custom_pref">
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/treehouses/remote/issues"/>
-        </io.treehouses.remote.Views.CustomPref>
+        </Preference>
 
-    </io.treehouses.remote.Views.CustomPrefCategory>
+    </PreferenceCategory>
 
-    <io.treehouses.remote.Views.CustomPrefCategory android:title="Advanced">
-        <io.treehouses.remote.Views.CustomSwitchPref android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
+    <PreferenceCategory android:title="Advanced" android:layout="@layout/custom_pref_category">
+        <SwitchPreferenceCompat android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
             android:summary="Enable to reconnect to Bluetooth automatically when a connection fails. Warning: this may affect battery life."
-            android:layout="@layout/custom_switch_preference"
+            android:layout="@layout/custom_pref"
             android:key="reconnectBluetooth"/>
-    </io.treehouses.remote.Views.CustomPrefCategory>
+    </PreferenceCategory>
 
 </PreferenceScreen>
