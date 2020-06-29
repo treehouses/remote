@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/padding_normal">
+    android:padding="@dimen/padding_normal"
+    android:theme="@style/CardTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -21,7 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="IP"
-        android:padding="@dimen/padding_normal" />
+        android:padding="@dimen/padding_normal"
+        android:textColor="@color/daynight_textColor"/>
 
 
     <com.google.android.material.textfield.TextInputEditText
@@ -29,21 +31,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Mask"
-        android:padding="@dimen/padding_normal" />
+        android:padding="@dimen/padding_normal"
+        android:textColor="@color/daynight_textColor"/>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/gateway"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Gateway"
-        android:padding="@dimen/padding_normal" />
+        android:padding="@dimen/padding_normal"
+        android:textColor="@color/daynight_textColor"/>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/dns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="DNS"
-        android:padding="@dimen/padding_normal" />
+        android:padding="@dimen/padding_normal"
+        android:textColor="@color/daynight_textColor"/>
 
     <Button
         android:id="@+id/btn_start_config"

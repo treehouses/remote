@@ -34,11 +34,33 @@
         <!--<item name="android:dropDownVerticalOffset">5dp</item>-->
     </style>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/windowBackground</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
+    </style>
+
+    <style name="CustomAlertDialogStyle">
+        <item name="android:background">@color/card_background</item>
+        <item name="android:textColorPrimary">@color/daynight_textColor</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+    </style>
+
+    <style name="CardTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/card_background</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
     </style>
 
     <style name="FullscreenTheme" parent="MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus">
@@ -60,6 +82,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:itemBackground">@color/card_background</item>
+        <item name="android:itemTextAppearance">@style/MenuTextStyle</item>
+    </style>
+
+    <style name="MenuTextStyle">
+        <item name="android:textColor">@color/daynight_textColor</item>
     </style>
 
     <style name="MyAppTheme.TextInputLayout" parent="@android:style/TextAppearance">
@@ -141,5 +169,22 @@
     <style name="DialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="tutorialTitle">
+        <item name="android:textSize">@dimen/text_size_very_large</item>
+        <item name="fontFamily">@font/roboto_bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/margin_huge</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="tutorialDescription">
+        <item name="android:textColor">@color/bg_white</item>
+        <item name="fontFamily">@font/roboto_light</item>
+        <item name="android:textSize">@dimen/text_size_mid</item>
+        <item name="android:padding">@dimen/padding_large</item>
+        <item name="android:gravity">center</item>
     </style>
 </resources>

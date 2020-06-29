@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout6"
@@ -15,6 +16,7 @@
             android:id="@+id/editTextSSID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
             android:hint="Hotspot SSID" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -31,7 +33,7 @@
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:textColor="@color/daynight_textColor"
             android:hint="@string/password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -50,6 +52,7 @@
 
         <ImageView
             android:id="@+id/imageViewSettings"
+            android:background="#FFFFFF"
             android:layout_width="@dimen/icon_size_mid"
             android:layout_height="@dimen/icon_size_mid"
             android:layout_alignParentEnd="true"

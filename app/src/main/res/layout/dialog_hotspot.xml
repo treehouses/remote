@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:padding="@dimen/margin_medium"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/CardTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -23,7 +24,8 @@
         android:fontFamily="sans-serif"
         android:hint="ESSID"
         android:inputType="textEmailAddress"
-        android:padding="@dimen/margin_medium" />
+        android:padding="@dimen/margin_medium"
+        android:textColor="@color/daynight_textColor"/>
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -42,7 +44,8 @@
             android:fontFamily="sans-serif"
             android:hint="@string/password"
             android:inputType="textPassword"
-          />
+            android:textColor="@color/daynight_textColor"
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,7 +61,7 @@
             android:entries="@array/spinner_hotspot"
             android:padding="@dimen/padding_large" />
         <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/checkBoxHiddenWifi"
+            android:id="@+id/checkBoxHiddenHotspot"
             android:layout_width="0dp"
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_weight="1"

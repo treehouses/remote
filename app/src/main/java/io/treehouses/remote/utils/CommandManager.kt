@@ -1,6 +1,5 @@
 package io.treehouses.remote.utils
 
-import android.util.Log
 import java.util.*
 
 
@@ -54,16 +53,20 @@ object Matcher {
     private fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
 
     fun isError(output: String): Boolean {
-        val keys = listOf("error", "unknown", "usage", "command ")
+        val keys = listOf("error ", "unknown command", "usage: ", "not a valid option", "error: ")
         if (output.contains("{") || output.contains("}")) return false
         for (k in keys) if (toLC(output).contains(k)) return true
         return false
     }
 
-    fun isBoolean(output: String): Boolean { return toLC(output) == "true" || toLC(output) == "false" }
+    fun isValidOutput(output : String, str1: String, str2: String) : Boolean {
+        return toLC(output) == str1 || toLC(output) == str2
+    }
+
+    fun isBoolean(output: String): Boolean { return isValidOutput(output, "true", "false")}
 
     fun isVersion(output: String): Boolean {
-        return toLC(output) == "version: false" || toLC(output) == "version: true"
+        return isValidOutput(output,"version: false", "version: true")
     }
 
     fun isRemoteCheck(output: String): Boolean {
@@ -81,7 +84,7 @@ object Matcher {
 
     fun isHotspotConnected (output: String): Boolean {return toLC(output).contains("pirateship has anchored successfully")}
 
-    fun isWifiConnected (output: String): Boolean {return output.contains("open wifi network") || output.contains("password network")}
+    fun isWifiConnected (output: String): Boolean {return output.contains("open network") || output.contains("password network")}
 
     fun isDefaultNetwork(output: String): Boolean {return toLC(output).contains("the network mode has been reset to default")}
 

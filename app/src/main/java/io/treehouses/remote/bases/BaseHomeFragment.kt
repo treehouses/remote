@@ -1,6 +1,7 @@
 package io.treehouses.remote.bases
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
@@ -9,17 +10,19 @@ import android.net.Uri
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.util.Linkify
+import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import io.treehouses.remote.Constants
+import io.treehouses.remote.*
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
-import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.ParseDbService
-import io.treehouses.remote.R
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.SaveUtils.Screens
 import java.util.*
 
 open class BaseHomeFragment : BaseFragment() {
@@ -31,22 +34,23 @@ open class BaseHomeFragment : BaseFragment() {
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
         when (option) {
             1 -> {
-                green.setBackgroundResource(R.drawable.thanksgiving_anim_green)
-                red.setBackgroundResource(R.drawable.thanksgiving_anim_red)
+                setBackground(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
             }
             2 -> {
-                green.setBackgroundResource(R.drawable.newyear_anim_green)
-                red.setBackgroundResource(R.drawable.newyear_anim_red)
+                setBackground(green, red, R.drawable.newyear_anim_green, R.drawable.newyear_anim_red)
             }
             3 -> {
-                green.setBackgroundResource(R.drawable.heavymetal_anim_green)
-                red.setBackgroundResource(R.drawable.heavymetal_anim_red)
+                setBackground(green, red, R.drawable.heavymetal_anim_green, R.drawable.heavymetal_anim_red)
             }
             else -> {
-                green.setBackgroundResource(R.drawable.dance_anim_green)
-                red.setBackgroundResource(R.drawable.dance_anim_red)
+                setBackground(green, red, R.drawable.dance_anim_green, R.drawable.dance_anim_red)
             }
         }
+    }
+
+    private fun setBackground(green: ImageView, red: ImageView, greenDrawable: Int, redDrawable: Int) {
+        green.setBackgroundResource(greenDrawable)
+        red.setBackgroundResource(redDrawable)
     }
 
     protected fun showLogDialog(preferences: SharedPreferences) {
@@ -59,7 +63,7 @@ open class BaseHomeFragment : BaseFragment() {
         if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
             if (connectionCount >= 3) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
-                AlertDialog.Builder(activity).setTitle("Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
                         .setPositiveButton("Continue") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show()
             }
@@ -74,7 +78,7 @@ open class BaseHomeFragment : BaseFragment() {
         val date = Calendar.getInstance()
         if (lastDialogShown < date.timeInMillis) {
             if (connectionCount >= 3 && ratingDialog) {
-                AlertDialog.Builder(activity).setTitle("Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
+                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
                         "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
                         .setPositiveButton("RATE IT NOW") { _: DialogInterface?, _: Int ->
                             val intent = Intent(Intent.ACTION_VIEW)
@@ -105,38 +109,42 @@ open class BaseHomeFragment : BaseFragment() {
             map["treehousesVersion"] = tresshousesVersion
             map["bluetoothMacAddress"] = bluetoothMac
             map["rpiVersion"] = rpiVersion
+            val preferences:SharedPreferences = preferences!!
             ParseDbService.sendLog(activity, deviceName, map, preferences)
             MainApplication.logSent = true
         }
     }
 
     protected fun showDialogOnce(preferences: SharedPreferences) {
-        val dialogShown = preferences.getBoolean("dialogShown", false)
-        if (!dialogShown) {
-            showWelcomeDialog()
+        val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
+        Log.e("REACHED HERE", firstTime.toString())
+        if (firstTime) {
+//            showWelcomeDialog()
+            Log.e("FIRST", "TIME")
+            val i = Intent(activity, IntroActivity::class.java)
+            startActivity(i)
             val editor = preferences.edit()
-            editor.putBoolean("dialogShown", true)
+            editor.putBoolean(Screens.FIRST_TIME.name, false)
             editor.apply()
         }
     }
 
-    private fun showWelcomeDialog(): AlertDialog {
-        val s = SpannableString("""Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by "control" and "cli". There is more information under "Get Started"
-
-https://treehouses.io/#!pages/download.md
-https://github.com/treehouses/control
-https://github.com/treehouses/cli""")
-        Linkify.addLinks(s, Linkify.ALL)
-        val d = AlertDialog.Builder(context)
-                .setTitle("Friendly Reminder")
-                .setIcon(R.drawable.dialog_icon)
-                .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .setMessage(s)
-                .create()
-        d.show()
-        (d.findViewById<View>(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
-        return d
-    }
+//    private fun showWelcomeDialog(): AlertDialog {
+//        val s = SpannableString("""Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by "control" and "cli". There is more information under "Get Started"
+//
+//https://treehouses.io/#!pages/download.md
+//https://github.com/treehouses/control
+//https://github.com/treehouses/cli""")
+//        Linkify.addLinks(s, Linkify.ALL)
+//        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder" )
+//                .setIcon(R.drawable.dialog_icon)
+//                .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+//                .setMessage(s)
+//                .create()
+//        d.show()
+//        (d.findViewById<View>(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
+//        return d
+//    }
 
     protected fun showTestConnectionDialog(dismissable: Boolean, title: String, messageID: Int, selected_LED: Int): AlertDialog {
         val mView = layoutInflater.inflate(R.layout.dialog_test_connection, null)
@@ -160,7 +168,7 @@ https://github.com/treehouses/cli""")
     }
 
     private fun createTestConnectionDialog(mView: View, dismissable: Boolean, title: String, messageID: Int): AlertDialog {
-        val d = AlertDialog.Builder(context).setView(mView).setTitle(title).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID)
+        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID)
         if (dismissable) d.setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         return d.create()
     }
@@ -174,10 +182,8 @@ https://github.com/treehouses/cli""")
 
 
     protected fun showUpgradeCLI() {
-        val alertDialog = AlertDialog.Builder(context)
-                .setTitle("Update Treehouses CLI")
-                .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!")
-                .setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
+        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Update Treehouses CLI")
+                .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!").setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
                     listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE))
                     Toast.makeText(context, "Upgraded", Toast.LENGTH_LONG).show()
                     dialog.dismiss()
@@ -185,5 +191,9 @@ https://github.com/treehouses/cli""")
                 .setNegativeButton("Upgrade Later") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .create()
         alertDialog.show()
+    }
+
+    private fun CreateAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
     }
 }

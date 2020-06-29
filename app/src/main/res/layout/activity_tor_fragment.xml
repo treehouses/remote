@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/services_tab_background"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/treehouse_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:srcCompat="@drawable/tor" />
+
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_tor_start"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="8dp"
+
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:background="@drawable/service_button"
+            android:text="Start Tor"
+            android:layout_weight="1"
+            android:textColor="@color/bg_white" />
+<!--        <Button-->
+<!--            android:id="@+id/btn_tor_start"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="4dp"-->
+
+<!--            android:layout_weight="1"-->
+<!--            android:text="Start Tor"-->
+<!--            android:layout_marginLeft="30dp"-->
+<!--            android:layout_marginRight="30dp"-->
+<!--            android:bottomRightRadius="30dp"-->
+<!--            android:bottomLeftRadius="30dp"-->
+<!--            android:topLeftRadius="30dp"-->
+<!--            android:topRightRadius="30dp"-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
+<!--            android:textColor="@android:color/black"-->
+<!--            android:textSize="@dimen/text_size_small"-->
+<!--            android:textStyle="bold" />-->
+
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/tor_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:padding="@dimen/margin_medium"
+        android:textColor="@color/daynight_textColor"
+        android:text="nojj6apzltogyb3zfkkfv.............bi74pee66dihzvid.onion"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textSize="@dimen/text_size_mid" />
+
+    <Switch
+        android:id="@+id/switchNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/daynight_textColor"
+        android:padding="@dimen/margin_medium"
+        android:text="Notification: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textSize="@dimen/text_size_large" />
+
+    <LinearLayout  android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_add_port"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="30dp"
+
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:background="@drawable/add_command_background"
+            android:text="Add port"
+            android:layout_weight="1"
+            android:textColor="@color/black_overlay" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/countries"
+        android:background="@color/tor_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/margin_large"
+        android:layout_weight="1"/>
+
+
+
+    <LinearLayout  android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

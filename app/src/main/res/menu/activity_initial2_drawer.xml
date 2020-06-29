@@ -25,9 +25,9 @@
             android:icon="@drawable/ic_apps_black_24dp"
             android:title="@string/menu_services" />
         <item
-            android:id="@+id/menu_tunnel"
+            android:id="@+id/menu_tunnel2"
             android:icon="@drawable/ssh"
-            android:title="@string/menu_tunnel" />
+            android:title="@string/menu_ssh_tunnel" />
         <item
             android:id="@+id/menu_about"
             android:icon="@drawable/about"

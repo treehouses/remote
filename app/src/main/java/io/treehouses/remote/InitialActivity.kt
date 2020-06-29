@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,10 +17,12 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
 import io.treehouses.remote.Fragments.DialogFragments.SSHDialog
+import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
@@ -87,6 +90,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return true
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         var flag = true
@@ -105,7 +109,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
-        if (flag) title = item.title;
+        if (flag) title = item.title
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -128,13 +132,13 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private fun checkMore(id: Int) {
         when (id) {
             R.id.menu_services -> openCallFragment(ServicesFragment())
-            R.id.menu_tunnel -> openCallFragment(TunnelFragment())
             R.id.menu_about -> openCallFragment(AboutFragment())
             R.id.menu_status -> openCallFragment(StatusFragment())
+            R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
             R.id.menu_ssh -> getSSH()
             else -> openCallFragment(HomeFragment())
-
         }
+
     }
 
     override fun openCallFragment(newfragment: Fragment) {
@@ -177,7 +181,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return mChatService!!
     }
 
-    private fun checkStatusNow() {
+    fun checkStatusNow() {
         validBluetoothConnection = when (mChatService!!.state) {
             Constants.STATE_CONNECTED -> {
                 LogUtils.mConnect()
@@ -199,12 +203,14 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (item.itemId == R.id.action_settings) {
             openCallFragment(SettingsFragment())
             title = "Settings"
+        } else if (item.itemId == R.id.action_feedback) {
+            FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showAlertDialog() {
-        AlertDialog.Builder(this@InitialActivity)
+    fun showAlertDialog() {
+        AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
                 .setTitle("ALERT:")
                 .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
                 .setIcon(R.drawable.bluetooth)
@@ -255,6 +261,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
+    }
+
+    fun hasValidConnection() : Boolean {
+        return validBluetoothConnection
     }
 
     companion object {

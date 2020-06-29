@@ -2,23 +2,46 @@ package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.R
 import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
+    var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+
         setPreferencesFromResource(R.xml.app_preferences, rootKey)
         val clearCommandsList = findPreference<Preference>("clear_commands")
         val resetCommandsList = findPreference<Preference>("reset_commands")
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
+
+
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
+
+        preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "dark_mode") {
+                darkMode(sharedPreferences.getString(key, "").toString())
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     private fun setClickListener(preference: Preference?) {
@@ -26,6 +49,16 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             preference.onPreferenceClickListener = this
         } else {
             Log.e("SETTINGS", "Unknown key")
+        }
+    }
+
+    fun darkMode(key: String) {
+        if (key == "ON") {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else if (key == "OFF") {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else if (key == "Follow System") {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 
@@ -51,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive) { dialog: DialogInterface?, which: Int -> onClickDialog(ID) }
@@ -61,19 +94,19 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun clearNetworkProfiles() {
-        SaveUtils.clearProfiles(context)
+        SaveUtils.clearProfiles(requireContext())
         Toast.makeText(context, "Network Profiles have been reset", Toast.LENGTH_LONG).show()
     }
 
     private fun onClickDialog(id: Int) {
         when (id) {
             CLEAR_COMMANDS_ID -> {
-                SaveUtils.clearCommandsList(context)
+                SaveUtils.clearCommandsList(requireContext())
                 Toast.makeText(context, "Commands List has been Cleared", Toast.LENGTH_LONG).show()
             }
             RESET_COMMANDS_ID -> {
-                SaveUtils.clearCommandsList(context)
-                SaveUtils.initCommandsList(context)
+                SaveUtils.clearCommandsList(requireContext())
+                SaveUtils.initCommandsList(requireContext())
                 Toast.makeText(context, "Commands has been reset to default", Toast.LENGTH_LONG).show()
             }
             NETWORK_PROFILES_ID -> clearNetworkProfiles()

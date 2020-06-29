@@ -17,6 +17,14 @@
             android:title="LED Pattern"
             android:summary="Set the Test Connection LED Pattern"/>
 
+        <ListPreference
+            android:defaultValue="Follow System"
+            android:entries="@array/dark_mode_options"
+            android:entryValues="@array/dark_mode_options"
+            android:key="dark_mode"
+            android:title="Dark Mode"
+            android:summary="Set the Dark Mode Preference"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="User Customization">

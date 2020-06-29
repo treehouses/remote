@@ -19,8 +19,11 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 
 import androidx.core.app.ActivityCompat;
+
+import io.treehouses.remote.R;
 
 public class GPSService extends Service implements LocationListener {
 
@@ -113,7 +116,7 @@ public class GPSService extends Service implements LocationListener {
     }
 
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.CustomAlertDialogStyle));
         alertDialog.setTitle("GPS is settings");
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
         alertDialog.setPositiveButton("Settings", (dialog, which) -> {

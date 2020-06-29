@@ -3,7 +3,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/margin_medium"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/CardTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -25,6 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/daynight_textColor"
             android:hint="ESSID"
             />
         <Button
@@ -43,7 +45,7 @@
         android:elevation="2dp"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600"
-       >
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_password"
@@ -52,6 +54,7 @@
             android:editable="true"
             android:fontFamily="sans-serif"
             android:hint="Password"
+            android:textColor="@color/daynight_textColor"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -62,7 +65,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:hint="Hotspot ESSID"
-      />
+        android:textColor="@color/daynight_textColor"
+        />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout5"
@@ -71,14 +75,15 @@
         android:elevation="2dp"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600"
-      >
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_hotspot_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Hotspot Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/daynight_textColor"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
