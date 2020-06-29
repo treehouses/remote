@@ -33,8 +33,8 @@ class StatusFragment : BaseFragment() {
     private var lastCommand = "hostname"
     private var deviceName = ""
     private var rpiVersion = ""
-    private var usedMemory = 0
-    private var totalMemory = 0
+    private var usedMemory = 0.0
+    private var totalMemory = 0.0
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,14 +81,15 @@ class StatusFragment : BaseFragment() {
             bind.tvRpiType.text = "Mode: " + res[4]
             rpiVersion = res[3]
             Log.e("REACHED", "YAYY")
-            writeToRPI("treehouses memory used")
-        } else if (lastCommand == "treehouses memory used") {
+            writeToRPI("treehouses memory used -g")
+        } else if (lastCommand == "treehouses memory used -g") {
             //setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
-            usedMemory = readMessage.trim { it <= ' ' }.toInt()
-            writeToRPI("treehouses memory total")
-        } else if (lastCommand == "treehouses memory total") {
-            totalMemory = readMessage.trim { it <= ' ' }.toInt()
-            ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory.toFloat()/totalMemory*100).toInt()).setDuration(600).start()
+            usedMemory = readMessage.trim { it <= ' ' }.toDouble()
+            writeToRPI("treehouses memory total -g")
+        } else if (lastCommand == "treehouses memory total -g") {
+            totalMemory = readMessage.trim { it <= ' ' }.toDouble()
+            ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
+            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
             writeToRPI("treehouses temperature celsius")
         } else if (lastCommand == "treehouses temperature celsius") {
             bind.temperature.text = readMessage
@@ -148,8 +149,8 @@ class StatusFragment : BaseFragment() {
             bind.upgrade.visibility = View.GONE
         } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
             bind.upgradeCheck.visibility = View.VISIBLE
-            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-            bind.tvUpgradeCheck.text = String.format("%s to %s", rpiVersion, readMessage.substring(4))
+            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_update_alert))
+            bind.tvUpgradeCheck.text = String.format("%s to %s", rpiVersion, readMessage.substring(5))
             bind.upgrade.visibility = View.VISIBLE
         }
     }

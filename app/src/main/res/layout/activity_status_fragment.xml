@@ -9,13 +9,15 @@
 
     <ImageView
         android:id="@+id/editName"
-        android:layout_width="37dp"
-        android:layout_height="50dp"
+        android:layout_width="33dp"
+        android:layout_height="42dp"
         android:layout_gravity="end"
         android:background="@drawable/ic_edit_black_24dp"
         android:scaleType="fitXY"
-        tools:layout_editor_absoluteX="194dp"
-        tools:layout_editor_absoluteY="340dp" />
+        app:layout_constraintBottom_toTopOf="@+id/rpiDetailBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.394"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/cliVersionBox"
@@ -48,24 +50,26 @@
                 android:layout_height="47dp"
                 android:layout_weight="2"
                 android:text="  CLI Version"
+                android:textColor="@color/daynight_textColor"
+                android:textStyle="bold"
                 android:textSize="18sp" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvUpgradeCheck"
-            android:layout_width="140dp"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="... to ..."
-            android:textColor="@color/daynight_textColor"
+            android:textStyle="bold"
             tools:layout_editor_absoluteX="210dp"
             tools:layout_editor_absoluteY="627dp" />
 
         <Button
             android:id="@+id/upgrade"
-            android:layout_width="151dp"
+            android:layout_width="134dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_margin="@dimen/margin_medium"
@@ -98,7 +102,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="hostname:"
-            android:textColor="@color/daynight_textColor" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvRpiType"
@@ -109,12 +113,13 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="Mode:"
-            android:textColor="@color/daynight_textColor" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/cpuModelText"
-            android:layout_width="90dp"
-            android:layout_height="0dp"
+            android:layout_width="141dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="CPU:"
             android:textStyle="bold"
@@ -130,7 +135,7 @@
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:text="Treehouses Image: "
-            android:textColor="@color/daynight_textColor"
+            android:textStyle="bold"
             android:textSize="13sp"
             tools:layout_editor_absoluteX="-104dp"
             tools:layout_editor_absoluteY="564dp" />
@@ -258,16 +263,16 @@
 
             <TextView
                 android:id="@+id/tvMemoryStatus"
-                android:layout_width="0dp"
+                android:layout_width="235dp"
                 android:layout_height="43dp"
                 android:layout_marginBottom="60dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Memory: "
+                android:text="Memory"
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -275,11 +280,9 @@
                 <ProgressBar
                     android:id="@+id/memoryBar"
                     style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="353dp"
-                    android:layout_height="33dp"
-                    android:layout_weight="1"
-                    tools:layout_editor_absoluteX="36dp"
-                    tools:layout_editor_absoluteY="613dp" />
+                    android:layout_width="208dp"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/memory"
