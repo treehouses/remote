@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.StatusFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
@@ -25,11 +26,6 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
-                Constants.MESSAGE_WRITE -> {
-                    val writeBuf = msg.obj as ByteArray
-                    val writeMessage = String(writeBuf)
-                    Log.d(TAG, "writeMessage = $writeMessage")
-                }
                 Constants.MESSAGE_READ -> {
                     readMessage = msg.obj as String
                     Log.d(TAG, "readMessage = $readMessage")
