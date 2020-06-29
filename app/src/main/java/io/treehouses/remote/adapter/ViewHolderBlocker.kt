@@ -41,35 +41,31 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         listener.sendMessage("treehouses blocker")
 
         radioGroup.setOnCheckedChangeListener { _: RadioGroup?, i: Int ->
-            makeSelection(i, context, listener)
-        }
-    }
-
-    fun makeSelection(i:Int, context: Context?, listener: HomeInteractListener){
-        when (i) {
-            R.id.radioButton1 -> {
-                listener.sendMessage("treehouses blocker 0")
-                context.toast("Blocker Disabled")
-            }
-            R.id.radioButton2 -> {
-                listener.sendMessage("treehouses blocker 1")
-                context.toast("Blocker set to level 1")
-            }
-            R.id.radioButton3 -> {
-                listener.sendMessage("treehouses blocker 2")
-                context.toast("Blocker set to level 2")
-            }
-            R.id.radioButton4 -> {
-                listener.sendMessage("treehouses blocker 3")
-                context.toast("Blocker set to level 3")
-            }
-            R.id.radioButton5 -> {
-                listener.sendMessage("treehouses blocker 4")
-                context.toast("Blocker set to level 4")
-            }
-            R.id.radioButton6 -> {
-                listener.sendMessage("treehouses blocker max")
-                context.toast("Blocker set to maximum level")
+            when (i) {
+                R.id.radioButton1 -> {
+                    listener.sendMessage("treehouses blocker 0")
+                    context.toast("Blocker Disabled")
+                }
+                R.id.radioButton2 -> {
+                    listener.sendMessage("treehouses blocker 1")
+                    context.toast("Blocker set to level 1")
+                }
+                R.id.radioButton3 -> {
+                    listener.sendMessage("treehouses blocker 2")
+                    context.toast("Blocker set to level 2")
+                }
+                R.id.radioButton4 -> {
+                    listener.sendMessage("treehouses blocker 3")
+                    context.toast("Blocker set to level 3")
+                }
+                R.id.radioButton5 -> {
+                    listener.sendMessage("treehouses blocker 4")
+                    context.toast("Blocker set to level 4")
+                }
+                R.id.radioButton6 -> {
+                    listener.sendMessage("treehouses blocker max")
+                    context.toast("Blocker set to maximum level")
+                }
             }
         }
     }
