@@ -134,8 +134,8 @@
             android:paddingStart="10dp"
             android:paddingLeft="10dp"
             android:text="Treehouses Image: "
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:textSize="13sp"
             tools:layout_editor_absoluteX="-104dp"
             tools:layout_editor_absoluteY="564dp" />
 
