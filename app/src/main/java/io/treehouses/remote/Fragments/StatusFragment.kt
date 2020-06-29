@@ -82,6 +82,15 @@ class StatusFragment : BaseFragment() {
             writeToRPI("treehouses memory free")
         } else if (lastCommand == "treehouses memory free") {
             //setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
+            writeToRPI("treehouses temperature celsius")
+        } else if (lastCommand == "treehouses temperature celsius") {
+            bind.temperature.text = "Temperature: " + readMessage
+            writeToRPI("treehouses remote version")
+        } else if (lastCommand == "treehouses remote version") {
+            bind.remoteVersionText.text = "    TreeHouses Remote Version: " + readMessage
+            writeToRPI("treehouses detect arm")
+        } else if (lastCommand == "treehouses detect arm") {
+            bind.cpuModelText.text = "CPU: ARM " + readMessage
             writeToRPI("treehouses internet")
         } else if (lastCommand == "treehouses internet") {
             checkWifiStatus(readMessage)
@@ -91,7 +100,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun checkWifiStatus(readMessage: String) {
-        bind.tvWifi.text = String.format("RPI Wifi Connection: %s", readMessage)
+        //bind.tvWifi.text = String.format("RPI Wifi Connection: %s", readMessage)
         if (readMessage.startsWith("true")) {
             //bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
             writeToRPI("treehouses upgrade --check")
