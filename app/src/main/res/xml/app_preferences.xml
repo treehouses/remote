@@ -75,7 +75,10 @@
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/treehouses/remote/issues"/>
         </Preference>
-
+        <Preference
+            android:title="Reactivate Tutorials"
+            android:key="reactivate_tutorials">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Advanced">
