@@ -3,6 +3,7 @@ job:
     - git config --global user.email "${GITLAB_USER_EMAIL}"
     - git config --global user.name "${GITLAB_USER_NAME}"
   script:
+    - export
     - git fetch
     - var=$(git describe --tags)
     - version=${var:1}
@@ -12,7 +13,7 @@ job:
     - sed -i "s#versionName appVersionName#versionName $version#" app/build.gradle
     - git add app/build.gradle
     - git commit -m "update to $version"
-    - git push "https://${GITLAB_USER_NAME}:${PERSONAL_ACCESS_TOKEN}${CI_REPOSITORY_URL#*@}"
+    - git push "https://${GITLAB_USER_NAME}:$PERSONAL_ACCESS_TOKEN@${CI_REPOSITORY_URL#*@}"
     - cat app/build.gradle
   only:
     - tags
