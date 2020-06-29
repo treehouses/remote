@@ -79,7 +79,7 @@ class StatusFragment : BaseFragment() {
             bind.tvRpiType.text = "Mode: " + res[4]
             rpiVersion = res[3]
             //also set remote version
-            bind.remoteVersionText.text = "    TreeHouses Remote Version: " + BuildConfig.VERSION_NAME
+            bind.remoteVersionText.text = "    Treehouses Remote Version: " + BuildConfig.VERSION_NAME
             Log.e("REACHED", "YAYY")
             writeToRPI("treehouses memory used -g")
         } else if (lastCommand == "treehouses memory used -g") {
