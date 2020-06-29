@@ -97,9 +97,11 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         when (position) {
             0 -> {
                 fragment = servicesTabFragment
+                mChatService.updateHandler(servicesTabFragment!!.handlerOverview)
             }
             1 -> {
                 fragment = servicesDetailsFragment
+                mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
             }
             else -> {
             }

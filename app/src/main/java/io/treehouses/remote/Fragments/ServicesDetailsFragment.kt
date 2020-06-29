@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -51,11 +52,17 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
     }
 
-    override fun getMessage(msg: Message) {
-        when (msg.what) {
-            Constants.MESSAGE_READ -> {
-                val output = msg.obj as String
-                moreActions(output)
+    @JvmField
+    val handlerDetails: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                Constants.MESSAGE_READ -> {
+                    val output = msg.obj as String
+                    moreActions(output)
+                }
+                Constants.MESSAGE_STATE_CHANGE -> {
+                    listener.redirectHome()
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,15 +36,21 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
         return bind!!.root
     }
 
-    override fun getMessage(msg: Message) {
-        when (msg.what) {
-            Constants.MESSAGE_READ -> {
-                val output = msg.obj as String
-                moreAction(output)
-            }
-            Constants.MESSAGE_WRITE -> {
-                val write_msg = String((msg.obj as ByteArray))
-                Log.d("WRITE", write_msg)
+    @JvmField
+    val handlerOverview: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                Constants.MESSAGE_READ -> {
+                    val output = msg.obj as String
+                    moreAction(output)
+                }
+                Constants.MESSAGE_WRITE -> {
+                    val write_msg = String((msg.obj as ByteArray))
+                    Log.d("WRITE", write_msg)
+                }
+                Constants.MESSAGE_STATE_CHANGE -> {
+                    listener.redirectHome()
+                }
             }
         }
     }
