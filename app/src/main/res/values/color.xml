@@ -17,6 +17,8 @@
     <color name="card_background">@color/cardview_light_background</color>
     <color name="preference_category">@color/accent</color>
     <color name="preference_title">@color/md_grey_900</color>
+    <color name="tor_background">#ffffff</color>
+
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/margin_medium"
-    android:theme="@style/AppTheme">
+    android:theme="@style/CardTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -57,6 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add Port"
+        android:textColor="#000000"
         android:background="@color/md_grey_300"/>
 
 </LinearLayout>

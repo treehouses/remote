@@ -166,4 +166,7 @@
         <item>Follow System</item>
     </string-array>
 
+    <string name="intro_slide_1_m1">Treehouses Remote requires a Raspberry Pi running a Treehouses Image in order to function properly.</string>
+    <string name="intro_slide_welcome_m1">Treehouses Remote </string>
+
 </resources>
