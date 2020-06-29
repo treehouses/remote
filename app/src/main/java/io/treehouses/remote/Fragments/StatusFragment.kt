@@ -14,10 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -75,15 +74,15 @@ class StatusFragment : BaseFragment() {
             writeToRPI("treehouses remote status")
         } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
             val res = readMessage.trim().split(" ")
-            //setCard(bind.tvWifi, bind.wifiStatus, "RPI Wifi Connection : " + res[0])
             bind.imageText.text = String.format("Treehouses Image: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
             bind.tvRpiType.text = "Mode: " + res[4]
             rpiVersion = res[3]
+            //also set remote version
+            bind.remoteVersionText.text = "    TreeHouses Remote Version: " + BuildConfig.VERSION_NAME
             Log.e("REACHED", "YAYY")
             writeToRPI("treehouses memory used -g")
         } else if (lastCommand == "treehouses memory used -g") {
-            //setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
             usedMemory = readMessage.trim { it <= ' ' }.toDouble()
             writeToRPI("treehouses memory total -g")
         } else if (lastCommand == "treehouses memory total -g") {
@@ -94,9 +93,6 @@ class StatusFragment : BaseFragment() {
         } else if (lastCommand == "treehouses temperature celsius") {
             bind.temperature.text = readMessage
             ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat()/80*100).toInt()).setDuration(600).start()
-            writeToRPI("treehouses remote version")
-        } else if (lastCommand == "treehouses remote version") {
-            bind.remoteVersionText.text = "    TreeHouses Remote Version: " + readMessage
             writeToRPI("treehouses detect arm")
         } else if (lastCommand == "treehouses detect arm") {
             bind.cpuModelText.text = "CPU: ARM " + readMessage
@@ -109,13 +105,10 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun checkWifiStatus(readMessage: String) {
-        //bind.tvWifi.text = String.format("RPI Wifi Connection: %s", readMessage)
         if (readMessage.startsWith("true")) {
-            //bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
             writeToRPI("treehouses upgrade --check")
         } else {
-            //bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-            bind.tvUpgradeCheck.text = "Upgrade Status: NO INTERNET"
+            bind.tvUpgradeCheck.text = "NO INTERNET"
             bind.upgrade.visibility = View.GONE
         }
     }
@@ -124,11 +117,6 @@ class StatusFragment : BaseFragment() {
         lastCommand = ping
         val pSend = ping.toByteArray()
         mChatService.write(pSend)
-    }
-
-    private fun setCard(textView: TextView, tick: ImageView?, text: String) {
-        textView.text = text
-        tick!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
     }
 
     private fun checkUpgradeNow() {
@@ -145,8 +133,8 @@ class StatusFragment : BaseFragment() {
         checkUpgradeNow()
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
             bind.upgradeCheck.visibility = View.INVISIBLE
-            bind.tvUpgradeCheck.text = String.format("Upgrade Status: Latest Version: %s", rpiVersion)
-            bind.upgrade.visibility = View.GONE
+            bind.tvUpgradeCheck.text = "           " + rpiVersion
+            bind.upgrade.visibility = View.INVISIBLE
         } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
             bind.upgradeCheck.visibility = View.VISIBLE
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_update_alert))

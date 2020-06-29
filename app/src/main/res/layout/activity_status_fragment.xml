@@ -62,7 +62,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_vertical"
-            android:text="... to ..."
             android:textStyle="bold"
             tools:layout_editor_absoluteX="210dp"
             tools:layout_editor_absoluteY="627dp" />
@@ -195,8 +194,8 @@
 
     <LinearLayout
         android:id="@+id/networkBox"
-        android:layout_width="328dp"
-        android:layout_height="139dp"
+        android:layout_width="338dp"
+        android:layout_height="134dp"
         android:layout_marginTop="52dp"
         android:background="@drawable/lightrounded"
         android:orientation="vertical"
@@ -214,8 +213,10 @@
             <ImageView
                 android:id="@+id/imageView5"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 app:srcCompat="@drawable/ic_wifi" />
 
             <TextView
@@ -223,6 +224,7 @@
                 android:layout_width="151dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:gravity="center|left"
                 android:text="WiFi Network"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -233,15 +235,39 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
+            <LinearLayout
+                android:id="@+id/ipAdrBox"
+                android:layout_width="5dp"
+                android:layout_height="43dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rounded"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/ipAdrText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ip address: " />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ssidBox"
+                android:layout_width="5dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_rounded"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/ssidText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SSID: " />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -266,6 +292,7 @@
                 android:layout_width="235dp"
                 android:layout_height="43dp"
                 android:layout_marginBottom="60dp"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Memory"
@@ -281,13 +308,15 @@
                     android:id="@+id/memoryBar"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="208dp"
-                    android:layout_height="28dp"
-                    android:layout_weight="1" />
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:progressDrawable="@drawable/green_progress_bar" />
 
                 <TextView
                     android:id="@+id/memory"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="GB" />
             </LinearLayout>
@@ -304,6 +333,7 @@
                 android:layout_width="235dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:layout_marginLeft="10dp"
                 android:text="Temperature"
                 android:textStyle="bold" />
 
@@ -318,7 +348,9 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="208dp"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:layout_marginTop="5dp"
+                    android:progressDrawable="@drawable/red_progress_bar" />
 
                 <TextView
                     android:id="@+id/temperature"
@@ -346,6 +378,7 @@
             android:id="@+id/remoteVersionText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center|left"
             android:text="    TreeHouses Remote Version:"
             android:textSize="16sp" />
     </LinearLayout>
@@ -384,7 +417,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
         android:layout_marginLeft="44dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:text="Bluetooth"
         android:textColor="@color/daynight_textColor"
         android:textSize="18sp"
