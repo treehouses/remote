@@ -50,7 +50,7 @@
                 android:layout_height="47dp"
                 android:layout_weight="2"
                 android:text="  CLI Version"
-                android:textColor="@color/daynight_textColor"
+                android:textColor="#575757"
                 android:textStyle="bold"
                 android:textSize="18sp" />
 
@@ -99,7 +99,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/margin_huge"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|bottom"
             android:text="hostname:"
             android:textStyle="bold" />
 
