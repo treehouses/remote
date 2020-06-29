@@ -5,8 +5,8 @@
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingStart="0dp"
-    android:paddingLeft="0dp"
+    android:paddingStart="@dimen/padding_large"
+    android:paddingLeft="@dimen/padding_large"
     android:paddingEnd="?android:attr/scrollbarSize"
     android:paddingRight="?android:attr/scrollbarSize">
 
@@ -34,8 +34,8 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/daynight_textColor"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:textColor="@color/preference_title"
             tools:text="CATEGORY TITLE" />
 
         <TextView
