@@ -15,7 +15,7 @@
     <color name="tab_text_color">#FFFFFF</color>
     <color name="tab_indicator_color">#FFFFFF</color>
     <color name="card_background">@color/cardview_dark_background</color>
-
+    <color name="tor_background">#B5B5B5</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>

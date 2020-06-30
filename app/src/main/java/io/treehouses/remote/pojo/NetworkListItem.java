@@ -50,6 +50,7 @@ public class NetworkListItem {
         systemList.add(new NetworkListItem("Add SSH Key", R.layout.configure_ssh_key));
         systemList.add(new NetworkListItem("Toggle Camera", R.layout.configure_camera));
         systemList.add(new NetworkListItem("Wifi Country", R.layout.configure_wificountry));
+        systemList.add(new NetworkListItem("Blocker Level", R.layout.configure_blocker));
         return systemList;
     }
 }

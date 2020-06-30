@@ -30,6 +30,7 @@
             android:id="@+id/btn_save_key"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#ffffff"
             android:padding="@dimen/padding_normal"
             android:text="Save key"
             android:theme="@style/PrimaryButton" />
