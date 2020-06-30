@@ -9,7 +9,7 @@ job:
     - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}" --delete f-droid
     - git checkout -b f-droid
     - sed -i "s#versionCode appVersionCode#versionCode $version#" app/build.gradle
-    - sed -i "s#versionName appVersionName#versionName $version#" app/build.gradle
+    - sed -i "s#versionName appVersionName#versionName \"$version\"#" app/build.gradle
     - git add app/build.gradle
     - git commit -m "update to $version"
     - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
