@@ -36,110 +36,109 @@ import io.treehouses.remote.SSH.Terminal.TerminalBridge;
  * @author Kenny Root
  */
 public class Relay implements Runnable {
-	private static final String TAG = "CB.Relay";
+    private static final String TAG = "CB.Relay";
 
-	private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096;
 
-	private TerminalBridge bridge;
+    private TerminalBridge bridge;
 
-	private Charset currentCharset;
-	private CharsetDecoder decoder;
+    private Charset currentCharset;
+    private CharsetDecoder decoder;
 
-	private SSH transport;
+    private SSH transport;
 
-	private vt320 buffer;
+    private vt320 buffer;
 
-	private ByteBuffer byteBuffer;
-	private CharBuffer charBuffer;
+    private ByteBuffer byteBuffer;
+    private CharBuffer charBuffer;
 
-	private byte[] byteArray;
-	private char[] charArray;
+    private byte[] byteArray;
+    private char[] charArray;
 
-	public Relay(TerminalBridge bridge, SSH transport, vt320 buffer, String encoding) {
-		Log.e("REACHED", "HERE123");
-		setCharset(encoding);
-		this.bridge = bridge;
-		this.transport = transport;
-		this.buffer = buffer;
-	}
+    public Relay(TerminalBridge bridge, SSH transport, vt320 buffer, String encoding) {
+        setCharset(encoding);
+        this.bridge = bridge;
+        this.transport = transport;
+        this.buffer = buffer;
+    }
 
-	public void setCharset(String encoding) {
-		Log.d("ConnectBot.Relay", "changing charset to " + encoding);
-		Charset charset;
+    public void setCharset(String encoding) {
+        Log.d("ConnectBot.Relay", "changing charset to " + encoding);
+        Charset charset;
 //		if (encoding.equals("CP437")) {
 //			charset = new IBM437("IBM437",
 //					new String[] {"IBM437", "CP437"});
 //		} else {
-		charset = Charset.forName(encoding);
+        charset = Charset.forName(encoding);
 //		}
 
-		if (charset == null || charset.equals(currentCharset)) {
-			return;
-		}
+        if (charset.equals(currentCharset)) {
+            return;
+        }
 
-		CharsetDecoder newCd = charset.newDecoder();
-		newCd.onUnmappableCharacter(CodingErrorAction.REPLACE);
-		newCd.onMalformedInput(CodingErrorAction.REPLACE);
+        CharsetDecoder newCd = charset.newDecoder();
+        newCd.onUnmappableCharacter(CodingErrorAction.REPLACE);
+        newCd.onMalformedInput(CodingErrorAction.REPLACE);
 
-		currentCharset = charset;
-		synchronized (this) {
-			decoder = newCd;
-		}
-	}
+        currentCharset = charset;
+        synchronized (this) {
+            decoder = newCd;
+        }
+    }
 
-	public Charset getCharset() {
-		return currentCharset;
-	}
+    public Charset getCharset() {
+        return currentCharset;
+    }
 
-	@Override
-	public void run() {
-		byteBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-		charBuffer = CharBuffer.allocate(BUFFER_SIZE);
+    @Override
+    public void run() {
+        byteBuffer = ByteBuffer.allocate(BUFFER_SIZE);
+        charBuffer = CharBuffer.allocate(BUFFER_SIZE);
 
-		/* for East Asian character widths */
-		byte[] wideAttribute = new byte[BUFFER_SIZE];
+        /* for East Asian character widths */
+        byte[] wideAttribute = new byte[BUFFER_SIZE];
 
-		byteArray = byteBuffer.array();
-		charArray = charBuffer.array();
+        byteArray = byteBuffer.array();
+        charArray = charBuffer.array();
 
-		CoderResult result;
+        CoderResult result;
 
-		int bytesRead = 0;
-		byteBuffer.limit(0);
-		int bytesToRead;
-		int offset;
+        int bytesRead = 0;
+        byteBuffer.limit(0);
+        int bytesToRead;
+        int offset;
 
-		try {
-			while (true) {
-				bytesToRead = byteBuffer.capacity() - byteBuffer.limit();
-				offset = byteBuffer.arrayOffset() + byteBuffer.limit();
-				bytesRead = transport.read(byteArray, offset, bytesToRead);
+        try {
+            while (true) {
+                bytesToRead = byteBuffer.capacity() - byteBuffer.limit();
+                offset = byteBuffer.arrayOffset() + byteBuffer.limit();
+                bytesRead = transport.read(byteArray, offset, bytesToRead);
 
-				if (bytesRead > 0) {
-					byteBuffer.limit(byteBuffer.limit() + bytesRead);
+                if (bytesRead > 0) {
+                    byteBuffer.limit(byteBuffer.limit() + bytesRead);
 
-					synchronized (this) {
-						result = decoder.decode(byteBuffer, charBuffer, false);
-					}
+                    synchronized (this) {
+                        result = decoder.decode(byteBuffer, charBuffer, false);
+                    }
 
-					if (result.isUnderflow() &&
-							byteBuffer.limit() == byteBuffer.capacity()) {
-						byteBuffer.compact();
-						byteBuffer.limit(byteBuffer.position());
-						byteBuffer.position(0);
-					}
+                    if (result.isUnderflow() &&
+                            byteBuffer.limit() == byteBuffer.capacity()) {
+                        byteBuffer.compact();
+                        byteBuffer.limit(byteBuffer.position());
+                        byteBuffer.position(0);
+                    }
 
-					offset = charBuffer.position();
+                    offset = charBuffer.position();
 
-					AndroidCharacter.getEastAsianWidths(charArray, 0, offset, wideAttribute);
-					buffer.putString(charArray, wideAttribute, 0, charBuffer.position());
-					bridge.propagateConsoleText(charArray, charBuffer.position());
-					charBuffer.clear();
-					bridge.redraw();
-				}
-			}
-		} catch (IOException e) {
-			Log.e(TAG, "Problem while handling incoming data in relay thread", e);
-		}
-	}
+                    AndroidCharacter.getEastAsianWidths(charArray, 0, offset, wideAttribute);
+                    buffer.putString(charArray, wideAttribute, 0, charBuffer.position());
+                    bridge.propagateConsoleText(charArray, charBuffer.position());
+                    charBuffer.clear();
+                    bridge.redraw();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Problem while handling incoming data in relay thread", e);
+        }
+    }
 }

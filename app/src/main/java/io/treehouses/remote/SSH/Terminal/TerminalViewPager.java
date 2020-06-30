@@ -31,32 +31,32 @@ import androidx.viewpager.widget.ViewPager;
  * @author rhansby
  */
 public class TerminalViewPager extends ViewPager {
-	private boolean enabled;
+    private boolean enabled;
 
-	public TerminalViewPager(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		this.enabled = true;
-	}
+    public TerminalViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        this.enabled = true;
+    }
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (this.enabled) {
-			return super.onTouchEvent(event);
-		}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (this.enabled) {
+            return super.onTouchEvent(event);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent event) {
-		if (this.enabled) {
-			return super.onInterceptTouchEvent(event);
-		}
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        if (this.enabled) {
+            return super.onInterceptTouchEvent(event);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public void setPagingEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setPagingEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

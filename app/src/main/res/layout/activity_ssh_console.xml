@@ -33,7 +33,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <io.treehouses.remote.SSH.Terminal.TerminalViewPager
-        android:id="@+id/console_flip"
+        android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />
@@ -122,6 +122,6 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/keyboard" />
+    <include layout="@layout/keyboard" android:id="@+id/keyboard" />
 
 </RelativeLayout>

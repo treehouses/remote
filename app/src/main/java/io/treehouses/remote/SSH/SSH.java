@@ -70,7 +70,6 @@ import io.treehouses.remote.SSH.beans.PubKeyBean;
 
 /**
  * @author Kenny Root
- *
  */
 public class SSH implements ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     HostBean host;
@@ -113,7 +112,7 @@ public class SSH implements ConnectionMonitor, InteractiveCallback, AuthAgentCal
 
     static {
         // Since this class deals with EdDSA keys, we need to make sure this is available.
-		Ed25519Provider.insertIfNeeded();
+        Ed25519Provider.insertIfNeeded();
     }
 
     public SSH() {
@@ -351,6 +350,7 @@ public class SSH implements ConnectionMonitor, InteractiveCallback, AuthAgentCal
 
     /**
      * Attempt connection with given {@code pubkey}.
+     *
      * @return {@code true} for successful authentication
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
