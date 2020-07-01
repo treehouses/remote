@@ -16,7 +16,6 @@ job:
     - git tag "fdroid-$version"
     - git push --tag "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
     - cat app/build.gradle | grep $version
-  only:
-    - tags
-  except:
-    - branches
+only:
+  variables:
+    - $CI_COMMIT_TAG =~ /^v.*$/
