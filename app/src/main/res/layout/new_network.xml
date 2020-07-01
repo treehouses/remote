@@ -23,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        android:src="@drawable/profiles_background"
+        android:src="@drawable/profiles_back"
         app:layout_constraintBottom_toBottomOf="@+id/back_layout"
         app:layout_constraintEnd_toEndOf="@+id/back_layout"
         app:layout_constraintStart_toStartOf="@+id/back_layout"
