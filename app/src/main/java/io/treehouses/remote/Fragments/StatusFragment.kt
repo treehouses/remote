@@ -24,6 +24,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
+import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class StatusFragment : BaseFragment() {
 
@@ -34,6 +35,7 @@ class StatusFragment : BaseFragment() {
     private var rpiVersion = ""
     private var usedMemory = 0.0
     private var totalMemory = 0.0
+    private var networkMode = ""
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,10 +94,16 @@ class StatusFragment : BaseFragment() {
             writeToRPI("treehouses temperature celsius")
         } else if (lastCommand == "treehouses temperature celsius") {
             bind.temperature.text = readMessage
-            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat()/80*100).toInt()).setDuration(600).start()
+            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
             writeToRPI("treehouses detect arm")
         } else if (lastCommand == "treehouses detect arm") {
             bind.cpuModelText.text = "CPU: ARM " + readMessage
+            writeToRPI("treehouses networkmode")
+        } else if (lastCommand == "treehouses networkmode") {
+            networkMode = readMessage.dropLast(1)
+            writeToRPI("treehouses networkmode info")
+        } else if (lastCommand == "treehouses networkmode info") {
+            writeNetworkInfo(readMessage)
             writeToRPI("treehouses internet")
         } else if (lastCommand == "treehouses internet") {
             checkWifiStatus(readMessage)
@@ -104,11 +112,24 @@ class StatusFragment : BaseFragment() {
         }
     }
 
+    private fun writeNetworkInfo(readMessage: String) {
+        val tokens = readMessage.split(" ")
+        when (networkMode) {
+            "default" -> {
+                ipAdrText.text = "ip address: " + tokens[6]
+            }
+            "bridge" -> {
+                ipAdrText.text = "ip address: " + tokens[11].dropLast(1)
+                ssidText.text = "SSID: " + tokens[9].dropLast(1)
+            }
+        }
+    }
+
     private fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
             writeToRPI("treehouses upgrade --check")
         } else {
-            bind.tvUpgradeCheck.text = "NO INTERNET"
+            bind.tvUpgradeCheck.text = "      NO INTERNET"
             bind.upgrade.visibility = View.GONE
         }
     }
