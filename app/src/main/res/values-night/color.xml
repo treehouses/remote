@@ -10,6 +10,7 @@
     <color name="navigationBarColor">#000000</color>
     <color name="daynight_textColor">#FFFFFF</color>
     <color name="home_welcome">#FFFFFF</color>
+    <color name="box_color">@color/cardview_dark_background</color>
     <color name="services_detail_background">#1E1E1E</color>
     <color name="services_tab_background">#1E1E1E</color>
     <color name="tab_text_color">#FFFFFF</color>

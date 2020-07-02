@@ -55,6 +55,7 @@ class StatusFragment : BaseFragment() {
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())
+        bind.upgrade.visibility = View.GONE
     }
 
     private fun upgradeOnViewClickListener() {
@@ -72,11 +73,11 @@ class StatusFragment : BaseFragment() {
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
         if (lastCommand == "hostname") {
-            bind.tvRpiName.text = "hostname: " + readMessage
+            bind.tvRpiName.text = "Hostname: " + readMessage
             writeToRPI("treehouses remote status")
         } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
             val res = readMessage.trim().split(" ")
-            bind.imageText.text = String.format("Treehouses Image: %s", res[2].substring(8))
+            bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
             bind.tvRpiType.text = "Mode: " + res[4]
             rpiVersion = res[3]
@@ -153,13 +154,12 @@ class StatusFragment : BaseFragment() {
     private fun checkUpgradeStatus(readMessage: String) {
         checkUpgradeNow()
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
-            bind.upgradeCheck.visibility = View.INVISIBLE
-            bind.tvUpgradeCheck.text = "           " + rpiVersion
-            bind.upgrade.visibility = View.INVISIBLE
+            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
+            bind.tvUpgradeCheck.text = String.format("Latest Version: %s", rpiVersion)
+            bind.upgrade.visibility = View.GONE
         } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
-            bind.upgradeCheck.visibility = View.VISIBLE
-            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_update_alert))
-            bind.tvUpgradeCheck.text = String.format("%s to %s", rpiVersion, readMessage.substring(5))
+            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
+            bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
             bind.upgrade.visibility = View.VISIBLE
         }
     }
