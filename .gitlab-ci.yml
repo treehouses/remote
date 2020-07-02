@@ -6,13 +6,16 @@ job:
     - git fetch
     - var=$(git describe --tags)
     - version=${var:1}
-    - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}" --delete f-droid
-    - git checkout -b f-droid
+    - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}" --delete fdroid
+    - git checkout -b fdroid
     - sed -i "s#versionCode appVersionCode#versionCode $version#" app/build.gradle
-    - sed -i "s#versionName appVersionName#versionName $version#" app/build.gradle
+    - sed -i "s#versionName appVersionName#versionName \"$version\"#" app/build.gradle
     - git add app/build.gradle
     - git commit -m "update to $version"
     - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
+    - git tag "fdroid-$version"
+    - git push --tag "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
     - cat app/build.gradle | grep $version
   only:
-    - tags
+    variables:
+      - $CI_COMMIT_TAG =~ /^v.*$/
