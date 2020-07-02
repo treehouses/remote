@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.LocalOnlyHotspotReservation
+import android.text.InputType
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.Button
@@ -17,6 +18,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+
 
 class ViewHolderTether internal constructor(v: View, listener: HomeInteractListener, context: Context) {
     private val mReservation: LocalOnlyHotspotReservation? = null
@@ -40,6 +42,7 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
 
     companion object {
         lateinit var editTextSSID: TextInputEditText
+        lateinit var editTextPassword: TextInputEditText
 
         private fun isApOn(context: Context): Boolean {
             val manager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -66,12 +69,13 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
         val imageViewSettings = v.findViewById<ImageView>(R.id.imageViewSettings)
         val btnStartConfig = v.findViewById<Button>(R.id.btn_start_config)
         editTextSSID = v.findViewById(R.id.editTextSSID)
-        val editTextPassword: TextInputEditText = v.findViewById(R.id.editTextPassword)
-        imageViewSettings.setOnClickListener { v1: View? -> openHotspotSettings(context) }
+        editTextPassword = v.findViewById(R.id.editTextPassword)
+        editTextPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        imageViewSettings.setOnClickListener { openHotspotSettings(context) }
         if (!isApOn(context)) {
             showAlertDialog(context)
         }
-        btnStartConfig.setOnClickListener { v13: View? ->
+        btnStartConfig.setOnClickListener {
             val ssid = editTextSSID.text.toString()
             val password = editTextPassword.text.toString()
             if (!ssid.isEmpty()) {
