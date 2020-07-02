@@ -21,7 +21,6 @@ import java.lang.reflect.Method
 
 
 class ViewHolderTether internal constructor(v: View, listener: HomeInteractListener, context: Context) {
-    private val mReservation: LocalOnlyHotspotReservation? = null
     private fun openHotspotSettings(context: Context) {
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -36,8 +35,8 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
                 .setTitle("OUTPUT:")
                 .setMessage("Hotspot is disabled, open hotspot settings?")
                 .setIcon(R.drawable.wificon)
-                .setPositiveButton(R.string.yes) { dialog: DialogInterface?, which: Int -> openHotspotSettings(context) }
-                .setNegativeButton("NO") { dialog: DialogInterface, which: Int -> dialog.cancel() }.show()
+                .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int -> openHotspotSettings(context) }
+                .setNegativeButton("NO") { dialog: DialogInterface, _: Int -> dialog.cancel() }.show()
     }
 
     companion object {
@@ -78,7 +77,7 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
         btnStartConfig.setOnClickListener {
             val ssid = editTextSSID.text.toString()
             val password = editTextPassword.text.toString()
-            if (!ssid.isEmpty()) {
+            if (ssid.isNotEmpty()) {
                 listener.sendMessage("treehouses wifi " + ssid + " " + if (password.isEmpty()) "" else password)
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
             } else {
