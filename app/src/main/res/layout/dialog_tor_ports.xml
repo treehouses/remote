@@ -30,7 +30,7 @@
             android:fontFamily="sans-serif"
             android:textColor="@color/daynight_textColor"
             android:hint="External"
-            android:inputType="number"/>
+            android:inputType="textPersonName" />
 
     </LinearLayout>
 
@@ -47,7 +47,6 @@
             android:textColor="@color/daynight_textColor"
             android:fontFamily="sans-serif"
             android:hint="Internal"
-            android:inputType="number"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
