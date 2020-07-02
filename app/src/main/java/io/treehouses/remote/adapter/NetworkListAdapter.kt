@@ -54,7 +54,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     }
 
     override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        val convertView: View?
         convertView = inflater.inflate(R.layout.list_group, parent, false)
         val listHeader = convertView.findViewById<TextView>(R.id.lblListHeader)
         listHeader.text = getGroup(i).toString()
@@ -66,7 +66,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
 
         // Needs to recycle views instead of creating new ones each time.
         // if (convertView == null) creating bugs
-        var convertView = convertView
+        val convertView: View?
         if (views[i] != null) {
             return views[i]!!
         }
