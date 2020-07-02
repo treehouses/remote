@@ -84,6 +84,9 @@ class StatusFragment : BaseFragment() {
             writeToRPI("treehouses memory free")
         } else if (lastCommand == "treehouses memory free") {
             setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
+            writeToRPI("treehouses temperature celsius")
+        } else if(lastCommand == "treehouses temperature celsius"){
+            setCard(bind.tvTemperature, bind.temperature, "Temperature: " + readMessage)
             writeToRPI("treehouses internet")
         } else if (lastCommand == "treehouses internet") {
             checkWifiStatus(readMessage)

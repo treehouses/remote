@@ -10,7 +10,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -68,6 +68,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         testConnectionListener()
         return bind.root
     }
+
 
     private fun setupProfiles() {
         val profileAdapter = ProfilesListAdapter(context, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
@@ -129,7 +130,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 else vibe.vibrate(10)
             }
             if (connectionState) {
-                RPIDialogFragment.getInstance().bluetoothCheck("unregister")
+                RPIDialogFragment.instance!!.bluetoothCheck("unregister")
                 mChatService.stop()
                 connectionState = false
                 checkConnectionState()
