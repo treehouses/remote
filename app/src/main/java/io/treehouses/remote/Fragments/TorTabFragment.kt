@@ -13,10 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -68,7 +65,7 @@ class TorTabFragment : BaseFragment() {
         portList = bind!!.countries
         portList!!.setAdapter(adapter)
         portList!!.setOnItemClickListener(OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
-            val builder = AlertDialog.Builder(context)
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             builder.setTitle("Delete Port " + portsName!![position] + " ?")
 
 //            builder.setMessage("Would you like to delete?");
