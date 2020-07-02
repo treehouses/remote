@@ -121,14 +121,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun reactivateTutorials() {
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.HOME, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.NETWORK, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_DETAILS, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_OVERVIEW, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.STATUS, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.SYSTEM, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.TERMINAL, true)
-        SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.TUNNEL, true)
+        for(screen in SaveUtils.Screens.values()) SaveUtils.setFragmentFirstTime(requireContext(), screen, true)
         Toast.makeText(context, "Tutorials reactivated", Toast.LENGTH_LONG).show()
     }
 
