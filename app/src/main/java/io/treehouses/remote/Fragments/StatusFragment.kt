@@ -79,10 +79,10 @@ class StatusFragment : BaseFragment() {
             val res = readMessage.trim().split(" ")
             bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
-            bind.tvRpiType.text = "Mode: " + res[4]
+            bind.tvRpiType.text = "Model: " + res[4]
             rpiVersion = res[3]
             //also set remote version
-            bind.remoteVersionText.text = "    Treehouses Remote Version: " + BuildConfig.VERSION_NAME
+            bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
             Log.e("REACHED", "YAYY")
             writeToRPI("treehouses memory used -g")
         } else if (lastCommand == "treehouses memory used -g") {
@@ -114,16 +114,18 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun writeNetworkInfo(readMessage: String) {
-        val tokens = readMessage.split(" ")
-        when (networkMode) {
-            "default" -> {
-                ipAdrText.text = "ip address: " + tokens[6]
-            }
-            "bridge" -> {
-                ipAdrText.text = "ip address: " + tokens[11].dropLast(1)
-                ssidText.text = "SSID: " + tokens[9].dropLast(1)
-            }
+        val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
+        val ip = readMessage.substringAfter("ip: ").substringBefore(", has")
+        when(networkMode){
+            "default" -> networkModeTitle.text = "Default"
+            "wifi" -> networkModeTitle.text = "WiFi"
+            "hotspot" -> networkModeTitle.text = "Hotspot"
+            "bridge" -> networkModeTitle.text = "Bridge"
+            "ethernet" -> networkModeTitle.text = "Ethernet"
         }
+
+        ipAdrText.text = "IP Address: " + ip
+        ssidText.text = "SSID: " + ssid
     }
 
     private fun checkWifiStatus(readMessage: String) {
