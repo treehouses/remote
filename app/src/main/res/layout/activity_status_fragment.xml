@@ -72,7 +72,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="32dp"
                         android:gravity="center_vertical"
-                        android:text="Bluetooth RPI Connection"
+                        android:text="Bluetooth RPI Connection: Checking....."
                         android:textColor="@color/daynight_textColor" />
 
                     <TextView
@@ -136,7 +136,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:paddingLeft="20dp"
-                    android:text="WiFi Network"
+                    android:text="Checking Network Mode....."
                     android:textColor="@color/daynight_textColor"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@id/wifiIcon" />
@@ -165,7 +165,7 @@
                         android:id="@+id/ipAdrText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="IP Address: "
+                        android:text="IP Address: Checking....."
                         android:textColor="@color/daynight_textColor" />
                 </LinearLayout>
 
@@ -186,7 +186,7 @@
                         android:id="@+id/ssidText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="SSID: "
+                        android:text="SSID: Checking....."
                         android:textColor="@color/daynight_textColor" />
                 </LinearLayout>
             </LinearLayout>
@@ -247,7 +247,7 @@
                     android:layout_marginRight="20dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Hostname:"
+                    android:text="Hostname: Checking.."
                     android:textColor="@color/daynight_textColor"
                     android:textStyle="bold" />
 
@@ -259,7 +259,7 @@
                     android:layout_marginRight="20dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Model:"
+                    android:text="Model: Checking.."
                     android:textColor="@color/daynight_textColor"
                     android:textStyle="bold" />
 
@@ -271,7 +271,7 @@
                     android:layout_marginRight="20dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="CPU:"
+                    android:text="CPU: Checking.."
                     android:textColor="@color/daynight_textColor"
                     android:textStyle="bold" />
 
@@ -283,7 +283,7 @@
                     android:layout_marginRight="0dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Image Version: "
+                    android:text="Image Version: Checking.."
                     android:textColor="@color/daynight_textColor"
                     android:textStyle="bold" />
 
@@ -295,7 +295,7 @@
                     android:layout_marginRight="0dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Remote Version:"
+                    android:text="Remote Version: Checking"
                     android:textColor="@color/daynight_textColor"
                     android:textStyle="bold" />
 
@@ -436,7 +436,7 @@
                         android:layout_height="0dp"
                         android:layout_marginLeft="20dp"
                         android:layout_weight="1"
-                        android:text="GB"
+                        android:text="Checking......"
                         android:textColor="@color/daynight_textColor" />
                 </LinearLayout>
 
@@ -483,7 +483,7 @@
                         android:layout_height="0dp"
                         android:layout_marginLeft="20dp"
                         android:layout_weight="1"
-                        android:text="C"
+                        android:text="Checking......"
                         android:textColor="@color/daynight_textColor" />
                 </LinearLayout>
 
