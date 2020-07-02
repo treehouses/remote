@@ -321,7 +321,9 @@
             android:layout_margin="@dimen/margin_medium"
             android:text="Upgrade?"
             android:theme="@style/PrimaryButton"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:enabled="false"
+            android:backgroundTint="@color/status_upgrade_button"/>
 
         <TextView
             android:id="@+id/image_text"
