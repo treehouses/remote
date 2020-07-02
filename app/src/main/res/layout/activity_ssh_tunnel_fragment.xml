@@ -10,15 +10,14 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
-        android:background="@color/bg_white"
+        android:background="@color/services_tab_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="4dp"
-
-        app:tabIndicatorColor="@color/primary"
-        app:tabTextColor="@color/md_blue_grey_800">
+        app:tabIndicatorColor="@color/tab_indicator_color"
+        app:tabTextColor="@color/tab_text_color">
 
 
         <com.google.android.material.tabs.TabItem
