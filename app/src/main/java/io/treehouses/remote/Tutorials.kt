@@ -28,8 +28,7 @@ object Tutorials {
                 .focusCircleRadiusFactor(1.25)
                 .enableAutoTextPosition()
                 .build()
-        val queue = FancyShowCaseQueue().add(a).add(b)
-        queue.show()
+        show(a,b)
     }
 
     fun networkTutorials(bind: NewNetworkBinding, activity: FragmentActivity) {
@@ -66,8 +65,7 @@ object Tutorials {
                 .enableAutoTextPosition()
                 .build()
 
-        val queue = FancyShowCaseQueue().add(a)
-        queue.show()
+        show(a)
     }
 
     fun servicesDetailsTutorials(bind: ActivityServicesDetailsBinding, activity: FragmentActivity) {
@@ -82,8 +80,7 @@ object Tutorials {
                 .enableAutoTextPosition()
                 .build()
 
-        val queue = FancyShowCaseQueue().add(a)
-        queue.show()
+        show(a)
     }
 
     fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
@@ -113,7 +110,14 @@ object Tutorials {
                 .delay(50)
                 .enableAutoTextPosition()
                 .build()
-        val queue = FancyShowCaseQueue().add(a).add(b)
+        show(a,b)
+    }
+
+    private fun show(vararg view: FancyShowCaseView) {
+        val queue = FancyShowCaseQueue()
+        for(v in view) {
+            queue.add(v)
+        }
         queue.show()
     }
 }
