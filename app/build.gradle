@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
-def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0")
+def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0") + ""
 
 android {
     compileSdkVersion 29
@@ -13,7 +13,7 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
         versionCode appVersionCode
-        versionName appVersionName + ""
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         applicationVariants.all { variant ->
             variant.outputs.all { output ->

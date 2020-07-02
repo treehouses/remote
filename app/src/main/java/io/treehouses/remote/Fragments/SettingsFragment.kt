@@ -6,8 +6,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.R
@@ -32,6 +36,12 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
                 darkMode(sharedPreferences.getString(key, "").toString())
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.windowBackground))
+        setDivider(null);
     }
 
     override fun onResume() {
