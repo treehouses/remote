@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/rectangle_border"
-        android:hint="Enter Treehouse Commands"
+        android:hint="Enter Commands"
         android:textColorHint="#BABABA"
         android:textColor="@color/daynight_textColor"
         android:paddingStart="@dimen/margin_medium"
