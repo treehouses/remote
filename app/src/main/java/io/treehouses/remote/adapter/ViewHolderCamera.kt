@@ -13,7 +13,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 
 class ViewHolderCamera internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
-    private val mChatService: BluetoothChatService
+    private val mChatService: BluetoothChatService = listener.getChatService()
     private val cameraSwitch: Switch
     private val mHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -35,17 +35,12 @@ class ViewHolderCamera internal constructor(v: View, private val c: Context, lis
         }
     }
 
-    companion object {
-        private val editTextSSHKey: TextInputEditText? = null
-    }
-
     init {
-        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         cameraSwitch = v.findViewById(R.id.CameraSwitch)
         listener.sendMessage("treehouses camera")
         cameraSwitch.isEnabled = false
-        cameraSwitch.setOnClickListener { v2: View? ->
+        cameraSwitch.setOnClickListener {
             if (cameraSwitch.isChecked) {
                 listener.sendMessage("treehouses camera on")
                 cameraSwitch.isEnabled = false

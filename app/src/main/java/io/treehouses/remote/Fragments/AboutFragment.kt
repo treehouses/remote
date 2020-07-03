@@ -54,7 +54,7 @@ class AboutFragment : Fragment() {
 
     private fun setVersion(view : View) {
         val version = view.findViewById<Button>(R.id.btn_version)
-        version.setOnClickListener { v: View? ->
+        version.setOnClickListener {
             var versionName = BuildConfig.VERSION_NAME
             if (versionName == "1.0.0") {
                 versionName = "latest version"
@@ -70,7 +70,7 @@ class AboutFragment : Fragment() {
     }
 
     private fun hyperLinks(view: View, url: String) {
-        view.setOnClickListener { view1: View? ->
+        view.setOnClickListener {
             val i = Intent(Intent.ACTION_VIEW)
             i.data = Uri.parse(url)
             startActivity(i)

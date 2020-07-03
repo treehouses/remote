@@ -36,13 +36,13 @@ class WifiDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        mContext = getContext()
+        mContext = context
         setupWifi()
         mDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setView(mView)
                 .setIcon(R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
-                .setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }.create()
+                .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         Log.e("TAG", "SSID = $wifiList")
         return mDialog!!
     }
@@ -51,7 +51,7 @@ class WifiDialogFragment : DialogFragment() {
         val listView = mView!!.findViewById<ListView>(R.id.listView)
         val arrayAdapter = ArrayAdapter(mContext!!, android.R.layout.simple_list_item_1, wifiList)
         listView.adapter = arrayAdapter
-        listView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+        listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             SSID = wifiList[position]
             if (targetFragment != null) {
                 val intent = Intent()
@@ -95,7 +95,7 @@ class WifiDialogFragment : DialogFragment() {
         wifiList.clear()
         // converts Object list to array
         val `object`: Array<Any> = results.toTypedArray()
-        val temp = Arrays.toString(`object`)
+        val temp = `object`.contentToString()
         val resultArray = temp.split(",".toRegex()).toTypedArray()
 
         // extracts SSID from wifi data
@@ -111,7 +111,7 @@ class WifiDialogFragment : DialogFragment() {
     }
 
     private fun addToList(ssid: String) {
-        if (ssid.trim { it <= ' ' }.length > 0) {
+        if (ssid.trim { it <= ' ' }.isNotEmpty()) {
             wifiList.add(ssid)
             progressBar!!.visibility = View.INVISIBLE
         }
