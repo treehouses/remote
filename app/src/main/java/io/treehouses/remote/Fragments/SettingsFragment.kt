@@ -6,15 +6,19 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.R
 import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
-    var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
+    private var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
         setPreferencesFromResource(R.xml.app_preferences, rootKey)
@@ -32,6 +36,12 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
                 darkMode(sharedPreferences.getString(key, "").toString())
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.windowBackground))
+        setDivider(null)
     }
 
     override fun onResume() {
@@ -52,13 +62,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         }
     }
 
-    fun darkMode(key: String) {
-        if (key == "ON") {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else if (key == "OFF") {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        } else if (key == "Follow System") {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    private fun darkMode(key: String) {
+        when (key) {
+            "ON" ->  AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            "OFF" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "Follow System" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 
@@ -87,8 +95,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(positive) { dialog: DialogInterface?, which: Int -> onClickDialog(ID) }
-                .setNegativeButton("Cancel") { dialog: DialogInterface?, which: Int -> }
+                .setPositiveButton(positive) { _: DialogInterface?, _: Int -> onClickDialog(ID) }
+                .setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> }
                 .create()
                 .show()
     }

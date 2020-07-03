@@ -16,6 +16,6 @@ object LogUtils {
     }
 
     fun log(message: String?) {
-        Log.d("TREEHOUSES ", message)
+        Log.d("TREEHOUSES ", message!!)
     }
 }

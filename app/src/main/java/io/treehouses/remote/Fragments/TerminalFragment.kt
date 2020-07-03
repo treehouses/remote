@@ -69,7 +69,7 @@ class TerminalFragment : BaseTerminalFragment() {
         return bind.root
     }
 
-    fun setupList() {
+    private fun setupList() {
         expandableListTitle = ArrayList(expandableListDetail.keys)
         expandableListAdapter = CommandListAdapter(requireContext(), expandableListTitle, expandableListDetail)
         bind.terminalList.setAdapter(expandableListAdapter)
@@ -119,7 +119,7 @@ class TerminalFragment : BaseTerminalFragment() {
      * Set up the UI and background operations for chat.
      */
     override fun setupChat() {
-        copyToList(bind.`in`, context)
+        copyToList(bind.`in`)
         mConversationArrayAdapter = object : ArrayAdapter<String>(requireActivity(), R.layout.message, terminalList!!) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 return getViews(super.getView(position, convertView, parent), isRead)
@@ -134,7 +134,7 @@ class TerminalFragment : BaseTerminalFragment() {
 
     private fun btnSendClickListener() {
         // Initialize the send button with a listener that for click events
-        bind.buttonSend.setOnClickListener { v: View? ->
+        bind.buttonSend.setOnClickListener {
             // Send a message using content of the edit text widget
             val view = view
             if (null != view) {
@@ -142,7 +142,7 @@ class TerminalFragment : BaseTerminalFragment() {
                 bind.editTextOut.setText("")
             }
         }
-        bind.btnPrevious.setOnClickListener { v: View? ->
+        bind.btnPrevious.setOnClickListener {
             try {
                 bind.editTextOut.setText(commandList[--i].trim())
                 bind.editTextOut.setSelection(bind.editTextOut.length())

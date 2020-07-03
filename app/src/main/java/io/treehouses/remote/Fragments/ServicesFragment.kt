@@ -43,7 +43,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         writeToRPI("treehouses remote allservices\n")
         return bind!!.root
     }
-
+  
     override fun getMessage(msg: Message) {
         when (msg.what) {
             Constants.MESSAGE_READ -> {
@@ -91,7 +91,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun replaceFragment(position: Int) {
-        if (services!!.isEmpty()) return
+        if (services.isEmpty()) return
         setTabEnabled(true)
         var fragment: Fragment? = null
         when (position) {
