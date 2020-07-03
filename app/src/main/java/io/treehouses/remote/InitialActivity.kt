@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -14,8 +16,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -52,7 +56,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         checkStatusNow()
         openCallFragment(HomeFragment())
         setUpDrawer()
-        title = "Home";
+        title = "Home"
         GPSService(this)
     }
 
@@ -65,7 +69,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
-        bind.navView.itemIconTintList = null
     }
 
 
@@ -76,9 +79,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
             else if (f is SettingsFragment) {
-                (supportFragmentManager).popBackStack();
+                (supportFragmentManager).popBackStack()
                 title = "Home"
-
             }
         }
 
@@ -92,7 +94,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        var flag = true
         val id = item.itemId
         checkStatusNow()
         if (validBluetoothConnection) {
@@ -102,12 +103,9 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 openCallFragment(AboutFragment())
             } else if (id == R.id.menu_home) {
                 openCallFragment(HomeFragment())
-            } else {
-                showAlertDialog()
-                flag = false;
             }
         }
-        if (flag) title = item.title;
+        title = item.title
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -165,6 +163,15 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        checkStatusNow()
+        for (x in 1 until bind.navView.menu.size() - 1) {
+            val item = bind.navView.menu.getItem(x)
+            item.isEnabled = validBluetoothConnection
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         mChatService!!.updateHandler(mHandler)
@@ -206,15 +213,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    fun showAlertDialog() {
-        AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
-                .setTitle("ALERT:")
-                .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
-                .setIcon(R.drawable.bluetooth)
-                .setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
-                .show()
     }
 
     /**
