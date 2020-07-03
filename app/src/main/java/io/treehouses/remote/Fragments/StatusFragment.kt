@@ -133,11 +133,11 @@ class StatusFragment : BaseFragment() {
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
             bind.tvUpgradeCheck.text = String.format("Upgrade Status: Latest Version: %s", rpiVersion)
-            bind.upgrade.visibility = View.GONE
+            bind.upgrade.isEnabled = false
         } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
             bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
-            bind.upgrade.visibility = View.VISIBLE
+            bind.upgrade.isEnabled = true
         }
     }
 
