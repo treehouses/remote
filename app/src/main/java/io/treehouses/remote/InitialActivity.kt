@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -14,9 +16,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
@@ -31,8 +36,10 @@ import io.treehouses.remote.utils.LogUtils
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     private var validBluetoothConnection = false
+    var REQUEST_COARSE_LOCATION = 99
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
+    private val TAG = "InitialActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
@@ -62,7 +69,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
-        bind.navView.itemIconTintList = null
     }
 
 
@@ -75,7 +81,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             else if (f is SettingsFragment) {
                 (supportFragmentManager).popBackStack()
                 title = "Home"
-
             }
         }
 
@@ -89,58 +94,65 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        var flag = true
         val id = item.itemId
         checkStatusNow()
         if (validBluetoothConnection) {
             onNavigationItemClicked(id)
         } else {
-            when(id){
-                R.id.menu_about -> openCallFragment(AboutFragment())
-                R.id.menu_home -> openCallFragment(HomeFragment())
-                else -> {
-                    showAlertDialog()
-                    flag = false
-                }
+            if (id == R.id.menu_about) {
+                openCallFragment(AboutFragment())
+            } else if (id == R.id.menu_home) {
+                openCallFragment(HomeFragment())
             }
         }
-        if (flag) title = item.title
+        title = item.title
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
     private fun onNavigationItemClicked(id: Int) {
-        when(id){
-            R.id.menu_home -> openCallFragment(HomeFragment())
-            R.id.menu_network -> openCallFragment(NewNetworkFragment())
-            R.id.menu_system -> openCallFragment(SystemFragment())
-            R.id.menu_terminal -> openCallFragment(TerminalFragment())
-            else -> checkMore(id)
+        if (id == R.id.menu_home) {
+            openCallFragment(HomeFragment())
+        } else if (id == R.id.menu_network) {
+            openCallFragment(NewNetworkFragment())
+        } else if (id == R.id.menu_system) {
+            openCallFragment(SystemFragment())
+        } else if (id == R.id.menu_terminal) {
+            openCallFragment(TerminalFragment())
+        } else {
+            checkMore(id)
         }
     }
 
     private fun checkMore(id: Int) {
-        when(id){
-            R.id.menu_services -> openCallFragment(ServicesFragment())
-            R.id.menu_about -> openCallFragment(AboutFragment())
-            R.id.menu_status -> openCallFragment(StatusFragment())
-            R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
-            else -> openCallFragment(HomeFragment())
+        if (id == R.id.menu_services) {
+            openCallFragment(ServicesFragment())
+        } else if (id == R.id.menu_about) {
+            openCallFragment(AboutFragment())
+        } else if (id == R.id.menu_status) {
+            openCallFragment(StatusFragment())
+        } else if (id == R.id.menu_tunnel2) {
+            openCallFragment(SSHTunnelFragment())
+        } else {
+            openCallFragment(HomeFragment())
         }
     }
 
-    override fun openCallFragment(f: Fragment) {
+    override fun openCallFragment(newfragment: Fragment) {
         val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, f)
+        fragmentTransaction.replace(R.id.fragment_container, newfragment)
         fragmentTransaction.addToBackStack("")
         fragmentTransaction.commit()
+        //        menuItem.setChecked(true);
+//        title = "Treehouses Remote"
+        //        drawer.closeDrawers();
     }
 
-
-    override fun setNotification(notificationStatus: Boolean) {
-        if (notificationStatus) bind.navView.menu.getItem(7).setIcon(R.drawable.status_notification) else bind.navView.menu.getItem(7).setIcon(R.drawable.status)
+    //
+    override fun setNotification(b: Boolean) {
+        if (b) bind.navView.menu.getItem(7).setIcon(R.drawable.status_notification) else bind.navView.menu.getItem(7).setIcon(R.drawable.status)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -151,13 +163,22 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        checkStatusNow()
+        for (x in 1 until bind.navView.menu.size() - 1) {
+            val item = bind.navView.menu.getItem(x)
+            item.isEnabled = validBluetoothConnection
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         mChatService!!.updateHandler(mHandler)
     }
 
-    override fun setChatService(service: BluetoothChatService) {
-        mChatService = service
+    override fun setChatService(chatService: BluetoothChatService) {
+        mChatService = chatService
         mChatService!!.updateHandler(mHandler)
         checkStatusNow()
     }
@@ -194,23 +215,14 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         return super.onOptionsItemSelected(item)
     }
 
-    fun showAlertDialog() {
-        AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
-                .setTitle("ALERT:")
-                .setMessage("Connect to raspberry pi via bluetooth in the HOME PAGE first before accessing this feature")
-                .setIcon(R.drawable.bluetooth)
-                .setNegativeButton("OK") { dialog, _ -> dialog.cancel() }
-                .show()
-    }
-
     /**
      * Sends a message.
      *
-     * @param s A string of text to send.
+     * @param message A string of text to send.
      */
-    override fun sendMessage(s: String) {
+    override fun sendMessage(message: String) {
         // Check that we're actually connected before trying anything
-        LogUtils.log(s)
+        LogUtils.log(message)
         if (mChatService!!.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
             LogUtils.mIdle()
@@ -218,9 +230,9 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
 
         // Check that there's actually something to send
-        if (s.isNotEmpty()) {
+        if (message.isNotEmpty()) {
             // Get the message bytes and tell the BluetoothChatService to write
-            val send = s.toByteArray()
+            val send = message.toByteArray()
             mChatService!!.write(send)
 
             // Reset out string buffer to zero and clear the edit text field

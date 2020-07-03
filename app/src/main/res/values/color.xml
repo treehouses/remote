@@ -15,10 +15,10 @@
     <color name="tab_text_color">#FF37474F</color>
     <color name="tab_indicator_color">#FF2196F3</color>
     <color name="card_background">@color/cardview_light_background</color>
+    <color name="focusColor">#000000</color>
     <color name="preference_category">@color/accent</color>
     <color name="preference_title">@color/md_grey_900</color>
     <color name="tor_background">#ffffff</color>
-
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>
@@ -28,6 +28,8 @@
 
     <color name="material_drawer_selected_text">@color/colorPrimary</color>
     <color name="material_drawer_dark_selected_text">@color/colorPrimary</color>
+    <color name="material_drawer_unavailable_bg">#1384DF</color>
+    <color name="material_drawer_unavailable_text">#71AADA</color>
     <color name="offwhite">#fafafa</color>
 
     <!-- changes logout button area background from white to whatever the background color for the drawer is.

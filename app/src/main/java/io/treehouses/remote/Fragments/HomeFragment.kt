@@ -62,7 +62,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 instance!!.openCallFragment(TerminalFragment())
                 activity?.let { it.title = "Terminal" }
             } else {
-                instance!!.showAlertDialog()
+                Toast.makeText(context,"Please connect to the Raspberry Pi", Toast.LENGTH_SHORT).show()
             }
         }
         testConnectionListener()
@@ -120,6 +120,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             rate(preferences!!)
             showLogDialog(preferences!!)
         }
+        activity?.invalidateOptionsMenu()
     }
 
     private fun connectRpiListener() {
@@ -186,7 +187,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.logoHome.visibility = b1
         bind.testConnection.visibility = b2
         bind.layoutBack.visibility = b2
-
+        activity?.invalidateOptionsMenu()
     }
 
     private fun dismissTestConnection() {
