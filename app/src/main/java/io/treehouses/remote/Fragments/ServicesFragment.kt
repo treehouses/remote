@@ -52,11 +52,11 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
-                    val a = performAction(output, services!!)
+                    val a = performAction(output, services)
                     if (a == 1) {
                         servicesTabFragment = ServicesTabFragment()
                         servicesDetailsFragment = ServicesDetailsFragment()
-                        var bundle = Bundle()
+                        val bundle = Bundle()
                         bundle.putSerializable("services", services)
                         servicesTabFragment?.arguments = bundle
                         servicesDetailsFragment?.arguments = bundle
@@ -68,8 +68,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                     }
                 }
                 Constants.MESSAGE_WRITE -> {
-                    val write_msg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", write_msg)
+                    val writeMsg = String((msg.obj as ByteArray))
+                    Log.d("WRITE", writeMsg)
                 }
             }
         }
@@ -96,7 +96,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun replaceFragment(position: Int) {
-        if (services!!.isEmpty()) return
+        if (services.isEmpty()) return
         setTabEnabled(true)
         var fragment: Fragment? = null
         when (position) {

@@ -15,10 +15,10 @@ import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.utils.SaveUtils
 
 class SplashScreenActivity : AppCompatActivity() {
-    var logoAnimation: Animation? = null
-    var textAnimation: Animation? = null
-    var logo: ImageView? = null
-    var logoText: TextView? = null
+    private var logoAnimation: Animation? = null
+    private var textAnimation: Animation? = null
+    private var logo: ImageView? = null
+    private var logoText: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +56,11 @@ class SplashScreenActivity : AppCompatActivity() {
         private const val SPLASH_TIME_OUT = 2000
     }
 
-    fun nightMode() {
+    private fun nightMode() {
         val preference = PreferenceManager.getDefaultSharedPreferences(this).getString("dark_mode", "Follow System")
         val options = listOf(*resources.getStringArray(R.array.dark_mode_options))
-        val optionsCode = resources.getStringArray(R.array.led_options_commands)
-        val selected_mode = options.indexOf(preference)
-        when (selected_mode) {
+        resources.getStringArray(R.array.led_options_commands)
+        when (options.indexOf(preference)) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)

@@ -35,8 +35,8 @@ import io.treehouses.remote.pojo.DeviceInfo
 import java.util.*
 
 class RPIDialogFragment : BaseDialogFragment() {
-    private val raspberry_devices: MutableList<BluetoothDevice> = ArrayList()
-    private val all_devices: MutableList<BluetoothDevice> = ArrayList()
+    private val raspberryDevices: MutableList<BluetoothDevice> = ArrayList()
+    private val allDevices: MutableList<BluetoothDevice> = ArrayList()
     private var pairedDevices: Set<BluetoothDevice>? = null
     private var mArrayAdapter: ArrayAdapter<*>? = null
     private var mBluetoothAdapter: BluetoothAdapter? = null
@@ -52,7 +52,7 @@ class RPIDialogFragment : BaseDialogFragment() {
         instance = this
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothCheck()
-        if (mBluetoothAdapter!!.isDiscovering()) {
+        if (mBluetoothAdapter!!.isDiscovering) {
             mBluetoothAdapter!!.cancelDiscovery()
         }
         mBluetoothAdapter!!.startDiscovery()
@@ -61,11 +61,11 @@ class RPIDialogFragment : BaseDialogFragment() {
         if (mChatService == null) {
             mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
         }
-        pairedDevices = mBluetoothAdapter!!.getBondedDevices()
+        pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
             if (checkPiAddress(d.address)) {
-                addToDialog(d, raspberryDevicesText, raspberry_devices, false)
+                addToDialog(d, raspberryDevicesText, raspberryDevices, false)
                 bind!!.progressBar.visibility = View.INVISIBLE
             }
         }
@@ -75,10 +75,10 @@ class RPIDialogFragment : BaseDialogFragment() {
 
     private fun initDialog() {
         pDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-        mDialog = getAlertDialog(bind!!.root, context, false)
+        mDialog = getAlertDialog(bind!!.root)
         mDialog!!.setTitle(R.string.select_device)
         listViewOnClickListener(bind!!.listView)
-        bind!!.rpiCloseButton.setOnClickListener { v: View? ->
+        bind!!.rpiCloseButton.setOnClickListener {
             bluetoothCheck("unregister")
             dismiss()
         }
@@ -95,10 +95,9 @@ class RPIDialogFragment : BaseDialogFragment() {
     }
 
     private fun listViewOnClickListener(mView: View) {
-        bind!!.listView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+        bind!!.listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
-            val deviceList: List<BluetoothDevice>
-            deviceList = if (bind!!.rpiSwitch.isChecked) raspberry_devices else all_devices
+            val deviceList: List<BluetoothDevice> = if (bind!!.rpiSwitch.isChecked) raspberryDevices else allDevices
             if (checkPiAddress(deviceList[position].address)) {
                 mainDevice = deviceList[position]
                 mChatService!!.connect(deviceList[position], true)
@@ -114,7 +113,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     """.trimIndent())
                 pDialog!!.show()
             } else {
-                Toast.makeText(getContext(), "Device Unsupported", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Device Unsupported", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -124,7 +123,7 @@ class RPIDialogFragment : BaseDialogFragment() {
             if (isChecked) {
                 setAdapterNotNull(raspberryDevicesText)
                 buttonView.setText(R.string.paired_devices)
-                if (raspberry_devices.isEmpty()) bind!!.progressBar.visibility = View.VISIBLE
+                if (raspberryDevices.isEmpty()) bind!!.progressBar.visibility = View.VISIBLE
             } else {
                 setAdapterNotNull(allDevicesText)
                 buttonView.setText(R.string.all_devices)
@@ -138,7 +137,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     }
 
     private fun finish(status: Int, mView: View) {
-        val mDialog = getAlertDialog(mView, context, false)
+        val mDialog = getAlertDialog(mView)
         if (status == 3) mDialog.setTitle("BLUETOOTH IS CONNECTED") else if (status == 2) mDialog.setTitle("BLUETOOTH IS CONNECTING...") else mDialog.setTitle("BLUETOOTH IS NOT CONNECTED")
         setAdapterNotNull(ArrayList())
     }
@@ -152,8 +151,8 @@ class RPIDialogFragment : BaseDialogFragment() {
         }
     }
 
-    private fun getAlertDialog(mView: View, context: Context?, wifi: Boolean): AlertDialog {
-        return AlertDialog.Builder(ContextThemeWrapper(getContext(), R.style.CustomAlertDialogStyle)).setView(mView).setIcon(R.drawable.dialog_icon).create()
+    private fun getAlertDialog(mView: View): AlertDialog {
+        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setView(mView).setIcon(R.drawable.dialog_icon).create()
     }
 
     fun bluetoothCheck(vararg args: String) {
@@ -162,7 +161,7 @@ class RPIDialogFragment : BaseDialogFragment() {
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent)
             mContext!!.unregisterReceiver(mReceiver)
         }
-        if (args.size >= 1 && args[0] == "unregister") {
+        if (args.isNotEmpty() && args[0] == "unregister") {
             mContext!!.unregisterReceiver(mReceiver)
             val intent = Intent()
             intent.putExtra("mChatService", mChatService)
@@ -179,11 +178,11 @@ class RPIDialogFragment : BaseDialogFragment() {
         override fun onReceive(context: Context, intent: Intent) {
             if (BluetoothDevice.ACTION_FOUND == intent.action) {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                if (checkPiAddress(device.address)) {
-                    addToDialog(device, raspberryDevicesText, raspberry_devices, true)
+                if (checkPiAddress(device!!.address)) {
+                    addToDialog(device, raspberryDevicesText, raspberryDevices, true)
                     bind!!.progressBar.visibility = View.INVISIBLE
                 }
-                addToDialog(device, allDevicesText, all_devices, true)
+                addToDialog(device, allDevicesText, allDevices, true)
                 Log.e("Broadcast BT", """
      ${device.name}
      ${device.address}
@@ -204,7 +203,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     }
 
     private fun checkPiAddress(deviceHardwareAddress: String): Boolean {
-        val piAddress: Set<String> = HashSet(Arrays.asList("B8:27:EB", "DC:A6:32", "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"))
+        val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"))
         return piAddress.contains(deviceHardwareAddress.substring(0, 7)) || piAddress.contains(deviceHardwareAddress.substring(0, 8))
     }
 
@@ -233,10 +232,6 @@ class RPIDialogFragment : BaseDialogFragment() {
                 Constants.MESSAGE_DEVICE_NAME -> Log.e("RPIDialogFragment", "Device Name " + msg.data.getString(Constants.DEVICE_NAME))
             }
         }
-    }
-
-    fun getmHandler(): Handler {
-        return mHandler
     }
 
     companion object {

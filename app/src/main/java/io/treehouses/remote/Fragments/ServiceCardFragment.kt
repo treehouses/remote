@@ -42,7 +42,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             binding!!.installButton.setOnClickListener(this)
             binding!!.startButton.setOnClickListener(this)
             binding!!.openLink.setOnClickListener(this)
-            binding!!.autorunChecked.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean -> actionListener!!.onClickAutorun(serviceData, isChecked) }
+            binding!!.autorunChecked.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean -> actionListener!!.onClickAutorun(serviceData, isChecked) }
         }
         return binding!!.root
     }
@@ -51,7 +51,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         binding!!.autorunChecked.isChecked = autorun!!.contains("true")
     }
 
-    private fun setButtons(started: Boolean, installed: Boolean, three: Boolean) {
+    private fun setButtons(started: Boolean, installed: Boolean) {
         var string1 = "Start"
         var visibility1 = View.GONE
 
@@ -77,15 +77,13 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         binding!!.startButton.visibility = visibility2
         binding!!.autorunChecked.visibility = visibility3
 
-
-        //restart.setEnabled(three);
     }
 
     private fun updateButtons(statusCode: Int) {
         when (statusCode) {
-            ServiceInfo.SERVICE_AVAILABLE -> setButtons(false, false, false)
-            ServiceInfo.SERVICE_INSTALLED -> setButtons(false, true, false)
-            ServiceInfo.SERVICE_RUNNING -> setButtons(true, true, true)
+            ServiceInfo.SERVICE_AVAILABLE -> setButtons(false, false)
+            ServiceInfo.SERVICE_INSTALLED -> setButtons(false, true)
+            ServiceInfo.SERVICE_RUNNING -> setButtons(true, true)
         }
     }
 

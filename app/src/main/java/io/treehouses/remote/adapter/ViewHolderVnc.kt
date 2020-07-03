@@ -18,7 +18,7 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")))
         val activities = context.packageManager.queryIntentActivities(intent, 0)
         if (activities.size == 0) {
-            Snackbar.make(v, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install") { view: View? ->
+            Snackbar.make(v, "No VNC Client installed on you device", Snackbar.LENGTH_LONG).setAction("Install") {
                 val intent1 = Intent(Intent.ACTION_VIEW)
                 intent1.data = Uri.parse("https://play.google.com/store/apps/details?id=com.realvnc.viewer.android")
                 context.startActivity(intent1)
@@ -44,8 +44,8 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
         val btnStartConfig = v.findViewById<Button>(R.id.btn_start_config)
         val vnc = v.findViewById<Switch>(R.id.switchVnc)
         editTextIp = v.findViewById(R.id.editTextIp)
-        btnStartConfig.setOnClickListener { v1: View? -> openVnc(context, v, editTextIp) }
-        vnc.setOnClickListener { v12: View? ->
+        btnStartConfig.setOnClickListener { openVnc(context, v, editTextIp) }
+        vnc.setOnClickListener {
             if (vnc.isChecked) {
                 listener.sendMessage("treehouses vnc on")
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_SHORT).show()
