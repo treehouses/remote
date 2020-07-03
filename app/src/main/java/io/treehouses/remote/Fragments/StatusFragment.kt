@@ -115,7 +115,7 @@ class StatusFragment : BaseFragment() {
 
     private fun writeNetworkInfo(readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
-        val ip = readMessage.substringAfter("ip: ").substringBefore(", has")
+        var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
         when(networkMode){
             "default" -> networkModeTitle.text = "Default"
             "wifi" -> networkModeTitle.text = "WiFi"
@@ -123,7 +123,9 @@ class StatusFragment : BaseFragment() {
             "bridge" -> networkModeTitle.text = "Bridge"
             "ethernet" -> networkModeTitle.text = "Ethernet"
         }
-
+        if(ip == "") {
+            ip = "N/A"
+        }
         ipAdrText.text = "IP Address: " + ip
         ssidText.text = "SSID: " + ssid
     }
