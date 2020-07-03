@@ -30,7 +30,7 @@
         android:screenOrientation="portrait"
         android:theme="@style/MyMaterialTheme.Base"
         android:usesCleartextTraffic="true">
-        <activity android:name=".IntroActivity"></activity>
+        <activity android:name=".IntroActivity" />
         <activity
             android:name=".SplashScreenActivity"
             android:screenOrientation="portrait">
