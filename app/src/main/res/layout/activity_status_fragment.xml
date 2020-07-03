@@ -62,7 +62,7 @@
                     app:srcCompat="@drawable/ic_bluetooth" />
 
                 <LinearLayout
-                    android:layout_width="290dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:paddingLeft="20dp">
@@ -132,7 +132,7 @@
 
                 <TextView
                     android:id="@+id/networkModeTitle"
-                    android:layout_width="290dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:paddingLeft="20dp"
@@ -228,15 +228,17 @@
             android:layout_marginRight="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/networkBox"
+            android:weightSum="2"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/rpiDetailBox"
-                android:layout_width="180dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/lightrounded"
                 android:orientation="vertical"
                 android:paddingTop="5dp"
+                android:layout_weight="1"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
@@ -303,13 +305,14 @@
 
             <LinearLayout
                 android:id="@+id/cliVersionBox"
-                android:layout_width="180dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/lightrounded"
                 android:orientation="vertical"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
+                android:layout_weight="1"
                 app:layout_constraintTop_toBottomOf="@+id/rpiDetailBox"
                 tools:layout_editor_absoluteX="20dp">
 
@@ -329,7 +332,7 @@
 
                     <TextView
                         android:id="@+id/textView8"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:paddingLeft="3dp"
@@ -423,9 +426,10 @@
                     <ProgressBar
                         android:id="@+id/memoryBar"
                         style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="208dp"
+                        android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
                         android:layout_marginTop="10dp"
                         android:layout_weight="1"
                         android:progressDrawable="@drawable/green_progress_bar" />
@@ -435,6 +439,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:text="Checking......"
                         android:textColor="@color/daynight_textColor" />
@@ -457,6 +462,7 @@
                     android:layout_height="43dp"
                     android:layout_marginLeft="20dp"
                     android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:text="Temperature"
                     android:textColor="@color/daynight_textColor"
                     android:textStyle="bold" />
@@ -470,9 +476,10 @@
                     <ProgressBar
                         android:id="@+id/temperatureBar"
                         style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="208dp"
+                        android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
                         android:layout_marginTop="5dp"
                         android:layout_weight="1"
                         android:progressDrawable="@drawable/red_progress_bar" />
@@ -482,6 +489,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:text="Checking......"
                         android:textColor="@color/daynight_textColor" />
