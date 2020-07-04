@@ -33,10 +33,10 @@ import java.util.Properties;
  */
 public interface VDUInput {
 
-    public final static int KEY_CONTROL = 0x01;
-    public final static int KEY_SHIFT = 0x02;
-    public final static int KEY_ALT = 0x04;
-    public final static int KEY_ACTION = 0x08;
+    int KEY_CONTROL = 0x01;
+    int KEY_SHIFT = 0x02;
+    int KEY_ALT = 0x04;
+    int KEY_ACTION = 0x08;
 
 
     /**
