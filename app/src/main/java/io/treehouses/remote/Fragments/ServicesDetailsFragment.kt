@@ -96,7 +96,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             binding.progressBar.visibility = View.GONE
         } else {
             setScreenState(true)
-            var msg: String = ""
+            var msg = ""
             if (output.contains("service autorun set")) {
                 msg = "Switched autorun"
             } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
@@ -162,11 +162,11 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                .setPositiveButton("Delete") { dialog: DialogInterface?, which: Int ->
+                .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
                     performService("Uninstalling", """treehouses services ${selected.name} cleanup
 """, selected.name)
                     performServiceWait()
-                }.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }.create().show()
+                }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create().show()
     }
 
     private fun onInstall(selected: ServiceInfo?) {
@@ -195,7 +195,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
-        v.setOnClickListener { v1: View? ->
+        v.setOnClickListener {
             writeToRPI(command)
             alertDialog.dismiss()
             binding.progressBar.visibility = View.VISIBLE

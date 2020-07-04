@@ -32,7 +32,7 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
-        adapter = ServicesListAdapter(requireContext(), services!!, resources.getColor(R.color.bg_white))
+        adapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.bg_white))
         bind!!.listView.adapter = adapter
         bind!!.listView.onItemClickListener = this
         return bind!!.root

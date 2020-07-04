@@ -29,31 +29,27 @@ class TorTabFragment : BaseFragment() {
 
     override lateinit var mChatService: BluetoothChatService
     private var startButton: Button? = null
-    private val moreButton: Button? = null
     private var addPortButton: Button? = null
     private var textStatus: TextView? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
 
-    private val background: ImageView? = null
     private var logo: ImageView? = null
-    private val internetstatus: ImageView? = null
     private var myClipboard: ClipboardManager? = null
     private var myClip: ClipData? = null
-    private val nDialog: ProgressDialog? = null
     private var portList: ListView? = null
     private var notification: Switch? = null
     var bind: ActivityTorFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
         listener.sendMessage("treehouses tor ports")
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         notification = bind!!.switchNotification
         notification!!.isEnabled = false
-        notification!!.setOnCheckedChangeListener { buttonView, isChecked ->
+        notification!!.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 notification!!.isEnabled = false
                 listener.sendMessage("treehouses tor notice on")
@@ -63,18 +59,18 @@ class TorTabFragment : BaseFragment() {
             }
         }
         portList = bind!!.countries
-        portList!!.setAdapter(adapter)
-        portList!!.setOnItemClickListener(OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+        portList!!.adapter = adapter
+        portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             builder.setTitle("Delete Port " + portsName!![position] + " ?")
 
 //            builder.setMessage("Would you like to delete?");
 
             // add the buttons
-            builder.setPositiveButton("Confirm") { dialog, id ->
+            builder.setPositiveButton("Confirm") { dialog, _ ->
                 listener.sendMessage("treehouses tor delete " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
                 addPortButton!!.text = "deleting port ....."
-                portList!!.setEnabled(false)
+                portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
                 dialog.dismiss()
             }
@@ -83,30 +79,30 @@ class TorTabFragment : BaseFragment() {
             // create and show the alert dialog
             val dialog = builder.create()
             dialog.show()
-        })
+        }
         logo = bind!!.treehouseLogo
         bind!!.btnAddPort
         startButton = bind!!.btnTorStart
         addPortButton = bind!!.btnAddPort
-        startButton!!.setEnabled(false)
-        startButton!!.setText("Getting Tor Status from raspberry pi")
+        startButton!!.isEnabled = false
+        startButton!!.text = "Getting Tor Status from raspberry pi"
         textStatus = bind!!.torStatusText
         val matrix = ColorMatrix()
         matrix.setSaturation(0f)
-        textStatus!!.setText("-")
+        textStatus!!.text = "-"
         val filter = ColorMatrixColorFilter(matrix)
-        logo!!.setColorFilter(filter)
-        /* start/stop tor button click */startButton!!.setOnClickListener(View.OnClickListener { v: View? ->
-            if (startButton!!.getText().toString() === "Stop Tor") {
-                startButton!!.setText("Stopping Tor")
-                startButton!!.setEnabled(false)
+        logo!!.colorFilter = filter
+        /* start/stop tor button click */startButton!!.setOnClickListener {
+            if (startButton!!.text.toString() === "Stop Tor") {
+                startButton!!.text = "Stopping Tor"
+                startButton!!.isEnabled = false
                 listener.sendMessage("treehouses tor stop")
             } else {
                 listener.sendMessage("treehouses tor start")
-                startButton!!.setEnabled(false)
-                startButton!!.setText("Starting tor......")
+                startButton!!.isEnabled = false
+                startButton!!.text = "Starting tor......"
             }
-        })
+        }
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_tor_ports)
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -116,37 +112,31 @@ class TorTabFragment : BaseFragment() {
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
 
-        addPortButton!!.setOnClickListener(View.OnClickListener { v: View? -> dialog.show() })
-        addingPortButton.setOnClickListener { v: View? ->
+        addPortButton!!.setOnClickListener { dialog.show() }
+        addingPortButton.setOnClickListener {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()
                 val s2 = inputExternal.text.toString()
                 listener.sendMessage("treehouses tor add $s2 $s1")
-                addPortButton!!.setText("Adding port, please wait for a while ............")
-                portList!!.setEnabled(false)
-                addPortButton!!.setEnabled(false)
+                addPortButton!!.text = "Adding port, please wait for a while ............"
+                portList!!.isEnabled = false
+                addPortButton!!.isEnabled = false
                 dialog.dismiss()
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
-        textStatus!!.setOnClickListener(View.OnClickListener { v: View? ->
+        textStatus!!.setOnClickListener {
             myClipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val text: String
-            text = textStatus!!.getText().toString()
-            myClip = ClipData.newPlainText("text", textStatus!!.getText())
+            textStatus!!.text.toString()
+            myClip = ClipData.newPlainText("text", textStatus!!.text)
             myClipboard!!.setPrimaryClip(myClip!!)
-            Toast.makeText(requireContext(), textStatus!!.getText().toString() + " copied!", Toast.LENGTH_SHORT).show()
-        })
+            Toast.makeText(requireContext(), textStatus!!.text.toString() + " copied!", Toast.LENGTH_SHORT).show()
+        }
         /* more button click */
 //            moreButton.setOnClickListener(v ->{
 //                showBottomSheet(new TorBottomSheet(), "ethernet");
 //            });
         return bind!!.root
-    }
-
-    private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
-        fragment.setTargetFragment(this@TorTabFragment, Constants.NETWORK_BOTTOM_SHEET)
-        fragment.show(requireFragmentManager(), tag)
     }
 
     @SuppressLint("HandlerLeak")
