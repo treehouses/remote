@@ -39,7 +39,7 @@ class Worker(threading.Thread):
         self.stopped = False
         self.receivingFile = False
         self.fileBuilder = ""
-        self.DELIMETER = "|END|"
+        self.DELIMETER = " cnysetomer"
        #self._logger.info(_serverHash)
 
     def send_msg(self, message):
@@ -79,8 +79,7 @@ class Worker(threading.Thread):
             with open(sys.argv[0],'w',encoding='utf-8') as f:
                 compressed = self.fileBuilder[:self.fileBuilder.find(self.DELIMETER)]
                 self._logger.info("GOT COMPRESSED: "+compressed)
-                self._logger.info("Real File: "+zlib.decompress(base64.b64decode(compressed)))
-                f.write(zlib.decompress(base64.b64decode(compressed)))
+                f.write(zlib.decompress(base64.b64decode(compressed)).decode("utf-8"))
             self.receivingFile = False
 
     def run(self):
