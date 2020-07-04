@@ -135,7 +135,6 @@ open class BaseTerminalFragment : BaseFragment() {
             override fun afterTextChanged(s: Editable) {
                 if (s.toString().endsWith("\n")) {
                     listener.sendMessage(autoComplete.text.toString().substring(0, autoComplete.text.toString().length - 1))
-                    autoComplete.setText("a")
                     if(TerminalFragment.treehouses) {
                         autoComplete.setText("treehouses ")
                         autoComplete.setSelection(autoComplete.text.length)
