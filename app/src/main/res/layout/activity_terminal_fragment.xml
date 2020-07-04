@@ -7,6 +7,21 @@
     android:background="@color/windowBackground"
     tools:context=".Fragments.TerminalFragment">
 
+    <ToggleButton
+        android:id="@+id/treehousesBtn"
+        android:layout_width="110dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/ic_treehouses"
+        android:textColor="#FFFFFF"
+        android:textOff="@string/treehouses"
+        android:textOn="@string/treehouses"
+        app:layout_constraintBottom_toTopOf="@+id/infoButton"
+        app:layout_constraintLeft_toLeftOf="@+id/button_send"
+        app:layout_constraintRight_toRightOf="parent" />
+
     <ListView
         android:id="@+id/in"
         android:layout_width="match_parent"

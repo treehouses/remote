@@ -10,10 +10,7 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ExpandableListAdapter
-import android.widget.ExpandableListView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
@@ -135,6 +132,7 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     private fun btnSendClickListener() {
+        var treehouses = false
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener {
             // Send a message using content of the edit text widget
@@ -147,7 +145,13 @@ class TerminalFragment : BaseTerminalFragment() {
                     Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
                     requireActivity().title = "Home"
                 }
-                bind.editTextOut.setText("")
+                if(treehouses) {
+                    bind.editTextOut.setText("treehouses ")
+                    bind.editTextOut.setSelection(bind.editTextOut.text.length)
+                }
+                else {
+                    bind.editTextOut.setText("")
+                }
             }
         }
         bind.btnPrevious.setOnClickListener {
@@ -167,6 +171,18 @@ class TerminalFragment : BaseTerminalFragment() {
                     listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
                 }
             }
+        }
+
+       bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+           treehouses = isChecked
+           if(treehouses) {
+               bind.editTextOut.setText("treehouses ")
+               bind.editTextOut.setSelection(bind.editTextOut.text.length)
+           }
+           else {
+               bind.editTextOut.setText("")
+           }
+
         }
     }
 
