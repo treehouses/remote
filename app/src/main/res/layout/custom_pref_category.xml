@@ -6,4 +6,4 @@
     android:paddingLeft="@dimen/padding_large"
     android:paddingEnd="0dp"
     android:paddingRight="0dp"
-    android:textColor="@color/preference_category" />
+    android:textColor="@color/accent" />
