@@ -4,7 +4,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_grey_200">
+    android:background="@color/expandable_list_row">
 
     <TextView
         android:id="@+id/label"
@@ -16,7 +16,6 @@
         android:layout_marginRight="18dp"
         android:padding="6dp"
         android:text="SSID"
-        android:textColor="@color/md_black_1000"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/delete_profile"
         app:layout_constraintHorizontal_bias="0.048"
