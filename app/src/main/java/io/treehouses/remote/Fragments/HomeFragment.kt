@@ -10,6 +10,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
+import android.util.Log
 import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -43,6 +44,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private var selectedLed = 0
     private var checkVersionSent = false
     private var internetSent = false
+    private var hashSent = false
     private var networkSsid = ""
     private var networkProfile: NetworkProfile? = null
 
@@ -163,12 +165,13 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             showLogDialog(preferences!!)
             transition(true, arrayOf(150f, 110f, 70f))
             connectionState = true
-            checkVersionSent = true
-            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            listener.sendMessage("remotehash")
+            hashSent = true
             Tutorials.homeTutorials(bind, requireActivity())
         } else {
             transition(false, arrayOf(0f, 0f, 0f))
             connectionState = false
+            hashSent = false
             MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
@@ -261,6 +264,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun moreActions(output: String, result: RESULTS) {
         when {
+            hashSent -> {
+                syncBluetooth(output)
+                hashSent = false
+                checkVersionSent = true
+                listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            }
             result == RESULTS.UPGRADE_CHECK -> notificationListener?.setNotification(output.contains("true"))
             result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
                 updateStatus("Switched to $networkSsid")
