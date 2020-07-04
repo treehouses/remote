@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
@@ -13,10 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -24,6 +24,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
+import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class StatusFragment : BaseFragment() {
 
@@ -32,7 +33,9 @@ class StatusFragment : BaseFragment() {
     private var lastCommand = "hostname"
     private var deviceName = ""
     private var rpiVersion = ""
-
+    private var usedMemory = 0.0
+    private var totalMemory = 0.0
+    private var networkMode = ""
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,14 +50,12 @@ class StatusFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bind.tvBluetooth.text = String.format("Bluetooth Connection: %s", deviceName)
+        bind.tvBluetooth.text = deviceName
         Log.e("STATUS", "device name: $deviceName")
-        if (mChatService.state == Constants.STATE_CONNECTED) {
-            bind.btStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
-        }
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())
+        bind.upgrade.visibility = View.GONE
     }
 
     private fun upgradeOnViewClickListener() {
@@ -66,27 +67,44 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun rpiNameOnViewClickListener() {
-        bind.rpiNameCard.setOnClickListener { showRenameDialog() }
+        bind.editName.setOnClickListener { showRenameDialog() }
     }
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
         if (lastCommand == "hostname") {
-            setCard(bind.tvRpiName, bind.rpiName, "Connected RPI Name: $readMessage")
+            bind.tvRpiName.text = "Hostname: " + readMessage
             writeToRPI("treehouses remote status")
         } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
             val res = readMessage.trim().split(" ")
-            setCard(bind.tvWifi, bind.wifiStatus, "RPI Wifi Connection : " + res[0])
-            bind.imageText.text = String.format("Treehouses Image Version: %s", res[2])
-            setCard(bind.tvRpiType, bind.rpiType, "RPI Type : " + res[4])
+            bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
+            bind.deviceAddress.text = res[1]
+            bind.tvRpiType.text = "Model: " + res[4]
             rpiVersion = res[3]
+            //also set remote version
+            bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
             Log.e("REACHED", "YAYY")
-            writeToRPI("treehouses memory free")
-        } else if (lastCommand == "treehouses memory free") {
-            setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
+            writeToRPI("treehouses memory used -g")
+        } else if (lastCommand == "treehouses memory used -g") {
+            usedMemory = readMessage.trim { it <= ' ' }.toDouble()
+            writeToRPI("treehouses memory total -g")
+        } else if (lastCommand == "treehouses memory total -g") {
+            totalMemory = readMessage.trim { it <= ' ' }.toDouble()
+            ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
+            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
             writeToRPI("treehouses temperature celsius")
-        } else if(lastCommand == "treehouses temperature celsius"){
-            setCard(bind.tvTemperature, bind.temperature, "Temperature: " + readMessage)
+        } else if (lastCommand == "treehouses temperature celsius") {
+            bind.temperature.text = readMessage
+            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
+            writeToRPI("treehouses detect arm")
+        } else if (lastCommand == "treehouses detect arm") {
+            bind.cpuModelText.text = "CPU: ARM " + readMessage
+            writeToRPI("treehouses networkmode")
+        } else if (lastCommand == "treehouses networkmode") {
+            networkMode = readMessage.dropLast(1)
+            writeToRPI("treehouses networkmode info")
+        } else if (lastCommand == "treehouses networkmode info") {
+            writeNetworkInfo(readMessage)
             writeToRPI("treehouses internet")
         } else if (lastCommand == "treehouses internet") {
             checkWifiStatus(readMessage)
@@ -95,14 +113,28 @@ class StatusFragment : BaseFragment() {
         }
     }
 
+    private fun writeNetworkInfo(readMessage: String) {
+        val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
+        var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
+        when(networkMode){
+            "default" -> networkModeTitle.text = "Default"
+            "wifi" -> networkModeTitle.text = "WiFi"
+            "hotspot" -> networkModeTitle.text = "Hotspot"
+            "bridge" -> networkModeTitle.text = "Bridge"
+            "ethernet" -> networkModeTitle.text = "Ethernet"
+        }
+        if(ip == "") {
+            ip = "N/A"
+        }
+        ipAdrText.text = "IP Address: " + ip
+        ssidText.text = "SSID: " + ssid
+    }
+
     private fun checkWifiStatus(readMessage: String) {
-        bind.tvWifi.text = String.format("RPI Wifi Connection: %s", readMessage)
         if (readMessage.startsWith("true")) {
-            bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
             writeToRPI("treehouses upgrade --check")
         } else {
-            bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-            bind.tvUpgradeCheck.text = "Upgrade Status: NO INTERNET"
+            bind.tvUpgradeCheck.text = "      NO INTERNET"
             bind.upgrade.visibility = View.GONE
         }
     }
@@ -111,11 +143,6 @@ class StatusFragment : BaseFragment() {
         lastCommand = ping
         val pSend = ping.toByteArray()
         mChatService.write(pSend)
-    }
-
-    private fun setCard(textView: TextView, tick: ImageView?, text: String) {
-        textView.text = text
-        tick!!.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
     }
 
     private fun checkUpgradeNow() {
@@ -132,12 +159,12 @@ class StatusFragment : BaseFragment() {
         checkUpgradeNow()
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
-            bind.tvUpgradeCheck.text = String.format("Upgrade Status: Latest Version: %s", rpiVersion)
-            bind.upgrade.isEnabled = false
+            bind.tvUpgradeCheck.text = String.format("Latest Version: %s", rpiVersion)
+            bind.upgrade.visibility = View.GONE
         } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
             bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
-            bind.upgrade.isEnabled = true
+            bind.upgrade.visibility = View.VISIBLE
         }
     }
 
