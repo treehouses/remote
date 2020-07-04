@@ -1,6 +1,7 @@
 package io.treehouses.remote
 
 import android.util.TypedValue
+import android.view.View
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
@@ -13,20 +14,21 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = FancyShowCaseView.Builder(activity)
-                .focusOn(bind.testConnection)
-                .title("Test Bluetooth Connection to RPI")
-                .delay(750)
-                .enableAutoTextPosition()
+        fun fancyShowCaseViewBuilderHome(view: View, title: String, delay: Int): FancyShowCaseView.Builder {
+            return FancyShowCaseView.Builder(activity)
+                    .focusOn(view)
+                    .title(title)
+                    .enableAutoTextPosition()
+                    .fitSystemWindows(true)
+                    .delay(delay)
+        }
+
+        val a = fancyShowCaseViewBuilderHome(bind.testConnection, "Test Bluetooth Connection to RPI", 750)
                 .build()
 
-        val b = FancyShowCaseView.Builder(activity)
-                .focusOn(bind.networkProfiles)
-                .title("Configure Network Profiles in the Network Screen to quickly switch between network configurations")
+        val b = fancyShowCaseViewBuilderHome(bind.networkProfiles, "Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500)
                 .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
-                .delay(500)
                 .focusCircleRadiusFactor(1.25)
-                .enableAutoTextPosition()
                 .build()
         val queue = FancyShowCaseQueue().add(a).add(b)
         queue.show()
@@ -49,6 +51,28 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL, false)
         //Put animations here
+        fun fancyShowCaseViewBuilderTerminal(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
+            return FancyShowCaseView.Builder(activity)
+                    .focusOn(view)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+                    .backgroundColor(R.color.focusColor)
+                    .focusShape(focusShape)
+                    .fitSystemWindows(true)
+                    .build()
+        }
+
+        val a = fancyShowCaseViewBuilderTerminal(bind.editTextOut, "Enter Commands here to run on Pi Remotely", 750, FocusShape.ROUNDED_RECTANGLE)
+
+        val b = fancyShowCaseViewBuilderTerminal(bind.terminalList, "You can Save your Commands here to use them without typing again", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val c = fancyShowCaseViewBuilderTerminal(bind.btnPrevious, "Access Recently used Commands on Successive taps of this button", 500, FocusShape.CIRCLE)
+
+        val d = fancyShowCaseViewBuilderTerminal(bind.infoButton, "Get Information on what Treehouses Commands are Available and how to use them", 500, FocusShape.CIRCLE)
+
+        val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
+        queue.show()
 
     }
 
@@ -99,22 +123,21 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
         //Put animations here
-        val a = FancyShowCaseView.Builder(activity)
-                .focusOn(bind.upgrade)
-                .fitSystemWindows(true)
-                .title("Tap to update CLI to newest version")
-                .delay(500)
-                .enableAutoTextPosition()
-                .build()
+        fun fancyShowCaseViewBuilderStatus(view: View, title: String, delay: Int):FancyShowCaseView{
+            return FancyShowCaseView.Builder(activity)
+                    .focusOn(view)
+                    .fitSystemWindows(true)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+                    .build()
+        }
+        val a = fancyShowCaseViewBuilderStatus(bind.upgrade, "Tap to update CLI to newest version", 500)
 
-        val b = FancyShowCaseView.Builder(activity)
-                .focusOn(bind.editName)
-                .fitSystemWindows(true)
-                .title("Tap to change your Raspberry Pi name")
-                .delay(50)
-                .enableAutoTextPosition()
-                .build()
+        val b = fancyShowCaseViewBuilderStatus(bind.editName, "Tap to change your Raspberry Pi name", 50)
+        
         val queue = FancyShowCaseQueue().add(a).add(b)
         queue.show()
     }
 }
+

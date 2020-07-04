@@ -38,7 +38,7 @@ class ChPasswordDialogFragment : DialogFragment() {
     protected fun getAlertDialog(mView: View?): AlertDialog {
         return createAlertDialog(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle), mView, R.string.change_password, android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.change_password
-                ) { dialog: DialogInterface, whichButton: Int ->
+                ) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
                     val chPass = bind!!.changePassword.text.toString()
                     val i = Intent()
@@ -46,7 +46,7 @@ class ChPasswordDialogFragment : DialogFragment() {
                     i.putExtra("password", chPass)
                     targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, i)
                 }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface?, whichButton: Int -> targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent) }
+                .setNegativeButton(R.string.cancel) { _: DialogInterface?, _: Int -> targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent) }
                 .create()
     }
 

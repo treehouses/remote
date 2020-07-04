@@ -23,7 +23,7 @@ class CommandListAdapter(private val context: Context, private val expandableLis
     }
 
     override fun getChildView(listPosition: Int, expandedListPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        val convertView: View?
         val expandedListText = getChild(listPosition, expandedListPosition) as String
         if (expandedListPosition == expandableListDetail[expandableListTitle[listPosition]]!!.size) {
             convertView = getConvertView(R.layout.list_add)

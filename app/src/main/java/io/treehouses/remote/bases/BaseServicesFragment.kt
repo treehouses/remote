@@ -45,28 +45,6 @@ open class BaseServicesFragment() : BaseFragment() {
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)
     }
 
-    protected fun openTorURL(url: String) {
-        val intent = requireContext().packageManager.getLaunchIntentForPackage("org.torproject.torbrowser")
-        if (intent != null) {
-            intent.data = Uri.parse("http://$url")
-            intent.action = Intent.ACTION_VIEW
-            startActivity(intent)
-        } else {
-            val s = "Please install Tor Browser from: \n\n https://play.google.com/store/apps/details?id=org.torproject.torbrowser"
-            val spannableString = SpannableString(s)
-            Linkify.addLinks(spannableString, Linkify.ALL)
-            val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle("Tor Browser Not Found").setMessage(spannableString).create()
-            alertDialog.show()
-            val alertTextView = alertDialog.findViewById<View>(android.R.id.message) as TextView
-            alertTextView.movementMethod = LinkMovementMethod.getInstance()
-        }
-    }
-
-    protected fun checkVersion(versionIntNumber: IntArray): Boolean {
-        if (versionIntNumber[0] > MINIMUM_VERSION[0]) return true
-        return if (versionIntNumber[0] == MINIMUM_VERSION[0] && versionIntNumber[1] > MINIMUM_VERSION[1]) true else versionIntNumber[0] == MINIMUM_VERSION[0] && versionIntNumber[1] == MINIMUM_VERSION[1] && versionIntNumber[2] >= MINIMUM_VERSION[2]
-    }
-
     protected fun writeToRPI(ping: String) {
         mChatService.write(ping.toByteArray())
     }
@@ -82,7 +60,7 @@ open class BaseServicesFragment() : BaseFragment() {
     }
 
     private fun constructServiceList(servicesData: ServicesData?, services: ArrayList<ServiceInfo>) {
-        if (servicesData == null || servicesData.available == null) {
+        if (servicesData?.available == null) {
             Toast.makeText(context, "Error Occurred. Please Refresh", Toast.LENGTH_SHORT).show()
             return
         }
@@ -121,7 +99,7 @@ open class BaseServicesFragment() : BaseFragment() {
     private fun formatList(services: ArrayList<ServiceInfo>) {
         if (inServiceList("Installed", services) == -1) addToServices(services, "Installed", ServiceInfo.SERVICE_HEADER_INSTALLED)
         else if (inServiceList("Available", services) == -1) addToServices(services, "Available", ServiceInfo.SERVICE_HEADER_AVAILABLE)
-        Collections.sort(services)
+        services.sort()
     }
 
     private fun addToServices(services: ArrayList<ServiceInfo>, str: String, flag: Int) {
@@ -133,22 +111,6 @@ open class BaseServicesFragment() : BaseFragment() {
             if (services[i].name == name) return i
         }
         return -1
-    }
-
-    protected fun isVersionNumber(s: String, versionNumber: IntArray?): Boolean {
-        if (!s.contains(".")) return false
-        val parts = s.split("[.]".toRegex()).toTypedArray()
-        val intParts = IntArray(3)
-        if (parts.size != 3) return false
-        for (i in parts.indices) {
-            try {
-                intParts[i] = parts[i].trim { it <= ' ' }.toInt()
-            } catch (e: NumberFormatException) {
-                return false
-            }
-        }
-        System.arraycopy(intParts, 0, versionNumber, 0, 3)
-        return true
     }
 
     private fun isError(output: String): Int {
@@ -185,7 +147,4 @@ open class BaseServicesFragment() : BaseFragment() {
         return output.contains(".") && output.contains(":") && output.length < 25 && !received
     }
 
-    companion object {
-        private val MINIMUM_VERSION = intArrayOf(1, 14, 1)
-    }
 }

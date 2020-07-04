@@ -1,7 +1,6 @@
 package io.treehouses.remote.bases
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Message
@@ -71,8 +70,8 @@ open class BaseTerminalFragment : BaseFragment() {
         bgShape.setColor(color)
     }
 
-    protected fun copyToList(mConversationView: ListView, context: Context?) {
-        mConversationView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+    protected fun copyToList(mConversationView: ListView) {
+        mConversationView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val clickedData = mConversationView.getItemAtPosition(position) as String
             requireContext().copyToClipboard( clickedData)
         }
@@ -87,7 +86,7 @@ open class BaseTerminalFragment : BaseFragment() {
     }
 
     private fun filterMessage(readMessage: String): Boolean {
-        val a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim { it <= ' ' }.isEmpty()
+        val a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && readMessage.trim { it <= ' ' }.isNotEmpty()
         val b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands") && !jsonSent
         return a && b
     }
