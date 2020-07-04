@@ -132,7 +132,7 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     private fun btnSendClickListener() {
-        var treehouses = false
+
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener {
             // Send a message using content of the edit text widget
@@ -308,6 +308,7 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     companion object {
+        var treehouses: Boolean = false
         private const val TAG = "BluetoothChatFragment"
         private const val TITLE_EXPANDABLE = "Commands"
         var instance: TerminalFragment? = null
