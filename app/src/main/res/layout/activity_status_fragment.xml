@@ -14,30 +14,6 @@
         android:background="@color/windowBackground">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_large"
-            app:cardElevation="@dimen/margin_small"
-            app:cardUseCompatPadding="true"
-            app:contentPadding="@dimen/margin_large"
-            app:cardBackgroundColor="@color/card_background"
-            app:layout_constraintBottom_toTopOf="@+id/listView">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textColor="@color/daynight_textColor"
-                android:text="Connection Status:"
-                android:textSize="@dimen/text_size_very_large"
-                android:textStyle="bold" />
-        </androidx.cardview.widget.CardView>
-
-
-        <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
