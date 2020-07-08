@@ -193,7 +193,7 @@ class TorTabFragment : BaseFragment() {
                     val portList = view!!.findViewById<ListView>(R.id.countries)
                     portList.adapter = adapter
                     listener.sendMessage("treehouses tor status")
-                } else if (readMessage.contains("no ports found")) {
+                } else if (readMessage.contains("No ports found")) {
                     addPortButton!!.text = "Add Port"
                     portList!!.isEnabled = true
                     addPortButton!!.isEnabled = true
