@@ -84,6 +84,7 @@ object Tutorials {
                 .focusOn(bind.listView)
                 .title("Install and use a variety of services")
                 .focusShape(FocusShape.ROUNDED_RECTANGLE)
+                .fitSystemWindows(true)
                 .roundRectRadius(90)
                 .delay(500)
                 .disableFocusAnimation()
