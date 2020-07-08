@@ -40,10 +40,10 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private var connectionState = false
     private var testConnectionResult = false
     private var testConnectionDialog: AlertDialog? = null
-    private var selected_LED = 0
+    private var selectedLed = 0
     private var checkVersionSent = false
     private var internetSent = false
-    private var network_ssid = ""
+    private var networkSsid = ""
     private var networkProfile: NetworkProfile? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
@@ -62,7 +62,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 instance!!.openCallFragment(TerminalFragment())
                 activity?.let { it.title = "Terminal" }
             } else {
-                Toast.makeText(context,"Please connect to the Raspberry Pi", Toast.LENGTH_SHORT).show()
+                instance!!.openCallFragment(AboutFragment())
+                activity?.let { it.title = "About" }
             }
         }
         testConnectionListener()
@@ -77,7 +78,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             if (groupPosition == 3) {
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
-            } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size > 0) {
+            } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.isNotEmpty()) {
                 if (SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
                 networkProfile = SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!![childPosition]
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
@@ -97,14 +98,14 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 listener.sendMessage(
                         getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
                         profile.ssid, profile.password))
-                network_ssid = profile.ssid
+                networkSsid = profile.ssid
             }
             profile.isHotspot -> {
                 //Hotspot
                 listener.sendMessage(
                         getString(if (profile.isHidden) R.string.TREEHOUSES_AP_HIDDEN else R.string.TREEHOUSES_AP,
                         profile.option, profile.ssid, profile.password))
-                network_ssid = profile.ssid
+                networkSsid = profile.ssid
             }
             profile.isBridge -> {
                 //Bridge
@@ -146,12 +147,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun testConnectionListener() {
         bind.testConnection.setOnClickListener {
-            val preference = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
+            val preference = PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
             val options = listOf(*resources.getStringArray(R.array.led_options))
             val optionsCode = resources.getStringArray(R.array.led_options_commands)
-            selected_LED = options.indexOf(preference)
-            listener.sendMessage(optionsCode[selected_LED])
-            testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selected_LED)
+            selectedLed = options.indexOf(preference)
+            listener.sendMessage(optionsCode[selectedLed])
+            testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selectedLed)
             testConnectionDialog?.show()
             testConnectionResult = false
         }
@@ -193,7 +194,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private fun dismissTestConnection() {
         if (testConnectionDialog != null) {
             testConnectionDialog!!.cancel()
-            showTestConnectionDialog(true, "Process Finished", R.string.test_finished, selected_LED)
+            showTestConnectionDialog(true, "Process Finished", R.string.test_finished, selectedLed)
         }
     }
 
@@ -263,7 +264,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         when {
             result == RESULTS.UPGRADE_CHECK -> notificationListener?.setNotification(output.contains("true"))
             result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
-                updateStatus("Switched to $network_ssid")
+                updateStatus("Switched to $networkSsid")
             }
             result == RESULTS.BRIDGE_CONNECTED -> {
                 updateStatus("Bridge Has Been Built")

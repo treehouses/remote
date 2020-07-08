@@ -4,6 +4,7 @@ package io.treehouses.remote.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,7 +82,7 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
 
     private void setLabelText(TextView label, String s, Button delete) {
         label.setText(s);
-        label.setTextColor(context.getResources().getColor(R.color.md_grey_700));
+        label.setTextColor(context.getResources().getColor(R.color.expandable_child_text));
         delete.setVisibility(View.GONE);
     }
 

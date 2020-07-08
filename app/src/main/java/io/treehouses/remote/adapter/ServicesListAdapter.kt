@@ -29,7 +29,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     override fun notifyDataSetChanged() {
-        Collections.sort(data)
+        data.sort()
         super.notifyDataSetChanged()
     }
 
@@ -53,18 +53,22 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     private fun setStatus(statusCode: Int) {
-        var color:Int = 0
-        var drawable:Int = 0
+        var color = 0
+        var drawable = 0
         if(statusCode == ServiceInfo.SERVICE_AVAILABLE || statusCode == ServiceInfo.SERVICE_INSTALLED || statusCode == ServiceInfo.SERVICE_RUNNING){
-            if (statusCode == ServiceInfo.SERVICE_AVAILABLE) {
-                color = R.color.md_grey_600
-                drawable = R.drawable.circle_red
-            } else if (statusCode == ServiceInfo.SERVICE_INSTALLED) {
-                color = R.color.md_grey_600
-                drawable = R.drawable.circle_yellow
-            } else if (statusCode == ServiceInfo.SERVICE_RUNNING) {
-                color = R.color.md_green_500
-                drawable = R.drawable.circle_green
+            when (statusCode) {
+                ServiceInfo.SERVICE_AVAILABLE -> {
+                    color = R.color.md_grey_600
+                    drawable = R.drawable.circle_red
+                }
+                ServiceInfo.SERVICE_INSTALLED -> {
+                    color = R.color.md_grey_600
+                    drawable = R.drawable.circle_yellow
+                }
+                ServiceInfo.SERVICE_RUNNING -> {
+                    color = R.color.md_green_500
+                    drawable = R.drawable.circle_green
+                }
             }
             name!!.setTextColor(context.resources.getColor(color))
             status!!.setImageDrawable(context.resources.getDrawable(drawable))
@@ -73,7 +77,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     private fun initView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        val convertView: View?
         convertView = if (flag(position)) {
             LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false)
         } else {

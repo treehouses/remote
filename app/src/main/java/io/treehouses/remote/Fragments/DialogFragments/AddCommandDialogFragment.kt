@@ -31,8 +31,8 @@ class AddCommandDialogFragment : DialogFragment() {
                 .setTitle(R.string.change_password)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton("Add Command"
-                ) { dialog: DialogInterface?, which: Int ->
-                    if (bind!!.commandName.text.toString().length > 0 && bind!!.commandValue.text.toString().length > 0) {
+                ) { _: DialogInterface?, _: Int ->
+                    if (bind!!.commandName.text.toString().isNotEmpty() && bind!!.commandValue.text.toString().isNotEmpty()) {
                         SaveUtils.addToCommandsList(requireContext(),
                                 CommandListItem(bind!!.commandName.text.toString(), bind!!.commandValue.text.toString()))
                         done()
@@ -41,7 +41,7 @@ class AddCommandDialogFragment : DialogFragment() {
                         Toast.makeText(context, "Please Enter Text", Toast.LENGTH_LONG).show()
                     }
                 }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface?, which: Int -> dismiss() }.create()
+                .setNegativeButton(R.string.cancel) { _: DialogInterface?, _: Int -> dismiss() }.create()
     }
 
     private fun done() {

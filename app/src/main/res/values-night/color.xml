@@ -20,6 +20,8 @@
     <color name="preference_category">@color/bg_white</color>
     <color name="preference_title">@color/md_grey_500</color>
     <color name="tor_background">#B5B5B5</color>
+    <color name="expandable_list_row">#4E4E4E</color>
+    <color name="expandable_child_text">#A6A6A6</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>

@@ -2,7 +2,6 @@ package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
@@ -16,22 +15,15 @@ import io.treehouses.remote.R
 class TextBoxValidation {
     private var mDialog: AlertDialog? = null
     private var textWatcher: EditText? = null
-    var SSID: EditText? = null
+    private var SSID: EditText? = null
     @JvmField
     var PWD: EditText? = null
     private var start: Button? = null
     private var addprofile: Button? = null
     private var textInputLayout: TextInputLayout? = null
 
-    //TODO: this file needs to be refactored and maybe make it usable for the future
-    private val IpAddressEditText: EditText? = null
-    private val MaskEditText: EditText? = null
-    private val GateWayEditText: EditText? = null
-    private val DNSEditText: EditText? = null
     private var ESSIDEditText: EditText? = null
     private var HotspotESSIDEditText: EditText? = null
-    var PasswordEditText: EditText? = null
-    var HotspotPasswordEditText: EditText? = null
     fun setmDialog(mDialog: AlertDialog?) {
         this.mDialog = mDialog
     }
@@ -66,22 +58,26 @@ class TextBoxValidation {
         this.textInputLayout = textInputLayout
     }
 
-    constructor() {}
+    constructor()
 
     /**
      * Textwatcher for most dialogs
      *
      */
-    fun textboxValidation(context: Context, type: String, toWatch: EditText?) {
+    private fun textboxValidation(context: Context, type: String, toWatch: EditText?) {
         toWatch!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                if (type == "ethernet") {
-//                    validateETHERNET(context);
-                } else if (type == "wifi") {
-                    validateWIFI(context)
-                } else if (type == "bridge") {
-                    validateBridge(context)
+                when (type) {
+                    "ethernet" -> {
+        //                    validateETHERNET(context);
+                    }
+                    "wifi" -> {
+                        validateWIFI(context)
+                    }
+                    "bridge" -> {
+                        validateBridge()
+                    }
                 }
             }
 
@@ -112,13 +108,13 @@ class TextBoxValidation {
     /**
      * Method that sets the dialog positive button to true or false
      */
-    fun dialogButtonTrueOrFalse(mDialog: AlertDialog?, button: Boolean?) {
+    private fun dialogButtonTrueOrFalse(mDialog: AlertDialog?, button: Boolean?) {
         if (mDialog == null) return
         mDialog.getButton(AlertDialog.BUTTON_POSITIVE).isClickable = button!!
         mDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = button
     }
 
-    fun dialogButtonTrueOrFalse(button1: Button?, button2: Button?, enabled: Boolean) {
+    private fun dialogButtonTrueOrFalse(button1: Button?, button2: Button?, enabled: Boolean) {
         if (button1 != null) {
             button1.isClickable = enabled
             button1.isEnabled = enabled
@@ -135,13 +131,13 @@ class TextBoxValidation {
      */
     private fun validateWIFI(context: Context) {
         var flag = true
-        if(SSID!!.length() == 0 || PWD!!.length() > 0 && PWD!!.length() < 8){
+        if(SSID!!.length() == 0 || PWD!!.length() in 1..7){
             flag = false
             dialogButtonTrueOrFalse(start, addprofile, false)
             if (SSID!!.length() == 0) {
                 SSID!!.error = context.getString(R.string.error_ssid_empty)
             }
-            if (PWD!!.length() > 0 && PWD!!.length() < 8) {
+            if (PWD!!.length() in 1..7) {
                 textInputLayout!!.error = context.getString(R.string.error_pwd_length)
             }
         }
@@ -155,7 +151,7 @@ class TextBoxValidation {
      * ETHERNET dialog validator
      *
      */
-    private fun validateBridge(context: Context) {
+    private fun validateBridge() {
         var flag = true
         if(ESSIDEditText!!.length() == 0 || HotspotESSIDEditText!!.length() == 0){
             flag = false
@@ -185,6 +181,6 @@ class TextBoxValidation {
     }
 
     fun getListener(mDialog: AlertDialog) {
-        mDialog.setOnShowListener { dialog: DialogInterface? -> dialogButtonTrueOrFalse(mDialog, false) }
+        mDialog.setOnShowListener { dialogButtonTrueOrFalse(mDialog, false) }
     }
 }

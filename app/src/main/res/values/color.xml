@@ -20,6 +20,8 @@
     <color name="preference_category">@color/accent</color>
     <color name="preference_title">@color/md_grey_900</color>
     <color name="tor_background">#ffffff</color>
+    <color name="expandable_list_row">@color/md_grey_200</color>
+    <color name="expandable_child_text">@color/md_grey_700</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>
