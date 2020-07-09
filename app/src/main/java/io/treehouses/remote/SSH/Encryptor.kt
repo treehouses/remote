@@ -55,47 +55,47 @@ object Encryptor {
      * @throws Exception
      * on any error encountered in encryption
      */
-    @Throws(Exception::class)
-    fun encrypt(
-            salt: ByteArray,
-            iterations: Int,
-            password: String,
-            cleartext: ByteArray?): ByteArray {
-        /* generate salt randomly */
-        SecureRandom.getInstance(RNG_ALGORITHM).nextBytes(salt)
-
-        /* compute key and initialization vector */
-        val shaDigest = MessageDigest.getInstance(DIGEST_ALGORITHM)
-        var pw = password.toByteArray(charset(CHARSET_NAME))
-        for (i in 0 until iterations) {
-            /* add salt */
-            val salted = ByteArray(pw.size + salt.size)
-            System.arraycopy(pw, 0, salted, 0, pw.size)
-            System.arraycopy(salt, 0, salted, pw.size, salt.size)
-            Arrays.fill(pw, 0x00.toByte())
-
-            /* compute SHA-256 digest */shaDigest.reset()
-            pw = shaDigest.digest(salted)
-            Arrays.fill(salted, 0x00.toByte())
-        }
-
-        /* extract the 16-byte key and initialization vector from the SHA-256 digest */
-        val key = ByteArray(16)
-        val iv = ByteArray(16)
-        System.arraycopy(pw, 0, key, 0, 16)
-        System.arraycopy(pw, 16, iv, 0, 16)
-        Arrays.fill(pw, 0x00.toByte())
-
-        /* perform AES-128 encryption */
-        val cipher = Cipher.getInstance(CIPHER_ALGORITHM)
-        cipher.init(
-                Cipher.ENCRYPT_MODE,
-                SecretKeySpec(key, KEY_ALGORITHM),
-                IvParameterSpec(iv))
-        Arrays.fill(key, 0x00.toByte())
-        Arrays.fill(iv, 0x00.toByte())
-        return cipher.doFinal(cleartext)
-    }
+//    @Throws(Exception::class)
+//    fun encrypt(
+//            salt: ByteArray,
+//            iterations: Int,
+//            password: String,
+//            cleartext: ByteArray?): ByteArray {
+//        /* generate salt randomly */
+//        SecureRandom.getInstance(RNG_ALGORITHM).nextBytes(salt)
+//
+//        /* compute key and initialization vector */
+//        val shaDigest = MessageDigest.getInstance(DIGEST_ALGORITHM)
+//        var pw = password.toByteArray(charset(CHARSET_NAME))
+//        for (i in 0 until iterations) {
+//            /* add salt */
+//            val salted = ByteArray(pw.size + salt.size)
+//            System.arraycopy(pw, 0, salted, 0, pw.size)
+//            System.arraycopy(salt, 0, salted, pw.size, salt.size)
+//            Arrays.fill(pw, 0x00.toByte())
+//
+//            /* compute SHA-256 digest */shaDigest.reset()
+//            pw = shaDigest.digest(salted)
+//            Arrays.fill(salted, 0x00.toByte())
+//        }
+//
+//        /* extract the 16-byte key and initialization vector from the SHA-256 digest */
+//        val key = ByteArray(16)
+//        val iv = ByteArray(16)
+//        System.arraycopy(pw, 0, key, 0, 16)
+//        System.arraycopy(pw, 16, iv, 0, 16)
+//        Arrays.fill(pw, 0x00.toByte())
+//
+//        /* perform AES-128 encryption */
+//        val cipher = Cipher.getInstance(CIPHER_ALGORITHM)
+//        cipher.init(
+//                Cipher.ENCRYPT_MODE,
+//                SecretKeySpec(key, KEY_ALGORITHM),
+//                IvParameterSpec(iv))
+//        Arrays.fill(key, 0x00.toByte())
+//        Arrays.fill(iv, 0x00.toByte())
+//        return cipher.doFinal(cleartext)
+//    }
 
     /**
      * Decrypt the specified ciphertext using the given password.

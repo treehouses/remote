@@ -103,95 +103,8 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (gestureDetector != null && gestureDetector.onTouchEvent(event)) {
-            return true
-        }
-
-        // Old version of copying, only for pre-Honeycomb.
-        if (terminalTextViewOverlay == null) {
-            // when copying, highlight the area
-            if (bridge.isSelectingForCopy) {
-                val area = bridge.selectionArea
-                val row = Math.floor(event.y / bridge.charHeight.toDouble()).toInt()
-                val col = Math.floor(event.x / bridge.charWidth.toDouble()).toInt()
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        // recording starting area
-                        viewPager.setPagingEnabled(false)
-                        if (area.isSelectingOrigin) {
-                            area.setRow(row)
-                            area.setColumn(col)
-                            lastTouchedRow = row
-                            lastTouchedCol = col
-                            bridge.redraw()
-                        }
-                        return true
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        /* ignore when user hasn't moved since last time so
-                         * we can fine-tune with directional pad
-                         */if (row == lastTouchedRow && col == lastTouchedCol) return true
-
-                        // if the user moves, start the selection for other corner
-                        area.finishSelectingOrigin()
-
-                        // update selected area
-                        area.setRow(row)
-                        area.setColumn(col)
-                        lastTouchedRow = row
-                        lastTouchedCol = col
-                        bridge.redraw()
-                        return true
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        /* If they didn't move their finger, maybe they meant to
-                         * select the rest of the text with the directional pad.
-                         */if (area.getLeft() == area.getRight() &&
-                                area.getTop() == area.getBottom()) {
-                            return true
-                        }
-
-                        // copy selected area to clipboard
-                        val copiedText = area.copyFrom(bridge.vDUBuffer!!)
-                        clipboard.text = copiedText
-                        Toast.makeText(
-                                context,
-                                context.resources.getQuantityString(R.plurals.console_copy_done,
-                                        copiedText.length, copiedText.length),
-                                Toast.LENGTH_LONG).show()
-                        // make sure we clear any highlighted area
-                        area.reset()
-                        bridge.isSelectingForCopy = false
-                        bridge.redraw()
-                        viewPager.setPagingEnabled(true)
-                        return true
-                    }
-                    MotionEvent.ACTION_CANCEL -> {
-                        area.reset()
-                        bridge.isSelectingForCopy = false
-                        bridge.redraw()
-                        viewPager.setPagingEnabled(true)
-                        return true
-                    }
-                }
-            }
-            return true
-        }
+        if (gestureDetector != null && gestureDetector.onTouchEvent(event)) return true
         return super.onTouchEvent(event)
-    }
-
-    /**
-     * Only intended for pre-Honeycomb devices.
-     */
-    fun startPreHoneycombCopyMode() {
-        // mark as copying and reset any previous bounds
-        val area = bridge.selectionArea
-        area.reset()
-        area.setBounds(bridge.vDUBuffer!!.columns, bridge.vDUBuffer!!.rows)
-        bridge.isSelectingForCopy = true
-
-        // Make sure we show the initial selection
-        bridge.redraw()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -389,78 +302,78 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         }
     }
 
-    private inner class AccessibilityStateTester : AsyncTask<Void?, Void?, Boolean>() {
-        override fun doInBackground(vararg params: Void?): Boolean {
-            /*
-             * Presumably if the accessibility manager is not enabled, we don't
-             * need to send accessibility events.
-             */
-            val accessibility = context
-                    .getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-            if (!accessibility.isEnabled) {
-                return java.lang.Boolean.FALSE
-            }
-
-            /*
-             * Restrict the set of intents to only accessibility services that
-             * have the category FEEDBACK_SPOKEN (aka, screen readers).
-             */
-            val screenReaderIntent = Intent(SCREENREADER_INTENT_ACTION)
-            screenReaderIntent.addCategory(SCREENREADER_INTENT_CATEGORY)
-            val cr = context.contentResolver
-            val screenReaders = context.packageManager.queryIntentServices(
-                    screenReaderIntent, 0)
-            var foundScreenReader = false
-            for (screenReader in screenReaders) {
-                /*
-                 * All screen readers are expected to implement a content
-                 * provider that responds to:
-                 * content://<nameofpackage>.providers.StatusProvider
-                 */
-                val cursor = cr.query(
-                        Uri.parse("content://" + screenReader.serviceInfo.packageName
-                                + ".providers.StatusProvider"), null, null, null, null)
-                if (cursor != null) {
-                    try {
-                        if (!cursor.moveToFirst()) {
-                            continue
-                        }
-
-                        /*
-                         * These content providers use a special cursor that only has
-                         * one element, an integer that is 1 if the screen reader is
-                         * running.
-                         */
-                        val status = cursor.getInt(0)
-                        if (status == 1) {
-                            foundScreenReader = true
-                            break
-                        }
-                    } finally {
-                        cursor.close()
-                    }
-                }
-            }
-            if (foundScreenReader) {
-                mControlCodes = Pattern.compile(CONTROL_CODE_PATTERN)
-            }
-            return foundScreenReader
-        }
-
-        override fun onPostExecute(result: Boolean) {
-            mAccessibilityActive = result
-            mAccessibilityInitialized = true
-            if (result) {
-                mEventSender = AccessibilityEventSender()
-                postDelayed(mEventSender, ACCESSIBILITY_EVENT_THRESHOLD.toLong())
-            } else {
-                synchronized(mAccessibilityLock) {
-                    mAccessibilityBuffer.setLength(0)
-                    mAccessibilityBuffer.trimToSize()
-                }
-            }
-        }
-    }
+//    private inner class AccessibilityStateTester : AsyncTask<Void?, Void?, Boolean>() {
+//        override fun doInBackground(vararg params: Void?): Boolean {
+//            /*
+//             * Presumably if the accessibility manager is not enabled, we don't
+//             * need to send accessibility events.
+//             */
+//            val accessibility = context
+//                    .getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+//            if (!accessibility.isEnabled) {
+//                return java.lang.Boolean.FALSE
+//            }
+//
+//            /*
+//             * Restrict the set of intents to only accessibility services that
+//             * have the category FEEDBACK_SPOKEN (aka, screen readers).
+//             */
+//            val screenReaderIntent = Intent(SCREENREADER_INTENT_ACTION)
+//            screenReaderIntent.addCategory(SCREENREADER_INTENT_CATEGORY)
+//            val cr = context.contentResolver
+//            val screenReaders = context.packageManager.queryIntentServices(
+//                    screenReaderIntent, 0)
+//            var foundScreenReader = false
+//            for (screenReader in screenReaders) {
+//                /*
+//                 * All screen readers are expected to implement a content
+//                 * provider that responds to:
+//                 * content://<nameofpackage>.providers.StatusProvider
+//                 */
+//                val cursor = cr.query(
+//                        Uri.parse("content://" + screenReader.serviceInfo.packageName
+//                                + ".providers.StatusProvider"), null, null, null, null)
+//                if (cursor != null) {
+//                    try {
+//                        if (!cursor.moveToFirst()) {
+//                            continue
+//                        }
+//
+//                        /*
+//                         * These content providers use a special cursor that only has
+//                         * one element, an integer that is 1 if the screen reader is
+//                         * running.
+//                         */
+//                        val status = cursor.getInt(0)
+//                        if (status == 1) {
+//                            foundScreenReader = true
+//                            break
+//                        }
+//                    } finally {
+//                        cursor.close()
+//                    }
+//                }
+//            }
+//            if (foundScreenReader) {
+//                mControlCodes = Pattern.compile(CONTROL_CODE_PATTERN)
+//            }
+//            return foundScreenReader
+//        }
+//
+//        override fun onPostExecute(result: Boolean) {
+//            mAccessibilityActive = result
+//            mAccessibilityInitialized = true
+//            if (result) {
+//                mEventSender = AccessibilityEventSender()
+//                postDelayed(mEventSender, ACCESSIBILITY_EVENT_THRESHOLD.toLong())
+//            } else {
+//                synchronized(mAccessibilityLock) {
+//                    mAccessibilityBuffer.setLength(0)
+//                    mAccessibilityBuffer.trimToSize()
+//                }
+//            }
+//        }
+//    }
 
     companion object {
         private val scaleType = ScaleToFit.FILL
@@ -582,6 +495,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         })
 
         // Enable accessibility features if a screen reader is active.
-        AccessibilityStateTester().execute(null as Void?)
+//        AccessibilityStateTester().execute(null as Void?)
     }
 }

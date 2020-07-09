@@ -28,6 +28,7 @@ import android.view.inputmethod.InputConnection
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.MotionEventCompat
 import de.mud.terminal.vt320
+import kotlin.math.floor
 
 /**
  * Custom TextView [TextView] which is intended to (invisibly) be on top of the TerminalView
@@ -56,8 +57,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
             }
 
             // Truncate all the new whitespace without removing the old data.
-            while (buffer.length > previousTotalLength &&
-                    Character.isWhitespace(buffer[buffer.length - 1])) {
+            while (buffer.length > previousTotalLength && Character.isWhitespace(buffer[buffer.length - 1])) {
                 buffer.setLength(buffer.length - 1)
             }
 
@@ -80,13 +80,9 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         val vb = terminalView.bridge.vDUBuffer
         val numRows = vb!!.bufferSize
         val numNewRows = numRows - oldBufferHeight
-        if (numNewRows <= 0) {
-            return
-        }
+        if (numNewRows <= 0) return
         val newLines = StringBuilder(numNewRows)
-        for (i in 0 until numNewRows) {
-            newLines.append('\n')
-        }
+        for (i in 0 until numNewRows) newLines.append('\n')
         oldScrollY = (vb.getWindowBase() + numNewRows) * lineHeight
         oldBufferHeight = numRows
         append(newLines)
@@ -109,7 +105,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
     }
 
     fun copyCurrentSelectionToClipboard() {
-        if (currentSelection.length != 0) {
+        if (currentSelection.isNotEmpty()) {
             clipboard.text = currentSelection
         }
         closeSelectionActionMode()
@@ -117,9 +113,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
 
     private fun pasteClipboard() {
         var clip = ""
-        if (clipboard.hasText()) {
-            clip = clipboard.text.toString()
-        }
+        if (clipboard.hasText()) clip = clipboard.text.toString()
         terminalView.bridge.injectString(clip)
     }
 
@@ -138,25 +132,14 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            // Selection may be beginning. Sync the TextView with the buffer.
-            refreshTextFromBuffer()
-        } else if (event.action == MotionEvent.ACTION_UP) {
-            super.scrollTo(0, terminalView.bridge.vDUBuffer!!.getWindowBase() * lineHeight)
-        }
+        if (event.action == MotionEvent.ACTION_DOWN) refreshTextFromBuffer()
+        else if (event.action == MotionEvent.ACTION_UP) super.scrollTo(0, terminalView.bridge.vDUBuffer!!.getWindowBase() * lineHeight)
 
         // Mouse input is treated differently:
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH &&
-                MotionEventCompat.getSource(event) == InputDevice.SOURCE_MOUSE) {
-            if (onMouseEvent(event, terminalView.bridge)) {
-                return true
-            }
+        if (MotionEventCompat.getSource(event) == InputDevice.SOURCE_MOUSE) {
+            if (onMouseEvent(event, terminalView.bridge)) return true
             terminalView.viewPager.setPagingEnabled(true)
-        } else {
-            if (terminalView.onTouchEvent(event)) {
-                return true
-            }
-        }
+        } else if (terminalView.onTouchEvent(event)) return true
         return super.onTouchEvent(event)
     }
 
@@ -170,8 +153,8 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
                     val vtBuffer = terminalView.bridge.vDUBuffer as vt320
                     val mouseReport = vtBuffer.isMouseReportEnabled
                     if (mouseReport) {
-                        val row = Math.floor(event.y / terminalView.bridge.charHeight.toDouble()).toInt()
-                        val col = Math.floor(event.x / terminalView.bridge.charWidth.toDouble()).toInt()
+                        val row = floor(event.y / terminalView.bridge.charHeight.toDouble()).toInt()
+                        val col = floor(event.x / terminalView.bridge.charWidth.toDouble()).toInt()
                         vtBuffer.mouseWheel(
                                 yDistance > 0,
                                 col,
