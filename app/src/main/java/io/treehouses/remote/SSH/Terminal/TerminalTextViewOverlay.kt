@@ -211,9 +211,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
                 }
 
                 // Begin "selection mode"
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    closeSelectionActionMode()
-                }
+                closeSelectionActionMode()
             } else if (event.action == MotionEvent.ACTION_MOVE) {
                 // In the middle of selection.
                 if (selectionActionMode == null) {

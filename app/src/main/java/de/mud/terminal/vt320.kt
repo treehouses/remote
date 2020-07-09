@@ -727,73 +727,28 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 if (shift) writeSpecial(Insert[0]) //  VMS shift delete = insert
                 else writeSpecial(Remove[0]) //  VMS delete = remove
                 return
-            } else if (control) when (keyChar) {
-                '0' -> {
-                    writeSpecial(Numpad[0])
-                    return
+            } else if (control) {
+                var flag = true
+                when (keyChar) {
+                    '0' -> writeSpecial(Numpad[0])
+                    '1' -> writeSpecial(Numpad[1])
+                    '2' -> writeSpecial(Numpad[2])
+                    '3' -> writeSpecial(Numpad[3])
+                    '4' -> writeSpecial(Numpad[4])
+                    '5' -> writeSpecial(Numpad[5])
+                    '6' -> writeSpecial(Numpad[6])
+                    '7' -> writeSpecial(Numpad[7])
+                    '8' -> writeSpecial(Numpad[8])
+                    '9' -> writeSpecial(Numpad[9])
+                    '.' -> writeSpecial(KPPeriod)
+                    '-', 31.toChar() -> writeSpecial(KPMinus)
+                    '+' -> writeSpecial(KPComma)
+                    10.toChar() -> writeSpecial(KPEnter)
+                    '/' -> writeSpecial(PF2)
+                    '*' -> writeSpecial(PF3)
+                    else -> flag = false
                 }
-                '1' -> {
-                    writeSpecial(Numpad[1])
-                    return
-                }
-                '2' -> {
-                    writeSpecial(Numpad[2])
-                    return
-                }
-                '3' -> {
-                    writeSpecial(Numpad[3])
-                    return
-                }
-                '4' -> {
-                    writeSpecial(Numpad[4])
-                    return
-                }
-                '5' -> {
-                    writeSpecial(Numpad[5])
-                    return
-                }
-                '6' -> {
-                    writeSpecial(Numpad[6])
-                    return
-                }
-                '7' -> {
-                    writeSpecial(Numpad[7])
-                    return
-                }
-                '8' -> {
-                    writeSpecial(Numpad[8])
-                    return
-                }
-                '9' -> {
-                    writeSpecial(Numpad[9])
-                    return
-                }
-                '.' -> {
-                    writeSpecial(KPPeriod)
-                    return
-                }
-                '-', 31.toChar() -> {
-                    writeSpecial(KPMinus)
-                    return
-                }
-                '+' -> {
-                    writeSpecial(KPComma)
-                    return
-                }
-                10.toChar() -> {
-                    writeSpecial(KPEnter)
-                    return
-                }
-                '/' -> {
-                    writeSpecial(PF2)
-                    return
-                }
-                '*' -> {
-                    writeSpecial(PF3)
-                    return
-                }
-                else -> {
-                }
+                if (flag) return
             }
             /* Now what does this do and how did it get here. -Marcus
       if (shift && keyChar < 32) {
