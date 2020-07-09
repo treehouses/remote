@@ -173,7 +173,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             bridges.add(bridge)
             val wr = WeakReference(bridge)
             mHostBridgeMap[bridge.host] = wr
-            mNicknameBridgeMap.put(bridge.host.nickname, wr)
+            mNicknameBridgeMap.put(bridge.host.nickname!!, wr)
         }
         synchronized(disconnected) { disconnected.remove(bridge.host) }
 
@@ -294,7 +294,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         keyHolder.bean = pubkey
         keyHolder.pair = pair
         keyHolder.openSSHPubkey = sshPubKey
-        loadedKeypairs[pubkey.nickname] = keyHolder
+        loadedKeypairs[pubkey.nickname!!] = keyHolder
         if (pubkey.lifetime > 0) {
             val nickname = pubkey.nickname
             pubkeyTimer!!.schedule(object : TimerTask() {
