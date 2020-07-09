@@ -252,22 +252,12 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                 return true
             }
 
-            return when (keyCode) {
-                KEYCODE_ESCAPE -> {
-                    sendEscape()
-                    true
-                }
-                KeyEvent.KEYCODE_TAB -> {
-                    bridge.transport!!.write(0x09)
-                    true
-                }
+            when (keyCode) {
+                KeyEvent.KEYCODE_ESCAPE -> sendEscape()
+                KeyEvent.KEYCODE_TAB -> bridge.transport!!.write(0x09)
                 KeyEvent.KEYCODE_CAMERA -> {
-
                     // check to see which shortcut the camera button triggers
-                    val camera = manager!!.prefs!!.getString(
-                            PreferenceConstants.CAMERA,
-                            PreferenceConstants.CAMERA_CTRLA_SPACE)
-                    when (camera) {
+                    when (manager!!.prefs!!.getString(PreferenceConstants.CAMERA, PreferenceConstants.CAMERA_CTRLA_SPACE)) {
                         PreferenceConstants.CAMERA_CTRLA_SPACE -> {
                             bridge.transport!!.write(0x01)
                             bridge.transport!!.write(' '.toInt())
@@ -275,86 +265,58 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                         PreferenceConstants.CAMERA_CTRLA -> bridge.transport!!.write(0x01)
                         PreferenceConstants.CAMERA_ESC -> (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
                         PreferenceConstants.CAMERA_ESC_A -> {
-                            (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
+                            sendEscape()
                             bridge.transport!!.write('a'.toInt())
                         }
                     }
-                    true
                 }
-                KeyEvent.KEYCODE_DEL -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_BACK_SPACE, ' ', stateForBuffer)
-                    true
-                }
-                KeyEvent.KEYCODE_ENTER -> {
-                    (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
-                    true
-                }
+                KeyEvent.KEYCODE_DEL -> sendPressedKey(vt320.KEY_BACK_SPACE)
+                KeyEvent.KEYCODE_ENTER -> (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
                     if (selectingForCopy) {
                         selectionArea.decrementColumn()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_LEFT, ' ', stateForBuffer)
+                        sendPressedKey(vt320.KEY_LEFT)
                         bridge.tryKeyVibrate()
                     }
-                    true
                 }
                 KeyEvent.KEYCODE_DPAD_UP -> {
                     if (selectingForCopy) {
                         selectionArea.decrementRow()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_UP, ' ', stateForBuffer)
+                        sendPressedKey(vt320.KEY_UP)
                         bridge.tryKeyVibrate()
                     }
-                    true
                 }
                 KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (selectingForCopy) {
                         selectionArea.incrementRow()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_DOWN, ' ', stateForBuffer)
+                        sendPressedKey(vt320.KEY_DOWN)
                         bridge.tryKeyVibrate()
                     }
-                    true
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     if (selectingForCopy) {
                         selectionArea.incrementColumn()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_RIGHT, ' ', stateForBuffer)
+                        sendPressedKey(vt320.KEY_RIGHT)
                         bridge.tryKeyVibrate()
                     }
-                    true
                 }
-                KEYCODE_INSERT -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_INSERT, ' ', stateForBuffer)
-                    true
-                }
-                KEYCODE_FORWARD_DEL -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_DELETE, ' ', stateForBuffer)
-                    true
-                }
-                KEYCODE_MOVE_HOME -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_HOME, ' ', stateForBuffer)
-                    true
-                }
-                KEYCODE_MOVE_END -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_END, ' ', stateForBuffer)
-                    true
-                }
-                KEYCODE_PAGE_UP -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_PAGE_UP, ' ', stateForBuffer)
-                    true
-                }
-                KEYCODE_PAGE_DOWN -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_PAGE_DOWN, ' ', stateForBuffer)
-                    true
-                }
-                else -> false
+                KEYCODE_INSERT -> sendPressedKey(vt320.KEY_INSERT)
+                KEYCODE_FORWARD_DEL -> sendPressedKey(vt320.KEY_DELETE)
+                KEYCODE_MOVE_HOME -> sendPressedKey(vt320.KEY_HOME)
+                KEYCODE_MOVE_END -> sendPressedKey(vt320.KEY_END)
+                KEYCODE_PAGE_UP -> sendPressedKey(vt320.KEY_PAGE_UP)
+                KEYCODE_PAGE_DOWN -> sendPressedKey(vt320.KEY_DOWN)
+                else -> return false
             }
+            return true
         } catch (e: IOException) {
             Log.e(TAG, "Problem while trying to handle an onKey() event", e)
             try {
@@ -370,7 +332,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         return false
     }
 
-    fun keyAsControl(key: Int): Int {
+    private fun keyAsControl(key: Int): Int {
         // Support CTRL-a through CTRL-z
         var key = key
         if (key in 0x61..0x7A) key -= 0x60 else if (key in 0x40..0x5F) key -= 0x40 else if (key == 0x20) key = 0x00 else if (key == 0x3F) key = 0x7F

@@ -855,19 +855,13 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             osc = ""
                             term_state = TSTATE_OSC
                         }
-                        RI -> {
-                            if (R > topMargin) R-- else insertLine(R, 1, SCROLL_DOWN)
-                        }
-                        IND -> {
-                            if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
-                        }
+                        RI -> if (R > topMargin) R-- else insertLine(R, 1, SCROLL_DOWN)
+                        IND -> if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                         NEL -> {
                             if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                             C = 0
                         }
-                        HTS -> {
-                            Tabs?.set(C, 1)
-                        }
+                        HTS -> Tabs?.set(C, 1)
                         DCS -> {
                             dcs = ""
                             term_state = TSTATE_DCS
@@ -1127,10 +1121,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         keypadmode = true
                     }
                     '<' -> vt52mode = false
-                    '>' -> {
-                        if (debug > 0) debug("ESC >")
-                        keypadmode = false
-                    }
+                    '>' -> keypadmode = false
                     '7' -> {
                         Sc = C
                         Sr = R
@@ -1157,7 +1148,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             }
                         }
                         attributes = Sa
-                        if (debug > 1) debug("ESC 8")
                     }
                     '(' -> {
                         term_state = TSTATE_SETG0
