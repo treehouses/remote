@@ -109,7 +109,7 @@
 
     <ListView
         android:id="@+id/countries"
-        android:background="@color/tor_background"
+        android:background="#00FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin_large"
