@@ -36,7 +36,7 @@ class SystemFragment : BaseFragment() {
         bind = ActivitySystemFragmentBinding.inflate(inflater, container, false)
         val mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.getSystemList(), mChatService)
+        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.systemList, mChatService)
         adapter.setListener(listener)
         bind.listView.setOnGroupExpandListener { groupPosition: Int ->
             if (groupPosition == 1) {
@@ -150,7 +150,7 @@ class SystemFragment : BaseFragment() {
             elementConditions(element)
             if (element.contains("essid") && tether) {
                 tether = false
-                ViewHolderTether.getEditTextSSID().setText(element.substring(12).trim { it <= ' ' })
+                ViewHolderTether.editTextSSID.setText(element.substring(12).trim { it <= ' ' })
             }
         }
     }

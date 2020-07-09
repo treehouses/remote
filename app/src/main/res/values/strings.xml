@@ -151,6 +151,17 @@
         <item>LED Thanksgiving</item>
         <item>LED New Years</item>
         <item>LED Heavy Metal</item>
+        <item>LED Lunar New Year</item>
+        <item>LED Valentine</item>
+        <item>LED Carnival</item>
+        <item>LED St. Patrick\'s</item>
+        <item>LED Onam</item>
+        <item>LED Easter</item>
+        <item>LED Eid al-Fitr</item>
+        <item>LED Kecak</item>
+        <item>LED Christmas</item>
+        <item>LED Diwali</item>
+        <item>LED Lantern</item>
     </string-array>
 
     <string-array name="led_options_commands">
@@ -158,6 +169,17 @@
         <item>treehouses led thanksgiving</item>
         <item>treehouses led newyear</item>
         <item>treehouses led heavymetal</item>
+        <item>treehouses led lunarnewyear</item>
+        <item>treehouses led valentine</item>
+        <item>treehouses led carnival</item>
+        <item>treehouses led stpatricks</item>
+        <item>treehouses led onam</item>
+        <item>treehouses led easter</item>
+        <item>treehouses led eid</item>
+        <item>treehouses led kecak</item>
+        <item>treehouses led christmas</item>
+        <item>treehouses led diwali</item>
+        <item>treehouses led lantern</item>
     </string-array>
 
     <plurals name="console_copy_done">
