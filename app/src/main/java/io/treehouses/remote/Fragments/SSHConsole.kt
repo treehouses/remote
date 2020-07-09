@@ -62,7 +62,6 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     protected var toolbar: Toolbar? = null
     protected var bound: TerminalManager? = null
     protected var adapter: TerminalPagerAdapter? = null
-    protected var inflater: LayoutInflater? = null
     private var prefs: SharedPreferences? = null
 
     // determines whether or not menuitem accelerators are bound
@@ -158,39 +157,27 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         }
 
         override fun onTouch(v: View, event: MotionEvent): Boolean {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "KeyRepeater.onTouch(" + v.id + ", " +
-                        event.action + ", " +
-                        event.actionIndex + ", " +
-                        event.actionMasked + ");")
-            }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     mDown = false
                     mHandler.postDelayed(this, KEYBOARD_REPEAT_INITIAL.toLong())
                     mView.isPressed = true
-                    return true
                 }
                 MotionEvent.ACTION_CANCEL -> {
                     mHandler.removeCallbacks(this)
                     mView.isPressed = false
-                    return true
                 }
                 MotionEvent.ACTION_UP -> {
                     mHandler.removeCallbacks(this)
                     mView.isPressed = false
-                    if (!mDown) {
-                        mView.performClick()
-                    }
-                    return true
+                    if (!mDown) mView.performClick()
                 }
+                else -> return false
             }
-            return false
+            return true
         }
 
-        override fun onClick(view: View) {
-            onEmulatedKeyClicked(view)
-        }
+        override fun onClick(view: View) = onEmulatedKeyClicked(view)
 
     }
 
@@ -233,19 +220,15 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             R.id.button_f12 -> handler.sendPressedKey(vt320.KEY_F12)
             else -> Log.e(TAG, "Unknown emulated key clicked: " + v.id)
         }
-        if (hideKeys) {
-            hideEmulatedKeys()
-        } else {
-            autoHideEmulatedKeys()
-        }
+        if (hideKeys) hideEmulatedKeys()
+        else autoHideEmulatedKeys()
+
         terminal.bridge.tryKeyVibrate()
         hideActionBarIfRequested()
     }
 
     private fun hideActionBarIfRequested() {
-        if (titleBarHide && actionBar != null) {
-            actionBar!!.hide()
-        }
+        if (titleBarHide && actionBar != null) actionBar!!.hide()
     }
 
     /**
@@ -259,19 +242,19 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         if (bind.pager.childCount == 0) finish()
     }
 
-    protected fun findCurrentView(id: Int): View? {
+    private fun findCurrentView(id: Int): View? {
         val view = bind.pager.findViewWithTag<View>(adapter!!.getBridgeAtPosition(bind.pager.currentItem))
                 ?: return null
         return view.findViewById(id)
     }
 
-    protected val currentPromptHelper: PromptHelper?
-        protected get() {
+    private val currentPromptHelper: PromptHelper?
+        get() {
             val view = adapter!!.currentTerminalView ?: return null
             return view.bridge.promptHelper
         }
 
-    protected fun hideAllPrompts() {
+    private fun hideAllPrompts() {
         bind.consolePasswordGroup.visibility = View.GONE
         bind.consoleBooleanGroup.visibility = View.GONE
     }
@@ -288,9 +271,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun autoHideEmulatedKeys() {
-        if (keyboardGroupHider != null) {
-            handler.removeCallbacks(keyboardGroupHider!!)
-        }
+        if (keyboardGroupHider != null) handler.removeCallbacks(keyboardGroupHider!!)
         keyboardGroupHider = Runnable {
             if (bind.keyboard.keyboardGroup.visibility == View.GONE || inActionBarMenu) {
                 return@Runnable
@@ -302,12 +283,12 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             hideActionBarIfRequested()
             keyboardGroupHider = null
         }
-        handler.postDelayed(keyboardGroupHider, KEYBOARD_DISPLAY_TIME.toLong())
+        handler.postDelayed(keyboardGroupHider!!, KEYBOARD_DISPLAY_TIME.toLong())
     }
 
     private fun hideEmulatedKeys() {
         if (!keyboardAlwaysVisible) {
-            if (keyboardGroupHider != null) handler.removeCallbacks(keyboardGroupHider)
+            if (keyboardGroupHider != null) handler.removeCallbacks(keyboardGroupHider!!)
             bind.keyboard.keyboardGroup.visibility = View.GONE
         }
         hideActionBarIfRequested()
@@ -345,11 +326,8 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             requested = intent.data
         } else {
             val uri = icicle.getString(STATE_SELECTED_URI)
-            if (uri != null) {
-                requested = Uri.parse(uri)
-            }
+            if (uri != null) requested = Uri.parse(uri)
         }
-        inflater = LayoutInflater.from(this)
         bind.pager.addOnPageChangeListener(
                 object : SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
@@ -360,30 +338,47 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         adapter = TerminalPagerAdapter()
         bind.pager.adapter = adapter
         empty = findViewById(android.R.id.empty)
-        bind.consolePassword.setOnKeyListener(View.OnKeyListener { v: View?, keyCode: Int, event: KeyEvent ->
-            if (event.action == KeyEvent.ACTION_UP) return@OnKeyListener false
-            if (keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
-
-            // pass collected password down to current terminal
-            val value = bind.consolePassword.text.toString()
-            val helper = currentPromptHelper ?: return@OnKeyListener false
-            helper.setResponse(value)
-
-            // finally clear password for next user
-            bind.consolePassword.setText("")
-            updatePromptVisible()
-            true
-        })
-        bind.consolePromptYes.setOnClickListener {
-            val helper = currentPromptHelper ?: return@setOnClickListener
-            helper.setResponse(java.lang.Boolean.TRUE)
-            updatePromptVisible()
+        promptListeners()
+        setUpKeyboard()
+        addKeyboardListeners()
+        keyboardScroll()
+        actionBar = supportActionBar
+        if (actionBar != null) {
+            actionBar!!.setDisplayHomeAsUpEnabled(true)
+            if (titleBarHide) {
+                actionBar!!.hide()
+            }
+            actionBar!!.addOnMenuVisibilityListener { isVisible: Boolean ->
+                inActionBarMenu = isVisible
+                if (!isVisible) {
+                    hideEmulatedKeys()
+                }
+            }
         }
-        bind.consolePromptNo.setOnClickListener { v: View? ->
-            val helper = currentPromptHelper ?: return@setOnClickListener
-            helper.setResponse(java.lang.Boolean.FALSE)
-            updatePromptVisible()
+        if (tabs != null) setupTabLayoutWithViewPager()
+        bind.pager.setOnClickListener { showEmulatedKeys(true) }
+
+        // Change keyboard button image according to soft keyboard visibility
+        // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
+        mContentView = findViewById(android.R.id.content)
+        mContentView!!.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            mContentView!!.getWindowVisibleDisplayFrame(r)
+            val screenHeight = mContentView!!.rootView.height
+            val keypadHeight = screenHeight - r.bottom
+            if (keypadHeight > screenHeight * 0.15) {
+                // keyboard is opened
+                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
+                //                mKeyboardButton.setContentDescription(getResources().getText(R.string.image_description_hide_keyboard));
+            } else {
+                // keyboard is closed
+                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
+                //                mKeyboardButton.setContentDescription(getResources().getText(R.string.image_description_show_keyboard));
+            }
         }
+    }
+
+    private fun setUpKeyboard() {
         fade_out_delayed = AnimationUtils.loadAnimation(this, R.anim.fade_out_delayed)
 
         // Preload animation for keyboard button
@@ -407,6 +402,9 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             // Show virtual keyboard
             bind.keyboard.keyboardGroup.visibility = View.VISIBLE
         }
+    }
+
+    private fun addKeyboardListeners() {
         bind.keyboard.buttonKeyboard.setOnClickListener { view: View? ->
             val terminal = adapter!!.currentTerminalView ?: return@setOnClickListener
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -439,19 +437,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         bind.keyboard.buttonF10.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonF11.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonF12.setOnClickListener(emulatedKeysListener)
-        actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar!!.setDisplayHomeAsUpEnabled(true)
-            if (titleBarHide) {
-                actionBar!!.hide()
-            }
-            actionBar!!.addOnMenuVisibilityListener { isVisible: Boolean ->
-                inActionBarMenu = isVisible
-                if (!isVisible) {
-                    hideEmulatedKeys()
-                }
-            }
-        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun keyboardScroll() {
         val keyboardScroll = findViewById<HorizontalScrollView>(R.id.keyboard_hscroll)
         if (!hardKeyboard) {
             // Show virtual keyboard and scroll back and forth
@@ -474,26 +463,31 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             }
             false
         }
-        if (tabs != null) setupTabLayoutWithViewPager()
-        bind.pager.setOnClickListener { showEmulatedKeys(true) }
+    }
 
-        // Change keyboard button image according to soft keyboard visibility
-        // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
-        mContentView = findViewById(android.R.id.content)
-        mContentView!!.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect()
-            mContentView!!.getWindowVisibleDisplayFrame(r)
-            val screenHeight = mContentView!!.rootView.height
-            val keypadHeight = screenHeight - r.bottom
-            if (keypadHeight > screenHeight * 0.15) {
-                // keyboard is opened
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
-                //                mKeyboardButton.setContentDescription(getResources().getText(R.string.image_description_hide_keyboard));
-            } else {
-                // keyboard is closed
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
-                //                mKeyboardButton.setContentDescription(getResources().getText(R.string.image_description_show_keyboard));
-            }
+    private fun promptListeners() {
+        bind.consolePassword.setOnKeyListener(View.OnKeyListener { v: View?, keyCode: Int, event: KeyEvent ->
+            if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
+
+            // pass collected password down to current terminal
+            val value = bind.consolePassword.text.toString()
+            val helper = currentPromptHelper ?: return@OnKeyListener false
+            helper.setResponse(value)
+
+            // finally clear password for next user
+            bind.consolePassword.setText("")
+            updatePromptVisible()
+            true
+        })
+        bind.consolePromptYes.setOnClickListener {
+            val helper = currentPromptHelper ?: return@setOnClickListener
+            helper.setResponse(java.lang.Boolean.TRUE)
+            updatePromptVisible()
+        }
+        bind.consolePromptNo.setOnClickListener { v: View? ->
+            val helper = currentPromptHelper ?: return@setOnClickListener
+            helper.setResponse(java.lang.Boolean.FALSE)
+            updatePromptVisible()
         }
     }
 
@@ -571,13 +565,13 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         if (!sessionOpen && disconnected) disconnect!!.setTitle("Close Console")
         disconnect!!.isEnabled = activeTerminal
         disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
-        disconnect!!.setOnMenuItemClickListener(MenuItem.OnMenuItemClickListener { item: MenuItem? ->
+        disconnect!!.setOnMenuItemClickListener {
             // disconnect or close the currently visible session
             val terminalView = adapter!!.currentTerminalView
             val bridge = terminalView!!.bridge
             bridge.dispatchDisconnect(true)
             true
-        })
+        }
         paste = menu.add("Paste")
         if (hardKeyboard) paste!!.alphabeticShortcut = 'v'
         MenuItemCompat.setShowAsAction(paste, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM)
@@ -770,7 +764,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         when {
             String::class.java == prompt!!.promptRequested -> {
                 hideEmulatedKeys()
-                bind.consolePasswordGroup.setVisibility(View.VISIBLE)
+                bind.consolePasswordGroup.visibility = View.VISIBLE
                 val instructions = prompt.promptInstructions
                 if (instructions != null && instructions.isNotEmpty()) {
                     bind.consolePasswordInstructions.visibility = View.VISIBLE
@@ -877,8 +871,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             bridge.promptHelper!!.setHandler(promptHandler)
 
             // inflate each terminal view
-            val view = inflater!!.inflate(
-                    R.layout.item_terminal, container, false) as RelativeLayout
+            val view = layoutInflater.inflate(R.layout.item_terminal, container, false) as RelativeLayout
 
             // set the terminal name overlay text
             val terminalNameOverlay = view.findViewById<TextView>(R.id.terminal_name_overlay)
