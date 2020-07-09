@@ -314,8 +314,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     override fun setKeyCodes(codes: Properties) {
         var res: String?
         val prefixes = arrayOf("", "S", "C", "A")
-        var i: Int
-        i = 0
+        var i = 0
         while (i < 10) {
             res = codes.getProperty("NUMPAD$i")
             if (res != null) Numpad[i] = unEscape(res)
@@ -809,71 +808,31 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         var xind: Int
         xind = 0
         //fmap = FunctionKey;
-        if (shift) {
-            //fmap = FunctionKeyShift;
-            xind = 1
-        }
-        if (control) {
-            //fmap = FunctionKeyCtrl;
-            xind = 2
-        }
-        if (alt) {
-            //fmap = FunctionKeyAlt;
-            xind = 3
-        }
+        if (shift) xind = 1
+        if (control) xind = 2
+        if (alt) xind = 3
         if (keyCode == KEY_ESCAPE) {
             writeSpecial(Escape[xind])
             return
         }
-        if (modifiers and VDUInput.KEY_ACTION != 0) when (keyCode) {
-            KEY_NUMPAD0 -> {
-                writeSpecial(Numpad[0])
-                return
+        if (modifiers and VDUInput.KEY_ACTION != 0) {
+            var flag = true
+            when (keyCode) {
+                KEY_NUMPAD0 -> writeSpecial(Numpad[0])
+                KEY_NUMPAD1 -> writeSpecial(Numpad[1])
+                KEY_NUMPAD2 -> writeSpecial(Numpad[2])
+                KEY_NUMPAD3 -> writeSpecial(Numpad[3])
+                KEY_NUMPAD4 -> writeSpecial(Numpad[4])
+                KEY_NUMPAD5 -> writeSpecial(Numpad[5])
+                KEY_NUMPAD6 -> writeSpecial(Numpad[6])
+                KEY_NUMPAD7 -> writeSpecial(Numpad[7])
+                KEY_NUMPAD8 -> writeSpecial(Numpad[8])
+                KEY_NUMPAD9 -> writeSpecial(Numpad[9])
+                KEY_DECIMAL -> writeSpecial(NUMDot[xind])
+                KEY_ADD -> writeSpecial(NUMPlus[xind])
+                else -> flag = false
             }
-            KEY_NUMPAD1 -> {
-                writeSpecial(Numpad[1])
-                return
-            }
-            KEY_NUMPAD2 -> {
-                writeSpecial(Numpad[2])
-                return
-            }
-            KEY_NUMPAD3 -> {
-                writeSpecial(Numpad[3])
-                return
-            }
-            KEY_NUMPAD4 -> {
-                writeSpecial(Numpad[4])
-                return
-            }
-            KEY_NUMPAD5 -> {
-                writeSpecial(Numpad[5])
-                return
-            }
-            KEY_NUMPAD6 -> {
-                writeSpecial(Numpad[6])
-                return
-            }
-            KEY_NUMPAD7 -> {
-                writeSpecial(Numpad[7])
-                return
-            }
-            KEY_NUMPAD8 -> {
-                writeSpecial(Numpad[8])
-                return
-            }
-            KEY_NUMPAD9 -> {
-                writeSpecial(Numpad[9])
-                return
-            }
-            KEY_DECIMAL -> {
-                writeSpecial(NUMDot[xind])
-                return
-            }
-            KEY_ADD -> {
-                writeSpecial(NUMPlus[xind])
-                return
-            }
+            if (flag) return
         }
         if (!(keyChar.toInt() == 8 || keyChar.toInt() == 127 || keyChar == '\r' || keyChar == '\n')) {
             write(keyChar.toInt())

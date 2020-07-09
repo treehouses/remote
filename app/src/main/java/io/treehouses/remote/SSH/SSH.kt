@@ -155,8 +155,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             val result: Boolean
             val matchName = String.format(Locale.US, "%s:%d", hostname, port)
             val fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
-            val algorithmName: String
-            algorithmName = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
+            val algorithmName: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
             return when (hosts.verifyHostkey(matchName, serverHostKeyAlgorithm, serverHostKey)) {
                 KnownHosts.HOSTKEY_IS_OK -> {
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_sucess, algorithmName, fingerprint))
@@ -167,9 +166,6 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
                     result = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
-                    if (result == null) {
-                        return false
-                    }
                     Log.e("HOST KEY", Arrays.toString(serverHostKey))
                     //                    if (result) {
 //                        // save this key in known database
@@ -513,24 +509,24 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         if (stdin != null) stdin!!.write(c)
     }
 
-    val options: Map<String, String>
-        get() {
-            val options: MutableMap<String, String> = HashMap()
-            options["compression"] = java.lang.Boolean.toString(compression)
-            return options
-        }
-
-    fun setOptions(options: Map<String?, String?>) {
-        if (options.containsKey("compression")) compression = java.lang.Boolean.parseBoolean(options["compression"])
-    }
+//    val options: Map<String, String>
+//        get() {
+//            val options: MutableMap<String, String> = HashMap()
+//            options["compression"] = java.lang.Boolean.toString(compression)
+//            return options
+//        }
+//
+//    fun setOptions(options: Map<String?, String?>) {
+//        if (options.containsKey("compression")) compression = java.lang.Boolean.parseBoolean(options["compression"])
+//    }
 
     override fun connectionLost(reason: Throwable) {
         onDisconnect()
     }
 
-    fun canForwardPorts(): Boolean {
-        return true
-    }
+//    fun canForwardPorts(): Boolean {
+//        return true
+//    }
 
     //    @Override
     //    public List<PortForwardBean> getPortForwards() {
@@ -697,23 +693,23 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         return responses
     }
 
-    fun createHost(uri: Uri): HostBean {
-        val host = HostBean()
-        host.protocol = protocolName
-        host.hostname = uri.host
-        var port = uri.port
-        if (port < 0) port = defaultPort
-        host.port = port
-        host.username = uri.userInfo
-        val nickname = uri.fragment
-        if (nickname == null || nickname.length == 0) {
-            host.nickname = getDefaultNickname(host.username,
-                    host.hostname, host.port)
-        } else {
-            host.nickname = uri.fragment
-        }
-        return host
-    }
+//    fun createHost(uri: Uri): HostBean {
+//        val host = HostBean()
+//        host.protocol = protocolName
+//        host.hostname = uri.host
+//        var port = uri.port
+//        if (port < 0) port = defaultPort
+//        host.port = port
+//        host.username = uri.userInfo
+//        val nickname = uri.fragment
+//        if (nickname == null || nickname.isEmpty()) {
+//            host.nickname = getDefaultNickname(host.username,
+//                    host.hostname, host.port)
+//        } else {
+//            host.nickname = uri.fragment
+//        }
+//        return host
+//    }
 
     fun setCompression(compression: Boolean) {
         this.compression = compression
