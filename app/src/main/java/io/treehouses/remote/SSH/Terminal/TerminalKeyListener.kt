@@ -395,8 +395,8 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         }
     }
 
-    fun sendPressedKey(key: Int) {
-        (buffer as vt320).keyPressed(key, ' ', stateForBuffer)
+    fun sendPressedKey(key: Int, modifier: Int = stateForBuffer) {
+        (buffer as vt320).keyPressed(key, ' ', modifier)
     }
 
     /**
@@ -406,16 +406,17 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     private fun sendFunctionKey(keyCode: Int): Boolean {
         var handled = true
         when (keyCode) {
-            KeyEvent.KEYCODE_1 -> (buffer as vt320).keyPressed(vt320.KEY_F1, ' ', 0)
-            KeyEvent.KEYCODE_2 -> (buffer as vt320).keyPressed(vt320.KEY_F2, ' ', 0)
-            KeyEvent.KEYCODE_3 -> (buffer as vt320).keyPressed(vt320.KEY_F3, ' ', 0)
-            KeyEvent.KEYCODE_4 -> (buffer as vt320).keyPressed(vt320.KEY_F4, ' ', 0)
-            KeyEvent.KEYCODE_5 -> (buffer as vt320).keyPressed(vt320.KEY_F5, ' ', 0)
-            KeyEvent.KEYCODE_6 -> (buffer as vt320).keyPressed(vt320.KEY_F6, ' ', 0)
-            KeyEvent.KEYCODE_7 -> (buffer as vt320).keyPressed(vt320.KEY_F7, ' ', 0)
-            KeyEvent.KEYCODE_8 -> (buffer as vt320).keyPressed(vt320.KEY_F8, ' ', 0)
-            KeyEvent.KEYCODE_9 -> (buffer as vt320).keyPressed(vt320.KEY_F9, ' ', 0)
-            KeyEvent.KEYCODE_0 -> (buffer as vt320).keyPressed(vt320.KEY_F10, ' ', 0)
+            KeyEvent.KEYCODE_1 -> sendPressedKey(vt320.KEY_F1, 0)
+            KeyEvent.KEYCODE_2 -> sendPressedKey(vt320.KEY_F2, 0)
+            KeyEvent.KEYCODE_3 -> sendPressedKey(vt320.KEY_F3, 0)
+            KeyEvent.KEYCODE_4 -> sendPressedKey(vt320.KEY_F4, 0)
+            KeyEvent.KEYCODE_5 -> sendPressedKey(vt320.KEY_F5, 0)
+            KeyEvent.KEYCODE_6 -> sendPressedKey(vt320.KEY_F6, 0)
+            KeyEvent.KEYCODE_7 -> sendPressedKey(vt320.KEY_F7, 0)
+            KeyEvent.KEYCODE_8 -> sendPressedKey(vt320.KEY_F8, 0)
+            KeyEvent.KEYCODE_9 -> sendPressedKey(vt320.KEY_F9, 0)
+            KeyEvent.KEYCODE_0 -> sendPressedKey(vt320.KEY_F10, 0)
+            //Add F11 and F12??
             else -> handled = false
         }
         return handled
