@@ -44,12 +44,11 @@ class Relay(bridge: TerminalBridge, transport: SSH, buffer: vt320, encoding: Str
     private var charArray: CharArray? = null
     fun setCharset(encoding: String) {
         Log.d("ConnectBot.Relay", "changing charset to $encoding")
-        val charset: Charset
         //		if (encoding.equals("CP437")) {
 //			charset = new IBM437("IBM437",
 //					new String[] {"IBM437", "CP437"});
 //		} else {
-        charset = Charset.forName(encoding)
+        val charset: Charset = Charset.forName(encoding)
         //		}
         if (charset == this.charset) {
             return
@@ -90,7 +89,7 @@ class Relay(bridge: TerminalBridge, transport: SSH, buffer: vt320, encoding: Str
                     }
                     offset = charBuffer!!.position()
                     AndroidCharacter.getEastAsianWidths(charArray, 0, offset, wideAttribute)
-                    buffer.putString(charArray, wideAttribute, 0, charBuffer!!.position())
+                    buffer.putString(charArray!!, wideAttribute, 0, charBuffer!!.position())
                     bridge.propagateConsoleText(charArray, charBuffer!!.position())
                     charBuffer!!.clear()
                     bridge.redraw()

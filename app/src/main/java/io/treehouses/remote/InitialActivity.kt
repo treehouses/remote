@@ -157,7 +157,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         checkStatusNow()
-        for (x in 1 until bind.navView.menu.size() - 1) {
+        for (x in 1 until bind.navView.menu.size() - 2) {
             val item = bind.navView.menu.getItem(x)
             item.isEnabled = validBluetoothConnection
         }

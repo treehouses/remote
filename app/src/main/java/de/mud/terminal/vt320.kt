@@ -128,18 +128,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
 
     override fun setScreenSize(c: Int, r: Int, broadcast: Boolean) {
         val oldrows = height
-        if (debug > 2) {
-            if (debugStr == null) debugStr = StringBuilder()
-            debugStr!!.append("setscreensize (")
-                    .append(c)
-                    .append(',')
-                    .append(r)
-                    .append(',')
-                    .append(broadcast)
-                    .append(')')
-            debug(debugStr.toString())
-            debugStr!!.setLength(0)
-        }
         super.setScreenSize(c, r, false)
 
         // Don't let the cursor go off the screen. Scroll down if needed.
@@ -184,8 +172,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         if (modifiers and 16 == 16) mousebut = 0
         if (modifiers and 8 == 8) mousebut = 1
         if (modifiers and 4 == 4) mousebut = 2
-        val mousecode: Int
-        mousecode = if (mouserpt == 9) /* X10 Mouse */ 0x20 or mousebut.toInt() else  /* normal xterm mouse reporting */ mousebut or 0x20 or (modifiers and 7 shl 2)
+        val mousecode: Int = if (mouserpt == 9) /* X10 Mouse */ 0x20 or mousebut.toInt() else  /* normal xterm mouse reporting */ mousebut.toInt() or 0x20 or (modifiers and 7 shl 2)
         val b = ByteArray(6)
         b[0] = 27
         b[1] = '['.toByte()
@@ -464,22 +451,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         return true
     }
 
-    private fun write(s: Int, doecho: Boolean): Boolean {
-        if (debug > 2) {
-            debugStr!!.append("write(|")
-                    .append(s)
-                    .append("|,")
-                    .append(doecho)
-            debug(debugStr.toString())
-            debugStr!!.setLength(0)
-        }
-        write(s)
-
-        // TODO check if character is wide
-        if (doecho) putChar(s.toChar(), false, false)
-        return true
-    }
-
     // ===================================================================
     // the actual terminal emulation code comes here:
     // ===================================================================
@@ -497,7 +468,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     var Sa: Long = 0
     var Sgr = 0.toChar()
     var Sgl = 0.toChar()
-    var Sgx: CharArray?
+    var Sgx: CharArray? = null
     var insertmode = 0
     var statusmode = 0
     var vt52mode = false
@@ -524,9 +495,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
      * ....
      */
     var gx: CharArray
-    var gl // GL (left charset) = 0.toChar()
-    var gr // GR (right charset) = 0.toChar()
-    var onegl // single shift override for GL. = 0
+    var gl: Int = 0// GL (left charset) = 0.toChar()
+    var gr: Int = 0 // GR (right charset) = 0.toChar()
+    var onegl: Int = 0// single shift override for GL. = 0
 
     /**
      * Strings to send on function key pressing
@@ -579,7 +550,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     /**
      * Tabulators
      */
-    private var Tabs: ByteArray
+    private var Tabs: ByteArray? = null
 
     /**
      * The list of integers as used by CSI
@@ -802,7 +773,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     writeSpecial(KPPeriod)
                     return
                 }
-                '-', 31 -> {
+                '-', 31.toChar() -> {
                     writeSpecial(KPMinus)
                     return
                 }
@@ -810,7 +781,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     writeSpecial(KPComma)
                     return
                 }
-                10 -> {
+                10.toChar() -> {
                     writeSpecial(KPEnter)
                     return
                 }
@@ -960,7 +931,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         val rows = height //statusline
         val columns = width
         when (term_state) {
-            TSTATE_DATA -> {
+            TSTATE_DATA -> run {
                 /* FIXME: we shouldn't use chars with bit 8 set if ibmcharset.
                  * probably... but some BBS do anyway...
                  */if (!useibmcharset) {
@@ -972,30 +943,16 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                         RI -> {
                             if (R > topMargin) R-- else insertLine(R, 1, SCROLL_DOWN)
-                            if (debug > 1) debug("RI")
                         }
                         IND -> {
-                            if (debug > 2) {
-                                debugStr!!.append("IND at ")
-                                        .append(R)
-                                        .append(", tm is ")
-                                        .append(topMargin)
-                                        .append(", bm is ")
-                                        .append(bottomMargin)
-                                debug(debugStr.toString())
-                                debugStr!!.setLength(0)
-                            }
                             if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
-                            if (debug > 1) debug("IND (at $R )")
                         }
                         NEL -> {
                             if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                             C = 0
-                            if (debug > 1) debug("NEL (at $R )")
                         }
                         HTS -> {
-                            Tabs[C] = 1
-                            if (debug > 1) debug("HTS")
+                            Tabs?.set(C, 1)
                         }
                         DCS -> {
                             dcs = ""
@@ -1003,7 +960,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                         else -> doneflag = false
                     }
-                    if (doneflag) break
+                    if (doneflag) return@run
                 }
                 when (c) {
                     SS3 -> onegl = 3
@@ -1020,8 +977,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         term_state = TSTATE_ESC
                         lastwaslf = 0
                     }
-                    5 -> write(answerBack, false)
-                    12 -> {
+                    5.toChar() -> write(answerBack, false)
+                    12.toChar() -> {
                         /* FormFeed, Home for the BBS world */deleteArea(0, 0, columns, rows, attributes)
                         run {
                             R = 0
@@ -1037,27 +994,26 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         do {
                             // Don't overwrite or insert! TABS are not destructive, but movement!
                             C++
-                        } while (C < columns && Tabs[C] == 0)
+                        } while (C < columns && Tabs?.get(C)?.toInt() ?: -1 == 0)
                         lastwaslf = 0
                     }
                     '\r' -> C = 0
                     '\n' -> {
-                        if (debug > 3) debug("R= $R, bm $bottomMargin, tm=$topMargin, rows=$rows")
                         if (!vms) {
-                            if (lastwaslf != 0 && lastwaslf != c.toInt()) //  Ray: I do not understand this logic.
-                                break
-                            lastwaslf = c.toInt()
-                            /*C = 0;*/
+                            if (lastwaslf == 0 || lastwaslf == c.toInt()) {
+                                lastwaslf = c.toInt()
+                                if (R == bottomMargin || R >= rows - 1) insertLine(R, 1, SCROLL_UP) else R++
+                            }
                         }
-                        if (R == bottomMargin || R >= rows - 1) insertLine(R, 1, SCROLL_UP) else R++
+                        else if (R == bottomMargin || R >= rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                     }
-                    7 -> beep()
+                    7.toChar() -> beep()
                     '\u000e' -> {
-                        /* ^N, Shift out - Put G1 into GL */gl = 1.toChar()
+                        /* ^N, Shift out - Put G1 into GL */gl = 1
                         usedcharsets = true
                     }
                     '\u000f' -> {
-                        /* ^O, Shift in - Put G0 into GL */gl = 0.toChar()
+                        /* ^O, Shift in - Put G0 into GL */gl = 0
                         usedcharsets = true
                     }
                     else -> {
@@ -1068,17 +1024,15 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                         lastwaslf = 0
                         if (c.toInt() < 32) {
-                            if (c.toInt() != 0) if (debug > 0) debug("TSTATE_DATA char: " + c.toInt())
-                            /*break; some BBS really want those characters, like hearst etc. */if (c.toInt() == 0) /* print 0 ... you bet */ break
+                            if (c.toInt() == 0) return@run
                         }
                         if (C >= columns) {
                             if (wraparound) {
                                 var bot = rows
 
                                 // If we're in the scroll region, check against the bottom margin
-                                if (R <= bottomMargin && R >= topMargin) bot = bottomMargin + 1
+                                if (R in topMargin..bottomMargin) bot = bottomMargin + 1
                                 if (R < bot - 1) R++ else {
-                                    if (debug > 3) debug("scrolling due to wrap at $R")
                                     insertLine(R, 1, SCROLL_UP)
                                 }
                                 C = 0
@@ -1091,7 +1045,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
 
                         // Mapping if DEC Special is chosen charset
                         if (usedcharsets) {
-                            if (c >= '\u0020' && c <= '\u007f') {
+                            if (c in '\u0020'..'\u007f') {
                                 when (gx[thisgl]) {
                                     '0' -> {
                                         // Remap SCOANSI line drawing to VT100 line drawing chars
@@ -1106,7 +1060,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                                 i += 2
                                             }
                                         }
-                                        if (c >= '\u005f' && c <= '\u007e') {
+                                        if (c in '\u005f'..'\u007e') {
                                             c = DECSPECIAL[c.toShort() - 0x5f]
                                             mapped = true
                                         }
@@ -1121,7 +1075,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             }
                             if (!mapped && c >= '\u0080' && c <= '\u00ff') {
                                 when (gx[gr.toInt()]) {
-                                    '0' -> if (c >= '\u00df' && c <= '\u00fe') {
+                                    '0' -> if (c in '\u00df'..'\u00fe') {
                                         c = DECSPECIAL[c - '\u00df']
                                         mapped = true
                                     }
@@ -1138,9 +1092,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     var bot = rows
 
                                     // If we're in the scroll region, check against the bottom margin
-                                    if (R <= bottomMargin && R >= topMargin) bot = bottomMargin + 1
+                                    if (R in topMargin..bottomMargin) bot = bottomMargin + 1
                                     if (R < bot - 1) R++ else {
-                                        if (debug > 3) debug("scrolling due to wrap at $R")
                                         insertLine(R, 1, SCROLL_UP)
                                     }
                                     C = 0
@@ -1178,15 +1131,13 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 if (c.toInt() < 0x20 && c != ESC) { // NP - No printing character
                     handle_osc(osc)
                     term_state = TSTATE_DATA
-                    break
                 }
                 //but check for vt102 ESC \
-                if (c == '\\' && osc!![osc!!.length - 1] == ESC) {
+                else if (c == '\\' && osc!![osc!!.length - 1] == ESC) {
                     handle_osc(osc)
                     term_state = TSTATE_DATA
-                    break
                 }
-                osc = osc + c
+                else osc += c
             }
             TSTATE_ESCSPACE -> {
                 term_state = TSTATE_DATA
@@ -1234,11 +1185,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     'E' -> {
                         if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                         C = 0
-                        if (debug > 1) debug("ESC E (at $R)")
                     }
                     'D' -> {
                         if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
-                        if (debug > 1) debug("ESC D (at $R )")
                     }
                     'J' -> {
                         if (R < rows - 1) deleteArea(0, R + 1, columns, rows - R - 1, attributes)
@@ -1252,12 +1201,10 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         } else { // scroll down
                             insertLine(R, 1, SCROLL_DOWN)
                         }
-                        /* else do nothing ; */if (debug > 2) debug("ESC M ")
                     }
                     'H' -> {
-                        if (debug > 1) debug("ESC H at $C")
                         /* right border probably ...*/if (C >= columns) C = columns - 1
-                        Tabs[C] = 1
+                        Tabs?.set(C, 1)
                     }
                     'N' -> onegl = 2
                     'O' -> onegl = 3
@@ -1273,8 +1220,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     '7' -> {
                         Sc = C
                         Sr = R
-                        Sgl = gl
-                        Sgr = gr
+                        Sgl = gl.toChar()
+                        Sgr = gr.toChar()
                         Sa = attributes
                         Sgx = CharArray(4)
                         var i = 0
@@ -1282,13 +1229,12 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             Sgx!![i] = gx[i]
                             i++
                         }
-                        if (debug > 1) debug("ESC 7")
                     }
                     '8' -> {
                         C = Sc
                         R = Sr
-                        gl = Sgl
-                        gr = Sgr
+                        gl = Sgl.toInt()
+                        gr = Sgr.toInt()
                         if (Sgx != null) {
                             var i = 0
                             while (i < 4) {
@@ -1316,23 +1262,23 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         usedcharsets = true
                     }
                     '~' -> {
-                        gr = 1.toChar()
+                        gr = 1
                         usedcharsets = true
                     }
                     'n' -> {
-                        gl = 2.toChar()
+                        gl = 2
                         usedcharsets = true
                     }
                     '}' -> {
-                        gr = 2.toChar()
+                        gr = 2
                         usedcharsets = true
                     }
                     'o' -> {
-                        gl = 3.toChar()
+                        gl = 3
                         usedcharsets = true
                     }
                     '|' -> {
-                        gr = 3.toChar()
+                        gr = 3
                         usedcharsets = true
                     }
                     'Y' -> term_state = TSTATE_VT52Y
@@ -1354,7 +1300,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             }
             TSTATE_SETG0 -> {
                 if (c != '0' && c != 'A' && c != 'B' && c != '<') debug("ESC ( " + c + ": G0 char set?  (" + c.toInt() + ")") else {
-                    if (debug > 2) debug("ESC ( : G0 char set  (" + c + " " + c.toInt() + ")")
                     gx[0] = c
                 }
                 term_state = TSTATE_DATA
@@ -1363,21 +1308,18 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 if (c != '0' && c != 'A' && c != 'B' && c != '<') {
                     debug("ESC ) " + c + " (" + c.toInt() + ") :G1 char set?")
                 } else {
-                    if (debug > 2) debug("ESC ) :G1 char set  (" + c + " " + c.toInt() + ")")
                     gx[1] = c
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG2 -> {
                 if (c != '0' && c != 'A' && c != 'B' && c != '<') debug("ESC*:G2 char set?  (" + c.toInt() + ")") else {
-                    if (debug > 2) debug("ESC*:G2 char set  (" + c + " " + c.toInt() + ")")
                     gx[2] = c
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG3 -> {
                 if (c != '0' && c != 'A' && c != 'B' && c != '<') debug("ESC+:G3 char set?  (" + c.toInt() + ")") else {
-                    if (debug > 2) debug("ESC+:G3 char set  (" + c + " " + c.toInt() + ")")
                     gx[3] = c
                 }
                 term_state = TSTATE_DATA
@@ -1403,9 +1345,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 if (c == '\\' && dcs!![dcs!!.length - 1] == ESC) {
                     handle_dcs(dcs)
                     term_state = TSTATE_DATA
-                    break
                 }
-                dcs = dcs + c
+                else dcs += c
             }
             TSTATE_DCEQ -> {
                 term_state = TSTATE_DATA
@@ -1430,7 +1371,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                     }
                     'r' -> {
-                        if (true || debug > 1) debug("ESC [ ? " + DCEvars[0] + " r")
+                        debug("ESC [ ? " + DCEvars[0] + " r")
                         /* DEC Mode reset */
                         var i = 0
                         while (i <= DCEvar) {
@@ -1451,7 +1392,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                     }
                     'h' -> {
-                        if (debug > 0) debug("ESC [ ? " + DCEvars[0] + " h")
                         /* DEC Mode set */
                         var i = 0
                         while (i <= DCEvar) {
@@ -1472,11 +1412,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             }
                             i++
                         }
-                    }
-                    'i' -> when (DCEvars[0]) {
-                        1 -> if (debug > 1) debug("CSI ? 1 i : Print line containing cursor")
-                        4 -> if (debug > 1) debug("CSI ? 4 i : Start passthrough printing")
-                        5 -> if (debug > 1) debug("CSI ? 4 i : Stop passthrough printing")
                     }
                     'l' -> {
                         /* DEC Mode reset */if (debug > 0) debug("ESC [ ? " + DCEvars[0] + " l")
@@ -1525,15 +1460,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 when (c) {
                     'p' -> {
                         debug("Conformance level: " + DCEvars[0] + " (unsupported)," + DCEvars[1])
-                        if (DCEvars[0] == 61) {
-                            output8bit = false
-                            break
-                        }
-                        output8bit = if (DCEvars[1] == 1) {
-                            false
-                        } else {
-                            true /* 0 or 2 */
-                        }
+                        output8bit = if (DCEvars[0] == 61) false
+                        else DCEvars[1] != 1
                     }
                     else -> debug("Unknown ESC [...  \"$c")
                 }
@@ -1551,19 +1479,17 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         term_state = TSTATE_CSI_EQUAL
                     }
                     'F' -> {
-                        val newcolor: Int
                         debug("ESC [ = " + DCEvars[0] + " F")
                         attributes = attributes and COLOR_FG.inv()
-                        newcolor = DCEvars[0] and 1 shl 2 or
+                        val newcolor: Int = DCEvars[0] and 1 shl 2 or
                                 (DCEvars[0] and 2) or
                                 (DCEvars[0] and 4 shr 2)
                         attributes = attributes or ((newcolor + 1).toLong() shl COLOR_FG_SHIFT)
                     }
                     'G' -> {
-                        val newcolor: Int
                         debug("ESC [ = " + DCEvars[0] + " G")
                         attributes = attributes and COLOR_BG.inv()
-                        newcolor = DCEvars[0] and 1 shl 2 or
+                        val newcolor: Int = DCEvars[0] and 1 shl 2 or
                                 (DCEvars[0] and 2) or
                                 (DCEvars[0] and 4 shr 2)
                         attributes = attributes or ((newcolor + 1).toLong() shl COLOR_BG_SHIFT)
@@ -1621,15 +1547,12 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         if (terminalID == "vt220") subcode = "62;"
                         if (terminalID == "vt100") subcode = "61;"
                         write(ESC.toString() + "[?" + subcode + "1;2c", false)
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " c")
                     }
-                    'q' -> if (debug > 1) debug("ESC [ " + DCEvars[0] + " q")
                     'g' -> {
                         when (DCEvars[0]) {
                             3 -> Tabs = ByteArray(width)
-                            0 -> Tabs[C] = 0
+                            0 -> Tabs?.set(C, 0)
                         }
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " g")
                     }
                     'h' -> {
                         when (DCEvars[0]) {
@@ -1640,14 +1563,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             }
                             else -> debug("unsupported: ESC [ " + DCEvars[0] + " h")
                         }
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " h")
                     }
-                    'i' -> when (DCEvars[0]) {
-                        0 -> if (debug > 1) debug("CSI 0 i:  Print Screen, not implemented.")
-                        4 -> if (debug > 1) debug("CSI 4 i:  Enable Transparent Printing, not implemented.")
-                        5 -> if (debug > 1) debug("CSI 4/5 i:  Disable Transparent Printing, not implemented.")
-                        else -> debug("ESC [ " + DCEvars[0] + " i, unimplemented!")
-                    }
+                    'i' -> debug("ESC [ " + DCEvars[0] + " i, unimplemented!")
                     'l' -> when (DCEvars[0]) {
                         4 -> insertmode = 0
                         20 -> {
@@ -1666,16 +1583,11 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         if (debug > 1) debug("ESC [ " + DCEvars[0] + " A")
                     }
                     'B' ->                         /* cursor down n (1) times */ {
-                        val limit: Int
-                        limit = if (R <= bottomMargin) {
+                        val limit: Int = if (R <= bottomMargin) {
                             bottomMargin
                         } else rows - 1
                         if (DCEvars[0] == 0) R++ else R += DCEvars[0]
-                        if (R > limit) R = limit else {
-                            if (debug > 2) debug("Not limited.")
-                        }
-                        if (debug > 2) debug("to: $R")
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " B (at C=" + C + ")")
+                        if (R > limit) R = limit
                     }
                     'C' -> {
                         if (DCEvars[0] == 0) DCEvars[0] = 1
@@ -1683,12 +1595,10 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             C++
                         }
                         if (C >= columns) C = columns - 1
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " C")
                     }
                     'd' -> {
                         R = DCEvars[0] - 1
                         if (R < 0) R = 0 else if (R >= height) R = height - 1
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " d")
                     }
                     'D' -> {
                         if (DCEvars[0] == 0) DCEvars[0] = 1
@@ -1696,7 +1606,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             C--
                         }
                         if (C < 0) C = 0
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " D")
                     }
                     'r' -> {
                         if (DCEvar > 0) //  Ray:  Any argument is optional
@@ -1815,16 +1724,13 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         Sc = C
                         Sr = R
                         Sa = attributes
-                        if (debug > 3) debug("ESC[s")
                     }
                     'u' -> {
                         C = Sc
                         R = Sr
                         attributes = Sa
-                        if (debug > 3) debug("ESC[u")
                     }
                     'm' -> {
-                        if (debug > 3) debug("ESC [ ")
                         if (DCEvar == 0 && DCEvars[0] == 0) attributes = 0
                         var i = 0
                         while (i <= DCEvar) {
@@ -1861,11 +1767,11 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                 5 -> {
                                 }
                                 10 -> {
-                                    gl = 0.toChar()
+                                    gl = 0
                                     usedcharsets = true
                                 }
                                 11, 12 -> {
-                                    gl = 1.toChar()
+                                    gl = 1
                                     usedcharsets = true
                                 }
                                 21 -> attributes = attributes and (LOW or BOLD).inv()
@@ -1926,20 +1832,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     debugStr!!.setLength(0)
                                 }
                             }
-                            if (debug > 3) {
-                                debugStr!!.append(DCEvars[i])
-                                        .append(';')
-                                debug(debugStr.toString())
-                                debugStr!!.setLength(0)
-                            }
                             i++
-                        }
-                        if (debug > 3) {
-                            debugStr!!.append(" (attributes = ")
-                                    .append(attributes)
-                                    .append(")m")
-                            debug(debugStr.toString())
-                            debugStr!!.setLength(0)
                         }
                     }
                     else -> {
@@ -1969,8 +1862,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         gx[1] = 'B'
         gx[2] = 'B'
         gx[3] = 'B'
-        gl = 0.toChar() // default GL to G0
-        gr = 2.toChar() // default GR to G2
+        gl = 0 // default GL to G0
+        gr = 2 // default GR to G2
         onegl = -1 // Single shift override
 
         /* reset tabs */
@@ -1979,7 +1872,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         Tabs = ByteArray(nw)
         var i = 0
         while (i < nw) {
-            Tabs[i] = 1
+            Tabs!![i] = 1
             i += 8
         }
         deleteArea(0, 0, width, height, attributes)
