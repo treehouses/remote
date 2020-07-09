@@ -30,7 +30,7 @@ class StatusFragment : BaseFragment() {
 
     private var updateRightNow = false
     private var notificationListener: NotificationCallback? = null
-    private var lastCommand = "hostname"
+    private var lastCommand = ""
     private var deviceName = ""
     private var rpiVersion = ""
     private var usedMemory = 0.0
@@ -44,7 +44,7 @@ class StatusFragment : BaseFragment() {
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         checkStatusNow()
-        writeToRPI("hostname")
+        writeToRPI("treehouses remote status")
         return bind.root
     }
 
@@ -72,10 +72,7 @@ class StatusFragment : BaseFragment() {
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
-        if (lastCommand == "hostname") {
-            bind.tvRpiName.text = "Hostname: " + readMessage
-            writeToRPI("treehouses remote status")
-        } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
+        if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
             val res = readMessage.trim().split(" ")
             bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
@@ -84,6 +81,9 @@ class StatusFragment : BaseFragment() {
             //also set remote version
             bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
             Log.e("REACHED", "YAYY")
+            writeToRPI("hostname")
+        } else if (lastCommand == "hostname"){
+            bind.tvRpiName.text = "Hostname: " + readMessage
             writeToRPI("treehouses memory used -g")
         } else if (lastCommand == "treehouses memory used -g") {
             usedMemory = readMessage.trim { it <= ' ' }.toDouble()
