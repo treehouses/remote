@@ -364,28 +364,21 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
     private inner class AccessibilityEventSender : Runnable {
         override fun run() {
             synchronized(mAccessibilityLock) {
-                if (mCodeMatcher == null) {
-                    mCodeMatcher = mControlCodes!!.matcher(mAccessibilityBuffer.toString())
-                } else {
-                    mCodeMatcher!!.reset(mAccessibilityBuffer.toString())
-                }
+                if (mCodeMatcher == null) mCodeMatcher = mControlCodes!!.matcher(mAccessibilityBuffer.toString())
+                else mCodeMatcher!!.reset(mAccessibilityBuffer.toString())
 
                 // Strip all control codes out.
                 mAccessibilityBuffer.setLength(0)
-                while (mCodeMatcher!!.find()) {
-                    mCodeMatcher!!.appendReplacement(mAccessibilityBuffer, " ")
-                }
+                while (mCodeMatcher!!.find()) mCodeMatcher!!.appendReplacement(mAccessibilityBuffer, " ")
 
                 // Apply Backspaces using backspace character sequence
                 var i = mAccessibilityBuffer.indexOf(BACKSPACE_CODE)
                 while (i != -1) {
-                    mAccessibilityBuffer.replace(if (i == 0) 0 else i - 1,
-                            i + BACKSPACE_CODE.length, "")
+                    mAccessibilityBuffer.replace(if (i == 0) 0 else i - 1, i + BACKSPACE_CODE.length, "")
                     i = mAccessibilityBuffer.indexOf(BACKSPACE_CODE)
                 }
-                if (mAccessibilityBuffer.length > 0) {
-                    val event = AccessibilityEvent.obtain(
-                            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED)
+                if (mAccessibilityBuffer.isNotEmpty()) {
+                    val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED)
                     event.fromIndex = 0
                     event.addedCount = mAccessibilityBuffer.length
                     event.text.add(mAccessibilityBuffer)
@@ -491,17 +484,17 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         // so this is using software rendering until we can replace all the
         // instances.
         // See: https://developer.android.com/guide/topics/graphics/hardware-accel.html#unsupported
+        val colorFilter = ColorMatrixColorFilter(ColorMatrix(floatArrayOf(-1f, 0f, 0f, 0f, 255f, 0f, -1f, 0f, 0f, 255f, 0f, 0f, -1f, 0f, 255f, 0f, 0f, 0f, 1f, 0f)))
         setLayerTypeToSoftware()
         paint = Paint()
         cursorPaint = Paint()
         cursorPaint.color = bridge.color[bridge.defaultFg]
         cursorPaint.isAntiAlias = true
         cursorInversionPaint = Paint()
-        cursorInversionPaint.colorFilter = ColorMatrixColorFilter(ColorMatrix(floatArrayOf(-1f, 0f, 0f, 0f, 255f, 0f, -1f, 0f, 0f, 255f, 0f, 0f, -1f, 0f, 255f, 0f, 0f, 0f, 1f, 0f)))
+        cursorInversionPaint.colorFilter = colorFilter
         cursorInversionPaint.isAntiAlias = true
         cursorMetaInversionPaint = Paint()
-        cursorMetaInversionPaint.colorFilter = ColorMatrixColorFilter(ColorMatrix(floatArrayOf(
-                -1f, 0f, 0f, 0f, 255f, 0f, -1f, 0f, 0f, 255f, 0f, 0f, -1f, 0f, 255f, 0f, 0f, 0f, 0.5f, 0f)))
+        cursorMetaInversionPaint.colorFilter = colorFilter
         cursorMetaInversionPaint.isAntiAlias = true
         cursorStrokePaint = Paint(cursorInversionPaint)
         cursorStrokePaint.strokeWidth = 0.1f
@@ -577,11 +570,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                             totalY = 0f
                         }
                         return true
-                    } else if (terminalTextViewOverlay == null && moved != 0) {
-                        val base = bridge.vDUBuffer!!.getWindowBase()
-                        bridge.vDUBuffer!!.setWindowBase(base + moved)
-                        totalY = 0f
-                        return false
                     }
                 }
                 return false
