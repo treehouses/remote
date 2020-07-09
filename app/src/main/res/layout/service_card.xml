@@ -33,7 +33,9 @@
                 android:id="@+id/service_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="75dp"
+                android:minWidth = "75dp"
                 android:scaleType="fitCenter"
+                android:background="#ffffff"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_gravity="center_horizontal" />
 
