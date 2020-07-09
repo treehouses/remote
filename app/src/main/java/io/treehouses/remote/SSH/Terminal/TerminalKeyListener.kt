@@ -35,10 +35,10 @@ import java.io.IOException
  * @author kenny
  */
 // for ClipboardManager
-class TerminalKeyListener(private val manager: TerminalManager,
+class TerminalKeyListener(private val manager: TerminalManager?,
                           private val bridge: TerminalBridge,
                           private val buffer: VDUBuffer,
-                          private var encoding: String) : View.OnKeyListener, OnSharedPreferenceChangeListener {
+                          private var encoding: String?) : View.OnKeyListener, OnSharedPreferenceChangeListener {
     private var keymode: String? = null
     private val deviceHasHardKeyboard: Boolean
     private var shiftedNumbersAreFKeysOnHardKeyboard = false
@@ -65,7 +65,7 @@ class TerminalKeyListener(private val manager: TerminalManager,
             // skip keys if we aren't connected yet or have been disconnected
             if (bridge.isDisconnected || bridge.transport == null) return false
             val interpretAsHardKeyboard = deviceHasHardKeyboard &&
-                    !manager.hardKeyboardHidden
+                    !manager!!.hardKeyboardHidden
             val rightModifiersAreSlashAndTab = interpretAsHardKeyboard && PreferenceConstants.KEYMODE_RIGHT == keymode
             val leftModifiersAreSlashAndTab = interpretAsHardKeyboard && PreferenceConstants.KEYMODE_LEFT == keymode
             val shiftedNumbersAreFKeys = shiftedNumbersAreFKeysOnHardKeyboard &&
@@ -79,24 +79,24 @@ class TerminalKeyListener(private val manager: TerminalManager,
                     if (keyCode == KeyEvent.KEYCODE_ALT_RIGHT
                             && metaState and OUR_SLASH != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
-                        bridge.transport.write('/'.toInt())
+                        bridge.transport!!.write('/'.toInt())
                         return true
                     } else if (keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
                             && metaState and OUR_TAB != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
-                        bridge.transport.write(0x09)
+                        bridge.transport!!.write(0x09)
                         return true
                     }
                 } else if (leftModifiersAreSlashAndTab) {
                     if (keyCode == KeyEvent.KEYCODE_ALT_LEFT
                             && metaState and OUR_SLASH != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
-                        bridge.transport.write('/'.toInt())
+                        bridge.transport!!.write('/'.toInt())
                         return true
                     } else if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
                             && metaState and OUR_TAB != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
-                        bridge.transport.write(0x09)
+                        bridge.transport!!.write(0x09)
                         return true
                     }
                 }
@@ -118,8 +118,8 @@ class TerminalKeyListener(private val manager: TerminalManager,
             // Handle potentially multi-character IME input.
             if (keyCode == KeyEvent.KEYCODE_UNKNOWN &&
                     event.action == KeyEvent.ACTION_MULTIPLE) {
-                val input = event.characters.toByteArray(charset(encoding))
-                bridge.transport.write(input)
+                val input = event.characters.toByteArray(charset(encoding ?: "UTF-8"))
+                bridge.transport!!.write(input)
                 return true
             }
 
@@ -272,9 +272,9 @@ class TerminalKeyListener(private val manager: TerminalManager,
             if (uchar >= 0x20) {
                 if (derivedMetaState and HC_META_CTRL_ON != 0) uchar = keyAsControl(uchar)
                 if (derivedMetaState and KeyEvent.META_ALT_ON != 0) sendEscape()
-                if (uchar < 0x80) bridge.transport.write(uchar) else  // TODO write encoding routine that doesn't allocate each time
-                    bridge.transport.write(String(Character.toChars(uchar))
-                            .toByteArray(charset(encoding)))
+                if (uchar < 0x80) bridge.transport!!.write(uchar) else  // TODO write encoding routine that doesn't allocate each time
+                    bridge.transport!!.write(String(Character.toChars(uchar))
+                            .toByteArray(charset(encoding ?: "UTF-8")))
                 return true
             }
             when (keyCode) {
@@ -283,25 +283,25 @@ class TerminalKeyListener(private val manager: TerminalManager,
                     return true
                 }
                 KeyEvent.KEYCODE_TAB -> {
-                    bridge.transport.write(0x09)
+                    bridge.transport!!.write(0x09)
                     return true
                 }
                 KeyEvent.KEYCODE_CAMERA -> {
 
                     // check to see which shortcut the camera button triggers
-                    val camera = manager.prefs!!.getString(
+                    val camera = manager!!.prefs!!.getString(
                             PreferenceConstants.CAMERA,
                             PreferenceConstants.CAMERA_CTRLA_SPACE)
                     if (PreferenceConstants.CAMERA_CTRLA_SPACE == camera) {
-                        bridge.transport.write(0x01)
-                        bridge.transport.write(' '.toInt())
+                        bridge.transport!!.write(0x01)
+                        bridge.transport!!.write(' '.toInt())
                     } else if (PreferenceConstants.CAMERA_CTRLA == camera) {
-                        bridge.transport.write(0x01)
+                        bridge.transport!!.write(0x01)
                     } else if (PreferenceConstants.CAMERA_ESC == camera) {
                         (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
                     } else if (PreferenceConstants.CAMERA_ESC_A == camera) {
                         (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
-                        bridge.transport.write('a'.toInt())
+                        bridge.transport!!.write('a'.toInt())
                     }
                 }
                 KeyEvent.KEYCODE_DEL -> {
@@ -391,7 +391,7 @@ class TerminalKeyListener(private val manager: TerminalManager,
         } catch (e: IOException) {
             Log.e(TAG, "Problem while trying to handle an onKey() event", e)
             try {
-                bridge.transport.flush()
+                bridge.transport!!.flush()
             } catch (ioe: IOException) {
                 Log.d(TAG, "Our transport was closed, dispatching disconnect event")
                 bridge.dispatchDisconnect(false)
@@ -406,7 +406,7 @@ class TerminalKeyListener(private val manager: TerminalManager,
     fun keyAsControl(key: Int): Int {
         // Support CTRL-a through CTRL-z
         var key = key
-        if (key >= 0x61 && key <= 0x7A) key -= 0x60 else if (key >= 0x40 && key <= 0x5F) key -= 0x40 else if (key == 0x20) key = 0x00 else if (key == 0x3F) key = 0x7F
+        if (key in 0x61..0x7A) key -= 0x60 else if (key in 0x40..0x5F) key -= 0x40 else if (key == 0x20) key = 0x00 else if (key == 0x3F) key = 0x7F
         return key
     }
 
@@ -416,11 +416,11 @@ class TerminalKeyListener(private val manager: TerminalManager,
 
     fun sendTab() {
         try {
-            bridge.transport.write(0x09)
+            bridge.transport!!.write(0x09)
         } catch (e: IOException) {
             Log.e(TAG, "Problem while trying to send TAB press.", e)
             try {
-                bridge.transport.flush()
+                bridge.transport!!.flush()
             } catch (ioe: IOException) {
                 Log.d(TAG, "Our transport was closed, dispatching disconnect event")
                 bridge.dispatchDisconnect(false)
@@ -597,7 +597,7 @@ class TerminalKeyListener(private val manager: TerminalManager,
         selectionArea = SelectionArea()
         prefs = PreferenceManager.getDefaultSharedPreferences(manager)
         prefs.registerOnSharedPreferenceChangeListener(this)
-        deviceHasHardKeyboard = (manager.res!!.configuration.keyboard
+        deviceHasHardKeyboard = (manager!!.res!!.configuration.keyboard
                 == Configuration.KEYBOARD_QWERTY)
         updatePrefs()
     }

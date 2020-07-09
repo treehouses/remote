@@ -727,7 +727,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         val currentTerminalView = adapter!!.currentTerminalView
         if (currentTerminalView != null
                 && !currentTerminalView.bridge.isDisconnected) {
-            requested = currentTerminalView.bridge.host.uri
+            requested = currentTerminalView.bridge.host!!.uri
             savedInstanceState.putString(STATE_SELECTED_URI, requested.toString())
         }
         super.onSaveInstanceState(savedInstanceState)
@@ -768,7 +768,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         val prompt = view.bridge.promptHelper
         Log.e("GOT", "HERE ")
         when {
-            String::class.java == prompt.promptRequested -> {
+            String::class.java == prompt!!.promptRequested -> {
                 hideEmulatedKeys()
                 bind.consolePasswordGroup.setVisibility(View.VISIBLE)
                 val instructions = prompt.promptInstructions
@@ -874,7 +874,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
                 Log.w(TAG, "Activity not bound when creating TerminalView.")
             }
             val bridge = bound!!.bridges[position]
-            bridge.promptHelper.setHandler(promptHandler)
+            bridge.promptHelper!!.setHandler(promptHandler)
 
             // inflate each terminal view
             val view = inflater!!.inflate(
@@ -882,7 +882,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
 
             // set the terminal name overlay text
             val terminalNameOverlay = view.findViewById<TextView>(R.id.terminal_name_overlay)
-            terminalNameOverlay.text = bridge.host.nickname
+            terminalNameOverlay.text = bridge.host!!.nickname
 
             // and add our terminal view control, using index to place behind overlay
             val terminal = TerminalView(container.context, bridge, bind.pager)
@@ -944,7 +944,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
 
         override fun getPageTitle(position: Int): CharSequence? {
             val bridge = getBridgeAtPosition(position) ?: return "???"
-            return "Treehouses Remote: " + bridge.host.nickname
+            return "Treehouses Remote: " + bridge.host!!.nickname
         }
 
         val currentTerminalView: TerminalView?

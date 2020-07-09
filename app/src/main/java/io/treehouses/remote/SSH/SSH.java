@@ -329,7 +329,7 @@ public class SSH implements ConnectionMonitor, InteractiveCallback, AuthAgentCal
                 }
             } else if (connection.isAuthMethodAvailable(host.getUsername(), AUTH_PASSWORD)) {
                 bridge.outputLine(manager.res.getString(R.string.terminal_auth_pass));
-                String password = bridge.getPromptHelper().requestStringPrompt(null,
+                String password = bridge.promptHelper.requestStringPrompt(null,
                         manager.res.getString(R.string.prompt_password));
                 if (password != null
                         && connection.authenticateWithPassword(host.getUsername(), password)) {
@@ -373,7 +373,7 @@ public class SSH implements ConnectionMonitor, InteractiveCallback, AuthAgentCal
             // otherwise load key from database and prompt for password as needed
             String password = null;
             if (pubkey.isEncrypted()) {
-                password = bridge.getPromptHelper().requestStringPrompt(null,
+                password = bridge.promptHelper.requestStringPrompt(null,
                         manager.res.getString(R.string.prompt_pubkey_password, pubkey.getNickname()));
 
                 // Something must have interrupted the prompt.

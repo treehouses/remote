@@ -172,8 +172,8 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         synchronized(bridges) {
             bridges.add(bridge)
             val wr = WeakReference(bridge)
-            mHostBridgeMap[bridge.host] = wr
-            mNicknameBridgeMap.put(bridge.host.nickname!!, wr)
+            mHostBridgeMap[bridge.host!!] = wr
+            mNicknameBridgeMap.put(bridge.host!!.nickname!!, wr)
         }
         synchronized(disconnected) { disconnected.remove(bridge.host) }
 
@@ -261,7 +261,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             // remove this bridge from our list
             bridges.remove(bridge)
             mHostBridgeMap.remove(bridge.host)
-            mNicknameBridgeMap.remove(bridge.host.nickname)
+            mNicknameBridgeMap.remove(bridge.host!!.nickname)
             if (bridge.isUsingNetwork) {
 //				connectivityManager.decRef();
             }
@@ -272,7 +272,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             // pass notification back up to gui
             if (disconnectListener != null) disconnectListener!!.onDisconnected(bridge)
         }
-        synchronized(disconnected) { disconnected.add(bridge.host) }
+        synchronized(disconnected) { disconnected.add(bridge.host!!) }
         notifyHostStatusChanged()
 
 //		if (shouldHideRunningNotification) {
@@ -418,7 +418,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         } else {
             // tell each bridge to forget about their previous prompt handler
             for (bridge in bridges) {
-                bridge.promptHelper.setHandler(null)
+                bridge.promptHelper?.setHandler(null)
             }
         }
         return true

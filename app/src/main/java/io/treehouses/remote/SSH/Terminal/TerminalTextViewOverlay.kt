@@ -43,8 +43,8 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
     private var oldBufferHeight = 0
     private var oldScrollY = -1
     fun refreshTextFromBuffer() {
-        val vb = terminalView.bridge.vduBuffer
-        val numRows = vb.bufferSize
+        val vb = terminalView.bridge.vDUBuffer
+        val numRows = vb!!.bufferSize
         val numCols = vb.columns
         oldBufferHeight = numRows
         val buffer = StringBuilder()
@@ -77,8 +77,8 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
      * rest of the buffer.
      */
     fun onBufferChanged() {
-        val vb = terminalView.bridge.vduBuffer
-        val numRows = vb.bufferSize
+        val vb = terminalView.bridge.vDUBuffer
+        val numRows = vb!!.bufferSize
         val numNewRows = numRows - oldBufferHeight
         if (numNewRows <= 0) {
             return
@@ -133,7 +133,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
     override fun scrollTo(x: Int, y: Int) {
         val lineMultiple = (y * 2 + 1) / (lineHeight * 2)
         val bridge = terminalView.bridge
-        bridge.buffer.setWindowBase(lineMultiple)
+        bridge.vDUBuffer!!.setWindowBase(lineMultiple)
         super.scrollTo(0, y)
     }
 
@@ -142,7 +142,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
             // Selection may be beginning. Sync the TextView with the buffer.
             refreshTextFromBuffer()
         } else if (event.action == MotionEvent.ACTION_UP) {
-            super.scrollTo(0, terminalView.bridge.buffer.getWindowBase() * lineHeight)
+            super.scrollTo(0, terminalView.bridge.vDUBuffer!!.getWindowBase() * lineHeight)
         }
 
         // Mouse input is treated differently:
@@ -167,7 +167,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
                 MotionEvent.ACTION_SCROLL -> {
                     // Process scroll wheel movement:
                     val yDistance = MotionEventCompat.getAxisValue(event, MotionEvent.AXIS_VSCROLL)
-                    val vtBuffer = terminalView.bridge.buffer as vt320
+                    val vtBuffer = terminalView.bridge.vDUBuffer as vt320
                     val mouseReport = vtBuffer.isMouseReportEnabled
                     if (mouseReport) {
                         val row = Math.floor(event.y / terminalView.bridge.charHeight.toDouble()).toInt()
@@ -198,7 +198,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         val col = Math.floor(event.x / bridge.charWidth.toDouble()).toInt()
         val meta = event.metaState
         val shiftOn = meta and KeyEvent.META_SHIFT_ON != 0
-        val vtBuffer = bridge.buffer as vt320
+        val vtBuffer = bridge.vDUBuffer as vt320
         val mouseReport = vtBuffer.isMouseReportEnabled
 
         // MouseReport can be "defeated" using the shift key.
