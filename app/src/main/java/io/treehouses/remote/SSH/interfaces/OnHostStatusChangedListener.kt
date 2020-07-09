@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package io.treehouses.remote.SSH.interfaces;
+package io.treehouses.remote.SSH.interfaces
 
 /**
- * Used to notify interested parties when a {@link io.treehouses.remote.SSH.Terminal.TerminalBridge} has changed materially
+ * Used to notify interested parties when a [io.treehouses.remote.SSH.Terminal.TerminalBridge] has changed materially
  * changed status (e.g., connected, disconnected, name changed, etc).
  */
-public interface OnHostStatusChangedListener {
-	void onHostStatusChanged();
+interface OnHostStatusChangedListener {
+    fun onHostStatusChanged()
 }

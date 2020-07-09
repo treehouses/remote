@@ -1,4 +1,8 @@
-package de.mud.terminal;/*
+package de.mud.terminal
+
+import java.util.*
+
+/*
  * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
  *
  * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
@@ -21,30 +25,19 @@ package de.mud.terminal;/*
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * --LICENSE NOTICE--
  *
- */
-
-import java.util.Properties;
-
-/**
+ */ /**
  * An interface for a terminal that accepts input from keyboard and mouse.
  *
  * @author Matthias L. Jugel, Marcus Meißner
  * @version $Id: de.mud.terminal.VDUInput.java 499 2005-09-29 08:24:54Z leo $
  */
-public interface VDUInput {
-
-    int KEY_CONTROL = 0x01;
-    int KEY_SHIFT = 0x02;
-    int KEY_ALT = 0x04;
-    int KEY_ACTION = 0x08;
-
-
+interface VDUInput {
     /**
      * Direct access to writing data ...
      *
      * @param b
      */
-    void write(byte b[]);
+    fun write(b: ByteArray?)
 
     /**
      * Terminal is mouse-aware and requires (x,y) coordinates of
@@ -54,7 +47,7 @@ public interface VDUInput {
      * @param y
      * @param modifiers
      */
-    void mousePressed(int x, int y, int modifiers);
+    fun mousePressed(x: Int, y: Int, modifiers: Int)
 
     /**
      * Passes mouse wheel events to the terminal.
@@ -66,7 +59,7 @@ public interface VDUInput {
      * @param shift
      * @param meta
      */
-    public void mouseWheel(boolean down, int x, int y, boolean ctrl, boolean shift, boolean meta);
+    fun mouseWheel(down: Boolean, x: Int, y: Int, ctrl: Boolean, shift: Boolean, meta: Boolean)
 
     /**
      * Terminal is mouse-aware and requires the coordinates and button
@@ -75,14 +68,14 @@ public interface VDUInput {
      * @param x
      * @param y
      */
-    void mouseReleased(int x, int y);
+    fun mouseReleased(x: Int, y: Int)
 
     /**
      * Override the standard key codes used by the terminal emulation.
      *
      * @param codes a properties object containing key code definitions
      */
-    void setKeyCodes(Properties codes);
+    fun setKeyCodes(codes: Properties)
 
     /**
      * main keytyping event handler...
@@ -91,7 +84,7 @@ public interface VDUInput {
      * @param keyChar   the character represented by the key
      * @param modifiers shift/alt/control modifiers
      */
-    void keyPressed(int keyCode, char keyChar, int modifiers);
+    fun keyPressed(keyCode: Int, keyChar: Char, modifiers: Int)
 
     /**
      * Handle key Typed events for the terminal, this will get
@@ -101,5 +94,12 @@ public interface VDUInput {
      * @param keyChar   the character represented by the key
      * @param modifiers shift/alt/control modifiers
      */
-    void keyTyped(int keyCode, char keyChar, int modifiers);
+    fun keyTyped(keyCode: Int, keyChar: Char, modifiers: Int)
+
+    companion object {
+        const val KEY_CONTROL = 0x01
+        const val KEY_SHIFT = 0x02
+        const val KEY_ALT = 0x04
+        const val KEY_ACTION = 0x08
+    }
 }

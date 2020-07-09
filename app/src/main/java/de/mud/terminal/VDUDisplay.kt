@@ -1,4 +1,6 @@
-package de.mud.terminal;/*
+package de.mud.terminal
+
+/*
  * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".
  *
  * (c) Matthias L. Jugel, Marcus Meißner 1996-2005. All Rights Reserved.
@@ -21,21 +23,13 @@ package de.mud.terminal;/*
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * --LICENSE NOTICE--
  *
- */
-
-/**
+ */ /**
  * Generic display
  */
-public interface VDUDisplay {
-    void redraw();
-
-    void updateScrollBar();
-
-    void setVDUBuffer(VDUBuffer buffer);
-
-    VDUBuffer getVDUBuffer();
-
-    void setColor(int index, int red, int green, int blue);
-
-    void resetColors();
+interface VDUDisplay {
+    fun redraw()
+    fun updateScrollBar()
+    var vDUBuffer: VDUBuffer?
+    fun setColor(index: Int, red: Int, green: Int, blue: Int)
+    fun resetColors()
 }

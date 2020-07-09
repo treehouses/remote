@@ -46,7 +46,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
      *
      * @param b the array of bytes to be sent
      */
-    abstract override fun write(b: ByteArray)
+    abstract override fun write(b: ByteArray?)
 
     /**
      * Write an answer back to the remote host. This is needed to be able to

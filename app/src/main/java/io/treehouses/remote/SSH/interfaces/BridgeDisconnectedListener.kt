@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.treehouses.remote.SSH.interfaces
 
-package io.treehouses.remote.SSH.interfaces;
+import io.treehouses.remote.SSH.Terminal.TerminalBridge
 
-import io.treehouses.remote.SSH.Terminal.TerminalBridge;
-
-public interface BridgeDisconnectedListener {
-	void onDisconnected(TerminalBridge bridge);
+interface BridgeDisconnectedListener {
+    fun onDisconnected(bridge: TerminalBridge)
 }
