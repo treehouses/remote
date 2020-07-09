@@ -75,44 +75,34 @@ class TerminalKeyListener(private val manager: TerminalManager?,
 
             // Ignore all key-up events except for the special keys
             if (event.action == KeyEvent.ACTION_UP) {
-                if (rightModifiersAreSlashAndTab) {
+                return if (rightModifiersAreSlashAndTab) {
                     if (keyCode == KeyEvent.KEYCODE_ALT_RIGHT
                             && metaState and OUR_SLASH != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
                         bridge.transport!!.write('/'.toInt())
-                        return true
+                        true
                     } else if (keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
                             && metaState and OUR_TAB != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
                         bridge.transport!!.write(0x09)
-                        return true
-                    }
+                        true
+                    } else false
                 } else if (leftModifiersAreSlashAndTab) {
                     if (keyCode == KeyEvent.KEYCODE_ALT_LEFT
                             && metaState and OUR_SLASH != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
                         bridge.transport!!.write('/'.toInt())
-                        return true
+                        true
                     } else if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
                             && metaState and OUR_TAB != 0) {
                         metaState = metaState and OUR_TRANSIENT.inv()
                         bridge.transport!!.write(0x09)
-                        return true
-                    }
-                }
-                return false
+                        true
+                    } else false
+                } else false
             }
 
             //Log.i("CBKeyDebug", KeyEventUtil.describeKeyEvent(keyCode, event));
-            if (volumeKeysChangeFontSize) {
-                if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                    bridge.increaseFontSize()
-                    return true
-                } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                    bridge.decreaseFontSize()
-                    return true
-                }
-            }
             bridge.resetScrollPosition()
 
             // Handle potentially multi-character IME input.
@@ -125,53 +115,39 @@ class TerminalKeyListener(private val manager: TerminalManager?,
 
             /// Handle alt and shift keys if they aren't repeating
             if (event.repeatCount == 0) {
-                if (rightModifiersAreSlashAndTab) {
-                    when (keyCode) {
-                        KeyEvent.KEYCODE_ALT_RIGHT -> {
-                            metaState = metaState or OUR_SLASH
-                            return true
+                when {
+                    rightModifiersAreSlashAndTab -> {
+                        var flag = true
+                        when (keyCode) {
+                            KeyEvent.KEYCODE_ALT_RIGHT -> metaState = metaState or OUR_SLASH
+                            KeyEvent.KEYCODE_SHIFT_RIGHT -> metaState = metaState or OUR_TAB
+                            KeyEvent.KEYCODE_SHIFT_LEFT -> metaPress(OUR_SHIFT_ON)
+                            KeyEvent.KEYCODE_ALT_LEFT -> metaPress(OUR_ALT_ON)
+                            else -> flag = false
                         }
-                        KeyEvent.KEYCODE_SHIFT_RIGHT -> {
-                            metaState = metaState or OUR_TAB
-                            return true
-                        }
-                        KeyEvent.KEYCODE_SHIFT_LEFT -> {
-                            metaPress(OUR_SHIFT_ON)
-                            return true
-                        }
-                        KeyEvent.KEYCODE_ALT_LEFT -> {
-                            metaPress(OUR_ALT_ON)
-                            return true
-                        }
+                        if (flag) return true
                     }
-                } else if (leftModifiersAreSlashAndTab) {
-                    when (keyCode) {
-                        KeyEvent.KEYCODE_ALT_LEFT -> {
-                            metaState = metaState or OUR_SLASH
-                            return true
+                    leftModifiersAreSlashAndTab -> {
+                        var flag = true
+                        when (keyCode) {
+                            KeyEvent.KEYCODE_ALT_LEFT -> metaState = metaState or OUR_SLASH
+                            KeyEvent.KEYCODE_SHIFT_LEFT -> metaState = metaState or OUR_TAB
+                            KeyEvent.KEYCODE_SHIFT_RIGHT -> metaPress(OUR_SHIFT_ON)
+                            KeyEvent.KEYCODE_ALT_RIGHT -> metaPress(OUR_ALT_ON)
+                            else -> flag = false
                         }
-                        KeyEvent.KEYCODE_SHIFT_LEFT -> {
-                            metaState = metaState or OUR_TAB
-                            return true
-                        }
-                        KeyEvent.KEYCODE_SHIFT_RIGHT -> {
-                            metaPress(OUR_SHIFT_ON)
-                            return true
-                        }
-                        KeyEvent.KEYCODE_ALT_RIGHT -> {
-                            metaPress(OUR_ALT_ON)
-                            return true
-                        }
+                        if (flag) return true
                     }
-                } else {
-                    when (keyCode) {
-                        KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> {
-                            metaPress(OUR_ALT_ON)
-                            return true
-                        }
-                        KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> {
-                            metaPress(OUR_SHIFT_ON)
-                            return true
+                    else -> {
+                        when (keyCode) {
+                            KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> {
+                                metaPress(OUR_ALT_ON)
+                                return true
+                            }
+                            KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> {
+                                metaPress(OUR_SHIFT_ON)
+                                return true
+                            }
                         }
                     }
                 }
@@ -220,29 +196,27 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             if (controlNumbersAreFKeys && derivedMetaState and HC_META_CTRL_ON != 0) {
                 if (sendFunctionKey(keyCode)) return true
             }
-
+            var shouldReturn = false
             // CTRL-SHIFT-C to copy.
             if (keyCode == KeyEvent.KEYCODE_C && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
                 bridge.copyCurrentSelection()
-                return true
+                shouldReturn = true
             }
 
             // CTRL-SHIFT-V to paste.
-            if (keyCode == KeyEvent.KEYCODE_V && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && clipboard!!.hasText()) {
+            else if (keyCode == KeyEvent.KEYCODE_V && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && clipboard!!.hasText()) {
                 bridge.injectString(clipboard!!.text.toString())
-                return true
-            }
-            if (keyCode == KeyEvent.KEYCODE_EQUALS && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0
+                shouldReturn = true
+            } else if (keyCode == KeyEvent.KEYCODE_EQUALS && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0
                     || (keyCode == KeyEvent.KEYCODE_PLUS
                             && derivedMetaState and HC_META_CTRL_ON != 0)) {
                 bridge.increaseFontSize()
-                return true
-            }
-            if (keyCode == KeyEvent.KEYCODE_MINUS && derivedMetaState and HC_META_CTRL_ON != 0) {
+                shouldReturn = true
+            } else if (keyCode == KeyEvent.KEYCODE_MINUS && derivedMetaState and HC_META_CTRL_ON != 0) {
                 bridge.decreaseFontSize()
-                return true
+                shouldReturn = true
             }
-
+            if (shouldReturn) return true
             // Ask the system to use the keymap to give us the unicode character for this key,
             // with our derived modifier state applied.
             var uchar = event.getUnicodeChar(derivedMetaState and HC_META_CTRL_MASK.inv())
@@ -277,14 +251,15 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                             .toByteArray(charset(encoding ?: "UTF-8")))
                 return true
             }
-            when (keyCode) {
+
+            return when (keyCode) {
                 KEYCODE_ESCAPE -> {
                     sendEscape()
-                    return true
+                    true
                 }
                 KeyEvent.KEYCODE_TAB -> {
                     bridge.transport!!.write(0x09)
-                    return true
+                    true
                 }
                 KeyEvent.KEYCODE_CAMERA -> {
 
@@ -292,101 +267,93 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                     val camera = manager!!.prefs!!.getString(
                             PreferenceConstants.CAMERA,
                             PreferenceConstants.CAMERA_CTRLA_SPACE)
-                    if (PreferenceConstants.CAMERA_CTRLA_SPACE == camera) {
-                        bridge.transport!!.write(0x01)
-                        bridge.transport!!.write(' '.toInt())
-                    } else if (PreferenceConstants.CAMERA_CTRLA == camera) {
-                        bridge.transport!!.write(0x01)
-                    } else if (PreferenceConstants.CAMERA_ESC == camera) {
-                        (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
-                    } else if (PreferenceConstants.CAMERA_ESC_A == camera) {
-                        (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
-                        bridge.transport!!.write('a'.toInt())
+                    when (camera) {
+                        PreferenceConstants.CAMERA_CTRLA_SPACE -> {
+                            bridge.transport!!.write(0x01)
+                            bridge.transport!!.write(' '.toInt())
+                        }
+                        PreferenceConstants.CAMERA_CTRLA -> bridge.transport!!.write(0x01)
+                        PreferenceConstants.CAMERA_ESC -> (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
+                        PreferenceConstants.CAMERA_ESC_A -> {
+                            (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
+                            bridge.transport!!.write('a'.toInt())
+                        }
                     }
+                    true
                 }
                 KeyEvent.KEYCODE_DEL -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_BACK_SPACE, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_BACK_SPACE, ' ', stateForBuffer)
+                    true
                 }
                 KeyEvent.KEYCODE_ENTER -> {
                     (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
-                    return true
+                    true
                 }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
                     if (selectingForCopy) {
                         selectionArea.decrementColumn()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_LEFT, ' ',
-                                stateForBuffer)
+                        (buffer as vt320).keyPressed(vt320.KEY_LEFT, ' ', stateForBuffer)
                         bridge.tryKeyVibrate()
                     }
-                    return true
+                    true
                 }
                 KeyEvent.KEYCODE_DPAD_UP -> {
                     if (selectingForCopy) {
                         selectionArea.decrementRow()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_UP, ' ',
-                                stateForBuffer)
+                        (buffer as vt320).keyPressed(vt320.KEY_UP, ' ', stateForBuffer)
                         bridge.tryKeyVibrate()
                     }
-                    return true
+                    true
                 }
                 KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (selectingForCopy) {
                         selectionArea.incrementRow()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_DOWN, ' ',
-                                stateForBuffer)
+                        (buffer as vt320).keyPressed(vt320.KEY_DOWN, ' ', stateForBuffer)
                         bridge.tryKeyVibrate()
                     }
-                    return true
+                    true
                 }
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
                     if (selectingForCopy) {
                         selectionArea.incrementColumn()
                         bridge.redraw()
                     } else {
-                        (buffer as vt320).keyPressed(vt320.KEY_RIGHT, ' ',
-                                stateForBuffer)
+                        (buffer as vt320).keyPressed(vt320.KEY_RIGHT, ' ', stateForBuffer)
                         bridge.tryKeyVibrate()
                     }
-                    return true
+                    true
                 }
                 KEYCODE_INSERT -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_INSERT, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_INSERT, ' ', stateForBuffer)
+                    true
                 }
                 KEYCODE_FORWARD_DEL -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_DELETE, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_DELETE, ' ', stateForBuffer)
+                    true
                 }
                 KEYCODE_MOVE_HOME -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_HOME, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_HOME, ' ', stateForBuffer)
+                    true
                 }
                 KEYCODE_MOVE_END -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_END, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_END, ' ', stateForBuffer)
+                    true
                 }
                 KEYCODE_PAGE_UP -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_PAGE_UP, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_PAGE_UP, ' ', stateForBuffer)
+                    true
                 }
                 KEYCODE_PAGE_DOWN -> {
-                    (buffer as vt320).keyPressed(vt320.KEY_PAGE_DOWN, ' ',
-                            stateForBuffer)
-                    return true
+                    (buffer as vt320).keyPressed(vt320.KEY_PAGE_DOWN, ' ', stateForBuffer)
+                    true
                 }
+                else -> false
             }
         } catch (e: IOException) {
             Log.e(TAG, "Problem while trying to handle an onKey() event", e)
@@ -437,49 +404,21 @@ class TerminalKeyListener(private val manager: TerminalManager?,
      * @return successful
      */
     private fun sendFunctionKey(keyCode: Int): Boolean {
-        return when (keyCode) {
-            KeyEvent.KEYCODE_1 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F1, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_2 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F2, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_3 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F3, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_4 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F4, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_5 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F5, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_6 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F6, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_7 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F7, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_8 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F8, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_9 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F9, ' ', 0)
-                true
-            }
-            KeyEvent.KEYCODE_0 -> {
-                (buffer as vt320).keyPressed(vt320.KEY_F10, ' ', 0)
-                true
-            }
-            else -> false
+        var handled = true
+        when (keyCode) {
+            KeyEvent.KEYCODE_1 -> (buffer as vt320).keyPressed(vt320.KEY_F1, ' ', 0)
+            KeyEvent.KEYCODE_2 -> (buffer as vt320).keyPressed(vt320.KEY_F2, ' ', 0)
+            KeyEvent.KEYCODE_3 -> (buffer as vt320).keyPressed(vt320.KEY_F3, ' ', 0)
+            KeyEvent.KEYCODE_4 -> (buffer as vt320).keyPressed(vt320.KEY_F4, ' ', 0)
+            KeyEvent.KEYCODE_5 -> (buffer as vt320).keyPressed(vt320.KEY_F5, ' ', 0)
+            KeyEvent.KEYCODE_6 -> (buffer as vt320).keyPressed(vt320.KEY_F6, ' ', 0)
+            KeyEvent.KEYCODE_7 -> (buffer as vt320).keyPressed(vt320.KEY_F7, ' ', 0)
+            KeyEvent.KEYCODE_8 -> (buffer as vt320).keyPressed(vt320.KEY_F8, ' ', 0)
+            KeyEvent.KEYCODE_9 -> (buffer as vt320).keyPressed(vt320.KEY_F9, ' ', 0)
+            KeyEvent.KEYCODE_0 -> (buffer as vt320).keyPressed(vt320.KEY_F10, ' ', 0)
+            else -> handled = false
         }
+        return handled
     }
 
     /**
@@ -539,12 +478,10 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         volumeKeysChangeFontSize = prefs.getBoolean(PreferenceConstants.VOLUME_FONT, true)
         val stickyModifiers = prefs.getString(PreferenceConstants.STICKY_MODIFIERS,
                 PreferenceConstants.NO)
-        stickyMetas = if (PreferenceConstants.ALT == stickyModifiers) {
-            OUR_ALT_ON
-        } else if (PreferenceConstants.YES == stickyModifiers) {
-            OUR_SHIFT_ON or OUR_CTRL_ON or OUR_ALT_ON
-        } else {
-            0
+        stickyMetas = when (stickyModifiers) {
+            PreferenceConstants.ALT -> OUR_ALT_ON
+            PreferenceConstants.YES -> OUR_SHIFT_ON or OUR_CTRL_ON or OUR_ALT_ON
+            else -> 0
         }
     }
 
