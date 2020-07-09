@@ -58,7 +58,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     fun getViews(view: View, isRead: Boolean): View {
         val consoleView = view.findViewById<TextView>(R.id.listItem)
-        if (isRead) { consoleView.setTextColor(Color.BLUE)
+        if (isRead) { consoleView.setTextColor(resources.getColor(R.color.terminal))
         } else { consoleView.setTextColor(Color.RED) }
         return view
     }
