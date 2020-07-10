@@ -64,7 +64,7 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
         delete.visibility = View.GONE
     }
 
-    override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View, parent: ViewGroup): View {
+    override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         convertView = layoutInflater.inflate(R.layout.row_profile, null)
