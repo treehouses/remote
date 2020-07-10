@@ -75,9 +75,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                     servicesDetailsFragment?.arguments = bundle
                     bind!!.progressBar2.visibility = View.GONE
                     replaceFragment(0)
-                } else if (a == 0) {
-                    bind!!.progressBar2.visibility = View.GONE
-                    showUpdateCliAlert()
                 }
             }
        }
