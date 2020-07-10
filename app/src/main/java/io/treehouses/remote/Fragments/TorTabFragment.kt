@@ -107,7 +107,8 @@ class TorTabFragment : BaseFragment() {
         dialog.setContentView(R.layout.dialog_tor_ports)
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         val window = dialog.window
-        window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window!!.setGravity(Gravity.CENTER)
+        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
