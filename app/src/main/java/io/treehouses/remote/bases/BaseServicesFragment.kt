@@ -1,19 +1,11 @@
 package io.treehouses.remote.bases
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.Gson
-import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.utils.RESULTS
@@ -26,7 +18,7 @@ open class BaseServicesFragment() : BaseFragment() {
     private var startJson = ""
     private var gettingJSON = false
     lateinit var services: ArrayList<ServiceInfo>
-    protected var servicesData: ServicesData? = null
+    private var servicesData: ServicesData? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

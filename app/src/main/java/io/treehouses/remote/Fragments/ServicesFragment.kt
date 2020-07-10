@@ -85,6 +85,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 "Please update CLI",
                 "Please update to the latest CLI version to access services.")
                 .create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 

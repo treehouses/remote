@@ -196,6 +196,7 @@ open class BaseHomeFragment : BaseFragment() {
         animationDrawableGreen.start()
         animationDrawableRed.start()
         val a = createTestConnectionDialog(mView, dismissable, title, messageID)
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
         return a
     }
@@ -223,6 +224,7 @@ open class BaseHomeFragment : BaseFragment() {
                 }
                 .setNegativeButton("Upgrade Later") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 

@@ -91,6 +91,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private fun switchProfile(profile: NetworkProfile?) {
         if (profile == null) return
         progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + profile.ssid, true)
+        progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         progressDialog?.show()
         when {
             profile.isWifi -> {
@@ -153,6 +154,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             selectedLed = options.indexOf(preference)
             listener.sendMessage(optionsCode[selectedLed])
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selectedLed)
+            testConnectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             testConnectionDialog?.show()
             testConnectionResult = false
         }
@@ -228,6 +230,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
                         }
                     }.create()
+            alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             alertDialog.show()
 
         }

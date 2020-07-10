@@ -130,6 +130,7 @@ public class ProfilesListAdapter extends BaseExpandableListAdapter {
                         dialog.dismiss();
                     }
                 }).create();
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         alertDialog.show();
     }
 

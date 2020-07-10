@@ -77,6 +77,7 @@ class TorTabFragment : BaseFragment() {
 
             // create and show the alert dialog
             val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
         logo = bind!!.treehouseLogo
@@ -111,7 +112,9 @@ class TorTabFragment : BaseFragment() {
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
 
-        addPortButton!!.setOnClickListener { dialog.show() }
+        addPortButton!!.setOnClickListener {
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show() }
         addingPortButton.setOnClickListener {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()

@@ -94,13 +94,14 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        var dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive) { _: DialogInterface?, _: Int -> onClickDialog(ID) }
                 .setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> }
                 .create()
-                .show()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun clearNetworkProfiles() {
