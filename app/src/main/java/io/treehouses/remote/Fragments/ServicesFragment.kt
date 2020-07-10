@@ -7,14 +7,12 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Base64.encodeToString
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -92,31 +90,33 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 Constants.MESSAGE_READ -> {
                     val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("ServicesPref", MODE_PRIVATE)
                     val output:String? = msg.obj as String
-                    val a = performAction(output!!, services)
-                    if (a == 1) {
-                        counter += 1
-                        val myEdit = sharedPreferences.edit()
-                        myEdit.putString("output$counter", output)
-                        myEdit.putBoolean("flag", true)
-                        myEdit.putInt("max", counter)
-                        myEdit.apply()
-                        servicesTabFragment = ServicesTabFragment()
-                        servicesDetailsFragment = ServicesDetailsFragment()
-                        val bundle = Bundle()
-                        bundle.putSerializable("services", services)
-                        servicesTabFragment?.arguments = bundle
-                        servicesDetailsFragment?.arguments = bundle
-                        bind!!.progressBar2.visibility = View.GONE
-                        replaceFragment(0)
-                    } else if (a == 0) {
-                        bind!!.progressBar2.visibility = View.GONE
-                        showUpdateCliAlert()
-                    }
-                    else {
-                        counter += 1
-                        val myEdit = sharedPreferences.edit()
-                        myEdit.putString("output$counter", output)
-                        myEdit.apply()
+                    when (performAction(output!!, services)) {
+                        1 -> {
+                            counter += 1
+                            val myEdit = sharedPreferences.edit()
+                            myEdit.putString("output$counter", output)
+                            myEdit.putBoolean("flag", true)
+                            myEdit.putInt("max", counter)
+                            myEdit.apply()
+                            servicesTabFragment = ServicesTabFragment()
+                            servicesDetailsFragment = ServicesDetailsFragment()
+                            val bundle = Bundle()
+                            bundle.putSerializable("services", services)
+                            servicesTabFragment?.arguments = bundle
+                            servicesDetailsFragment?.arguments = bundle
+                            bind!!.progressBar2.visibility = View.GONE
+                            replaceFragment(0)
+                        }
+                        0 -> {
+                            bind!!.progressBar2.visibility = View.GONE
+                            showUpdateCliAlert()
+                        }
+                        else -> {
+                            counter += 1
+                            val myEdit = sharedPreferences.edit()
+                            myEdit.putString("output$counter", output)
+                            myEdit.apply()
+                        }
                     }
                 }
                 Constants.MESSAGE_WRITE -> {
