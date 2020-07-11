@@ -84,11 +84,11 @@ class StatusFragment : BaseFragment() {
             writeToRPI("hostname")
         } else if (lastCommand == "hostname"){
             bind.tvRpiName.text = "Hostname: " + readMessage
-            writeToRPI("treehouses memory used -g")
-        } else if (lastCommand == "treehouses memory used -g") {
+            writeToRPI("treehouses memory used gb")
+        } else if (lastCommand == "treehouses memory used gb") {
             usedMemory = readMessage.trim { it <= ' ' }.toDouble()
-            writeToRPI("treehouses memory total -g")
-        } else if (lastCommand == "treehouses memory total -g") {
+            writeToRPI("treehouses memory total gb")
+        } else if (lastCommand == "treehouses memory total gb") {
             totalMemory = readMessage.trim { it <= ' ' }.toDouble()
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
