@@ -217,7 +217,11 @@ class StatusFragment : BaseFragment() {
                 Constants.MESSAGE_READ -> {
                     val readMessage = msg.obj as String
                     Log.d(TAG, "readMessage = $readMessage")
-                    updateStatus(readMessage)
+                    try {
+                        updateStatus(readMessage)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
         }
