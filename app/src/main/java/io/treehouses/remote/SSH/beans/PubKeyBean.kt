@@ -47,33 +47,33 @@ class PubKeyBean {
         return if (publicKey == null) null else publicKey!!.clone()
     }
 
-    fun getDescription(context: Context): String {
-        if (bits == null) {
-            try {
-                bits = PubKeyUtils.getBitStrength(publicKey, type)
-            } catch (ignored: NoSuchAlgorithmException) {
-            } catch (ignored: InvalidKeySpecException) {
-            }
-        }
-        val res = context.resources
-        val sb = StringBuilder()
-        if (KEY_TYPE_RSA == type) {
-            sb.append(res.getString(R.string.key_type_rsa_bits, bits))
-        } else if (KEY_TYPE_DSA == type) {
-            sb.append(res.getString(R.string.key_type_dsa_bits, 1024))
-        } else if (KEY_TYPE_EC == type) {
-            sb.append(res.getString(R.string.key_type_ec_bits, bits))
-        } else if (KEY_TYPE_ED25519 == type) {
-            sb.append(res.getString(R.string.key_type_ed25519))
-        } else {
-            sb.append(res.getString(R.string.key_type_unknown))
-        }
-        if (isEncrypted) {
-            sb.append(' ')
-            sb.append(res.getString(R.string.key_attribute_encrypted))
-        }
-        return sb.toString()
-    } //
+//    fun getDescription(context: Context): String {
+//        if (bits == null) {
+//            try {
+//                bits = PubKeyUtils.getBitStrength(publicKey, type)
+//            } catch (ignored: NoSuchAlgorithmException) {
+//            } catch (ignored: InvalidKeySpecException) {
+//            }
+//        }
+//        val res = context.resources
+//        val sb = StringBuilder()
+//        if (KEY_TYPE_RSA == type) {
+//            sb.append(res.getString(R.string.key_type_rsa_bits, bits))
+//        } else if (KEY_TYPE_DSA == type) {
+//            sb.append(res.getString(R.string.key_type_dsa_bits, 1024))
+//        } else if (KEY_TYPE_EC == type) {
+//            sb.append(res.getString(R.string.key_type_ec_bits, bits))
+//        } else if (KEY_TYPE_ED25519 == type) {
+//            sb.append(res.getString(R.string.key_type_ed25519))
+//        } else {
+//            sb.append(res.getString(R.string.key_type_unknown))
+//        }
+//        if (isEncrypted) {
+//            sb.append(' ')
+//            sb.append(res.getString(R.string.key_attribute_encrypted))
+//        }
+//        return sb.toString()
+//    } //
 
     //    public boolean changePassword(String oldPassword, String newPassword) throws Exception {
     //        PrivateKey priv;

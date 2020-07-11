@@ -313,27 +313,22 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                 // Something must have interrupted the prompt.
                 if (password == null) return false
             }
-            if (false) {
-                // load specific key using pem format
-                pair = PEMDecoder.decode(String(pubkey.getPrivateKey()!!, charset("UTF-8")).toCharArray(), password)
-            } else {
-                // load using internal generated format
-                val privKey: PrivateKey
-                privKey = try {
-                    PubKeyUtils.decodePrivate(pubkey.getPrivateKey(),
-                            pubkey.type, password)
-                } catch (e: Exception) {
-                    val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
-                    Log.e(TAG, message, e)
-                    bridge!!.outputLine(message)
-                    return false
-                }
-                val pubKey = PubKeyUtils.decodePublic(pubkey.getPublicKey(), pubkey.type)
-
-                // convert key to trilead format
-                pair = KeyPair(pubKey, privKey)
-                Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
+            // load using internal generated format
+            val privKey: PrivateKey
+            privKey = try {
+                PubKeyUtils.decodePrivate(pubkey.getPrivateKey()!!,
+                        pubkey.type, password)
+            } catch (e: Exception) {
+                val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
+                Log.e(TAG, message, e)
+                bridge!!.outputLine(message)
+                return false
             }
+            val pubKey = PubKeyUtils.decodePublic(pubkey.getPublicKey(), pubkey.type)
+
+            // convert key to trilead format
+            pair = KeyPair(pubKey, privKey)
+            Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
             Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
 
             // save this key in memory
