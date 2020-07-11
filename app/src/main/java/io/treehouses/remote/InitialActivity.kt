@@ -1,10 +1,13 @@
 package io.treehouses.remote
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Message
 import android.util.Log
 import android.view.Menu
@@ -31,6 +34,29 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
+    private var mBound = false
+
+    /** Defines callbacks for service binding, passed to bindService()  */
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            Log.e("Bluetooth Service", "CONNECTED")
+            val binder = service as BluetoothChatService.LocalBinder
+            mChatService = binder.service
+            mChatService.updateHandler(mHandler)
+            mChatService.context = applicationContext
+            mBound = true
+            checkStatusNow()
+            openCallFragment(HomeFragment())
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            Log.e("Bluetooth Service", "DISCONNECTED")
+            mBound = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
@@ -39,16 +65,24 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         requestPermission()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        if (mChatService == null) {
-            mChatService = BluetoothChatService(mHandler, applicationContext)
-        } else {
-            mChatService!!.updateHandler(mHandler)
-        }
-        checkStatusNow()
-        openCallFragment(HomeFragment())
+
         setUpDrawer()
         title = "Home"
         GPSService(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Bind to LocalService
+        Intent(this, BluetoothChatService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        mBound = false
     }
 
     private fun setUpDrawer() {
@@ -191,7 +225,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     fun checkStatusNow() {
-        validBluetoothConnection = when (mChatService!!.state) {
+        validBluetoothConnection = when (mChatService.state) {
             Constants.STATE_CONNECTED -> {
                 LogUtils.mConnect()
                 true
@@ -271,6 +305,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         @JvmStatic
         var instance: InitialActivity? = null
             private set
-        private var mChatService: BluetoothChatService? = null
+        private lateinit var mChatService: BluetoothChatService
     }
 }

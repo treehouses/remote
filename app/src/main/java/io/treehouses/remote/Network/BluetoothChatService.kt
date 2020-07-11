@@ -17,22 +17,22 @@
 */
 package io.treehouses.remote.Network
 
+import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.os.Bundle
-import android.os.Handler
-import android.os.Message
+import android.content.Intent
+import android.os.*
 import android.util.Log
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
 import java.util.*
+
 
 /**
  * Created by yubo on 7/11/17.
@@ -43,7 +43,7 @@ import java.util.*
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-class BluetoothChatService(handler: Handler, applicationContext: Context) : Serializable {
+class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : Service(), Serializable {
     // Member fields
     private val mAdapter: BluetoothAdapter
     private var mDevice: BluetoothDevice? = null
@@ -53,6 +53,8 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
     private var mConnectThread: ConnectThread? = null
     private var mConnectedThread: ConnectedThread? = null
 
+    private val mBinder = LocalBinder()
+
     /**
      * Return the current connection state.
      */
@@ -61,10 +63,24 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         private set
     private var mNewState: Int
     private var bNoReconnect = false
-    private val context: Context
+    var context: Context?
+
+
     fun updateHandler(handler: Handler) {
         mHandler = handler
     }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        Log.e("Bluetooth Service", "ON BIND")
+        return mBinder
+    }
+
+    inner class LocalBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods
+        val service: BluetoothChatService
+            get() = this@BluetoothChatService
+    }
+
 
     /**
      * Update UI title according to the current state of the chat connection
