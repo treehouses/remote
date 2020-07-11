@@ -127,13 +127,13 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     }
 
     override fun setScreenSize(c: Int, r: Int, broadcast: Boolean) {
-        val oldrows = height
+        val oldrows = rows
         super.setScreenSize(c, r, false)
 
         // Don't let the cursor go off the screen. Scroll down if needed.
         if (R >= r) {
             screenBase += R - (r - 1)
-            setWindowBase(screenBase)
+            setBaseWindow(screenBase)
         }
         R = cursorRow
         C = cursorColumn
@@ -813,7 +813,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     val red = rgb[0].substring(0, 2).toInt(16) and 0xFF
                     val green = rgb[1].substring(0, 2).toInt(16) and 0xFF
                     val blue = rgb[2].substring(0, 2).toInt(16) and 0xFF
-                    display.setColor(colorIndex, red, green, blue)
+                    display!!.setColor(colorIndex, red, green, blue)
                 }
             } catch (e: Exception) {
                 debugStr!!.append("OSC: invalid color sequence encountered: ")
@@ -829,10 +829,10 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     }
 
     private fun _SetCursor(row: Int, col: Int) {
-        var maxr = height - 1
+        var maxr = rows - 1
         val tm = topMargin
         R = if (row < 0) 0 else row
-        C = if (col < 0) 0 else if (col >= width) width - 1 else col
+        C = if (col < 0) 0 else if (col >= columns) columns - 1 else col
         if (!moveoutsidemargins) {
             R += tm
             maxr = bottomMargin
@@ -842,8 +842,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
 
     private fun putChar(c: Char, isWide: Boolean, doshowcursor: Boolean) {
         var c = c
-        val rows = height //statusline
-        val columns = width
+        val rows = rows //statusline
+        val columns = columns
         when (term_state) {
             TSTATE_DATA -> run {
                 /* FIXME: we shouldn't use chars with bit 8 set if ibmcharset.
@@ -1194,12 +1194,12 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             }
             TSTATE_VT52X -> {
                 C = c.toInt() - 37
-                if (C < 0) C = 0 else if (C >= width) C = width - 1
+                if (C < 0) C = 0 else if (C >= columns) C = columns - 1
                 term_state = TSTATE_VT52Y
             }
             TSTATE_VT52Y -> {
                 R = c.toInt() - 37
-                if (R < 0) R = 0 else if (R >= height) R = height - 1
+                if (R < 0) R = 0 else if (R >= rows) R = rows - 1
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG0 -> {
@@ -1280,7 +1280,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         var i = 0
                         while (i <= DCEvar) {
                             when (DCEvars[i]) {
-                                3 -> setScreenSize(80, height, true)
+                                3 -> setScreenSize(80, rows, true)
                                 4 -> {
                                 }
                                 5 -> {
@@ -1307,7 +1307,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     KeyLeft[0] = "\u001bOD"
                                 }
                                 2 -> vt52mode = false
-                                3 -> setScreenSize(132, height, true)
+                                3 -> setScreenSize(132, rows, true)
                                 6 -> moveoutsidemargins = false
                                 7 -> wraparound = true
                                 25 -> showCursor(true)
@@ -1329,7 +1329,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     KeyLeft[0] = "\u001b[D"
                                 }
                                 2 -> vt52mode = true
-                                3 -> setScreenSize(80, height, true)
+                                3 -> setScreenSize(80, rows, true)
                                 6 -> moveoutsidemargins = true
                                 7 -> wraparound = false
                                 25 -> showCursor(false)
@@ -1454,7 +1454,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     'g' -> {
                         when (DCEvars[0]) {
-                            3 -> Tabs = ByteArray(width)
+                            3 -> Tabs = ByteArray(columns)
                             0 -> Tabs?.set(C, 0)
                         }
                     }
@@ -1502,7 +1502,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     'd' -> {
                         R = DCEvars[0] - 1
-                        if (R < 0) R = 0 else if (R >= height) R = height - 1
+                        if (R < 0) R = 0 else if (R >= rows) R = rows - 1
                     }
                     'D' -> {
                         if (DCEvars[0] == 0) DCEvars[0] = 1
@@ -1530,7 +1530,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     'G' -> {
                         C = DCEvars[0] - 1
-                        if (C < 0) C = 0 else if (C >= width) C = width - 1
+                        if (C < 0) C = 0 else if (C >= columns) C = columns - 1
                         if (debug > 1) debug("ESC [ " + DCEvars[0] + " G")
                     }
                     'H' -> {
@@ -1543,8 +1543,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     'f' -> {
                         /* gets 2 arguments */R = DCEvars[0] - 1
                         C = DCEvars[1] - 1
-                        if (C < 0) C = 0 else if (C >= width) C = width - 1
-                        if (R < 0) R = 0 else if (R >= height) R = height - 1
+                        if (C < 0) C = 0 else if (C >= columns) C = columns - 1
+                        if (R < 0) R = 0 else if (R >= rows) R = rows - 1
                         if (debug > 2) debug("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " f")
                     }
                     'S' -> if (DCEvars[0] == 0) insertLine(bottomMargin, SCROLL_UP) else insertLine(bottomMargin, DCEvars[0], SCROLL_UP)
@@ -1771,7 +1771,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         onegl = -1 // Single shift override
 
         /* reset tabs */
-        var nw = width
+        var nw = columns
         if (nw < 132) nw = 132
         Tabs = ByteArray(nw)
         var i = 0
@@ -1779,12 +1779,12 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             Tabs!![i] = 1
             i += 8
         }
-        deleteArea(0, 0, width, height, attributes)
-        setMargins(0, height)
+        deleteArea(0, 0, columns, rows, attributes)
+        setMargins(0, rows)
         R = 0
         C = R
         _SetCursor(0, 0)
-        if (display != null) display.resetColors()
+        if (display != null) display!!.resetColors()
         showCursor(true)
         /*FIXME:*/term_state = TSTATE_DATA
     }

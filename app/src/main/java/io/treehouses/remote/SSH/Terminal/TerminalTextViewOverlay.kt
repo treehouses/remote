@@ -20,7 +20,6 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Build
 import android.text.ClipboardManager
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -51,9 +50,9 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         val buffer = StringBuilder()
         var previousTotalLength = 0
         var r = 0
-        while (r < numRows && vb.charArray[r] != null) {
+        while (r < numRows && vb.charArray?.get(r) != null) {
             for (c in 0 until numCols) {
-                buffer.append(vb.charArray[r][c])
+                buffer.append(vb.charArray!![r]!![c])
             }
 
             // Truncate all the new whitespace without removing the old data.
@@ -67,7 +66,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
             previousTotalLength = buffer.length
             r++
         }
-        oldScrollY = vb.getWindowBase() * lineHeight
+        oldScrollY = vb.getBaseWindow() * lineHeight
         text = buffer
     }
 
@@ -83,7 +82,7 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         if (numNewRows <= 0) return
         val newLines = StringBuilder(numNewRows)
         for (i in 0 until numNewRows) newLines.append('\n')
-        oldScrollY = (vb.getWindowBase() + numNewRows) * lineHeight
+        oldScrollY = (vb.getBaseWindow() + numNewRows) * lineHeight
         oldBufferHeight = numRows
         append(newLines)
     }
@@ -127,13 +126,13 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
     override fun scrollTo(x: Int, y: Int) {
         val lineMultiple = (y * 2 + 1) / (lineHeight * 2)
         val bridge = terminalView.bridge
-        bridge.vDUBuffer!!.setWindowBase(lineMultiple)
+        bridge.vDUBuffer!!.setBaseWindow(lineMultiple)
         super.scrollTo(0, y)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) refreshTextFromBuffer()
-        else if (event.action == MotionEvent.ACTION_UP) super.scrollTo(0, terminalView.bridge.vDUBuffer!!.getWindowBase() * lineHeight)
+        else if (event.action == MotionEvent.ACTION_UP) super.scrollTo(0, terminalView.bridge.vDUBuffer!!.getBaseWindow() * lineHeight)
 
         // Mouse input is treated differently:
         if (MotionEventCompat.getSource(event) == InputDevice.SOURCE_MOUSE) {

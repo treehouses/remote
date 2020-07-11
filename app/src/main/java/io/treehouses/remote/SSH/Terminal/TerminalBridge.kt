@@ -31,7 +31,6 @@ import io.treehouses.remote.SSH.Colors
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Relay
 import io.treehouses.remote.SSH.SSH
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.SelectionArea
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
@@ -207,9 +206,9 @@ class TerminalBridge : VDUDisplay {
         }
 
         // Don't keep any scrollback if a session is not being opened.
-        if (host.wantSession) vDUBuffer?.setBufferSize(scrollback) else vDUBuffer?.setBufferSize(0)
+        if (host.wantSession) vDUBuffer?.bufferSize = scrollback else vDUBuffer?.bufferSize = 0
         resetColors()
-        vDUBuffer?.setDisplay(this)
+        vDUBuffer?.display = this
         selectionArea = SelectionArea()
         keyHandler = TerminalKeyListener(manager, this, vDUBuffer!!, host.encoding)
     }
@@ -585,7 +584,7 @@ class TerminalBridge : VDUDisplay {
             var isWideCharacter = false
 
             // walk through all lines in the buffer
-            for (l in 0 until vDUBuffer!!.height) {
+            for (l in 0 until vDUBuffer!!.rows) {
 
                 // check if this line is dirty and needs to be repainted
                 // also check for entire-buffer dirty flags
@@ -596,9 +595,9 @@ class TerminalBridge : VDUDisplay {
 
                 // walk through all characters in this line
                 var c = 0
-                while (c < vDUBuffer!!.width) {
+                while (c < vDUBuffer!!.columns) {
                     var addr = 0
-                    val currAttr = vDUBuffer!!.charAttributes[vDUBuffer!!.windowBase + l][c]
+                    val currAttr = vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c]
                     run {
                         var fgcolor = defaultFg
                         var bgcolor = defaultBg
@@ -624,8 +623,8 @@ class TerminalBridge : VDUDisplay {
                     isWideCharacter = currAttr and VDUBuffer.FULLWIDTH != 0L
                     if (isWideCharacter) addr++ else {
                         // determine the amount of continuous characters with the same settings and print them all at once
-                        while (c + addr < vDUBuffer!!.width
-                                && vDUBuffer!!.charAttributes[vDUBuffer!!.windowBase + l][c + addr] == currAttr) {
+                        while (c + addr < vDUBuffer!!.columns
+                                && vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c + addr] == currAttr) {
                             addr++
                         }
                     }
@@ -650,9 +649,11 @@ class TerminalBridge : VDUDisplay {
 
                     // write the text string starting at 'c' for 'addr' number of characters
                     defaultPaint.color = fg
-                    if (currAttr and VDUBuffer.INVISIBLE == 0L) canvas.drawText(vDUBuffer!!.charArray[vDUBuffer!!.windowBase + l], c,
-                            addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
-                            defaultPaint)
+                    if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
+                        canvas.drawText(it, c,
+                                addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
+                                defaultPaint)
+                    }
 
                     // Restore the previous clip region
                     canvas.restore()
@@ -858,9 +859,9 @@ class TerminalBridge : VDUDisplay {
      */
     fun scanForURLs(): List<String> {
         val urls: MutableList<String> = ArrayList()
-        val visibleBuffer = CharArray(vDUBuffer!!.height * vDUBuffer!!.width)
-        for (l in 0 until vDUBuffer!!.height) System.arraycopy(vDUBuffer!!.charArray[vDUBuffer!!.windowBase + l], 0,
-                visibleBuffer, l * vDUBuffer!!.width, vDUBuffer!!.width)
+        val visibleBuffer = CharArray(vDUBuffer!!.rows * vDUBuffer!!.columns)
+        for (l in 0 until vDUBuffer!!.rows) System.arraycopy(vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]!!, 0,
+                visibleBuffer, l * vDUBuffer!!.columns, vDUBuffer!!.columns)
         val urlMatcher = PatternHolder.urlPattern!!.matcher(String(visibleBuffer))
         while (urlMatcher.find()) urls.add(urlMatcher.group())
         return urls
@@ -877,7 +878,7 @@ class TerminalBridge : VDUDisplay {
      */
     fun resetScrollPosition() {
         // if we're in scrollback, scroll to bottom of window on input
-        if (vDUBuffer!!.windowBase != vDUBuffer!!.screenBase) vDUBuffer!!.setWindowBase(vDUBuffer!!.screenBase)
+        if (vDUBuffer!!.windowBase != vDUBuffer!!.screenBase) vDUBuffer!!.setBaseWindow(vDUBuffer!!.screenBase)
     }
 
     /**
