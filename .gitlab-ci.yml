@@ -6,7 +6,10 @@ job:
     - git fetch
     - var=$(git describe --tags)
     - version=${var:1}
+    - exists=$(git ls-remote --heads origin fdroid)
+    - if [[ -n $exists ]]; then
     - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}" --delete fdroid
+    - fi
     - git checkout -b fdroid
     - sed -i "s#versionCode appVersionCode#versionCode $version#" app/build.gradle
     - sed -i "s#versionName appVersionName#versionName \"$version\"#" app/build.gradle
