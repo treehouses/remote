@@ -29,8 +29,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesTabFragment: ServicesTabFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
-    var counter = 0
-
+    private var counter = 0
     override fun onSaveInstanceState(outState: Bundle) {
 
     }
@@ -64,6 +63,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             val a = performAction(output!!, services)
             if (a == 1) {
                 showUI()
+                writeToRPI("treehouses remote allservices\n")
                 worked = true
             }
         }
