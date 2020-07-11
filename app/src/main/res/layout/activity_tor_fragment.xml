@@ -98,7 +98,7 @@
 
             android:layout_marginEnd="20dp"
             android:layout_marginRight="8dp"
-            android:text="Now" />
+            android:text="Notify Now" />
 
     </LinearLayout>
 
