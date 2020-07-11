@@ -407,18 +407,10 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             if ((connectionInfo.clientToServerCryptoAlgorithm
                             == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
                             == connectionInfo.serverToClientMACAlgorithm)) {
-                bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_using_algorithm,
-                        connectionInfo.clientToServerCryptoAlgorithm,
-                        connectionInfo.clientToServerMACAlgorithm))
+                outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
             } else {
-                bridge!!.outputLine(manager!!.res!!.getString(
-                        R.string.terminal_using_c2s_algorithm,
-                        connectionInfo.clientToServerCryptoAlgorithm,
-                        connectionInfo.clientToServerMACAlgorithm))
-                bridge!!.outputLine(manager!!.res!!.getString(
-                        R.string.terminal_using_s2c_algorithm,
-                        connectionInfo.serverToClientCryptoAlgorithm,
-                        connectionInfo.serverToClientMACAlgorithm))
+                outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
+                outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
             }
         } catch (e: IOException) {
             Log.e(TAG, "Problem in SSH connection thread during authentication", e)
@@ -445,6 +437,12 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         } catch (e: Exception) {
             Log.e(TAG, "Problem in SSH connection thread during authentication", e)
         }
+    }
+
+    private fun outputCryptoAlgo(connectionInfo: ConnectionInfo, stringRes: Int) {
+        bridge!!.outputLine(manager!!.res!!.getString(stringRes,
+                connectionInfo.clientToServerCryptoAlgorithm,
+                connectionInfo.clientToServerMACAlgorithm))
     }
 
     fun close() {

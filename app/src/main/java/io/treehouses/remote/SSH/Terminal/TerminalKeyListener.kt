@@ -55,36 +55,33 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     private var selectingForCopy = false
     private val selectionArea: SelectionArea
     private val prefs: SharedPreferences
-    private fun specialKeys(keyCode: Int, event: KeyEvent, left: Boolean, right: Boolean) : Boolean {
+    private fun specialKeys(keyCode: Int, left: Boolean, right: Boolean) : Boolean {
         // Ignore all key-up events except for the special keys
-        if (event.action == KeyEvent.ACTION_UP) {
-            return if (right) {
-                if (keyCode == KeyEvent.KEYCODE_ALT_RIGHT
-                        && metaState and OUR_SLASH != 0) {
-                    metaState = metaState and OUR_TRANSIENT.inv()
-                    bridge.transport!!.write('/'.toInt())
-                    true
-                } else if (keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
-                        && metaState and OUR_TAB != 0) {
-                    metaState = metaState and OUR_TRANSIENT.inv()
-                    bridge.transport!!.write(0x09)
-                    true
-                } else false
-            } else if (left) {
-                if (keyCode == KeyEvent.KEYCODE_ALT_LEFT
-                        && metaState and OUR_SLASH != 0) {
-                    metaState = metaState and OUR_TRANSIENT.inv()
-                    bridge.transport!!.write('/'.toInt())
-                    true
-                } else if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
-                        && metaState and OUR_TAB != 0) {
-                    metaState = metaState and OUR_TRANSIENT.inv()
-                    bridge.transport!!.write(0x09)
-                    true
-                } else false
+        return if (right) {
+            if (keyCode == KeyEvent.KEYCODE_ALT_RIGHT
+                    && metaState and OUR_SLASH != 0) {
+                metaState = metaState and OUR_TRANSIENT.inv()
+                bridge.transport!!.write('/'.toInt())
+                true
+            } else if (keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
+                    && metaState and OUR_TAB != 0) {
+                metaState = metaState and OUR_TRANSIENT.inv()
+                bridge.transport!!.write(0x09)
+                true
             } else false
-        }
-        return false
+        } else if (left) {
+            if (keyCode == KeyEvent.KEYCODE_ALT_LEFT
+                    && metaState and OUR_SLASH != 0) {
+                metaState = metaState and OUR_TRANSIENT.inv()
+                bridge.transport!!.write('/'.toInt())
+                true
+            } else if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
+                    && metaState and OUR_TAB != 0) {
+                metaState = metaState and OUR_TRANSIENT.inv()
+                bridge.transport!!.write(0x09)
+                true
+            } else false
+        } else false
     }
     /**
      * Handle onKey() events coming down from a [TerminalView] above us.
@@ -102,8 +99,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                     interpretAsHardKeyboard
             val controlNumbersAreFKeys = controlNumbersAreFKeysOnSoftKeyboard &&
                     !interpretAsHardKeyboard
-
-            if (specialKeys(keyCode, event, leftModifiersAreSlashAndTab, rightModifiersAreSlashAndTab)) return true
+            if (event.action == KeyEvent.ACTION_UP) return specialKeys(keyCode, leftModifiersAreSlashAndTab, rightModifiersAreSlashAndTab)
 
             //Log.i("CBKeyDebug", KeyEventUtil.describeKeyEvent(keyCode, event));
             bridge.resetScrollPosition()
