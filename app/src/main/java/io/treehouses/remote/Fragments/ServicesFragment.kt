@@ -47,7 +47,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         setTabEnabled(false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(handler)
-        writeToRPI("treehouses remote allservices\n")
+        writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
         return bind!!.root
     }
 

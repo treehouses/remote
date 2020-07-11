@@ -59,7 +59,7 @@ class StatusFragment : BaseFragment() {
 
     private fun upgradeOnViewClickListener() {
         bind.upgrade.setOnClickListener {
-            writeToRPI("treehouses upgrade")
+            writeToRPI(getString(R.string.TREEHOUSES_UPGRADE))
             updateRightNow = true
             bind.progressBar.visibility = View.VISIBLE
         }
@@ -73,22 +73,22 @@ class StatusFragment : BaseFragment() {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
         if (lastCommand == "hostname") {
             setCard(bind.tvRpiName, bind.rpiName, "Connected RPI Name: $readMessage")
-            writeToRPI("treehouses remote status")
-        } else if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
+            writeToRPI(getString(R.string.TREEHOUSES_REMOTE_STATUS))
+        } else if (readMessage.trim().split(" ").size == 5 && lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUS)) {
             val res = readMessage.trim().split(" ")
             setCard(bind.tvWifi, bind.wifiStatus, "RPI Wifi Connection : " + res[0])
             bind.imageText.text = String.format("Treehouses Image Version: %s", res[2])
             setCard(bind.tvRpiType, bind.rpiType, "RPI Type : " + res[4])
             rpiVersion = res[3]
             Log.e("REACHED", "YAYY")
-            writeToRPI("treehouses memory free")
-        } else if (lastCommand == "treehouses memory free") {
+            writeToRPI(getString(R.string.TREEHOUSES_MEMORY_FREE))
+        } else if (lastCommand == getString(R.string.TREEHOUSES_MEMORY_FREE)) {
             setCard(bind.tvMemoryStatus, bind.memoryStatus, "Memory: " + readMessage + "bytes available")
-            writeToRPI("treehouses temperature celsius")
-        } else if(lastCommand == "treehouses temperature celsius"){
+            writeToRPI(getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS))
+        } else if(lastCommand == getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS)){
             setCard(bind.tvTemperature, bind.temperature, "Temperature: " + readMessage)
-            writeToRPI("treehouses internet")
-        } else if (lastCommand == "treehouses internet") {
+            writeToRPI(getString(R.string.TREEHOUSES_INTERNET))
+        } else if (lastCommand == getString(R.string.TREEHOUSES_INTERNET)) {
             checkWifiStatus(readMessage)
         } else {
             checkUpgradeStatus(readMessage)
@@ -99,7 +99,7 @@ class StatusFragment : BaseFragment() {
         bind.tvWifi.text = String.format("RPI Wifi Connection: %s", readMessage)
         if (readMessage.startsWith("true")) {
             bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
-            writeToRPI("treehouses upgrade --check")
+            writeToRPI(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
         } else {
             bind.wifiStatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
             bind.tvUpgradeCheck.text = "Upgrade Status: NO INTERNET"
@@ -155,7 +155,7 @@ class StatusFragment : BaseFragment() {
                 .setPositiveButton("Rename"
                 ) { _: DialogInterface?, _: Int ->
                     if (mEditText.text.toString() != "") {
-                        writeToRPI("treehouses rename " + mEditText.text.toString())
+                        writeToRPI( getString(R.string.TREEHOUSES_RENAME) + " " + mEditText.text.toString())
                         Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()

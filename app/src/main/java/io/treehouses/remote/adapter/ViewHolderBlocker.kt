@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
+import com.mikepenz.iconics.utils.Utils.getString
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.StatusFragment
 import io.treehouses.remote.Network.BluetoothChatService
@@ -38,32 +39,32 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     init {
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-        listener.sendMessage("treehouses blocker")
+        listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER))
 
         radioGroup.setOnCheckedChangeListener { _: RadioGroup?, i: Int ->
             when (i) {
                 R.id.radioButton1 -> {
-                    listener.sendMessage("treehouses blocker 0")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 0")
                     context.toast("Blocker Disabled")
                 }
                 R.id.radioButton2 -> {
-                    listener.sendMessage("treehouses blocker 1")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 1")
                     context.toast("Blocker set to level 1")
                 }
                 R.id.radioButton3 -> {
-                    listener.sendMessage("treehouses blocker 2")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 2")
                     context.toast("Blocker set to level 2")
                 }
                 R.id.radioButton4 -> {
-                    listener.sendMessage("treehouses blocker 3")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 3")
                     context.toast("Blocker set to level 3")
                 }
                 R.id.radioButton5 -> {
-                    listener.sendMessage("treehouses blocker 4")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 4")
                     context.toast("Blocker set to level 4")
                 }
                 R.id.radioButton6 -> {
-                    listener.sendMessage("treehouses blocker max")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " max")
                     context.toast("Blocker set to maximum level")
                 }
             }

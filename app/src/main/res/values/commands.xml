@@ -6,12 +6,21 @@
     <string name="TREEHOUSES_INTERNET">treehouses internet\n</string>
     <string name="TREEHOUSES_REMOTE_CHECK">treehouses remote check\n</string>
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
+    <string name="TREEHOUSES_REMOTE_STATUS">treehouses remote status\n</string>
+    <string name="TREEHOUSES_REMOTE_COMMANDS">treehouses remote commands</string>
     <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
+    <string name="TREEHOUSES_TEMPERATURE_CELSIUS">treehouses temperature celsius\n</string>
+    <string name="TREEHOUSES_MEMORY_FREE">treehouses memory free</string>
+    <string name="TREEHOUSES_MEMORY_USED">treehouses memory used</string>
+    <string name="TREEHOUSES_MEMORY_TOTAL">treehouses memory total\n</string>
+    <string name="TREEHOUSES_RENAME">treehouses rename</string>
 
     <string name="TREEHOUSES_NETWORKMODE">treehouses networkmode\n</string>
+    <string name="TREEHOUSES_NETWORKMODE_INFO">treehouses networkmode info\n</string>
     <string name="TREEHOUSES_WIFI">treehouses wifi \"%1$s\" \"%2$s\"\n</string>
+    <string name="TREEHOUSES_WIFI_COUNTRY">treehouses wificountry</string>
     <string name="TREEHOUSES_WIFI_HIDDEN">treehouses wifihidden \"%1$s\" \"%2$s\"\n</string>
     <string name="TREEHOUSES_AP">treehouses ap \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_AP_HIDDEN">treehouses aphidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
@@ -23,7 +32,29 @@
     <string name="TREEHOUSES_WIFI_ENTERPRISE">treehouses wifi \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_WIFI_HIDDEN_ENTERPRISE">treehouses wifihidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
 
-
     <string name="TREEHOUSES_HELP_JSON">treehouses remote help json\n</string>
+    <string name="TREEHOUSES_REMOTE_ALLSERVICES">treehouses remote allservices\n</string>
+    <string name="TREEHOUSES_TOR_PORTS">treehouses tor ports</string>
+    <string name="TREEHOUSES_TOR_NOTICE_ON">treehouses tor notice on</string>
+    <string name="TREEHOUSES_TOR_NOTICE_OFF">treehouses tor notice off</string>
+    <string name="TREEHOUSES_TOR_DELETE">treehouses tor delete</string>
+    <string name="TREEHOUSES_TOR_START">treehouses tor start</string>
+    <string name="TREEHOUSES_TOR_STOP">treehouses tor stop</string>
+    <string name="TREEHOUSES_TOR_ADD">treehouses tor add</string>
+    <string name="TREEHOUSES_TOR_NOTICE">treehouses tor notice</string>
+    <string name="TREEHOUSES_TOR_STATUS">treehouses tor status</string>
+    <string name="TREEHOUSES_TOR">treehouses tor</string>
+    <string name="TREEHOUSES_SERVICES">treehouses services</string>
+
+    <string name="TREEHOUSES_BLOCKER">treehouses blocker</string>
+    <string name="TREEHOUSES_CAMERA">treehouses camera</string>
+    <string name="TREEHOUSES_CAMERA_ON">treehouses camera on</string>
+    <string name="TREEHOUSES_CAMERA_OFF">treehouses camera off</string>
+    <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add</string>
+    <string name="TREEHOUSES_VNC_ON">treehouses vnc on</string>
+    <string name="TREEHOUSES_VNC_OFF">treehouses vnc off</string>
+
+
+
 
 </resources>

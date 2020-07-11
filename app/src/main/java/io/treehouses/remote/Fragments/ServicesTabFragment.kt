@@ -65,7 +65,7 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
             val i = output.trim { it <= ' ' }.toInt()
             if (i >= total) {
                 total = i
-                writeToRPI("treehouses memory used")
+                writeToRPI(getString(R.string.TREEHOUSES_MEMORY_USED))
             } else {
                 used = i
                 ObjectAnimator.ofInt(bind!!.spaceLeft, "progress", (used.toFloat() / total * 100).toInt())
@@ -93,7 +93,7 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
 
     override fun onResume() {
         super.onResume()
-        writeToRPI("treehouses memory total\n")
+        writeToRPI(getString(R.string.TREEHOUSES_MEMORY_TOTAL))
     }
 
     companion object {

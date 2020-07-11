@@ -47,10 +47,10 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
         btnStartConfig.setOnClickListener { openVnc(context, v, editTextIp) }
         vnc.setOnClickListener {
             if (vnc.isChecked) {
-                listener.sendMessage("treehouses vnc on")
+                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_VNC_ON))
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_SHORT).show()
             } else {
-                listener.sendMessage("treehouses vnc off")
+                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_VNC_OFF))
             }
         }
     }
