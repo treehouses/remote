@@ -307,27 +307,29 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         titleBarHide = prefs!!.getBoolean(PreferenceConstants.TITLEBARHIDE, false)
-        if (titleBarHide) {
-            // This is a separate method because Gradle does not uniformly respect the conditional
-            // Build check. See: https://code.google.com/p/android/issues/detail?id=137195
-            requestActionBar()
-        }
+        if (titleBarHide) requestActionBar()
         bind = ActivitySshConsoleBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
-        // hide status bar if requested by user
-        if (prefs!!.getBoolean(PreferenceConstants.FULLSCREEN, false)) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        }
-        volumeControlStream = AudioManager.STREAM_MUSIC
-
         // handle requested console from incoming intent
-        if (icicle == null) {
-            requested = intent.data
+        if (icicle == null) { requested = intent.data
         } else {
             val uri = icicle.getString(STATE_SELECTED_URI)
             if (uri != null) requested = Uri.parse(uri)
         }
+        setUpTerminalPager()
+        empty = findViewById(android.R.id.empty)
+        promptListeners()
+        setUpKeyboard()
+        addKeyboardListeners()
+        keyboardScroll()
+        setUpActionBar()
+
+        detectSoftVisibility()
+
+    }
+
+    private fun setUpTerminalPager() {
         bind.pager.addOnPageChangeListener(
                 object : SimpleOnPageChangeListener() {
                     override fun onPageSelected(position: Int) {
@@ -337,11 +339,11 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
                 })
         adapter = TerminalPagerAdapter()
         bind.pager.adapter = adapter
-        empty = findViewById(android.R.id.empty)
-        promptListeners()
-        setUpKeyboard()
-        addKeyboardListeners()
-        keyboardScroll()
+        if (tabs != null) setupTabLayoutWithViewPager()
+        bind.pager.setOnClickListener { showEmulatedKeys(true) }
+    }
+
+    private fun setUpActionBar() {
         actionBar = supportActionBar
         if (actionBar != null) {
             actionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -355,9 +357,9 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
                 }
             }
         }
-        if (tabs != null) setupTabLayoutWithViewPager()
-        bind.pager.setOnClickListener { showEmulatedKeys(true) }
+    }
 
+    private fun detectSoftVisibility() {
         // Change keyboard button image according to soft keyboard visibility
         // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
         mContentView = findViewById(android.R.id.content)
@@ -369,11 +371,9 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             if (keypadHeight > screenHeight * 0.15) {
                 // keyboard is opened
                 bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
-                //                mKeyboardButton.setContentDescription(getResources().getText(R.string.image_description_hide_keyboard));
             } else {
                 // keyboard is closed
                 bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
-                //                mKeyboardButton.setContentDescription(getResources().getText(R.string.image_description_show_keyboard));
             }
         }
     }
@@ -634,11 +634,6 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         }
     }
 
-    override fun onOptionsMenuClosed(menu: Menu) {
-        super.onOptionsMenuClosed(menu)
-        volumeControlStream = AudioManager.STREAM_MUSIC
-    }
-
     public override fun onStart() {
         super.onStart()
 
@@ -686,6 +681,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             Log.e(TAG, "We're not bound in onNewIntent()")
             return
         }
+        setIntentRequested()
+    }
+
+    private fun setIntentRequested() {
         val requestedBridge = bound!!.getConnectedBridge(requested!!.fragment)
         var requestedIndex = 0
         synchronized(bind.pager) {
