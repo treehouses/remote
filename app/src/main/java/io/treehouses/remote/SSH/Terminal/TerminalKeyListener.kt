@@ -112,12 +112,11 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                 bridge.transport!!.write(input)
                 return true
             }
-
+            var flag = true
             /// Handle alt and shift keys if they aren't repeating
             if (event.repeatCount == 0) {
                 when {
                     rightModifiersAreSlashAndTab -> {
-                        var flag = true
                         when (keyCode) {
                             KeyEvent.KEYCODE_ALT_RIGHT -> metaState = metaState or OUR_SLASH
                             KeyEvent.KEYCODE_SHIFT_RIGHT -> metaState = metaState or OUR_TAB
@@ -125,10 +124,8 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                             KeyEvent.KEYCODE_ALT_LEFT -> metaPress(OUR_ALT_ON)
                             else -> flag = false
                         }
-                        if (flag) return true
                     }
                     leftModifiersAreSlashAndTab -> {
-                        var flag = true
                         when (keyCode) {
                             KeyEvent.KEYCODE_ALT_LEFT -> metaState = metaState or OUR_SLASH
                             KeyEvent.KEYCODE_SHIFT_LEFT -> metaState = metaState or OUR_TAB
@@ -136,27 +133,20 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                             KeyEvent.KEYCODE_ALT_RIGHT -> metaPress(OUR_ALT_ON)
                             else -> flag = false
                         }
-                        if (flag) return true
                     }
                     else -> {
                         when (keyCode) {
-                            KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> {
-                                metaPress(OUR_ALT_ON)
-                                return true
-                            }
-                            KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> {
-                                metaPress(OUR_SHIFT_ON)
-                                return true
-                            }
+                            KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> metaPress(OUR_ALT_ON)
+                            KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> metaPress(OUR_SHIFT_ON)
+                            else -> flag = false
                         }
                     }
                 }
-                if (keyCode == KEYCODE_CTRL_LEFT || keyCode == KEYCODE_CTRL_RIGHT) {
-                    metaPress(OUR_CTRL_ON)
-                    return true
-                }
+                if (!flag && (keyCode == KEYCODE_CTRL_LEFT || keyCode == KEYCODE_CTRL_RIGHT)) metaPress(OUR_CTRL_ON)
+                else flag = false
             }
-            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+
+            if (!flag && keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
                 if (selectingForCopy) {
                     if (selectionArea.isSelectingOrigin) selectionArea.finishSelectingOrigin() else {
                         if (clipboard != null) {
@@ -178,8 +168,10 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                     } else metaPress(OUR_CTRL_ON, true)
                 }
                 bridge.redraw()
-                return true
+                flag = true
             }
+            if (flag) return true
+
             var derivedMetaState = event.metaState
             if (metaState and OUR_SHIFT_MASK != 0) derivedMetaState = derivedMetaState or KeyEvent.META_SHIFT_ON
             if (metaState and OUR_ALT_MASK != 0) derivedMetaState = derivedMetaState or KeyEvent.META_ALT_ON
@@ -189,16 +181,12 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                 bridge.redraw()
             }
 
-            // Test for modified numbers becoming function keys
-            if (shiftedNumbersAreFKeys && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
-                if (sendFunctionKey(keyCode)) return true
-            }
-            if (controlNumbersAreFKeys && derivedMetaState and HC_META_CTRL_ON != 0) {
-                if (sendFunctionKey(keyCode)) return true
-            }
             var shouldReturn = false
-            // CTRL-SHIFT-C to copy.
-            if (keyCode == KeyEvent.KEYCODE_C && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
+
+            // Test for modified numbers becoming function keys
+            if (shiftedNumbersAreFKeys && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && sendFunctionKey(keyCode)) shouldReturn = true
+            else if (controlNumbersAreFKeys && derivedMetaState and HC_META_CTRL_ON != 0 && !shouldReturn && sendFunctionKey(keyCode)) shouldReturn = true
+            else if (keyCode == KeyEvent.KEYCODE_C && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
                 bridge.copyCurrentSelection()
                 shouldReturn = true
             }
