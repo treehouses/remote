@@ -150,7 +150,6 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
             // read in all known hosts from hostdb
             val hosts = KnownHosts()
-            val result: Boolean
             val matchName = String.format(Locale.US, "%s:%d", hostname, port)
             val fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
             val algorithmName: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
@@ -163,13 +162,12 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                     // prompt user
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
-                    result = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
                     Log.e("HOST KEY", Arrays.toString(serverHostKey))
                     //                    if (result) {
 //                        // save this key in known database
 //                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
 //                    }
-                    result
+                    continueConnecting()
                 }
                 KnownHosts.HOSTKEY_HAS_CHANGED -> {
                     val header = String.format("@   %s   @",
@@ -184,8 +182,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                     bridge!!.outputLine(String.format(manager!!.res!!.getString(R.string.host_fingerprint), algorithmName, fingerprint))
 
                     // Users have no way to delete keys, so we'll prompt them for now.
-                    result = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
-                    result
+                    continueConnecting()
                 }
                 else -> {
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
@@ -193,6 +190,8 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                 }
             }
         }
+
+        private fun continueConnecting() : Boolean = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
 
         override fun getKnownKeyAlgorithmsForHost(host: String, port: Int): List<String> {
 //            return manager.hostdb.getHostKeyAlgorithmsForHost(host, port);
@@ -716,20 +715,12 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         for ((key, value) in manager!!.loadedKeypairs) {
             val pair = value?.pair
             try {
-                val privKey = pair!!.private
-                if (privKey is RSAPrivateKey) {
-                    val pubkey = pair.public as RSAPublicKey
-                    pubKeys[key] = RSASHA1Verify.encodeSSHRSAPublicKey(pubkey)
-                } else if (privKey is DSAPrivateKey) {
-                    val pubkey = pair.public as DSAPublicKey
-                    pubKeys[key] = DSASHA1Verify.encodeSSHDSAPublicKey(pubkey)
-                } else if (privKey is ECPrivateKey) {
-                    val pubkey = pair.public as ECPublicKey
-                    pubKeys[key] = ECDSASHA2Verify.encodeSSHECDSAPublicKey(pubkey)
-                } else if (privKey is EdDSAPrivateKey) {
-                    val pubkey = pair.public as EdDSAPublicKey
-                    pubKeys[key] = Ed25519Verify.encodeSSHEd25519PublicKey(pubkey)
-                } else continue
+                when (pair?.private) {
+                    is RSAPrivateKey -> pubKeys[key] = RSASHA1Verify.encodeSSHRSAPublicKey(pair.public as RSAPublicKey)
+                    is DSAPrivateKey -> pubKeys[key] = DSASHA1Verify.encodeSSHDSAPublicKey(pair.public as DSAPublicKey)
+                    is ECPrivateKey -> pubKeys[key] = ECDSASHA2Verify.encodeSSHECDSAPublicKey(pair.public as ECPublicKey)
+                    is EdDSAPrivateKey -> pubKeys[key] = Ed25519Verify.encodeSSHEd25519PublicKey(pair.public as EdDSAPublicKey)
+                }
             } catch (e: IOException) {
                 continue
             }

@@ -693,20 +693,13 @@ class TerminalBridge : VDUDisplay {
         val limit = 0.125f
         var direction: Int
         while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } < 0) sizeDp += step
-        if (direction == 0) {
-            Log.d("fontsize", String.format("Found match at %f", sizeDp))
-            return
-        }
+        if (direction == 0) return
         step /= 2.0f
         sizeDp -= step
-        while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } != 0
-                && step >= limit) {
+        while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } != 0 && step >= limit) {
             step /= 2.0f
-            if (direction > 0) {
-                sizeDp -= step
-            } else {
-                sizeDp += step
-            }
+            if (direction > 0) sizeDp -= step
+            else sizeDp += step
         }
         if (direction > 0) sizeDp -= step
         columns = cols
