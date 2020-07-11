@@ -27,6 +27,11 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
 
     var bind: ActivityServicesFragmentBinding? = null
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityServicesFragmentBinding.inflate(inflater, container, false)
         services = ArrayList()
@@ -116,7 +121,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             val transaction = fragmentManager.beginTransaction()
             transaction.replace(R.id.main_content, fragment)
             transaction.addToBackStack(null)
-            transaction.commit()
+            transaction.commitAllowingStateLoss()
         }
     }
 
@@ -125,6 +130,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         Objects.requireNonNull(bind!!.tabLayout.getTabAt(1))!!.select()
         replaceFragment(1)
     }
+
 
     companion object {
         private const val TAG = "ServicesFragment"

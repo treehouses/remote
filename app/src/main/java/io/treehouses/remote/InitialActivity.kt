@@ -155,7 +155,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     //
     override fun setNotification(notificationStatus: Boolean) {
-        if (notificationStatus) bind.navView.menu.getItem(7).setIcon(R.drawable.status_notification) else bind.navView.menu.getItem(7).setIcon(R.drawable.status)
+        if (notificationStatus) bind.navView.menu.getItem(6).setIcon(R.drawable.status_notification) else bind.navView.menu.getItem(6).setIcon(R.drawable.status)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
