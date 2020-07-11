@@ -94,7 +94,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
-                R.id.menu_ssh -> getSSH()
+                R.id.menu_ssh -> SSHDialog(this)
             }
         }
         title = item.title
@@ -112,18 +112,13 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
     }
 
-
-    private fun getSSH() {
-        SSHDialog(this)
-    }
-
     private fun checkMore(id: Int) {
         when (id) {
             R.id.menu_services -> openCallFragment(ServicesFragment())
             R.id.menu_about -> openCallFragment(AboutFragment())
             R.id.menu_status -> openCallFragment(StatusFragment())
             R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
-            R.id.menu_ssh -> getSSH()
+            R.id.menu_ssh -> SSHDialog(this)
             else -> openCallFragment(HomeFragment())
 
         }
