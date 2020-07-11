@@ -4,7 +4,7 @@ import android.net.Uri
 import java.nio.charset.Charset
 
 class HostBean {
-    var fontSize = 10
+    var fontSize = 8 //Default 10
     var nickname: String? = "treehouses"
     var hostname: String? = "192.168.1.29"
     var username: String? = "pi"
