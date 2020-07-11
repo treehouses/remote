@@ -17,12 +17,12 @@ public class TunnelPageAdapter extends FragmentStatePagerAdapter {
     private ArrayList<ServiceInfo> data;
 
     public TunnelPageAdapter(FragmentManager fm) {
-        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        super(fm, BEHAVIOR_SET_USER_VISIBLE_HINT);
 
     }
 
     public TunnelPageAdapter(FragmentManager fm, ArrayList<ServiceInfo> data) {
-        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        super(fm, BEHAVIOR_SET_USER_VISIBLE_HINT);
         this.data = removeHeaders(data);
 
     }
@@ -52,8 +52,10 @@ public class TunnelPageAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = null;
         if (position == 0) {
             fragment = new TorTabFragment();
+
         } else if (position == 1) {
             fragment = new TunnelSSHFragment();
+
         }
         return fragment;
     }

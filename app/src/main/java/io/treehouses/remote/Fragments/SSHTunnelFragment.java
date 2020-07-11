@@ -31,7 +31,6 @@ public class SSHTunnelFragment extends BaseServicesFragment implements ServicesL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.activity_ssh_tunnel_fragment, container, false);
         tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -89,14 +88,15 @@ public class SSHTunnelFragment extends BaseServicesFragment implements ServicesL
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        Log.d("3", "onItemscrolled: ");
         tabLayout.setScrollPosition(position,0f,true);
 
     }
 
     @Override
     public void onPageSelected(int position) {
-        Log.d("3", "Page selected: ");
+
+
+
     }
 
     @Override
