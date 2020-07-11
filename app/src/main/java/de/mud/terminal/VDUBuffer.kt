@@ -201,7 +201,7 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
     fun deleteChar(c: Int, l: Int) {
         if (c < columns - 1) {
             System.arraycopy(charArray!![screenBase + l]!!, c + 1,
-                    charArray!![screenBase + l], c, columns - c - 1)
+                    charArray!![screenBase + l]!!, c, columns - c - 1)
             System.arraycopy(charAttributes!![screenBase + l], c + 1,
                     charAttributes!![screenBase + l], c, columns - c - 1)
         }
@@ -359,9 +359,9 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
             System.arraycopy(charArray!!, oldBase + l, cbuf, 0, bottom - l - (n - 1))
             System.arraycopy(charAttributes!!, oldBase + l,
                     abuf, 0, bottom - l - (n - 1))
-            System.arraycopy(cbuf, 0, charArray, oldBase + l + n,
+            System.arraycopy(cbuf, 0, charArray!!, oldBase + l + n,
                     bottom - l - (n - 1))
-            System.arraycopy(abuf, 0, charAttributes, oldBase + l + n,
+            System.arraycopy(abuf, 0, charAttributes!!, oldBase + l + n,
                     bottom - l - (n - 1))
             cbuf = charArray
             abuf = charAttributes
@@ -392,39 +392,37 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 // up to the screenBase.
                 if (oldBase > 0) {
                     System.arraycopy(charArray!!, offset,
-                            cbuf, 0,
+                            cbuf!!, 0,
                             oldBase - offset)
                     System.arraycopy(charAttributes!!, offset,
-                            abuf, 0,
+                            abuf!!, 0,
                             oldBase - offset)
                 }
                 // copy anything from the top of the screen (screenBase) up to the
                 // topMargin to the new screen
                 if (top > 0) {
                     System.arraycopy(charArray!!, oldBase,
-                            cbuf, newScreenBase,
-                            top)
+                            cbuf!!, newScreenBase, top)
+
                     System.arraycopy(charAttributes!!, oldBase,
-                            abuf, newScreenBase,
-                            top)
+                            abuf!!, newScreenBase, top)
                 }
                 // copy anything from the topMargin up to the amount of lines inserted
                 // to the gap left over between scrollback buffer and screenBase
                 if (oldBase >= 0) {
                     System.arraycopy(charArray!!, oldBase + top,
-                            cbuf, oldBase - offset,
-                            n)
+                            cbuf!!, oldBase - offset, n)
+
                     System.arraycopy(charAttributes!!, oldBase + top,
-                            abuf, oldBase - offset,
-                            n)
+                            abuf!!, oldBase - offset, n)
                 }
                 // copy anything from topMargin + n up to the line linserted to the
                 // topMargin
                 System.arraycopy(charArray!!, oldBase + top + n,
-                        cbuf, newScreenBase + top,
+                        cbuf!!, newScreenBase + top,
                         l - top - (n - 1))
                 System.arraycopy(charAttributes!!, oldBase + top + n,
-                        abuf, newScreenBase + top,
+                        abuf!!, newScreenBase + top,
                         l - top - (n - 1))
                 //
                 // copy the all lines next to the inserted to the new buffer
@@ -445,13 +443,13 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 System.err.println("--- BEGIN STACK TRACE ---")
                 e.printStackTrace()
                 System.err.println("--- END STACK TRACE ---")
-                System.err.println("bufSize=" + bufSize + ", maxBufSize=" + maxBufferSize)
+                System.err.println("bufSize=$bufSize, maxBufSize=$maxBufferSize")
                 System.err.println("top=$top, bottom=$bottom")
                 System.err.println("n=$n, l=$l")
                 System.err.println("screenBase=$screenBase, windowBase=$windowBase")
                 System.err.println("newScreenBase=$newScreenBase, newWindowBase=$newWindowBase")
                 System.err.println("oldBase=$oldBase")
-                System.err.println("size.width=" + columns + ", size.height=" + rows)
+                System.err.println("size.width=$columns, size.height=$rows")
                 System.err.println("abuf.length=" + abuf!!.size + ", cbuf.length=" + cbuf!!.size)
                 System.err.println("*** done dumping debug information")
             }
@@ -461,7 +459,7 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
         scrollMarker -= n
         for (i in 0 until n) {
             cbuf!![newScreenBase + l + (if (scrollDown) i else -i)] = CharArray(columns)
-            Arrays.fill(cbuf[newScreenBase + l + (if (scrollDown) i else -i)], ' ')
+            Arrays.fill(cbuf[newScreenBase + l + (if (scrollDown) i else -i)]!!, ' ')
             abuf!![newScreenBase + l + (if (scrollDown) i else -i)] = LongArray(columns)
         }
         charArray = cbuf
@@ -488,14 +486,14 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
         val discardedAttributes = charAttributes!![screenBase + l]
         if (numRows > 0) {
             System.arraycopy(charArray!!, screenBase + l + 1,
-                    charArray, screenBase + l, numRows)
+                    charArray!!, screenBase + l, numRows)
             System.arraycopy(charAttributes!!, screenBase + l + 1,
-                    charAttributes, screenBase + l, numRows)
+                    charAttributes!!, screenBase + l, numRows)
         }
         val newBottomRow = screenBase + bottom - 1
         charArray!![newBottomRow] = discardedChars
         charAttributes!![newBottomRow] = discardedAttributes
-        Arrays.fill(charArray!![newBottomRow], ' ')
+        Arrays.fill(charArray!![newBottomRow]!!, ' ')
         Arrays.fill(charAttributes!![newBottomRow], 0)
         markLine(l, bottom - l)
     }

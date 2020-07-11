@@ -1098,8 +1098,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         if (R == bottomMargin || R == rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                     }
                     'J' -> {
-                        if (R < rows - 1) deleteArea(0, R + 1, columns, rows - R - 1, attributes)
-                        if (C < columns - 1) deleteArea(C, R, columns - C, 1, attributes)
+                        jDeleteArea(rows, columns)
                     }
                     'K' -> if (C < columns - 1) deleteArea(C, R, columns - C, 1, attributes)
                     'M' -> {
@@ -1478,13 +1477,12 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         else -> debug("ESC [ " + DCEvars[0] + " l, unimplemented!")
                     }
                     'A' -> {
-                        val limit: Int
-                        /* FIXME: xterm only cares about 0 and topmargin */limit = if (R >= topMargin) {
+                        /* FIXME: xterm only cares about 0 and topmargin */
+                        val limit: Int = if (R >= topMargin) {
                             topMargin
                         } else 0
                         if (DCEvars[0] == 0) R-- else R -= DCEvars[0]
                         if (R < limit) R = limit
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " A")
                     }
                     'B' ->                         /* cursor down n (1) times */ {
                         val limit: Int = if (R <= bottomMargin) {
@@ -1495,9 +1493,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     'C' -> {
                         if (DCEvars[0] == 0) DCEvars[0] = 1
-                        while (DCEvars[0]-- > 0) {
-                            C++
-                        }
+                        while (DCEvars[0]-- > 0) C++
                         if (C >= columns) C = columns - 1
                     }
                     'd' -> {
@@ -1506,9 +1502,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     'D' -> {
                         if (DCEvars[0] == 0) DCEvars[0] = 1
-                        while (DCEvars[0]-- > 0) {
-                            C--
-                        }
+                        while (DCEvars[0]-- > 0) C--
                         if (C < 0) C = 0
                     }
                     'r' -> {
@@ -1526,35 +1520,26 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                         setMargins(R, bot)
                         _SetCursor(0, 0)
-                        if (debug > 1) debug("ESC [" + DCEvars[0] + " ; " + DCEvars[1] + " r")
                     }
                     'G' -> {
                         C = DCEvars[0] - 1
                         if (C < 0) C = 0 else if (C >= columns) C = columns - 1
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " G")
                     }
                     'H' -> {
                         /* gets 2 arguments */_SetCursor(DCEvars[0] - 1, DCEvars[1] - 1)
-                        if (debug > 2) {
-                            debug("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " H, moveoutsidemargins " + moveoutsidemargins)
-                            debug("	-> R now $R, C now $C")
-                        }
                     }
                     'f' -> {
                         /* gets 2 arguments */R = DCEvars[0] - 1
                         C = DCEvars[1] - 1
                         if (C < 0) C = 0 else if (C >= columns) C = columns - 1
                         if (R < 0) R = 0 else if (R >= rows) R = rows - 1
-                        if (debug > 2) debug("ESC [ " + DCEvars[0] + ";" + DCEvars[1] + " f")
                     }
                     'S' -> if (DCEvars[0] == 0) insertLine(bottomMargin, SCROLL_UP) else insertLine(bottomMargin, DCEvars[0], SCROLL_UP)
                     'L' -> {
                         /* insert n lines */if (DCEvars[0] == 0) insertLine(R, SCROLL_DOWN) else insertLine(R, DCEvars[0], SCROLL_DOWN)
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + "" + c + " (at R " + R + ")")
                     }
                     'T' -> if (DCEvars[0] == 0) insertLine(topMargin, SCROLL_DOWN) else insertLine(topMargin, DCEvars[0], SCROLL_DOWN)
                     'M' -> {
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + "" + c + " at R=" + R)
                         if (DCEvars[0] == 0) deleteLine(R) else {
                             var i = 0
                             while (i < DCEvars[0]) {
@@ -1564,7 +1549,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                     }
                     'K' -> {
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " K")
                         when (DCEvars[0]) {
                             6, 0 -> if (C < columns - 1) deleteArea(C, R, columns - C, 1, attributes)
                             1 -> if (C > 0) deleteArea(0, R, C + 1, 1, attributes)
@@ -1574,8 +1558,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     'J' -> {
                         when (DCEvars[0]) {
                             0 -> {
-                                if (R < rows - 1) deleteArea(0, R + 1, columns, rows - R - 1, attributes)
-                                if (C < columns - 1) deleteArea(C, R, columns - C, 1, attributes)
+                                jDeleteArea(rows, columns)
                             }
                             1 -> {
                                 if (R > 0) deleteArea(0, 0, columns, R, attributes)
@@ -1583,11 +1566,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             }
                             2 -> deleteArea(0, 0, columns, rows, attributes)
                         }
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " J")
                     }
                     '@' -> {
                         if (DCEvars[0] == 0) DCEvars[0] = 1
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " @")
                         var i = 0
                         while (i < DCEvars[0]) {
                             insertChar(C, R, ' ', attributes)
@@ -1596,13 +1577,11 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     'X' -> {
                         var toerase = DCEvars[0]
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " X, C=" + C + ",R=" + R)
                         if (toerase == 0) toerase = 1
                         if (toerase + C > columns) toerase = columns - C
                         deleteArea(C, R, toerase, 1, attributes)
                     }
                     'P' -> {
-                        if (debug > 1) debug("ESC [ " + DCEvars[0] + " P, C=" + C + ",R=" + R)
                         if (DCEvars[0] == 0) DCEvars[0] = 1
                         var i = 0
                         while (i < DCEvars[0]) {
@@ -1613,16 +1592,13 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     'n' -> when (DCEvars[0]) {
                         5 -> {
                             writeSpecial("$ESC[0n")
-                            if (debug > 1) debug("ESC[5n")
                         }
                         6 -> {
                             // DO NOT offset R and C by 1! (checked against /usr/X11R6/bin/resize
                             // FIXME check again.
                             // FIXME: but vttest thinks different???
                             writeSpecial(ESC.toString() + "[" + R + ";" + C + "R")
-                            if (debug > 1) debug("ESC[6n")
                         }
-                        else -> if (debug > 0) debug("ESC [ " + DCEvars[0] + " n??")
                     }
                     's' -> {
                         Sc = C
@@ -1650,10 +1626,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     attributes = attributes or BOLD
                                     attributes = attributes and LOW.inv()
                                 }
-                                2 ->                                     /* SCO color hack mode */if (terminalID == "scoansi" && DCEvar - i >= 2) {
-                                    var ncolor: Int
+                                2 ->  /* SCO color hack mode */if (terminalID == "scoansi" && DCEvar - i >= 2) {
                                     attributes = attributes and (COLOR or BOLD).inv()
-                                    ncolor = DCEvars[i + 1]
+                                    var ncolor: Int = DCEvars[i + 1]
                                     if (ncolor and 8 == 8) attributes = attributes or BOLD
                                     ncolor = ncolor and 1 shl 2 or (ncolor and 2) or (ncolor and 4 shr 2)
                                     attributes = attributes or ((ncolor + 1).toLong() shl COLOR_FG_SHIFT)
@@ -1687,8 +1662,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                 24 -> attributes = attributes and UNDERLINE.inv()
                                 22 -> attributes = attributes and BOLD.inv()
                                 30, 31, 32, 33, 34, 35, 36, 37 -> {
-                                    attributes = attributes and COLOR_FG.inv()
-                                    attributes = attributes or ((DCEvars[i] - 30 + 1).toLong() shl COLOR_FG_SHIFT)
+//                                    attributes = attributes and COLOR_FG.inv()
+//                                    attributes = attributes or ((DCEvars[i] - 30 + 1).toLong() shl COLOR_FG_SHIFT)
+                                    setAttributes(30, i, COLOR_FG)
                                 }
                                 38 -> if (DCEvars[i + 1] == 5) {
                                     attributes = attributes and COLOR_FG.inv()
@@ -1703,10 +1679,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     i += 4
                                 }
                                 39 -> attributes = attributes and COLOR_FG.inv()
-                                40, 41, 42, 43, 44, 45, 46, 47 -> {
-                                    attributes = attributes and COLOR_BG.inv()
-                                    attributes = attributes or ((DCEvars[i] - 40 + 1).toLong() shl COLOR_BG_SHIFT)
-                                }
+                                40, 41, 42, 43, 44, 45, 46, 47 -> setAttributes(40, i, COLOR_BG)
                                 48 -> if (DCEvars[i + 1] == 5) {
                                     attributes = attributes and COLOR_BG.inv()
                                     attributes = attributes or ((DCEvars[i + 2] + 1).toLong() shl COLOR_BG_SHIFT)
@@ -1720,14 +1693,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     i += 4
                                 }
                                 49 -> attributes = attributes and COLOR_BG.inv()
-                                90, 91, 92, 93, 94, 95, 96, 97 -> {
-                                    attributes = attributes and COLOR_FG.inv()
-                                    attributes = attributes or ((DCEvars[i] - 82 + 1).toLong() shl COLOR_FG_SHIFT)
-                                }
-                                100, 101, 102, 103, 104, 105, 106, 107 -> {
-                                    attributes = attributes and COLOR_BG.inv()
-                                    attributes = attributes or ((DCEvars[i] - 92 + 1).toLong() shl COLOR_BG_SHIFT)
-                                }
+                                90, 91, 92, 93, 94, 95, 96, 97 -> setAttributes(82, i, COLOR_FG)
+                                100, 101, 102, 103, 104, 105, 106, 107 -> setAttributes(92, i, COLOR_BG)
                                 else -> {
                                     debugStr!!.append("ESC [ ")
                                             .append(DCEvars[i])
@@ -1752,12 +1719,16 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             }
             TSTATE_TITLE -> when (c) {
                 ESC -> term_state = TSTATE_ESC
-                else -> {
-                }
             }
             else -> term_state = TSTATE_DATA
         }
         setCursorPosition(C, R)
+    }
+
+    private fun setAttributes(unique: Int, i: Int, FgOrBG: Long) {
+        attributes = attributes and FgOrBG.inv()
+        val shift = if (FgOrBG == COLOR_FG) COLOR_FG_SHIFT else COLOR_BG_SHIFT
+        attributes = attributes or ((DCEvars[i] - unique + 1).toLong() shl shift)
     }
 
     /* hard reset the terminal */
@@ -1787,6 +1758,11 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         if (display != null) display!!.resetColors()
         showCursor(true)
         /*FIXME:*/term_state = TSTATE_DATA
+    }
+
+    private fun jDeleteArea(rows: Int, columns: Int) {
+        if (R < rows - 1) deleteArea(0, R + 1, columns, rows - R - 1, attributes)
+        if (C < columns - 1) deleteArea(C, R, columns - C, 1, attributes)
     }
 
     companion object {
