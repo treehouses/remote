@@ -30,6 +30,7 @@ import java.util.*
 class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener, OnPageChangeListener, ServiceAction {
     private var received = false
     private var wait = false
+    private var editEnv = false
     private var spinnerAdapter: ServicesListAdapter? = null
     private var selected: ServiceInfo? = null
     private var serviceCardAdapter: ServiceCardAdapter? = null
@@ -60,6 +61,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
+                    Log.d("QQQ",output)
                     moreActions(output)
                 }
             }
@@ -94,6 +96,13 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             received = true
             openLocalURL(output.trim { it <= ' ' })
             binding.progressBar.visibility = View.GONE
+        } else if (editEnv) {
+            var tokens = output.split(" ")
+            Log.d("d",tokens.size.toString())
+            Log.d("d",tokens.toString())
+            tokens = tokens.subList(6, tokens.size-1)
+            Log.d("d",tokens.toString())
+            editEnv = false
         } else {
             setScreenState(true)
             var msg = ""
@@ -232,6 +241,11 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     override fun onClickLink(s: ServiceInfo?) {
         onLink(s)
         received = false
+    }
+
+    override fun onClickEditEnvVar(s: ServiceInfo?) {
+        editEnv = true
+        writeToRPI("treehouses services " + s!!.name + " config edit request")
     }
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
