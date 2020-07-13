@@ -2,6 +2,8 @@ package io.treehouses.remote.Fragments
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -22,12 +24,12 @@ import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
+
 class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesTabFragment: ServicesTabFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
-
     var bind: ActivityServicesFragmentBinding? = null
-
+    private var counter = 0
     override fun onSaveInstanceState(outState: Bundle) {
 
     }
@@ -47,8 +49,65 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         setTabEnabled(false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(handler)
-        writeToRPI("treehouses remote allservices\n")
+        preferences()
         return bind!!.root
+    }
+
+    private fun preferences(){
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("ServicesPref", MODE_PRIVATE)
+        var worked = false
+
+        val max: Int = sharedPreferences.getInt("max", 0)
+        for (i in 1..max) {
+            val output:String? = sharedPreferences.getString("output$i", "")
+            val a = performAction(output!!, services)
+            if (a == 1) {
+                showUI()
+                writeToRPI("treehouses remote allservices\n")
+                worked = true
+            }
+        }
+        if(!worked){
+            writeToRPI("treehouses remote allservices\n")
+        }
+
+    }
+
+    private fun showUI(){
+        servicesTabFragment = ServicesTabFragment()
+        servicesDetailsFragment = ServicesDetailsFragment()
+        val bundle = Bundle()
+        bundle.putSerializable("services", services)
+        servicesTabFragment?.arguments = bundle
+        servicesDetailsFragment?.arguments = bundle
+        bind!!.progressBar2.visibility = View.GONE
+        replaceFragment(0)
+    }
+
+
+    private fun updateListFromRPI(msg:Message){
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("ServicesPref", MODE_PRIVATE)
+        val output:String? = msg.obj as String
+        when (performAction(output!!, services)) {
+            1 -> {
+                counter += 1
+                val myEdit = sharedPreferences.edit()
+                myEdit.putString("output$counter", output)
+                myEdit.putInt("max", counter)
+                myEdit.apply()
+                showUI()
+            }
+            0 -> {
+                bind!!.progressBar2.visibility = View.GONE
+                showUpdateCliAlert()
+            }
+            else -> {
+                counter += 1
+                val myEdit = sharedPreferences.edit()
+                myEdit.putString("output$counter", output)
+                myEdit.apply()
+            }
+        }
     }
 
     @SuppressLint("HandlerLeak")
@@ -56,21 +115,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
-                    val output = msg.obj as String
-                    val a = performAction(output, services)
-                    if (a == 1) {
-                        servicesTabFragment = ServicesTabFragment()
-                        servicesDetailsFragment = ServicesDetailsFragment()
-                        val bundle = Bundle()
-                        bundle.putSerializable("services", services)
-                        servicesTabFragment?.arguments = bundle
-                        servicesDetailsFragment?.arguments = bundle
-                        bind!!.progressBar2.visibility = View.GONE
-                        replaceFragment(0)
-                    } else if (a == 0) {
-                        bind!!.progressBar2.visibility = View.GONE
-                        showUpdateCliAlert()
-                    }
+                    updateListFromRPI(msg)
                 }
                 Constants.MESSAGE_WRITE -> {
                     val writeMsg = String((msg.obj as ByteArray))
