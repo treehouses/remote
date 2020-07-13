@@ -72,7 +72,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
+        val profileAdapter = ProfilesListAdapter(context!!, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {

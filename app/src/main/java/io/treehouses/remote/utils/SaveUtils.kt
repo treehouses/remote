@@ -109,7 +109,7 @@ object SaveUtils {
         addToArrayList(context, NETWORK_PROFILES_KEY, gson.toJson(profile))
     }
 
-    fun getProfiles(context: Context): HashMap<String, List<NetworkProfile>> {
+    fun getProfiles(context: Context): HashMap<String, MutableList<NetworkProfile>> {
         val gson = Gson()
         val json_profiles = getStringArray(context, NETWORK_PROFILES_KEY)
         val wifi = ArrayList<NetworkProfile>()
@@ -127,7 +127,7 @@ object SaveUtils {
                 Log.e("SAVE UTILS", "Not a supported type")
             }
         }
-        val profiles = HashMap<String, List<NetworkProfile>>()
+        val profiles = HashMap<String, MutableList<NetworkProfile>>()
         profiles[HomeFragment.group_labels[0]] = wifi
         profiles[HomeFragment.group_labels[1]] = hotspot
         profiles[HomeFragment.group_labels[2]] = bridge

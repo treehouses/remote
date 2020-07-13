@@ -84,6 +84,20 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:itemBackground">@color/card_background</item>
         <item name="android:itemTextAppearance">@style/MenuTextStyle</item>
+        <item name="android:editTextColor">@color/daynight_textColor</item>
+        <item name="alertDialogTheme">@style/CustomAlertDialogTheme</item>
+
+    </style>
+
+    <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
+        <item name="android:tint">@color/daynight_textColor</item>
+    </style>
+
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@color/card_background</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="textColorAlertDialogListItem">@color/daynight_textColor</item>
     </style>
 
     <style name="MenuTextStyle">
