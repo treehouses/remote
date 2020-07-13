@@ -1,0 +1,44 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:theme="@style/CardTheme"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/varList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rename_tv"
+            android:layout_width="274dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16dp"
+            android:layout_marginLeft="@dimen/_16dp"
+            android:layout_marginTop="@dimen/_16dp"
+            android:layout_marginEnd="@dimen/_16dp"
+            android:layout_marginRight="@dimen/_16dp"
+            android:text="@string/rename_message"
+            android:textColor="@color/md_grey_500" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hostname"
+            android:layout_width="274dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="@dimen/_16dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rectangle_border"
+            android:hint="Hostname"
+            android:inputType="text"
+            android:padding="@dimen/margin_small"
+            android:textColor="@color/daynight_textColor" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -24,6 +25,7 @@ import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
+import io.treehouses.remote.databinding.EnvVarBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
@@ -98,11 +100,13 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             binding.progressBar.visibility = View.GONE
         } else if (editEnv) {
             var tokens = output.split(" ")
+            val name = tokens[2]
             Log.d("d",tokens.size.toString())
             Log.d("d",tokens.toString())
             tokens = tokens.subList(6, tokens.size-1)
             Log.d("d",tokens.toString())
             editEnv = false
+            showEditDialog(name, tokens.size, tokens)
         } else {
             setScreenState(true)
             var msg = ""
@@ -165,6 +169,34 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             if (services[i].isHeader) count++
         }
         return count
+    }
+
+    private fun showEditDialog(name: String, size: Int, vars: List<String>) {
+        val inflater = requireActivity().layoutInflater
+        val dialogBinding = EnvVarBinding.inflate(inflater)
+        for (i in 0 until size) {
+            val textView = TextInputEditText(requireContext())
+            textView.setText(vars[i])
+            dialogBinding.varList.addView(textView)
+        }
+        val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
+        alertDialog.show()
+    }
+
+    private fun createEditDialog(view: View, name: String, size: Int, vars: List<String>): AlertDialog {
+        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
+                .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
+                .setPositiveButton("Edit"
+                ) { _: DialogInterface?, _: Int ->
+                    var command = "treehouses services " + name + " config edit send "
+                    for (x in 0..size) {
+                        command += "\" \""
+                    }
+                    writeToRPI("command")
+                    Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
+                }
+                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                .create()
     }
 
     private fun showDeleteDialog(selected: ServiceInfo?) {
