@@ -22,6 +22,7 @@
     <color name="expandable_list_row">#4E4E4E</color>
     <color name="expandable_child_text">#A6A6A6</color>
     <color name="terminal">#FFFFFF</color>
+    <color name="back_arrow">#CCCCCC</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>
