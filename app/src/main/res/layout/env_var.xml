@@ -21,7 +21,7 @@
             android:layout_marginTop="@dimen/_16dp"
             android:layout_marginEnd="@dimen/_16dp"
             android:layout_marginRight="@dimen/_16dp"
-            android:text="@string/rename_message"
+            android:text="@string/env_message"
             android:textColor="@color/md_grey_500" />
 
     </LinearLayout>
