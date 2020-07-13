@@ -177,6 +177,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         for (i in 0 until size) {
             val textView = TextInputEditText(requireContext())
             textView.setText(vars[i])
+            textView.id = i
             dialogBinding.varList.addView(textView)
         }
         val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
@@ -188,11 +189,12 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Edit"
                 ) { _: DialogInterface?, _: Int ->
-                    var command = "treehouses services " + name + " config edit send "
-                    for (x in 0..size) {
-                        command += "\" \""
+                    var command = "treehouses services " + name + " config edit send"
+                    for (i in 0 until size) {
+                        command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
                     }
-                    writeToRPI("command")
+                    Log.d("eee", command)
+                    writeToRPI(command)
                     Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
                 }
                 .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
