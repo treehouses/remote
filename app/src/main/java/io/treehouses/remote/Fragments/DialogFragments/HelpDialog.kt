@@ -80,7 +80,6 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog: Dialog = super.onCreateDialog(savedInstanceState)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return dialog
     }
 
