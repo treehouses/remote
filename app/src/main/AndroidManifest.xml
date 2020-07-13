@@ -40,6 +40,29 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="io.treehouses.remote.SSH.Terminal.TerminalManager"
+            android:configChanges="keyboardHidden|orientation"
+            />
+
+        <activity
+            android:name=".Fragments.SSHConsole"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="ssh"/>
+                <!-- format:  ssh://user@host:port/#nickname  -->
+                <!-- format:  telnet://host:port/#nickname  -->
+                <!-- format:  local://  -->
+            </intent-filter>
+        </activity>
         <service android:name=".utils.GPSService" />
 
         <activity

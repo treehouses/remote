@@ -109,9 +109,9 @@ open class BaseTerminalFragment : BaseFragment() {
         inSecondLevel = HashSet()
         inThirdLevel = HashSet()
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        arrayAdapter1 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, array2)
-        arrayAdapter2 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList())
-        arrayAdapter3 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList())
+        arrayAdapter1 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, array2)
+        arrayAdapter2 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, ArrayList())
+        arrayAdapter3 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, ArrayList())
         if (preferences.getBoolean("autocomplete", true)) {
             autoComplete.threshold = 0
             autoComplete.setAdapter(arrayAdapter1)

@@ -191,11 +191,20 @@ class TorTabFragment : BaseFragment() {
                         }
                         portsName!!.add(ports[i])
                     }
+                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+                    val portList = view!!.findViewById<ListView>(R.id.countries)
+                    portList.adapter = adapter
+                    listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
+                } else if (readMessage.contains("No ports found")) {
+                    addPortButton!!.text = "Add Port"
+                    portList!!.isEnabled = true
+                    addPortButton!!.isEnabled = true
+                    portsName = ArrayList()
                     adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
                     val portList = view!!.findViewById<ListView>(R.id.countries)
                     portList.adapter = adapter
                     listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
-                }else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
+                } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
                     listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
                     portsName = ArrayList()
                     addPortButton!!.text = "Retrieving port.... Please wait"
