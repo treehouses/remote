@@ -26,7 +26,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.MotionEventCompat
-import de.mud.terminal.vt320
+import io.treehouses.remote.Views.terminal.vt320
 import kotlin.math.floor
 
 /**

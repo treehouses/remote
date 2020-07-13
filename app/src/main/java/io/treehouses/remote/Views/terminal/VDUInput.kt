@@ -1,4 +1,4 @@
-package de.mud.terminal
+package io.treehouses.remote.Views.terminal
 
 import java.util.*
 
@@ -29,7 +29,7 @@ import java.util.*
  * An interface for a terminal that accepts input from keyboard and mouse.
  *
  * @author Matthias L. Jugel, Marcus Meißner
- * @version $Id: de.mud.terminal.VDUInput.java 499 2005-09-29 08:24:54Z leo $
+ * @version $Id: io.treehouses.remote.Views.terminal.VDUInput.java 499 2005-09-29 08:24:54Z leo $
  */
 interface VDUInput {
     /**

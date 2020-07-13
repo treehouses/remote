@@ -23,9 +23,9 @@ import android.os.Looper
 import android.provider.Settings
 import android.text.ClipboardManager
 import android.util.Log
-import de.mud.terminal.VDUBuffer
-import de.mud.terminal.VDUDisplay
-import de.mud.terminal.vt320
+import io.treehouses.remote.Views.terminal.VDUBuffer
+import io.treehouses.remote.Views.terminal.VDUDisplay
+import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Colors
 import io.treehouses.remote.SSH.PromptHelper
@@ -797,7 +797,7 @@ class TerminalBridge : VDUDisplay {
     //	}
 
     /* (non-Javadoc)
-     * @see de.mud.terminal.VDUDisplay#setColor(byte, byte, byte, byte)
+     * @see io.treehouses.remote.Views.terminal.VDUDisplay#setColor(byte, byte, byte, byte)
      */
     override fun setColor(index: Int, red: Int, green: Int, blue: Int) {
         // Don't allow the system colors to be overwritten for now. May violate specs.

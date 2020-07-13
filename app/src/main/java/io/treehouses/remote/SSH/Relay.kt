@@ -18,7 +18,7 @@ package io.treehouses.remote.SSH
 
 import android.text.AndroidCharacter
 import android.util.Log
-import de.mud.terminal.vt320
+import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import java.io.IOException
 import java.nio.ByteBuffer

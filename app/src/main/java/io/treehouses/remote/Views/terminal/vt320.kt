@@ -1,7 +1,7 @@
-package de.mud.terminal
+package io.treehouses.remote.Views.terminal
 
 import android.text.AndroidCharacter
-import de.mud.terminal.Precomposer.precompose
+import io.treehouses.remote.Views.terminal.Precomposer.precompose
 import java.util.*
 
 /*
@@ -34,7 +34,7 @@ import java.util.*
  * <B>Maintainer:</B> Marcus Meißner
  *
  * @author Matthias L. Jugel, Marcus Meißner
- * @version $Id: de.mud.terminal.vt320.java 507 2005-10-25 10:14:52Z marcus $
+ * @version $Id: io.treehouses.remote.Views.terminal.vt320.java 507 2005-10-25 10:14:52Z marcus $
  */
 abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24) : VDUBuffer(width, height), VDUInput {
     private var debugStr: StringBuilder?
@@ -453,7 +453,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     // ===================================================================
     // the actual terminal emulation code comes here:
     // ===================================================================
-    private var terminalID = "de.mud.terminal.vt320"
+    private var terminalID = "io.treehouses.remote.Views.terminal.vt320"
     private var answerBack = "Use Terminal.answerback to set ...\n"
 
     // X - COLUMNS, Y - ROWS
@@ -537,7 +537,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     private var dcs /* to memorize OSC & DCS control sequence */: String? = null
 
     /**
-     * de.mud.terminal.vt320 state variable (internal)
+     * io.treehouses.remote.Views.terminal.vt320 state variable (internal)
      */
     private var term_state = TSTATE_DATA
 
@@ -1446,7 +1446,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     'c' -> {
                         /* send (ESC[?61c) */
                         var subcode = ""
-                        if (terminalID == "de.mud.terminal.vt320") subcode = "63;"
+                        if (terminalID == "io.treehouses.remote.Views.terminal.vt320") subcode = "63;"
                         if (terminalID == "vt220") subcode = "62;"
                         if (terminalID == "vt100") subcode = "61;"
                         write(ESC.toString() + "[?" + subcode + "1;2c", false)
@@ -1768,9 +1768,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     companion object {
         /**
          * The current version id tag.<P>
-         * $Id: de.mud.terminal.vt320.java 507 2005-10-25 10:14:52Z marcus $
+         * $Id: io.treehouses.remote.Views.terminal.vt320.java 507 2005-10-25 10:14:52Z marcus $
         </P> */
-        const val ID = "\$Id: de.mud.terminal.vt320.java 507 2005-10-25 10:14:52Z marcus $"
+        const val ID = "\$Id: io.treehouses.remote.Views.terminal.vt320.java 507 2005-10-25 10:14:52Z marcus $"
 
         /**
          * the debug level
@@ -2211,16 +2211,16 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 0x00a0.toChar())
     }
     /**
-     * Create a new de.mud.terminal.vt320 terminal and intialize it with useful settings.
+     * Create a new io.treehouses.remote.Views.terminal.vt320 terminal and intialize it with useful settings.
      */
     /**
-     * Create a default de.mud.terminal.vt320 terminal with 80 columns and 24 lines.
+     * Create a default io.treehouses.remote.Views.terminal.vt320 terminal with 80 columns and 24 lines.
      */
     init {
         debugStr = StringBuilder()
         setVMS(false)
         setIBMCharset(false)
-        setTerminalID("de.mud.terminal.vt320")
+        setTerminalID("io.treehouses.remote.Views.terminal.vt320")
         bufferSize = 100
         //setBorder(2, false);
         gx = CharArray(4)

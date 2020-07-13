@@ -1,4 +1,4 @@
-package de.mud.terminal
+package io.treehouses.remote.Views.terminal
 
 /*
  * This file is part of "JTA - Telnet/SSH for the JAVA(tm) platform".

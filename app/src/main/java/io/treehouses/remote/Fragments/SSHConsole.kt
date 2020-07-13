@@ -44,8 +44,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
-import de.mud.terminal.vt320
-import io.treehouses.remote.BuildConfig
+import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.R

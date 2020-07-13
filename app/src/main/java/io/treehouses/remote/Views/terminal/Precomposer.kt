@@ -1,4 +1,4 @@
-package de.mud.terminal
+package io.treehouses.remote.Views.terminal
 
 /*
  * ConnectBot: simple, powerful, open-source SSH client for Android

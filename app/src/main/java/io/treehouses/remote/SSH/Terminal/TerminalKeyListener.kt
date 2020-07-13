@@ -25,8 +25,8 @@ import android.util.Log
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.View
-import de.mud.terminal.VDUBuffer
-import de.mud.terminal.vt320
+import io.treehouses.remote.Views.terminal.VDUBuffer
+import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.beans.SelectionArea
 import java.io.IOException

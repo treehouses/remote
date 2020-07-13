@@ -16,7 +16,7 @@
  */
 package io.treehouses.remote.SSH.beans
 
-import de.mud.terminal.VDUBuffer
+import io.treehouses.remote.Views.terminal.VDUBuffer
 
 /**
  * @author Kenny Root

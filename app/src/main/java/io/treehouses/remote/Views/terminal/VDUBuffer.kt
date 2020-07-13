@@ -1,4 +1,4 @@
-package de.mud.terminal
+package io.treehouses.remote.Views.terminal
 
 import java.util.*
 
@@ -31,7 +31,7 @@ import java.util.*
  * attributes as well as the regions displayed.
  *
  * @author Matthias L. Jugel, Marcus Meißner
- * @version $Id: de.mud.terminal.VDUBuffer.java 503 2005-10-24 07:34:13Z marcus $
+ * @version $Id: io.treehouses.remote.Views.terminal.VDUBuffer.java 503 2005-10-24 07:34:13Z marcus $
  */
 open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24) {
     /**
@@ -780,7 +780,7 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
         /**
          * The current version id tag
          */
-        const val ID = "\$Id: de.mud.terminal.VDUBuffer.java 503 2005-10-24 07:34:13Z marcus $"
+        const val ID = "\$Id: io.treehouses.remote.Views.terminal.VDUBuffer.java 503 2005-10-24 07:34:13Z marcus $"
 
         /**
          * Enable debug messages.
