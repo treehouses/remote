@@ -30,19 +30,6 @@ public class NetworkListItem {
         this.layout = layout;
     }
 
-
-    public static List<NetworkListItem> getNetworkList() {
-        List<NetworkListItem> list = new ArrayList<>();
-        list.add(new NetworkListItem("Ethernet: Automatic", R.layout.dialog_ethernet));
-        list.add(new NetworkListItem("WiFi", R.layout.dialog_wifi));
-        list.add(new NetworkListItem("Hotspot", R.layout.dialog_hotspot));
-        list.add(new NetworkListItem("Bridge", R.layout.dialog_bridge));
-        list.add(new NetworkListItem("Reset", R.layout.dialog_reset));
-        list.add(new NetworkListItem("Reboot", R.layout.dialog_reboot));
-        list.add(new NetworkListItem("Network Mode: ", -1));
-        return list;
-    }
-
     public static List<NetworkListItem> getSystemList() {
         List<NetworkListItem> systemList = new ArrayList();
         systemList.add(new NetworkListItem("Open VNC", R.layout.open_vnc));
@@ -51,6 +38,7 @@ public class NetworkListItem {
         systemList.add(new NetworkListItem("Toggle Camera", R.layout.configure_camera));
         systemList.add(new NetworkListItem("Wifi Country", R.layout.configure_wificountry));
         systemList.add(new NetworkListItem("Blocker Level", R.layout.configure_blocker));
+        systemList.add(new NetworkListItem("Discover", R.layout.configure_discover));
         return systemList;
     }
 }

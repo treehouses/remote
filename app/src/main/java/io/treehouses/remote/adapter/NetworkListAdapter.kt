@@ -2,6 +2,7 @@ package io.treehouses.remote.adapter
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,6 +81,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
             R.layout.configure_camera -> ViewHolderCamera(convertView, context, listener!!)
             R.layout.configure_wificountry -> ViewHolderWifiCountry(convertView, context, listener!!)
             R.layout.configure_blocker -> ViewHolderBlocker(convertView, context, listener!!)
+            R.layout.configure_discover -> ViewHolderDiscover(convertView, context, listener!!)
         }
         views[i] = convertView
         return convertView
@@ -98,6 +100,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     init {
         inflater = LayoutInflater.from(context)
         this.list = list
-        views = arrayOfNulls(6)
+        views = arrayOfNulls(7)
     }
 }
