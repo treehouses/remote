@@ -245,6 +245,7 @@ open class BaseHomeFragment : BaseFragment() {
                     .setPositiveButton("Upgrade") { _, _ ->
                         Log.e("ENCODED", Utils.compressString(localString))
                         listener.sendMessage("remotesync ${Utils.compressString(localString).replace("\n","" ) + " cnysetomer"}")
+                        Toast.makeText(requireContext(), "Bluetooth Upgraded. Restart bluetooth to apply the changes.", Toast.LENGTH_LONG).show()
                     }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
                         dialog.dismiss()
                     }.show()
