@@ -93,6 +93,7 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
                     notifyDataSetChanged()
                 }
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }.create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
