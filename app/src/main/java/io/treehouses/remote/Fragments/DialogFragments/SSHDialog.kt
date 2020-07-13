@@ -1,7 +1,5 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,27 +7,17 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.Fragments.SSHConsole
 import io.treehouses.remote.SSH.beans.HostBean
-import io.treehouses.remote.bases.BaseDialogFragment
+import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogSshBinding
 import java.util.regex.Pattern
 
 
-class SSHDialog : BaseDialogFragment() {
+class SSHDialog : FullScreenDialogFragment() {
     private val sshPattern = Pattern.compile("^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
     private lateinit var bind: DialogSshBinding
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        return dialog
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogSshBinding.inflate(inflater, container, false)
         return bind.root
