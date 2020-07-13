@@ -1,0 +1,5 @@
+<resources>
+    <!-- This is so that ConsoleActivity has something to refer to when
+         setting the ID of the TerminalView instances in the ViewPager. -->
+    <item name="terminal_view" type="id"/>
+</resources>

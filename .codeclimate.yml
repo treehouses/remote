@@ -1,0 +1,2 @@
+exclude_patterns:
+  - "app/src/main/java/io/treehouses/remote/Views/terminal"
