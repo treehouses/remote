@@ -13,12 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
-
-
-
-
     </LinearLayout>
 
     <Button
@@ -59,8 +53,9 @@
             android:id="@+id/editTextSSHTunnel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/daynight_textColor"
-            android:hint="Port Interval" />
+            android:hint="Port Interval"
+            android:inputType="number"
+            android:textColor="@color/daynight_textColor" />
     <Button
         android:id="@+id/btn_add_sshtunnel_port"
         android:layout_width="match_parent"

@@ -11,33 +11,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
-import com.google.gson.Gson
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
-import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.BluetoothChatService
-import io.treehouses.remote.adapter.ViewHolderSSHKey
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
 class TunnelSSHFragment : BaseFragment() {
     override lateinit var mChatService: BluetoothChatService
 
-    protected var jsonReceiving = false
-    protected var jsonSent = false
-    private var portsName: ArrayList<String>? = null
-    private var adapter: ArrayAdapter<String>? = null
+    private var jsonReceiving = false
+    private var jsonSent = false
 
     private var jsonString = ""
 
@@ -78,36 +66,31 @@ class TunnelSSHFragment : BaseFragment() {
         bind!!.btnRemoveAll.setOnClickListener {
             listener.sendMessage("treehouses sshtunnel remove all")
         }
-//
-//        notification = bind!!.switchNotification
-//        notification!!.isEnabled = false
-//
+
         return bind!!.root
     }
 
     @SuppressLint("HandlerLeak")
     private val mHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
-
             when (msg.what) {
-//                Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
-//                Constants.MESSAGE_WRITE -> {
-//                    TerminalFragment.isRead = false
-//                    addToCommandList(handlerCaseWrite(TerminalFragment.TAG, mConversationArrayAdapter, msg))
-//                }
                 Constants.MESSAGE_READ -> {
                     val readMessage = msg.obj as String
                     match(readMessage)
 
-                    if(readMessage.contains("treehouses tor portstreehouses remote key send")){
-                        listener.sendMessage("treehouses remote key send")
+                    Log.d("Read Message", readMessage)
+                    if(readMessage.contains("treehouses tor ports")){
+                        listener.sendMessage("Please try again")
                     }
                     if(readMessage.contains("key required")){
                         listener.sendMessage("treehouses remote key send")
                         Toast.makeText(requireContext(), "No keys saved, retrieving keys now", Toast.LENGTH_SHORT).show()
                     }
-                    if(readMessage.contains("already exists")){
+                    if(readMessage.contains("Error when trying to run the command 'treehouses sshtunnel add host")){
                         Toast.makeText(requireContext(), "Port already exists", Toast.LENGTH_SHORT).show()
+                    }
+                    if(readMessage.contains("successfully added")){
+                        Toast.makeText(requireContext(), "Port successfully added", Toast.LENGTH_SHORT).show()
                     }
                     if(readMessage.contains("Saved")){
                         Toast.makeText(requireContext(), "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
@@ -127,21 +110,6 @@ class TunnelSSHFragment : BaseFragment() {
                         Log.d("public_key", output)
                     }
                 }
-
-//                Log.d("Tor reply", "" + readMessage)
-//                if (isMessageJSON(readMessage)) {
-//
-//                    val jsonMessage = JSONObject(readMessage)
-//re
-//                    if (jsonMessage.has("public_key")) {
-//                        val myEdit = sharedPreferences.edit()
-//                        myEdit.putString("public_key", jsonMessage.getString("public_key"))
-//                        myEdit.apply()
-//                        bind!!.publicKey.text = jsonMessage.getString("public_key")
-//                    }
-//                }
-//                Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
-//                Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
             }
         }
     }
@@ -149,8 +117,6 @@ class TunnelSSHFragment : BaseFragment() {
     private fun buildJSON() {
         try {
             val jsonObject = JSONObject(jsonString)
-//            commands = Gson().fromJson(jsonObject.toString(), CommandsList::class.java)
-//            updateArrayAdapters(commands)
             Log.d("JSON Object", jsonObject.toString())
             bind!!.publicKey.text = jsonObject.toString()
 
@@ -191,13 +157,5 @@ class TunnelSSHFragment : BaseFragment() {
             bind!!.progressBar.visibility = View.GONE
             jsonReceiving = false
         }
-    }
-    private fun showHelpDialog(jsonString: String) {
-        val b = Bundle()
-        b.putString(Constants.JSON_STRING, jsonString)
-        val dialogFrag: DialogFragment = HelpDialog()
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
-        dialogFrag.arguments = b
-        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "helpDialog")
     }
 }
