@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments
 
-import android.R
 import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
@@ -23,13 +22,9 @@ import org.json.JSONObject
 
 class TunnelSSHFragment : BaseFragment() {
     override lateinit var mChatService: BluetoothChatService
-
     private var jsonReceiving = false
     private var jsonSent = false
-
     private var jsonString = ""
-
-
 
     var bind: ActivityTunnelSshFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,11 +33,9 @@ class TunnelSSHFragment : BaseFragment() {
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
-
         bind!!.btnGetKey.setOnClickListener {
             listener.sendMessage("treehouses remote key send")
             jsonSend(true)
-
         }
 
         bind!!.btnSendToPi.setOnClickListener{
@@ -140,10 +133,6 @@ class TunnelSSHFragment : BaseFragment() {
                 buildJSON()
                 jsonSend(false)
             }
-//            else if (s == RESULTS.END_HELP) {
-//                showHelpDialog(jsonString)
-//                jsonSend(false)
-//            }
         } else if (s == RESULTS.START_JSON) {
             jsonReceiving = true
             jsonString = readMessage.trim()
