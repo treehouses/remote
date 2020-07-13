@@ -1,19 +1,11 @@
 package io.treehouses.remote.bases
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import com.google.gson.Gson
-import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.utils.RESULTS
@@ -98,7 +90,7 @@ open class BaseServicesFragment() : BaseFragment() {
 
     private fun formatList(services: ArrayList<ServiceInfo>) {
         if (inServiceList("Installed", services) == -1) addToServices(services, "Installed", ServiceInfo.SERVICE_HEADER_INSTALLED)
-        else if (inServiceList("Available", services) == -1) addToServices(services, "Available", ServiceInfo.SERVICE_HEADER_AVAILABLE)
+        if (inServiceList("Available", services) == -1) addToServices(services, "Available", ServiceInfo.SERVICE_HEADER_AVAILABLE)
         services.sort()
     }
 
