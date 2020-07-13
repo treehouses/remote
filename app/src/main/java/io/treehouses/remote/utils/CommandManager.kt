@@ -19,6 +19,7 @@ enum class RESULTS {
     DEFAULT_NETWORK,
     NETWORKMODE,
     START_JSON,
+    END_JSON,
     END_JSON_SERVICES,
     END_JSON_COMMANDS,
     PING_OUTPUT,
@@ -27,7 +28,6 @@ enum class RESULTS {
 
 fun match (output: String) : RESULTS {
     when {
-        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isError(output) ->  return RESULTS.ERROR
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
         Matcher.isVersion(output) -> return RESULTS.VERSION
@@ -40,10 +40,11 @@ fun match (output: String) : RESULTS {
         Matcher.isDefaultConnected(output) -> return RESULTS.DEFAULT_CONNECTED
         Matcher.isNetworkModeReturned(output) -> return RESULTS.NETWORKMODE
         Matcher.isStartJSON(output) -> return RESULTS.START_JSON
+        Matcher.isEndJSON(output) -> return RESULTS.END_JSON
+        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isEndAllServicesJson(output) -> return RESULTS.END_JSON_SERVICES
         Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
-
     }
     return RESULTS.RESULT_NOT_FOUND
 }
@@ -97,13 +98,14 @@ object Matcher {
 
     fun isStartJSON(output: String): Boolean { return toLC(output).startsWith("{") }
 
-    fun isEndCommandsJson(output: String): Boolean { return toLC(output).endsWith("]}") }
+    fun isEndJSON(output: String): Boolean { return toLC(output).trim().endsWith("}")}
 
+    fun isEndHelpJson(output: String): Boolean { return toLC(output).trim().endsWith("\" }")}
+
+    fun isEndCommandsJson(output: String): Boolean { return toLC(output).endsWith("]}") }
 
     fun isPingOutput(output: String): Boolean {return toLC(output).contains("google.com") || toLC(output).contains("remote")}
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
-
-    fun isEndHelpJson(output: String): Boolean { return toLC(output).trim().endsWith("\" }")}
 
 }
