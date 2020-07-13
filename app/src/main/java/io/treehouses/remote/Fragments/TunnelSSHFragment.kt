@@ -21,6 +21,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.adapter.ViewHolderSSHKey
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.pojo.CommandsList
@@ -62,6 +63,21 @@ class TunnelSSHFragment : BaseFragment() {
             val privateKey: String? = sharedPreferences.getString("private_key", "")
             listener.sendMessage("treehouses remote key receive $publicKey $privateKey")
         }
+
+        bind!!.btnAddSshtunnelPort.setOnClickListener {
+            val port: String = bind!!.editTextSSHTunnel.text.toString().trim()
+            if(port != "" && port.matches("^[0-9]*$".toRegex())){
+                Log.d("Port", bind!!.editTextSSHTunnel.text.toString())
+                listener.sendMessage("treehouses sshtunnel add host $port")
+            }
+            else{
+                Toast.makeText(requireContext(), "A numeric port interval is required", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        bind!!.btnRemoveAll.setOnClickListener {
+            listener.sendMessage("treehouses sshtunnel remove all")
+        }
 //
 //        notification = bind!!.switchNotification
 //        notification!!.isEnabled = false
@@ -90,18 +106,26 @@ class TunnelSSHFragment : BaseFragment() {
                         listener.sendMessage("treehouses remote key send")
                         Toast.makeText(requireContext(), "No keys saved, retrieving keys now", Toast.LENGTH_SHORT).show()
                     }
+                    if(readMessage.contains("already exists")){
+                        Toast.makeText(requireContext(), "Port already exists", Toast.LENGTH_SHORT).show()
+                    }
                     if(readMessage.contains("Saved")){
                         Toast.makeText(requireContext(), "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
+                    }
+                    if(readMessage.contains("Removed")){
+                        Toast.makeText(requireContext(), "All ports successfully removed", Toast.LENGTH_SHORT).show()
                     }
                     if (readMessage.contains("unknown")) {
                         jsonSend(false)
                     }
-                    if (jsonSent) {
-                        handleJson(readMessage)
+                    else{
+                        if (jsonSent) {
+                            handleJson(readMessage)
+                        }
+                        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", MODE_PRIVATE)
+                        val output: String? = sharedPreferences.getString("public_key", "")
+                        Log.d("public_key", output)
                     }
-                    val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", MODE_PRIVATE)
-                    val output: String? = sharedPreferences.getString("public_key", "")
-                    Log.d("public_key", output)
                 }
 
 //                Log.d("Tor reply", "" + readMessage)

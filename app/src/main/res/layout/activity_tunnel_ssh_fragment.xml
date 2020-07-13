@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="#FFF"
+    android:background="@color/services_tab_background"
     android:orientation="vertical">
 
 
@@ -36,8 +36,8 @@
     <TextView
         android:id="@+id/public_key"
         android:layout_width="match_parent"
-        android:layout_height="575dp"
-        android:textSize="36sp" />
+        android:layout_height="142dp"
+        android:textSize="18sp" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -49,5 +49,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_small">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextSSHTunnel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
+            android:hint="Port Interval" />
+    <Button
+        android:id="@+id/btn_add_sshtunnel_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add SSH Tunnel Port" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/btn_remove_all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remove All Ports" />
 </LinearLayout>
