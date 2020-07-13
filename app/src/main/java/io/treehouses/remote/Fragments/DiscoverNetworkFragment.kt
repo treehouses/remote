@@ -44,6 +44,8 @@ class DiscoverNetworkFragment : BaseFragment() {
     }
 
     private fun setupIcons() {
+        bind.container.removeAllViews()
+
         val icon = ImageView(context)
         icon.setImageResource(R.drawable.ic_download_icon)
         val param = LinearLayout.LayoutParams(200, 200)
@@ -117,11 +119,12 @@ class DiscoverNetworkFragment : BaseFragment() {
         catch (e : Exception) {
             Log.e(TAG, "Failed bro")
         }
+        setupIcons()
     }
 
     private fun getGatewayList(message: String) {
         Log.e(TAG, "MBA")
-        deviceList.clear()
+//        deviceList.clear()
         val splitMessage = message.lines()
 
         for(m in splitMessage) {
@@ -130,8 +133,7 @@ class DiscoverNetworkFragment : BaseFragment() {
             device.ip = m.split("\\s+".toRegex())[0]
             device.mac = m.split("\\s+".toRegex())[1]
 
-            for(i in 0 until 10)
-                deviceList.add(device)
+            deviceList.add(device)
         }
 
         setupIcons()
@@ -148,8 +150,20 @@ class DiscoverNetworkFragment : BaseFragment() {
                 Constants.MESSAGE_READ -> {
                     val readMessage = msg.obj as String
                     Log.e(TAG, "readMessage = $readMessage")
-//                    if(readMessage.matches("([0-9]+.){3}[0-9]+\\s+([0-9]+:){5}[0-9]+".toRegex()))
-                        getGatewayList(readMessage)
+                    val regex = "([0-9]+.){3}[0-9]+\\s+([0-9a-z]+:){5}[0-9a-z]+".toRegex()
+                    val collection = regex.findAll(readMessage)
+
+                    collection.forEach {
+                        Log.e(TAG, "Regex match: " + it.value)
+                        val device = Device()
+
+                        device.ip = it.value.split("\\s+".toRegex())[0]
+                        device.mac = it.value.split("\\s+".toRegex())[1]
+
+                        deviceList.add(device)
+                    }
+
+                    setupIcons()
                 }
             }
         }
