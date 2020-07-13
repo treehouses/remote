@@ -79,7 +79,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         }
         var visibility4 = View.GONE
 
-        if (installed && hasEnvVariables())
+        if (installed && !started && hasEnvVariables())
             visibility4 = View.VISIBLE
 
         binding!!.installButton.text = string2
