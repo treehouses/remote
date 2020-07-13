@@ -111,7 +111,7 @@ open class BaseHomeFragment : BaseFragment() {
         val date = Calendar.getInstance()
         if (lastDialogShown < date.timeInMillis) {
             if (connectionCount >= 3 && ratingDialog) {
-                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
+                val a = CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
                         "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
                         .setPositiveButton("RATE IT NOW") { _: DialogInterface?, _: Int ->
                             val intent = Intent(Intent.ACTION_VIEW)
@@ -119,7 +119,9 @@ open class BaseHomeFragment : BaseFragment() {
                             startActivity(intent)
                             preferences.edit().putBoolean("ratingDialog", false).apply()
                         }.setNeutralButton("REMIND ME LATER") { _: DialogInterface?, _: Int -> MainApplication.ratingDialog = false }
-                        .setNegativeButton("NO THANKS") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("ratingDialog", false).apply() }.show()
+                        .setNegativeButton("NO THANKS") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("ratingDialog", false).apply() }.create()
+                a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                a.show()
             }
         }
     }
