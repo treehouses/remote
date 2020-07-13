@@ -67,7 +67,7 @@ class TorTabFragment : BaseFragment() {
 
             // add the buttons
             builder.setPositiveButton("Confirm") { dialog, _ ->
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE) + " " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0]))
                 addPortButton!!.text = "deleting port ....."
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
@@ -116,7 +116,7 @@ class TorTabFragment : BaseFragment() {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()
                 val s2 = inputExternal.text.toString()
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD) + " $s2 $s1")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
                 addPortButton!!.text = "Adding port, please wait for a while ............"
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false

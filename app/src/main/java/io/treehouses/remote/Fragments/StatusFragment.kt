@@ -29,7 +29,7 @@ class StatusFragment : BaseFragment() {
 
     private var updateRightNow = false
     private var notificationListener: NotificationCallback? = null
-    private var lastCommand = "hostname"
+    private var lastCommand = getString(R.string.HOSTNAME)
     private var deviceName = ""
     private var rpiVersion = ""
 
@@ -41,7 +41,7 @@ class StatusFragment : BaseFragment() {
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         checkStatusNow()
-        writeToRPI("hostname")
+        writeToRPI(getString(R.string.HOSTNAME))
         return bind.root
     }
 
@@ -71,7 +71,7 @@ class StatusFragment : BaseFragment() {
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
-        if (lastCommand == "hostname") {
+        if (lastCommand == getString(R.string.HOSTNAME)) {
             setCard(bind.tvRpiName, bind.rpiName, "Connected RPI Name: $readMessage")
             writeToRPI(getString(R.string.TREEHOUSES_REMOTE_STATUS))
         } else if (readMessage.trim().split(" ").size == 5 && lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUS)) {
@@ -155,7 +155,7 @@ class StatusFragment : BaseFragment() {
                 .setPositiveButton("Rename"
                 ) { _: DialogInterface?, _: Int ->
                     if (mEditText.text.toString() != "") {
-                        writeToRPI( getString(R.string.TREEHOUSES_RENAME) + " " + mEditText.text.toString())
+                        writeToRPI(getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
                         Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()

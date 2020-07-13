@@ -44,27 +44,27 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         radioGroup.setOnCheckedChangeListener { _: RadioGroup?, i: Int ->
             when (i) {
                 R.id.radioButton1 -> {
-                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 0")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER, "0"))
                     context.toast("Blocker Disabled")
                 }
                 R.id.radioButton2 -> {
-                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 1")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER, "1"))
                     context.toast("Blocker set to level 1")
                 }
                 R.id.radioButton3 -> {
-                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 2")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER, "2"))
                     context.toast("Blocker set to level 2")
                 }
                 R.id.radioButton4 -> {
-                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 3")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER, "3"))
                     context.toast("Blocker set to level 3")
                 }
                 R.id.radioButton5 -> {
-                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " 4")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER, "4"))
                     context.toast("Blocker set to level 4")
                 }
                 R.id.radioButton6 -> {
-                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER) + " max")
+                    listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER, "max"))
                     context.toast("Blocker set to maximum level")
                 }
             }

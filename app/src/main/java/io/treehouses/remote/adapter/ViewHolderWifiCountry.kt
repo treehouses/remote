@@ -81,7 +81,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
             countryList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
                 var selectedString = countryList!!.getItemAtPosition(p).toString()
                 selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
-                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY) + " $selectedString")
+                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY, selectedString))
                 textBar.isEnabled = false
                 textBar.setText("Changing country")
                 dialog.dismiss()

@@ -163,14 +163,14 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
-                    performService("Uninstalling", getString(R.string.TREEHOUSES_SERVICES) + " ${selected.name} cleanup ", selected.name)
+                    performService("Uninstalling", getString(R.string.TREEHOUSES_SERVICES_CLEANUP, selected.name), selected.name)
                     performServiceWait()
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create().show()
     }
 
     private fun onInstall(selected: ServiceInfo?) {
         if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
-            performService("Installing", getString(R.string.TREEHOUSES_SERVICES) + " ${selected.name} install", selected.name)
+            performService("Installing", getString(R.string.TREEHOUSES_SERVICES_INSTALL, selected.name), selected.name)
             performServiceWait()
         } else if (installedOrRunning(selected)) {
             showDeleteDialog(selected)
@@ -184,9 +184,9 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     private fun onStart(selected: ServiceInfo?) {
         if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
-            performService("Starting", getString(R.string.TREEHOUSES_SERVICES) + " ${selected.name} up", selected.name)
+            performService("Starting", getString(R.string.TREEHOUSES_SERVICES_UP, selected.name), selected.name)
         } else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-            performService("Stopping", getString(R.string.TREEHOUSES_SERVICES) + " ${selected.name} stop", selected.name)
+            performService("Stopping", getString(R.string.TREEHOUSES_SERVICES_STOP, selected.name), selected.name)
         }
     }
 
@@ -202,8 +202,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         //reqUrls();
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
-        setOnClick(chooseBind.localButton, getString(R.string.TREEHOUSES_SERVICES) + " ${selected!!.name} url local", alertDialog)
-        setOnClick(chooseBind.torButton, getString(R.string.TREEHOUSES_SERVICES) + " ${selected.name} url tor", alertDialog)
+        setOnClick(chooseBind.localButton, getString(R.string.TREEHOUSES_SERVICES_URL_LOCAL, selected!!.name), alertDialog)
+        setOnClick(chooseBind.torButton, getString(R.string.TREEHOUSES_SERVICES_URL_TOR, selected.name), alertDialog)
         alertDialog.show()
     }
 
@@ -230,8 +230,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
         setScreenState(false)
-        if (newAutoRun) listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES) + " ${s!!.name} autorun true")
-        else listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES) + " ${s!!.name} autorun false")
+        if (newAutoRun) listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "true"))
+        else listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "false"))
         Toast.makeText(context, "Switching autorun status to $newAutoRun", Toast.LENGTH_SHORT).show()
     }
 
