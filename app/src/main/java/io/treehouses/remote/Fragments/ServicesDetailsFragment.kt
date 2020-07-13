@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
@@ -186,8 +187,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             envName.hint = "New Value"
             row.addView(envName)
             row.addView(newVal)
-            envName.setTextColor(resources.getColor(R.color.daynight_textColor))
-            newVal.setTextColor(resources.getColor(R.color.daynight_textColor))
+            envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
+            newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
             dialogBinding.varList.addView(row)
         }
         val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
