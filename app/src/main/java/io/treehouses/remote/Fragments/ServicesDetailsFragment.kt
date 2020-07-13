@@ -7,12 +7,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.textfield.TextInputEditText
@@ -175,10 +174,19 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         val inflater = requireActivity().layoutInflater
         val dialogBinding = EnvVarBinding.inflate(inflater)
         for (i in 0 until size) {
-            val textView = TextInputEditText(requireContext())
-            textView.setText(vars[i])
-            textView.id = i
-            dialogBinding.varList.addView(textView)
+            val envName = TextView(requireContext())
+            val newVal = TextInputEditText(requireContext())
+            val row = LinearLayout(requireContext())
+            envName.setText(vars[i].trim { it <= '\"'} + ":")
+            envName.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            newVal.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+            envName.gravity = Gravity.CENTER
+            newVal.gravity = Gravity.CENTER
+            newVal.id = i
+            envName.hint = "New Value"
+            row.addView(envName)
+            row.addView(newVal)
+            dialogBinding.varList.addView(row)
         }
         val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
         alertDialog.show()
