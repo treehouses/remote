@@ -28,6 +28,7 @@ enum class RESULTS {
 
 fun match (output: String) : RESULTS {
     when {
+        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isError(output) ->  return RESULTS.ERROR
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
         Matcher.isVersion(output) -> return RESULTS.VERSION
@@ -40,11 +41,10 @@ fun match (output: String) : RESULTS {
         Matcher.isDefaultConnected(output) -> return RESULTS.DEFAULT_CONNECTED
         Matcher.isNetworkModeReturned(output) -> return RESULTS.NETWORKMODE
         Matcher.isStartJSON(output) -> return RESULTS.START_JSON
-        Matcher.isEndJSON(output) -> return RESULTS.END_JSON
-        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isEndAllServicesJson(output) -> return RESULTS.END_JSON_SERVICES
         Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
+        Matcher.isEndJSON(output) -> return RESULTS.END_JSON
     }
     return RESULTS.RESULT_NOT_FOUND
 }
@@ -74,7 +74,6 @@ object Matcher {
         return output.contains(" ") && toLC(output).split(" ").size == 4
                 && !output.contains("network") && !output.contains("pirateship") && !output.contains("bridge")
     }
-
 
     fun isUpgradeCheck(output: String): Boolean {
         val regexTrue = """(true|false) \d{1,2}[.]\d{1,2}[.]\d{1,2}""".toRegex()

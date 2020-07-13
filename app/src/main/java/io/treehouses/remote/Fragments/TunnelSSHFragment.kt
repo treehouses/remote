@@ -57,7 +57,10 @@ class TunnelSSHFragment : BaseFragment() {
         }
 
         bind!!.btnSendToPi.setOnClickListener{
-            listener.sendMessage("treehouses sshtunnel key send public")
+            val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", MODE_PRIVATE)
+            val publicKey: String? = sharedPreferences.getString("public_key", "")
+            val privateKey: String? = sharedPreferences.getString("private_key", "")
+            listener.sendMessage("treehouses remote key receive $publicKey $privateKey")
         }
 //
 //        notification = bind!!.switchNotification
@@ -80,16 +83,20 @@ class TunnelSSHFragment : BaseFragment() {
                     val readMessage = msg.obj as String
                     match(readMessage)
 
-//                    if(readMessage.contains("Error")){
-//                        list
-//                    }
+                    if(readMessage.contains("treehouses tor portstreehouses remote key send")){
+                        listener.sendMessage("treehouses remote key send")
+                    }
+                    if(readMessage.contains("key required")){
+                        listener.sendMessage("treehouses remote key send")
+                        Toast.makeText(requireContext(), "No keys saved, retrieving keys now", Toast.LENGTH_SHORT).show()
+                    }
+                    if(readMessage.contains("Saved")){
+                        Toast.makeText(requireContext(), "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
+                    }
                     if (readMessage.contains("unknown")) {
-                        Log.d("JSON Sent", "json sent")
                         jsonSend(false)
                     }
-                    Log.d("JSON Sent Value", jsonSent.toString())
                     if (jsonSent) {
-                        Log.d("Handle Json", "Handle JSON")
                         handleJson(readMessage)
                     }
                     val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", MODE_PRIVATE)
@@ -101,7 +108,7 @@ class TunnelSSHFragment : BaseFragment() {
 //                if (isMessageJSON(readMessage)) {
 //
 //                    val jsonMessage = JSONObject(readMessage)
-//
+//re
 //                    if (jsonMessage.has("public_key")) {
 //                        val myEdit = sharedPreferences.edit()
 //                        myEdit.putString("public_key", jsonMessage.getString("public_key"))
@@ -126,6 +133,7 @@ class TunnelSSHFragment : BaseFragment() {
             val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", MODE_PRIVATE)
             val myEdit = sharedPreferences.edit()
             myEdit.putString("public_key", jsonObject.getString("public_key"))
+            myEdit.putString("private_key", jsonObject.getString("private_key"))
             myEdit.apply()
 
         } catch (e: JSONException) {
@@ -138,9 +146,7 @@ class TunnelSSHFragment : BaseFragment() {
         val s = match(readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
-            Log.d("JSON String", jsonString)
-            Log.d("Match readMessage", s.toString())
-            if (s == RESULTS.END_JSON) {
+            if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
                 buildJSON()
                 jsonSend(false)
             }
@@ -151,7 +157,6 @@ class TunnelSSHFragment : BaseFragment() {
         } else if (s == RESULTS.START_JSON) {
             jsonReceiving = true
             jsonString = readMessage.trim()
-            Log.d("JSON String First", jsonString)
         }
     }
     private fun jsonSend(sent: Boolean) {

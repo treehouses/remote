@@ -25,18 +25,18 @@
         android:id="@+id/btn_get_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Get Public SSH Key" />
+        android:text="Get SSH Key" />
 
     <Button
         android:id="@+id/btn_send_to_pi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send To Raspberry Pi" />
+        android:text="Save SSH Key To Raspberry Pi" />
 
     <TextView
         android:id="@+id/public_key"
         android:layout_width="match_parent"
-        android:layout_height="242dp"
+        android:layout_height="575dp"
         android:textSize="36sp" />
 
     <ProgressBar
