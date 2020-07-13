@@ -186,6 +186,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             envName.hint = "New Value"
             row.addView(envName)
             row.addView(newVal)
+            envName.setTextColor(resources.getColor(R.color.daynight_textColor))
+            newVal.setTextColor(resources.getColor(R.color.daynight_textColor))
             dialogBinding.varList.addView(row)
         }
         val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
