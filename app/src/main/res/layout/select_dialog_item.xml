@@ -7,6 +7,8 @@
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:textColor="@color/daynight_textColor"
     android:gravity="center_vertical"
-    android:paddingLeft="14dp"
+    android:drawableRight="@drawable/delete_icon"
+    android:paddingRight="26dip"
+    android:drawablePadding="100dp"
     android:ellipsize="marquee"
     />
