@@ -1,7 +1,6 @@
 package io.treehouses.remote.bases
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Message
@@ -59,7 +58,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     fun getViews(view: View, isRead: Boolean): View {
         val consoleView = view.findViewById<TextView>(R.id.listItem)
-        if (isRead) { consoleView.setTextColor(Color.BLUE)
+        if (isRead) { consoleView.setTextColor(resources.getColor(R.color.terminal))
         } else { consoleView.setTextColor(Color.RED) }
         return view
     }
@@ -71,8 +70,8 @@ open class BaseTerminalFragment : BaseFragment() {
         bgShape.setColor(color)
     }
 
-    protected fun copyToList(mConversationView: ListView, context: Context?) {
-        mConversationView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+    protected fun copyToList(mConversationView: ListView) {
+        mConversationView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val clickedData = mConversationView.getItemAtPosition(position) as String
             requireContext().copyToClipboard( clickedData)
         }
@@ -87,7 +86,7 @@ open class BaseTerminalFragment : BaseFragment() {
     }
 
     private fun filterMessage(readMessage: String): Boolean {
-        val a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && !readMessage.trim { it <= ' ' }.isEmpty()
+        val a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && readMessage.trim { it <= ' ' }.isNotEmpty()
         val b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands") && !jsonSent
         return a && b
     }
@@ -110,9 +109,9 @@ open class BaseTerminalFragment : BaseFragment() {
         inSecondLevel = HashSet()
         inThirdLevel = HashSet()
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        arrayAdapter1 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, array2)
-        arrayAdapter2 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList())
-        arrayAdapter3 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList())
+        arrayAdapter1 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, array2)
+        arrayAdapter2 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, ArrayList())
+        arrayAdapter3 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, ArrayList())
         if (preferences.getBoolean("autocomplete", true)) {
             autoComplete.threshold = 0
             autoComplete.setAdapter(arrayAdapter1)

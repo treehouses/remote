@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -30,7 +29,7 @@
         android:screenOrientation="portrait"
         android:theme="@style/MyMaterialTheme.Base"
         android:usesCleartextTraffic="true">
-        <activity android:name=".IntroActivity"></activity>
+        <activity android:name=".IntroActivity" />
         <activity
             android:name=".SplashScreenActivity"
             android:screenOrientation="portrait">
@@ -41,6 +40,29 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name="io.treehouses.remote.SSH.Terminal.TerminalManager"
+            android:configChanges="keyboardHidden|orientation"
+            />
+
+        <activity
+            android:name=".Fragments.SSHConsole"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="ssh"/>
+                <!-- format:  ssh://user@host:port/#nickname  -->
+                <!-- format:  telnet://host:port/#nickname  -->
+                <!-- format:  local://  -->
+            </intent-filter>
+        </activity>
         <service android:name=".utils.GPSService" />
 
         <activity

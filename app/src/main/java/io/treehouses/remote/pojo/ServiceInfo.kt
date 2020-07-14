@@ -29,8 +29,8 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
         this.autorun = autorun
     }
 
-    override fun compareTo(o: ServiceInfo): Int {
-        return serviceStatus - o.serviceStatus
+    override fun compareTo(other: ServiceInfo): Int {
+        return serviceStatus - other.serviceStatus
     }
 
     val isHeader: Boolean

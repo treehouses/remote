@@ -13,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
@@ -32,10 +33,14 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
-        adapter = ServicesListAdapter(requireContext(), services!!, resources.getColor(R.color.bg_white))
+        adapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.bg_white))
         bind!!.listView.adapter = adapter
         bind!!.listView.onItemClickListener = this
         return bind!!.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Tutorials.servicesOverviewTutorials(bind!!, requireActivity())
     }
 
 

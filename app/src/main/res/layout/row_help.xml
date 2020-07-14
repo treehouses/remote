@@ -14,6 +14,7 @@
         android:paddingEnd="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_large"
+        android:textColor = "@color/daynight_textColor"
         tools:text="ITEM"
         style="@style/TextAppearance.AppCompat"
          />
@@ -26,6 +27,7 @@
         android:paddingRight="@dimen/padding_large"
         android:paddingEnd="@dimen/padding_large"
         android:maxLines="2"
+        android:textColor = "@color/expandable_child_text"
         tools:text="@tools:sample/lorem/random"
         style="@style/TextAppearance.AppCompat.Caption"/>
 

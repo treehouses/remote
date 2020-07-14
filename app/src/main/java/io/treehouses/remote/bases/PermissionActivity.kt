@@ -15,12 +15,12 @@ import androidx.core.content.ContextCompat
 import io.treehouses.remote.R
 
 abstract class PermissionActivity : AppCompatActivity() {
-    fun checkPermission(strPermission: String?): Boolean {
+    private fun checkPermission(strPermission: String?): Boolean {
         val result = ContextCompat.checkSelfPermission(this, strPermission!!)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
-    fun statusCheck() {
+    private fun statusCheck() {
         val manager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps()
@@ -31,8 +31,8 @@ abstract class PermissionActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
-                .setPositiveButton("Yes") { dialog: DialogInterface?, id: Int -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
-                .setNegativeButton("No") { dialog: DialogInterface, id: Int -> dialog.cancel() }
+                .setPositiveButton("Yes") { _: DialogInterface?, _: Int -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+                .setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.cancel() }
         val alert = builder.create()
         alert.show()
     }
@@ -52,22 +52,14 @@ abstract class PermissionActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_WIFI) {
-            if (grantResults.size > 0
+            if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 statusCheck()
             }
         }
     }
 
-    protected fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_COARSE_LOCATION)
-        }
-    }
-
     companion object {
         private const val PERMISSION_REQUEST_WIFI = 111
-        private const val PERMISSION_REQUEST_CODE_CAMERA = 112
-        private const val REQUEST_COARSE_LOCATION = 99
     }
 }
