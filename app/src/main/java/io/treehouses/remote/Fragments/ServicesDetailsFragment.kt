@@ -63,7 +63,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
-                    Log.d("QQQ",output)
                     moreActions(output)
                 }
             }
@@ -101,10 +100,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         } else if (editEnv) {
             var tokens = output.split(" ")
             val name = tokens[2]
-            Log.d("d",tokens.size.toString())
-            Log.d("d",tokens.toString())
             tokens = tokens.subList(6, tokens.size-1)
-            Log.d("d",tokens.toString())
             editEnv = false
             showEditDialog(name, tokens.size, tokens)
         } else {
@@ -204,7 +200,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                     for (i in 0 until size) {
                         command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
                     }
-                    Log.d("eee", command)
                     writeToRPI(command)
                     Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
                 }
