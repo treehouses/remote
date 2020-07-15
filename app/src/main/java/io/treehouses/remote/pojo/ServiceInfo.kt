@@ -13,6 +13,8 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
     var info: String? = null
     @JvmField
     var autorun: String? = null
+    //@JvmField
+    //var usesEnv: String? = null
 
     //Headers
     constructor(n: String, status: Int) {
