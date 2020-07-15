@@ -25,6 +25,8 @@
     <color name="terminal">@color/md_blue_A700</color>
     <color name="back_arrow">#585858</color>
 
+    <color name="rectangle_border_color">@color/md_grey_800</color>
+
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>
     <color name="red">#66ff0000</color>
