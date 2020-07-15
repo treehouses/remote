@@ -13,8 +13,8 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
     var info: String? = null
     @JvmField
     var autorun: String? = null
-    //@JvmField
-    //var usesEnv: String? = null
+    @JvmField
+    var usesEnv: String? = null
 
     //Headers
     constructor(n: String, status: Int) {
@@ -23,12 +23,13 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
     }
 
     //Services
-    constructor(name: String, serviceStatus: Int, icon: String?, info: String?, autorun: String?) {
+    constructor(name: String, serviceStatus: Int, icon: String?, info: String?, autorun: String?, usesEnv: String?) {
         this.name = name
         this.serviceStatus = serviceStatus
         this.icon = icon
         this.info = info
         this.autorun = autorun
+        this.usesEnv = usesEnv
     }
 
     override fun compareTo(other: ServiceInfo): Int {

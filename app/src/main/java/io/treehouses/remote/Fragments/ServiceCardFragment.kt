@@ -52,10 +52,6 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         binding!!.autorunChecked.isChecked = autorun!!.contains("true")
     }
 
-    private fun hasEnvVariables(): Boolean {
-        return true
-    }
-
     private fun setButtons(started: Boolean, installed: Boolean) {
         var string1 = "Start"
         var visibility1 = View.GONE
@@ -79,7 +75,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         }
         var visibility4 = View.GONE
 
-        if (installed && !started && hasEnvVariables())
+        if (installed && !started && serviceData.usesEnv == "true")
             visibility4 = View.VISIBLE
 
         binding!!.installButton.text = string2
