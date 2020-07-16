@@ -116,7 +116,7 @@ object Tutorials {
     }
 
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
-        fun fancyShowCaseViewBuilderTerminal(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
+        fun fancyShowCaseViewBuilderStatus(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
             return FancyShowCaseView.Builder(activity)
                     .focusOn(view)
                     .title(title)
@@ -128,17 +128,17 @@ object Tutorials {
                     .build()
         }
 
-        val a = fancyShowCaseViewBuilderTerminal(bind.bluetoothBox, "Your Device's Bluetooth details are listed here", 750, FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilderStatus(bind.bluetoothBox, "Your Device's Bluetooth details are listed here", 750, FocusShape.ROUNDED_RECTANGLE)
 
-        val b = fancyShowCaseViewBuilderTerminal(bind.networkBox, "Network details can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
+        val b = fancyShowCaseViewBuilderStatus(bind.networkBox, "Network details can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
 
-        val c = fancyShowCaseViewBuilderTerminal(bind.rpiDetailBox, "Some details like your Hostname, Image Version, CPU and Model are listed here", 500, FocusShape.ROUNDED_RECTANGLE)
+        val c = fancyShowCaseViewBuilderStatus(bind.rpiDetailBox, "Some details like your Hostname, Image Version, CPU and Model are listed here", 500, FocusShape.ROUNDED_RECTANGLE)
 
-        val d = fancyShowCaseViewBuilderTerminal(bind.editName, "Edit your hostname here, new hostname will show up the next time you visit Status", 500, FocusShape.ROUNDED_RECTANGLE)
+        val d = fancyShowCaseViewBuilderStatus(bind.editName, "Edit your hostname here, new hostname will show up the next time you visit Status", 500, FocusShape.ROUNDED_RECTANGLE)
 
-        val e = fancyShowCaseViewBuilderTerminal(bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available", 500, FocusShape.ROUNDED_RECTANGLE)
+        val e = fancyShowCaseViewBuilderStatus(bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available", 500, FocusShape.ROUNDED_RECTANGLE)
 
-        val f = fancyShowCaseViewBuilderTerminal(bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
+        val f = fancyShowCaseViewBuilderStatus(bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
 
         show(a,b,c,d,e,f)
     }
