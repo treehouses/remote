@@ -23,7 +23,6 @@
     <string name="TREEHOUSES_WIFI_ENTERPRISE">treehouses wifi \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_WIFI_HIDDEN_ENTERPRISE">treehouses wifihidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
 
-
     <string name="TREEHOUSES_HELP_JSON">treehouses remote help json\n</string>
 
 </resources>
