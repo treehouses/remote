@@ -10,6 +10,7 @@
     <color name="navigationBarColor">#000000</color>
     <color name="daynight_textColor">#FFFFFF</color>
     <color name="home_welcome">#FFFFFF</color>
+    <color name="box_color">@color/cardview_dark_background</color>
     <color name="services_detail_background">#1E1E1E</color>
     <color name="services_tab_background">#1E1E1E</color>
     <color name="tab_text_color">#FFFFFF</color>
@@ -19,6 +20,12 @@
     <color name="preference_category">@color/bg_white</color>
     <color name="preference_title">@color/md_grey_500</color>
     <color name="tor_background">#B5B5B5</color>
+    <color name="expandable_list_row">#4E4E4E</color>
+    <color name="expandable_child_text">#A6A6A6</color>
+    <color name="terminal">#FFFFFF</color>
+    <color name="back_arrow">#CCCCCC</color>
+
+    <color name="rectangle_border_color">@color/md_grey_500</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>

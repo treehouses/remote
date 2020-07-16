@@ -143,4 +143,11 @@
 
 -keep class io.treehouses.remote.pojo.** { *; }
 
+-keep public class com.trilead.ssh2.compression.**
+-keep public class com.trilead.ssh2.crypto.**
+
+-keep class org.conscrypt.** { *; }
+
+
+
 

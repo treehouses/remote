@@ -10,6 +10,7 @@
     <color name="navigationBarColor">#000000</color>
     <color name="daynight_textColor">#000000</color>
     <color name="home_welcome">#616161</color>
+    <color name="box_color">#F1F1F1</color>
     <color name="services_detail_background">#FFE0E0E0</color>
     <color name="services_tab_background">#FFFFFF</color>
     <color name="tab_text_color">#FF37474F</color>
@@ -19,6 +20,12 @@
     <color name="preference_category">@color/accent</color>
     <color name="preference_title">@color/md_grey_900</color>
     <color name="tor_background">#ffffff</color>
+    <color name="expandable_list_row">@color/md_grey_200</color>
+    <color name="expandable_child_text">@color/md_grey_700</color>
+    <color name="terminal">@color/md_blue_A700</color>
+    <color name="back_arrow">#585858</color>
+
+    <color name="rectangle_border_color">@color/md_grey_800</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>
@@ -40,4 +47,11 @@
 
     <color name="disconnect_button">#BC5C5C</color>
     <color name="disconnect_button_light">#c48787</color>
+
+    <color name="key_background_selected">#55f0f0f0</color>
+    <color name="key_background_pressed">#aaa0a0ff</color>
+    <color name="key_background_normal">#55f0f0f0</color>
+    <color name="key_background_layout">#55000000</color>
+    <color name="key_separator">#00000000</color>
+    <color name="keyboard_background">#55b0b0f0</color>
 </resources>
