@@ -2,8 +2,6 @@ package io.treehouses.remote.Fragments
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -31,7 +29,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     private var counter = 0
-    private lateinit var array: ArrayList<String>
+    private lateinit var array: MutableList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
     }
@@ -57,7 +55,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
     private fun preferences(){
         var worked = false
-        array = SaveUtils.getStringArray(requireContext(), "servicesArray")
+        array = SaveUtils.getStringList(requireContext(), "servicesArray")
         for (string in array) {
             val a = performAction(string, services)
             if (a == 1) {
@@ -89,7 +87,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         when (performAction(output!!, services)) {
             1 -> {
                 array.add(output)
-                SaveUtils.saveStringArray(requireContext(), array, "servicesArray")
+                SaveUtils.saveStringList(requireContext(), array, "servicesArray")
                 showUI()
             }
             0 -> {

@@ -72,7 +72,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context!!, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
+        val profileAdapter = ProfilesListAdapter(requireContext(), listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
@@ -305,6 +305,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     override fun onResume() {
         super.onResume()
         if (mChatService.state == Constants.STATE_CONNECTED) {
+            mChatService.updateHandler(mHandler)
             checkVersionSent = true
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }

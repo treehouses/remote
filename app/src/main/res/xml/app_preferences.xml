@@ -53,6 +53,13 @@
             android:layout="@layout/custom_pref"
             android:summary="Clear all Network Profiles (WIFI, Hotspot, Bridge)">
         </Preference>
+
+        <Preference
+            android:title="Clear SSH Hosts"
+            android:key="ssh_hosts"
+            android:layout="@layout/custom_pref"
+            android:summary="Delete all SSH hosts">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">
