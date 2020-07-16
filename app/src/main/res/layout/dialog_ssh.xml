@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/card_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start SSH Connection"
+        android:textColor="@color/daynight_textColor"
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingEnd="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/ssh_text_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_border"
+        android:padding="@dimen/padding_normal"
+        android:layout_margin="@dimen/margin_large"
+        android:textColorHint="@color/md_grey_500"
+        android:hint="pi@192.168.1.29"
+        />
+
+    <Button
+        android:id="@+id/connect_ssh"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/bg_white"
+        android:background="@drawable/ripple"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:text="Connect"
+         />
+
+</LinearLayout>
