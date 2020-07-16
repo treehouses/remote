@@ -24,11 +24,11 @@ import java.lang.Exception
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
-
+import kotlin.random.Random
 
 class DiscoverNetworkFragment : BaseFragment() {
     private lateinit var bind : ActivityDiscoverNetworkFragmentBinding
-    private lateinit var viewPager : DiscoverViewPager
+    private var gateway = Gateway()
     private var deviceList = ArrayList<Device>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,28 +46,27 @@ class DiscoverNetworkFragment : BaseFragment() {
     private fun setupIcons() {
         bind.container.removeAllViews()
 
-        val icon = ImageView(context)
-        icon.setImageResource(R.drawable.ic_download_icon)
-        val param = LinearLayout.LayoutParams(200, 200)
+        var size = 0
 
-        icon.layoutParams = param
+        val midX = (bind.container.measuredWidth / 2).toFloat()
+        val midY = (bind.container.measuredHeight / 2).toFloat()
 
-        val midX = (this.resources.displayMetrics.widthPixels / 2).toFloat()
-        val midY = (this.resources.displayMetrics.heightPixels / 2 - 100).toFloat()
-
-        icon.x = midX - 100
-        icon.y = midY - 100
-
-        val r = this.resources.displayMetrics.widthPixels / 2 * 0.7
+        val r = this.resources.displayMetrics.widthPixels / 2 * 0.72
         val interval = 2 * PI / deviceList.size
-        var radians = 0.0
+        var radians = Random.nextFloat() * 2 * PI
+
+        size = when {
+            deviceList.size <= 12 -> ICON_MEDIUM_SIZE
+            deviceList.size <= 20 -> ICON_SMALL_SIZE
+            else -> ICON_XSMALL_SIZE
+        }
 
         for(i in deviceList) {
             val imageView = ImageView(context)
             imageView.setImageResource(R.drawable.circle_yellow)
-            imageView.layoutParams = LinearLayout.LayoutParams(200, 200)
-            imageView.x = midX + (r * sin(radians)).toFloat() - 100
-            imageView.y = midY + (r * -cos(radians)).toFloat() - 100
+            imageView.layoutParams = LinearLayout.LayoutParams(size, size)
+            imageView.x = midX + (r * sin(radians)).toFloat() - size / 2
+            imageView.y = midY + (r * -cos(radians)).toFloat() - size / 2
 
             imageView.setOnClickListener {
                 val message = ("IP Address: " + i.ip + "\n") +
@@ -77,8 +76,8 @@ class DiscoverNetworkFragment : BaseFragment() {
             }
 
             val bitmap = Bitmap.createBitmap(
-                    this.resources.displayMetrics.widthPixels,
-                    this.resources.displayMetrics.heightPixels,
+                    bind.container.measuredWidth,
+                    bind.container.measuredHeight,
                     Bitmap.Config.ARGB_8888
             )
 
@@ -87,15 +86,38 @@ class DiscoverNetworkFragment : BaseFragment() {
             p4.isAntiAlias = true
             p4.color = Color.BLACK
             p4.strokeWidth = 10f
-            canvas.drawLine(midX, (midY + 100), (imageView.x + 100),(imageView.y + 200), p4)
+            canvas.drawLine(midX, midY, imageView.x + size / 2, imageView.y + size / 2, p4)
 
             radians += interval
+            radians %= 2 * PI
 
             val line = ImageView(context)
             line.setImageBitmap(bitmap)
             bind.container.addView(line)
             bind.container.addView(imageView)
         }
+
+        val icon = ImageView(context)
+        icon.setImageResource(R.drawable.ic_download_icon)
+        val param = LinearLayout.LayoutParams(size, size)
+
+        size = ICON_MEDIUM_SIZE
+
+        icon.x = midX - size / 2
+        icon.y = midY - size / 2
+
+        icon.layoutParams = param
+
+        icon.setOnClickListener {
+            val message = ("SSID: " + gateway.ssid + "\n")
+                    ("IP Address: " + gateway.device.ip + "\n") +
+                    ("MAC Address: " + gateway.device.mac + "\n") +
+                    ("Connected Devices: " + deviceList.size) +
+
+            message.lines()
+            showDialog("Device Information", message)
+        }
+
         bind.container.addView(icon)
     }
 
@@ -115,6 +137,13 @@ class DiscoverNetworkFragment : BaseFragment() {
         Log.e(TAG, "Requesting Gateway List")
         try {
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY_LIST))
+        }
+        catch (e : Exception) {
+            Log.e(TAG, "Failed bro")
+        }
+
+        try {
+            listener.sendMessage("treehouses discover gateway")
         }
         catch (e : Exception) {
             Log.e(TAG, "Failed bro")
@@ -150,10 +179,10 @@ class DiscoverNetworkFragment : BaseFragment() {
                 Constants.MESSAGE_READ -> {
                     val readMessage = msg.obj as String
                     Log.e(TAG, "readMessage = $readMessage")
-                    val regex = "([0-9]+.){3}[0-9]+\\s+([0-9a-z]+:){5}[0-9a-z]+".toRegex()
-                    val collection = regex.findAll(readMessage)
+                    var regex = "([0-9]+.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
+                    var devices = regex.findAll(readMessage)
 
-                    collection.forEach {
+                    devices.forEach {
                         Log.e(TAG, "Regex match: " + it.value)
                         val device = Device()
 
@@ -161,6 +190,25 @@ class DiscoverNetworkFragment : BaseFragment() {
                         device.mac = it.value.split("\\s+".toRegex())[1]
 
                         deviceList.add(device)
+                    }
+
+
+                    regex = "ip address:\\s+([0-9]+.){3}[0-9]".toRegex()
+                    val ip = regex.find(readMessage)
+                    if (ip != null) {
+                        gateway.device.ip = ip.value.split("\\s+".toRegex())[1]
+                    }
+
+                    regex = "ESSID:\\s+\"[.]+\"".toRegex()
+                    val ssid = regex.find(readMessage)
+                    if (ssid != null) {
+                        gateway.ssid = ssid.value.split("\\s+".toRegex())[1]
+                    }
+
+                    regex = "MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
+                    val mac = regex.find(readMessage)
+                    if (mac != null) {
+                        gateway.device.mac = mac.value.split("\\s+".toRegex())[1]
                     }
 
                     setupIcons()
@@ -174,7 +222,15 @@ class DiscoverNetworkFragment : BaseFragment() {
         lateinit var mac : String
     }
 
+    inner class Gateway {
+        var device = Device()
+        lateinit var ssid : String
+    }
+
     companion object {
         private const val TAG = "Discover Fragment"
+        private const val ICON_MEDIUM_SIZE = 200
+        private const val ICON_SMALL_SIZE = 120
+        private const val ICON_XSMALL_SIZE = 80
     }
 }
