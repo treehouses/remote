@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
@@ -10,18 +9,17 @@ import android.text.style.BackgroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.HelpAdapter
+import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogHelpBinding
 import io.treehouses.remote.pojo.HelpCommand
 import org.json.JSONObject
 
 
-class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListener {
+class HelpDialog : FullScreenDialogFragment(), android.widget.SearchView.OnQueryTextListener {
     private lateinit var bind: DialogHelpBinding
     private var jsonString = ""
     private val items = mutableListOf<HelpCommand>()
@@ -101,17 +99,6 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
 
     private fun updateHighlight(item: HelpCommand) {
         bind.description.text = highlight(item.preview, queryText)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        return dialog
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     private fun createJson(jsonStr: String) {

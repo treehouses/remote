@@ -10,6 +10,7 @@
     <color name="navigationBarColor">#000000</color>
     <color name="daynight_textColor">#000000</color>
     <color name="home_welcome">#616161</color>
+    <color name="box_color">#F1F1F1</color>
     <color name="services_detail_background">#FFE0E0E0</color>
     <color name="services_tab_background">#FFFFFF</color>
     <color name="tab_text_color">#FF37474F</color>
@@ -23,6 +24,8 @@
     <color name="expandable_child_text">@color/md_grey_700</color>
     <color name="terminal">@color/md_blue_A700</color>
     <color name="back_arrow">#585858</color>
+
+    <color name="rectangle_border_color">@color/md_grey_800</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="bg_white">#ffffff</color>

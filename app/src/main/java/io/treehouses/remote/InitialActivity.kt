@@ -94,7 +94,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
-                R.id.menu_ssh -> SSHDialog(this)
+                R.id.menu_ssh -> SSHDialog().show(supportFragmentManager, "SSH")
             }
         }
         title = item.title
@@ -118,7 +118,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             R.id.menu_about -> openCallFragment(AboutFragment())
             R.id.menu_status -> openCallFragment(StatusFragment())
             R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
-            R.id.menu_ssh -> SSHDialog(this)
+            R.id.menu_ssh -> SSHDialog().show(supportFragmentManager, "SSH")
             else -> openCallFragment(HomeFragment())
 
         }
