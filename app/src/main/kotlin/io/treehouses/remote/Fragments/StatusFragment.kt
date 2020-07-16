@@ -44,7 +44,7 @@ class StatusFragment : BaseFragment() {
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         checkStatusNow()
-        writeToRPI(getString(R.string.TREEHOUSES_REMOTE_STATUS))
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUS))
 
         return bind.root
     }
@@ -61,7 +61,7 @@ class StatusFragment : BaseFragment() {
 
     private fun upgradeOnViewClickListener() {
         bind.upgrade.setOnClickListener {
-            writeToRPI(getString(R.string.TREEHOUSES_UPGRADE))
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE))
             updateRightNow = true
             bind.progressBar.visibility = View.VISIBLE
         }
@@ -73,7 +73,7 @@ class StatusFragment : BaseFragment() {
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
-        if (readMessage.trim().split(" ").size == 5 && lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUS)) {
+        if (readMessage.trim().split(" ").size == 5 && lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUS)) {
             val res = readMessage.trim().split(" ")
             bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
@@ -82,32 +82,32 @@ class StatusFragment : BaseFragment() {
             //also set remote version
             bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
             Log.e("REACHED", "YAYY")
-            writeToRPI(getString(R.string.HOSTNAME))
-        } else if (lastCommand == getString(R.string.HOSTNAME)){
+            writeToRPI(requireActivity().getString(R.string.HOSTNAME))
+        } else if (lastCommand == requireActivity().getString(R.string.HOSTNAME)){
             bind.tvRpiName.text = "Hostname: " + readMessage
-            writeToRPI(getString(R.string.TREEHOUSES_MEMORY_USED_GB))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_MEMORY_USED_GB)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_MEMORY_USED_GB))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_MEMORY_USED_GB)) {
             usedMemory = readMessage.trim { it <= ' ' }.toDouble()
-            writeToRPI(getString(R.string.TREEHOUSES_MEMORY_TOTAL_GB))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_MEMORY_TOTAL_GB)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_MEMORY_TOTAL_GB))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_MEMORY_TOTAL_GB)) {
             totalMemory = readMessage.trim { it <= ' ' }.toDouble()
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
-            writeToRPI(getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS)) {
             bind.temperature.text = readMessage
             ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
-            writeToRPI(getString(R.string.TREEHOUSES_DETECT_ARM))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_DETECT_ARM)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_DETECT_ARM))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_DETECT_ARM)) {
             bind.cpuModelText.text = "CPU: ARM " + readMessage
-            writeToRPI(getString(R.string.TREEHOUSES_NETWORKMODE))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_NETWORKMODE)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE)) {
             networkMode = readMessage.dropLast(1)
-            writeToRPI(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_NETWORKMODE_INFO)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO)) {
             writeNetworkInfo(readMessage)
-            writeToRPI(getString(R.string.TREEHOUSES_INTERNET))
-        } else if (lastCommand == getString(R.string.TREEHOUSES_INTERNET)) {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_INTERNET))
+        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_INTERNET)) {
             checkWifiStatus(readMessage)
         } else {
             checkUpgradeStatus(readMessage)
@@ -133,7 +133,7 @@ class StatusFragment : BaseFragment() {
 
     private fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
-            writeToRPI(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE_CHECK))
         } else {
             bind.tvUpgradeCheck.text = "      NO INTERNET"
             bind.upgrade.visibility = View.GONE
@@ -183,7 +183,7 @@ class StatusFragment : BaseFragment() {
                 .setPositiveButton("Rename"
                 ) { _: DialogInterface?, _: Int ->
                     if (mEditText.text.toString() != "") {
-                        writeToRPI(getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
+                        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
                         Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
