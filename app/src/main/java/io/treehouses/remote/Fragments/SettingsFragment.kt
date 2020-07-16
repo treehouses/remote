@@ -104,15 +104,25 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun clearNetworkProfiles() {
-        SaveUtils.clearProfiles(requireContext())
-        Toast.makeText(context, "Network Profiles have been reset", Toast.LENGTH_LONG).show()
+        clear("profiles", "Network Profiles have been reset")
+    }
+
+    private fun clear(subject: String, message: String) {
+        when (subject) {
+            "profiles" -> {
+                SaveUtils.clearProfiles(requireContext())
+            }
+            "commandsList" -> {
+                SaveUtils.clearCommandsList(requireContext())
+            }
+        }
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     private fun onClickDialog(id: Int) {
         when (id) {
             CLEAR_COMMANDS_ID -> {
-                SaveUtils.clearCommandsList(requireContext())
-                Toast.makeText(context, "Commands List has been Cleared", Toast.LENGTH_LONG).show()
+                clear("commandsList", "Commands List has been Cleared")
             }
             RESET_COMMANDS_ID -> {
                 SaveUtils.clearCommandsList(requireContext())
