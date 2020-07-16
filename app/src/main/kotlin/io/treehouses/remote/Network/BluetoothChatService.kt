@@ -17,15 +17,22 @@
 */
 package io.treehouses.remote.Network
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.*
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import io.treehouses.remote.Constants
 import java.io.IOException
 import java.io.InputStream
@@ -81,6 +88,61 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             get() = this@BluetoothChatService
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.e("BLUETOOTH","START COMMAND")
+        if (intent?.action.equals("stop")) {
+            stopSelf();
+        }
+        else if (intent != null && intent.hasExtra("DEVICE")) {
+            mDevice = intent.getParcelableExtra("DEVICE")
+        }
+        if (mDevice != null) connect(mDevice!!, false)
+        return START_STICKY
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) startNotification() else startForeground(1, Notification())
+    }
+
+//    override fun onTaskRemoved(rootIntent: Intent?) {
+//        super.onTaskRemoved(rootIntent)
+//        Log.e("SERVICE","TASK REMOVE")
+//        val broadcastIntent = Intent()
+//        if (mDevice != null) broadcastIntent.putExtra("DEVICE", mDevice)
+//        broadcastIntent.action = "restartservice"
+//        broadcastIntent.setClass(this, BluetoothConnectionReceiver::class.java)
+//        this.sendBroadcast(broadcastIntent)
+//    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("SERVICE","OnDestroy")
+        val broadcastIntent = Intent()
+        if (mDevice != null) broadcastIntent.putExtra("DEVICE", mDevice)
+        broadcastIntent.action = "restartservice"
+        broadcastIntent.setClass(this, BluetoothConnectionReceiver::class.java)
+        this.sendBroadcast(broadcastIntent)
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startNotification() {
+        val NOTIFICATION_CHANNEL_ID = "bluetooth"
+        val channelName = "Bluetooth Connection"
+        val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE)
+        chan.lightColor = Color.BLUE
+        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+
+        val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+        manager.createNotificationChannel(chan)
+
+        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notification: Notification = notificationBuilder.setOngoing(true)
+                .setContentTitle("App is running in background")
+                .setPriority(NotificationManager.IMPORTANCE_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build()
+        startForeground(2, notification)
+    }
 
     /**
      * Update UI title according to the current state of the chat connection
@@ -295,104 +357,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         msg?.data = bundle
         mHandler?.sendMessage(msg ?: Message())
     }
-    /**
-     * This thread runs while listening for incoming connections. It behaves
-     * like a server-side client. It runs until a connection is accepted
-     * (or until cancelled).
-     */
-    // Uncomment this if phone needs to be able to accept connections from other devices
-    //    private class AcceptThread extends Thread {
-    //        // The local server socket
-    //        private final BluetoothServerSocket mmServerSocket;
-    //        private String mSocketType;
-    //
-    //        public AcceptThread(boolean secure) {
-    //            BluetoothServerSocket tmp = null;
-    //            mSocketType = secure ? "Secure" : "Insecure";
-    //
-    //            // Create a new listening server socket
-    //            try {
-    ////                if (secure) {
-    //                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, MY_UUID_SECURE);
-    ////                } else {
-    ////                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME_INSECURE, MY_UUID_INSECURE);
-    ////                }
-    //            } catch (Exception e) {
-    //                Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
-    //            }
-    //            mmServerSocket = tmp;
-    //            mCurrentState = Constants.STATE_LISTEN;
-    //        }
-    //
-    //        @Override
-    //        public void run() {
-    //            Log.d(TAG, "Socket Type: " + mSocketType + "BEGIN mAcceptThread" + this);
-    //            setName("AcceptThread" + mSocketType);
-    //
-    //            // Listen to the server socket if we're not connected
-    //            while (mCurrentState != Constants.STATE_CONNECTED) {
-    //                try {
-    //                    // This is a blocking call and will only return on a successful connection or an exception
-    //                    Log.e("TAG", "currentState: " + mCurrentState);
-    //
-    //                    socket = mmServerSocket.accept();
-    //                } catch (Exception e) {
-    //                    Log.e(TAG, "Socket Type: " + mSocketType + " accept() failed" + e);
-    //                    mCurrentState = Constants.STATE_NONE;
-    //                    updateUserInterfaceTitle();
-    //                    checkConnection("connectionCheck");
-    //                    break;
-    //                }
-    //
-    //                // If a connection was accepted
-    //                if (socket != null) {
-    //                    synchronized (BluetoothChatService.this) {
-    //                        switch (mCurrentState) {
-    //                            case Constants.STATE_LISTEN:
-    //                            case Constants.STATE_CONNECTING:
-    //                                // Situation normal. Start the connected thread.
-    //                                connected(socket, socket.getRemoteDevice(), mSocketType);
-    //                                break;
-    //                            case Constants.STATE_NONE:
-    //                            case Constants.STATE_CONNECTED:
-    //                                // Either not ready or already connected. Terminate new socket.
-    //                                try {
-    //                                    mmServerSocket.close();
-    //                                    HomeFragment homeFragment = new HomeFragment();
-    //                                    homeFragment.checkConnectionState();
-    //                                } catch (IOException e) {
-    //                                    Log.e(TAG, "Could not close unwanted socket", e);
-    //                                }
-    //                                break;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            Log.i(TAG, "END mAcceptThread, socket Type: " + mSocketType);
-    //
-    //        }
-    //
-    //        public void cancel() {
-    //            Log.d(TAG, "Socket Type" + mSocketType + "cancel " + this);
-    //            try {
-    //                mmServerSocket.close();
-    //            } catch (IOException e) {
-    //                Log.e(TAG, "Socket Type" + mSocketType + "close() of server failed", e);
-    //            }
-    //        }
-    //    }
-    //
-    //    private void checkConnection(String message) {
-    //        mCurrentState = getState();
-    //        if (mCurrentState == Constants.STATE_CONNECTED) {
-    //            Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ);
-    //            Bundle bundle = new Bundle();
-    //            bundle.putString(Constants.TOAST, message);
-    //            msg.setData(bundle);
-    //            RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
-    //            rpiDialogFragment.getmHandler().handleMessage(msg);
-    //        }
-    //    }
     /**
      * This thread runs while attempting to make an outgoing connection
      * with a device. It runs straight through; the connection either

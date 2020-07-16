@@ -1,5 +1,6 @@
 package io.treehouses.remote
 
+import android.app.ActivityManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -21,8 +22,8 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
-import io.treehouses.remote.Fragments.DialogFragments.SSHDialog
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
+import io.treehouses.remote.Fragments.DialogFragments.SSHDialog
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
@@ -31,11 +32,11 @@ import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
 
+
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
-    private var mBound = false
 
     /** Defines callbacks for service binding, passed to bindService()  */
     private val connection = object : ServiceConnection {
@@ -47,14 +48,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             mChatService = binder.service
             mChatService.updateHandler(mHandler)
             mChatService.context = applicationContext
-            mBound = true
             checkStatusNow()
             openCallFragment(HomeFragment())
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             Log.e("Bluetooth Service", "DISCONNECTED")
-            mBound = false
         }
     }
 
@@ -75,15 +74,22 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     override fun onStart() {
         super.onStart()
         // Bind to LocalService
-        Intent(this, BluetoothChatService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        if (!isBluetoothServiceRunning(BluetoothChatService::class.java)) {
+            Log.e("InitialActivity", "STARTING SERVICE")
+            Intent(this, BluetoothChatService::class.java).also { intent ->
+                bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
-        mBound = false
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unbindService(connection)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
+
     }
 
     private fun setUpDrawer() {
@@ -95,6 +101,18 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
+    }
+
+    private fun isBluetoothServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                Log.i("Service status", "Running")
+                return true
+            }
+        }
+        Log.i("Service status", "Not running")
+        return false
     }
 
 
