@@ -116,6 +116,8 @@ object Tutorials {
     }
 
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
         fun fancyShowCaseViewBuilderStatus(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
             return FancyShowCaseView.Builder(activity)
                     .focusOn(view)
