@@ -25,11 +25,12 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val clearCommandsList = findPreference<Preference>("clear_commands")
         val resetCommandsList = findPreference<Preference>("reset_commands")
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
-
+        val reactivateTutorials = findPreference<Preference>("reactivate_tutorials")
 
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
+        setClickListener(reactivateTutorials)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -75,6 +76,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "clear_commands" -> clearCommands()
             "reset_commands" -> resetCommands()
             "network_profiles" -> networkProfiles()
+            "reactivate_tutorials" -> reactivateTutorialsPrompt()
         }
         return false
     }
@@ -118,12 +120,23 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
                 Toast.makeText(context, "Commands has been reset to default", Toast.LENGTH_LONG).show()
             }
             NETWORK_PROFILES_ID -> clearNetworkProfiles()
+            REACTIVATE_TUTORIALS -> reactivateTutorials()
         }
+    }
+
+    private fun reactivateTutorialsPrompt() {
+        createAlertDialog("Reactivate Tutorials", "Would you like to reactivate all the tutorials in the application? ", "Reactivate", REACTIVATE_TUTORIALS)
+    }
+
+    private fun reactivateTutorials() {
+        for(screen in SaveUtils.Screens.values()) SaveUtils.setFragmentFirstTime(requireContext(), screen, true)
+        Toast.makeText(context, "Tutorials reactivated", Toast.LENGTH_LONG).show()
     }
 
     companion object {
         private const val CLEAR_COMMANDS_ID = 1
         private const val RESET_COMMANDS_ID = 2
         private const val NETWORK_PROFILES_ID = 3
+        private const val REACTIVATE_TUTORIALS = 4
     }
 }

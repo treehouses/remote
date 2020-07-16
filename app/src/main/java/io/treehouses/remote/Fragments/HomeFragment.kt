@@ -62,7 +62,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 instance!!.openCallFragment(TerminalFragment())
                 activity?.let { it.title = "Terminal" }
             } else {
-                Toast.makeText(context,"Please connect to the Raspberry Pi", Toast.LENGTH_SHORT).show()
+                instance!!.openCallFragment(AboutFragment())
+                activity?.let { it.title = "About" }
             }
         }
         testConnectionListener()
@@ -71,7 +72,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
+        val profileAdapter = ProfilesListAdapter(context!!, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {

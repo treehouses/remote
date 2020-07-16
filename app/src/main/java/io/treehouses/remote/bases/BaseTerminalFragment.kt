@@ -58,7 +58,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     fun getViews(view: View, isRead: Boolean): View {
         val consoleView = view.findViewById<TextView>(R.id.listItem)
-        if (isRead) { consoleView.setTextColor(Color.BLUE)
+        if (isRead) { consoleView.setTextColor(resources.getColor(R.color.terminal))
         } else { consoleView.setTextColor(Color.RED) }
         return view
     }
@@ -109,9 +109,9 @@ open class BaseTerminalFragment : BaseFragment() {
         inSecondLevel = HashSet()
         inThirdLevel = HashSet()
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        arrayAdapter1 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, array2)
-        arrayAdapter2 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList())
-        arrayAdapter3 = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, ArrayList())
+        arrayAdapter1 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, array2)
+        arrayAdapter2 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, ArrayList())
+        arrayAdapter3 = ArrayAdapter(requireContext(), R.layout.simple_dropdown_item_1line, ArrayList())
         if (preferences.getBoolean("autocomplete", true)) {
             autoComplete.threshold = 0
             autoComplete.setAdapter(arrayAdapter1)

@@ -19,7 +19,7 @@ object SaveUtils {
         FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
     }
 
-    private fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
+    fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
         var strArr = StringBuilder()
         for (i in array.indices) {
             strArr.append(array[i]).append(DELIMITER)
@@ -32,7 +32,7 @@ object SaveUtils {
         e.apply()
     }
 
-    private fun getStringArray(context: Context, arrayName: String): ArrayList<String> {
+    fun getStringArray(context: Context, arrayName: String): ArrayList<String> {
         val strArr: Array<String>
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val str = prefs.getString(arrayName, null)
@@ -109,7 +109,7 @@ object SaveUtils {
         addToArrayList(context, NETWORK_PROFILES_KEY, gson.toJson(profile))
     }
 
-    fun getProfiles(context: Context): HashMap<String, List<NetworkProfile>> {
+    fun getProfiles(context: Context): HashMap<String, MutableList<NetworkProfile>> {
         val gson = Gson()
         val json_profiles = getStringArray(context, NETWORK_PROFILES_KEY)
         val wifi = ArrayList<NetworkProfile>()
@@ -127,7 +127,7 @@ object SaveUtils {
                 Log.e("SAVE UTILS", "Not a supported type")
             }
         }
-        val profiles = HashMap<String, List<NetworkProfile>>()
+        val profiles = HashMap<String, MutableList<NetworkProfile>>()
         profiles[HomeFragment.group_labels[0]] = wifi
         profiles[HomeFragment.group_labels[1]] = hotspot
         profiles[HomeFragment.group_labels[2]] = bridge
