@@ -1,26 +1,32 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.HelpAdapter
+import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogHelpBinding
 import io.treehouses.remote.pojo.HelpCommand
 import org.json.JSONObject
 
 
-class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListener {
+class HelpDialog : FullScreenDialogFragment(), android.widget.SearchView.OnQueryTextListener {
     private lateinit var bind: DialogHelpBinding
     private var jsonString = ""
     private val items = mutableListOf<HelpCommand>()
     private val excludedHelpItems = listOf<String>("anime")
+    private var queryText = ""
+
+    private var selectedItem: HelpCommand = HelpCommand()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogHelpBinding.inflate(inflater, container, false)
@@ -39,10 +45,12 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
         bind.searchBar.isIconifiedByDefault = false
         bind.results.addOnItemTouchListener(RecyclerViewClickListener(context, bind.results, object: RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
-                fullTransitionDescription(getItemAtPosition(position))
+                selectedItem = getItemAtPosition(position)
+                fullTransitionDescription(selectedItem)
             }
             override fun onLongClick(view: View?, position: Int) {
-                transitionDescription(getItemAtPosition(position))
+                selectedItem = getItemAtPosition(position)
+                transitionDescription(selectedItem)
             }
         }))
 
@@ -73,19 +81,24 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
     private fun transitionDescription(item: HelpCommand) {
         bind.showHelp.visibility = View.VISIBLE
         bind.titleDescription.text = item.title
-        bind.description.text = item.preview
+        updateHighlight(item)
     }
 
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        return dialog
+    private fun highlight(original: String, word: String): Spannable? {
+        val highlighted: Spannable = SpannableString(original)
+        if (original.isEmpty() || word.isEmpty()) return highlighted
+        var start = original.indexOf(word)
+        while (start >= 0) {
+            val spanStart = start.coerceAtMost(original.length)
+            val spanEnd = (start + word.length).coerceAtMost(original.length)
+            highlighted.setSpan(BackgroundColorSpan(Color.YELLOW), spanStart, spanEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+            start = original.indexOf(word, spanEnd)
+        }
+        return highlighted
     }
 
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    private fun updateHighlight(item: HelpCommand) {
+        bind.description.text = highlight(item.preview, queryText)
     }
 
     private fun createJson(jsonStr: String) {
@@ -107,6 +120,8 @@ class HelpDialog : DialogFragment(), android.widget.SearchView.OnQueryTextListen
         val filteredList = items.filter { it.title.contains(newText) || it.preview.contains(newText) }
         (bind.results.adapter as HelpAdapter).replaceAll(filteredList)
         bind.results.scrollToPosition(0)
+        queryText = newText
+        if (bind.description.visibility == View.VISIBLE && selectedItem.title.isNotEmpty()) updateHighlight(selectedItem)
         return false
     }
 }

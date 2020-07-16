@@ -19,7 +19,7 @@ object SaveUtils {
         FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
     }
 
-    private fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
+    fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
         var strArr = StringBuilder()
         for (i in array.indices) {
             strArr.append(array[i]).append(DELIMITER)
@@ -32,7 +32,7 @@ object SaveUtils {
         e.apply()
     }
 
-    private fun getStringArray(context: Context, arrayName: String): ArrayList<String> {
+    fun getStringArray(context: Context, arrayName: String): ArrayList<String> {
         val strArr: Array<String>
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val str = prefs.getString(arrayName, null)

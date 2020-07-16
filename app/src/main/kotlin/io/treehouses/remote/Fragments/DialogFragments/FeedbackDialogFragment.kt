@@ -12,12 +12,13 @@ import android.widget.Toast
 import android.util.Patterns
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.Network.ParseDbService
+import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogFeedbackBinding
 import io.treehouses.remote.utils.Utils
 import java.util.HashMap
 
 
-class FeedbackDialogFragment : DialogFragment() {
+class FeedbackDialogFragment : FullScreenDialogFragment() {
     private lateinit var bind: DialogFeedbackBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,19 +72,5 @@ class FeedbackDialogFragment : DialogFragment() {
                 bind.editEmail.text.toString().isNotBlank() &&
                 bind.editMessage.text.toString().isNotBlank() &&
                 (bind.radioButtonBug.isChecked || bind.radioButtonSuggestion.isChecked)
-    }
-
-
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        return dialog
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 }
