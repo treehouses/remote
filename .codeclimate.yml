@@ -1,2 +1,2 @@
 exclude_patterns:
-  - "app/src/main/java/io/treehouses/remote/Views/terminal"
+  - "app/src/main/kotlin/io/treehouses/remote/Views/terminal"
