@@ -9,6 +9,5 @@
     android:gravity="center_vertical"
     android:drawableRight="@drawable/delete_icon"
     android:paddingRight="26dip"
-    android:drawablePadding="100dp"
     android:ellipsize="marquee"
     />
