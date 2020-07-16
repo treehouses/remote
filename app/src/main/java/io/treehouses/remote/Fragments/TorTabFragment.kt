@@ -28,6 +28,7 @@ import java.util.*
 class TorTabFragment : BaseFragment() {
 
     override lateinit var mChatService: BluetoothChatService
+    private var nowButton: Button? = null
     private var startButton: Button? = null
     private var addPortButton: Button? = null
     private var textStatus: TextView? = null
@@ -57,6 +58,11 @@ class TorTabFragment : BaseFragment() {
                 notification!!.isEnabled = false
                 listener.sendMessage("treehouses tor notice off")
             }
+        }
+        nowButton = bind!!.notifyNow
+        nowButton!!.setOnClickListener {
+            nowButton!!.isEnabled = false
+            listener.sendMessage("treehouses tor notice now")
         }
         portList = bind!!.countries
         portList!!.adapter = adapter
@@ -191,11 +197,20 @@ class TorTabFragment : BaseFragment() {
                         }
                         portsName!!.add(ports[i])
                     }
+                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+                    val portList = view!!.findViewById<ListView>(R.id.countries)
+                    portList.adapter = adapter
+                    listener.sendMessage("treehouses tor status")
+                } else if (readMessage.contains("No ports found")) {
+                    addPortButton!!.text = "Add Port"
+                    portList!!.isEnabled = true
+                    addPortButton!!.isEnabled = true
+                    portsName = ArrayList()
                     adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
                     val portList = view!!.findViewById<ListView>(R.id.countries)
                     portList.adapter = adapter
                     listener.sendMessage("treehouses tor status")
-                }else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
+                } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
                     listener.sendMessage("treehouses tor ports")
                     portsName = ArrayList()
                     addPortButton!!.text = "Retrieving port.... Please wait"
@@ -204,6 +219,10 @@ class TorTabFragment : BaseFragment() {
                     } else if (readMessage.contains("has been deleted")) {
                         Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
                     }
+                }
+                else if( readMessage.contains("Thanks for the feedback!")){
+                    Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
+                    nowButton!!.isEnabled = true
                 }
             }
         }

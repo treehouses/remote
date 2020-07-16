@@ -18,6 +18,7 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
+import io.treehouses.remote.Fragments.DialogFragments.SSHDialog
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
@@ -90,10 +91,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (validBluetoothConnection) {
             onNavigationItemClicked(id)
         } else {
-            if (id == R.id.menu_about) {
-                openCallFragment(AboutFragment())
-            } else if (id == R.id.menu_home) {
-                openCallFragment(HomeFragment())
+            when (id) {
+                R.id.menu_about -> openCallFragment(AboutFragment())
+                R.id.menu_home -> openCallFragment(HomeFragment())
+                R.id.menu_ssh -> SSHDialog().show(supportFragmentManager, "SSH")
             }
         }
         title = item.title
@@ -103,42 +104,25 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     private fun onNavigationItemClicked(id: Int) {
         when (id) {
-            R.id.menu_home -> {
-                openCallFragment(HomeFragment())
-            }
-            R.id.menu_network -> {
-                openCallFragment(NewNetworkFragment())
-            }
-            R.id.menu_system -> {
-                openCallFragment(SystemFragment())
-            }
-            R.id.menu_terminal -> {
-                openCallFragment(TerminalFragment())
-            }
-            else -> {
-                checkMore(id)
-            }
+            R.id.menu_home -> openCallFragment(HomeFragment())
+            R.id.menu_network -> openCallFragment(NewNetworkFragment())
+            R.id.menu_system -> openCallFragment(SystemFragment())
+            R.id.menu_terminal -> openCallFragment(TerminalFragment())
+            else -> checkMore(id)
         }
     }
 
     private fun checkMore(id: Int) {
         when (id) {
-            R.id.menu_services -> {
-                openCallFragment(ServicesFragment())
-            }
-            R.id.menu_about -> {
-                openCallFragment(AboutFragment())
-            }
-            R.id.menu_status -> {
-                openCallFragment(StatusFragment())
-            }
-            R.id.menu_tunnel2 -> {
-                openCallFragment(SSHTunnelFragment())
-            }
-            else -> {
-                openCallFragment(HomeFragment())
-            }
+            R.id.menu_services -> openCallFragment(ServicesFragment())
+            R.id.menu_about -> openCallFragment(AboutFragment())
+            R.id.menu_status -> openCallFragment(StatusFragment())
+            R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
+            R.id.menu_ssh -> SSHDialog().show(supportFragmentManager, "SSH")
+            else -> openCallFragment(HomeFragment())
+
         }
+
     }
 
     override fun openCallFragment(f: Fragment) {
@@ -168,7 +152,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         checkStatusNow()
-        for (x in 1 until bind.navView.menu.size() - 1) {
+        for (x in 1 until bind.navView.menu.size() - 2) {
             val item = bind.navView.menu.getItem(x)
             item.isEnabled = validBluetoothConnection
         }

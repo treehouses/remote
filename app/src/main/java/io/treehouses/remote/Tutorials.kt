@@ -70,8 +70,7 @@ object Tutorials {
 
         val d = fancyShowCaseViewBuilderTerminal(bind.infoButton, "Get Information on what Treehouses Commands are Available and how to use them", 500, FocusShape.CIRCLE)
 
-        val queue = FancyShowCaseQueue().add(a).add(b).add(c).add(d)
-        queue.show()
+        show(a,b,c,d)
 
     }
 
@@ -120,21 +119,21 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
         //Put animations here
-        val a = FancyShowCaseView.Builder(activity)
-                .focusOn(bind.upgrade)
-                .fitSystemWindows(true)
-                .title("Tap to update CLI to newest version")
-                .delay(500)
-                .enableAutoTextPosition()
-                .build()
+        fun fancyShowCaseViewBuilderStatus(view: View, title: String, delay: Int): FancyShowCaseView {
+            return FancyShowCaseView.Builder(activity)
+                    .focusOn(view)
+                    .fitSystemWindows(true)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+                    .build()
 
-        val b = FancyShowCaseView.Builder(activity)
-                .focusOn(bind.editName)
-                .fitSystemWindows(true)
-                .title("Tap to change your Raspberry Pi name")
-                .delay(50)
-                .enableAutoTextPosition()
-                .build()
+        }
+        
+        val a = fancyShowCaseViewBuilderStatus(bind.upgrade, "Tap to update CLI to newest version", 500)
+
+        val b = fancyShowCaseViewBuilderStatus(bind.editName, "Tap to change your Raspberry Pi name", 50)
+
         show(a,b)
     }
 
