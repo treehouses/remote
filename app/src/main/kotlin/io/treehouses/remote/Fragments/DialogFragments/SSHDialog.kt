@@ -101,9 +101,7 @@ class SSHDialog : FullScreenDialogFragment() {
         })
     }
     private fun saveHostIfNeeded(host: HostBean) {
-        if (!pastHosts.contains(host)) {
-            SaveUtils.updateHostList(requireContext(), host)
-        }
+        SaveUtils.updateHostList(requireContext(), host)
     }
 
     fun setEnabled(bool: Boolean) {
