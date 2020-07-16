@@ -89,7 +89,8 @@
         </Preference>
         <Preference
             android:title="Reactivate Tutorials"
-            android:key="reactivate_tutorials">
+            android:key="reactivate_tutorials"
+            android:layout="@layout/custom_pref">
         </Preference>
     </PreferenceCategory>
 
