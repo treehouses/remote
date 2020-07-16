@@ -99,10 +99,12 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             var msg = ""
             if (output.contains("service autorun set")) {
                 msg = "Switched autorun"
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
                 msg = "An Error occurred"
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+
         }
     }
 
