@@ -22,6 +22,7 @@ import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.SaveUtils
 import java.util.*
 
 
@@ -30,6 +31,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     private var counter = 0
+    private lateinit var array: ArrayList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
     }
@@ -54,13 +56,10 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun preferences(){
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("ServicesPref", MODE_PRIVATE)
         var worked = false
-
-        val max: Int = sharedPreferences.getInt("max", 0)
-        for (i in 1..max) {
-            val output:String? = sharedPreferences.getString("output$i", "")
-            val a = performAction(output!!, services)
+        array = SaveUtils.getStringArray(requireContext(), "servicesArray")
+        for (string in array) {
+            val a = performAction(string, services)
             if (a == 1) {
                 showUI()
                 writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
@@ -86,15 +85,11 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
 
     private fun updateListFromRPI(msg:Message){
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("ServicesPref", MODE_PRIVATE)
         val output:String? = msg.obj as String
         when (performAction(output!!, services)) {
             1 -> {
-                counter += 1
-                val myEdit = sharedPreferences.edit()
-                myEdit.putString("output$counter", output)
-                myEdit.putInt("max", counter)
-                myEdit.apply()
+                array.add(output)
+                SaveUtils.saveStringArray(requireContext(), array, "servicesArray")
                 showUI()
             }
             0 -> {
@@ -102,10 +97,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 showUpdateCliAlert()
             }
             else -> {
-                counter += 1
-                val myEdit = sharedPreferences.edit()
-                myEdit.putString("output$counter", output)
-                myEdit.apply()
+                array.add(output)
             }
         }
     }

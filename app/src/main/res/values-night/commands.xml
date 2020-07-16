@@ -15,8 +15,11 @@
     <string name="TREEHOUSES_TEMPERATURE_CELSIUS">treehouses temperature celsius\n</string>
     <string name="TREEHOUSES_MEMORY_FREE">treehouses memory free</string>
     <string name="TREEHOUSES_MEMORY_USED">treehouses memory used</string>
+    <string name="TREEHOUSES_MEMORY_USED_GB">treehouses memory used gb</string>
     <string name="TREEHOUSES_MEMORY_TOTAL">treehouses memory total\n</string>
+    <string name="TREEHOUSES_MEMORY_TOTAL_GB">treehouses memory total gb\n</string>
     <string name="TREEHOUSES_RENAME">treehouses rename \"%1$s\"</string>
+    <string name="TREEHOUSES_DETECT_ARM">treehouses detect arm"</string>
 
     <string name="TREEHOUSES_NETWORKMODE">treehouses networkmode\n</string>
     <string name="TREEHOUSES_NETWORKMODE_INFO">treehouses networkmode info\n</string>

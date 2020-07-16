@@ -64,6 +64,7 @@
                     android:padding="@dimen/padding_normal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textIsSelectable="true"
                     android:textColor = "@color/expandable_child_text"
                     tools:text="@tools:sample/lorem/random"/>
             </ScrollView>
