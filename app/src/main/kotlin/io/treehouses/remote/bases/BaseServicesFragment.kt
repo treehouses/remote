@@ -75,6 +75,7 @@ open class BaseServicesFragment() : BaseFragment() {
             if (inServiceList(service, services) == -1) {
                 services.add(ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
                         servicesData!!.info[service], servicesData!!.autorun[service], servicesData!!.usesEnv[service]))
+                        servicesData!!.info[service], servicesData!!.autorun[service]))
             }
         }
     }
@@ -98,7 +99,7 @@ open class BaseServicesFragment() : BaseFragment() {
 
     private fun formatList(services: ArrayList<ServiceInfo>) {
         if (inServiceList("Installed", services) == -1) addToServices(services, "Installed", ServiceInfo.SERVICE_HEADER_INSTALLED)
-        else if (inServiceList("Available", services) == -1) addToServices(services, "Available", ServiceInfo.SERVICE_HEADER_AVAILABLE)
+        if (inServiceList("Available", services) == -1) addToServices(services, "Available", ServiceInfo.SERVICE_HEADER_AVAILABLE)
         services.sort()
     }
 

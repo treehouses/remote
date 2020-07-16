@@ -73,6 +73,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             visibility2 = View.VISIBLE
             visibility3 = View.VISIBLE
         }
+
         var visibility4 = View.GONE
 
         if (installed && !started && serviceData.usesEnv == "true")

@@ -6,6 +6,13 @@
             <solid android:color="@color/md_blue_400"/>
         </shape>
     </item>
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="10dp"/>
+            <solid android:color="@color/md_grey_600"/>
+        </shape>
+
+    </item>
     <item android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="10dp"/>
