@@ -40,26 +40,12 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                     val readMessage = msg.obj as String
                     match(readMessage)
 
-                    Log.d("Read Message", readMessage)
                     if(readMessage.contains("true") || readMessage.contains("false")){
                         listener.sendMessage("treehouses remote key send")
                         Toast.makeText(c, "Please wait...", Toast.LENGTH_SHORT).show()
                     }
-                    if(readMessage.contains("key required")){
-                        listener.sendMessage("treehouses remote key send")
-                        Toast.makeText(c, "No keys saved, retrieving keys now", Toast.LENGTH_SHORT).show()
-                    }
-                    if(readMessage.contains("Error when trying to run the command 'treehouses sshtunnel add host")){
-                        Toast.makeText(c, "Port already exists", Toast.LENGTH_SHORT).show()
-                    }
-                    if(readMessage.contains("successfully added")){
-                        Toast.makeText(c, "Port successfully added", Toast.LENGTH_SHORT).show()
-                    }
                     if(readMessage.contains("Saved")){
                         Toast.makeText(c, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
-                    }
-                    if(readMessage.contains("Removed")){
-                        Toast.makeText(c, "All ports successfully removed", Toast.LENGTH_SHORT).show()
                     }
                     if (readMessage.contains("unknown")) {
                         jsonSend(false)
@@ -100,7 +86,6 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
     private fun buildJSON() {
         try {
             val jsonObject = JSONObject(jsonString)
-            Log.d("JSON Object", jsonObject.toString())
 
             val sharedPreferences: SharedPreferences = c.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
             val myEdit = sharedPreferences.edit()
