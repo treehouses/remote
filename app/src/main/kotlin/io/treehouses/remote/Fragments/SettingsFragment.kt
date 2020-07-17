@@ -26,11 +26,13 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val resetCommandsList = findPreference<Preference>("reset_commands")
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
         val reactivateTutorials = findPreference<Preference>("reactivate_tutorials")
+        val clearSSHHosts = findPreference<Preference>("ssh_hosts")
 
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
         setClickListener(reactivateTutorials)
+        setClickListener(clearSSHHosts)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -77,6 +79,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "reset_commands" -> resetCommands()
             "network_profiles" -> networkProfiles()
             "reactivate_tutorials" -> reactivateTutorialsPrompt()
+            "ssh_hosts" -> clearSSHHosts()
         }
         return false
     }
@@ -91,6 +94,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     private fun networkProfiles() {
         createAlertDialog("Clear Network Profiles", "Would you like to remove all network profiles? ", "Clear", NETWORK_PROFILES_ID)
+    }
+
+    private fun clearSSHHosts() {
+        createAlertDialog("Clear All SSH Hosts", " Would you like to delete all SSH Hosts? ", "Clear", CLEAR_SSH_HOSTS)
     }
 
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
@@ -121,6 +128,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             }
             NETWORK_PROFILES_ID -> clearNetworkProfiles()
             REACTIVATE_TUTORIALS -> reactivateTutorials()
+            CLEAR_SSH_HOSTS -> SaveUtils.deleteAllHosts(requireContext())
         }
     }
 
@@ -138,5 +146,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         private const val RESET_COMMANDS_ID = 2
         private const val NETWORK_PROFILES_ID = 3
         private const val REACTIVATE_TUTORIALS = 4
+        private const val CLEAR_SSH_HOSTS = 5
     }
 }
