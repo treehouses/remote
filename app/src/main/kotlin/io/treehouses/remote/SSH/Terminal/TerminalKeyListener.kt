@@ -53,35 +53,27 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     // TODO add support for the new API.
     private var clipboard: ClipboardManager? = null
     private var selectingForCopy = false
-    private val selectionArea: SelectionArea
-    private val prefs: SharedPreferences
+    private val selectionArea: SelectionArea = SelectionArea()
+    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(manager)
     private fun specialKeys(keyCode: Int, left: Boolean, right: Boolean) : Boolean {
         // Ignore all key-up events except for the special keys
-        return if (right) {
-            if (keyCode == KeyEvent.KEYCODE_ALT_RIGHT
-                    && metaState and OUR_SLASH != 0) {
-                metaState = metaState and OUR_TRANSIENT.inv()
+
+        val ALTRIGHT = keyCode == KeyEvent.KEYCODE_ALT_RIGHT
+        val ALTLEFT = keyCode == KeyEvent.KEYCODE_ALT_LEFT
+        val SHIFTRIGHT = keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
+        val SHIFTLEFT = keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
+
+        return if((right && ALTRIGHT || left && ALTLEFT) && metaState and OUR_SLASH != 0  ||
+                (right && SHIFTRIGHT || left && SHIFTLEFT) && metaState and OUR_TAB != 0) {
+            metaState = metaState and OUR_TRANSIENT.inv()
+            if((right && ALTRIGHT || left && ALTLEFT) && metaState and OUR_SLASH != 0) {
                 bridge.transport!!.write('/'.toInt())
-                true
-            } else if (keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
-                    && metaState and OUR_TAB != 0) {
-                metaState = metaState and OUR_TRANSIENT.inv()
+            }else if((right && SHIFTRIGHT || left && SHIFTLEFT) && metaState and OUR_TAB != 0){
                 bridge.transport!!.write(0x09)
-                true
-            } else false
-        } else if (left) {
-            if (keyCode == KeyEvent.KEYCODE_ALT_LEFT
-                    && metaState and OUR_SLASH != 0) {
-                metaState = metaState and OUR_TRANSIENT.inv()
-                bridge.transport!!.write('/'.toInt())
-                true
-            } else if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
-                    && metaState and OUR_TAB != 0) {
-                metaState = metaState and OUR_TRANSIENT.inv()
-                bridge.transport!!.write(0x09)
-                true
-            } else false
-        } else false
+            }
+            true
+        }
+        else false
     }
     /**
      * Handle onKey() events coming down from a [TerminalView] above us.
@@ -319,9 +311,9 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         return false
     }
 
-    private fun keyAsControl(key: Int): Int {
+    private fun keyAsControl(keyIn: Int): Int {
         // Support CTRL-a through CTRL-z
-        var key = key
+        var key = keyIn
         if (key in 0x61..0x7A) key -= 0x60 else if (key in 0x40..0x5F) key -= 0x40 else if (key == 0x20) key = 0x00 else if (key == 0x3F) key = 0x7F
         return key
     }
@@ -397,12 +389,8 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         bridge.redraw()
     }
 
-    fun setTerminalKeyMode(keymode: String?) {
-        this.keymode = keymode
-    }
-
     private val stateForBuffer: Int
-        private get() {
+        get() {
             var bufferState = 0
             if (metaState and OUR_CTRL_MASK != 0) bufferState = bufferState or vt320.KEY_CONTROL
             if (metaState and OUR_SHIFT_MASK != 0) bufferState = bufferState or vt320.KEY_SHIFT
@@ -461,8 +449,6 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         private const val OUR_ALT_MASK = OUR_ALT_ON or OUR_ALT_LOCK
         private const val OUR_SHIFT_MASK = OUR_SHIFT_ON or OUR_SHIFT_LOCK
 
-        // backport constants from api level 11
-        private const val KEYCODE_ESCAPE = 111
         private const val KEYCODE_CTRL_LEFT = 113
         private const val KEYCODE_CTRL_RIGHT = 114
         private const val KEYCODE_INSERT = 124
@@ -481,8 +467,6 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     }
 
     init {
-        selectionArea = SelectionArea()
-        prefs = PreferenceManager.getDefaultSharedPreferences(manager)
         prefs.registerOnSharedPreferenceChangeListener(this)
         deviceHasHardKeyboard = (manager!!.res!!.configuration.keyboard
                 == Configuration.KEYBOARD_QWERTY)
