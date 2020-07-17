@@ -37,6 +37,35 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.NETWORK)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.NETWORK, false)
         //Put animations here
+        fun fancyShowCaseViewBuilderNetwork(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
+            return FancyShowCaseView.Builder(activity)
+                    .focusOn(view)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+                    .backgroundColor(R.color.focusColor)
+                    .focusShape(focusShape)
+                    .fitSystemWindows(true)
+                    .build()
+        }
+
+        val a = fancyShowCaseViewBuilderNetwork(bind.networkWifi, "Touch Here to Connect to a WiFi Network", 750, FocusShape.CIRCLE)
+
+        val b = fancyShowCaseViewBuilderNetwork(bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", 500, FocusShape.CIRCLE)
+
+        val c = fancyShowCaseViewBuilderNetwork(bind.networkBridge, "Touch Here to Configure a Bridge Connection", 500, FocusShape.CIRCLE)
+
+        val d = fancyShowCaseViewBuilderNetwork(bind.networkEthernet, "Touch Here to Configure an Ethernet Connection", 500, FocusShape.CIRCLE)
+
+        val e = fancyShowCaseViewBuilderNetwork(bind.buttonNetworkMode, "Use this button to Refresh Network Mode Info", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val f = fancyShowCaseViewBuilderNetwork(bind.rebootRaspberry, "Use this to Reboot RPi", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val g = fancyShowCaseViewBuilderNetwork(bind.resetNetwork, "Use this to Reset Network back to Default", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        show(a,b,c,d,e,f,g)
+
+
     }
 
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
