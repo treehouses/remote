@@ -183,11 +183,9 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 if(a || b || c || d || e || f) {
                     var paint:Paint = cursorInversionPaint
                     var cursor:Path = shiftCursor
-                    if (a || c || e) {
-                        paint = cursorStrokePaint
-                        if(c) cursor = altCursor
-                        else if(e) cursor = ctrlCursor
-                    }
+                    if (a || c || e) paint = cursorStrokePaint
+                    if(c || d) cursor = altCursor
+                    else if(e || f) cursor = ctrlCursor
                     canvas.drawPath(cursor, paint)
                 }
 
