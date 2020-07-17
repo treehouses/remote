@@ -57,17 +57,11 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(manager)
     private fun specialKeys(keyCode: Int, left: Boolean, right: Boolean) : Boolean {
         // Ignore all key-up events except for the special keys
-
-        val ALTRIGHT = keyCode == KeyEvent.KEYCODE_ALT_RIGHT
-        val ALTLEFT = keyCode == KeyEvent.KEYCODE_ALT_LEFT
-        val SHIFTRIGHT = keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
-        val SHIFTLEFT = keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
-
-        return if((right && ALTRIGHT || left && ALTLEFT) && metaState and OUR_SLASH != 0) {
+        return if((right && keyCode == KeyEvent.KEYCODE_ALT_RIGHT || left && keyCode == KeyEvent.KEYCODE_ALT_LEFT) && metaState and OUR_SLASH != 0) {
                 metaState = metaState and OUR_TRANSIENT.inv()
                 bridge.transport!!.write('/'.toInt())
                 true
-            }else if((right && SHIFTRIGHT || left && SHIFTLEFT) && metaState and OUR_TAB != 0){
+            }else if((right && keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT || left && keyCode == KeyEvent.KEYCODE_SHIFT_LEFT) && metaState and OUR_TAB != 0){
                 metaState = metaState and OUR_TRANSIENT.inv()
                 bridge.transport!!.write(0x09)
                 true
