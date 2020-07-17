@@ -178,15 +178,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mConnectedThread = null
         }
 
-        // Start the thread to listen on a BluetoothServerSocket
-//        if (mSecureAcceptThread == null) {
-//            mSecureAcceptThread = new AcceptThread(true);
-//            mSecureAcceptThread.start();
-//        }
-//        if (mInsecureAcceptThread == null) {
-//            mInsecureAcceptThread = new AcceptThread(false);
-//            mInsecureAcceptThread.start();
-//        }
         // Update UI title
         updateUserInterfaceTitle()
     }
@@ -284,16 +275,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mConnectedThread!!.cancel()
             mConnectedThread = null
         }
-
-//        if (mSecureAcceptThread != null) {
-//            mSecureAcceptThread.cancel();
-//            mSecureAcceptThread = null;
-//        }
-
-//        if (mInsecureAcceptThread != null) {
-//            mInsecureAcceptThread.cancel();
-//            mInsecureAcceptThread = null;
-//        }
+        
         state = Constants.STATE_NONE
         // Update UI title
         updateUserInterfaceTitle()
