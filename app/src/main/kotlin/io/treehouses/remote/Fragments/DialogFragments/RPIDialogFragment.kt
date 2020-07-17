@@ -145,7 +145,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         try {
-            if (mBluetoothAdapter == null) requireContext().unregisterReceiver(mReceiver)
+            requireContext().unregisterReceiver(mReceiver)
         } catch (e: Exception) {
             e.printStackTrace()
         }
