@@ -63,17 +63,15 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         val SHIFTRIGHT = keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
         val SHIFTLEFT = keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
 
-        return if((right && ALTRIGHT || left && ALTLEFT) && metaState and OUR_SLASH != 0  ||
-                (right && SHIFTRIGHT || left && SHIFTLEFT) && metaState and OUR_TAB != 0) {
-            metaState = metaState and OUR_TRANSIENT.inv()
-            if((right && ALTRIGHT || left && ALTLEFT) && metaState and OUR_SLASH != 0) {
+        return if((right && ALTRIGHT || left && ALTLEFT) && metaState and OUR_SLASH != 0) {
+                metaState = metaState and OUR_TRANSIENT.inv()
                 bridge.transport!!.write('/'.toInt())
+                true
             }else if((right && SHIFTRIGHT || left && SHIFTLEFT) && metaState and OUR_TAB != 0){
+                metaState = metaState and OUR_TRANSIENT.inv()
                 bridge.transport!!.write(0x09)
-            }
-            true
-        }
-        else false
+                true
+            } else false
     }
     /**
      * Handle onKey() events coming down from a [TerminalView] above us.
