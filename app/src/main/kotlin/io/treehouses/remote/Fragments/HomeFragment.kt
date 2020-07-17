@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
@@ -59,17 +60,19 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.btnGetStarted.setOnClickListener {
             instance!!.checkStatusNow()
             if (instance!!.hasValidConnection()) {
-                instance!!.openCallFragment(TerminalFragment())
-                activity?.let { it.title = "Terminal" }
+                switchFragment(TerminalFragment(), "Terminal")
             } else {
-                instance!!.openCallFragment(AboutFragment())
-                activity?.let { it.title = "About" }
+                switchFragment(AboutFragment(), "About")
             }
         }
         testConnectionListener()
         return bind.root
     }
 
+    private fun switchFragment(fragment: Fragment, title: String) {
+        instance!!.openCallFragment(fragment)
+        activity?.let { it.title = title}
+    }
 
     private fun setupProfiles() {
         val profileAdapter = ProfilesListAdapter(requireContext(), listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
