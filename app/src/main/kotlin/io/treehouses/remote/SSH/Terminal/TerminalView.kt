@@ -179,16 +179,14 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 val d = metaState and TerminalKeyListener.OUR_ALT_LOCK != 0
                 val e = metaState and TerminalKeyListener.OUR_CTRL_ON != 0
                 val f = metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0
+                var paint:Paint = cursorInversionPaint
+                var cursor:Path = shiftCursor
 
-                if(a || b || c || d || e || f) {
-                    var paint:Paint = cursorInversionPaint
-                    var cursor:Path = shiftCursor
-                    if (a || c || e) paint = cursorStrokePaint
-                    if(c || d) cursor = altCursor
-                    else if(e || f) cursor = ctrlCursor
-                    canvas.drawPath(cursor, paint)
-                }
-
+                if (a || c || e) paint = cursorStrokePaint
+                if(c || d) cursor = altCursor
+                else if(e || f) cursor = ctrlCursor
+                if(a || b || c || d || e || f) canvas.drawPath(cursor, paint)
+                
                 // Restore previous clip region
                 canvas.restore()
             }
