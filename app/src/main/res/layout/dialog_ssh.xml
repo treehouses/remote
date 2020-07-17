@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_large"
         android:background="@drawable/rectangle_border"
-        android:hint="pi@192.168.1.29"
+        android:hint="user@hostname:port"
         android:padding="@dimen/padding_normal"
         android:textColorHint="@color/md_grey_500" />
 
