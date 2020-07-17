@@ -173,6 +173,7 @@ class StatusFragment : BaseFragment() {
         val dialogBinding = DialogRenameStatusBinding.inflate(inflater)
         dialogBinding.hostname.hint = "New Name"
         val alertDialog = createRenameDialog(dialogBinding.root, dialogBinding.hostname)
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
