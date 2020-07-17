@@ -197,7 +197,7 @@ class DiscoverNetworkFragment : BaseFragment() {
                     val ip = regex.find(readMessage)
                     if (ip != null) {
                         Log.e(TAG, "BENER")
-                        gateway.device.ip = ip.value.split("\\s+".toRegex())[1]
+                        gateway.device.ip = ip.value.split("ip address:\\s+".toRegex())[1]
                     }
 
                     regex = "ESSID:\"(.)+\"".toRegex()
