@@ -142,6 +142,7 @@
 -keep interface com.github.nkzawa.** { *; }
 
 -keep class io.treehouses.remote.pojo.** { *; }
+-keep class io.treehouses.remote.SSH.beans.** { *; }
 
 -keep public class com.trilead.ssh2.compression.**
 -keep public class com.trilead.ssh2.crypto.**

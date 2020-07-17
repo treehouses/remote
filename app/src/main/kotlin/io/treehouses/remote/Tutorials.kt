@@ -37,6 +37,35 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.NETWORK)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.NETWORK, false)
         //Put animations here
+        fun fancyShowCaseViewBuilderNetwork(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
+            return FancyShowCaseView.Builder(activity)
+                    .focusOn(view)
+                    .title(title)
+                    .delay(delay)
+                    .enableAutoTextPosition()
+                    .backgroundColor(R.color.focusColor)
+                    .focusShape(focusShape)
+                    .fitSystemWindows(true)
+                    .build()
+        }
+
+        val a = fancyShowCaseViewBuilderNetwork(bind.networkWifi, "Touch Here to Connect to a WiFi Network", 750, FocusShape.CIRCLE)
+
+        val b = fancyShowCaseViewBuilderNetwork(bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", 500, FocusShape.CIRCLE)
+
+        val c = fancyShowCaseViewBuilderNetwork(bind.networkBridge, "Touch Here to Configure a Bridge Connection", 500, FocusShape.CIRCLE)
+
+        val d = fancyShowCaseViewBuilderNetwork(bind.networkEthernet, "Touch Here to Configure an Ethernet Connection", 500, FocusShape.CIRCLE)
+
+        val e = fancyShowCaseViewBuilderNetwork(bind.buttonNetworkMode, "Use this button to Refresh Network Mode Info", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val f = fancyShowCaseViewBuilderNetwork(bind.rebootRaspberry, "Use this to Reboot RPi", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val g = fancyShowCaseViewBuilderNetwork(bind.resetNetwork, "Use this to Reset Network back to Default", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        show(a,b,c,d,e,f,g)
+
+
     }
 
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
@@ -118,23 +147,31 @@ object Tutorials {
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
-        //Put animations here
-        fun fancyShowCaseViewBuilderStatus(view: View, title: String, delay: Int): FancyShowCaseView {
+        fun fancyShowCaseViewBuilderStatus(view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
             return FancyShowCaseView.Builder(activity)
                     .focusOn(view)
-                    .fitSystemWindows(true)
                     .title(title)
                     .delay(delay)
                     .enableAutoTextPosition()
+                    .backgroundColor(R.color.focusColor)
+                    .focusShape(focusShape)
+                    .fitSystemWindows(true)
                     .build()
-
         }
-        
-        val a = fancyShowCaseViewBuilderStatus(bind.upgrade, "Tap to update CLI to newest version", 500)
 
-        val b = fancyShowCaseViewBuilderStatus(bind.editName, "Tap to change your Raspberry Pi name", 50)
+        val a = fancyShowCaseViewBuilderStatus(bind.bluetoothBox, "Your Device's Bluetooth details are listed here", 750, FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b)
+        val b = fancyShowCaseViewBuilderStatus(bind.networkBox, "Network details can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val c = fancyShowCaseViewBuilderStatus(bind.rpiDetailBox, "Some details like your Hostname, Image Version, CPU and Model are listed here", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val d = fancyShowCaseViewBuilderStatus(bind.editName, "Edit your hostname here, new hostname will show up the next time you visit Status", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val e = fancyShowCaseViewBuilderStatus(bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        val f = fancyShowCaseViewBuilderStatus(bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
+
+        show(a,b,c,d,e,f)
     }
 
     private fun show(vararg view: FancyShowCaseView) {

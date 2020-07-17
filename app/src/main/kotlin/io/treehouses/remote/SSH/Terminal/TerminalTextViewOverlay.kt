@@ -249,11 +249,14 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
             selectionActionMode = mode
             menu.clear()
-            menu.add(0, COPY, 0, "Copy") //					.setIcon(R.drawable.ic_action_copy)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT or MenuItem.SHOW_AS_ACTION_IF_ROOM)
-            menu.add(0, PASTE, 1, "Paste") //					.setIcon(R.drawable.ic_action_paste)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT or MenuItem.SHOW_AS_ACTION_IF_ROOM)
+            addToMenu(menu, COPY, 0, "Copy") //					.setIcon(R.drawable.ic_action_copy)
+            addToMenu(menu, PASTE, 1, "Paste") //					.setIcon(R.drawable.ic_action_paste)
             return true
+        }
+
+        private fun addToMenu(menu: Menu, itemId: Int, order: Int, title: String) {
+            menu.add(0, itemId, order, title)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT or MenuItem.SHOW_AS_ACTION_IF_ROOM)
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {

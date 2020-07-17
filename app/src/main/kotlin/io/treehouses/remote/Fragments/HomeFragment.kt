@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
@@ -59,20 +60,22 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.btnGetStarted.setOnClickListener {
             instance!!.checkStatusNow()
             if (instance!!.hasValidConnection()) {
-                instance!!.openCallFragment(TerminalFragment())
-                activity?.let { it.title = "Terminal" }
+                switchFragment(TerminalFragment(), "Terminal")
             } else {
-                instance!!.openCallFragment(AboutFragment())
-                activity?.let { it.title = "About" }
+                switchFragment(AboutFragment(), "About")
             }
         }
         testConnectionListener()
         return bind.root
     }
 
+    private fun switchFragment(fragment: Fragment, title: String) {
+        instance!!.openCallFragment(fragment)
+        activity?.let { it.title = title}
+    }
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context!!, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
+        val profileAdapter = ProfilesListAdapter(requireContext(), listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
@@ -91,6 +94,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private fun switchProfile(profile: NetworkProfile?) {
         if (profile == null) return
         progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + profile.ssid, true)
+        progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         progressDialog?.show()
         when {
             profile.isWifi -> {
@@ -153,6 +157,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             selectedLed = options.indexOf(preference)
             listener.sendMessage(optionsCode[selectedLed])
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selectedLed)
+            testConnectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             testConnectionDialog?.show()
             testConnectionResult = false
         }
@@ -228,6 +233,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
                         }
                     }.create()
+            alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             alertDialog.show()
 
         }
@@ -305,6 +311,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     override fun onResume() {
         super.onResume()
         if (mChatService.state == Constants.STATE_CONNECTED) {
+            mChatService.updateHandler(mHandler)
             checkVersionSent = true
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }
