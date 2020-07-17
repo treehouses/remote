@@ -109,10 +109,10 @@ class DiscoverNetworkFragment : BaseFragment() {
         icon.layoutParams = param
 
         icon.setOnClickListener {
-            val message = ("SSID: " + gateway.ssid + "\n")
+            val message = ("SSID: " + gateway.ssid + "\n") +
                     ("IP Address: " + gateway.device.ip + "\n") +
                     ("MAC Address: " + gateway.device.mac + "\n") +
-                    ("Connected Devices: " + deviceList.size) +
+                    ("Connected Devices: " + deviceList.size)
 
             message.lines()
             showDialog("Device Information", message)
@@ -196,19 +196,22 @@ class DiscoverNetworkFragment : BaseFragment() {
                     regex = "ip address:\\s+([0-9]+.){3}[0-9]".toRegex()
                     val ip = regex.find(readMessage)
                     if (ip != null) {
+                        Log.e(TAG, "BENER")
                         gateway.device.ip = ip.value.split("\\s+".toRegex())[1]
                     }
 
-                    regex = "ESSID:\\s+\"[.]+\"".toRegex()
+                    regex = "ESSID:\"(.)+\"".toRegex()
                     val ssid = regex.find(readMessage)
                     if (ssid != null) {
-                        gateway.ssid = ssid.value.split("\\s+".toRegex())[1]
+                        Log.e(TAG, "BENER")
+                        gateway.ssid = ssid.value.split("ESSID:".toRegex())[1]
                     }
 
                     regex = "MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
                     val mac = regex.find(readMessage)
                     if (mac != null) {
-                        gateway.device.mac = mac.value.split("\\s+".toRegex())[1]
+                        Log.e(TAG, "BENER")
+                        gateway.device.mac = mac.value.split("MAC Address:\\s+".toRegex())[1]
                     }
 
                     setupIcons()
