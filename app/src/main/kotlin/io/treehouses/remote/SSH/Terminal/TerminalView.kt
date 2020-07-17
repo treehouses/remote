@@ -173,9 +173,23 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
 
                 // Make sure we scale our decorations to the correct size.
                 canvas.concat(scaleMatrix)
-                if (metaState and TerminalKeyListener.OUR_SHIFT_ON != 0) canvas.drawPath(shiftCursor, cursorStrokePaint) else if (metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0) canvas.drawPath(shiftCursor, cursorInversionPaint)
-                if (metaState and TerminalKeyListener.OUR_ALT_ON != 0) canvas.drawPath(altCursor, cursorStrokePaint) else if (metaState and TerminalKeyListener.OUR_ALT_LOCK != 0) canvas.drawPath(altCursor, cursorInversionPaint)
-                if (metaState and TerminalKeyListener.OUR_CTRL_ON != 0) canvas.drawPath(ctrlCursor, cursorStrokePaint) else if (metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0) canvas.drawPath(ctrlCursor, cursorInversionPaint)
+                val a = metaState and TerminalKeyListener.OUR_SHIFT_ON != 0
+                val b = metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0
+                val c = metaState and TerminalKeyListener.OUR_ALT_ON != 0
+                val d = metaState and TerminalKeyListener.OUR_ALT_LOCK != 0
+                val e = metaState and TerminalKeyListener.OUR_CTRL_ON != 0
+                val f = metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0
+
+                if(a || b || c || d || e || f) {
+                    var paint:Paint = cursorInversionPaint
+                    var cursor:Path = shiftCursor
+                    if (a || c || e) {
+                        paint = cursorStrokePaint
+                        if(c) cursor = altCursor
+                        else if(e) cursor = ctrlCursor
+                    }
+                    canvas.drawPath(cursor, paint)
+                }
 
                 // Restore previous clip region
                 canvas.restore()
