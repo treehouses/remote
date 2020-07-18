@@ -5,14 +5,21 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.graphics.Typeface
+import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
@@ -22,6 +29,7 @@ import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
 
+@RequiresApi(Build.VERSION_CODES.N)
 class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
     private val mChatService: BluetoothChatService = listener.getChatService()
 
@@ -29,11 +37,13 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
     private var jsonSent = false
     private var jsonString = ""
 
-    val keys: TextView
+    private val publicKey: TextView
+    private val privateKey: TextView
     val progressBar: ProgressBar
 
     @SuppressLint("HandlerLeak")
     private val mHandler: Handler = object : Handler() {
+        @RequiresApi(Build.VERSION_CODES.N)
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
@@ -65,7 +75,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         val btnGetKeys = v.findViewById<Button>(R.id.btn_save_keys)
         val btnShowKeys = v.findViewById<Button>(R.id.btn_show_keys)
 
-        keys = v.findViewById(R.id.keys)
+        publicKey = v.findViewById(R.id.public_key)
+        privateKey = v.findViewById(R.id.private_key)
         progressBar = v.findViewById(R.id.progress_bar)
         btnGetKeys.setOnClickListener {
             listener.sendMessage("treehouses remote key send")
@@ -77,11 +88,14 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             val storedPublicKey: String? = sharedPreferences.getString("public_key", "")
             val storedPrivateKey: String? = sharedPreferences.getString("private_key", "")
 
-            keys.text = "Public key: " + storedPublicKey + "\nPrivate key: " + storedPrivateKey
+            val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key:</b> $storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
+            val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key:</b> $storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
+            publicKey.text = strPhonePublicKey
+            privateKey.text = strPhonePrivateKey
         }
     }
 
-    val dialogListener = listener
+    private val dialogListener = listener
 
     private fun buildJSON() {
         try {
@@ -109,11 +123,13 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             else if(!piPublicKey.isNullOrBlank() && !piPrivateKey.isNullOrBlank() && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
                 val builder = AlertDialog.Builder(c)
                 builder.setTitle("Save Key To Phone")
+                builder.setMessage("Pi Public Key: $piPublicKey\n" +
+                        "Pi Private Key: $piPrivateKey")
                 builder.setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     myEdit.putString("public_key", jsonObject.getString("public_key"))
                     myEdit.putString("private_key", jsonObject.getString("private_key"))
                     myEdit.apply()
-                    Toast.makeText(c, "Key saved to phone successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(c, "Key saved to phone successfully", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface?, _: Int ->
                     dialog?.dismiss()
                 }
@@ -123,9 +139,12 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             else if(piPublicKey.isNullOrBlank() && piPrivateKey.isNullOrBlank() && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()){
                 val builder = AlertDialog.Builder(c)
                 builder.setTitle("Save Key To Pi")
+                builder.setMessage(
+                        "Phone Public Key: $storedPublicKey\n\n" +
+                        "Phone Private Key: $storedPrivateKey")
                 builder.setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     dialogListener.sendMessage("treehouses remote key receive $storedPublicKey $storedPrivateKey")
-                    Toast.makeText(c, "Key saved to Pi successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(c, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface?, _: Int ->
                     dialog?.dismiss()
                 }
@@ -139,15 +158,28 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             else{
                 val builder = AlertDialog.Builder(c)
                 builder.setTitle("Overwrite On Pi or Phone")
-                builder.setMessage("There are different keys on the Pi and the phone. Would you like to overwrite the Pi's key or the phone's key?")
+
+                val strPiPublicKey = "Pi Public Key: $piPublicKey"
+                val strPiPrivateKey = "Pi Private Key: $piPrivateKey"
+                val strPhonePublicKey = "Phone Public Key: $storedPublicKey"
+                val strPhonePrivateKey = "Phone Private Key: $storedPrivateKey"
+
+                val message = ("There are different keys on the Pi and the phone. Would you like to overwrite the Pi's key or the phone's key?\n\n" +
+                        strPiPublicKey + "\n\n" +
+                        strPiPrivateKey + "\n\n" +
+                        strPhonePublicKey + "\n\n" +
+                        strPhonePrivateKey)
+
+                builder.setMessage(message)
+
                 builder.setNegativeButton("Phone") { _: DialogInterface?, _: Int ->
                     myEdit.putString("public_key", piPublicKey)
                     myEdit.putString("private_key", piPrivateKey)
                     myEdit.apply()
-                    Toast.makeText(c, "The phone's key has been overwritten with Pi's key successfully ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(c, "The phone's key has been overwritten with Pi's key successfully ", Toast.LENGTH_LONG).show()
                 }.setPositiveButton("Pi") { _: DialogInterface?, _: Int ->
                     dialogListener.sendMessage("treehouses remote key receive $storedPublicKey $storedPrivateKey")
-                    Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
                 }.setNeutralButton("Cancel"){ dialog: DialogInterface?, _: Int ->
                     dialog?.dismiss()
                 }

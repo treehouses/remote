@@ -15,20 +15,26 @@
         android:text="Save Keys"
         android:theme="@style/PrimaryButton" />
 
-    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+    <Button
         android:id="@+id/btn_show_keys"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#ffffff"
         android:padding="@dimen/padding_normal"
         android:text="Show Keys"
+        android:textColor="#ffffff"
         android:theme="@style/PrimaryButton" />
 
     <TextView
-        android:id="@+id/keys"
+        android:id="@+id/public_key"
         android:layout_width="match_parent"
-        android:layout_height="112dp" />
+        android:layout_height="wrap_content"
+        android:scrollbars = "vertical" />
 
+    <TextView
+        android:id="@+id/private_key"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars = "vertical" />
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
