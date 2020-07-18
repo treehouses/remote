@@ -14,18 +14,6 @@ class TunnelPageAdapter : FragmentStatePagerAdapter {
         private set
 
     constructor(fm: FragmentManager?) : super(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {}
-    constructor(fm: FragmentManager?, data: ArrayList<ServiceInfo>) : super(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-        this.data = removeHeaders(data)
-    }
-
-    private fun removeHeaders(data: ArrayList<ServiceInfo>): ArrayList<ServiceInfo> {
-        val tmp = ArrayList(data)
-        val iterator = tmp.iterator()
-        while (iterator.hasNext()) {
-            if (iterator.next().isHeader) iterator.remove()
-        }
-        return tmp
-    }
 
     override fun getCount(): Int {
         return 2
