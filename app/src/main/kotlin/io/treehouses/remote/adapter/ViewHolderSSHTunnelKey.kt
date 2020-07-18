@@ -92,8 +92,17 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 profile = "default"
 
             val sharedPreferences: SharedPreferences = c.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-            val storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
-            val storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
+            var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
+            var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
+
+            if (storedPublicKey != null && storedPrivateKey != null) {
+                if(storedPublicKey.isBlank()){
+                    storedPublicKey = "No public key found"
+                }
+                if(storedPrivateKey.isBlank()){
+                    storedPrivateKey = "No private key found"
+                }
+            }
 
             val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> $storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
             val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> $storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
@@ -119,7 +128,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             val storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
             val storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
 
-            Log.d("pipPublicKey", piPublicKey)
+            Log.d("piPublicKey", piPublicKey)
             Log.d("piPrivateKey", piPrivateKey)
             Log.d("storedPublicKey", storedPublicKey)
             Log.d("storedPrivateKey", storedPrivateKey)
@@ -129,7 +138,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 Toast.makeText(c, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
             }
             // Key exists in Pi but not phone
-            else if(!piPublicKey.isNullOrBlank() && !piPrivateKey.isNullOrBlank() && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
+            else if(piPublicKey != "No public key found" && piPrivateKey != "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
                 val builder = AlertDialog.Builder(c)
                 builder.setTitle("Save Key To Phone")
                 builder.setMessage("Pi Public Key for ${profile}: $piPublicKey\n" +
@@ -145,7 +154,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.show()
             }
             // Key exists in phone but not Pi
-            else if(piPublicKey.isNullOrBlank() && piPrivateKey.isNullOrBlank() && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()){
+            else if(piPublicKey == "No public key found" && piPrivateKey == "No private key found " && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()){
                 val builder = AlertDialog.Builder(c)
                 builder.setTitle("Save Key To Pi")
                 builder.setMessage(
@@ -160,7 +169,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.show()
             }
             // Keys don't exist in phone or Pi
-            else if(piPublicKey.isNullOrBlank() && piPrivateKey.isNullOrBlank() && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
+            else if(piPublicKey == "No public key found" && piPrivateKey == "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
                 Toast.makeText(c, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             }
             // Keys are different, overwrite one or cancel
