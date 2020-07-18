@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
@@ -23,6 +24,7 @@ class TunnelSSHFragment : BaseFragment() {
 
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         bind!!.switchNotification.isEnabled = false;
+        bind!!.notifyNow.isEnabled = false
         bind!!.switchNotification.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 bind!!.switchNotification.isEnabled = false
@@ -31,6 +33,10 @@ class TunnelSSHFragment : BaseFragment() {
                 bind!!.switchNotification.isEnabled = false
                 listener.sendMessage("treehouses sshtunnel notice off")
             }
+        }
+        bind!!.notifyNow.setOnClickListener {
+            bind!!.notifyNow.isEnabled = false
+            listener.sendMessage("treehouses sshtunnel notice now")
         }
         return bind!!.root
     }
@@ -69,14 +75,20 @@ class TunnelSSHFragment : BaseFragment() {
                 else if(readMessage.contains("Status: on")){
                     bind!!.switchNotification.isChecked = true;
                     bind!!.switchNotification.isEnabled = true;
+                    bind!!.notifyNow.isEnabled = true
                 }
                 else if(readMessage.contains("Status: off")){
                     bind!!.switchNotification.isChecked = false;
                     bind!!.switchNotification.isEnabled = true;
+                    bind!!.notifyNow.isEnabled = true
 
                 }
                 else if (readMessage.contains("OK.")) {
                     listener.sendMessage("treehouses sshtunnel notice")
+                }
+                else if( readMessage.contains("Thanks for the feedback!")){
+                    Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
+                    bind!!.notifyNow.isEnabled = true
                 }
 
 
