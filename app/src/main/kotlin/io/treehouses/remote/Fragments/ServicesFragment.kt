@@ -28,7 +28,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesTabFragment: ServicesTabFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
-    private var counter = 0
+    var worked = false
     private lateinit var array: MutableList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -49,25 +49,22 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         setTabEnabled(false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(handler)
+        worked = false
         preferences()
         return bind!!.root
     }
 
     private fun preferences(){
-        var worked = false
         array = SaveUtils.getStringList(requireContext(), "servicesArray")
         for (string in array) {
             val a = performAction(string, services)
             if (a == 1) {
-                showUI()
-                writeToRPI("treehouses remote allservices\n")
                 worked = true
+                showUI()
             }
         }
-        if(!worked){
-            writeToRPI("treehouses remote allservices\n")
-        }
-
+        writeToRPI("treehouses remote allservices\n")
+        worked = false
     }
 
     private fun showUI(){
@@ -143,7 +140,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         when (position) {
             0 -> {
                 fragment = servicesTabFragment
-                mChatService.updateHandler(servicesTabFragment!!.handlerOverview)
+                if(!worked) mChatService.updateHandler(servicesTabFragment!!.handlerOverview)
             }
             1 -> {
                 fragment = servicesDetailsFragment
