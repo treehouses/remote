@@ -15,18 +15,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
 import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
 import java.util.regex.Pattern
 
 
-class SSHConfig : BaseFragment() {
+class SSHConfig : BaseFragment(), RVButtonClick {
     private val sshPattern = Pattern.compile("^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
     private lateinit var bind: DialogSshBinding
     private lateinit var pastHosts: List<HostBean>
@@ -67,7 +69,8 @@ class SSHConfig : BaseFragment() {
         adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHRow {
                 val holderBinding = RowSshBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return ViewHolderSSHRow(holderBinding)
+                holderBinding.editButton.setOnClickListener {  }
+                return ViewHolderSSHRow(holderBinding, this@SSHConfig)
             }
 
             override fun getItemCount(): Int { return pastHosts.size }
@@ -149,4 +152,10 @@ class SSHConfig : BaseFragment() {
                 }
             }
         }
+
+    override fun onButtonClick(position: Int) {
+        val edit = EditHostDialog()
+        edit.arguments = Bundle().apply { putString(EditHostDialog.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
+        edit.show(childFragmentManager, "EditHost")
+    }
 }

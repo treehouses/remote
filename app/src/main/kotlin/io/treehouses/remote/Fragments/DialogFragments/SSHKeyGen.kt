@@ -1,13 +1,19 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.KeysDialogBinding
-import java.security.InvalidAlgorithmParameterException
+import io.treehouses.remote.utils.KeyUtils
+import io.treehouses.remote.utils.SaveUtils
+import net.i2p.crypto.eddsa.Utils
+import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.security.NoSuchAlgorithmException
 
 class SSHKeyGen : FullScreenDialogFragment() {
     private lateinit var bind : KeysDialogBinding
@@ -22,24 +28,24 @@ class SSHKeyGen : FullScreenDialogFragment() {
         bind.cancelButton.setOnClickListener { dismiss() }
 
         bind.generateKey.setOnClickListener {
-            generateKey(name = bind.keyNameInput.text.toString(), keyType = bind.keyTypeSpinner.selectedItem.toString(), password = bind.passwordInput.text.toString())
+            generateKey(name = bind.keyNameInput.text.toString(), algorithm = bind.keyTypeSpinner.selectedItem.toString(), password = bind.passwordInput.text.toString())
         }
     }
 
-    private fun generateKey(name: String, keyType: String, password: String) {
-        val key = if (keyType == "RSA") {
-            generateRSA()
-        } else {
-            throw InvalidAlgorithmParameterException()
-        }
+    private fun generateKey(name: String, algorithm: String, password: String) {
+        val keyPair = generateKeyPair(algorithm)
+        val key = PubKeyBean(name, algorithm, keyPair.private.encoded, keyPair.public.encoded)
+        KeyUtils.saveKey(requireContext(), key)
+        dismiss()
     }
 
-    private fun generateRSA() {
-        val keyGen = KeyPairGenerator.getInstance("RSA")
-        keyGen.initialize(512)
-        val keypair = keyGen.genKeyPair()
-
-
+    private fun generateKeyPair(algorithm: String) : KeyPair {
+        val keyGen = KeyPairGenerator.getInstance(algorithm)
+        keyGen.initialize(if (algorithm == "EC") 256 else 1024)
+        val keyPair = keyGen.generateKeyPair()
+        Log.e("GENERATED Public", keyPair.public.toString())
+        Log.e("GENERATED Private", keyPair.private.toString())
+        return keyPair
     }
 
 }

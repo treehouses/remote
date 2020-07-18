@@ -166,6 +166,9 @@
 
     <string-array name="key_types">
         <item>RSA</item>
+        <item>EC</item>
+        <item>DSA</item>
+        <item>DH</item>
     </string-array>
 
     <string-array name="led_options_commands">

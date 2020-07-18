@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/padding_normal"
-        android:text="Generate SSH Key"
+        android:text="Edit Host"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/daynight_textColor" />
 
@@ -26,21 +26,22 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="@dimen/padding_large"
-            android:textStyle="bold"
-            android:text="Key Name:"
+            android:text="Uri"
             android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_mid" />
+            android:textSize="@dimen/text_size_mid"
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:id="@+id/uriInputLayout"
             android:layout_weight="1">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/key_name_input"
+                android:id="@+id/uriInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="My Key"
+                android:hint="username@host:port"
                 android:inputType="text"
                 android:textColor="@color/daynight_textColor" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -57,18 +58,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textStyle="bold"
             android:padding="@dimen/padding_large"
-            android:text="Key Type:"
+            android:text="Key:"
             android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_mid" />
+            android:textSize="@dimen/text_size_mid"
+            android:textStyle="bold" />
 
         <Spinner
-            android:id="@+id/keyTypeSpinner"
+            android:id="@+id/selectKey"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:entries="@array/key_types" />
+            tools:entries="@array/key_types" />
 
     </LinearLayout>
 
@@ -79,37 +80,33 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:gravity="center"
             android:padding="@dimen/padding_large"
-            android:text="Password:"
+            android:text="Font Size:"
             android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_mid" />
+            android:textSize="@dimen/text_size_mid"
+            android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <NumberPicker
+            android:id="@+id/selectFontSize"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="(Optional)"
-                android:inputType="textPassword"
-                android:textColor="@color/daynight_textColor" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="@dimen/margin_huge"
+            android:layout_marginLeft="@dimen/margin_huge"
+            android:layout_marginEnd="@dimen/margin_huge"
+            android:layout_marginRight="@dimen/margin_huge"
+            android:layout_weight="1" />
 
 
     </LinearLayout>
 
     <Button
-        android:id="@+id/generate_key"
+        android:id="@+id/save_host"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_large"
         android:background="@drawable/ripple"
-        android:text="Generate"
+        android:text="Save Host"
         android:textColor="@color/bg_white" />
 
     <Button

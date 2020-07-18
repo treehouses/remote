@@ -8,7 +8,7 @@ class HostBean {
     var nickname: String? = "treehouses"
     var hostname: String? = "192.168.1.29"
     var username: String? = "pi"
-    val keyName: String = ""
+    var keyName: String = ""
 
     var protocol: String? = "ssh"
     var port = 22

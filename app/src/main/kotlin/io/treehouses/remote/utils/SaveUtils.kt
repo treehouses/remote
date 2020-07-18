@@ -47,13 +47,13 @@ object SaveUtils {
         return strList.toMutableList()
     }
 
-    private fun addToArrayList(context: Context, arrayName: String, toAdd: String) {
+    fun addToArrayList(context: Context, arrayName: String, toAdd: String) {
         val arrayList = getStringList(context, arrayName)
         arrayList.add(toAdd)
         saveStringList(context, arrayList, arrayName)
     }
 
-    private fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
+    fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
         val arrayList = getStringList(context, arrayName)
         if (arrayList.isNotEmpty()) {
             arrayList.remove(toRemove)
@@ -162,6 +162,14 @@ object SaveUtils {
         editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
         editor.apply()
         addToArrayList(context, SSH_HOSTS, hostBean.uri.toString())
+    }
+
+    fun updateHost(context: Context, oldUri: String, newHostBean: HostBean) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.remove(oldUri)
+        editor.apply()
+        removeFromArrayList(context, SSH_HOSTS, oldUri)
+        addHost(context, newHostBean)
     }
 
     fun getHost(context: Context, hostUri: String) : HostBean? {

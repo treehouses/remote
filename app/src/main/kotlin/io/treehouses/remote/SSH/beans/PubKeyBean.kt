@@ -9,43 +9,44 @@ import java.security.spec.InvalidKeySpecException
 /**
  * @author Kenny Root
  */
-class PubKeyBean {
+class PubKeyBean constructor(var nickname: String = "",
+                             var type: String = "RSA", var privateKey: ByteArray? = null, var publicKey: ByteArray? = null) {
     /* Database fields */
-    var id: Long = 0
-    var nickname: String? = null
-    var type: String? = null
-    private var privateKey: ByteArray? = null
-    private var publicKey: ByteArray? = null
+//    var id: Long = 0
+//    var nickname: String = ""
+//    var type: String = "RSA"
+//    private var privateKey: ByteArray? = null
+//    private var publicKey: ByteArray? = null
 //    var isEncrypted = false
 //    var isStartup = false
     var isConfirmUse = false
     var lifetime = 0
 
     /* Transient values */
-    @Transient
-    var isUnlocked = false
-
-    @Transient
-    var unlockedPrivate: Any? = null
+//    @Transient
+//    var isUnlocked = false
+//
+//    @Transient
+//    var unlockedPrivate: Any? = null
 
     @Transient
     private var bits: Int? = null
 
-    fun setPrivateKey(privateKey: ByteArray?) {
-        if (privateKey == null) this.privateKey = null else this.privateKey = privateKey.clone()
-    }
-
-    fun getPrivateKey(): ByteArray? {
-        return if (privateKey == null) null else privateKey!!.clone()
-    }
-
-    fun setPublicKey(encoded: ByteArray?) {
-        publicKey = encoded?.clone()
-    }
-
-    fun getPublicKey(): ByteArray? {
-        return if (publicKey == null) null else publicKey!!.clone()
-    }
+//    fun setPrivateKey(privateKey: ByteArray?) {
+//        if (privateKey == null) this.privateKey = null else this.privateKey = privateKey.clone()
+//    }
+//
+//    fun getPrivateKey(): ByteArray? {
+//        return if (privateKey == null) null else privateKey!!.clone()
+//    }
+//
+//    fun setPublicKey(encoded: ByteArray?) {
+//        publicKey = encoded?.clone()
+//    }
+//
+//    fun getPublicKey(): ByteArray? {
+//        return if (publicKey == null) null else publicKey!!.clone()
+//    }
 
 //    fun getDescription(context: Context): String {
 //        if (bits == null) {
