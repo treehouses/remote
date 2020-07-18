@@ -180,16 +180,15 @@ class DiscoverNetworkFragment : BaseFragment() {
                     val ip = regex.find(readMessage)
                     if (ip != null) {
                         Log.e(TAG, "BENER")
-                        var trimmedIp = ip.value.split("ip address:\\s+".toRegex())[1]
-                        trimmedIp = trimmedIp.substring(1, trimmedIp.length - 1)
-                        gateway.device.ip = trimmedIp
+                        gateway.device.ip = ip.value.split("ip address:\\s+".toRegex())[1]
                     }
 
                     regex = "ESSID:\"(.)+\"".toRegex()
                     val ssid = regex.find(readMessage)
                     if (ssid != null) {
-                        Log.e(TAG, "BENER")
-                        gateway.ssid = ssid.value.split("ESSID:".toRegex())[1]
+                        var trimmedSsid = ssid.value.split("ESSID:".toRegex())[1]
+                        trimmedSsid = trimmedSsid.substring(1, trimmedSsid.length - 1)
+                        gateway.ssid = trimmedSsid
                     }
 
                     regex = "MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
