@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments.DialogFragments
+package io.treehouses.remote.Fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -15,26 +15,27 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.SSHConsole
+import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
-import io.treehouses.remote.bases.FullScreenDialogFragment
+import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
 import java.util.regex.Pattern
 
 
-class SSHDialog : FullScreenDialogFragment() {
+class SSHConfig : BaseFragment() {
     private val sshPattern = Pattern.compile("^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
     private lateinit var bind: DialogSshBinding
     private lateinit var pastHosts: List<HostBean>
+    private lateinit var adapter : RecyclerView.Adapter<ViewHolderSSHRow>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogSshBinding.inflate(inflater, container, false)
-        if (listener?.getChatService() != null && listener?.getChatService()?.state == Constants.STATE_CONNECTED) {
-            listener?.sendMessage("treehouses networkmode info")
-            listener?.getChatService()?.updateHandler(mHandler)
+        if (listener.getChatService().state == Constants.STATE_CONNECTED) {
+            listener.sendMessage("treehouses networkmode info")
+            listener.getChatService().updateHandler(mHandler)
         }
         return bind.root
     }
@@ -58,10 +59,12 @@ class SSHDialog : FullScreenDialogFragment() {
             bind.pastHosts.visibility = View.GONE
         }
         else setUpAdapter()
+
+        bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
     }
 
     private fun setUpAdapter() {
-        bind.pastHosts.adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
+        adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHRow {
                 val holderBinding = RowSshBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 return ViewHolderSSHRow(holderBinding)
@@ -71,6 +74,7 @@ class SSHDialog : FullScreenDialogFragment() {
 
             override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) { holder.bind(pastHosts[position]) }
         }
+        bind.pastHosts.adapter = adapter
 
         val listener = RecyclerViewClickListener(requireContext(), bind.pastHosts, object : RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
@@ -114,7 +118,6 @@ class SSHDialog : FullScreenDialogFragment() {
         contents.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         contents.setClass(activity, SSHConsole::class.java)
         activity.startActivity(contents)
-        dialog?.dismiss()
     }
 
     private fun getIP(s: String) {
@@ -125,6 +128,14 @@ class SSHDialog : FullScreenDialogFragment() {
         val hostAddress = "pi@$ipAddress"
         bind.sshTextInput.setText(hostAddress)
         Log.e("GOT IP", ipAddress)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
+        bind.pastHosts.adapter = null
+        bind.pastHosts.adapter = adapter
+
     }
 
     private val mHandler: Handler = @SuppressLint("HandlerLeak")

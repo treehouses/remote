@@ -164,6 +164,10 @@
         <item>LED Lantern</item>
     </string-array>
 
+    <string-array name="key_types">
+        <item>RSA</item>
+    </string-array>
+
     <string-array name="led_options_commands">
         <item>treehouses led dance</item>
         <item>treehouses led thanksgiving</item>

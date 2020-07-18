@@ -8,6 +8,7 @@ import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
+import java.security.KeyPair
 import java.util.*
 
 object SaveUtils {

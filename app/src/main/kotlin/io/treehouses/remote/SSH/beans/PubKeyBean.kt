@@ -16,8 +16,8 @@ class PubKeyBean {
     var type: String? = null
     private var privateKey: ByteArray? = null
     private var publicKey: ByteArray? = null
-    var isEncrypted = false
-    var isStartup = false
+//    var isEncrypted = false
+//    var isStartup = false
     var isConfirmUse = false
     var lifetime = 0
 

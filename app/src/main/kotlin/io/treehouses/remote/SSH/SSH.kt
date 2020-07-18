@@ -218,13 +218,13 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
         outputLine(R.string.terminal_auth)
         try {
-            val pubkeyId = host!!.pubkeyId
-            if (!pubkeysExhausted && pubkeyId != -2L &&
+            val pubkeyId = host!!.keyName
+            if (!pubkeysExhausted &&
                     connection!!.isAuthMethodAvailable(host!!.username, AUTH_PUBLICKEY)) {
 
                 // if explicit pubkey defined for this host, then prompt for password as needed
                 // otherwise just try all in-memory keys held in terminalmanager
-                if (pubkeyId == -1L) {
+                if (pubkeyId.isEmpty()) {
                     // try each of the in-memory keys
                     Log.e("HERE", "YAY")
                     outputLine(R.string.terminal_auth_pubkey_any)
