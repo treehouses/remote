@@ -64,6 +64,7 @@ class StatusFragment : BaseFragment() {
             writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE))
             updateRightNow = true
             bind.progressBar.visibility = View.VISIBLE
+            bind.upgrade.visibility = View.GONE
         }
     }
 
@@ -174,6 +175,7 @@ class StatusFragment : BaseFragment() {
         val dialogBinding = DialogRenameStatusBinding.inflate(inflater)
         dialogBinding.hostname.hint = "New Name"
         val alertDialog = createRenameDialog(dialogBinding.root, dialogBinding.hostname)
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
