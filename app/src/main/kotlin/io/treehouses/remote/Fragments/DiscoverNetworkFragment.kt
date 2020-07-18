@@ -30,17 +30,14 @@ class DiscoverNetworkFragment : BaseFragment() {
     private lateinit var bind : ActivityDiscoverNetworkFragmentBinding
     private var gateway = Gateway()
     private var deviceList = ArrayList<Device>()
+    private lateinit var gatewayIcon : ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityDiscoverNetworkFragmentBinding.inflate(inflater, container, false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-        requestGatewayList()
+        requestNetworkList()
         return bind.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun setupIcons() {
@@ -107,16 +104,7 @@ class DiscoverNetworkFragment : BaseFragment() {
         icon.y = midY - size / 2
 
         icon.layoutParams = param
-
-        icon.setOnClickListener {
-            val message = ("SSID: " + gateway.ssid + "\n") +
-                    ("IP Address: " + gateway.device.ip + "\n") +
-                    ("MAC Address: " + gateway.device.mac + "\n") +
-                    ("Connected Devices: " + deviceList.size)
-
-            message.lines()
-            showDialog("Device Information", message)
-        }
+        gatewayIcon = icon
 
         bind.container.addView(icon)
     }
@@ -133,13 +121,13 @@ class DiscoverNetworkFragment : BaseFragment() {
                 .setMessage(message)
     }
 
-    private fun requestGatewayList() {
-        Log.e(TAG, "Requesting Gateway List")
+    private fun requestNetworkList() {
+        Log.d(TAG, "Requesting Network List")
         try {
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY_LIST))
         }
         catch (e : Exception) {
-            Log.e(TAG, "Failed bro")
+            Log.e(TAG, "Error Requesting Network List")
         }
 
         try {
@@ -148,24 +136,20 @@ class DiscoverNetworkFragment : BaseFragment() {
         catch (e : Exception) {
             Log.e(TAG, "Failed bro")
         }
-        setupIcons()
     }
 
-    private fun getGatewayList(message: String) {
-        Log.e(TAG, "MBA")
-//        deviceList.clear()
-        val splitMessage = message.lines()
+    private fun updateGatewayIcon() {
+        bind.container.removeView(gatewayIcon)
+        gatewayIcon.setOnClickListener {
+            val message = ("SSID: " + gateway.ssid + "\n") +
+                    ("IP Address: " + gateway.device.ip + "\n") +
+                    ("MAC Address: " + gateway.device.mac + "\n") +
+                    ("Connected Devices: " + deviceList.size)
 
-        for(m in splitMessage) {
-            val device = Device()
-
-            device.ip = m.split("\\s+".toRegex())[0]
-            device.mac = m.split("\\s+".toRegex())[1]
-
-            deviceList.add(device)
+            message.lines()
+            showDialog("Device Information", message)
         }
-
-        setupIcons()
+        bind.container.addView(gatewayIcon)
     }
 
     val mHandler: Handler = @SuppressLint("HandlerLeak")
@@ -192,12 +176,13 @@ class DiscoverNetworkFragment : BaseFragment() {
                         deviceList.add(device)
                     }
 
-
                     regex = "ip address:\\s+([0-9]+.){3}[0-9]".toRegex()
                     val ip = regex.find(readMessage)
                     if (ip != null) {
                         Log.e(TAG, "BENER")
-                        gateway.device.ip = ip.value.split("ip address:\\s+".toRegex())[1]
+                        var trimmedIp = ip.value.split("ip address:\\s+".toRegex())[1]
+                        trimmedIp = trimmedIp.substring(1, trimmedIp.length - 1)
+                        gateway.device.ip = trimmedIp
                     }
 
                     regex = "ESSID:\"(.)+\"".toRegex()
@@ -215,6 +200,7 @@ class DiscoverNetworkFragment : BaseFragment() {
                     }
 
                     setupIcons()
+                    updateGatewayIcon()
                 }
             }
         }
