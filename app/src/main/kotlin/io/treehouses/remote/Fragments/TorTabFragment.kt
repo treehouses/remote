@@ -42,9 +42,8 @@ class TorTabFragment : BaseFragment() {
     private var notification: Switch? = null
     var bind: ActivityTorFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
-        listener.sendMessage("treehouses tor ports")
+
+
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
@@ -150,12 +149,13 @@ class TorTabFragment : BaseFragment() {
                 mChatService!!.updateHandler(mHandler)
 
 
-                Thread.sleep(1000)
+
                 listener.sendMessage("treehouses tor ports")
 
                 portsName = ArrayList()
-                adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
-                Log.i("Tag", "Reload fragment")
+
+
+
             }
 
         }

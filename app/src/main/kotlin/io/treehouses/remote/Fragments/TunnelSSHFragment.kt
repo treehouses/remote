@@ -41,7 +41,7 @@ class TunnelSSHFragment : BaseFragment() {
             mChatService!!.updateHandler(mHandler)
 
 
-            Thread.sleep(1000)
+
             listener.sendMessage("treehouses sshtunnel ports")
             var sshPorts = bind!!.sshPorts
             portsName = ArrayList()
