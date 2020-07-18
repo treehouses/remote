@@ -68,6 +68,9 @@ class TerminalFragment : BaseTerminalFragment() {
         expandableListDetail = HashMap()
         expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
         setHasOptionsMenu(true)
+        bind.treehousesBtn.text = null;
+        bind.treehousesBtn.textOn = null;
+        bind.treehousesBtn.textOff = null;
         return bind.root
     }
 
