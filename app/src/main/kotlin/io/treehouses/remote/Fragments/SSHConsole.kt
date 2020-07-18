@@ -477,8 +477,8 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             updatePromptVisible()
             true
         })
-        fun update(b:Boolean, c:PromptHelper){
-            c.setResponse(b)
+        fun update(b:Boolean, helper:PromptHelper){
+            helper.setResponse(b)
             updatePromptVisible()
         }
         bind.consolePromptYes.setOnClickListener {
