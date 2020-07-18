@@ -70,7 +70,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
     init {
         mChatService.updateHandler(mHandler)
 
-        var profile = v.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
+        val profileText = v.findViewById<EditText>(R.id.sshtunnel_profile).text
+
         val btnGetKeys = v.findViewById<Button>(R.id.btn_save_keys)
         val btnShowKeys = v.findViewById<Button>(R.id.btn_show_keys)
 
@@ -78,12 +79,15 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         privateKey = v.findViewById(R.id.private_key)
         progressBar = v.findViewById(R.id.progress_bar)
 
+        Log.d("profile string", profileText.toString())
         btnGetKeys.setOnClickListener {
+            var profile = profileText.toString()
             listener.sendMessage("treehouses remote key send $profile")
             jsonSend(true)
         }
 
         btnShowKeys.setOnClickListener {
+            var profile = profileText.toString()
             if(profile.isBlank())
                 profile = "default"
 
