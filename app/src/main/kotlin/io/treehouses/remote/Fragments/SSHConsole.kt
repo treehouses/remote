@@ -477,15 +477,17 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             updatePromptVisible()
             true
         })
+        fun update(b:Boolean, c:PromptHelper){
+            c.setResponse(b)
+            updatePromptVisible()
+        }
         bind.consolePromptYes.setOnClickListener {
             val helper = currentPromptHelper ?: return@setOnClickListener
-            helper.setResponse(java.lang.Boolean.TRUE)
-            updatePromptVisible()
+            update(java.lang.Boolean.TRUE, helper)
         }
         bind.consolePromptNo.setOnClickListener {
             val helper = currentPromptHelper ?: return@setOnClickListener
-            helper.setResponse(java.lang.Boolean.FALSE)
-            updatePromptVisible()
+            update(java.lang.Boolean.FALSE, helper)
         }
     }
 
