@@ -126,8 +126,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.setMessage("Pi Public Key: $piPublicKey\n" +
                         "Pi Private Key: $piPrivateKey")
                 builder.setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    myEdit.putString("public_key", jsonObject.getString("public_key"))
-                    myEdit.putString("private_key", jsonObject.getString("private_key"))
+                    myEdit.putString("public_key", piPublicKey)
+                    myEdit.putString("private_key", piPrivateKey)
                     myEdit.apply()
                     Toast.makeText(c, "Key saved to phone successfully", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface?, _: Int ->
@@ -203,6 +203,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             jsonString = readMessage.trim()
         }
     }
+
     private fun jsonSend(sent: Boolean) {
         jsonSent = sent
         if (sent) {
