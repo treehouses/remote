@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.DialogFragment
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
@@ -104,10 +105,12 @@ class TerminalFragment : BaseTerminalFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mChatService.state == Constants.STATE_NONE) {
-            mChatService.start()
-            updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
-        }
+        if(chatOpen()) {
+            if (mChatService.state == Constants.STATE_NONE) {
+                mChatService.start()
+                updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
+            }
+        } 
     }
 
     override fun onResume() {
