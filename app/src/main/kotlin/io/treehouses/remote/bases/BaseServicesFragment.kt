@@ -75,7 +75,6 @@ open class BaseServicesFragment() : BaseFragment() {
             if (inServiceList(service, services) == -1) {
                 services.add(ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
                         servicesData!!.info[service], servicesData!!.autorun[service], servicesData!!.usesEnv[service]))
-                        servicesData!!.info[service], servicesData!!.autorun[service]))
             }
         }
     }
