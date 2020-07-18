@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/margin_medium"
-    android:theme="@style/AppTheme">
+    android:theme="@style/CardTheme">
 
     <TextView
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             android:fontFamily="sans-serif"
             android:textColor="@color/daynight_textColor"
             android:hint="External"
-            android:inputType="textPersonName" />
+            android:inputType="number"/>
 
     </LinearLayout>
 
@@ -47,6 +47,7 @@
             android:textColor="@color/daynight_textColor"
             android:fontFamily="sans-serif"
             android:hint="Internal"
+            android:inputType="number"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -57,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add Port"
+        android:textColor="#000000"
         android:background="@color/md_grey_300"/>
 
 </LinearLayout>

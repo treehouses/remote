@@ -97,7 +97,7 @@
     <string name="menu_system">System</string>
     <string name="menu_terminal">Terminal</string>
     <string name="menu_services">Services</string>
-    <string name="menu_ssh">SSH</string>
+    <string name="menu_ssh">SSH (Beta)</string>
     <string name="menu_ssh_tunnel">Tunnel</string>
     <string name="menu_about">About</string>
     <string name="menu_status">Status</string>
@@ -151,6 +151,17 @@
         <item>LED Thanksgiving</item>
         <item>LED New Years</item>
         <item>LED Heavy Metal</item>
+        <item>LED Lunar New Year</item>
+        <item>LED Valentine</item>
+        <item>LED Carnival</item>
+        <item>LED St. Patrick\'s</item>
+        <item>LED Onam</item>
+        <item>LED Easter</item>
+        <item>LED Eid al-Fitr</item>
+        <item>LED Kecak</item>
+        <item>LED Christmas</item>
+        <item>LED Diwali</item>
+        <item>LED Lantern</item>
     </string-array>
 
     <string-array name="led_options_commands">
@@ -158,12 +169,154 @@
         <item>treehouses led thanksgiving</item>
         <item>treehouses led newyear</item>
         <item>treehouses led heavymetal</item>
+        <item>treehouses led lunarnewyear</item>
+        <item>treehouses led valentine</item>
+        <item>treehouses led carnival</item>
+        <item>treehouses led stpatricks</item>
+        <item>treehouses led onam</item>
+        <item>treehouses led easter</item>
+        <item>treehouses led eid</item>
+        <item>treehouses led kecak</item>
+        <item>treehouses led christmas</item>
+        <item>treehouses led diwali</item>
+        <item>treehouses led lantern</item>
     </string-array>
+
+    <plurals name="console_copy_done">
+        <item quantity="one">"Copied %1$d byte to clipboard"</item>
+        <item quantity="other">"Copied %1$d bytes to clipboard"</item>
+    </plurals>
+
+    <string name="terminal_connecting">"Connecting to %1$s:%2$d via %3$s"</string>
+    <!-- Text for the "Esc" button in virtual keyboard. -->
+    <string name="button_key_esc">Esc</string>
+    <!-- Text for the "Ctrl" button in virtual keyboard. -->
+    <string name="button_key_ctrl">Ctrl</string>
+
+    <!-- Text for the "Home" button in virtual keyboard. -->
+    <string name="button_key_home">Home</string>
+    <!-- Text for the "End" button in virtual keyboard. -->
+    <string name="button_key_end">End</string>
+    <!-- Text for the "Page Up" button in virtual keyboard. -->
+    <string name="button_key_pgup">PgUp</string>
+    <!-- Text for the "Page Down" button in virtual keyboard. -->
+    <string name="button_key_pgdn">PgDn</string>
+    <!-- Text for the "F1" button in virtual keyboard. -->
+    <string name="button_key_f1">F1</string>
+    <!-- Text for the "F2" button in virtual keyboard. -->
+    <string name="button_key_f2">F2</string>
+    <!-- Text for the "F3" button in virtual keyboard. -->
+    <string name="button_key_f3">F3</string>
+    <!-- Text for the "F4" button in virtual keyboard. -->
+    <string name="button_key_f4">F4</string>
+    <!-- Text for the "F5" button in virtual keyboard. -->
+    <string name="button_key_f5">F5</string>
+    <!-- Text for the "F6" button in virtual keyboard. -->
+    <string name="button_key_f6">F6</string>
+    <!-- Text for the "F7" button in virtual keyboard. -->
+    <string name="button_key_f7">F7</string>
+    <!-- Text for the "F8" button in virtual keyboard. -->
+    <string name="button_key_f8">F8</string>
+    <!-- Text for the "F9" button in virtual keyboard. -->
+    <string name="button_key_f9">F9</string>
+    <!-- Text for the "F10" button in virtual keyboard. -->
+    <string name="button_key_f10">F10</string>
+    <!-- Text for the "F11" button in virtual keyboard. -->
+    <string name="button_key_f11">F11</string>
+    <!-- Text for the "F12" button in virtual keyboard. -->
+    <string name="button_key_f12">F12</string>
+
+    <!-- Displays the host key to the user in the terminal -->
+    <string name="terminal_sucess">"Verified host '%1$s' key: %2$s"</string>
+    <string name="terminal_failed">"Host key verification failed."</string>
+
+    <!-- Displayed on the terminal describing the cryptographic algorithm names -->
+    <string name="terminal_using_s2c_algorithm">"Server-to-client algorithm: %1$s %2$s"</string>
+    <!-- Displayed on the terminal describing the cryptographic algorithm names -->
+    <string name="terminal_using_c2s_algorithm">"Client-to-server algorithm: %1$s %2$s"</string>
+    <!-- Displayed on the terminal describing the cryptographic algorithm names -->
+    <string name="terminal_using_algorithm">"Using algorithm: %1$s %2$s"</string>
+
+    <!-- Displayed on the terminal during a SSH connection describing the cryptographic key
+         exchange algorithm used to establish a shared secret between this program and the
+         server. -->
+    <string name="terminal_kex_algorithm">Key exchange algorithm: %s</string>
+
+    <string name="terminal_auth">"Trying to authenticate"</string>
+
+    <string name="terminal_auth_pass">"Attempting 'password' authentication"</string>
+    <string name="terminal_auth_pass_fail">"Authentication method 'password' failed"</string>
+
+    <string name="terminal_auth_pubkey_any">"Attempting 'publickey' authentication with any in-memory public keys"</string>
+    <string name="terminal_auth_pubkey_invalid">"Selected public key is invalid, try reselecting key in host editor"</string>
+    <string name="terminal_auth_pubkey_specific">"Attempting 'publickey' authentication with a specific public key"</string>
+    <string name="terminal_auth_pubkey_fail">"Authentication method 'publickey' with key '%1$s' failed"</string>
+
+    <string name="terminal_auth_ki">"Attempting 'keyboard-interactive' authentication"</string>
+    <string name="terminal_auth_ki_fail">"Authentication method 'keyboard-interactive' failed"</string>
+
+    <string name="terminal_auth_fail">"[Your host doesn't support 'password' or 'keyboard-interactive' authentication.]"</string>
+
+    <string name="terminal_no_session">"Session will not be started due to host preference."</string>
+    <string name="terminal_enable_portfoward">"Enable port forward: %1$s"</string>
+
+    <!-- In a list of all the key pairs the user has generated or imported into their device.
+	     Describes a key type of the RSA algorithm with a certain strength described in
+	     number of bits (e.g., "RSA 2048-bit"). -->
+    <string name="key_type_rsa_bits">RSA %d-bit</string>
+    <!-- In a list of all the key pairs the user has generated or imported into their device.
+         Describes a key type of the DSA algorithm with a certain strength described in
+         number of bits (e.g., "DSA 1024-bit" ). -->
+    <string name="key_type_dsa_bits">DSA %d-bit</string>
+    <!-- In a list of all the key pairs the user has generated or imported into their device.
+         Describes a key type of the Elliptic Curve (EC) algorithm with a certain strength
+         described in number of bits (e.g., "EC 256-bit"). -->
+    <string name="key_type_ec_bits">EC %d-bit</string>
+    <!-- In a list of all the key pairs the user has generated or imported into their device.
+         Describes a key type of the Ed25519 algorithm with a certain strength described in
+         number of bits (e.g., "Ed25519"). -->
+    <string name="key_type_ed25519">Ed25519</string>
+    <!-- In a list of all the key pairs the user has generated or imported into their device.
+         Describes a key type of an unknown algorithm. -->
+    <string name="key_type_unknown">Key type unknown</string>
+    <!-- In a list of all the key pairs the user has generated or imported into their device.
+         Added to the end of a key description to indicate that the key is encrypted (i.e,
+         password protected). -->
+    <string name="key_attribute_encrypted">(encrypted)</string>
+
+    <!-- The header of the warning a user gets when the host key has changed. Note that this can be a very serious attack, so we try to be as "loud" to the user as possible. -->
+    <string name="host_verification_failure_warning_header">"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"</string>
+    <!-- The body of the warning a user gets when the host key has changed. Note that this can be a very serious attack, so we try to be as "loud" to the user as possible. -->
+    <string name="host_verification_failure_warning">"IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!"\n"Someone could be eavesdropping on you right now (man-in-the-middle attack)!"\n"It is also possible that the host key has just been changed."</string>
+
+    <string name="prompt_continue_connecting">"Are you sure you want"\n"to continue connecting?"</string>
+
+    <!-- Sent to user when the remote public encryption key fingerprint doesn't match the local database -->
+    <string name="host_authenticity_warning">"The authenticity of host '%1$s' can't be established."</string>
+    <!-- First field is encryption algorithm. Second is the actual fingerprint in hex digits -->
+    <string name="host_fingerprint">"Host %1$s key fingerprint is %2$s"</string>
+
+    <string name="prompt_password">"Password:"</string>
+    <string name="prompt_pubkey_password">"Password for key '%1$s'"</string>
+    <!-- Part of the formatting hints that will be used like: username@hostname:port -->
+    <string name="format_username">"username"</string>
+    <!-- Part of the formatting hints that will be used like: username@hostname:port -->
+    <string name="format_hostname">"hostname"</string>
+    <!-- Part of the formatting hints that will be used like: username@hostname:port -->
+    <string name="format_port">"port"</string>
+
+    <string name="prompt_allow_agent_to_use_key">"Allow remote host to"\n"use key '%1$s'?"</string>
+
+
+
 
     <string-array name="dark_mode_options">
         <item>OFF</item>
         <item>ON</item>
         <item>Follow System</item>
     </string-array>
+
+    <string name="intro_slide_1_m1">Treehouses Remote requires a Raspberry Pi running a Treehouses Image in order to function properly.</string>
+    <string name="intro_slide_welcome_m1">Treehouses Remote </string>
 
 </resources>
