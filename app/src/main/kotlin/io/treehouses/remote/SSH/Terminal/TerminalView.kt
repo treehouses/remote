@@ -24,6 +24,7 @@ import android.graphics.*
 import android.graphics.Matrix.ScaleToFit
 import android.preference.PreferenceManager
 import android.text.ClipboardManager
+import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.accessibility.AccessibilityEvent
@@ -37,6 +38,7 @@ import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -497,6 +499,19 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                 viewPager.performClick()
                 return super.onSingleTapConfirmed(e)
+            }
+
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                try {
+                    bridge.transport?.write(0x09)
+                    bridge.tryKeyVibrate()
+                }
+                catch (e: IOException) {
+                    e.printStackTrace()
+                    try { bridge.transport?.flush() }
+                    catch (ioe: IOException) { bridge.dispatchDisconnect(false) }
+                }
+                return super.onDoubleTap(e)
             }
         })
 
