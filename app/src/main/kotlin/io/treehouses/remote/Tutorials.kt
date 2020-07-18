@@ -14,7 +14,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = fancyShowCaseView(activity, bind.testConnection, "Test Bluetooth Connection to RPI", 750)
+        val a = fancyShowCaseView(activity, bind.testConnection, "Test Bluetooth Connection to RPI", 750, FocusShape.CIRCLE)
 
         val b = fancyShowCaseViewBuilder(activity, bind.networkProfiles, "Configure Network Profiles in the Network Screen to quickly switch between network configurations", 500)
                 .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
@@ -97,17 +97,17 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
 
-        val a = fancyShowCaseViewRoundedRect(activity, bind.bluetoothBox, "Your Device's Bluetooth details are listed here", 750, FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewRoundedRect(activity, bind.bluetoothBox, "Your Device's Bluetooth details are listed here", 750)
 
-        val b = fancyShowCaseViewRoundedRect(activity, bind.networkBox, "Network details can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
+        val b = fancyShowCaseViewRoundedRect(activity, bind.networkBox, "Network details can be found here", 500)
 
-        val c = fancyShowCaseViewRoundedRect(activity, bind.rpiDetailBox, "Some details like your Hostname, Image Version, CPU and Model are listed here", 500, FocusShape.ROUNDED_RECTANGLE)
+        val c = fancyShowCaseViewRoundedRect(activity, bind.rpiDetailBox, "Some details like your Hostname, Image Version, CPU and Model are listed here", 500)
 
         val d = fancyShowCaseView(activity, bind.editName, "Edit your hostname here, new hostname will show up the next time you visit Status", 500, FocusShape.CIRCLE)
 
-        val e = fancyShowCaseViewRoundedRect(activity, bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available", 500, FocusShape.ROUNDED_RECTANGLE)
+        val e = fancyShowCaseViewRoundedRect(activity, bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available", 500)
 
-        val f = fancyShowCaseViewRoundedRect(activity, bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here", 500, FocusShape.ROUNDED_RECTANGLE)
+        val f = fancyShowCaseViewRoundedRect(activity, bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here", 500)
 
         show(a,b,c,d,e,f)
     }
@@ -123,11 +123,11 @@ object Tutorials {
                 .delay(delay)
     }
 
-    private fun fancyShowCaseView(activity: FragmentActivity, view: View, title: String, delay: Int, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView {
+    private fun fancyShowCaseView(activity: FragmentActivity, view: View, title: String, delay: Int, focusShape: FocusShape): FancyShowCaseView {
         return fancyShowCaseViewBuilder(activity, view, title, delay, focusShape).build()
     }
 
-    private fun fancyShowCaseViewRoundedRect(activity: FragmentActivity, view: View, title: String, delay: Int, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView {
+    private fun fancyShowCaseViewRoundedRect(activity: FragmentActivity, view: View, title: String, delay: Int, focusShape: FocusShape = FocusShape.ROUNDED_RECTANGLE): FancyShowCaseView {
         return fancyShowCaseViewBuilder(activity, view, title, delay, focusShape)
                 .roundRectRadius(80)
                 .build()
