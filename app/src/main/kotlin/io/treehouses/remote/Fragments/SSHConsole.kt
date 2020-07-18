@@ -192,21 +192,14 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
+        var flag = true
         when (v.id) {
-            R.id.button_ctrl -> {
-                handler.metaPress(TerminalKeyListener.OUR_CTRL_ON, true)
-                return true
-            }
-            R.id.button_esc -> {
-                handler.sendEscape()
-                return true
-            }
-            R.id.button_tab -> {
-                handler.sendTab()
-                return true
-            }
-            else -> return false
+            R.id.button_ctrl -> handler.metaPress(TerminalKeyListener.OUR_CTRL_ON, true)
+            R.id.button_esc -> handler.sendEscape()
+            R.id.button_tab -> handler.sendTab()
+            else -> flag = false
         }
+        return flag
     }
 
     private fun checkButtons(v: View, handler: TerminalKeyListener) {
