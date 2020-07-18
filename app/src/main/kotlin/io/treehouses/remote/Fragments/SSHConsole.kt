@@ -480,15 +480,18 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         fun update(b:Boolean, helper:PromptHelper){
             helper.setResponse(b)
             updatePromptVisible()
+            return
         }
-        bind.consolePromptYes.setOnClickListener {
-            val helper = currentPromptHelper ?: return@setOnClickListener
-            update(java.lang.Boolean.TRUE, helper)
+
+        bind.consolePromptYes.setOnClickListener a@{
+            val helper1 = currentPromptHelper ?: return@a
+            update(java.lang.Boolean.TRUE, helper1)
         }
-        bind.consolePromptNo.setOnClickListener {
-            val helper = currentPromptHelper ?: return@setOnClickListener
-            update(java.lang.Boolean.FALSE, helper)
+        bind.consolePromptNo.setOnClickListener b@{
+            val helper2 = currentPromptHelper ?: return@b
+            update(java.lang.Boolean.FALSE, helper2)
         }
+
     }
 
     private fun addKeyRepeater(view: View) {
