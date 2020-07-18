@@ -67,18 +67,17 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     // otherwise they collide with an external keyboard's CTRL-char
     private var hardKeyboard = false
     protected var requested: Uri? = null
-    protected var clipboard: ClipboardManager? = null
+    private var clipboard: ClipboardManager? = null
 //    private var keyboardGroup: LinearLayout? = null
     private var keyboardGroupHider: Runnable? = null
     private var empty: TextView? = null
-    private var fade_out_delayed: Animation? = null
-    private var keyboard_fade_in: Animation? = null
-    private var keyboard_fade_out: Animation? = null
+    private var fadeOutDelayed: Animation? = null
+    private var keyboardFadeIn: Animation? = null
+    private var keyboardFadeOut: Animation? = null
     private var disconnect: MenuItem? = null
-    private val copy: MenuItem? = null
     private var paste: MenuItem? = null
     private var resize: MenuItem? = null
-    private var urlscan: MenuItem? = null
+    private var urlScan: MenuItem? = null
     private var forcedOrientation = false
     private val handler = Handler()
     private var mContentView: View? = null
@@ -135,13 +134,13 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             adapter!!.notifyDataSetChanged()
             Log.d(TAG, "Someone sending HANDLE_DISCONNECT to parentHandler")
             if (bridge.isAwaitingClose) {
-                closeBridge(bridge)
+                closeBridge()
             }
         }
     }
 
-    protected var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }
-    protected var keyRepeatHandler = Handler()
+    private var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }
+    private var keyRepeatHandler = Handler()
 
     /**
      * Handle repeatable virtual keys and touch events
@@ -233,7 +232,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     /**
      * @param bridge
      */
-    private fun closeBridge(bridge: TerminalBridge) {
+    private fun closeBridge() {
         updateEmptyVisible()
         updatePromptVisible()
 
@@ -260,7 +259,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
 
     private fun showEmulatedKeys(showActionBar: Boolean) {
         if (bind.keyboard.keyboardGroup.visibility == View.GONE) {
-            bind.keyboard.keyboardGroup.startAnimation(keyboard_fade_in)
+            bind.keyboard.keyboardGroup.startAnimation(keyboardFadeIn)
             bind.keyboard.keyboardGroup.visibility = View.VISIBLE
         }
         if (showActionBar) {
@@ -276,7 +275,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
                 return@Runnable
             }
             if (!keyboardAlwaysVisible) {
-                bind.keyboard.keyboardGroup.startAnimation(keyboard_fade_out)
+                bind.keyboard.keyboardGroup.startAnimation(keyboardFadeOut)
                 bind.keyboard.keyboardGroup.visibility = View.GONE
             }
             hideActionBarIfRequested()
@@ -378,11 +377,11 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun setUpKeyboard() {
-        fade_out_delayed = AnimationUtils.loadAnimation(this, R.anim.fade_out_delayed)
+        fadeOutDelayed = AnimationUtils.loadAnimation(this, R.anim.fade_out_delayed)
 
         // Preload animation for keyboard button
-        keyboard_fade_in = AnimationUtils.loadAnimation(this, R.anim.keyboard_fade_in)
-        keyboard_fade_out = AnimationUtils.loadAnimation(this, R.anim.keyboard_fade_out)
+        keyboardFadeIn = AnimationUtils.loadAnimation(this, R.anim.keyboard_fade_in)
+        keyboardFadeOut = AnimationUtils.loadAnimation(this, R.anim.keyboard_fade_out)
         keyboardAlwaysVisible = prefs!!.getBoolean(PreferenceConstants.KEY_ALWAYS_VISIBLE, false)
         if (keyboardAlwaysVisible) {
             // equivalent to android:layout_above=keyboard_group
@@ -404,7 +403,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun addKeyboardListeners() {
-        bind.keyboard.buttonKeyboard.setOnClickListener { view: View? ->
+        bind.keyboard.buttonKeyboard.setOnClickListener {
             val terminal = adapter!!.currentTerminalView ?: return@setOnClickListener
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.toggleSoftInputFromWindow(terminal.applicationWindowToken,
@@ -465,7 +464,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun promptListeners() {
-        bind.consolePassword.setOnKeyListener(View.OnKeyListener { v: View?, keyCode: Int, event: KeyEvent ->
+        bind.consolePassword.setOnKeyListener(View.OnKeyListener { _: View?, keyCode: Int, event: KeyEvent ->
             if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
 
             // pass collected password down to current terminal
@@ -483,7 +482,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             helper.setResponse(java.lang.Boolean.TRUE)
             updatePromptVisible()
         }
-        bind.consolePromptNo.setOnClickListener { v: View? ->
+        bind.consolePromptNo.setOnClickListener {
             val helper = currentPromptHelper ?: return@setOnClickListener
             helper.setResponse(java.lang.Boolean.FALSE)
             updatePromptVisible()
@@ -561,7 +560,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         menu.setQwertyMode(true)
         disconnect = menu.add("Disconnect")
         if (hardKeyboard) disconnect!!.alphabeticShortcut = 'w'
-        if (!sessionOpen && disconnected) disconnect!!.setTitle("Close Console")
+        if (!sessionOpen && disconnected) disconnect!!.title = "Close Console"
         disconnect!!.isEnabled = activeTerminal
         disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
         disconnect!!.setOnMenuItemClickListener {
@@ -575,15 +574,15 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         if (hardKeyboard) paste!!.alphabeticShortcut = 'v'
         MenuItemCompat.setShowAsAction(paste, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM)
         paste!!.isEnabled = activeTerminal
-        paste!!.setOnMenuItemClickListener { item: MenuItem? ->
+        paste!!.setOnMenuItemClickListener {
             pasteIntoTerminal()
             true
         }
-        urlscan = menu.add("Scan for URLs")
-        if (hardKeyboard) urlscan!!.alphabeticShortcut = 'u'
-        urlscan!!.setIcon(android.R.drawable.ic_menu_search)
-        urlscan!!.isEnabled = activeTerminal
-        urlscan!!.setOnMenuItemClickListener {
+        urlScan = menu.add("Scan for URLs")
+        if (hardKeyboard) urlScan!!.alphabeticShortcut = 'u'
+        urlScan!!.setIcon(android.R.drawable.ic_menu_search)
+        urlScan!!.isEnabled = activeTerminal
+        urlScan!!.setOnMenuItemClickListener {
             val terminalView = adapter!!.currentTerminalView
             val urls = terminalView!!.bridge.scanForURLs()
             val urlDialog = Dialog(this@SSHConsole)
@@ -615,7 +614,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         if (sessionOpen || !disconnected) disconnect?.title = "Disconnect" else disconnect?.title = "Close Console"
         paste?.isEnabled = activeTerminal
         //		portForward.setEnabled(sessionOpen && canForwardPorts);
-        urlscan?.isEnabled = activeTerminal
+        urlScan?.isEnabled = activeTerminal
         resize?.isEnabled = sessionOpen
         return true
     }
@@ -821,7 +820,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
      */
     private fun onTerminalChanged() {
         val terminalNameOverlay = findCurrentView(R.id.terminal_name_overlay)
-        terminalNameOverlay?.startAnimation(fade_out_delayed)
+        terminalNameOverlay?.startAnimation(fadeOutDelayed)
         updateDefault()
         updatePromptVisible()
         ActivityCompat.invalidateOptionsMenu(this@SSHConsole)
@@ -883,7 +882,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             // Tag the view with its bridge so it can be retrieved later.
             view.tag = bridge
             container.addView(view)
-            terminalNameOverlay.startAnimation(fade_out_delayed)
+            terminalNameOverlay.startAnimation(fadeOutDelayed)
             return view
         }
 
@@ -948,7 +947,6 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
 
     companion object {
         const val TAG = "CB.ConsoleActivity"
-        protected const val REQUEST_EDIT = 1
         private const val KEYBOARD_DISPLAY_TIME = 3000
         private const val KEYBOARD_REPEAT_INITIAL = 500
         private const val KEYBOARD_REPEAT = 100
