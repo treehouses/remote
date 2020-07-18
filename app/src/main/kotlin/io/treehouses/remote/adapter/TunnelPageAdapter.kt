@@ -13,8 +13,8 @@ class TunnelPageAdapter : FragmentStatePagerAdapter {
     var data: ArrayList<ServiceInfo>? = null
         private set
 
-    constructor(fm: FragmentManager?) : super(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {}
-    constructor(fm: FragmentManager?, data: ArrayList<ServiceInfo>) : super(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    constructor(fm: FragmentManager?) : super(fm!!, BEHAVIOR_SET_USER_VISIBLE_HINT) {}
+    constructor(fm: FragmentManager?, data: ArrayList<ServiceInfo>) : super(fm!!, BEHAVIOR_SET_USER_VISIBLE_HINT) {
         this.data = removeHeaders(data)
     }
 

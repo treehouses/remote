@@ -143,7 +143,23 @@ class TorTabFragment : BaseFragment() {
 //            });
         return bind!!.root
     }
+    override fun setUserVisibleHint(visible: Boolean) {
+        if(visible) {
+            if(isListenerInitialized()){
+                mChatService = listener.getChatService()
+                mChatService!!.updateHandler(mHandler)
 
+
+                Thread.sleep(1000)
+                listener.sendMessage("treehouses tor ports")
+
+                portsName = ArrayList()
+                adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+                Log.i("Tag", "Reload fragment")
+            }
+
+        }
+    }
     @SuppressLint("HandlerLeak")
     private val mHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
