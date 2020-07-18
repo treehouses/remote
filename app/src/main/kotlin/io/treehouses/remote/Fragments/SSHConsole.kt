@@ -420,6 +420,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         addKeyRepeater(bind.keyboard.buttonDown)
         addKeyRepeater(bind.keyboard.buttonLeft)
         addKeyRepeater(bind.keyboard.buttonRight)
+        setButtonListeners()
+    }
+
+    private fun setButtonListeners() {
         bind.keyboard.buttonHome.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonEnd.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonPgup.setOnClickListener(emulatedKeysListener)
