@@ -30,11 +30,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         //Uncomment for debugging
-//        debug {
-//            minifyEnabled true
-//            shrinkResources true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//        }
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
 
     }
     lintOptions {
@@ -91,4 +91,8 @@ dependencies {
 }
 repositories {
     mavenCentral()
+}
+
+android.sourceSets.all {
+    java.srcDir("src/$name/kotlin")
 }

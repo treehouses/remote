@@ -30,13 +30,14 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
         context.startActivity(intent)
     }
 
-    private fun showAlertDialog(context: Context): AlertDialog {
+    private fun showAlertDialog(context: Context) {
         return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle("OUTPUT:")
                 .setMessage("Hotspot is disabled, open hotspot settings?")
                 .setIcon(R.drawable.wificon)
                 .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int -> openHotspotSettings(context) }
-                .setNegativeButton("NO") { dialog: DialogInterface, _: Int -> dialog.cancel() }.show()
+                .setNegativeButton("NO") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+                .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     companion object {

@@ -104,6 +104,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     private fun showDialog(title: String, message: String) {
         val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
                 .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
@@ -130,6 +131,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
                     rebootHelper()
                     dialog.dismiss()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
     }
 
@@ -140,6 +142,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
                     listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                     Toast.makeText(context, "Switching to default network...", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
     }
 
