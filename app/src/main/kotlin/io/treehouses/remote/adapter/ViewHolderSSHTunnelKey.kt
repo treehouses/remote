@@ -70,7 +70,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
     init {
         mChatService.updateHandler(mHandler)
 
-        val profile = v.findViewById<EditText>(R.id.sshtunnel_profile).text
+        var profile = v.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
         val btnGetKeys = v.findViewById<Button>(R.id.btn_save_keys)
         val btnShowKeys = v.findViewById<Button>(R.id.btn_show_keys)
 
@@ -88,6 +88,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             val storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
             val storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
 
+            if(profile.isBlank())
+                profile = "default"
             val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> $storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
             val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> $storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
             publicKey.text = strPhonePublicKey
