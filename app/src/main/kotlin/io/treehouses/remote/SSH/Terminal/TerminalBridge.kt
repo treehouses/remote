@@ -603,35 +603,28 @@ class TerminalBridge : VDUDisplay {
 
     fun walkThroughLine(l: Int) {
         // walk through all characters in this line
-        var fg: Int
-        var bg: Int
-        var isWideCharacter = false
-        var c = 0
+        var fg: Int; var bg: Int; var isWideCharacter: Boolean; var c = 0
         while (c < vDUBuffer!!.columns) {
             var addr = 0
             val currAttr = vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c]
             run {
                 var (newFg, newBg) = setColors(currAttr)
-                fg = newFg
-                bg = newBg
+                fg = newFg; bg = newBg
             }
 
-            // support character inversion by swapping background and foreground color
-            if (currAttr and VDUBuffer.INVERT != 0L) {
-                val swapc = bg
-                bg = fg
-                fg = swapc
-            }
+            var (newBg, newFg) = checkAndSwap(currAttr, bg, fg)
+            bg = newBg; fg = newFg
 
             var (newAddr, newIsWideCharacter) = setAttributes(c, addr, l, currAttr)
-            addr = newAddr
-            isWideCharacter = newIsWideCharacter
+            addr = newAddr; isWideCharacter = newIsWideCharacter
             // Save the current clip region
             canvas.save()
 
-            clearDirtyArea(bg, c, l, addr, isWideCharacter)
+            defaultPaint.color = bg
+            clearDirtyArea(c, l, addr, isWideCharacter)
 
-            writeText(fg, c, l, addr, currAttr)
+            defaultPaint.color = fg
+            writeText(c, l, addr, currAttr)
 
             // Restore the previous clip region
             canvas.restore()
@@ -641,6 +634,18 @@ class TerminalBridge : VDUDisplay {
             if (isWideCharacter) c++
             c++
         }
+    }
+
+    fun checkAndSwap(currAttr: Long, bg: Int, fg: Int) : Pair<Int, Int> {
+        var newBg = bg
+        var newFg = fg
+        // support character inversion by swapping background and foreground color
+        if (currAttr and VDUBuffer.INVERT != 0L) {
+            val swapc = bg
+            newBg = fg
+            newFg = swapc
+        }
+        return Pair(newBg, newFg)
     }
 
     fun setColors(currAttr: Long) : Pair<Int, Int> {
@@ -672,9 +677,8 @@ class TerminalBridge : VDUDisplay {
         return Pair(newAddr, isWideCharacter)
     }
 
-    fun writeText(fg: Int, c: Int, l: Int, addr: Int, currAttr: Long) {
+    fun writeText(c: Int, l: Int, addr: Int, currAttr: Long) {
         // write the text string starting at 'c' for 'addr' number of characters
-        defaultPaint.color = fg
         if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
             canvas.drawText(it, c,
                     addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
@@ -682,9 +686,8 @@ class TerminalBridge : VDUDisplay {
         }
     }
 
-    fun clearDirtyArea(bg: Int, c: Int, l: Int, addr: Int, isWideCharacter: Boolean) {
+    fun clearDirtyArea(c: Int, l: Int, addr: Int, isWideCharacter: Boolean) {
         // clear this dirty area with background color
-        defaultPaint.color = bg
         if (isWideCharacter) {
             canvas.clipRect(c * charWidth,
                     l * charHeight,
