@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
+import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
 import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.Views.RecyclerViewClickListener
@@ -64,14 +65,13 @@ class SSHConfig : BaseFragment(), RVButtonClick {
 
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
 
-        bind.showKeys.setOnClickListener {  }
+        bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
     }
 
     private fun setUpAdapter() {
         adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHRow {
                 val holderBinding = RowSshBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                holderBinding.editButton.setOnClickListener {  }
                 return ViewHolderSSHRow(holderBinding, this@SSHConfig)
             }
 

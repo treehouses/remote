@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.KeysDialogBinding
@@ -14,6 +15,7 @@ import net.i2p.crypto.eddsa.Utils
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.NoSuchAlgorithmException
+import java.util.*
 
 class SSHKeyGen : FullScreenDialogFragment() {
     private lateinit var bind : KeysDialogBinding
@@ -35,6 +37,8 @@ class SSHKeyGen : FullScreenDialogFragment() {
     private fun generateKey(name: String, algorithm: String, password: String) {
         val keyPair = generateKeyPair(algorithm)
         val key = PubKeyBean(name, algorithm, keyPair.private.encoded, keyPair.public.encoded)
+        Log.e("PUBLIC ENCODED: ", keyPair.public.encoded.toString())
+        Log.e("PUBLIC ENCODED: ", keyPair.private.encoded.toString())
         KeyUtils.saveKey(requireContext(), key)
         dismiss()
     }
@@ -43,7 +47,8 @@ class SSHKeyGen : FullScreenDialogFragment() {
         val keyGen = KeyPairGenerator.getInstance(algorithm)
         keyGen.initialize(if (algorithm == "EC") 256 else if (algorithm == "RSA") 2048 else 1024)
         val keyPair = keyGen.generateKeyPair()
-        Log.e("GENERATED Public", keyPair.public.toString())
+
+        Log.e("GENERATED Public", Arrays.toString(keyPair.public.encoded))
         Log.e("GENERATED Private", keyPair.private.toString())
         return keyPair
     }

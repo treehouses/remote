@@ -300,9 +300,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //    @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class, IOException::class)
     private fun tryPublicKey(pubkey: PubKeyBean): Boolean {
         var pair: KeyPair?
-        var data = "ssh-rsa "
-        data += String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pubkey.publicKey as RSAPublicKey)))
-        Log.e("KEY", "$data ${pubkey.nickname}")
+
         if (manager!!.isKeyLoaded(pubkey.nickname)) {
             // load this key from memory if its already there
             Log.d(TAG, String.format("Found unlocked key '%s' already in-memory", pubkey.nickname))
@@ -324,8 +322,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             // load using internal generated format
             val privKey: PrivateKey
             privKey = try {
-                PubKeyUtils.decodePrivate(pubkey.privateKey!!,
-                        pubkey.type, password)
+                PubKeyUtils.decodePrivate(pubkey.privateKey!!, pubkey.type, password)
             } catch (e: Exception) {
                 val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
                 Log.e(TAG, message, e)

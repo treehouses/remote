@@ -13,7 +13,6 @@ import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.EditHostBinding
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
-import java.lang.Exception
 
 class EditHostDialog : FullScreenDialogFragment() {
     private lateinit var bind : EditHostBinding

@@ -3,11 +3,13 @@ package io.treehouses.remote.utils
 import android.content.Context
 import android.util.Log
 import androidx.preference.PreferenceManager
-import com.google.gson.Gson
+import com.google.gson.*
 import com.trilead.ssh2.KnownHosts
 import io.treehouses.remote.SSH.beans.KnownHostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
+import java.lang.reflect.Type
 import java.util.*
+
 
 object KeyUtils {
     const val ALL_KEY_NAMES = "keys_names_for_ssh"
@@ -15,10 +17,24 @@ object KeyUtils {
     fun getAllKeyNames(context: Context) : MutableList<String> {
         return SaveUtils.getStringList(context, ALL_KEY_NAMES)
     }
+    val customGson = GsonBuilder().registerTypeHierarchyAdapter(ByteArray::class.java, ByteArrayToBase64TypeAdapter()).create()
+
+    // Using Android's base64 libraries. This can be replaced with any base64 library.
+    private class ByteArrayToBase64TypeAdapter : JsonSerializer<ByteArray?>, JsonDeserializer<ByteArray?> {
+        @Throws(JsonParseException::class)
+        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): ByteArray {
+            return android.util.Base64.decode(json.asString, android.util.Base64.DEFAULT)
+        }
+
+        override fun serialize(src: ByteArray?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+            return JsonPrimitive(android.util.Base64.encodeToString(src, android.util.Base64.DEFAULT))
+        }
+    }
 
     fun saveKey(context: Context, key: PubKeyBean) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        prefs.putString(key.nickname, Gson().toJson(key))
+
+        prefs.putString(key.nickname, customGson.toJson(key))
         prefs.apply()
 
         SaveUtils.addToArrayList(context, ALL_KEY_NAMES, key.nickname)
@@ -27,11 +43,20 @@ object KeyUtils {
     fun getKey(context: Context, keyName:String) : PubKeyBean? {
         val string = PreferenceManager.getDefaultSharedPreferences(context).getString(keyName, "")
         return try {
-            Gson().fromJson(string, PubKeyBean::class.java)
+            customGson.fromJson(string, PubKeyBean::class.java)
         } catch (e: Exception) {
             Log.e("Get Key", e.message, e)
             null
         }
+    }
+
+    fun getAllKeys(context: Context) : List<PubKeyBean> {
+        val allKeys = mutableListOf<PubKeyBean>()
+        getAllKeyNames(context).forEach {
+            val key = getKey(context, it)
+            if (key != null) allKeys.add(key)
+        }
+        return allKeys
     }
 
     fun deleteKey(context: Context, keyName: String) {
