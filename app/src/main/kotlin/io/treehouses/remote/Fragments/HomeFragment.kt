@@ -10,7 +10,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
-import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +18,7 @@ import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
@@ -32,6 +32,7 @@ import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
+import io.treehouses.remote.utils.Utils.toast
 import kotlinx.android.synthetic.main.activity_home_fragment.*
 import java.util.*
 
@@ -80,12 +81,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
+                context.toast("Switched to Default Network", Toast.LENGTH_LONG)
             } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.isNotEmpty()) {
                 if (SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
                 networkProfile = SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!![childPosition]
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                Toast.makeText(requireContext(), "Configuring...", Toast.LENGTH_LONG).show()
+                requireContext().toast("Configuring...", Toast.LENGTH_LONG)
             }
             false
         }
@@ -144,7 +145,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             }
             if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
                 startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT)
-                Toast.makeText(context, "Bluetooth is disabled", Toast.LENGTH_LONG).show()
+                context.toast( "Bluetooth is disabled", Toast.LENGTH_LONG)
             } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog(this@HomeFragment)
         }
     }
@@ -288,7 +289,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun updateStatus(message : String) {
         dismissPDialog()
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        context.toast(message, Toast.LENGTH_LONG)
     }
 
     /**
@@ -321,4 +322,5 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         @JvmField
         val group_labels = arrayOf("WiFi", "Hotspot", "Bridge", "Default")
     }
+
 }

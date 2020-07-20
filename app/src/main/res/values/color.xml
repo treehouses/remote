@@ -39,6 +39,9 @@
     <color name="material_drawer_unavailable_text">#71AADA</color>
     <color name="offwhite">#fafafa</color>
 
+    <color name="divider_colour">@color/md_grey_300</color>
+    <color name="grey_to_light_grey">@color/md_grey_600</color>
+
     <!-- changes logout button area background from white to whatever the background color for the drawer is.
     Without it, the drawer and logout button area are different colors -->
     <color name="material_drawer_background">@color/colorPrimary</color>
