@@ -12,6 +12,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.TerminalFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.CommandsList
@@ -135,7 +136,13 @@ open class BaseTerminalFragment : BaseFragment() {
             override fun afterTextChanged(s: Editable) {
                 if (s.toString().endsWith("\n")) {
                     listener.sendMessage(autoComplete.text.toString().substring(0, autoComplete.text.toString().length - 1))
-                    autoComplete.setText("")
+                    if(TerminalFragment.treehouses) {
+                        autoComplete.setText("treehouses ")
+                        autoComplete.setSelection(autoComplete.text.length)
+                    }
+                    else {
+                        autoComplete.setText("")
+                    }
                 }
             }
         })

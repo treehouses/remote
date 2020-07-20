@@ -7,13 +7,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ExpandableListAdapter
-import android.widget.ExpandableListView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
@@ -68,6 +68,9 @@ class TerminalFragment : BaseTerminalFragment() {
         expandableListDetail = HashMap()
         expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
         setHasOptionsMenu(true)
+        bind.treehousesBtn.text = null;
+        bind.treehousesBtn.textOn = null;
+        bind.treehousesBtn.textOff = null;
         return bind.root
     }
 
@@ -101,9 +104,11 @@ class TerminalFragment : BaseTerminalFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mChatService.state == Constants.STATE_NONE) {
-            mChatService.start()
-            updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
+        if(chatOpen()) {
+            if (mChatService.state == Constants.STATE_NONE) {
+                mChatService.start()
+                updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
+            }
         }
     }
 
@@ -135,6 +140,7 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     private fun btnSendClickListener() {
+
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener {
             // Send a message using content of the edit text widget
@@ -147,7 +153,13 @@ class TerminalFragment : BaseTerminalFragment() {
                     Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
                     requireActivity().title = "Home"
                 }
-                bind.editTextOut.setText("")
+                if(treehouses) {
+                    bind.editTextOut.setText("treehouses ")
+                    bind.editTextOut.setSelection(bind.editTextOut.text.length)
+                }
+                else {
+                    bind.editTextOut.setText("")
+                }
             }
         }
         bind.btnPrevious.setOnClickListener {
@@ -168,6 +180,32 @@ class TerminalFragment : BaseTerminalFragment() {
                 }
             }
         }
+
+       bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+           treehouses = isChecked
+           if(treehouses) {
+               bind.editTextOut.setText("treehouses ")
+               bind.editTextOut.setSelection(bind.editTextOut.text.length)
+           }
+           else {
+               bind.editTextOut.setText("")
+           }
+
+        }
+
+        bind.editTextOut.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (TextUtils.isEmpty(s.toString().trim())) {
+                    bind.treehousesBtn.isChecked= false
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
     }
 
     private fun showHelpDialog(jsonString: String) {
@@ -292,6 +330,7 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     companion object {
+        var treehouses: Boolean = false
         private const val TAG = "BluetoothChatFragment"
         private const val TITLE_EXPANDABLE = "Commands"
         var instance: TerminalFragment? = null
