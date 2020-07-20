@@ -499,21 +499,25 @@ class TerminalBridge : VDUDisplay {
         if (width <= 0 || height <= 0) return
         val clipboard = parent.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         keyHandler.setClipboardManager(clipboard)
-        if (!forcedSize) {
-            // recalculate buffer size
-            val newColumns: Int
-            val newRows: Int
-            newColumns = width / charWidth
-            newRows = height / charHeight
+        if (!forcedSize) checkDimensions(width, height)
 
-            // If nothing has changed in the terminal dimensions and not an intial
-            // draw then don't blow away scroll regions and such.
-            if (newColumns == columns && newRows == rows) return
-            columns = newColumns
-            rows = newRows
-            refreshOverlayFontSize()
-        }
+        checkBitMap(width, height)
 
+        // clear out any old buffer information
+        defaultPaint.color = Color.BLACK
+        canvas.drawPaint(defaultPaint)
+
+        if (forcedSize) strokeBorder(width, height)
+
+        requestResize(width, height)
+
+        // redraw local output if we don't have a sesson to receive our resize request
+        if (transport == null) redrawLocal()
+
+        forceRedraw(parent)
+    }
+
+    fun checkBitMap(width: Int, height: Int) {
         // reallocate new bitmap if needed
         var newBitmap = bitmap == null
         if (bitmap != null) newBitmap = bitmap!!.width != width || bitmap!!.height != height
@@ -522,20 +526,39 @@ class TerminalBridge : VDUDisplay {
             bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             canvas.setBitmap(bitmap)
         }
+    }
 
-        // clear out any old buffer information
-        defaultPaint.color = Color.BLACK
-        canvas.drawPaint(defaultPaint)
+    fun checkDimensions(width: Int, height: Int) {
+        // recalculate buffer size
+        val newColumns: Int
+        val newRows: Int
+        newColumns = width / charWidth
+        newRows = height / charHeight
 
-        // Stroke the border of the terminal if the size is being forced;
-        if (forcedSize) {
-            val borderX = columns * charWidth + 1
-            val borderY = rows * charHeight + 1
-            defaultPaint.color = Color.GRAY
-            defaultPaint.strokeWidth = 0.0f
-            if (width >= borderX) canvas.drawLine(borderX.toFloat(), 0f, borderX.toFloat(), borderY + 1.toFloat(), defaultPaint)
-            if (height >= borderY) canvas.drawLine(0f, borderY.toFloat(), borderX + 1.toFloat(), borderY.toFloat(), defaultPaint)
+        // If nothing has changed in the terminal dimensions and not an intial
+        // draw then don't blow away scroll regions and such.
+        if (newColumns == columns && newRows == rows) return
+        columns = newColumns
+        rows = newRows
+        refreshOverlayFontSize()
+    }
+
+    fun redrawLocal() {
+        synchronized(localOutput) {
+            (vDUBuffer as vt320?)!!.reset()
+            for (line in localOutput) (vDUBuffer as vt320?)!!.putString(line)
         }
+    }
+
+    fun forceRedraw(parent: TerminalView) {
+        // force full redraw with new buffer size
+        fullRedraw = true
+        redraw()
+        parent.notifyUser(String.format("%d x %d", columns, rows))
+        Log.i(TAG, String.format("parentChanged() now width=%d, height=%d", columns, rows))
+    }
+
+    fun requestResize(width: Int, height: Int) {
         try {
             // request a terminal pty resize
             synchronized(vDUBuffer!!) { vDUBuffer!!.setScreenSize(columns, rows, true) }
@@ -543,20 +566,16 @@ class TerminalBridge : VDUDisplay {
         } catch (e: Exception) {
             Log.e(TAG, "Problem while trying to resize screen or PTY", e)
         }
+    }
 
-        // redraw local output if we don't have a sesson to receive our resize request
-        if (transport == null) {
-            synchronized(localOutput) {
-                (vDUBuffer as vt320?)!!.reset()
-                for (line in localOutput) (vDUBuffer as vt320?)!!.putString(line)
-            }
-        }
-
-        // force full redraw with new buffer size
-        fullRedraw = true
-        redraw()
-        parent.notifyUser(String.format("%d x %d", columns, rows))
-        Log.i(TAG, String.format("parentChanged() now width=%d, height=%d", columns, rows))
+    fun strokeBorder(width: Int, height: Int) {
+        // Stroke the border of the terminal if the size is being forced;
+        val borderX = columns * charWidth + 1
+        val borderY = rows * charHeight + 1
+        defaultPaint.color = Color.GRAY
+        defaultPaint.strokeWidth = 0.0f
+        if (width >= borderX) canvas.drawLine(borderX.toFloat(), 0f, borderX.toFloat(), borderY + 1.toFloat(), defaultPaint)
+        if (height >= borderY) canvas.drawLine(0f, borderY.toFloat(), borderX + 1.toFloat(), borderY.toFloat(), defaultPaint)
     }
 
     /**
