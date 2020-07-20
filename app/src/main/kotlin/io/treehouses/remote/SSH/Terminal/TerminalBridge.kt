@@ -632,28 +632,9 @@ class TerminalBridge : VDUDisplay {
                     // Save the current clip region
                     canvas.save()
 
-                    // clear this dirty area with background color
-                    defaultPaint.color = bg
-                    if (isWideCharacter) {
-                        canvas.clipRect(c * charWidth,
-                                l * charHeight,
-                                (c + 2) * charWidth,
-                                (l + 1) * charHeight)
-                    } else {
-                        canvas.clipRect(c * charWidth,
-                                l * charHeight,
-                                (c + addr) * charWidth,
-                                (l + 1) * charHeight)
-                    }
-                    canvas.drawPaint(defaultPaint)
+                    clearDirtyArea(bg, c, l, addr, isWideCharacter)
 
-                    // write the text string starting at 'c' for 'addr' number of characters
-                    defaultPaint.color = fg
-                    if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
-                        canvas.drawText(it, c,
-                                addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
-                                defaultPaint)
-                    }
+                    writeText(fg, c, l, addr, currAttr)
 
                     // Restore the previous clip region
                     canvas.restore()
@@ -669,6 +650,33 @@ class TerminalBridge : VDUDisplay {
             vDUBuffer!!.update[0] = false
         }
         fullRedraw = false
+    }
+
+    fun writeText(fg: Int, c: Int, l: Int, addr: Int, currAttr: Long) {
+        // write the text string starting at 'c' for 'addr' number of characters
+        defaultPaint.color = fg
+        if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
+            canvas.drawText(it, c,
+                    addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
+                    defaultPaint)
+        }
+    }
+
+    fun clearDirtyArea(bg: Int, c: Int, l: Int, addr: Int, isWideCharacter: Boolean) {
+        // clear this dirty area with background color
+        defaultPaint.color = bg
+        if (isWideCharacter) {
+            canvas.clipRect(c * charWidth,
+                    l * charHeight,
+                    (c + 2) * charWidth,
+                    (l + 1) * charHeight)
+        } else {
+            canvas.clipRect(c * charWidth,
+                    l * charHeight,
+                    (c + addr) * charWidth,
+                    (l + 1) * charHeight)
+        }
+        canvas.drawPaint(defaultPaint)
     }
 
     override fun redraw() {
