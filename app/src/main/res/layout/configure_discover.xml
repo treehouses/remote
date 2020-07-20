@@ -11,6 +11,7 @@
             android:id="@+id/discover_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textColor="@color/daynight_textColor"
             android:text="Go to Discover"
             android:paddingLeft="20dp"> </TextView>
 
