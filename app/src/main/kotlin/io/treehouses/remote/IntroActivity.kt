@@ -16,6 +16,7 @@ import io.treehouses.remote.databinding.ActivityIntroBinding
 import io.treehouses.remote.databinding.IntroScreenBluetoothBinding
 import io.treehouses.remote.databinding.IntroScreenDownloadBinding
 import io.treehouses.remote.databinding.IntroScreenWelcomeBinding
+import io.treehouses.remote.utils.SaveUtils
 
 class IntroActivity : AppCompatActivity() {
     lateinit var binding: ActivityIntroBinding
@@ -62,6 +63,10 @@ class IntroActivity : AppCompatActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             bind.nextBtn.setOnClickListener { listener.goToPosition(1) }
+            bind.skipBtn.setOnClickListener {
+                for(screen in SaveUtils.Screens.values()) SaveUtils.setFragmentFirstTime(requireContext(), screen, false)
+                listener.goToMain()
+            }
         }
     }
 
