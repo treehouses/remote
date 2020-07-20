@@ -174,22 +174,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 }
 
                 // Make sure we scale our decorations to the correct size.
-                canvas.concat(scaleMatrix)
-                val a = metaState and TerminalKeyListener.OUR_SHIFT_ON != 0
-                val b = metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0
-                val c = metaState and TerminalKeyListener.OUR_ALT_ON != 0
-                val d = metaState and TerminalKeyListener.OUR_ALT_LOCK != 0
-                val e = metaState and TerminalKeyListener.OUR_CTRL_ON != 0
-                val f = metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0
-                var paint:Paint = cursorInversionPaint
-                var cursor:Path = shiftCursor
-                if(c || d) cursor = altCursor
-                else if(e || f) cursor = ctrlCursor
-                if (a || c || e) {
-                    paint = cursorStrokePaint
-                    canvas.drawPath(cursor, paint)
-                }
-                else if(b || d || f) canvas.drawPath(cursor, paint)
+                scaleDecorations(canvas, metaState)
 
                 // Restore previous clip region
                 canvas.restore()
@@ -209,6 +194,25 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 canvas.restore()
             }
         }
+    }
+
+    fun scaleDecorations(canvas: Canvas, metaState: Int) {
+        canvas.concat(scaleMatrix)
+        val a = metaState and TerminalKeyListener.OUR_SHIFT_ON != 0
+        val b = metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0
+        val c = metaState and TerminalKeyListener.OUR_ALT_ON != 0
+        val d = metaState and TerminalKeyListener.OUR_ALT_LOCK != 0
+        val e = metaState and TerminalKeyListener.OUR_CTRL_ON != 0
+        val f = metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0
+        var paint:Paint = cursorInversionPaint
+        var cursor:Path = shiftCursor
+        if(c || d) cursor = altCursor
+        else if(e || f) cursor = ctrlCursor
+        if (a || c || e) {
+            paint = cursorStrokePaint
+            canvas.drawPath(cursor, paint)
+        }
+        else if(b || d || f) canvas.drawPath(cursor, paint)
     }
 
     fun notifyUser(message: String) {
