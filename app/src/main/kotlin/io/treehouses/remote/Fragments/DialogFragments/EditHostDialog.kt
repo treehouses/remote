@@ -76,6 +76,7 @@ class EditHostDialog : FullScreenDialogFragment() {
             }
             else -> {
                 Toast.makeText(requireContext(), "Unknown Key", Toast.LENGTH_LONG).show()
+                SaveUtils.updateHost(requireContext(), host.uri.toString(), host.apply { keyName = "" })
             }
         }
     }

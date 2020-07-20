@@ -64,6 +64,13 @@ object KeyUtils {
         SaveUtils.removeFromArrayList(context, ALL_KEY_NAMES, keyName)
     }
 
+    fun deleteAllKeys(context: Context) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        getAllKeyNames(context).forEach { editor.remove(it) }
+        editor.apply()
+        SaveUtils.clearArrayList(context, ALL_KEY_NAMES)
+    }
+
     fun saveKnownHost(context: Context, hostNamePort: String, algorithm: String, key: ByteArray) {
         Log.e("SAVING KNOWN HOST", "$hostNamePort with key $key")
         val hostName  = hostNamePort.split(":")[0]

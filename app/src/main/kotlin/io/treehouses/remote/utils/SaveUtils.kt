@@ -61,7 +61,7 @@ object SaveUtils {
         }
     }
 
-    private fun clearArrayList(context: Context, arrayName: String) {
+    fun clearArrayList(context: Context, arrayName: String) {
         saveStringList(context, ArrayList(), arrayName)
     }
 
