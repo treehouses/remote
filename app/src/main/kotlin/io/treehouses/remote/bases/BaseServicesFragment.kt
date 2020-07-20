@@ -26,7 +26,7 @@ open class BaseServicesFragment() : BaseFragment() {
     private var startJson = ""
     private var gettingJSON = false
     lateinit var services: ArrayList<ServiceInfo>
-    protected var servicesData: ServicesData? = null
+    private var servicesData: ServicesData? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

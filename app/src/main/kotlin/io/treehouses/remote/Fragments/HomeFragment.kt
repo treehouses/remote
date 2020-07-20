@@ -10,7 +10,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
-import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +17,8 @@ import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
@@ -31,6 +32,7 @@ import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
+import io.treehouses.remote.utils.Utils.toast
 import kotlinx.android.synthetic.main.activity_home_fragment.*
 import java.util.*
 
@@ -59,30 +61,32 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         bind.btnGetStarted.setOnClickListener {
             instance!!.checkStatusNow()
             if (instance!!.hasValidConnection()) {
-                instance!!.openCallFragment(TerminalFragment())
-                activity?.let { it.title = "Terminal" }
+                switchFragment(TerminalFragment(), "Terminal")
             } else {
-                instance!!.openCallFragment(AboutFragment())
-                activity?.let { it.title = "About" }
+                switchFragment(AboutFragment(), "About")
             }
         }
         testConnectionListener()
         return bind.root
     }
 
+    private fun switchFragment(fragment: Fragment, title: String) {
+        instance!!.openCallFragment(fragment)
+        activity?.let { it.title = title}
+    }
 
     private fun setupProfiles() {
-        val profileAdapter = ProfilesListAdapter(context!!, listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
+        val profileAdapter = ProfilesListAdapter(requireContext(), listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                Toast.makeText(context, "Switched to Default Network", Toast.LENGTH_LONG).show()
+                context.toast("Switched to Default Network", Toast.LENGTH_LONG)
             } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.isNotEmpty()) {
                 if (SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
                 networkProfile = SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!![childPosition]
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                Toast.makeText(requireContext(), "Configuring...", Toast.LENGTH_LONG).show()
+                requireContext().toast("Configuring...", Toast.LENGTH_LONG)
             }
             false
         }
@@ -91,6 +95,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private fun switchProfile(profile: NetworkProfile?) {
         if (profile == null) return
         progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + profile.ssid, true)
+        progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         progressDialog?.show()
         when {
             profile.isWifi -> {
@@ -140,7 +145,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             }
             if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
                 startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT)
-                Toast.makeText(context, "Bluetooth is disabled", Toast.LENGTH_LONG).show()
+                context.toast( "Bluetooth is disabled", Toast.LENGTH_LONG)
             } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog(this@HomeFragment)
         }
     }
@@ -153,6 +158,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             selectedLed = options.indexOf(preference)
             listener.sendMessage(optionsCode[selectedLed])
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, selectedLed)
+            testConnectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             testConnectionDialog?.show()
             testConnectionResult = false
         }
@@ -228,6 +234,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
                         }
                     }.create()
+            alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             alertDialog.show()
 
         }
@@ -282,7 +289,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun updateStatus(message : String) {
         dismissPDialog()
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        context.toast(message, Toast.LENGTH_LONG)
     }
 
     /**
@@ -305,6 +312,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     override fun onResume() {
         super.onResume()
         if (mChatService.state == Constants.STATE_CONNECTED) {
+            mChatService.updateHandler(mHandler)
             checkVersionSent = true
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }
@@ -314,4 +322,5 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         @JvmField
         val group_labels = arrayOf("WiFi", "Hotspot", "Bridge", "Default")
     }
+
 }

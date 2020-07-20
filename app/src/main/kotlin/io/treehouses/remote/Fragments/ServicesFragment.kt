@@ -2,8 +2,6 @@ package io.treehouses.remote.Fragments
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -30,8 +28,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesTabFragment: ServicesTabFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
-    private var counter = 0
-    private lateinit var array: ArrayList<String>
+    var worked = false
+    private lateinit var array: MutableList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
     }
@@ -51,25 +49,22 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         setTabEnabled(false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(handler)
+        worked = false
         preferences()
         return bind!!.root
     }
 
     private fun preferences(){
-        var worked = false
-        array = SaveUtils.getStringArray(requireContext(), "servicesArray")
+        array = SaveUtils.getStringList(requireContext(), "servicesArray")
         for (string in array) {
             val a = performAction(string, services)
             if (a == 1) {
-                showUI()
-                writeToRPI("treehouses remote allservices\n")
                 worked = true
+                showUI()
             }
         }
-        if(!worked){
-            writeToRPI("treehouses remote allservices\n")
-        }
-
+        writeToRPI("treehouses remote allservices\n")
+        worked = false
     }
 
     private fun showUI(){
@@ -89,7 +84,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         when (performAction(output!!, services)) {
             1 -> {
                 array.add(output)
-                SaveUtils.saveStringArray(requireContext(), array, "servicesArray")
+                SaveUtils.saveStringList(requireContext(), array, "servicesArray")
                 showUI()
             }
             0 -> {
@@ -122,6 +117,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 "Please update CLI",
                 "Please update to the latest CLI version to access services.")
                 .create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
@@ -144,7 +140,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         when (position) {
             0 -> {
                 fragment = servicesTabFragment
-                mChatService.updateHandler(servicesTabFragment!!.handlerOverview)
+                if(!worked) mChatService.updateHandler(servicesTabFragment!!.handlerOverview)
             }
             1 -> {
                 fragment = servicesDetailsFragment

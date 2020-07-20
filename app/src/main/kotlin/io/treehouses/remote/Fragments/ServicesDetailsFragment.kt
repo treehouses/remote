@@ -108,10 +108,12 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             var msg = ""
             if (output.contains("service autorun set")) {
                 msg = "Switched autorun"
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
                 msg = "An Error occurred"
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -208,14 +210,16 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     private fun showDeleteDialog(selected: ServiceInfo?) {
-        AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
+        var dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
                     performService("Uninstalling", """treehouses services ${selected.name} cleanup
 """, selected.name)
                     performServiceWait()
-                }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create().show()
+                }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun onInstall(selected: ServiceInfo?) {
@@ -255,6 +259,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         //reqUrls();
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         setOnClick(chooseBind.localButton, """treehouses services ${selected!!.name} url local
 """, alertDialog)
         setOnClick(chooseBind.torButton, """treehouses services ${selected.name} url tor

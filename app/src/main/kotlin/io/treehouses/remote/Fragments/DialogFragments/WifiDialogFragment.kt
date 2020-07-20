@@ -44,6 +44,7 @@ class WifiDialogFragment : DialogFragment() {
                 .setTitle("Choose a network: ")
                 .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         Log.e("TAG", "SSID = $wifiList")
+        mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return mDialog!!
     }
 
