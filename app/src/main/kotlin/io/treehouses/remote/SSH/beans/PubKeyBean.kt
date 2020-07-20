@@ -20,7 +20,7 @@ class PubKeyBean constructor(var nickname: String = "",
 //    var isEncrypted = false
 //    var isStartup = false
     var isConfirmUse = false
-    var lifetime = 0
+    var lifetime = 10000
 
     /* Transient values */
 //    @Transient

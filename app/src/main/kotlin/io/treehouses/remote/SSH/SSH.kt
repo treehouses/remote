@@ -16,19 +16,21 @@
  */
 package io.treehouses.remote.SSH
 
-import android.net.Uri
 import android.util.Log
 import com.trilead.ssh2.*
+import com.trilead.ssh2.crypto.Base64
 import com.trilead.ssh2.signature.DSASHA1Verify
 import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
+import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog.Companion.NO_KEY
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Ed25519Provider.Companion.insertIfNeeded
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.utils.KeyUtils
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
 import net.i2p.crypto.eddsa.EdDSAPublicKey
 import java.io.IOException
@@ -36,6 +38,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.security.KeyPair
 import java.security.NoSuchAlgorithmException
+import java.security.PrivateKey
 import java.security.interfaces.*
 import java.security.spec.InvalidKeySpecException
 import java.util.*
@@ -149,7 +152,8 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                                          serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
 
             // read in all known hosts from hostdb
-            val hosts = KnownHosts()
+            val hosts = KeyUtils.getAllKnownHosts(manager!!.applicationContext)
+            Log.e("ALL HOSTS", hosts.toString())
             val matchName = String.format(Locale.US, "%s:%d", hostname, port)
             val fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
             val algorithmName: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
@@ -167,7 +171,10 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //                        // save this key in known database
 //                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
 //                    }
-                    continueConnecting()
+                    if (continueConnecting()) {
+                        KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
+                        true
+                    } else false
                 }
                 KnownHosts.HOSTKEY_HAS_CHANGED -> {
                     val header = String.format("@   %s   @",
@@ -182,7 +189,10 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                     bridge!!.outputLine(String.format(manager!!.res!!.getString(R.string.host_fingerprint), algorithmName, fingerprint))
 
                     // Users have no way to delete keys, so we'll prompt them for now.
-                    continueConnecting()
+                    if (continueConnecting()) {
+                        KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
+                        true
+                    } else false
                 }
                 else -> {
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
@@ -194,16 +204,17 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         private fun continueConnecting() : Boolean = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
 
         override fun getKnownKeyAlgorithmsForHost(host: String, port: Int): List<String> {
-//            return manager.hostdb.getHostKeyAlgorithmsForHost(host, port);
-            return ArrayList()
+            val hostBean = KeyUtils.getKnownHost(manager!!.applicationContext, "$host:$port")
+            return if (hostBean == null) ArrayList() else arrayListOf(hostBean.algorithm)
         }
 
         override fun removeServerHostKey(host: String, port: Int, algorithm: String, hostKey: ByteArray) {
-//            manager.hostdb.removeKnownHost(host, port, algorithm, hostKey);
+            KeyUtils.removeKnownHost(manager!!.applicationContext, "$host:$port", algorithm, hostKey)
+            Log.e("REMOVING HOST KEY", "For: $host:$port with algorithm: $algorithm")
         }
 
         override fun addServerHostKey(host: String, port: Int, algorithm: String, hostKey: ByteArray) {
-//            manager.hostdb.saveKnownHost(host, port, algorithm, hostKey);
+            KeyUtils.saveKnownHost(manager!!.applicationContext, "$host:$port", algorithm, hostKey)
         }
     }
 
@@ -224,15 +235,13 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
                 // if explicit pubkey defined for this host, then prompt for password as needed
                 // otherwise just try all in-memory keys held in terminalmanager
-                if (pubkeyId.isEmpty()) {
+                if (pubkeyId.isEmpty() || pubkeyId == NO_KEY) {
                     // try each of the in-memory keys
-                    Log.e("HERE", "YAY")
+                    Log.e("HERE", "YAY: $pubkeyId")
                     outputLine(R.string.terminal_auth_pubkey_any)
                     for ((key, value) in manager!!.loadedKeypairs) {
-                        if (value?.bean!!.isConfirmUse
-                                && !promptForPubkeyUse(key)) continue
-                        if (this.tryPublicKey(host!!.username, key,
-                                        value.pair)) {
+                        if (value?.bean!!.isConfirmUse && !promptForPubkeyUse(key)) continue
+                        if (this.tryPublicKey(host!!.username, key, value.pair)) {
                             finishConnection()
                             break
                         }
@@ -240,13 +249,12 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                 } else {
                     outputLine(R.string.terminal_auth_pubkey_specific)
                     // use a specific key for this host, as requested
-//                    PubKeyBean pubkey = manager.pubkeydb.findPubkeyById(pubkeyId);
+                    val pubkey = KeyUtils.getKey(manager!!.applicationContext, pubkeyId)
 
-//                    if (pubkey == null)
-//                        bridge.outputLine(manager.res.getString(R.string.terminal_auth_pubkey_invalid));
-//                    else
-//                    if (tryPublicKey(pubkey))
-                    finishConnection()
+                    if (pubkey == null)
+                        bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
+                    else if (tryPublicKey(pubkey))
+                        finishConnection()
                 }
                 pubkeysExhausted = true
             } else if (interactiveCanContinue &&
@@ -290,18 +298,22 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
      * @throws IOException
      */
 //    @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class, IOException::class)
-//    private fun tryPublicKey(pubkey: PubKeyBean): Boolean {
-//        var pair: KeyPair? = null
-//        if (manager!!.isKeyLoaded(pubkey.nickname)) {
-//            // load this key from memory if its already there
-//            Log.d(TAG, String.format("Found unlocked key '%s' already in-memory", pubkey.nickname))
-//            if (pubkey.isConfirmUse) {
-//                if (!promptForPubkeyUse(pubkey.nickname)) return false
-//            }
-//            pair = manager!!.getKey(pubkey.nickname)
-//        } else {
-//            // otherwise load key from database and prompt for password as needed
-//            var password: String? = null
+    private fun tryPublicKey(pubkey: PubKeyBean): Boolean {
+        var pair: KeyPair?
+        var data = "ssh-rsa "
+        data += String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pubkey.publicKey as RSAPublicKey)))
+        Log.e("KEY", "$data ${pubkey.nickname}")
+        if (manager!!.isKeyLoaded(pubkey.nickname)) {
+            // load this key from memory if its already there
+            Log.d(TAG, String.format("Found unlocked key '%s' already in-memory", pubkey.nickname))
+            if (pubkey.isConfirmUse) {
+                if (!promptForPubkeyUse(pubkey.nickname)) return false
+            }
+            pair = manager!!.getKey(pubkey.nickname)
+        } else {
+            // otherwise load key from database and prompt for password as needed
+            var password: String? = null
+
 //            if (pubkey.isEncrypted) {
 //                password = bridge!!.promptHelper!!.requestStringPrompt(null,
 //                        manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
@@ -309,29 +321,29 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //                // Something must have interrupted the prompt.
 //                if (password == null) return false
 //            }
-//            // load using internal generated format
-//            val privKey: PrivateKey
-//            privKey = try {
-//                PubKeyUtils.decodePrivate(pubkey.getPrivateKey()!!,
-//                        pubkey.type, password)
-//            } catch (e: Exception) {
-//                val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
-//                Log.e(TAG, message, e)
-//                bridge!!.outputLine(message)
-//                return false
-//            }
-//            val pubKey = PubKeyUtils.decodePublic(pubkey.getPublicKey(), pubkey.type)
-//
-//            // convert key to trilead format
-//            pair = KeyPair(pubKey, privKey)
-//            Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
-//            Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
-//
-//            // save this key in memory
-//            manager!!.addKey(pubkey, pair)
-//        }
-//        return tryPublicKey(host!!.username, pubkey.nickname, pair)
-//    }
+            // load using internal generated format
+            val privKey: PrivateKey
+            privKey = try {
+                PubKeyUtils.decodePrivate(pubkey.privateKey!!,
+                        pubkey.type, password)
+            } catch (e: Exception) {
+                val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
+                Log.e(TAG, message, e)
+                bridge!!.outputLine(message)
+                return false
+            }
+            val pubKey = PubKeyUtils.decodePublic(pubkey.publicKey!!, pubkey.type)
+
+            // convert key to trilead format
+            pair = KeyPair(pubKey, privKey)
+            Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
+            Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
+
+            // save this key in memory
+            manager!!.addKey(pubkey, pair)
+        }
+        return tryPublicKey(host!!.username, pubkey.nickname, pair)
+    }
 
     @Throws(IOException::class)
     private fun tryPublicKey(username: String?, keyNickname: String?, pair: KeyPair?): Boolean {

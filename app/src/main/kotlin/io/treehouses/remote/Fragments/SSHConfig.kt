@@ -63,6 +63,8 @@ class SSHConfig : BaseFragment(), RVButtonClick {
         else setUpAdapter()
 
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
+
+        bind.showKeys.setOnClickListener {  }
     }
 
     private fun setUpAdapter() {
@@ -136,9 +138,7 @@ class SSHConfig : BaseFragment(), RVButtonClick {
     override fun onResume() {
         super.onResume()
         pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
-        bind.pastHosts.adapter = null
-        bind.pastHosts.adapter = adapter
-
+        setUpAdapter()
     }
 
     private val mHandler: Handler = @SuppressLint("HandlerLeak")

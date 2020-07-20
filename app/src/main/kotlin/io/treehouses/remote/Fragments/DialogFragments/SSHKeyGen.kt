@@ -41,7 +41,7 @@ class SSHKeyGen : FullScreenDialogFragment() {
 
     private fun generateKeyPair(algorithm: String) : KeyPair {
         val keyGen = KeyPairGenerator.getInstance(algorithm)
-        keyGen.initialize(if (algorithm == "EC") 256 else 1024)
+        keyGen.initialize(if (algorithm == "EC") 256 else if (algorithm == "RSA") 2048 else 1024)
         val keyPair = keyGen.generateKeyPair()
         Log.e("GENERATED Public", keyPair.public.toString())
         Log.e("GENERATED Private", keyPair.private.toString())

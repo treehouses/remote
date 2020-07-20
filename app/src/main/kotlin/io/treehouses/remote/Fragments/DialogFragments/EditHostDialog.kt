@@ -2,6 +2,7 @@ package io.treehouses.remote.Fragments.DialogFragments
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ class EditHostDialog : FullScreenDialogFragment() {
     private lateinit var allKeys: List<String>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = EditHostBinding.inflate(inflater, container, false)
+        Log.e("ARGUMENT: ", arguments?.getString(SELECTED_HOST_URI, "")!!)
         host = SaveUtils.getHost(requireContext(), arguments?.getString(SELECTED_HOST_URI, "")!!)!!
         initialHostUri = host.uri.toString()
         return bind.root
@@ -33,13 +35,14 @@ class EditHostDialog : FullScreenDialogFragment() {
         bind.cancelButton.setOnClickListener { dismiss() }
 
         bind.saveHost.setOnClickListener {
-            try {
-                val uri = Uri.parse(bind.uriInput.text.toString())
-                host.setHostFromUri(uri)
-            } catch (e: Exception) {
+            var uriString = bind.uriInput.text.toString()
+            if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
+            val uri = Uri.parse(uriString)
+            if (uri == null) {
                 bind.uriInputLayout.error = "Invalid Uri"
                 return@setOnClickListener
             }
+            host.setHostFromUri(uri)
             val keyName = bind.selectKey.selectedItem.toString()
             host.keyName = if (keyName == NO_KEY) "" else keyName
             host.fontSize = bind.selectFontSize.value

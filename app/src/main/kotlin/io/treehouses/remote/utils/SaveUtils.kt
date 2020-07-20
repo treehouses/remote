@@ -55,7 +55,7 @@ object SaveUtils {
 
     fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
         val arrayList = getStringList(context, arrayName)
-        if (arrayList.isNotEmpty()) {
+        if (arrayList.isNotEmpty() && arrayList.contains(toRemove)) {
             arrayList.remove(toRemove)
             saveStringList(context, arrayList, arrayName)
         }
@@ -158,6 +158,7 @@ object SaveUtils {
     }
 
     fun addHost(context: Context, hostBean: HostBean) {
+        Log.e("ADDING HOST", "${hostBean.uri}  ${Gson().toJson(hostBean)}")
         val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
         editor.apply()
@@ -165,15 +166,14 @@ object SaveUtils {
     }
 
     fun updateHost(context: Context, oldUri: String, newHostBean: HostBean) {
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        editor.remove(oldUri)
-        editor.apply()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().remove(oldUri).apply()
         removeFromArrayList(context, SSH_HOSTS, oldUri)
         addHost(context, newHostBean)
     }
 
     fun getHost(context: Context, hostUri: String) : HostBean? {
         val hostString = PreferenceManager.getDefaultSharedPreferences(context).getString(hostUri, "")
+        Log.e("GOT HOST STRING", hostString!!)
         return try {
             Gson().fromJson(hostString, HostBean::class.java)
         } catch (e: Exception) {

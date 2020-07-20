@@ -40,7 +40,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/past_hosts"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_margin="@dimen/margin_large"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="10"
@@ -85,6 +86,15 @@
         android:layout_marginBottom="@dimen/margin_large"
         android:background="@drawable/service_button"
         android:text="Generate Key"
+        android:textColor="@color/bg_white" />
+    <Button
+        android:id="@+id/show_keys"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:background="@drawable/service_button"
+        android:text="View All Keys"
         android:textColor="@color/bg_white" />
 
 </LinearLayout>
