@@ -51,6 +51,12 @@ open class BaseHomeFragment : BaseFragment() {
             6 -> {
                 setBackgrounds(green, red, R.drawable.carnival_anim_green, R.drawable.carnival_anim_red)
             }
+            else -> checkOtherBackgrounds(green, red, option)
+        }
+    }
+
+    private fun checkOtherBackgrounds(green: ImageView, red: ImageView, option: Int) {
+        when (option) {
             7 -> {
                 green.setBackgroundResource(R.drawable.stpatricks_anim_green)
             }
