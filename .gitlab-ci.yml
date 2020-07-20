@@ -8,20 +8,20 @@ job:
     - version=${var:1}
     - exists=$(git ls-remote --heads origin fdroid)
     - if [[ -n $exists ]]; then
-    - git push "https://${GITLAB_USER_LOGIN}:3ozBDRjysM2dXsDMN4tX@${CI_REPOSITORY_URL#*@}" --delete fdroid
+    - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}" --delete fdroid
     - fi
     - git checkout -b fdroid
     - sed -i "s#versionCode appVersionCode#versionCode $version#" app/build.gradle
     - sed -i "s#versionName appVersionName#versionName \"$version\"#" app/build.gradle
     - git add app/build.gradle
     - git commit -m "update to $version"
-    - git push "https://${GITLAB_USER_LOGIN}:3ozBDRjysM2dXsDMN4tX@${CI_REPOSITORY_URL#*@}"
+    - git push "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
     - tags=$(git tag | { grep fdroid || true; })
     - if [[ $tags ]]; then
     - git tag -d $tags
     - fi
     - git tag "fdroid-$version"
-    - git push --tag "https://${GITLAB_USER_LOGIN}:3ozBDRjysM2dXsDMN4tX@${CI_REPOSITORY_URL#*@}"
+    - git push --tag "https://${GITLAB_USER_LOGIN}:${PERSONAL_ACCESS_TOKEN}@${CI_REPOSITORY_URL#*@}"
     - cat app/build.gradle | grep $version
   only:
     variables:
