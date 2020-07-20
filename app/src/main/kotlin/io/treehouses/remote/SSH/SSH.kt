@@ -312,13 +312,13 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             // otherwise load key from database and prompt for password as needed
             var password: String? = null
 
-//            if (pubkey.isEncrypted) {
-//                password = bridge!!.promptHelper!!.requestStringPrompt(null,
-//                        manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
-//
-//                // Something must have interrupted the prompt.
-//                if (password == null) return false
-//            }
+            if (pubkey.isEncrypted) {
+                password = bridge!!.promptHelper!!.requestStringPrompt(null,
+                        manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
+
+                // Something must have interrupted the prompt.
+                if (password == null) return false
+            }
             // load using internal generated format
             val privKey: PrivateKey
             privKey = try {

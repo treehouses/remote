@@ -36,7 +36,8 @@ class SSHKeyGen : FullScreenDialogFragment() {
 
     private fun generateKey(name: String, algorithm: String, password: String) {
         val keyPair = generateKeyPair(algorithm)
-        val key = PubKeyBean(name, algorithm, keyPair.private.encoded, keyPair.public.encoded)
+        val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
+        if (!password.isEmpty()) key.isEncrypted = true
         Log.e("PUBLIC ENCODED: ", keyPair.public.encoded.toString())
         Log.e("PUBLIC ENCODED: ", keyPair.private.encoded.toString())
         KeyUtils.saveKey(requireContext(), key)

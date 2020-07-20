@@ -296,7 +296,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         keyHolder.bean = pubkey
         keyHolder.pair = pair
         keyHolder.openSSHPubkey = sshPubKey
-        loadedKeypairs[pubkey.nickname!!] = keyHolder
+        loadedKeypairs[pubkey.nickname] = keyHolder
         if (pubkey.lifetime > 0) {
             val nickname = pubkey.nickname
             pubkeyTimer!!.schedule(object : TimerTask() {

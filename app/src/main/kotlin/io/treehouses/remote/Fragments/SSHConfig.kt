@@ -19,6 +19,7 @@ import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
 import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
 import io.treehouses.remote.SSH.beans.HostBean
+import io.treehouses.remote.SSHConsole
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
 import io.treehouses.remote.bases.BaseFragment

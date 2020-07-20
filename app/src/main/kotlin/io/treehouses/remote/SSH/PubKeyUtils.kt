@@ -34,6 +34,7 @@ import java.security.interfaces.RSAPublicKey
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 
 object PubKeyUtils {
     private const val TAG = "CB.PubkeyUtils"
@@ -53,21 +54,18 @@ object PubKeyUtils {
                 ", bytes=" + encoded.size + "]"
     }
 
-    //    private static byte[] encrypt(byte[] cleartext, String secret) throws Exception {
-    //        byte[] salt = new byte[SALT_SIZE];
-    //
-    //        byte[] ciphertext = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext);
-    //
-    //        byte[] complete = new byte[salt.length + ciphertext.length];
-    //
-    //        System.arraycopy(salt, 0, complete, 0, salt.length);
-    //       PubKeyUtils System.arraycopy(ciphertext, 0, complete, salt.length, ciphertext.length);
-    //
-    //        Arrays.fill(salt, (byte) 0x00);
-    //        Arrays.fill(ciphertext, (byte) 0x00);
-    //
-    //        return complete;
-    //    }
+    @Throws(java.lang.Exception::class)
+    private fun encrypt(cleartext: ByteArray, secret: String): ByteArray {
+        val salt = ByteArray(SALT_SIZE)
+        val ciphertext: ByteArray = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext)
+        val complete = ByteArray(salt.size + ciphertext.size)
+        System.arraycopy(salt, 0, complete, 0, salt.size)
+        System.arraycopy(ciphertext, 0, complete, salt.size, ciphertext.size)
+        Arrays.fill(salt, 0x00.toByte())
+        Arrays.fill(ciphertext, 0x00.toByte())
+        return complete
+    }
+
     @Throws(Exception::class)
     private fun decrypt(saltAndCiphertext: ByteArray, secret: String): ByteArray {
         val salt = ByteArray(SALT_SIZE)
@@ -77,13 +75,12 @@ object PubKeyUtils {
         return decrypt(salt, ITERATIONS, secret, ciphertext)
     }
 
-    //    public static byte[] getEncodedPrivate(PrivateKey pk, String secret) throws Exception {
-    //        final byte[] encoded = pk.getEncoded();
-    //        if (secret == null || secret.length() == 0) {
-    //            return encoded;
-    //        }
-    //        return encrypt(pk.getEncoded(), secret);
-    //    }
+    @Throws(java.lang.Exception::class)
+    fun getEncodedPrivate(pk: PrivateKey, secret: String?): ByteArray {
+        val encoded = pk.encoded
+        return if (secret.isNullOrEmpty()) encoded else encrypt(pk.encoded, secret)
+    }
+
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
     fun decodePrivate(encoded: ByteArray?, keyType: String?): PrivateKey {
         val privKeySpec = PKCS8EncodedKeySpec(encoded)
@@ -93,7 +90,7 @@ object PubKeyUtils {
 
     @Throws(Exception::class)
     fun decodePrivate(encoded: ByteArray, keyType: String?, secret: String?): PrivateKey {
-        return if (secret != null && secret.isNotEmpty()) decodePrivate(decrypt(encoded, secret), keyType) else decodePrivate(encoded, keyType)
+        return if (!secret.isNullOrEmpty()) decodePrivate(decrypt(encoded, secret), keyType) else decodePrivate(encoded, keyType)
     }
 
     fun getBitStrength(encoded : ByteArray, keyType: String) : Int {
