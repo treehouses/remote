@@ -115,8 +115,8 @@
     <string name="contributors">Contributors</string>
     <string name="version_text">Version</string>
     <string name="bStatusOffline">Bluetooth Status: Offline</string>
-    <string name="bStatusIdle">Bluetooth Status: Idle (not Connected or trying to Connect)</string>
-    <string name="bStatusConnected">Bluetooth Status: Connected</string>
+    <string name="bStatusIdle">Bluetooth: Idle (not Connected or trying to Connect)</string>
+    <string name="bStatusConnected">Bluetooth: Connected</string>
     <string name="title_activity_initial">InitialActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -125,6 +125,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="menu_tunnel">Tunnel</string>
     <string name="yes">yes</string>
+    <string name="treehouses">treehouses</string>
     <string-array name="spinner_hotspot">
         <item>internet</item>
         <item>local</item>
