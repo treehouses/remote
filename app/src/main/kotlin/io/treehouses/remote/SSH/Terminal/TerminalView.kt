@@ -239,25 +239,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         lastNotification = message
     }
 
-    /**
-     * Ask the [TerminalBridge] we're connected to to resize to a specific size.
-     *
-     * @param width  width in characters
-     * @param height heigh in characters
-     */
-    fun forceSize(width: Int, height: Int) {
-        bridge.resizeComputed(width, height, getWidth(), getHeight())
-    }
-
-    /**
-     * Sets the ability for the TerminalView to display Toast notifications to the user.
-     *
-     * @param value whether to enable notifications or not
-     */
-    fun setNotifications(value: Boolean) {
-        notifications = value
-    }
-
     override fun onCheckIsTextEditor(): Boolean {
         return true
     }
