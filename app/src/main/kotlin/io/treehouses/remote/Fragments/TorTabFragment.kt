@@ -131,6 +131,8 @@ class TorTabFragment : BaseFragment() {
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
                 dialog.dismiss()
+                inputInternal.text?.clear()
+                inputExternal.text?.clear()
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
