@@ -385,21 +385,25 @@ class TerminalBridge : VDUDisplay {
 
     """.trimIndent())
             }
-            if (host!!.stayConnected) {
-                manager!!.requestReconnect(this)
-                return
-            }
-            val disconnectPromptThread = Thread(Runnable {
-                val result = promptHelper!!.requestBooleanPrompt(null, "Host has been Disconnected. Close session?")
-                if (result == null || result) {
-                    isAwaitingClose = true
-                    triggerDisconnectListener()
-                }
-            })
-            disconnectPromptThread.name = "DisconnectPrompt"
-            disconnectPromptThread.isDaemon = true
-            disconnectPromptThread.start()
+            startDisconnectPromptThread()
         }
+    }
+
+    fun startDisconnectPromptThread() {
+        if (host!!.stayConnected) {
+            manager!!.requestReconnect(this)
+            return
+        }
+        val disconnectPromptThread = Thread(Runnable {
+            val result = promptHelper!!.requestBooleanPrompt(null, "Host has been Disconnected. Close session?")
+            if (result == null || result) {
+                isAwaitingClose = true
+                triggerDisconnectListener()
+            }
+        })
+        disconnectPromptThread.name = "DisconnectPrompt"
+        disconnectPromptThread.isDaemon = true
+        disconnectPromptThread.start()
     }
 
     /**
