@@ -21,6 +21,7 @@ import kotlin.math.log
 
 class TunnelSSHFragment : BaseFragment() {
     private var addPortButton: Button? = null
+    private var addHostButton: Button? = null
     var bind: ActivityTunnelSshFragmentBinding? = null
     private var dropdown: Spinner? = null
     private var portList: ListView? = null
@@ -47,15 +48,25 @@ class TunnelSSHFragment : BaseFragment() {
         }
         portList = bind!!.sshPorts
         val dialog = Dialog(requireContext())
+        val dialogHosts = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_sshtunnel_ports)
+        dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        dialogHosts.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+
         val window = dialog.window
+        val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        windowHost!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
+        val inputExternalHost: TextInputEditText = dialogHosts.findViewById(R.id.ExternalTextInput)
+        val inputInternalHost: TextInputEditText = dialogHosts.findViewById(R.id.InternalTextInput)
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
+
         dropdown = dialog.findViewById(R.id.hosts)
         addPortButton = bind!!.btnAddPort
+        addHostButton = bind!!.btnAddHosts
         val items = arrayOf("1", "2", "three")
         hostsName = ArrayList()
         val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
@@ -70,18 +81,22 @@ class TunnelSSHFragment : BaseFragment() {
             override fun onNothingSelected(p0: AdapterView<*>?) {Log.d("nothing", "YYYYY ")}
         }
         addPortButton!!.setOnClickListener { dialog.show() }
+        addHostButton!!.setOnClickListener { dialogHosts.show() }
         addingPortButton.setOnClickListener {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()
                 val s2 = inputExternal.text.toString()
-                listener.sendMessage("treehouses tor add $s2 $s1")
-                addPortButton!!.text = "Adding port, please wait for a while ............"
-                portList!!.isEnabled = false
-                addPortButton!!.isEnabled = false
-                dialog.dismiss()
-                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+                val parts = dropdown?.selectedItem.toString().split(":")
+                Log.d("dasdas", parts[0])
+//                listener.sendMessage("treehouses tor add $s2 $s1")
+//                addPortButton!!.text = "Adding port, please wait for a while ............"
+//                portList!!.isEnabled = false
+//                addPortButton!!.isEnabled = false
+//                dialog.dismiss()
+//                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
+
         return bind!!.root
     }
     override fun setUserVisibleHint(visible: Boolean) {
