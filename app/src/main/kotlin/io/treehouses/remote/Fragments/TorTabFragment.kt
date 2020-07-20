@@ -81,6 +81,7 @@ class TorTabFragment : BaseFragment() {
 
             // create and show the alert dialog
             val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
         logo = bind!!.treehouseLogo
@@ -110,12 +111,15 @@ class TorTabFragment : BaseFragment() {
         dialog.setContentView(R.layout.dialog_tor_ports)
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         val window = dialog.window
-        window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window!!.setGravity(Gravity.CENTER)
+        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
 
-        addPortButton!!.setOnClickListener { dialog.show() }
+        addPortButton!!.setOnClickListener {
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show() }
         addingPortButton.setOnClickListener {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()
@@ -125,6 +129,8 @@ class TorTabFragment : BaseFragment() {
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
                 dialog.dismiss()
+                inputInternal.text?.clear()
+                inputExternal.text?.clear()
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }

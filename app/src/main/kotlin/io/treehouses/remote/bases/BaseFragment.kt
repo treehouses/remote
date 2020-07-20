@@ -21,6 +21,10 @@ open class BaseFragment : Fragment() {
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
     }
 
+    open fun chatOpen():Boolean {
+        return this::mChatService.isInitialized
+    }
+
     protected fun onLoad(mHandler: Handler?) {
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler!!)

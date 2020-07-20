@@ -34,6 +34,7 @@ abstract class PermissionActivity : AppCompatActivity() {
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
                 .setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.cancel() }
         val alert = builder.create()
+        alert.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alert.show()
     }
 

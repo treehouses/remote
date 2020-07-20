@@ -100,8 +100,9 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun showDialog(title: String, message: String) {
-        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
+        val alertDialog = createAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
                 .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
@@ -122,26 +123,28 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun reboot() {
-        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
+        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
                 "Are you sure you want to reboot your device?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
                     rebootHelper()
                     dialog.dismiss()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
     }
 
     private fun resetNetwork() {
-        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
+        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
                 "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                     Toast.makeText(context, "Switching to default network...", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
     }
 
-    private fun CreateAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
+    private fun createAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
         return AlertDialog.Builder(ContextThemeWrapper(context, id))
                 .setTitle(title)
                 .setMessage(message)
