@@ -182,20 +182,27 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     private fun onEmulatedKeyClicked(v: View) {
         val terminal = adapter!!.currentTerminalView ?: return
         val handler = terminal.bridge.keyHandler
-        var hideKeys = false
+        var hideKeys = sendKeys(v, handler)
+        if (hideKeys) hideEmulatedKeys()
+        else autoHideEmulatedKeys()
+
+        terminal.bridge.tryKeyVibrate()
+        hideActionBarIfRequested()
+    }
+
+    private fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
+        var flag = true
         when (v.id) {
-            R.id.button_ctrl -> {
-                handler.metaPress(TerminalKeyListener.OUR_CTRL_ON, true)
-                hideKeys = true
-            }
-            R.id.button_esc -> {
-                handler.sendEscape()
-                hideKeys = true
-            }
-            R.id.button_tab -> {
-                handler.sendTab()
-                hideKeys = true
-            }
+            R.id.button_ctrl -> handler.metaPress(TerminalKeyListener.OUR_CTRL_ON, true)
+            R.id.button_esc -> handler.sendEscape()
+            R.id.button_tab -> handler.sendTab()
+            else -> flag = false
+        }
+        return flag
+    }
+
+    private fun checkButtons(v: View, handler: TerminalKeyListener) {
+        when (v.id) {
             R.id.button_up -> handler.sendPressedKey(vt320.KEY_UP)
             R.id.button_down -> handler.sendPressedKey(vt320.KEY_DOWN)
             R.id.button_left -> handler.sendPressedKey(vt320.KEY_LEFT)
@@ -218,11 +225,14 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             R.id.button_f12 -> handler.sendPressedKey(vt320.KEY_F12)
             else -> Log.e(TAG, "Unknown emulated key clicked: " + v.id)
         }
-        if (hideKeys) hideEmulatedKeys()
-        else autoHideEmulatedKeys()
+    }
 
-        terminal.bridge.tryKeyVibrate()
-        hideActionBarIfRequested()
+    private fun sendKeys(v: View, handler: TerminalKeyListener) : Boolean {
+        if (isSpecialButton(v, handler)) return true
+        else {
+            checkButtons(v, handler)
+            return false
+        }
     }
 
     private fun hideActionBarIfRequested() {
@@ -419,6 +429,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         addKeyRepeater(bind.keyboard.buttonDown)
         addKeyRepeater(bind.keyboard.buttonLeft)
         addKeyRepeater(bind.keyboard.buttonRight)
+        setButtonListeners()
+    }
+
+    private fun setButtonListeners() {
         bind.keyboard.buttonHome.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonEnd.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonPgup.setOnClickListener(emulatedKeysListener)
