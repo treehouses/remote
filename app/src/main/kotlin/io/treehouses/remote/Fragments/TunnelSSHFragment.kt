@@ -1,5 +1,6 @@
 package io.treehouses.remote.Fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -7,19 +8,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.view.WindowManager
+import android.widget.*
+import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
+import kotlinx.android.synthetic.main.dialog_container.view.*
+import kotlinx.android.synthetic.main.dialog_rename.*
 import kotlin.math.log
 
 class TunnelSSHFragment : BaseFragment() {
-
+    private var addPortButton: Button? = null
     var bind: ActivityTunnelSshFragmentBinding? = null
+    private var dropdown: Spinner? = null
+    private var portList: ListView? = null
     private var adapter: ArrayAdapter<String>? = null
     private var portsName: java.util.ArrayList<String>? = null
+    private var hostsName: java.util.ArrayList<String>? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
@@ -38,6 +45,43 @@ class TunnelSSHFragment : BaseFragment() {
             bind!!.notifyNow.isEnabled = false
             listener.sendMessage("treehouses sshtunnel notice now")
         }
+        portList = bind!!.sshPorts
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_sshtunnel_ports)
+        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        val window = dialog.window
+        window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
+        val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
+        val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
+        dropdown = dialog.findViewById(R.id.hosts)
+        addPortButton = bind!!.btnAddPort
+        val items = arrayOf("1", "2", "three")
+        hostsName = ArrayList()
+        val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+        dropdown?.adapter = adapter
+        dropdown?.onItemSelectedListener = object :
+                AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3:
+            Long) {
+                Log.d("winwin", "YYYYY ")
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {Log.d("nothing", "YYYYY ")}
+        }
+        addPortButton!!.setOnClickListener { dialog.show() }
+        addingPortButton.setOnClickListener {
+            if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
+                val s1 = inputInternal.text.toString()
+                val s2 = inputExternal.text.toString()
+                listener.sendMessage("treehouses tor add $s2 $s1")
+                addPortButton!!.text = "Adding port, please wait for a while ............"
+                portList!!.isEnabled = false
+                addPortButton!!.isEnabled = false
+                dialog.dismiss()
+                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            }
+        }
         return bind!!.root
     }
     override fun setUserVisibleHint(visible: Boolean) {
@@ -51,6 +95,7 @@ class TunnelSSHFragment : BaseFragment() {
             listener.sendMessage("treehouses sshtunnel ports")
             var sshPorts = bind!!.sshPorts
             portsName = ArrayList()
+
             adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
             Log.i("Tag", "Reload fragment")
         }
@@ -64,9 +109,14 @@ class TunnelSSHFragment : BaseFragment() {
                     val hosts = readMessage.split('\n')
                     for (host in hosts) {
                         val ports = host.split(' ')
-                        for (port in ports)
-                            if(port.length >= 3)
-                            portsName!!.add(port)
+                        for (port in ports) {
+                            if (port.length >= 3)
+                                portsName!!.add(port)
+                            if (port.contains("ole@"))
+                                hostsName!!.add(port)
+                        }
+                        val adapter: ArrayAdapter<String> = ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                        dropdown?.adapter = adapter
                     }
                     listener.sendMessage("treehouses sshtunnel notice")
                     adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)

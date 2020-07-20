@@ -9,17 +9,12 @@
     android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/treehouse_logo"
+    <ImageView
+        android:id="@+id/bash"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_very_large"
         android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:text="SSH Tunnel "
-        app:srcCompat="@drawable/tor" />
+        app:srcCompat="@drawable/ic_bash" />
 
     <LinearLayout  android:layout_width="match_parent"
         android:layout_height="wrap_content">
