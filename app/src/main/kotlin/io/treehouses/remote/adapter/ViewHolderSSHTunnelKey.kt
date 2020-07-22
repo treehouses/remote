@@ -149,9 +149,9 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                     myEdit.putString("${profile}_private_key", piPrivateKey)
                     myEdit.apply()
                     Toast.makeText(c, "Key saved to phone successfully", Toast.LENGTH_LONG).show()
-                }.setNegativeButton("No") { dialog: DialogInterface?, _: Int ->
-                    dialog?.dismiss()
                 }
+                setNeutralButton(builder, "No")
+
                 builder.show()
             }
             // Key exists in phone but not Pi
@@ -199,9 +199,9 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 }.setPositiveButton("Pi") { _: DialogInterface?, _: Int ->
                     dialogListener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
                     Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
-                }.setNeutralButton("Cancel"){ dialog: DialogInterface?, _: Int ->
-                    dialog?.dismiss()
                 }
+                setNeutralButton(builder, "Cancel")
+
                 builder.show()
             }
         } catch (e: JSONException) {
@@ -209,6 +209,11 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         }
     }
 
+    private fun setNeutralButton(builder: AlertDialog.Builder, text: String){
+        builder.setNeutralButton(text){ dialog: DialogInterface?, _: Int ->
+            dialog?.dismiss()
+        }
+    }
     private fun handleJson(readMessage: String) {
         val s = match(readMessage)
         if (jsonReceiving) {
