@@ -12,7 +12,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Go to Discover"
-            android:paddingLeft="20dp"> </TextView>
+            android:paddingLeft="20dp"
+            android:paddingStart="20dp"
+            android:textSize="20sp"/>
 
     </RelativeLayout>
 
