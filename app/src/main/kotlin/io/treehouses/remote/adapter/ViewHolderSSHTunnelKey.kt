@@ -144,9 +144,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.setTitle("Save Key To Phone")
                 builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
                         "Pi Private Key for ${profile}: \n$piPrivateKey")
-                builder.setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    saveKeyToPhone(myEdit, profile, piPublicKey, piPrivateKey, "Key saved to phone successfully")
-                }
+
+                saveKeyToPhone(builder, myEdit, profile, piPublicKey, piPrivateKey, "Yes", "Key saved to phone successfully")
                 setNeutralButton(builder, "No")
 
                 builder.show()
@@ -188,9 +187,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
 
                 builder.setMessage(message)
 
-                builder.setNegativeButton("Phone") { _: DialogInterface?, _: Int ->
-                    saveKeyToPhone(myEdit, profile, piPublicKey, piPrivateKey, "The phone's key has been overwritten with Pi's key successfully ")
-                }.setPositiveButton("Pi") { _: DialogInterface?, _: Int ->
+                saveKeyToPhone(builder, myEdit, profile, piPublicKey, piPrivateKey, "Phone", "The phone's key has been overwritten with the Pi's key successfully")
+                builder.setNegativeButton("Pi") { _: DialogInterface?, _: Int ->
                     dialogListener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
                     Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
                 }
@@ -202,12 +200,14 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             e.printStackTrace()
         }
     }
-    private fun saveKeyToPhone(myEdit: SharedPreferences.Editor, profile: String, piPublicKey: String, piPrivateKey: String,
-    text: String){
-        myEdit.putString("${profile}_public_key", piPublicKey)
-        myEdit.putString("${profile}_private_key", piPrivateKey)
-        myEdit.apply()
-        Toast.makeText(c, text, Toast.LENGTH_LONG).show()
+    private fun saveKeyToPhone(builder: AlertDialog.Builder, myEdit: SharedPreferences.Editor, profile: String, piPublicKey: String, piPrivateKey: String,
+    buttonText: String, toastText: String){
+        builder.setPositiveButton(buttonText) { _: DialogInterface?, _: Int ->
+            myEdit.putString("${profile}_public_key", piPublicKey)
+            myEdit.putString("${profile}_private_key", piPrivateKey)
+            myEdit.apply()
+            Toast.makeText(c, toastText, Toast.LENGTH_LONG).show()
+        }
     }
 
 
