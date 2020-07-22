@@ -145,10 +145,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
                         "Pi Private Key for ${profile}: \n$piPrivateKey")
                 builder.setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    myEdit.putString("${profile}_public_key", piPublicKey)
-                    myEdit.putString("${profile}_private_key", piPrivateKey)
-                    myEdit.apply()
-                    Toast.makeText(c, "Key saved to phone successfully", Toast.LENGTH_LONG).show()
+                    saveKeyToPhone(myEdit, profile, piPublicKey, piPrivateKey, "Key saved to phone successfully")
                 }
                 setNeutralButton(builder, "No")
 
@@ -192,10 +189,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.setMessage(message)
 
                 builder.setNegativeButton("Phone") { _: DialogInterface?, _: Int ->
-                    myEdit.putString("${profile}_public_key", piPublicKey)
-                    myEdit.putString("${profile}_private_key", piPrivateKey)
-                    myEdit.apply()
-                    Toast.makeText(c, "The phone's key has been overwritten with Pi's key successfully ", Toast.LENGTH_LONG).show()
+                    saveKeyToPhone(myEdit, profile, piPublicKey, piPrivateKey, "The phone's key has been overwritten with Pi's key successfully ")
                 }.setPositiveButton("Pi") { _: DialogInterface?, _: Int ->
                     dialogListener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
                     Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
@@ -208,6 +202,15 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             e.printStackTrace()
         }
     }
+    private fun saveKeyToPhone(myEdit: SharedPreferences.Editor, profile: String, piPublicKey: String, piPrivateKey: String,
+    text: String){
+        myEdit.putString("${profile}_public_key", piPublicKey)
+        myEdit.putString("${profile}_private_key", piPrivateKey)
+        myEdit.apply()
+        Toast.makeText(c, text, Toast.LENGTH_LONG).show()
+    }
+
+
 
     private fun setNeutralButton(builder: AlertDialog.Builder, text: String){
         builder.setNeutralButton(text){ dialog: DialogInterface?, _: Int ->
