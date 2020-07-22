@@ -257,14 +257,16 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 listener.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                 internetSent = true
             }
-            s == RESULTS.BOOLEAN && internetSent -> {
-                internetSent = false
-                if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-                else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-                listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
-            }
+            s == RESULTS.BOOLEAN && internetSent -> checkPackage(output)
             else -> moreActions(output, s)
         }
+    }
+
+    private fun checkPackage(output: String) {
+        internetSent = false
+        if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+        else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+        listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
     }
 
     private fun moreActions(output: String, result: RESULTS) {
