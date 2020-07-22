@@ -118,7 +118,6 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             val jsonObject = JSONObject(jsonString)
 
             val sharedPreferences: SharedPreferences = c.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-            val myEdit = sharedPreferences.edit()
 
             val profile = jsonObject.getString("profile")
 
