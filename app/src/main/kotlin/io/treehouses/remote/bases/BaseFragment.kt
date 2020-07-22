@@ -44,7 +44,7 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
+    protected val mHandler: Handler = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
