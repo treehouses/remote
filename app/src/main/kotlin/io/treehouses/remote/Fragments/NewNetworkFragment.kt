@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -8,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -159,14 +157,11 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            if (msg.what == Constants.MESSAGE_READ) {
-                val readMessage = msg.obj as String
-                Log.d("TAG", "readMessage = $readMessage")
-                performAction(readMessage)
-            }
+    override fun getMessage(msg: Message) {
+        if (msg.what == Constants.MESSAGE_READ) {
+            val readMessage = msg.obj as String
+            Log.d("TAG", "readMessage = $readMessage")
+            performAction(readMessage)
         }
     }
 

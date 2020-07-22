@@ -2,11 +2,11 @@ package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -218,24 +218,21 @@ class StatusFragment : BaseFragment() {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> checkStatusNow()
-                Constants.MESSAGE_WRITE -> {
-                    val writeBuf = msg.obj as ByteArray
-                    val writeMessage = String(writeBuf)
-                    Log.d(TAG, "writeMessage = $writeMessage")
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    Log.d(TAG, "readMessage = $readMessage")
-                    try {
-                        updateStatus(readMessage)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_STATE_CHANGE -> checkStatusNow()
+            Constants.MESSAGE_WRITE -> {
+                val writeBuf = msg.obj as ByteArray
+                val writeMessage = String(writeBuf)
+                Log.d(TAG, "writeMessage = $writeMessage")
+            }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                Log.d(TAG, "readMessage = $readMessage")
+                try {
+                    updateStatus(readMessage)
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }

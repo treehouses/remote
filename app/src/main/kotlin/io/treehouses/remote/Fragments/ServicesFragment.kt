@@ -1,9 +1,7 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -48,7 +46,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         })
         setTabEnabled(false)
         mChatService = listener.getChatService()
-        mChatService.updateHandler(handler)
+        mChatService.updateHandler(mHandler)
         worked = false
         preferences()
         return bind!!.root
@@ -97,17 +95,19 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private val handler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    updateListFromRPI(msg)
-                }
-                Constants.MESSAGE_WRITE -> {
-                    val writeMsg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", writeMsg)
-                }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_READ -> {
+                updateListFromRPI(msg)
+            }
+            Constants.MESSAGE_WRITE -> {
+                val writeMsg = String((msg.obj as ByteArray))
+                Log.d("WRITE", writeMsg)
+            }
+
+            Constants.MESSAGE_WRITE -> {
+                val write_msg = String((msg.obj as ByteArray))
+                Log.d("WRITE", write_msg)
             }
         }
     }
