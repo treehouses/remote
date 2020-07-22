@@ -24,6 +24,7 @@ import android.graphics.*
 import android.graphics.Matrix.ScaleToFit
 import android.preference.PreferenceManager
 import android.text.ClipboardManager
+import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.accessibility.AccessibilityEvent
@@ -37,6 +38,7 @@ import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -138,63 +140,89 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
 
             // also draw cursor if visible
             if (bridge.vDUBuffer!!.isCursorVisible) {
-                var cursorColumn = bridge.vDUBuffer!!.cursorColumn
-                val cursorRow = bridge.vDUBuffer!!.cursorRow
-                val columns = bridge.vDUBuffer!!.columns
-                if (cursorColumn == columns) cursorColumn = columns - 1
-                if (cursorColumn < 0 || cursorRow < 0) return
-                val currentAttribute = bridge.vDUBuffer!!.getAttributes(
-                        cursorColumn, cursorRow)
-                val onWideCharacter = currentAttribute and VDUBuffer.FULLWIDTH != 0L
-                val x = cursorColumn * bridge.charWidth
-                val y = ((bridge.vDUBuffer!!.cursorRow
-                        + bridge.vDUBuffer!!.screenBase - bridge.vDUBuffer!!.windowBase)
-                        * bridge.charHeight)
-
-                // Save the current clip and translation
-                canvas.save()
-                canvas.translate(x.toFloat(), y.toFloat())
-                canvas.clipRect(0, 0,
-                        bridge.charWidth * if (onWideCharacter) 2 else 1,
-                        bridge.charHeight)
-                val metaState = bridge.keyHandler.metaState
-                if (y + bridge.charHeight < bridge.bitmap!!.height) {
-                    val underCursor = Bitmap.createBitmap(bridge.bitmap!!, x, y,
-                            bridge.charWidth * if (onWideCharacter) 2 else 1, bridge.charHeight)
-                    if (metaState == 0) canvas.drawBitmap(underCursor, 0f, 0f, cursorInversionPaint) else canvas.drawBitmap(underCursor, 0f, 0f, cursorMetaInversionPaint)
-                } else {
-                    canvas.drawPaint(cursorPaint)
-                }
-                val deadKey = bridge.keyHandler.deadKey
-                if (deadKey != 0) {
-                    singleDeadKey[0] = deadKey.toChar()
-                    canvas.drawText(singleDeadKey, 0, 1, 0f, 0f, cursorStrokePaint)
-                }
-
-                // Make sure we scale our decorations to the correct size.
-                canvas.concat(scaleMatrix)
-                if (metaState and TerminalKeyListener.OUR_SHIFT_ON != 0) canvas.drawPath(shiftCursor, cursorStrokePaint) else if (metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0) canvas.drawPath(shiftCursor, cursorInversionPaint)
-                if (metaState and TerminalKeyListener.OUR_ALT_ON != 0) canvas.drawPath(altCursor, cursorStrokePaint) else if (metaState and TerminalKeyListener.OUR_ALT_LOCK != 0) canvas.drawPath(altCursor, cursorInversionPaint)
-                if (metaState and TerminalKeyListener.OUR_CTRL_ON != 0) canvas.drawPath(ctrlCursor, cursorStrokePaint) else if (metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0) canvas.drawPath(ctrlCursor, cursorInversionPaint)
-
+                drawCursor(canvas)
                 // Restore previous clip region
                 canvas.restore()
             }
 
             // draw any highlighted area
             if (terminalTextViewOverlay == null && bridge.isSelectingForCopy) {
-                val area = bridge.selectionArea
-                canvas.save()
-                canvas.clipRect(
-                        area.getLeft() * bridge.charWidth,
-                        area.getTop() * bridge.charHeight,
-                        (area.getRight() + 1) * bridge.charWidth,
-                        (area.getBottom() + 1) * bridge.charHeight
-                )
-                canvas.drawPaint(cursorPaint)
-                canvas.restore()
+                drawHighlightedArea(canvas)
             }
         }
+    }
+
+    fun drawCursor(canvas: Canvas) {
+        var cursorColumn = bridge.vDUBuffer!!.cursorColumn
+        val cursorRow = bridge.vDUBuffer!!.cursorRow
+        val columns = bridge.vDUBuffer!!.columns
+        if (cursorColumn == columns) cursorColumn = columns - 1
+        if (cursorColumn < 0 || cursorRow < 0) return
+        val currentAttribute = bridge.vDUBuffer!!.getAttributes(
+                cursorColumn, cursorRow)
+        val onWideCharacter = currentAttribute and VDUBuffer.FULLWIDTH != 0L
+        val x = cursorColumn * bridge.charWidth
+        val y = ((bridge.vDUBuffer!!.cursorRow
+                + bridge.vDUBuffer!!.screenBase - bridge.vDUBuffer!!.windowBase)
+                * bridge.charHeight)
+        // Save the current clip and translation
+        val metaState = saveCanvasInfo(canvas, x, y, onWideCharacter)
+        // Make sure we scale our decorations to the correct size.
+        scaleDecorations(canvas, metaState)
+    }
+
+    fun saveCanvasInfo(canvas: Canvas, x: Int, y: Int, onWideCharacter: Boolean) : Int {
+        canvas.save()
+        canvas.translate(x.toFloat(), y.toFloat())
+        canvas.clipRect(0, 0,
+                bridge.charWidth * if (onWideCharacter) 2 else 1,
+                bridge.charHeight)
+        val metaState = bridge.keyHandler.metaState
+        if (y + bridge.charHeight < bridge.bitmap!!.height) {
+            val underCursor = Bitmap.createBitmap(bridge.bitmap!!, x, y,
+                    bridge.charWidth * if (onWideCharacter) 2 else 1, bridge.charHeight)
+            if (metaState == 0) canvas.drawBitmap(underCursor, 0f, 0f, cursorInversionPaint) else canvas.drawBitmap(underCursor, 0f, 0f, cursorMetaInversionPaint)
+        } else {
+            canvas.drawPaint(cursorPaint)
+        }
+        val deadKey = bridge.keyHandler.deadKey
+        if (deadKey != 0) {
+            singleDeadKey[0] = deadKey.toChar()
+            canvas.drawText(singleDeadKey, 0, 1, 0f, 0f, cursorStrokePaint)
+        }
+        return metaState
+    }
+
+    fun drawHighlightedArea(canvas: Canvas) {
+        val area = bridge.selectionArea
+        canvas.save()
+        canvas.clipRect(
+                area.getLeft() * bridge.charWidth,
+                area.getTop() * bridge.charHeight,
+                (area.getRight() + 1) * bridge.charWidth,
+                (area.getBottom() + 1) * bridge.charHeight
+        )
+        canvas.drawPaint(cursorPaint)
+        canvas.restore()
+    }
+
+    fun scaleDecorations(canvas: Canvas, metaState: Int) {
+        canvas.concat(scaleMatrix)
+        val a = metaState and TerminalKeyListener.OUR_SHIFT_ON != 0
+        val b = metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0
+        val c = metaState and TerminalKeyListener.OUR_ALT_ON != 0
+        val d = metaState and TerminalKeyListener.OUR_ALT_LOCK != 0
+        val e = metaState and TerminalKeyListener.OUR_CTRL_ON != 0
+        val f = metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0
+        var paint:Paint = cursorInversionPaint
+        var cursor:Path = shiftCursor
+        if(c || d) cursor = altCursor
+        else if(e || f) cursor = ctrlCursor
+        if (a || c || e) {
+            paint = cursorStrokePaint
+            canvas.drawPath(cursor, paint)
+        }
+        else if(b || d || f) canvas.drawPath(cursor, paint)
     }
 
     fun notifyUser(message: String) {
@@ -209,25 +237,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
             notification?.show()
         }
         lastNotification = message
-    }
-
-    /**
-     * Ask the [TerminalBridge] we're connected to to resize to a specific size.
-     *
-     * @param width  width in characters
-     * @param height heigh in characters
-     */
-    fun forceSize(width: Int, height: Int) {
-        bridge.resizeComputed(width, height, getWidth(), getHeight())
-    }
-
-    /**
-     * Sets the ability for the TerminalView to display Toast notifications to the user.
-     *
-     * @param value whether to enable notifications or not
-     */
-    fun setNotifications(value: Boolean) {
-        notifications = value
     }
 
     override fun onCheckIsTextEditor(): Boolean {
@@ -485,6 +494,19 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                 viewPager.performClick()
                 return super.onSingleTapConfirmed(e)
+            }
+
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                try {
+                    bridge.transport?.write(0x09)
+                    bridge.tryKeyVibrate()
+                }
+                catch (e: IOException) {
+                    e.printStackTrace()
+                    try { bridge.transport?.flush() }
+                    catch (ioe: IOException) { bridge.dispatchDisconnect(false) }
+                }
+                return super.onDoubleTap(e)
             }
         })
 

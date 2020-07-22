@@ -22,6 +22,7 @@ class AddCommandDialogFragment : DialogFragment() {
         bind = DialogAddCommandBinding.inflate(requireActivity().layoutInflater)
         val mDialog = getAlertDialog(bind!!.root)
         mDialog.setTitle(R.string.add_command_title)
+        mDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return mDialog
     }
 
