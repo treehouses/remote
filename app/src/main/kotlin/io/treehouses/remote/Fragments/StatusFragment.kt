@@ -44,8 +44,14 @@ class StatusFragment : BaseFragment() {
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         checkStatusNow()
-        writeToRPI("treehouses remote status")
+        refresh()
+        bind.refreshBtn.setOnClickListener { refresh() }
         return bind.root
+    }
+
+    private fun refresh() {
+        writeToRPI("treehouses remote status")
+        bind.refreshBtn.visibility = View.GONE
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +74,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun rpiNameOnViewClickListener() {
-        bind.editName.setOnClickListener { showRenameDialog() }
+        bind.editName.setOnClickListener {showRenameDialog()}
     }
 
     private fun updateStatus(readMessage: String) {
@@ -111,8 +117,12 @@ class StatusFragment : BaseFragment() {
         } else if (lastCommand == "treehouses networkmode info") {
             writeNetworkInfo(readMessage)
             writeToRPI("treehouses internet")
-        } else if (lastCommand == "treehouses internet") checkWifiStatus(readMessage)
-        else checkUpgradeStatus(readMessage)
+        } else if (lastCommand == "treehouses internet") {
+            checkWifiStatus(readMessage)
+            bind.refreshBtn.visibility = View.VISIBLE
+        } else {
+            checkUpgradeStatus(readMessage)
+        }
     }
 
     private fun writeNetworkInfo(readMessage: String) {
@@ -153,7 +163,7 @@ class StatusFragment : BaseFragment() {
             bind.progressBar.visibility = View.GONE
             Toast.makeText(context, "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show()
             notificationListener!!.setNotification(false)
-            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, StatusFragment()).commit()
+            refresh()
         }
     }
 
@@ -187,6 +197,7 @@ class StatusFragment : BaseFragment() {
                     if (mEditText.text.toString() != "") {
                         writeToRPI("treehouses rename " + mEditText.text.toString())
                         Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
+                        refresh()
                     } else {
                         Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
                     }

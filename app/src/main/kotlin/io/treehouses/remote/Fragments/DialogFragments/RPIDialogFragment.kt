@@ -52,15 +52,11 @@ class RPIDialogFragment : BaseDialogFragment() {
         instance = this
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothCheck()
-        if (mBluetoothAdapter!!.isDiscovering) {
-            mBluetoothAdapter!!.cancelDiscovery()
-        }
+        if (mBluetoothAdapter!!.isDiscovering) mBluetoothAdapter!!.cancelDiscovery()
         mBluetoothAdapter!!.startDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-        if (mChatService == null) {
-            mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
-        }
+        if (mChatService == null) mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
