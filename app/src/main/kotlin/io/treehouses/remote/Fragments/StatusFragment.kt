@@ -100,7 +100,11 @@ class StatusFragment : BaseFragment() {
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
             writeToRPI("treehouses temperature celsius")
-        } else if (lastCommand == "treehouses temperature celsius") {
+        } else checkOtherCommands(lastCommand, readMessage)
+    }
+
+    private fun checkOtherCommands(lastCommand: String, readMessage: String) {
+        if (lastCommand == "treehouses temperature celsius") {
             bind.temperature.text = readMessage
             ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
             writeToRPI("treehouses detect arm")
