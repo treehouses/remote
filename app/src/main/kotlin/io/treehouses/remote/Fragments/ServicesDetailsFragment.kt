@@ -170,23 +170,17 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     private fun showEditDialog(name: String, size: Int, vars: List<String>) {
-        val inflater = requireActivity().layoutInflater
-        val dialogBinding = EnvVarBinding.inflate(inflater)
+        val inflater = requireActivity().layoutInflater; val dialogBinding = EnvVarBinding.inflate(inflater)
         for (i in 0 until size) {
-            val envName = TextView(requireContext())
-            val newVal = TextInputEditText(requireContext())
-            val row = LinearLayout(requireContext())
+            val envName = TextView(requireContext()); val newVal = TextInputEditText(requireContext()); val row = LinearLayout(requireContext())
             envName.setText(vars[i].trim { it <= '\"'} + ":")
             envName.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
             newVal.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            envName.gravity = Gravity.CENTER
-            newVal.gravity = Gravity.CENTER
+            envName.gravity = Gravity.CENTER; newVal.gravity = Gravity.CENTER
             newVal.id = i
             envName.hint = "New Value"
-            row.addView(envName)
-            row.addView(newVal)
-            envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
-            newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
+            row.addView(envName); row.addView(newVal)
+            envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor)); newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
             dialogBinding.varList.addView(row)
         }
         val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
