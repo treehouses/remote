@@ -142,7 +142,7 @@ class SSHConfig : BaseFragment(), RVButtonClick {
         setUpAdapter()
     }
 
-    private val mHandler: Handler = @SuppressLint("HandlerLeak")
+    override val mHandler: Handler = @SuppressLint("HandlerLeak")
         object : Handler() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {

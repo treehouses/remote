@@ -62,7 +62,7 @@ class TorTabFragment : BaseFragment() {
             nowButton!!.isEnabled = false
             listener.sendMessage("treehouses tor notice now")
         }
-        portList = bind!!.countries
+        portList = bind!!.portList
         portList!!.adapter = adapter
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
@@ -206,7 +206,7 @@ class TorTabFragment : BaseFragment() {
                     portsName!!.add(ports[i])
                 }
                 adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-                val portList = view!!.findViewById<ListView>(R.id.countries)
+                val portList = requireView().findViewById<ListView>(R.id.portList)
                 portList.adapter = adapter
                 listener.sendMessage("treehouses tor status")
             } else if (readMessage.contains("No ports found")) {
@@ -215,7 +215,7 @@ class TorTabFragment : BaseFragment() {
                 addPortButton!!.isEnabled = true
                 portsName = ArrayList()
                 adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
-                val portList = view!!.findViewById<ListView>(R.id.countries)
+                val portList = requireView().findViewById<ListView>(R.id.portList)
                 portList.adapter = adapter
                 listener.sendMessage("treehouses tor status")
             } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
