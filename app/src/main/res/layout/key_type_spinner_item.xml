@@ -14,8 +14,12 @@
      limitations under the License.
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/card_background"
+    android:id="@+id/itemTitle"
+    android:textColor="@color/grey_to_light_grey"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
-    android:textSize="18sp"
-    />
+    android:padding="@dimen/padding_normal"
+    tools:text="Test"
+    android:textSize="18sp" />
