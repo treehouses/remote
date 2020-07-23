@@ -1,10 +1,8 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
@@ -142,17 +140,14 @@ class SSHConfig : BaseFragment(), RVButtonClick {
         setUpAdapter()
     }
 
-    override val mHandler: Handler = @SuppressLint("HandlerLeak")
-        object : Handler() {
-            override fun handleMessage(msg: Message) {
-                when (msg.what) {
-                    Constants.MESSAGE_READ -> {
-                        val output = msg.obj as String
-                        if (output.isNotEmpty()) getIP(output)
-                    }
-                }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_READ -> {
+                val output = msg.obj as String
+                if (output.isNotEmpty()) getIP(output)
             }
         }
+    }
 
     override fun onButtonClick(position: Int) {
         val edit = EditHostDialog()
