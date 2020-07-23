@@ -8,7 +8,7 @@ class HostBean {
     var nickname: String? = "treehouses"
     var hostname: String? = "192.168.1.29"
     var username: String? = "pi"
-    val pubkeyId: Long = -1
+    var keyName: String = ""
 
     var protocol: String? = "ssh"
     var port = 22
@@ -48,10 +48,6 @@ class HostBean {
             return Uri.parse(sb.toString())
         }
 
-    private fun log(s: String?): String {
-        return s ?: "null"
-    }
-
     @Throws(Exception::class)
     fun setHostFromUri(uri: Uri?) {
         if (uri == null) return
@@ -59,11 +55,17 @@ class HostBean {
             protocol = uri.scheme
             username = uri.userInfo
             hostname = uri.host
-            port = uri.port
-            nickname = uri.fragment
+            port = if (uri.port == -1) 22 else uri.port
+            nickname = if (uri.fragment == null) "" else uri.fragment
         } catch (e: Exception) {
             throw Exception("Not A Valid URI")
         }
+    }
+
+    fun getPrettyFormat() : String {
+        var format = "$username@$hostname"
+        if (port != 22) format += ":$port"
+        return format
     }
 
     override fun hashCode(): Int {
@@ -75,5 +77,21 @@ class HostBean {
         hash = 31 * hash + if (null == hostname) 0 else hostname.hashCode()
         hash = 31 * hash + port
         return hash
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        var flag = false
+        other as HostBean
+        flag = when {
+            fontSize != other.fontSize -> false
+            nickname != other.nickname -> false
+            hostname != other.hostname -> false
+            username != other.username -> false
+            port != other.port -> false
+            else -> true
+        }
+        return flag
     }
 }

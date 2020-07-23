@@ -400,7 +400,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 //                            MY_UUID_INSECURE);
 //                }
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e)
                 this@BluetoothChatService.state = Constants.STATE_NONE
             }
