@@ -52,11 +52,10 @@ class IntroActivity : AppCompatActivity() {
             }
         }
     }
-    class IntroSlideWelcome(val listener: IntroPagerListener) : Fragment() {
+    inner class IntroSlideWelcome(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenWelcomeBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            bind = IntroScreenWelcomeBinding.inflate(inflater, container, false)
-            return bind.root
+            return createView(inflater, container, "welcome")
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,11 +64,10 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
+    inner class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenDownloadBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            bind = IntroScreenDownloadBinding.inflate(inflater, container, false)
-            return bind.root
+            return createView(inflater, container, "download")
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,11 +80,10 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    class IntroSlideBluetooth(val listener: IntroPagerListener) : Fragment() {
+    inner class IntroSlideBluetooth(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenBluetoothBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            bind = IntroScreenBluetoothBinding.inflate(inflater, container, false)
-            return bind.root
+            return createView(inflater, container, "bluetooth")
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,4 +92,11 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
+    fun createView(inflater: LayoutInflater, container: ViewGroup?, type: String) : View {
+        when(type) {
+            "bluetooth" -> return IntroScreenBluetoothBinding.inflate(inflater, container, false).root
+            "download" -> return IntroScreenBluetoothBinding.inflate(inflater, container, false).root
+            else -> return IntroScreenWelcomeBinding.inflate(inflater, container, false).root
+        }
+    }
 }
