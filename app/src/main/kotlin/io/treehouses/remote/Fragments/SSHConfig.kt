@@ -44,7 +44,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             bound = (service as TerminalManager.TerminalBinder).service
-
             // update our listview binder to find the service
             setUpAdapter()
             bound?.registerOnHostStatusChangedListener(this@SSHConfig)
@@ -75,7 +74,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
             val host = HostBean()
             host.setHostFromUri(Uri.parse(uriString))
-            saveHostIfNeeded(host)
+            SaveUtils.updateHostList(requireContext(), host)
             Log.e("HOST URI", host.uri.toString())
             launchSSH(requireActivity(), host)
         }
@@ -137,9 +136,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             }
 
         })
-    }
-    private fun saveHostIfNeeded(host: HostBean) {
-        SaveUtils.updateHostList(requireContext(), host)
     }
 
     fun setEnabled(bool: Boolean) {
