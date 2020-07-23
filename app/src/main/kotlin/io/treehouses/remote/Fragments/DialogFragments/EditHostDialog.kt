@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.EditHostBinding
@@ -25,6 +26,7 @@ class EditHostDialog : FullScreenDialogFragment() {
         Log.e("ARGUMENT: ", arguments?.getString(SELECTED_HOST_URI, "")!!)
         host = SaveUtils.getHost(requireContext(), arguments?.getString(SELECTED_HOST_URI, "")!!)!!
         initialHostUri = host.uri.toString()
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return bind.root
     }
 
@@ -63,8 +65,8 @@ class EditHostDialog : FullScreenDialogFragment() {
         allKeys = mutableListOf(NO_KEY).plus(KeyUtils.getAllKeyNames(requireContext()))
         bind.selectKey.adapter = ArrayAdapter<String>(
                 requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                android.R.id.text1,
+                R.layout.key_type_spinner_item,
+                R.id.itemTitle,
                 allKeys)
 
         when {

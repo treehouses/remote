@@ -25,6 +25,7 @@ class SSHAllKeys : FullScreenDialogFragment() {
     private lateinit var allKeys: List<PubKeyBean>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogViewKeysBinding.inflate(inflater, container, false)
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return bind.root
     }
 
