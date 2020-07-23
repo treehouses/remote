@@ -60,6 +60,13 @@
             android:layout="@layout/custom_pref"
             android:summary="Delete all SSH hosts">
         </Preference>
+
+        <Preference
+            android:title="Clear SSH Keys"
+            android:key="ssh_keys"
+            android:layout="@layout/custom_pref"
+            android:summary="Delete all SSH keys">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">

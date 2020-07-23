@@ -18,8 +18,6 @@ import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
-import io.treehouses.remote.pojo.ServiceInfo
-import java.util.*
 
 class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
@@ -43,7 +41,6 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
         Tutorials.servicesOverviewTutorials(bind!!, requireActivity())
     }
 
-
     @JvmField
     val handlerOverview: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -55,6 +52,9 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
                 Constants.MESSAGE_WRITE -> {
                     val write_msg = String((msg.obj as ByteArray))
                     Log.d("WRITE", write_msg)
+                }
+                Constants.MESSAGE_STATE_CHANGE -> {
+                    listener.redirectHome()
                 }
             }
         }

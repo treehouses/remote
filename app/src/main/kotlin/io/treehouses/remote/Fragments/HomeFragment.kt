@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
@@ -257,14 +256,16 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 listener.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                 internetSent = true
             }
-            s == RESULTS.BOOLEAN && internetSent -> {
-                internetSent = false
-                if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-                else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-                listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
-            }
+            s == RESULTS.BOOLEAN && internetSent -> checkPackage(output)
             else -> moreActions(output, s)
         }
+    }
+
+    private fun checkPackage(output: String) {
+        internetSent = false
+        if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+        else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+        listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
     }
 
     private fun moreActions(output: String, result: RESULTS) {
@@ -295,15 +296,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    private val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    val output = msg.obj as String
-                    if (output.isNotEmpty()) {
-                        readMessage(output)
-                    }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_READ -> {
+                val output = msg.obj as String
+                if (output.isNotEmpty()) {
+                    readMessage(output)
                 }
             }
         }
