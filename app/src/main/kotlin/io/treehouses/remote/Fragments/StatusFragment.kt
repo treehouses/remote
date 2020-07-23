@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -24,6 +25,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
+import io.treehouses.remote.pojo.StatusData
 import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class StatusFragment : BaseFragment() {
@@ -50,7 +52,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun refresh() {
-        writeToRPI("treehouses remote status")
+        writeToRPI("treehouses remote statuspage")
         bind.refreshBtn.visibility = View.GONE
     }
 
@@ -79,51 +81,43 @@ class StatusFragment : BaseFragment() {
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
-        if (readMessage.trim().split(" ").size == 5 && lastCommand == "treehouses remote status") {
-            val res = readMessage.trim().split(" ")
+        if(lastCommand == "treehouses remote statuspage"){
+            val statusData = Gson().fromJson(readMessage, StatusData::class.java)
+
+            bind.temperature.text = statusData.temperature + "°C"
+            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (statusData.temperature.toFloat() / 80 * 100).toInt()).setDuration(600).start()
+
+            usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
+            totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
+
+            ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
+            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
+
+            bind.cpuModelText.text = "CPU: ARM " + statusData.arm
+
+            networkMode = statusData.networkmode.dropLast(1)
+
+            writeNetworkInfo(statusData.info)
+
+            bind.tvRpiName.text = "Hostname: " + statusData.hostname
+
+            val res = statusData.status.trim().split(" ")
             bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
             bind.tvRpiType.text = "Model: " + res[4]
             rpiVersion = res[3]
             //also set remote version
             bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
-            Log.e("REACHED", "YAYY")
-            writeToRPI("hostname")
-        } else if (lastCommand == "hostname"){
-            bind.tvRpiName.text = "Hostname: " + readMessage
-            writeToRPI("treehouses memory used gb")
-        } else if (lastCommand == "treehouses memory used gb") {
-            usedMemory = readMessage.trim { it <= ' ' }.toDouble()
-            writeToRPI("treehouses memory total gb")
-        } else if (lastCommand == "treehouses memory total gb") {
-            totalMemory = readMessage.trim { it <= ' ' }.toDouble()
-            ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
-            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
-            writeToRPI("treehouses temperature celsius")
-        } else checkOtherCommands(lastCommand, readMessage)
-    }
 
-    private fun checkOtherCommands(lastCommand: String, readMessage: String) {
-        if (lastCommand == "treehouses temperature celsius") {
-            bind.temperature.text = readMessage
-            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
-            writeToRPI("treehouses detect arm")
-        } else if (lastCommand == "treehouses detect arm") {
-            bind.cpuModelText.text = "CPU: ARM " + readMessage
-            writeToRPI("treehouses networkmode")
-        } else if (lastCommand == "treehouses networkmode") {
-            networkMode = readMessage.dropLast(1)
-            writeToRPI("treehouses networkmode info")
-        } else if (lastCommand == "treehouses networkmode info") {
-            writeNetworkInfo(readMessage)
-            writeToRPI("treehouses internet")
-        } else if (lastCommand == "treehouses internet") {
-            checkWifiStatus(readMessage)
+            checkWifiStatus(statusData.internet)
+
             bind.refreshBtn.visibility = View.VISIBLE
+
         } else {
             checkUpgradeStatus(readMessage)
         }
     }
+
 
     private fun writeNetworkInfo(readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
