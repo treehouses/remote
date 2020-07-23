@@ -12,6 +12,7 @@ import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.Exception
 import java.util.*
 
 open class BaseServicesFragment() : BaseFragment() {
@@ -65,7 +66,7 @@ open class BaseServicesFragment() : BaseFragment() {
     private fun addServicesToList(services: ArrayList<ServiceInfo>) {
         for (service in servicesData!!.available) {
             if (inServiceList(service, services) == -1) {
-                services.add(ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
+                services.add(ServiceInfo(service, servicesData!!.size[service]?.toInt()!!, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
                         servicesData!!.info[service], servicesData!!.autorun[service]))
             }
         }
