@@ -143,20 +143,15 @@ object Encryptor {
         var newPw = pw
         for (i in 0 until iterations) {
             /* add salt */
-            val salted = addSalt(newPw, salt)
-            Arrays.fill(pw, 0x00.toByte())
+            val salted = ByteArray(newPw.size + salt.size)
+            System.arraycopy(newPw, 0, salted, 0, newPw.size)
+            System.arraycopy(salt, 0, salted, newPw.size, salt.size)
+            Arrays.fill(newPw, 0x00.toByte())
 
             /* compute SHA-256 digest */shaDigest.reset()
             newPw = shaDigest.digest(salted)
             Arrays.fill(salted, 0x00.toByte())
         }
         return newPw
-    }
-
-    private fun addSalt(pw: ByteArray, salt: ByteArray) : ByteArray {
-        val salted = ByteArray(pw.size + salt.size)
-        System.arraycopy(pw, 0, salted, 0, pw.size)
-        System.arraycopy(salt, 0, salted, pw.size, salt.size)
-        return salted
     }
 }
