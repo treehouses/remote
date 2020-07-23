@@ -1,8 +1,6 @@
 package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -35,9 +33,6 @@ class StatusFragment : BaseFragment() {
     private var lastCommand = ""
     private var deviceName = ""
     private var rpiVersion = ""
-    private var usedMemory = 0.0
-    private var totalMemory = 0.0
-    private var networkMode = ""
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,17 +82,15 @@ class StatusFragment : BaseFragment() {
             bind.temperature.text = statusData.temperature + "°C"
             ObjectAnimator.ofInt(bind.temperatureBar, "progress", (statusData.temperature.toFloat() / 80 * 100).toInt()).setDuration(600).start()
 
-            usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
-            totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
+            val usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
+            val totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
 
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
 
             bind.cpuModelText.text = "CPU: ARM " + statusData.arm
 
-            networkMode = statusData.networkmode.dropLast(1)
-
-            writeNetworkInfo(statusData.info)
+            writeNetworkInfo(statusData.networkmode, statusData.info)
 
             bind.tvRpiName.text = "Hostname: " + statusData.hostname
 
@@ -106,7 +99,7 @@ class StatusFragment : BaseFragment() {
             bind.deviceAddress.text = res[1]
             bind.tvRpiType.text = "Model: " + res[4]
             rpiVersion = res[3]
-            //also set remote version
+
             bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
             checkWifiStatus(statusData.internet)
@@ -119,7 +112,7 @@ class StatusFragment : BaseFragment() {
     }
 
 
-    private fun writeNetworkInfo(readMessage: String) {
+    private fun writeNetworkInfo(networkMode:String, readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
         var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
         when(networkMode){
