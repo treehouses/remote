@@ -1,12 +1,10 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.*
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -193,23 +191,20 @@ class DiscoverFragment : BaseFragment() {
         return (ip != null) || (ssid != null) || (mac != null)
     }
 
-    val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_WRITE -> {
-                    val writeMsg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", writeMsg)
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    Log.d(TAG, "READ = $readMessage")
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_WRITE -> {
+                val writeMsg = String((msg.obj as ByteArray))
+                Log.d("WRITE", writeMsg)
+            }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                Log.d(TAG, "READ = $readMessage")
 
-                    if(addDevices(readMessage))
-                        setupIcons()
-                    else if (addGatewayInformation(readMessage))
-                        updateGatewayIcon()
-                }
+                if(addDevices(readMessage))
+                    setupIcons()
+                else if (addGatewayInformation(readMessage))
+                    updateGatewayIcon()
             }
         }
     }
