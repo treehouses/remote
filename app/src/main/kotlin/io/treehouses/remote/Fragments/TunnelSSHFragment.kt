@@ -85,7 +85,7 @@ class TunnelSSHFragment : BaseFragment() {
         addPortButton!!.setOnClickListener { dialog.show() }
         addHostButton!!.setOnClickListener { dialogHosts.show() }
         addingPortButton.setOnClickListener {
-                if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
+                if (inputExternal.text!!.isNotEmpty() && inputInternal.text!!.isNotEmpty()) {
                     val s1 = inputInternal.text.toString()
                     val s2 = inputExternal.text.toString()
                     val parts = dropdown?.selectedItem.toString().split(":")[0]
@@ -103,7 +103,7 @@ class TunnelSSHFragment : BaseFragment() {
 
         }
         addingHostButton.setOnClickListener {
-            if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
+            if (inputExternalHost.text.toString().isNotEmpty() && inputInternalHost.text.toString().isNotEmpty() ) {
                 val s1 = inputInternalHost.text.toString()
                 val s2 = inputExternalHost.text.toString()
 
@@ -151,7 +151,7 @@ class TunnelSSHFragment : BaseFragment() {
                     listener.sendMessage("treehouses sshtunnel ports")
                 }
                 else if (readMessage.contains("ole@")) {
-
+                    addPortButton?.isEnabled = true
                     addPortButton?.text = "Add Port"
                     addHostButton?.text = "Add Host"
                     addPortButton!!.isEnabled = true
@@ -196,6 +196,7 @@ class TunnelSSHFragment : BaseFragment() {
                 }
                 else if(readMessage.contains("Error")){
                     Toast.makeText(requireContext(), "Please add a host if you have no host", Toast.LENGTH_SHORT).show()
+                    addPortButton?.isEnabled = false
 
                 }
 
