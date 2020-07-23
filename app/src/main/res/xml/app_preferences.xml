@@ -53,6 +53,20 @@
             android:layout="@layout/custom_pref"
             android:summary="Clear all Network Profiles (WIFI, Hotspot, Bridge)">
         </Preference>
+
+        <Preference
+            android:title="Clear SSH Hosts"
+            android:key="ssh_hosts"
+            android:layout="@layout/custom_pref"
+            android:summary="Delete all SSH hosts">
+        </Preference>
+
+        <Preference
+            android:title="Clear SSH Keys"
+            android:key="ssh_keys"
+            android:layout="@layout/custom_pref"
+            android:summary="Delete all SSH keys">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">
@@ -89,7 +103,8 @@
         </Preference>
         <Preference
             android:title="Reactivate Tutorials"
-            android:key="reactivate_tutorials">
+            android:key="reactivate_tutorials"
+            android:layout="@layout/custom_pref">
         </Preference>
     </PreferenceCategory>
 

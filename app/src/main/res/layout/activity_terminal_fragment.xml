@@ -7,6 +7,8 @@
     android:background="@color/windowBackground"
     tools:context=".Fragments.TerminalFragment">
 
+
+
     <ListView
         android:id="@+id/in"
         android:layout_width="match_parent"
@@ -59,70 +61,80 @@
         android:layout_margin="@dimen/margin_medium"
         android:background="@drawable/ic_history_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/infoButton" />
+        app:layout_constraintEnd_toStartOf="@id/treehousesBtn" />
 
-    <Button
-        android:id="@+id/infoButton"
-        android:layout_width="@dimen/icon_size_mid"
-        android:layout_height="@dimen/icon_size_mid"
+
+
+    <ToggleButton
+        android:id="@+id/treehousesBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_margin="@dimen/margin_medium"
-        android:background="@drawable/help"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/ic_treehouses"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+         />
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:weightSum="10"
+        android:orientation="horizontal">
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:weightSum="10"
+        android:layout_weight="6"
         android:background="@color/windowBackground"
-        android:padding="@dimen/margin_small"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/PING"
             android:layout_width="@dimen/_16dp"
             android:layout_height="@dimen/_16dp"
-            android:layout_gravity="center_vertical"
             android:background="@drawable/circle"
             android:foregroundGravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:gravity="center" />
 
 
         <TextView
             android:id="@+id/pingStatus"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
-            android:gravity="center_vertical"
             android:textColor="@color/daynight_textColor"
             android:padding="@dimen/margin_small"
-            android:text="Bluetooth Status"
+            android:background="@color/windowBackground"
+            android:layout_marginTop="6dp"
+            android:layout_weight="10"
+            android:text="Bluetooth: "
+
             android:textSize="@dimen/text_size_small" />
+
+        <Button
+            android:id="@+id/infoButton"
+            android:layout_width="@dimen/icon_size_mid"
+            android:layout_height="@dimen/icon_size_mid"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="2dp"
+            android:background="@drawable/help" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="@dimen/terminal_commands_width"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:orientation="vertical"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
 
         <ExpandableListView
             android:id="@+id/terminalList"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="4"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_large"
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginRight="@dimen/margin_medium"

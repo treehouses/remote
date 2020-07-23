@@ -37,16 +37,16 @@ object EcCore {
         return R
     }
 
-    private fun addPointsA(P1: Array<BigInteger?>, P2: Array<BigInteger?>,
+    private fun addPointsA(a: Array<BigInteger?>, b: Array<BigInteger?>,
                            params: ECParameterSpec): Array<BigInteger?> {
-        val p = (params.curve.field as ECFieldFp).p
-        if (P2[0] == null || P2[1] == null) return P1
-        if (P1[0] == null || P1[1] == null) return P2
-        val d = P2[1]!!.subtract(P1[1]).multiply(P2[0]!!.subtract(P1[0])
-                .modInverse(p))
+        val par = (params.curve.field as ECFieldFp).p
+        if (b[0] == null || b[1] == null) return a
+        if (a[0] == null || a[1] == null) return b
+        val d = b[1]!!.subtract(a[1]).multiply(b[0]!!.subtract(a[0])
+                .modInverse(par))
         val R = arrayOfNulls<BigInteger>(2)
-        R[0] = d.pow(2).subtract(P1[0]).subtract(P2[0]).mod(p)
-        R[1] = d.multiply(P1[0]!!.subtract(R[0])).subtract(P1[1]).mod(p)
+        R[0] = d.pow(2).subtract(a[0]).subtract(b[0]).mod(par)
+        R[1] = d.multiply(a[0]!!.subtract(R[0])).subtract(a[1]).mod(par)
         return R
     }
 
