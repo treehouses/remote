@@ -95,11 +95,9 @@ class PromptHelper(private val tag: Any) {
     }
 
     /**
-     * Get str from parent. This blocks until user
-     * interface returns val.
-     * @param hint prompt for answer
-     * @return string entered
+     * Same as requestBooleanPrompt except for string
      */
+
     fun requestStringPrompt(instructions: String?, hint: String): String? {
         var value: String? = null
         try {
