@@ -145,7 +145,9 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
                         "Pi Private Key for ${profile}: \n$piPrivateKey")
                 builder.setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    changeKeys(myEdit, piPublicKey, piPrivateKey, profile)
+                    myEdit.putString("${profile}_public_key", piPublicKey)
+                    myEdit.putString("${profile}_private_key", piPrivateKey)
+                    myEdit.apply()
                     Toast.makeText(c, "Key saved to phone successfully", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("No") { dialog: DialogInterface?, _: Int ->
                     dialog?.dismiss()
@@ -190,7 +192,9 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 builder.setMessage(message)
 
                 builder.setNegativeButton("Phone") { _: DialogInterface?, _: Int ->
-                    changeKeys(myEdit, piPublicKey, piPrivateKey, profile)
+                    myEdit.putString("${profile}_public_key", piPublicKey)
+                    myEdit.putString("${profile}_private_key", piPrivateKey)
+                    myEdit.apply()
                     Toast.makeText(c, "The phone's key has been overwritten with Pi's key successfully ", Toast.LENGTH_LONG).show()
                 }.setPositiveButton("Pi") { _: DialogInterface?, _: Int ->
                     dialogListener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
@@ -228,11 +232,4 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
             jsonReceiving = false
         }
     }
-
-    private fun changeKeys(myEdit: SharedPreferences.Editor, piPublicKey: String, piPrivateKey: String, profile: String) {
-        myEdit.putString("${profile}_public_key", piPublicKey)
-        myEdit.putString("${profile}_private_key", piPrivateKey)
-        myEdit.apply()
-    }
-
 }

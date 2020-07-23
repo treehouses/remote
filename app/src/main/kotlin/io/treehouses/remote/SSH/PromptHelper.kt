@@ -95,8 +95,8 @@ class PromptHelper(private val tag: Any) {
     }
 
     /**
-     * Request a string response from parent. This is a blocking call until user
-     * interface returns a value.
+     * Get a string response from parent. This blocks until user
+     * interface returns a val.
      * @param hint prompt hint for user to answer
      * @return string user has entered
      */
