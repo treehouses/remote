@@ -92,8 +92,8 @@ object Tutorials {
     }
 
     fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
-        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
-        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
         //Put animations here
     }
 
