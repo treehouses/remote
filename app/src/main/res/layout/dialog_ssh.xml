@@ -1,40 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:background="@color/card_background"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start SSH Connection"
-        android:textColor="@color/daynight_textColor"
-        android:paddingStart="@dimen/padding_normal"
-        android:paddingEnd="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingEnd="@dimen/padding_normal"
+        android:text="Start SSH Connection"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/daynight_textColor" />
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/ssh_text_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rectangle_border"
-        android:padding="@dimen/padding_normal"
         android:layout_margin="@dimen/margin_large"
-        android:textColorHint="@color/md_grey_500"
-        android:hint="pi@192.168.1.29"
-        />
+        android:background="@drawable/rectangle_border"
+        android:hint="user@hostname:port"
+        android:padding="@dimen/padding_normal"
+        android:textColorHint="@color/md_grey_500" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:fontFamily="@font/roboto_bold"
+        android:textColor="@color/daynight_textColor"
+        android:gravity="center"
+        android:text="Previously Connected Devices"
+        android:textSize="@dimen/text_size_mid" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/past_hosts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="@dimen/margin_large"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="10"
+        tools:listitem="@layout/row_ssh" />
+
+    <LinearLayout
+        android:id="@+id/no_hosts"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_margin="@dimen/margin_large"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="@dimen/icon_size_mid"
+            android:layout_height="@dimen/icon_size_mid"
+            android:background="@drawable/ic_update_alert"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_to_light_grey"
+            android:textSize="@dimen/text_size_mid"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:text="There are no saved hosts!"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/connect_ssh"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/bg_white"
-        android:background="@drawable/ripple"
         android:layout_marginBottom="@dimen/margin_large"
+        android:background="@drawable/ripple"
         android:text="Connect"
-         />
+        android:textColor="@color/bg_white" />
+
+    <Button
+        android:id="@+id/generate_keys"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:background="@drawable/service_button"
+        android:text="Generate Key"
+        android:textColor="@color/bg_white" />
+    <Button
+        android:id="@+id/show_keys"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:background="@drawable/service_button"
+        android:text="View All Keys"
+        android:textColor="@color/bg_white" />
 
 </LinearLayout>

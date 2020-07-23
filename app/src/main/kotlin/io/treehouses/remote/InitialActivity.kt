@@ -22,6 +22,7 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
+import io.treehouses.remote.Fragments.SSHConfig
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Fragments.DialogFragments.SSHDialog
 import io.treehouses.remote.Network.BluetoothChatService
@@ -127,14 +128,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 title = "Home"
             }
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.initial, menu)
         return true
     }
-
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -146,7 +145,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
-                R.id.menu_ssh -> SSHDialog().show(supportFragmentManager, "SSH")
+                R.id.menu_ssh -> openCallFragment(SSHConfig())
             }
         }
         title = item.title
@@ -170,7 +169,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             R.id.menu_about -> openCallFragment(AboutFragment())
             R.id.menu_status -> openCallFragment(StatusFragment())
             R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
-            R.id.menu_ssh -> SSHDialog().show(supportFragmentManager, "SSH")
+            R.id.menu_ssh -> openCallFragment(SSHConfig())
             else -> openCallFragment(HomeFragment())
 
         }
@@ -297,6 +296,12 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 }
             }
         }
+    }
+
+    override fun redirectHome() {
+        val menu = bind.navView.menu.findItem(R.id.menu_home)
+        onNavigationItemSelected(menu)
+        bind.navView.setCheckedItem(menu)
     }
 
     fun hasValidConnection() : Boolean {

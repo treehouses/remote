@@ -36,6 +36,7 @@ import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
+import io.treehouses.remote.utils.SaveUtils
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.security.KeyPair
@@ -211,9 +212,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     @Throws(Exception::class)
     fun openConnection(uri: Uri?): TerminalBridge {
 //		HostBean host = TransportFactory.findHost(hostdb, uri);
-        val host = HostBean()
-        host.setHostFromUri(uri)
-
+        var host = if (uri == null) null else SaveUtils.getHost(applicationContext, uri.toString())
+        if (host == null) {
+            host = HostBean().apply { setHostFromUri(uri) }
+        }
 //		if (host == null)
 //			host = TransportFactory.getTransport(uri.getScheme()).createHost(uri);
         return openConnection(host)
@@ -294,7 +296,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         keyHolder.bean = pubkey
         keyHolder.pair = pair
         keyHolder.openSSHPubkey = sshPubKey
-        loadedKeypairs[pubkey.nickname!!] = keyHolder
+        loadedKeypairs[pubkey.nickname] = keyHolder
         if (pubkey.lifetime > 0) {
             val nickname = pubkey.nickname
             pubkeyTimer!!.schedule(object : TimerTask() {
