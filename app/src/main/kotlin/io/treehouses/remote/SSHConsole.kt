@@ -244,7 +244,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         updatePromptVisible()
 
         // If we just closed the last bridge, go back to the previous activity.
-        if (bind.pager.childCount == 0) finish()
+        if (bind.pager.childCount == 0) {
+            Log.e("FINISHING SSH", "FINISH")
+            finish()
+        }
     }
 
     private fun findCurrentView(id: Int): View? {
