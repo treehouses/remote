@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/alertdialog_background"
+    android:padding="@dimen/padding_normal"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/padding_normal"
+        android:text="SSH Keys"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/daynight_textColor" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/all_keys"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_margin="@dimen/margin_large"
+        tools:listitem="@layout/row_key"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:id="@+id/no_hosts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_margin="@dimen/margin_large"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="@dimen/icon_size_mid"
+            android:layout_height="@dimen/icon_size_mid"
+            android:background="@drawable/ic_update_alert"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_to_light_grey"
+            android:textSize="@dimen/text_size_mid"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:text="There are no saved SSH keys!"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/done_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_large"
+        android:background="@drawable/ripple"
+        android:text="Done"
+        android:textColor="@color/bg_white" />
+
+
+</LinearLayout>

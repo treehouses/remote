@@ -385,21 +385,25 @@ class TerminalBridge : VDUDisplay {
 
     """.trimIndent())
             }
-            if (host!!.stayConnected) {
-                manager!!.requestReconnect(this)
-                return
-            }
-            val disconnectPromptThread = Thread(Runnable {
-                val result = promptHelper!!.requestBooleanPrompt(null, "Host has been Disconnected. Close session?")
-                if (result == null || result) {
-                    isAwaitingClose = true
-                    triggerDisconnectListener()
-                }
-            })
-            disconnectPromptThread.name = "DisconnectPrompt"
-            disconnectPromptThread.isDaemon = true
-            disconnectPromptThread.start()
+            startDisconnectPromptThread()
         }
+    }
+
+    fun startDisconnectPromptThread() {
+        if (host!!.stayConnected) {
+            manager!!.requestReconnect(this)
+            return
+        }
+        val disconnectPromptThread = Thread(Runnable {
+            val result = promptHelper!!.requestBooleanPrompt(null, "Host has been Disconnected. Close session?")
+            if (result == null || result) {
+                isAwaitingClose = true
+                triggerDisconnectListener()
+            }
+        })
+        disconnectPromptThread.name = "DisconnectPrompt"
+        disconnectPromptThread.isDaemon = true
+        disconnectPromptThread.start()
     }
 
     /**
@@ -495,21 +499,25 @@ class TerminalBridge : VDUDisplay {
         if (width <= 0 || height <= 0) return
         val clipboard = parent.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         keyHandler.setClipboardManager(clipboard)
-        if (!forcedSize) {
-            // recalculate buffer size
-            val newColumns: Int
-            val newRows: Int
-            newColumns = width / charWidth
-            newRows = height / charHeight
+        if (!forcedSize && checkDimensions(width, height)) return
 
-            // If nothing has changed in the terminal dimensions and not an intial
-            // draw then don't blow away scroll regions and such.
-            if (newColumns == columns && newRows == rows) return
-            columns = newColumns
-            rows = newRows
-            refreshOverlayFontSize()
-        }
+        checkBitMap(width, height)
 
+        // clear out any old buffer information
+        defaultPaint.color = Color.BLACK
+        canvas.drawPaint(defaultPaint)
+
+        if (forcedSize) strokeBorder(width, height)
+
+        requestResize(width, height)
+
+        // redraw local output if we don't have a sesson to receive our resize request
+        if (transport == null) redrawLocal()
+
+        forceRedraw(parent)
+    }
+
+    fun checkBitMap(width: Int, height: Int) {
         // reallocate new bitmap if needed
         var newBitmap = bitmap == null
         if (bitmap != null) newBitmap = bitmap!!.width != width || bitmap!!.height != height
@@ -518,20 +526,40 @@ class TerminalBridge : VDUDisplay {
             bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             canvas.setBitmap(bitmap)
         }
+    }
 
-        // clear out any old buffer information
-        defaultPaint.color = Color.BLACK
-        canvas.drawPaint(defaultPaint)
+    fun checkDimensions(width: Int, height: Int) : Boolean {
+        // recalculate buffer size
+        val newColumns: Int
+        val newRows: Int
+        newColumns = width / charWidth
+        newRows = height / charHeight
 
-        // Stroke the border of the terminal if the size is being forced;
-        if (forcedSize) {
-            val borderX = columns * charWidth + 1
-            val borderY = rows * charHeight + 1
-            defaultPaint.color = Color.GRAY
-            defaultPaint.strokeWidth = 0.0f
-            if (width >= borderX) canvas.drawLine(borderX.toFloat(), 0f, borderX.toFloat(), borderY + 1.toFloat(), defaultPaint)
-            if (height >= borderY) canvas.drawLine(0f, borderY.toFloat(), borderX + 1.toFloat(), borderY.toFloat(), defaultPaint)
+        // If nothing has changed in the terminal dimensions and not an intial
+        // draw then don't blow away scroll regions and such.
+        if (newColumns == columns && newRows == rows) return true
+        columns = newColumns
+        rows = newRows
+        refreshOverlayFontSize()
+        return false
+    }
+
+    fun redrawLocal() {
+        synchronized(localOutput) {
+            (vDUBuffer as vt320?)!!.reset()
+            for (line in localOutput) (vDUBuffer as vt320?)!!.putString(line)
         }
+    }
+
+    fun forceRedraw(parent: TerminalView) {
+        // force full redraw with new buffer size
+        fullRedraw = true
+        redraw()
+        parent.notifyUser(String.format("%d x %d", columns, rows))
+        Log.i(TAG, String.format("parentChanged() now width=%d, height=%d", columns, rows))
+    }
+
+    fun requestResize(width: Int, height: Int) {
         try {
             // request a terminal pty resize
             synchronized(vDUBuffer!!) { vDUBuffer!!.setScreenSize(columns, rows, true) }
@@ -539,20 +567,16 @@ class TerminalBridge : VDUDisplay {
         } catch (e: Exception) {
             Log.e(TAG, "Problem while trying to resize screen or PTY", e)
         }
+    }
 
-        // redraw local output if we don't have a sesson to receive our resize request
-        if (transport == null) {
-            synchronized(localOutput) {
-                (vDUBuffer as vt320?)!!.reset()
-                for (line in localOutput) (vDUBuffer as vt320?)!!.putString(line)
-            }
-        }
-
-        // force full redraw with new buffer size
-        fullRedraw = true
-        redraw()
-        parent.notifyUser(String.format("%d x %d", columns, rows))
-        Log.i(TAG, String.format("parentChanged() now width=%d, height=%d", columns, rows))
+    fun strokeBorder(width: Int, height: Int) {
+        // Stroke the border of the terminal if the size is being forced;
+        val borderX = columns * charWidth + 1
+        val borderY = rows * charHeight + 1
+        defaultPaint.color = Color.GRAY
+        defaultPaint.strokeWidth = 0.0f
+        if (width >= borderX) canvas.drawLine(borderX.toFloat(), 0f, borderX.toFloat(), borderY + 1.toFloat(), defaultPaint)
+        if (height >= borderY) canvas.drawLine(0f, borderY.toFloat(), borderX + 1.toFloat(), borderY.toFloat(), defaultPaint)
     }
 
     /**
@@ -577,98 +601,129 @@ class TerminalBridge : VDUDisplay {
     }
 
     fun onDraw() {
-        var fg: Int
-        var bg: Int
         synchronized(vDUBuffer!!) {
             val entireDirty = vDUBuffer!!.update[0] || fullRedraw
-            var isWideCharacter = false
-
-            // walk through all lines in the buffer
-            for (l in 0 until vDUBuffer!!.rows) {
-
-                // check if this line is dirty and needs to be repainted
-                // also check for entire-buffer dirty flags
-                if (!entireDirty && !vDUBuffer!!.update[l + 1]) continue
-
-                // reset dirty flag for this line
-                vDUBuffer!!.update[l + 1] = false
-
-                // walk through all characters in this line
-                var c = 0
-                while (c < vDUBuffer!!.columns) {
-                    var addr = 0
-                    val currAttr = vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c]
-                    run {
-                        var fgcolor = defaultFg
-                        var bgcolor = defaultBg
-
-                        // check if foreground color attribute is set
-                        if (currAttr and VDUBuffer.COLOR_FG != 0L) fgcolor = (currAttr and VDUBuffer.COLOR_FG shr VDUBuffer.COLOR_FG_SHIFT).toInt() - 1
-                        fg = if (fgcolor < 8 && currAttr and VDUBuffer.BOLD != 0L) color[fgcolor + 8] else if (fgcolor < 256) color[fgcolor] else -0x1000000 or fgcolor - 256
-
-                        // check if background color attribute is set
-                        if (currAttr and VDUBuffer.COLOR_BG != 0L) bgcolor = (currAttr and VDUBuffer.COLOR_BG shr VDUBuffer.COLOR_BG_SHIFT).toInt() - 1
-                        bg = if (bgcolor < 256) color[bgcolor] else -0x1000000 or bgcolor - 256
-                    }
-
-                    // support character inversion by swapping background and foreground color
-                    if (currAttr and VDUBuffer.INVERT != 0L) {
-                        val swapc = bg
-                        bg = fg
-                        fg = swapc
-                    }
-
-                    // set underlined attributes if requested
-                    defaultPaint.isUnderlineText = currAttr and VDUBuffer.UNDERLINE != 0L
-                    isWideCharacter = currAttr and VDUBuffer.FULLWIDTH != 0L
-                    if (isWideCharacter) addr++ else {
-                        // determine the amount of continuous characters with the same settings and print them all at once
-                        while (c + addr < vDUBuffer!!.columns
-                                && vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c + addr] == currAttr) {
-                            addr++
-                        }
-                    }
-
-                    // Save the current clip region
-                    canvas.save()
-
-                    // clear this dirty area with background color
-                    defaultPaint.color = bg
-                    if (isWideCharacter) {
-                        canvas.clipRect(c * charWidth,
-                                l * charHeight,
-                                (c + 2) * charWidth,
-                                (l + 1) * charHeight)
-                    } else {
-                        canvas.clipRect(c * charWidth,
-                                l * charHeight,
-                                (c + addr) * charWidth,
-                                (l + 1) * charHeight)
-                    }
-                    canvas.drawPaint(defaultPaint)
-
-                    // write the text string starting at 'c' for 'addr' number of characters
-                    defaultPaint.color = fg
-                    if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
-                        canvas.drawText(it, c,
-                                addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
-                                defaultPaint)
-                    }
-
-                    // Restore the previous clip region
-                    canvas.restore()
-
-                    // advance to the next text block with different characteristics
-                    c += addr - 1
-                    if (isWideCharacter) c++
-                    c++
-                }
-            }
-
+            walkThroughLines(entireDirty)
             // reset entire-buffer flags
             vDUBuffer!!.update[0] = false
         }
         fullRedraw = false
+    }
+
+    fun walkThroughLines(entireDirty: Boolean) {
+        // walk through all lines in the buffer
+        for (l in 0 until vDUBuffer!!.rows) {
+
+            // check if this line is dirty and needs to be repainted
+            // also check for entire-buffer dirty flags
+            if (!entireDirty && !vDUBuffer!!.update[l + 1]) continue
+
+            // reset dirty flag for this line
+            vDUBuffer!!.update[l + 1] = false
+
+           walkThroughLine(l)
+        }
+    }
+
+    fun walkThroughLine(l: Int) {
+        // walk through all characters in this line
+        var fg: Int; var bg: Int; var isWideCharacter: Boolean; var c = 0
+        while (c < vDUBuffer!!.columns) {
+            var addr = 0
+            val currAttr = vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c]
+            run {
+                var (newFg, newBg) = setColors(currAttr)
+                fg = newFg; bg = newBg
+            }
+
+            var (newBg, newFg) = checkAndSwap(currAttr, bg, fg)
+            bg = newBg; fg = newFg
+
+            var (newAddr, newIsWideCharacter) = setAttributes(c, addr, l, currAttr)
+            addr = newAddr; isWideCharacter = newIsWideCharacter
+            // Save the current clip region
+            canvas.save()
+
+            defaultPaint.color = bg
+            clearDirtyArea(c, l, addr, isWideCharacter)
+
+            defaultPaint.color = fg
+            writeText(c, l, addr, currAttr)
+
+            // Restore the previous clip region
+            canvas.restore()
+
+            // advance to the next text block with different characteristics
+            c += addr - 1
+            if (isWideCharacter) c++
+            c++
+        }
+    }
+
+    fun checkAndSwap(currAttr: Long, bg: Int, fg: Int) : Pair<Int, Int> {
+        var newBg = bg
+        var newFg = fg
+        // support character inversion by swapping background and foreground color
+        if (currAttr and VDUBuffer.INVERT != 0L) {
+            val swapc = bg
+            newBg = fg
+            newFg = swapc
+        }
+        return Pair(newBg, newFg)
+    }
+
+    fun setColors(currAttr: Long) : Pair<Int, Int> {
+        var fgcolor = defaultFg
+        var bgcolor = defaultBg
+
+        // check if foreground color attribute is set
+        if (currAttr and VDUBuffer.COLOR_FG != 0L) fgcolor = (currAttr and VDUBuffer.COLOR_FG shr VDUBuffer.COLOR_FG_SHIFT).toInt() - 1
+        val fg = if (fgcolor < 8 && currAttr and VDUBuffer.BOLD != 0L) color[fgcolor + 8] else if (fgcolor < 256) color[fgcolor] else -0x1000000 or fgcolor - 256
+
+        // check if background color attribute is set
+        if (currAttr and VDUBuffer.COLOR_BG != 0L) bgcolor = (currAttr and VDUBuffer.COLOR_BG shr VDUBuffer.COLOR_BG_SHIFT).toInt() - 1
+        val bg = if (bgcolor < 256) color[bgcolor] else -0x1000000 or bgcolor - 256
+        return Pair(fg, bg)
+    }
+
+    fun setAttributes(c: Int, addr: Int, l: Int, currAttr: Long) : Pair<Int, Boolean> {
+        // set underlined attributes if requested
+        var newAddr = addr
+        defaultPaint.isUnderlineText = currAttr and VDUBuffer.UNDERLINE != 0L
+        var isWideCharacter = currAttr and VDUBuffer.FULLWIDTH != 0L
+        if (isWideCharacter) newAddr++ else {
+            // determine the amount of continuous characters with the same settings and print them all at once
+            while (c + newAddr < vDUBuffer!!.columns
+                    && vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c + newAddr] == currAttr) {
+                newAddr++
+            }
+        }
+        return Pair(newAddr, isWideCharacter)
+    }
+
+    fun writeText(c: Int, l: Int, addr: Int, currAttr: Long) {
+        // write the text string starting at 'c' for 'addr' number of characters
+        if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
+            canvas.drawText(it, c,
+                    addr, c * charWidth.toFloat(), l * charHeight - charTop.toFloat(),
+                    defaultPaint)
+        }
+    }
+
+    fun clearDirtyArea(c: Int, l: Int, addr: Int, isWideCharacter: Boolean) {
+        // clear this dirty area with background color
+        if (isWideCharacter) {
+            canvas.clipRect(c * charWidth,
+                    l * charHeight,
+                    (c + 2) * charWidth,
+                    (l + 1) * charHeight)
+        } else {
+            canvas.clipRect(c * charWidth,
+                    l * charHeight,
+                    (c + addr) * charWidth,
+                    (l + 1) * charHeight)
+        }
+        canvas.drawPaint(defaultPaint)
     }
 
     override fun redraw() {

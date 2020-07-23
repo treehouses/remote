@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.Fragments.HomeFragment
+import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
+import java.security.KeyPair
 import java.util.*
 
 object SaveUtils {
@@ -14,17 +16,18 @@ object SaveUtils {
     private const val COMMANDS_TITLES_KEY = "commands_titles"
     private const val COMMANDS_VALUES_KEY = "commands_values"
     private const val NETWORK_PROFILES_KEY = "network_profile_keys"
+    private const val SSH_HOSTS = "ssh_hosts_values"
 
     enum class Screens {
         FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
     }
 
-    fun saveStringArray(context: Context, array: ArrayList<String>, arrayName: String) {
+    fun saveStringList(context: Context, list: MutableList<String>, arrayName: String) {
         var strArr = StringBuilder()
-        for (i in array.indices) {
-            strArr.append(array[i]).append(DELIMITER)
+        for (value in list) {
+            strArr.append(value).append(DELIMITER)
         }
-        if (strArr.length != 0) {
+        if (strArr.isNotEmpty()) {
             strArr = StringBuilder(strArr.substring(0, strArr.length - DELIMITER.length))
         }
         val e = PreferenceManager.getDefaultSharedPreferences(context).edit()
@@ -32,52 +35,52 @@ object SaveUtils {
         e.apply()
     }
 
-    fun getStringArray(context: Context, arrayName: String): ArrayList<String> {
-        val strArr: Array<String>
+    fun getStringList(context: Context, arrayName: String): MutableList<String> {
+        val strList: List<String>
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val str = prefs.getString(arrayName, null)
-        strArr = if (str == null || str == "") {
+        strList = if (str == null || str == "") {
             return ArrayList()
         } else {
-            str.split(DELIMITER.toRegex()).toTypedArray()
+            str.split(DELIMITER)
         }
-        return ArrayList(Arrays.asList(*strArr))
+        return strList.toMutableList()
     }
 
-    private fun addToArrayList(context: Context, arrayName: String, toAdd: String) {
-        val arrayList = getStringArray(context, arrayName)
+    fun addToArrayList(context: Context, arrayName: String, toAdd: String) {
+        val arrayList = getStringList(context, arrayName)
         arrayList.add(toAdd)
-        saveStringArray(context, arrayList, arrayName)
+        saveStringList(context, arrayList, arrayName)
     }
 
-    private fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
-        val arrayList = getStringArray(context, arrayName)
-        if (!arrayList.isEmpty()) {
+    fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
+        val arrayList = getStringList(context, arrayName)
+        if (arrayList.isNotEmpty() && arrayList.contains(toRemove)) {
             arrayList.remove(toRemove)
-            saveStringArray(context, arrayList, arrayName)
+            saveStringList(context, arrayList, arrayName)
         }
     }
 
-    private fun clearArrayList(context: Context, arrayName: String) {
-        saveStringArray(context, ArrayList(), arrayName)
+    fun clearArrayList(context: Context, arrayName: String) {
+        saveStringList(context, ArrayList(), arrayName)
     }
 
     //TERMINAL COMMAND LIST UTILS
     @JvmStatic
     fun initCommandsList(context: Context) {
-        if (getStringArray(context, COMMANDS_TITLES_KEY).isEmpty() || getStringArray(context, COMMANDS_VALUES_KEY).isEmpty()) {
+        if (getStringList(context, COMMANDS_TITLES_KEY).isEmpty() || getStringList(context, COMMANDS_VALUES_KEY).isEmpty()) {
             val titles = arrayOf("CHANGE PASSWORD", "HELP", "DOCKER PS", "DETECT RPI", "EXPAND FS",
                     "VNC ON", "VNC OFF", "VNC STATUS", "TOR", "NETWORK MODE INFO", "CLEAR")
             val commands = arrayOf("ACTION", "treehouses help", "docker ps", "treehouses detectrpi", "treehouses expandfs",
                     "treehouses vnc on", "treehouses vnc off", "treehouses vnc", "treehouses tor", "treehouses networkmode info", "ACTION")
-            saveStringArray(context, ArrayList(Arrays.asList(*titles)), COMMANDS_TITLES_KEY)
-            saveStringArray(context, ArrayList(Arrays.asList(*commands)), COMMANDS_VALUES_KEY)
+            saveStringList(context, ArrayList(Arrays.asList(*titles)), COMMANDS_TITLES_KEY)
+            saveStringList(context, ArrayList(Arrays.asList(*commands)), COMMANDS_VALUES_KEY)
         }
     }
 
     fun getCommandsList(context: Context): List<CommandListItem> {
-        val titles = getStringArray(context, COMMANDS_TITLES_KEY)
-        val values = getStringArray(context, COMMANDS_VALUES_KEY)
+        val titles = getStringList(context, COMMANDS_TITLES_KEY)
+        val values = getStringList(context, COMMANDS_VALUES_KEY)
         val finalArray: MutableList<CommandListItem> = ArrayList()
         if (titles.isEmpty() || values.isEmpty()) {
             return ArrayList()
@@ -111,20 +114,17 @@ object SaveUtils {
 
     fun getProfiles(context: Context): HashMap<String, MutableList<NetworkProfile>> {
         val gson = Gson()
-        val json_profiles = getStringArray(context, NETWORK_PROFILES_KEY)
+        val json_profiles = getStringList(context, NETWORK_PROFILES_KEY)
         val wifi = ArrayList<NetworkProfile>()
         val hotspot = ArrayList<NetworkProfile>()
         val bridge = ArrayList<NetworkProfile>()
         for (i in json_profiles.indices) {
             val profile = gson.fromJson(json_profiles[i], NetworkProfile::class.java)
-            if (profile.isWifi) {
-                wifi.add(profile)
-            } else if (profile.isHotspot) {
-                hotspot.add(profile)
-            } else if (profile.isBridge) {
-                bridge.add(profile)
-            } else {
-                Log.e("SAVE UTILS", "Not a supported type")
+            when {
+                profile.isWifi -> wifi.add(profile)
+                profile.isHotspot -> hotspot.add(profile)
+                profile.isBridge -> bridge.add(profile)
+                else -> Log.e("SAVE UTILS", "Not a supported type")
             }
         }
         val profiles = HashMap<String, MutableList<NetworkProfile>>()
@@ -155,5 +155,51 @@ object SaveUtils {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context).edit()
         prefs.putBoolean(which.name, firstTime)
         prefs.apply()
+    }
+
+    fun addHost(context: Context, hostBean: HostBean) {
+        Log.e("ADDING HOST", "${hostBean.uri}  ${Gson().toJson(hostBean)}")
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
+        editor.apply()
+        addToArrayList(context, SSH_HOSTS, hostBean.uri.toString())
+    }
+
+    fun updateHost(context: Context, oldUri: String, newHostBean: HostBean) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().remove(oldUri).apply()
+        removeFromArrayList(context, SSH_HOSTS, oldUri)
+        addHost(context, newHostBean)
+    }
+
+    fun getHost(context: Context, hostUri: String) : HostBean? {
+        val hostString = PreferenceManager.getDefaultSharedPreferences(context).getString(hostUri, "")
+        Log.e("GOT HOST STRING", hostString!!)
+        return try {
+            Gson().fromJson(hostString, HostBean::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun updateHostList (context: Context, hostBean: HostBean) {
+        val allHosts = getAllHosts(context).toMutableList()
+        if (allHosts.contains(hostBean)) {
+            allHosts.remove(hostBean)
+            allHosts.add(hostBean)
+            saveStringList(context, allHosts.map { it.uri.toString() }.toMutableList(), SSH_HOSTS)
+        } else {
+            addHost(context, hostBean)
+        }
+    }
+
+    fun getAllHosts(context: Context) : List<HostBean> {
+        return getStringList(context, SSH_HOSTS).mapNotNull { getHost(context, it) }
+    }
+    
+    fun deleteAllHosts(context: Context) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        getAllHosts(context).forEach { editor.remove(it.uri.toString()) }
+        editor.apply()
+        clearArrayList(context, SSH_HOSTS)
     }
 }

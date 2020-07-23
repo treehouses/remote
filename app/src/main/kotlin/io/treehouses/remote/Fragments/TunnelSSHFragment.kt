@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
+import bolts.Task.delay
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -121,9 +122,9 @@ class TunnelSSHFragment : BaseFragment() {
 
         return bind!!.root
     }
+
     override fun setUserVisibleHint(visible: Boolean) {
         if(visible) {
-
             mChatService = listener.getChatService()
             mChatService!!.updateHandler(mHandler)
 
@@ -137,8 +138,7 @@ class TunnelSSHFragment : BaseFragment() {
             Log.i("Tag", "Reload fragment")
         }
     }
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
+    override fun getMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
@@ -190,11 +190,17 @@ class TunnelSSHFragment : BaseFragment() {
                     Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                     bind!!.notifyNow.isEnabled = true
                 }
+                else if(readMessage.contains("Error: only 'list'")){
+                    listener.sendMessage("treehouses sshtunnel ports")
+                    Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show()
+                }
                 else if(readMessage.contains("Error")){
                     Toast.makeText(requireContext(), "Please add a host if you have no host", Toast.LENGTH_SHORT).show()
+
                 }
 
             }
-        }
+
     }
 }
+

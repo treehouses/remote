@@ -52,15 +52,11 @@ class RPIDialogFragment : BaseDialogFragment() {
         instance = this
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothCheck()
-        if (mBluetoothAdapter!!.isDiscovering) {
-            mBluetoothAdapter!!.cancelDiscovery()
-        }
+        if (mBluetoothAdapter!!.isDiscovering) mBluetoothAdapter!!.cancelDiscovery()
         mBluetoothAdapter!!.startDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-        if (mChatService == null) {
-            mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
-        }
+        if (mChatService == null) mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
@@ -70,6 +66,7 @@ class RPIDialogFragment : BaseDialogFragment() {
             }
         }
         intentFilter()
+        mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return mDialog!!
     }
 
@@ -111,6 +108,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     Device Name: ${mainDevice!!.name}
     Device Address: ${mainDevice!!.address}
     """.trimIndent())
+                pDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
                 pDialog!!.show()
             } else {
                 Toast.makeText(context, "Device Unsupported", Toast.LENGTH_LONG).show()
@@ -138,6 +136,7 @@ class RPIDialogFragment : BaseDialogFragment() {
 
     private fun finish(status: Int, mView: View) {
         val mDialog = getAlertDialog(mView)
+        mDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         if (status == 3) mDialog.setTitle("BLUETOOTH IS CONNECTED") else if (status == 2) mDialog.setTitle("BLUETOOTH IS CONNECTING...") else mDialog.setTitle("BLUETOOTH IS NOT CONNECTED")
         setAdapterNotNull(ArrayList())
     }
@@ -145,7 +144,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         try {
-            if (mBluetoothAdapter == null) requireContext().unregisterReceiver(mReceiver)
+            requireContext().unregisterReceiver(mReceiver)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -159,10 +158,18 @@ class RPIDialogFragment : BaseDialogFragment() {
         if (mBluetoothAdapter == null) {
             Toast.makeText(activity, "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show()
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent)
-            mContext!!.unregisterReceiver(mReceiver)
+            try {
+                mContext!!.unregisterReceiver(mReceiver)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
         if (args.isNotEmpty() && args[0] == "unregister") {
-            mContext!!.unregisterReceiver(mReceiver)
+            try {
+                mContext!!.unregisterReceiver(mReceiver)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             val intent = Intent()
             intent.putExtra("mChatService", mChatService)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
