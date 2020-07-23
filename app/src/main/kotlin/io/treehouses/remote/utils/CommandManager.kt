@@ -19,6 +19,7 @@ enum class RESULTS {
     DEFAULT_NETWORK,
     NETWORKMODE,
     START_JSON,
+    END_JSON,
     END_JSON_SERVICES,
     END_JSON_COMMANDS,
     PING_OUTPUT,
@@ -43,7 +44,7 @@ fun match (output: String) : RESULTS {
         Matcher.isEndAllServicesJson(output) -> return RESULTS.END_JSON_SERVICES
         Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
-
+        Matcher.isEndJSON(output) -> return RESULTS.END_JSON
     }
     return RESULTS.RESULT_NOT_FOUND
 }
@@ -74,7 +75,6 @@ object Matcher {
                 && !output.contains("network") && !output.contains("pirateship") && !output.contains("bridge")
     }
 
-
     fun isUpgradeCheck(output: String): Boolean {
         val regexTrue = """(true|false) \d{1,2}[.]\d{1,2}[.]\d{1,2}""".toRegex()
         return regexTrue.matches(toLC(output))
@@ -97,13 +97,14 @@ object Matcher {
 
     fun isStartJSON(output: String): Boolean { return toLC(output).startsWith("{") }
 
-    fun isEndCommandsJson(output: String): Boolean { return toLC(output).endsWith("]}") }
+    fun isEndJSON(output: String): Boolean { return toLC(output).trim().endsWith("}")}
 
+    fun isEndHelpJson(output: String): Boolean { return toLC(output).trim().endsWith("\" }")}
+
+    fun isEndCommandsJson(output: String): Boolean { return toLC(output).endsWith("]}") }
 
     fun isPingOutput(output: String): Boolean {return toLC(output).contains("google.com") || toLC(output).contains("remote")}
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
-
-    fun isEndHelpJson(output: String): Boolean { return toLC(output).trim().endsWith("\" }")}
 
 }

@@ -1,11 +1,9 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.TextUtils
@@ -304,28 +302,25 @@ class TerminalFragment : BaseTerminalFragment() {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
-                Constants.MESSAGE_WRITE -> {
-                    isRead = false
-                    addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    match(readMessage)
-                    isRead = true
-                    if (readMessage.contains("unknown")) jsonSend(false)
-                    if (jsonSent) handleJson(readMessage)
-                    else {
-                        filterMessages(readMessage, mConversationArrayAdapter, terminalList)
-                    }
-                }
-                Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
-                Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
+            Constants.MESSAGE_WRITE -> {
+                isRead = false
+                addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
             }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                val s = match(readMessage)
+                isRead = true
+                if (readMessage.contains("unknown")) jsonSend(false)
+                if (jsonSent) handleJson(readMessage)
+                else {
+                    filterMessages(readMessage, mConversationArrayAdapter, terminalList)
+                }
+            }
+            Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
+            Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
         }
     }
 

@@ -174,17 +174,14 @@ class SystemFragment : BaseFragment() {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            if (msg.what == Constants.MESSAGE_READ) {
-                val readMessage = msg.obj.toString().trim { it <= ' ' }
-                val diff = ArrayList<Long>()
-                readMessageConditions(readMessage)
-                Log.d("TAG", "readMessage = $readMessage")
-                vncToast(readMessage)
-                checkAndPrefilIp(readMessage, diff)
-            }
+    override fun getMessage(msg: Message) {
+        if (msg.what == Constants.MESSAGE_READ) {
+            val readMessage = msg.obj.toString().trim { it <= ' ' }
+            val diff = ArrayList<Long>()
+            readMessageConditions(readMessage)
+            Log.d("TAG", "readMessage = $readMessage")
+            vncToast(readMessage)
+            checkAndPrefilIp(readMessage, diff)
         }
     }
 

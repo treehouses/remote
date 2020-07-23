@@ -8,6 +8,7 @@ import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
+import java.security.KeyPair
 import java.util.*
 
 object SaveUtils {
@@ -46,21 +47,21 @@ object SaveUtils {
         return strList.toMutableList()
     }
 
-    private fun addToArrayList(context: Context, arrayName: String, toAdd: String) {
+    fun addToArrayList(context: Context, arrayName: String, toAdd: String) {
         val arrayList = getStringList(context, arrayName)
         arrayList.add(toAdd)
         saveStringList(context, arrayList, arrayName)
     }
 
-    private fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
+    fun removeFromArrayList(context: Context, arrayName: String, toRemove: String) {
         val arrayList = getStringList(context, arrayName)
-        if (arrayList.isNotEmpty()) {
+        if (arrayList.isNotEmpty() && arrayList.contains(toRemove)) {
             arrayList.remove(toRemove)
             saveStringList(context, arrayList, arrayName)
         }
     }
 
-    private fun clearArrayList(context: Context, arrayName: String) {
+    fun clearArrayList(context: Context, arrayName: String) {
         saveStringList(context, ArrayList(), arrayName)
     }
 
@@ -157,14 +158,22 @@ object SaveUtils {
     }
 
     fun addHost(context: Context, hostBean: HostBean) {
+        Log.e("ADDING HOST", "${hostBean.uri}  ${Gson().toJson(hostBean)}")
         val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
         editor.apply()
         addToArrayList(context, SSH_HOSTS, hostBean.uri.toString())
     }
 
+    fun updateHost(context: Context, oldUri: String, newHostBean: HostBean) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().remove(oldUri).apply()
+        removeFromArrayList(context, SSH_HOSTS, oldUri)
+        addHost(context, newHostBean)
+    }
+
     fun getHost(context: Context, hostUri: String) : HostBean? {
         val hostString = PreferenceManager.getDefaultSharedPreferences(context).getString(hostUri, "")
+        Log.e("GOT HOST STRING", hostString!!)
         return try {
             Gson().fromJson(hostString, HostBean::class.java)
         } catch (e: Exception) {
