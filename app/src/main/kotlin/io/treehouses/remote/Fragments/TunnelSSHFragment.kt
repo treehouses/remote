@@ -63,6 +63,7 @@ class TunnelSSHFragment : BaseFragment() {
         val inputExternalHost: TextInputEditText = dialogHosts.findViewById(R.id.ExternalTextInput)
         val inputInternalHost: TextInputEditText = dialogHosts.findViewById(R.id.InternalTextInput)
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
+        val addingHostButton = dialogHosts.findViewById<Button>(R.id.btn_adding_host)
 
         dropdown = dialog.findViewById(R.id.hosts)
         addPortButton = bind!!.btnAddPort
@@ -83,16 +84,37 @@ class TunnelSSHFragment : BaseFragment() {
         addPortButton!!.setOnClickListener { dialog.show() }
         addHostButton!!.setOnClickListener { dialogHosts.show() }
         addingPortButton.setOnClickListener {
-            if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
-                val s1 = inputInternal.text.toString()
-                val s2 = inputExternal.text.toString()
-                val parts = dropdown?.selectedItem.toString().split(":")
-                Log.d("dasdas", parts[0])
-//                listener.sendMessage("treehouses tor add $s2 $s1")
+                if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
+                    val s1 = inputInternal.text.toString()
+                    val s2 = inputExternal.text.toString()
+                    val parts = dropdown?.selectedItem.toString().split(":")[0]
+
+                    listener.sendMessage("treehouses sshtunnel add port actual $s2 $s1 $parts")
+                    addPortButton!!.text = "Adding......"
+                    addPortButton!!.isEnabled = false
+
 //                addPortButton!!.text = "Adding port, please wait for a while ............"
 //                portList!!.isEnabled = false
 //                addPortButton!!.isEnabled = false
-//                dialog.dismiss()
+                    dialog.dismiss()
+//                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+                }
+
+        }
+        addingHostButton.setOnClickListener {
+            if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
+                val s1 = inputInternalHost.text.toString()
+                val s2 = inputExternalHost.text.toString()
+
+
+                listener.sendMessage("treehouses sshtunnel add host $s1 $s2")
+                addHostButton!!.text = "Adding......"
+                addHostButton!!.isEnabled = false
+
+//                addPortButton!!.text = "Adding port, please wait for a while ............"
+//                portList!!.isEnabled = false
+//                addPortButton!!.isEnabled = false
+                dialogHosts.dismiss()
 //                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
@@ -120,7 +142,20 @@ class TunnelSSHFragment : BaseFragment() {
             if (msg.what == Constants.MESSAGE_READ) {
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
-                if (readMessage.contains("ole@")) {
+                if(readMessage.contains("ssh-rsa") || readMessage.contains("Added")){
+                    Toast.makeText(requireContext(), "Added. Retrieving port list.", Toast.LENGTH_SHORT).show()
+                    addPortButton?.text = "Retrieving"
+                    addHostButton?.text = "Retrieving"
+                    portsName = ArrayList()
+                    hostsName = ArrayList()
+                    listener.sendMessage("treehouses sshtunnel ports")
+                }
+                else if (readMessage.contains("ole@")) {
+
+                    addPortButton?.text = "Add Port"
+                    addHostButton?.text = "Add Host"
+                    addPortButton!!.isEnabled = true
+                    addHostButton?.isEnabled = true
                     val hosts = readMessage.split('\n')
                     for (host in hosts) {
                         val ports = host.split(' ')
@@ -155,8 +190,9 @@ class TunnelSSHFragment : BaseFragment() {
                     Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                     bind!!.notifyNow.isEnabled = true
                 }
-
-
+                else if(readMessage.contains("Error")){
+                    Toast.makeText(requireContext(), "Please add a host if you have no host", Toast.LENGTH_SHORT).show()
+                }
 
             }
         }

@@ -43,6 +43,13 @@ class TorTabFragment : BaseFragment() {
     var bind: ActivityTorFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        mChatService = listener.getChatService()
+        mChatService!!.updateHandler(mHandler)
+
+
+
+        listener.sendMessage("treehouses tor ports")
+
 
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
