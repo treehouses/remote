@@ -67,15 +67,7 @@ object Encryptor {
         /* compute key and initialization vector */
         val shaDigest = MessageDigest.getInstance(DIGEST_ALGORITHM)
         var pw = password.toByteArray(charset(CHARSET_NAME))
-        for (i in 0 until iterations) {
-            /* add salt */
-            val salted = addSalt(pw, salt)
-            Arrays.fill(pw, 0x00.toByte())
-
-            /* compute SHA-256 digest */shaDigest.reset()
-            pw = shaDigest.digest(salted)
-            Arrays.fill(salted, 0x00.toByte())
-        }
+        pw = computePw(iterations, pw, salt, shaDigest)
 
         /* extract the 16-byte key and initialization vector from the SHA-256 digest */
         val key = ByteArray(16)
@@ -127,15 +119,7 @@ object Encryptor {
         /* compute key and initialization vector */
         val shaDigest = MessageDigest.getInstance(DIGEST_ALGORITHM)
         var pw = password.toByteArray(charset(CHARSET_NAME))
-        for (i in 0 until iterations) {
-            /* add salt */
-            val salted = addSalt(pw, salt)
-            Arrays.fill(pw, 0x00.toByte())
-
-            /* compute SHA-256 digest */shaDigest.reset()
-            pw = shaDigest.digest(salted)
-            Arrays.fill(salted, 0x00.toByte())
-        }
+        pw = computePw(iterations, pw, salt, shaDigest)
 
         /* extract the 16-byte key and initialization vector from the SHA-256 digest */
         val key = ByteArray(16)
@@ -153,6 +137,20 @@ object Encryptor {
         Arrays.fill(key, 0x00.toByte())
         Arrays.fill(iv, 0x00.toByte())
         return cipher.doFinal(ciphertext)
+    }
+
+    private fun computePw(iterations: Int, pw: ByteArray, salt: ByteArray, shaDigest: MessageDigest) : ByteArray {
+        var newPw = pw
+        for (i in 0 until iterations) {
+            /* add salt */
+            val salted = addSalt(newPw, salt)
+            Arrays.fill(pw, 0x00.toByte())
+
+            /* compute SHA-256 digest */shaDigest.reset()
+            newPw = shaDigest.digest(salted)
+            Arrays.fill(salted, 0x00.toByte())
+        }
+        return newPw
     }
 
     private fun addSalt(pw: ByteArray, salt: ByteArray) : ByteArray {
