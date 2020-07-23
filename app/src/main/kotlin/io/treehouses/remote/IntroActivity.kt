@@ -52,10 +52,10 @@ class IntroActivity : AppCompatActivity() {
             }
         }
     }
-    inner class IntroSlideWelcome(val listener: IntroPagerListener) : Fragment() {
+    class IntroSlideWelcome(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenWelcomeBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            return createView(inflater, container, "welcome")
+            return IntroScreenWelcomeBinding.inflate(inflater, container, false).root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,10 +64,10 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    inner class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
+    class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenDownloadBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            return createView(inflater, container, "download")
+            return IntroScreenDownloadBinding.inflate(inflater, container, false).root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,10 +80,10 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    inner class IntroSlideBluetooth(val listener: IntroPagerListener) : Fragment() {
+    class IntroSlideBluetooth(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bind: IntroScreenBluetoothBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            return createView(inflater, container, "bluetooth")
+            return IntroScreenBluetoothBinding.inflate(inflater, container, false).root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,11 +92,4 @@ class IntroActivity : AppCompatActivity() {
         }
     }
 
-    fun createView(inflater: LayoutInflater, container: ViewGroup?, type: String) : View {
-        when(type) {
-            "bluetooth" -> return IntroScreenBluetoothBinding.inflate(inflater, container, false).root
-            "download" -> return IntroScreenBluetoothBinding.inflate(inflater, container, false).root
-            else -> return IntroScreenWelcomeBinding.inflate(inflater, container, false).root
-        }
-    }
 }
