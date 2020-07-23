@@ -68,10 +68,7 @@ object Encryptor {
         val shaDigest = MessageDigest.getInstance(DIGEST_ALGORITHM)
         var pw = password.toByteArray(charset(CHARSET_NAME))
         for (i in 0 until iterations) {
-            /* add salt */
-            val salted = ByteArray(pw.size + salt.size)
-            System.arraycopy(pw, 0, salted, 0, pw.size)
-            System.arraycopy(salt, 0, salted, pw.size, salt.size)
+            val salted = getSalted(pw, salt)
             Arrays.fill(pw, 0x00.toByte())
 
             /* compute SHA-256 digest */shaDigest.reset()
@@ -130,10 +127,7 @@ object Encryptor {
         val shaDigest = MessageDigest.getInstance(DIGEST_ALGORITHM)
         var pw = password.toByteArray(charset(CHARSET_NAME))
         for (i in 0 until iterations) {
-            /* add salt */
-            val salted = ByteArray(pw.size + salt.size)
-            System.arraycopy(pw, 0, salted, 0, pw.size)
-            System.arraycopy(salt, 0, salted, pw.size, salt.size)
+            val salted = getSalted(pw, salt)
             Arrays.fill(pw, 0x00.toByte())
 
             /* compute SHA-256 digest */shaDigest.reset()
@@ -157,5 +151,13 @@ object Encryptor {
         Arrays.fill(key, 0x00.toByte())
         Arrays.fill(iv, 0x00.toByte())
         return cipher.doFinal(ciphertext)
+    }
+
+    fun getSalted(password : ByteArray, salt : ByteArray) : ByteArray {
+        val salted = ByteArray(password.size + salt.size)
+        System.arraycopy(password, 0, salted, 0, password.size)
+        System.arraycopy(salt, 0, salted, password.size, salt.size)
+
+        return salted
     }
 }
