@@ -400,6 +400,21 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
+    private fun displayAlgorithms() {
+        val connectionInfo = connection!!.connect(HostKeyVerifier())
+        isConnected = true
+        bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_kex_algorithm,
+                connectionInfo.keyExchangeAlgorithm))
+        if ((connectionInfo.clientToServerCryptoAlgorithm
+                        == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
+                        == connectionInfo.serverToClientMACAlgorithm)) {
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
+        } else {
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
+        }
+    }
+
     fun connect() {
         connection = Connection(host!!.hostname, host!!.port)
         connection!!.addConnectionMonitor(this)
@@ -420,18 +435,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 			Logger.enabled = true;
 			Logger.logger = logger;
 			*/
-            val connectionInfo = connection!!.connect(HostKeyVerifier())
-            isConnected = true
-            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_kex_algorithm,
-                    connectionInfo.keyExchangeAlgorithm))
-            if ((connectionInfo.clientToServerCryptoAlgorithm
-                            == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
-                            == connectionInfo.serverToClientMACAlgorithm)) {
-                outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
-            } else {
-                outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
-                outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
-            }
+            displayAlgorithms()
         } catch (e: IOException) {
             Log.e(TAG, "Problem in SSH connection thread during authentication", e)
 
@@ -445,6 +449,10 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             onDisconnect()
             return
         }
+        tryAuthentication()
+    }
+
+    private fun tryAuthentication() {
         try {
             // enter a loop to keep trying until authentication
             var tries = 0
