@@ -65,7 +65,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
         for (i in countriesCode.indices) {
             countriesName[i] = getCountryName(countriesCode[i])
         }
-        val adapter = ArrayAdapter(context, android.R.layout.select_dialog_item, countriesName)
+        val adapter = ArrayAdapter(context, R.layout.select_dialog_item_countries, countriesName)
         c = context
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)

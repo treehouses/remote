@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
@@ -22,13 +24,18 @@ class SSHKeyGen : FullScreenDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = KeysDialogBinding.inflate(inflater, container, false)
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return bind.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind.cancelButton.setOnClickListener { dismiss() }
-
+        bind.keyTypeSpinner.adapter = ArrayAdapter<String>(
+                requireContext(),
+                R.layout.key_type_spinner_item,
+                R.id.itemTitle,
+                resources.getStringArray(R.array.key_types))
         bind.generateKey.setOnClickListener {
             generateKey(name = bind.keyNameInput.text.toString(), algorithm = bind.keyTypeSpinner.selectedItem.toString(), password = bind.passwordInput.text.toString())
         }
@@ -37,7 +44,7 @@ class SSHKeyGen : FullScreenDialogFragment() {
     private fun generateKey(name: String, algorithm: String, password: String) {
         val keyPair = generateKeyPair(algorithm)
         val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
-        if (!password.isEmpty()) key.isEncrypted = true
+        if (password.isNotEmpty()) key.isEncrypted = true
         Log.e("PUBLIC ENCODED: ", keyPair.public.encoded.toString())
         Log.e("PUBLIC ENCODED: ", keyPair.private.encoded.toString())
         KeyUtils.saveKey(requireContext(), key)

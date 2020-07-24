@@ -1,8 +1,12 @@
 package io.treehouses.remote.Fragments
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,7 +20,9 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
 import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
+import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
+import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
 import io.treehouses.remote.SSHConsole
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
@@ -25,14 +31,31 @@ import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
+import java.lang.Exception
 import java.util.regex.Pattern
 
 
-class SSHConfig : BaseFragment(), RVButtonClick {
+class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     private val sshPattern = Pattern.compile("^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
     private lateinit var bind: DialogSshBinding
     private lateinit var pastHosts: List<HostBean>
     private lateinit var adapter : RecyclerView.Adapter<ViewHolderSSHRow>
+    private var bound : TerminalManager? = null
+    private val connection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            bound = (service as TerminalManager.TerminalBinder).service
+            // update our listview binder to find the service
+            setUpAdapter()
+            bound?.registerOnHostStatusChangedListener(this@SSHConfig)
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            bound?.unregisterOnHostStatusChangedListener(this@SSHConfig)
+            bound = null
+            setUpAdapter()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogSshBinding.inflate(inflater, container, false)
         if (listener.getChatService().state == Constants.STATE_CONNECTED) {
@@ -51,16 +74,12 @@ class SSHConfig : BaseFragment(), RVButtonClick {
             if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
             val host = HostBean()
             host.setHostFromUri(Uri.parse(uriString))
-            saveHostIfNeeded(host)
+            SaveUtils.updateHostList(requireContext(), host)
             Log.e("HOST URI", host.uri.toString())
             launchSSH(requireActivity(), host)
         }
-        pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
-        if (pastHosts.isEmpty()) {
-            bind.noHosts.visibility = View.VISIBLE
-            bind.pastHosts.visibility = View.GONE
-        }
-        else setUpAdapter()
+
+        setUpAdapter()
 
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
 
@@ -68,6 +87,11 @@ class SSHConfig : BaseFragment(), RVButtonClick {
     }
 
     private fun setUpAdapter() {
+        pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
+        if (pastHosts.isEmpty()) {
+            bind.noHosts.visibility = View.VISIBLE
+            bind.pastHosts.visibility = View.GONE
+        }
         adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHRow {
                 val holderBinding = RowSshBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -76,18 +100,23 @@ class SSHConfig : BaseFragment(), RVButtonClick {
 
             override fun getItemCount(): Int { return pastHosts.size }
 
-            override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) { holder.bind(pastHosts[position]) }
+            override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) {
+                val host = pastHosts[position]
+                holder.bind(host)
+                if (bound?.getConnectedBridge(host) != null) holder.setConnected(true) else holder.setConnected(false)
+            }
         }
         bind.pastHosts.adapter = adapter
 
+        addItemTouchListener()
+    }
+    private fun addItemTouchListener() {
         val listener = RecyclerViewClickListener(requireContext(), bind.pastHosts, object : RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
                 val clicked = pastHosts[position]
                 bind.sshTextInput.setText(clicked.getPrettyFormat())
             }
-
             override fun onLongClick(view: View?, position: Int) {}
-
         })
         bind.pastHosts.addOnItemTouchListener(listener)
     }
@@ -107,9 +136,6 @@ class SSHConfig : BaseFragment(), RVButtonClick {
             }
 
         })
-    }
-    private fun saveHostIfNeeded(host: HostBean) {
-        SaveUtils.updateHostList(requireContext(), host)
     }
 
     fun setEnabled(bool: Boolean) {
@@ -134,10 +160,14 @@ class SSHConfig : BaseFragment(), RVButtonClick {
         Log.e("GOT IP", ipAddress)
     }
 
-    override fun onResume() {
-        super.onResume()
-        pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
-        setUpAdapter()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.bindService(Intent(context, TerminalManager::class.java), connection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {activity?.unbindService(connection)} catch (e: Exception) {Log.e("SSHConfig", e.message, e)}
     }
 
     override fun getMessage(msg: Message) {
@@ -153,5 +183,9 @@ class SSHConfig : BaseFragment(), RVButtonClick {
         val edit = EditHostDialog()
         edit.arguments = Bundle().apply { putString(EditHostDialog.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
         edit.show(childFragmentManager, "EditHost")
+    }
+
+    override fun onHostStatusChanged() {
+        if (context != null) setUpAdapter()
     }
 }

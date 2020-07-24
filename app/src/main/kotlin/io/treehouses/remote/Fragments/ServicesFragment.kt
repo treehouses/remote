@@ -27,6 +27,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     var worked = false
+    private var currentTab:Int =  0
     private lateinit var array: MutableList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -38,6 +39,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         bind!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         bind!!.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                currentTab = tab.position
                 replaceFragment(tab.position)
             }
 
@@ -62,7 +64,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             }
         }
         writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
-        worked = false
     }
 
     private fun showUI(){
@@ -73,7 +74,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         servicesTabFragment?.arguments = bundle
         servicesDetailsFragment?.arguments = bundle
         bind!!.progressBar2.visibility = View.GONE
-        replaceFragment(0)
+        replaceFragment(currentTab)
     }
 
 
@@ -83,6 +84,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             1 -> {
                 array.add(output)
                 SaveUtils.saveStringList(requireContext(), array, "servicesArray")
+                worked = false
                 showUI()
             }
             0 -> {
@@ -144,7 +146,9 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             }
             1 -> {
                 fragment = servicesDetailsFragment
-                mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
+                if(!worked) {
+                    mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
+                }
             }
             else -> {
             }
@@ -161,7 +165,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     override fun onClick(s: ServiceInfo?) {
         servicesDetailsFragment!!.setSelected(s!!)
         Objects.requireNonNull(bind!!.tabLayout.getTabAt(1))!!.select()
-        replaceFragment(1)
+        currentTab = 1
+        replaceFragment(currentTab)
     }
 
 

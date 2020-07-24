@@ -1,5 +1,6 @@
 package io.treehouses.remote.adapter
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.callback.RVButtonClick
@@ -11,5 +12,9 @@ class ViewHolderSSHRow(private val binding: RowSshBinding, private val listener:
         binding.editButton.setOnClickListener {
             listener.onButtonClick(adapterPosition)
         }
+    }
+
+    fun setConnected(isConnected: Boolean) {
+        binding.status.visibility = if(isConnected) View.VISIBLE else View.INVISIBLE
     }
 }

@@ -499,7 +499,7 @@ class TerminalBridge : VDUDisplay {
         if (width <= 0 || height <= 0) return
         val clipboard = parent.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         keyHandler.setClipboardManager(clipboard)
-        if (!forcedSize) checkDimensions(width, height)
+        if (!forcedSize && checkDimensions(width, height)) return
 
         checkBitMap(width, height)
 
@@ -528,7 +528,7 @@ class TerminalBridge : VDUDisplay {
         }
     }
 
-    fun checkDimensions(width: Int, height: Int) {
+    fun checkDimensions(width: Int, height: Int) : Boolean {
         // recalculate buffer size
         val newColumns: Int
         val newRows: Int
@@ -537,10 +537,11 @@ class TerminalBridge : VDUDisplay {
 
         // If nothing has changed in the terminal dimensions and not an intial
         // draw then don't blow away scroll regions and such.
-        if (newColumns == columns && newRows == rows) return
+        if (newColumns == columns && newRows == rows) return true
         columns = newColumns
         rows = newRows
         refreshOverlayFontSize()
+        return false
     }
 
     fun redrawLocal() {

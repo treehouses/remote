@@ -295,13 +295,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             }
             return true
         } catch (e: IOException) {
-            Log.e(TAG, "Problem while trying to handle an onKey() event", e)
-            try {
-                bridge.transport!!.flush()
-            } catch (ioe: IOException) {
-                Log.d(TAG, "Our transport was closed, dispatching disconnect event")
-                bridge.dispatchDisconnect(false)
-            }
+            handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
             Log.d(TAG, "Input before connection established ignored.")
             return true
@@ -324,13 +318,17 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         try {
             bridge.transport!!.write(0x09)
         } catch (e: IOException) {
-            Log.e(TAG, "Problem while trying to send TAB press.", e)
-            try {
-                bridge.transport!!.flush()
-            } catch (ioe: IOException) {
-                Log.d(TAG, "Our transport was closed, dispatching disconnect event")
-                bridge.dispatchDisconnect(false)
-            }
+            handleProblem(e, "Problem while trying to send TAB press.")
+        }
+    }
+
+    fun handleProblem(e: IOException, message: String) {
+        Log.e(TAG, message, e)
+        try {
+            bridge.transport!!.flush()
+        } catch (ioe: IOException) {
+            Log.d(TAG, "Our transport was closed, dispatching disconnect event")
+            bridge.dispatchDisconnect(false)
         }
     }
 
