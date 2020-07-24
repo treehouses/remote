@@ -160,7 +160,13 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             return when (hosts.verifyHostkey(matchName, serverHostKeyAlgorithm, serverHostKey)) {
                 KnownHosts.HOSTKEY_IS_OK -> onKeyOk(algorithmName, fingerprint)
                 KnownHosts.HOSTKEY_IS_NEW -> {
-                    onNewHostKey(hostname, algorithmName, fingerprint, serverHostKey)
+                    bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
+                    bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
+                    Log.e("HOST KEY", Arrays.toString(serverHostKey))
+                    //                    if (result) {
+//                        // save this key in known database
+//                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
+//                    }
                     promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
                 }
                 KnownHosts.HOSTKEY_HAS_CHANGED -> {
@@ -179,16 +185,6 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         private fun onKeyFailed(): Boolean {
             bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
             return false
-        }
-
-        private fun onNewHostKey(hostname: String, algorithmName: String, fingerprint: String, serverHostKey: ByteArray) {
-            bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
-            bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
-            Log.e("HOST KEY", Arrays.toString(serverHostKey))
-            //                    if (result) {
-//                        // save this key in known database
-//                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
-//                    }
         }
 
         private fun onHostKeyChanged(algorithmName: String, fingerprint: String) {
