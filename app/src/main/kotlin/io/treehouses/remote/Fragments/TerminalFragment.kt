@@ -151,13 +151,7 @@ class TerminalFragment : BaseTerminalFragment() {
                     Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
                     requireActivity().title = "Home"
                 }
-                if(treehouses) {
-                    bind.editTextOut.setText("treehouses ")
-                    bind.editTextOut.setSelection(bind.editTextOut.text.length)
-                }
-                else {
-                    bind.editTextOut.setText("")
-                }
+                checkIfTreehouses()
             }
         }
         bind.btnPrevious.setOnClickListener {
@@ -181,13 +175,7 @@ class TerminalFragment : BaseTerminalFragment() {
 
        bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
            treehouses = isChecked
-           if(treehouses) {
-               bind.editTextOut.setText("treehouses ")
-               bind.editTextOut.setSelection(bind.editTextOut.text.length)
-           }
-           else {
-               bind.editTextOut.setText("")
-           }
+           checkIfTreehouses()
 
         }
 
@@ -204,6 +192,16 @@ class TerminalFragment : BaseTerminalFragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
+    }
+
+    private fun checkIfTreehouses() {
+        if(treehouses) {
+            bind.editTextOut.setText("treehouses ")
+            bind.editTextOut.setSelection(bind.editTextOut.text.length)
+        }
+        else {
+            bind.editTextOut.setText("")
+        }
     }
 
     private fun showHelpDialog(jsonString: String) {
