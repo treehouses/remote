@@ -39,6 +39,7 @@ import java.io.OutputStream
 import java.security.KeyPair
 import java.security.NoSuchAlgorithmException
 import java.security.PrivateKey
+import java.security.PublicKey
 import java.security.interfaces.*
 import java.security.spec.InvalidKeySpecException
 import java.util.*
@@ -324,8 +325,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             var password: String? = null
 
             if (pubkey.isEncrypted) {
-                password = bridge!!.promptHelper!!.requestStringPrompt(null,
-                        manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
+                password = bridge!!.promptHelper!!.requestStringPrompt(null, manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
 
                 // Something must have interrupted the prompt.
                 if (password == null) return false
@@ -335,22 +335,31 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             privKey = try {
                 PubKeyUtils.decodePrivate(pubkey.privateKey!!, pubkey.type, password)
             } catch (e: Exception) {
-                val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
-                Log.e(TAG, message, e)
-                bridge!!.outputLine(message)
-                return false
+                return onBadPassword(pubkey, e)
             }
             val pubKey = PubKeyUtils.decodePublic(pubkey.publicKey!!, pubkey.type)
 
-            // convert key to trilead format
-            pair = KeyPair(pubKey, privKey)
-            Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
-            Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
-
-            // save this key in memory
-            manager!!.addKey(pubkey, pair)
+            pair = convertAndSaveKey(pubKey, privKey, pubkey)
         }
         return tryPublicKey(host!!.username, pubkey.nickname, pair)
+    }
+
+    private fun onBadPassword(pubkey: PubKeyBean, e: Exception): Boolean {
+        val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
+        Log.e(TAG, message, e)
+        bridge!!.outputLine(message)
+        return false
+    }
+
+    private fun convertAndSaveKey(pubKey: PublicKey, privKey: PrivateKey, pubkey: PubKeyBean): KeyPair {
+        // convert key to trilead format
+        val pair = KeyPair(pubKey, privKey)
+        Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
+        Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
+
+        // save this key in memory
+        manager!!.addKey(pubkey, pair)
+        return pair
     }
 
     @Throws(IOException::class)
