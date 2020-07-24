@@ -218,7 +218,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
-    private fun authenticate() {
+    private fun tryNoneAuthentication() {
         try {
             if (connection!!.authenticateWithNone(host!!.username)) {
                 finishConnection()
@@ -227,6 +227,41 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         } catch (e: Exception) {
             Log.d(TAG, "Host does not support 'none' authentication.")
         }
+    }
+
+    private fun tryInMemKeys(pubkeyId: String) {
+        // try each of the in-memory keys
+        Log.e("HERE", "YAY: $pubkeyId")
+        outputLine(R.string.terminal_auth_pubkey_any)
+        for ((key, value) in manager!!.loadedKeypairs) {
+            if (value?.bean!!.isConfirmUse && !promptForPubkeyUse(key)) continue
+            if (this.tryPublicKey(host!!.username, key, value.pair)) {
+                finishConnection()
+                break
+            }
+        }
+    }
+
+    private fun promptForPw(pubkeyId: String) {
+        outputLine(R.string.terminal_auth_pubkey_specific)
+        // use a specific key for this host, as requested
+        val pubkey = KeyUtils.getKey(manager!!.applicationContext, pubkeyId)
+
+        if (pubkey == null) bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
+        else if (tryPublicKey(pubkey)) finishConnection()
+    }
+
+    private fun tryInteractiveAuth() {
+        // this auth method will talk with us using InteractiveCallback interface
+        // it blocks until authentication finishes
+        outputLine(R.string.terminal_auth_ki)
+        interactiveCanContinue = false
+        if (connection!!.authenticateWithKeyboardInteractive(host!!.username, this)) finishConnection()
+        else outputLine(R.string.terminal_auth_ki_fail)
+    }
+
+    private fun authenticate() {
+        tryNoneAuthentication()
         outputLine(R.string.terminal_auth)
         try {
             val pubkeyId = host!!.keyName
@@ -235,48 +270,17 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
                 // if explicit pubkey defined for this host, then prompt for password as needed
                 // otherwise just try all in-memory keys held in terminalmanager
-                if (pubkeyId.isEmpty() || pubkeyId == NO_KEY) {
-                    // try each of the in-memory keys
-                    Log.e("HERE", "YAY: $pubkeyId")
-                    outputLine(R.string.terminal_auth_pubkey_any)
-                    for ((key, value) in manager!!.loadedKeypairs) {
-                        if (value?.bean!!.isConfirmUse && !promptForPubkeyUse(key)) continue
-                        if (this.tryPublicKey(host!!.username, key, value.pair)) {
-                            finishConnection()
-                            break
-                        }
-                    }
-                } else {
-                    outputLine(R.string.terminal_auth_pubkey_specific)
-                    // use a specific key for this host, as requested
-                    val pubkey = KeyUtils.getKey(manager!!.applicationContext, pubkeyId)
-
-                    if (pubkey == null)
-                        bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
-                    else if (tryPublicKey(pubkey))
-                        finishConnection()
-                }
+                if (pubkeyId.isEmpty() || pubkeyId == NO_KEY) tryInMemKeys(pubkeyId)
+                else promptForPw(pubkeyId)
                 pubkeysExhausted = true
-            } else if (interactiveCanContinue &&
-                    connection!!.isAuthMethodAvailable(host!!.username, AUTH_KEYBOARDINTERACTIVE)) {
-                // this auth method will talk with us using InteractiveCallback interface
-                // it blocks until authentication finishes
-                outputLine(R.string.terminal_auth_ki)
-                interactiveCanContinue = false
-                if (connection!!.authenticateWithKeyboardInteractive(host!!.username, this)) finishConnection()
-                else outputLine(R.string.terminal_auth_ki_fail)
-
+            } else if (interactiveCanContinue && connection!!.isAuthMethodAvailable(host!!.username, AUTH_KEYBOARDINTERACTIVE)) {
+                tryInteractiveAuth()
             } else if (connection!!.isAuthMethodAvailable(host!!.username, AUTH_PASSWORD)) {
                 outputLine(R.string.terminal_auth_pass)
                 val password = bridge!!.promptHelper!!.requestStringPrompt(null, manager!!.res!!.getString(R.string.prompt_password))
-                if (password != null && connection!!.authenticateWithPassword(host!!.username, password)) {
-                    finishConnection()
-                } else {
-                    outputLine(R.string.terminal_auth_pass_fail)
-                }
-            } else {
-                outputLine(R.string.terminal_auth_pass_fail)
-            }
+                if (password != null && connection!!.authenticateWithPassword(host!!.username, password)) finishConnection()
+                else outputLine(R.string.terminal_auth_pass_fail)
+            } else outputLine(R.string.terminal_auth_pass_fail)
         } catch (e: IllegalStateException) {
             Log.e(TAG, "Connection went away while we were trying to authenticate", e)
             return
