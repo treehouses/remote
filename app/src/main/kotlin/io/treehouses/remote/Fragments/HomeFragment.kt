@@ -18,8 +18,12 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
+import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.BridgeBottomSheet
+import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.HotspotBottomSheet
+import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.WifiBottomSheet
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.adapter.ProfilesListAdapter
@@ -78,7 +82,16 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         val profileAdapter = ProfilesListAdapter(requireContext(), listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
-            if (groupPosition == 3) {
+            if (groupPosition == 0) {
+                showBottomSheet(WifiBottomSheet(), "wifi")
+            }
+            else if (groupPosition == 1) {
+                showBottomSheet(HotspotBottomSheet(), "hotspot")
+            }
+            else if (groupPosition == 2) {
+                showBottomSheet(BridgeBottomSheet(), "bridge")
+            }
+            else if (groupPosition == 3) {
                 listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 context.toast("Switched to Default Network", Toast.LENGTH_LONG)
             } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.isNotEmpty()) {
@@ -89,6 +102,11 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             }
             false
         }
+    }
+
+    private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
+        fragment.setTargetFragment(this@HomeFragment, Constants.NETWORK_BOTTOM_SHEET)
+        fragment.show(requireActivity().supportFragmentManager, tag)
     }
 
     private fun switchProfile(profile: NetworkProfile?) {

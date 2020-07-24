@@ -75,7 +75,7 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
             return convertView
         }
         if (isChildEmpty(groupPosition)) {
-            setLabelText(label, "Please configure in the Network screen", deleteProfile)
+            setLabelText(label, "Configure", deleteProfile)
             return convertView
         }
         label.text = data[titles[groupPosition]]!![childPosition].ssid
