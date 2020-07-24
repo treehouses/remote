@@ -254,12 +254,8 @@ object PubKeyUtils {
                 val data = String(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(pk)))
                 "${ECDSASHA2Verify.ECDSA_SHA2_PREFIX} $keyType $data $nickName"
             }
-            is EdDSAPublicKey -> {
-                "${Ed25519Verify.ED25519_ID} ${String(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(pk)))} $nickName"
-            }
-            else -> {
-                throw InvalidKeyException("Unknown Key Type")
-            }
+            is EdDSAPublicKey -> "${Ed25519Verify.ED25519_ID} ${String(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(pk)))} $nickName"
+            else -> throw InvalidKeyException("Unknown Key Type")
         }
     }
     /*
