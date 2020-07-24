@@ -189,9 +189,7 @@ class TerminalFragment : BaseTerminalFragment() {
         }
         bind.editTextOut.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (TextUtils.isEmpty(s.toString().trim())) {
-                    bind.treehousesBtn.isChecked= false
-                }
+                if (TextUtils.isEmpty(s.toString().trim())) bind.treehousesBtn.isChecked= false
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
