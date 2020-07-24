@@ -158,47 +158,58 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             val fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
             val algorithmName: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
             return when (hosts.verifyHostkey(matchName, serverHostKeyAlgorithm, serverHostKey)) {
-                KnownHosts.HOSTKEY_IS_OK -> {
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_sucess, algorithmName, fingerprint))
-                    true
-                }
+                KnownHosts.HOSTKEY_IS_OK -> onKeyOk(algorithmName, fingerprint)
                 KnownHosts.HOSTKEY_IS_NEW -> {
-                    // prompt user
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
-                    Log.e("HOST KEY", Arrays.toString(serverHostKey))
-                    //                    if (result) {
+                    onNewHostKey(hostname, algorithmName, fingerprint, serverHostKey)
+                    promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
+                }
+                KnownHosts.HOSTKEY_HAS_CHANGED -> {
+                    onHostKeyChanged(algorithmName, fingerprint)
+                    promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
+                }
+                else -> onKeyFailed()
+            }
+        }
+
+        private fun onKeyOk(algorithmName: String, fingerprint: String): Boolean {
+            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_sucess, algorithmName, fingerprint))
+            return true
+        }
+
+        private fun onKeyFailed(): Boolean {
+            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
+            return false
+        }
+
+        private fun onNewHostKey(hostname: String, algorithmName: String, fingerprint: String, serverHostKey: ByteArray) {
+            bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
+            bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
+            Log.e("HOST KEY", Arrays.toString(serverHostKey))
+            //                    if (result) {
 //                        // save this key in known database
 //                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
 //                    }
-                    if (continueConnecting()) {
-                        KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
-                        true
-                    } else false
-                }
-                KnownHosts.HOSTKEY_HAS_CHANGED -> {
-                    val header = String.format("@   %s   @",
-                            manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
-                    val atsigns = CharArray(header.length)
-                    Arrays.fill(atsigns, '@')
-                    val border = String(atsigns)
-                    bridge!!.outputLine(border)
-                    bridge!!.outputLine(header)
-                    bridge!!.outputLine(border)
-                    outputLine(R.string.host_verification_failure_warning)
-                    bridge!!.outputLine(String.format(manager!!.res!!.getString(R.string.host_fingerprint), algorithmName, fingerprint))
+        }
 
-                    // Users have no way to delete keys, so we'll prompt them for now.
-                    if (continueConnecting()) {
-                        KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
-                        true
-                    } else false
-                }
-                else -> {
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
-                    false
-                }
-            }
+        private fun onHostKeyChanged(algorithmName: String, fingerprint: String) {
+            val header = String.format("@   %s   @",
+                    manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
+            val atsigns = CharArray(header.length)
+            Arrays.fill(atsigns, '@')
+            val border = String(atsigns)
+            bridge!!.outputLine(border)
+            bridge!!.outputLine(header)
+            bridge!!.outputLine(border)
+            outputLine(R.string.host_verification_failure_warning)
+            bridge!!.outputLine(String.format(manager!!.res!!.getString(R.string.host_fingerprint), algorithmName, fingerprint))
+        }
+
+        private fun promptKeys(hostname: String, port: Int, serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
+            // Users have no way to delete keys, so we'll prompt them for now.
+            if (continueConnecting()) {
+                KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
+                return true
+            } else return false
         }
 
         private fun continueConnecting() : Boolean = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
