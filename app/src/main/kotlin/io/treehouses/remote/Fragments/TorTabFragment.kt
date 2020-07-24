@@ -71,11 +71,11 @@ class TorTabFragment : BaseFragment() {
 
             // add the buttons
             builder.setPositiveButton("Confirm") { dialog, _ ->
-                listener.sendMessage("treehouses tor delete " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
-                addPortButton!!.text = "deleting port ....."
-                portList!!.isEnabled = false
-                addPortButton!!.isEnabled = false
-                dialog.dismiss()
+                    listener.sendMessage("treehouses tor delete " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+                    addPortButton!!.text = "deleting port ....."
+                    portList!!.isEnabled = false
+                    addPortButton!!.isEnabled = false
+                    dialog.dismiss()
             }
             builder.setNegativeButton("Cancel", null)
 
@@ -94,17 +94,17 @@ class TorTabFragment : BaseFragment() {
         val matrix = ColorMatrix()
         matrix.setSaturation(0f)
         textStatus!!.text = "-"
-        val filter = ColorMatrixColorFilter(matrix)
-        logo!!.colorFilter = filter
-        /* start/stop tor button click */startButton!!.setOnClickListener {
-            if (startButton!!.text.toString() === "Stop Tor") {
-                startButton!!.text = "Stopping Tor"
-                startButton!!.isEnabled = false
-                listener.sendMessage("treehouses tor stop")
-            } else {
-                listener.sendMessage("treehouses tor start")
-                startButton!!.isEnabled = false
-                startButton!!.text = "Starting tor......"
+                val filter = ColorMatrixColorFilter(matrix)
+                logo!!.colorFilter = filter
+                /* start/stop tor button click */startButton!!.setOnClickListener {
+                    if (startButton!!.text.toString() === "Stop Tor") {
+                        startButton!!.text = "Stopping Tor"
+                        startButton!!.isEnabled = false
+                        listener.sendMessage("treehouses tor stop")
+                    } else {
+                        listener.sendMessage("treehouses tor start")
+                        startButton!!.isEnabled = false
+                        startButton!!.text = "Starting tor......"
             }
         }
         val dialog = Dialog(requireContext())
@@ -118,9 +118,11 @@ class TorTabFragment : BaseFragment() {
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
 
         addPortButton!!.setOnClickListener {
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            inputExternal.clearFocus()
+            inputInternal.clearFocus()
             dialog.show() }
         addingPortButton.setOnClickListener {
+            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()
                 val s2 = inputExternal.text.toString()
