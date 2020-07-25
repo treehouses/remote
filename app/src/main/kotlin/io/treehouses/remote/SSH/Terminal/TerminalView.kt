@@ -476,19 +476,18 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                     val pgUpDnGestureEnabled = prefs.getBoolean(PreferenceConstants.PG_UPDN_GESTURE, false)
                     if (pgUpDnGestureEnabled && e2.x <= width / 3) {
                         // otherwise consume as pgup/pgdown for every 5 lines
-                        if (moved > 5) {
-                            (bridge.vDUBuffer as vt320).keyPressed(vt320.KEY_PAGE_DOWN, ' ', 0)
-                            bridge.tryKeyVibrate()
-                            totalY = 0f
-                        } else if (moved < -5) {
-                            (bridge.vDUBuffer as vt320).keyPressed(vt320.KEY_PAGE_UP, ' ', 0)
-                            bridge.tryKeyVibrate()
-                            totalY = 0f
-                        }
+                        if (moved > 5) consume(vt320.KEY_PAGE_DOWN)
+                        else if (moved < -5) consume(vt320.KEY_PAGE_UP)
                         return true
                     }
                 }
                 return false
+            }
+
+            private fun consume(key: Int) {
+                (bridge.vDUBuffer as vt320).keyPressed(key, ' ', 0)
+                bridge.tryKeyVibrate()
+                totalY = 0f
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
