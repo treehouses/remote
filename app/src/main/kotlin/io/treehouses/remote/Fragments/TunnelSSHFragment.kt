@@ -1,14 +1,12 @@
 package io.treehouses.remote.Fragments
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
 import bolts.Task.delay
 import com.google.android.material.textfield.TextInputEditText
@@ -18,6 +16,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import kotlinx.android.synthetic.main.dialog_container.view.*
 import kotlinx.android.synthetic.main.dialog_rename.*
+import kotlinx.android.synthetic.main.hotspot_dialog.*
 import kotlin.math.log
 
 class TunnelSSHFragment : BaseFragment() {
@@ -29,6 +28,7 @@ class TunnelSSHFragment : BaseFragment() {
     private var adapter: ArrayAdapter<String>? = null
     private var portsName: java.util.ArrayList<String>? = null
     private var hostsName: java.util.ArrayList<String>? = null
+    private var hostsPosition: java.util.ArrayList<Int>? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
@@ -68,13 +68,13 @@ class TunnelSSHFragment : BaseFragment() {
 
         dropdown = dialog.findViewById(R.id.hosts)
         addPortButton = bind!!.btnAddPort
-        addHostButton = bind!!.btnAddHosts
-        val items = arrayOf("1", "2", "three")
-        hostsName = ArrayList()
-        val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-        dropdown?.adapter = adapter
-        dropdown?.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
+            addHostButton = bind!!.btnAddHosts
+            hostsName = ArrayList()
+            hostsPosition = ArrayList()
+            val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+            dropdown?.adapter = adapter
+            dropdown?.onItemSelectedListener = object :
+                    AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3:
             Long) {
                 Log.d("winwin", "YYYYY ")
@@ -102,6 +102,50 @@ class TunnelSSHFragment : BaseFragment() {
                 }
 
         }
+
+        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            if(portsName!![position].contains("@")){
+                builder.setTitle("Delete Host  " + portsName!![position] + " ?")
+                builder.setPositiveButton("Confirm") { dialog, _ ->
+                    val parts = portsName!![position].split(":")[0]
+                    listener.sendMessage("treehouses sshtunnel remove host $parts")
+                    addHostButton!!.text = "deleting host ....."
+                    portList!!.isEnabled = false
+                    addHostButton!!.isEnabled = false
+                    dialog.dismiss()
+                }
+            }
+            else{
+                builder.setTitle("Delete Port " + portsName!![position] + " ?")
+                builder.setPositiveButton("Confirm") { dialog, _ ->
+                    var myPos:Int = 0
+                    for(pos in hostsPosition!!.indices){
+                        if(hostsPosition!![pos] >= position){
+                            myPos = pos
+                            break
+                        }
+
+                    }
+                    listener.sendMessage("treehouses sshtunnel remove port " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0])
+                    addPortButton!!.text = "deleting port ....."
+                    portList!!.isEnabled = false
+                    addPortButton!!.isEnabled = false
+                    dialog.dismiss()
+                }
+            }
+//            builder.setMessage("Would you like to delete?");
+
+            // add the buttons
+
+            builder.setNegativeButton("Cancel", null)
+
+            // create and show the alert dialog
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
+
         addingHostButton.setOnClickListener {
             if (inputExternalHost.text.toString().isNotEmpty() && inputInternalHost.text.toString().isNotEmpty() ) {
                 val s1 = inputInternalHost.text.toString()
@@ -140,14 +184,16 @@ class TunnelSSHFragment : BaseFragment() {
     }
     override fun getMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
+                var Position:Int = 0
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
-                if(readMessage.contains("ssh-rsa") || readMessage.contains("Added")){
-                    Toast.makeText(requireContext(), "Added. Retrieving port list.", Toast.LENGTH_SHORT).show()
+                if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")){
+                    Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
                     addPortButton?.text = "Retrieving"
                     addHostButton?.text = "Retrieving"
                     portsName = ArrayList()
                     hostsName = ArrayList()
+                    hostsPosition = ArrayList()
                     listener.sendMessage("treehouses sshtunnel ports")
                 }
                 else if (readMessage.contains("ole@")) {
@@ -162,14 +208,17 @@ class TunnelSSHFragment : BaseFragment() {
                         for (port in ports) {
                             if (port.length >= 3)
                                 portsName!!.add(port)
-                            if (port.contains("ole@"))
+                            if (port.contains("ole@")) {
+                                hostsPosition!!.add(Position)
                                 hostsName!!.add(port)
+                            }
+                            Position += 1
                         }
                         val adapter: ArrayAdapter<String> = ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                         dropdown?.adapter = adapter
                     }
                     listener.sendMessage("treehouses sshtunnel notice")
-                    adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
                     bind!!.sshPorts.adapter = adapter
                 }
                 else if(readMessage.contains("Status: on")){

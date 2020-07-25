@@ -79,10 +79,11 @@
 
     <ListView
         android:id="@+id/ssh_ports"
+
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="@dimen/margin_large"
-
+        android:fadeScrollbars="false"
         android:layout_weight="1"/>
 
 
