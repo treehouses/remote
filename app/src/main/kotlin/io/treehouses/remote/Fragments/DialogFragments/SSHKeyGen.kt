@@ -37,6 +37,10 @@ class SSHKeyGen : FullScreenDialogFragment() {
                 R.id.itemTitle,
                 resources.getStringArray(R.array.key_types))
         bind.generateKey.setOnClickListener {
+            val name = bind.keyNameInput.text.toString()
+            if (KeyUtils.getAllKeyNames(requireContext()).contains(name)) {
+
+            }
             generateKey(name = bind.keyNameInput.text.toString(), algorithm = bind.keyTypeSpinner.selectedItem.toString(), password = bind.passwordInput.text.toString())
         }
     }
