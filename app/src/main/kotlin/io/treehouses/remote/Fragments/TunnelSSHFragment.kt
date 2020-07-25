@@ -142,7 +142,21 @@ class TunnelSSHFragment : BaseFragment() {
             if (msg.what == Constants.MESSAGE_READ) {
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
-                if(readMessage.contains("ssh-rsa") || readMessage.contains("Added")){
+                if(readMessage.contains("Error when")) {
+
+                    addHostButton?.isEnabled = true
+                    addHostButton?.text = "Add Host"
+                    if(readMessage.contains("'treehouses sshtunnel ports'")){
+                        Toast.makeText(requireContext(), "Please add a host if you have no host. Don't add duplicate host also.", Toast.LENGTH_SHORT).show()
+                        addPortButton?.isEnabled = false
+                    }
+                    else{
+                        Toast.makeText(requireContext(), "No duplicate hosts allowed", Toast.LENGTH_SHORT).show()
+
+                    }
+
+                }
+                else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added")){
                     Toast.makeText(requireContext(), "Added. Retrieving port list.", Toast.LENGTH_SHORT).show()
                     addPortButton?.text = "Retrieving"
                     addHostButton?.text = "Retrieving"
@@ -194,11 +208,7 @@ class TunnelSSHFragment : BaseFragment() {
                     listener.sendMessage("treehouses sshtunnel ports")
                     Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show()
                 }
-                else if(readMessage.contains("Error")){
-                    Toast.makeText(requireContext(), "Please add a host if you have no host", Toast.LENGTH_SHORT).show()
-                    addPortButton?.isEnabled = false
 
-                }
 
             }
 
