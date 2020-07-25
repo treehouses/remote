@@ -216,6 +216,10 @@ class DiscoverFragment : BaseFragment() {
     inner class Device {
         lateinit var ip : String
         lateinit var mac : String
+
+        override fun equals(other : Any?) : Boolean {
+            return this.ip == (other as Device).ip
+        }
     }
 
     inner class Gateway {
