@@ -106,11 +106,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 val writeMsg = String((msg.obj as ByteArray))
                 Log.d("WRITE", writeMsg)
             }
-
-            Constants.MESSAGE_WRITE -> {
-                val write_msg = String((msg.obj as ByteArray))
-                Log.d("WRITE", write_msg)
-            }
         }
     }
 
