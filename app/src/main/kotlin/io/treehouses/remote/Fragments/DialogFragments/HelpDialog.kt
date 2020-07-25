@@ -45,12 +45,10 @@ class HelpDialog : FullScreenDialogFragment(), android.widget.SearchView.OnQuery
         bind.searchBar.isIconifiedByDefault = false
         bind.results.addOnItemTouchListener(RecyclerViewClickListener(context, bind.results, object: RecyclerViewClickListener.ClickListener {
             override fun onClick(view: View?, position: Int) {
-                selectedItem = getItemAtPosition(position)
-                fullTransitionDescription(selectedItem)
+                transition(position, true)
             }
             override fun onLongClick(view: View?, position: Int) {
-                selectedItem = getItemAtPosition(position)
-                transitionDescription(selectedItem)
+                transition(position, false)
             }
         }))
 
@@ -58,6 +56,12 @@ class HelpDialog : FullScreenDialogFragment(), android.widget.SearchView.OnQuery
 
         jsonString = arguments?.getString(Constants.JSON_STRING)!!
         createJson(jsonString)
+    }
+
+    fun transition(position: Int, full: Boolean) {
+        selectedItem = getItemAtPosition(position)
+        if (full) fullTransitionDescription(selectedItem)
+        else transitionDescription(selectedItem)
     }
 
     fun getItemAtPosition(pos: Int): HelpCommand {
