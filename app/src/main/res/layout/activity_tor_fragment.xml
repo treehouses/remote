@@ -6,13 +6,6 @@
     android:background="@color/services_tab_background"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/treehouse_logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/treehouses_logo" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

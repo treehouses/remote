@@ -2,19 +2,15 @@ package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
@@ -33,7 +29,6 @@ class TorTabFragment : BaseFragment() {
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
 
-    private var logo: ImageView? = null
     private var myClipboard: ClipboardManager? = null
     private var myClip: ClipData? = null
     private var portList: ListView? = null
@@ -84,27 +79,23 @@ class TorTabFragment : BaseFragment() {
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
-        logo = bind!!.treehouseLogo
         bind!!.btnAddPort
         startButton = bind!!.btnTorStart
         addPortButton = bind!!.btnAddPort
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
         textStatus = bind!!.torStatusText
-        val matrix = ColorMatrix()
-        matrix.setSaturation(0f)
         textStatus!!.text = "-"
-                val filter = ColorMatrixColorFilter(matrix)
-                logo!!.colorFilter = filter
-                /* start/stop tor button click */startButton!!.setOnClickListener {
-                    if (startButton!!.text.toString() === "Stop Tor") {
-                        startButton!!.text = "Stopping Tor"
-                        startButton!!.isEnabled = false
-                        listener.sendMessage("treehouses tor stop")
-                    } else {
-                        listener.sendMessage("treehouses tor start")
-                        startButton!!.isEnabled = false
-                        startButton!!.text = "Starting tor......"
+        /* start/stop tor button click */
+        startButton!!.setOnClickListener {
+            if (startButton!!.text.toString() === "Stop Tor") {
+                startButton!!.text = "Stopping Tor"
+                startButton!!.isEnabled = false
+                listener.sendMessage("treehouses tor stop")
+            } else {
+                listener.sendMessage("treehouses tor start")
+                startButton!!.isEnabled = false
+                startButton!!.text = "Starting tor......"
             }
         }
         val dialog = Dialog(requireContext())
@@ -143,17 +134,7 @@ class TorTabFragment : BaseFragment() {
             myClipboard!!.setPrimaryClip(myClip!!)
             Toast.makeText(requireContext(), textStatus!!.text.toString() + " copied!", Toast.LENGTH_SHORT).show()
         }
-        /* more button click */
-//            moreButton.setOnClickListener(v ->{
-//                showBottomSheet(new TorBottomSheet(), "ethernet");
-//            });
         return bind!!.root
-    }
-
-
-    private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
-        fragment.setTargetFragment(this@TorTabFragment, Constants.NETWORK_BOTTOM_SHEET)
-        fragment.show(requireFragmentManager(), tag)
     }
 
     override fun getMessage(msg: Message) {
@@ -161,11 +142,7 @@ class TorTabFragment : BaseFragment() {
             val readMessage:String = msg.obj as String
             Log.d("Tor reply", "" + readMessage)
             if (readMessage.contains("inactive")) {
-                val matrix = ColorMatrix()
-                matrix.setSaturation(0f)
                 textStatus!!.text = "-"
-                val filter = ColorMatrixColorFilter(matrix)
-                logo!!.colorFilter = filter
                 startButton!!.text = "Start Tor"
                 textStatus!!.text = "-"
                 startButton!!.isEnabled = true
@@ -181,9 +158,6 @@ class TorTabFragment : BaseFragment() {
                 addPortButton!!.isEnabled = true
                 portList!!.isEnabled = true
             } else if (readMessage.contains("active")) {
-                val matrix = ColorMatrix()
-                val filter = ColorMatrixColorFilter(matrix)
-                logo!!.colorFilter = filter
                 startButton!!.text = "Stop Tor"
                 listener.sendMessage("treehouses tor")
                 startButton!!.isEnabled = true
