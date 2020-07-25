@@ -19,6 +19,8 @@
     <string name="TREEHOUSES_ETHERNET">treehouses ethernet \"%1$s\" \"%2$s\" \"%3$s\" \"%4$s\"\n</string>
     <string name="TREEHOUSES_COMMANDS_JSON">treehouses remote commands json\n</string>
     <string name="TREEHOUSES_PASSWORD">treehouses password %1$s</string>
+    <string name="TREEHOUSES_DISCOVER_GATEWAY">treehouses discover gateway\n</string>
+    <string name="TREEHOUSES_DISCOVER_GATEWAY_LIST">treehouses discover gateway list\n</string>
 
     <string name="TREEHOUSES_WIFI_ENTERPRISE">treehouses wifi \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_WIFI_HIDDEN_ENTERPRISE">treehouses wifihidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
