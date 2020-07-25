@@ -34,7 +34,7 @@
         app:fontFamily="@font/roboto_bold"
         android:textColor="@color/daynight_textColor"
         android:gravity="center"
-        android:text="Previously Connected Devices"
+        android:text="Previously Connected Hosts"
         android:textSize="@dimen/text_size_mid" />
 
     <androidx.recyclerview.widget.RecyclerView

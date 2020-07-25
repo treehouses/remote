@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.EditHostBinding
@@ -25,6 +26,7 @@ class EditHostDialog : FullScreenDialogFragment() {
         Log.e("ARGUMENT: ", arguments?.getString(SELECTED_HOST_URI, "")!!)
         host = SaveUtils.getHost(requireContext(), arguments?.getString(SELECTED_HOST_URI, "")!!)!!
         initialHostUri = host.uri.toString()
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return bind.root
     }
 
@@ -33,21 +35,7 @@ class EditHostDialog : FullScreenDialogFragment() {
 
         bind.cancelButton.setOnClickListener { dismiss() }
 
-        bind.saveHost.setOnClickListener {
-            var uriString = bind.uriInput.text.toString()
-            if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
-            val uri = Uri.parse(uriString)
-            if (uri == null) {
-                bind.uriInputLayout.error = "Invalid Uri"
-                return@setOnClickListener
-            }
-            host.setHostFromUri(uri)
-            val keyName = bind.selectKey.selectedItem.toString()
-            host.keyName = if (keyName == NO_KEY) "" else keyName
-            host.fontSize = bind.selectFontSize.value
-            SaveUtils.updateHost(requireContext(), initialHostUri, host)
-            dismiss()
-        }
+        bind.saveHost.setOnClickListener { saveHost() }
 
         setUpKeys()
 
@@ -63,8 +51,8 @@ class EditHostDialog : FullScreenDialogFragment() {
         allKeys = mutableListOf(NO_KEY).plus(KeyUtils.getAllKeyNames(requireContext()))
         bind.selectKey.adapter = ArrayAdapter<String>(
                 requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                android.R.id.text1,
+                R.layout.key_type_spinner_item,
+                R.id.itemTitle,
                 allKeys)
 
         when {
@@ -77,8 +65,25 @@ class EditHostDialog : FullScreenDialogFragment() {
             else -> {
                 Toast.makeText(requireContext(), "Unknown Key", Toast.LENGTH_LONG).show()
                 SaveUtils.updateHost(requireContext(), host.uri.toString(), host.apply { keyName = "" })
+                bind.selectKey.setSelection(0)
             }
         }
+    }
+
+    private fun saveHost() {
+        var uriString = bind.uriInput.text.toString()
+        if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
+        val uri = Uri.parse(uriString)
+        if (uri == null) {
+            bind.uriInputLayout.error = "Invalid Uri"
+            return
+        }
+        host.setHostFromUri(uri)
+        val keyName = bind.selectKey.selectedItem.toString()
+        host.keyName = if (keyName == NO_KEY) "" else keyName
+        host.fontSize = bind.selectFontSize.value
+        SaveUtils.updateHost(requireContext(), initialHostUri, host)
+        dismiss()
     }
 
     companion object {

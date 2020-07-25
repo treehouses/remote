@@ -35,6 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/uriInputLayout"
+            app:hintTextColor="@color/md_grey_500"
             android:layout_weight="1">
 
             <com.google.android.material.textfield.TextInputEditText

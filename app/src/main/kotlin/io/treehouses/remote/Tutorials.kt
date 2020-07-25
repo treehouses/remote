@@ -92,8 +92,8 @@ object Tutorials {
     }
 
     fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
-        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
-        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
         //Put animations here
     }
 
@@ -113,7 +113,9 @@ object Tutorials {
 
         val f = fancyShowCaseViewRoundedRect(activity, bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here")
 
-        show(a,b,c,d,e,f)
+        val g = fancyShowCaseViewRoundedRect(activity, bind.refreshBtn, "Refresh Anytime to Check Everything Again")
+
+        show(a,b,c,d,e,f,g)
     }
 
     private fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {

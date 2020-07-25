@@ -34,6 +34,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:hintTextColor="@color/md_grey_500"
+            android:textColorHint="@color/md_grey_500"
             android:layout_weight="1">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -89,6 +91,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textColorHint="@color/md_grey_500"
+            app:hintTextColor="@color/md_grey_500"
+            app:passwordToggleTint="@color/md_grey_500"
+            app:passwordToggleEnabled="true"
             android:layout_weight="1">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -96,6 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="(Optional)"
+                android:textColorHint="@color/md_grey_500"
                 android:inputType="textPassword"
                 android:textColor="@color/daynight_textColor" />
         </com.google.android.material.textfield.TextInputLayout>
