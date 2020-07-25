@@ -40,9 +40,15 @@ class TorTabFragment : BaseFragment() {
     private var notification: Switch? = null
     var bind: ActivityTorFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
+        mChatService!!.updateHandler(mHandler)
+
+
+
         listener.sendMessage("treehouses tor ports")
+
+
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
@@ -148,6 +154,25 @@ class TorTabFragment : BaseFragment() {
 //                showBottomSheet(new TorBottomSheet(), "ethernet");
 //            });
         return bind!!.root
+    }
+    override fun setUserVisibleHint(visible: Boolean) {
+        if(visible) {
+            if(isListenerInitialized()){
+                mChatService = listener.getChatService()
+                mChatService!!.updateHandler(mHandler)
+
+
+
+
+                listener.sendMessage("treehouses tor ports")
+
+                portsName = ArrayList()
+
+
+
+            }
+
+        }
     }
 
 
