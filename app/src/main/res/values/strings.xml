@@ -326,5 +326,6 @@
 
     <string name="intro_slide_1_m1">Treehouses Remote requires a Raspberry Pi running a Treehouses Image in order to function properly.</string>
     <string name="intro_slide_welcome_m1">Treehouses Remote </string>
+    <string name="delete_key_message"><b>Warning</b>: This action is cannot be undone. To confirm, please type the name of the key in the space below:</string>
 
 </resources>
