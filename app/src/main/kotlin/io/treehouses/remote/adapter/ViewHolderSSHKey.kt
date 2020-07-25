@@ -38,7 +38,7 @@ class ViewHolderSSHKey internal constructor(v: View, private val c: Context, lis
         btnStartConfig.setOnClickListener {
             if (editTextSSHKey.text.toString() != "") {
                 Log.d("1111111", editTextSSHKey.text.toString())
-                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD, " \"" + editTextSSHKey.text.toString() + "\""))
+                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD,  editTextSSHKey.text.toString()))
             } else {
                 Toast.makeText(c, "Incorrect SSH Key Input", Toast.LENGTH_LONG).show()
             }
