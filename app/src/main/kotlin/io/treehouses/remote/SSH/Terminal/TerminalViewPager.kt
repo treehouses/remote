@@ -31,15 +31,13 @@ import androidx.viewpager.widget.ViewPager
 class TerminalViewPager(context: Context?, attrs: AttributeSet?) : ViewPager(context!!, attrs) {
     private var mEnabled = true
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return if (mEnabled) {
-            super.onTouchEvent(event)
-        } else false
+        return if (mEnabled) super.onTouchEvent(event)
+        else false
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        return if (mEnabled) {
-            super.onInterceptTouchEvent(event)
-        } else false
+        return if (mEnabled) super.onInterceptTouchEvent(event)
+        else false
     }
 
     fun setPagingEnabled(enabled: Boolean) {
