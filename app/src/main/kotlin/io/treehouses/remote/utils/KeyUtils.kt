@@ -102,10 +102,9 @@ object KeyUtils {
             try {
                 if (host != null) {
                     Log.e("ALL HOSTS: ", "${host.hostName} with ${host.algorithm} and key ${host.pubKey}")
-                    knownHosts.addHostkey(arrayOf(
-                            String.format(Locale.US, "%s:%s", host.hostName, host.port.toString())
-                    ), host.algorithm, host.pubKey)
-                    Log.e("Added Host key", String.format(Locale.US, "%s%s", host.hostName, host.port.toString()))
+                    val hostKey = String.format(Locale.US, "%s:%s", host.hostName, host.port.toString())
+                    knownHosts.addHostkey(arrayOf(hostKey), host.algorithm, host.pubKey)
+                    Log.e("Added Host key", hostKey)
                 }
             } catch (e: Exception) {
                 Log.e("Getting Known Hosts", "Problem when adding host to known hosts", e)
