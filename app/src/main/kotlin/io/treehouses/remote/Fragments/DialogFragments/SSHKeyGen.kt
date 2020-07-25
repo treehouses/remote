@@ -1,6 +1,8 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,19 +14,17 @@ import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
-import io.treehouses.remote.utils.SaveUtils
-import net.i2p.crypto.eddsa.Utils
 import java.security.KeyPair
 import java.security.KeyPairGenerator
-import java.security.NoSuchAlgorithmException
 import java.util.*
 
 class SSHKeyGen : FullScreenDialogFragment() {
-    private lateinit var bind : KeysDialogBinding
-
+    private lateinit var bind: KeysDialogBinding
+    private lateinit var allKeys: MutableList<String>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = KeysDialogBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        allKeys = KeyUtils.getAllKeyNames(requireContext())
         return bind.root
     }
 
@@ -36,12 +36,38 @@ class SSHKeyGen : FullScreenDialogFragment() {
                 R.layout.key_type_spinner_item,
                 R.id.itemTitle,
                 resources.getStringArray(R.array.key_types))
+
+        bind.keyNameInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (validate(s.toString())) bind.keyNameLayout.error = null
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         bind.generateKey.setOnClickListener {
             val name = bind.keyNameInput.text.toString()
-            if (KeyUtils.getAllKeyNames(requireContext()).contains(name)) {
-
+            if (validate(name)) {
+                generateKey(
+                        name = name,
+                        algorithm = bind.keyTypeSpinner.selectedItem.toString(),
+                        password = bind.passwordInput.text.toString()
+                )
             }
-            generateKey(name = bind.keyNameInput.text.toString(), algorithm = bind.keyTypeSpinner.selectedItem.toString(), password = bind.passwordInput.text.toString())
+        }
+    }
+
+    private fun validate(keyName: String): Boolean {
+        val errorMsg = when {
+            keyName.isEmpty() -> "Please enter a key nickname"
+            allKeys.contains(keyName) -> "Name already exists!"
+            else -> ""
+        }
+        return if (errorMsg.isEmpty()) true
+        else {
+            bind.keyNameLayout.error = errorMsg
+            false
         }
     }
 
@@ -55,7 +81,7 @@ class SSHKeyGen : FullScreenDialogFragment() {
         dismiss()
     }
 
-    private fun generateKeyPair(algorithm: String) : KeyPair {
+    private fun generateKeyPair(algorithm: String): KeyPair {
         val keyGen = KeyPairGenerator.getInstance(algorithm)
         keyGen.initialize(if (algorithm == "EC") 256 else if (algorithm == "RSA") 2048 else 1024)
         val keyPair = keyGen.generateKeyPair()
