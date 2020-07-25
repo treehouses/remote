@@ -145,8 +145,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                     mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
                 }
             }
-            else -> {
-            }
         }
         if (fragment != null) {
             val fragmentManager = childFragmentManager
