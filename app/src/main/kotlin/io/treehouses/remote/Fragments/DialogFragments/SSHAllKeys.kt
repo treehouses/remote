@@ -57,8 +57,9 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
     private fun setUpAdapter() {
         bind.allKeys.adapter = object : RecyclerView.Adapter<ViewHolderSSHAllKeyRow>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHAllKeyRow {
-                val binding = RowKeyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return ViewHolderSSHAllKeyRow(binding, this@SSHAllKeys)
+                return ViewHolderSSHAllKeyRow(
+                        RowKeyBinding.inflate(LayoutInflater.from(parent.context),
+                                parent, false), this@SSHAllKeys)
             }
 
             override fun getItemCount(): Int {
