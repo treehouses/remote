@@ -1,6 +1,7 @@
 package io.treehouses.remote.adapter
 
 import android.app.Dialog
+
 import android.content.Context
 import android.os.Handler
 import android.os.Message
@@ -38,6 +39,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
             }
         }
     }
+
 
     private fun getCountryName(country: String): String {
         val l = Locale("", country)
@@ -89,6 +91,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
             searchView = dialog.findViewById(R.id.search_bar)
             searchView!!.isIconifiedByDefault = false
             searchView!!.setOnQueryTextListener(this)
+
             dialog.show()
         }
     }
