@@ -8,14 +8,28 @@
     android:orientation="vertical"
     android:padding="@dimen/padding_large">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="@dimen/padding_normal"
-        android:text="Edit Host"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@color/daynight_textColor" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="228dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/padding_normal"
+            android:text="Edit Host"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/daynight_textColor" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/delete_icon" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

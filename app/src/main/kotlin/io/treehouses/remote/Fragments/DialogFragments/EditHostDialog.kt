@@ -44,7 +44,10 @@ class EditHostDialog : FullScreenDialogFragment() {
         bind.selectFontSize.minValue = 5
         bind.selectFontSize.maxValue = 15
         bind.selectFontSize.value = host.fontSize
-
+        bind.deleteButton.setOnClickListener {
+            SaveUtils.deleteHost(requireContext(), host)
+            dismiss()
+        }
     }
 
     private fun setUpKeys() {
