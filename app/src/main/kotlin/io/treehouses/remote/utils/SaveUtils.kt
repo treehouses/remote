@@ -202,4 +202,12 @@ object SaveUtils {
         editor.apply()
         clearArrayList(context, SSH_HOSTS)
     }
+
+    fun deleteHost(context: Context, hostBean: HostBean) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.remove(hostBean.uri.toString())
+        editor.apply()
+        removeFromArrayList(context, SSH_HOSTS, hostBean.uri.toString())
+    }
+
 }
