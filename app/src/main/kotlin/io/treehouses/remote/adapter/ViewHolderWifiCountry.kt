@@ -61,7 +61,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
     }
 
     init {
-        listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY))
+        listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
         for (i in countriesCode.indices) {
