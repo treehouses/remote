@@ -25,10 +25,9 @@ class TorTabFragment : BaseFragment() {
     private var nowButton: Button? = null
     private var startButton: Button? = null
     private var addPortButton: Button? = null
-    private var textStatus: TextView? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
-
+    private var hostName:String = ""
     private var myClipboard: ClipboardManager? = null
     private var myClip: ClipData? = null
     private var portList: ListView? = null
@@ -47,6 +46,22 @@ class TorTabFragment : BaseFragment() {
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
+        bind!!.btnHostName.visibility = View.GONE
+        bind!!.btnHostName.setOnClickListener {
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            builder.setTitle("Tor Hostname")
+            builder.setMessage(hostName)
+            builder.setPositiveButton("Copy") { _, _ ->
+                myClipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                myClip = ClipData.newPlainText("text", hostName)
+                myClipboard!!.setPrimaryClip(myClip!!)
+                Toast.makeText(requireContext(), "$hostName copied!", Toast.LENGTH_SHORT).show()
+            }
+            builder.setNegativeButton("Exit", null)
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
         notification = bind!!.switchNotification
         notification!!.isEnabled = false
         notification!!.setOnCheckedChangeListener { _, isChecked ->
@@ -90,8 +105,6 @@ class TorTabFragment : BaseFragment() {
         addPortButton = bind!!.btnAddPort
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
-        textStatus = bind!!.torStatusText
-        textStatus!!.text = "-"
         /* start/stop tor button click */
         startButton!!.setOnClickListener {
             if (startButton!!.text.toString() === "Stop Tor") {
@@ -117,6 +130,7 @@ class TorTabFragment : BaseFragment() {
         addPortButton!!.setOnClickListener {
             inputExternal.clearFocus()
             inputInternal.clearFocus()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show() }
         addingPortButton.setOnClickListener {
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -132,13 +146,6 @@ class TorTabFragment : BaseFragment() {
                 inputExternal.text?.clear()
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
-        }
-        textStatus!!.setOnClickListener {
-            myClipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            textStatus!!.text.toString()
-            myClip = ClipData.newPlainText("text", textStatus!!.text)
-            myClipboard!!.setPrimaryClip(myClip!!)
-            Toast.makeText(requireContext(), textStatus!!.text.toString() + " copied!", Toast.LENGTH_SHORT).show()
         }
         return bind!!.root
     }
@@ -167,15 +174,15 @@ class TorTabFragment : BaseFragment() {
             val readMessage:String = msg.obj as String
             Log.d("Tor reply", "" + readMessage)
             if (readMessage.contains("inactive")) {
-                textStatus!!.text = "-"
+                bind!!.btnHostName.visibility = View.GONE
                 startButton!!.text = "Start Tor"
-                textStatus!!.text = "-"
                 startButton!!.isEnabled = true
                 listener.sendMessage("treehouses tor notice")
             } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
                 listener.sendMessage("treehouses tor status")
             } else if (readMessage.contains(".onion")) {
-                textStatus!!.text = readMessage
+                bind!!.btnHostName.visibility = View.VISIBLE
+                hostName = readMessage
                 listener.sendMessage("treehouses tor notice")
             } else if (readMessage.contains("Error")) {
                 Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
