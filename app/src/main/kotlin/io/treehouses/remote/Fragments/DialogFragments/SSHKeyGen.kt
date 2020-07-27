@@ -83,7 +83,7 @@ class SSHKeyGen : FullScreenDialogFragment() {
             }
         }
         bind.keyStrength.max = max - min
-        setStrength(min)
+        if (algorithm == "RSA") setStrength(2048) else setStrength(min)
     }
 
     private fun setUpStrengthListeners() {
