@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -8,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -37,7 +35,8 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
-        updateNetworkMode()
+        //update Network mode
+        sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
         return binding.root
     }
 
@@ -65,7 +64,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
             binding.networkHotspot == v -> showBottomSheet(HotspotBottomSheet(), "hotspot")
             binding.networkBridge == v -> showBottomSheet(BridgeBottomSheet(), "bridge")
             binding.networkEthernet == v -> showBottomSheet(EthernetBottomSheet(), "ethernet")
-            binding.buttonNetworkMode == v -> updateNetworkMode()
+            binding.buttonNetworkMode == v -> sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
         }
@@ -75,18 +74,14 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         binding.currentNetworkMode.text = "Current Network Mode: $mode"
     }
 
-    private fun updateNetworkMode() {
-        listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE))
-        Toast.makeText(context, "Network Mode retrieved", Toast.LENGTH_LONG).show()
-    }
-
     private fun performAction(output: String) {
         //Return from treehouses networkmode
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
             RESULTS.DEFAULT_CONNECTED -> {
                 Toast.makeText(context, "Network Mode switched to default", Toast.LENGTH_LONG).show()
-                updateNetworkMode()
+                //update network mode
+                sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
             }
             RESULTS.ERROR -> {
                 showDialog("Error", output)
@@ -94,7 +89,8 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
             }
             RESULTS.HOTSPOT_CONNECTED, RESULTS.WIFI_CONNECTED, RESULTS.BRIDGE_CONNECTED -> {
                 showDialog("Network Switched", output)
-                updateNetworkMode()
+                //update network mode
+                sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
                 binding.networkPbar.visibility = View.GONE
             }
             else -> Log.e("NewNetworkFragment", "Result not Found")
@@ -139,11 +135,15 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
                 "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    listener.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
-                    Toast.makeText(context, "Switching to default network...", Toast.LENGTH_LONG).show()
+                    sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK), "Switching to default network...")
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
+    }
+
+    private fun sendMessage(msg: String, toastMsg: String) {
+        listener.sendMessage(msg)
+        Toast.makeText(context, toastMsg, Toast.LENGTH_LONG).show()
     }
 
     private fun createAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
@@ -159,14 +159,11 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            if (msg.what == Constants.MESSAGE_READ) {
-                val readMessage = msg.obj as String
-                Log.d("TAG", "readMessage = $readMessage")
-                performAction(readMessage)
-            }
+    override fun getMessage(msg: Message) {
+        if (msg.what == Constants.MESSAGE_READ) {
+            val readMessage = msg.obj as String
+            Log.d("TAG", "readMessage = $readMessage")
+            performAction(readMessage)
         }
     }
 

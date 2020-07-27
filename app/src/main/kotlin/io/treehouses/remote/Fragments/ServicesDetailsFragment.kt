@@ -1,6 +1,5 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -57,13 +56,15 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     @JvmField
-    val handlerDetails: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
+    val handlerDetails: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
                     moreActions(output)
+                }
+                Constants.MESSAGE_STATE_CHANGE -> {
+                    listener.redirectHome()
                 }
             }
         }

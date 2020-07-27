@@ -1,9 +1,7 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -29,6 +27,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     var worked = false
+    private var currentTab:Int =  0
     private lateinit var array: MutableList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -40,6 +39,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         bind!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         bind!!.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                currentTab = tab.position
                 replaceFragment(tab.position)
             }
 
@@ -48,7 +48,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         })
         setTabEnabled(false)
         mChatService = listener.getChatService()
-        mChatService.updateHandler(handler)
+        mChatService.updateHandler(mHandler)
         worked = false
         preferences()
         return bind!!.root
@@ -64,7 +64,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             }
         }
         writeToRPI("treehouses remote allservices\n")
-        worked = false
     }
 
     private fun showUI(){
@@ -75,7 +74,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         servicesTabFragment?.arguments = bundle
         servicesDetailsFragment?.arguments = bundle
         bind!!.progressBar2.visibility = View.GONE
-        replaceFragment(0)
+        replaceFragment(currentTab)
     }
 
 
@@ -85,6 +84,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             1 -> {
                 array.add(output)
                 SaveUtils.saveStringList(requireContext(), array, "servicesArray")
+                worked = false
                 showUI()
             }
             0 -> {
@@ -97,17 +97,14 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private val handler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    updateListFromRPI(msg)
-                }
-                Constants.MESSAGE_WRITE -> {
-                    val writeMsg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", writeMsg)
-                }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_READ -> {
+                updateListFromRPI(msg)
+            }
+            Constants.MESSAGE_WRITE -> {
+                val writeMsg = String((msg.obj as ByteArray))
+                Log.d("WRITE", writeMsg)
             }
         }
     }
@@ -144,9 +141,9 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             }
             1 -> {
                 fragment = servicesDetailsFragment
-                mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
-            }
-            else -> {
+                if(!worked) {
+                    mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
+                }
             }
         }
         if (fragment != null) {
@@ -161,7 +158,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     override fun onClick(s: ServiceInfo?) {
         servicesDetailsFragment!!.setSelected(s!!)
         Objects.requireNonNull(bind!!.tabLayout.getTabAt(1))!!.select()
-        replaceFragment(1)
+        currentTab = 1
+        replaceFragment(currentTab)
     }
 
 

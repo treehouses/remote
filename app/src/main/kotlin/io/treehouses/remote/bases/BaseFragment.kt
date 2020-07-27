@@ -1,9 +1,11 @@
 package io.treehouses.remote.bases
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Message
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
@@ -19,9 +21,13 @@ open class BaseFragment : Fragment() {
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
     }
 
+    fun isListenerInitialized() = ::listener.isInitialized
+
+
     open fun chatOpen():Boolean {
         return this::mChatService.isInitialized
     }
+
 
     protected fun onLoad(mHandler: Handler?) {
         mChatService = listener.getChatService()
@@ -42,6 +48,19 @@ open class BaseFragment : Fragment() {
         }
     }
 
+    protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
+    object : Handler() {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                Constants.MESSAGE_STATE_CHANGE -> {
+                        Toast.makeText(activity, "Bluetooth disconnected", Toast.LENGTH_LONG).show()
+                        listener.redirectHome()
+                }
+                else -> getMessage(msg)
+            }
+        }
+    }
     fun checkStatusNow() {}
     open fun setupChat() {}
+    open fun getMessage(msg: Message) {}
 }

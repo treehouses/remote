@@ -33,51 +33,21 @@ open class BaseHomeFragment : BaseFragment() {
     private var rpiVersion: String? = null
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
         when (option) {
-            1 -> {
-                setBackgrounds(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
-            }
-            2 -> {
-                setBackgrounds(green, red, R.drawable.newyear_anim_green, R.drawable.newyear_anim_red)
-            }
-            3 -> {
-                setBackgrounds(green, red, R.drawable.heavymetal_anim_green, R.drawable.heavymetal_anim_red)
-            }
-            4 -> {
-                setBackgrounds(green, red, R.drawable.lunarnewyear_anim_green, R.drawable.lunarnewyear_anim_red)
-            }
-            5 -> {
-                setBackgrounds(green, red, R.drawable.valentine_anim_green, R.drawable.valentine_anim_red)
-            }
-            6 -> {
-                setBackgrounds(green, red, R.drawable.carnival_anim_green, R.drawable.carnival_anim_red)
-            }
-            7 -> {
-                green.setBackgroundResource(R.drawable.stpatricks_anim_green)
-            }
-            8 -> {
-                setBackgrounds(green, red, R.drawable.onam_anim_green, R.drawable.onam_anim_red)
-            }
-            9 -> {
-                setBackgrounds(green, red, R.drawable.easter_anim_green, R.drawable.easter_anim_red)
-            }
-            10 -> {
-                setBackgrounds(green ,red, R.drawable.eid_anim_green, R.drawable.eid_anim_red)
-            }
-            11 -> {
-                setBackgrounds(green, red, R.drawable.kecak_anim_green, R.drawable.kecak_anim_red)
-            }
-            12 -> {
-                setBackgrounds(green, red, R.drawable.christmas_anim_green, R.drawable.christmas_anim_red)
-            }
-            13 -> {
-                setBackgrounds(green, red, R.drawable.diwali_anim_green, R.drawable.diwali_anim_red)
-            }
-            14 -> {
-                setBackgrounds(green, red, R.drawable.lantern_anim_green, R.drawable.lantern_anim_red)
-            }
-            else -> {
-                setBackgrounds(green, red, R.drawable.dance_anim_green, R.drawable.dance_anim_red)
-            }
+            1 -> setBackgrounds(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
+            2 -> setBackgrounds(green, red, R.drawable.newyear_anim_green, R.drawable.newyear_anim_red)
+            3 -> setBackgrounds(green, red, R.drawable.heavymetal_anim_green, R.drawable.heavymetal_anim_red)
+            4 -> setBackgrounds(green, red, R.drawable.lunarnewyear_anim_green, R.drawable.lunarnewyear_anim_red)
+            5 -> setBackgrounds(green, red, R.drawable.valentine_anim_green, R.drawable.valentine_anim_red)
+            6 -> setBackgrounds(green, red, R.drawable.carnival_anim_green, R.drawable.carnival_anim_red)
+            7 -> green.setBackgroundResource(R.drawable.stpatricks_anim_green)
+            8 -> setBackgrounds(green, red, R.drawable.onam_anim_green, R.drawable.onam_anim_red)
+            9 -> setBackgrounds(green, red, R.drawable.easter_anim_green, R.drawable.easter_anim_red)
+            10 -> setBackgrounds(green ,red, R.drawable.eid_anim_green, R.drawable.eid_anim_red)
+            11 -> setBackgrounds(green, red, R.drawable.kecak_anim_green, R.drawable.kecak_anim_red)
+            12 -> setBackgrounds(green, red, R.drawable.christmas_anim_green, R.drawable.christmas_anim_red)
+            13 -> setBackgrounds(green, red, R.drawable.diwali_anim_green, R.drawable.diwali_anim_red)
+            14 -> setBackgrounds(green, red, R.drawable.lantern_anim_green, R.drawable.lantern_anim_red)
+            else -> setBackgrounds(green, red, R.drawable.dance_anim_green, R.drawable.dance_anim_red)
         }
     }
 
@@ -204,7 +174,7 @@ open class BaseHomeFragment : BaseFragment() {
     }
 
     private fun createTestConnectionDialog(mView: View, dismissable: Boolean, title: String, messageID: Int): AlertDialog {
-        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID)
+        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.bluetooth).setMessage(messageID)
         if (dismissable) d.setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         return d.create()
     }

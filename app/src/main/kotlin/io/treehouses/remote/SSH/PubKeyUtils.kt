@@ -16,12 +16,15 @@
  */
 package io.treehouses.remote.SSH
 
+import android.util.Log
+import com.trilead.ssh2.crypto.Base64
 import com.trilead.ssh2.signature.DSASHA1Verify
 import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
 import io.treehouses.remote.SSH.Ed25519Provider.Companion.insertIfNeeded
 import io.treehouses.remote.SSH.Encryptor.decrypt
+import io.treehouses.remote.SSH.beans.PubKeyBean
 import net.i2p.crypto.eddsa.EdDSAPublicKey
 import java.io.IOException
 import java.security.*
@@ -31,6 +34,7 @@ import java.security.interfaces.RSAPublicKey
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.*
 
 object PubKeyUtils {
     private const val TAG = "CB.PubkeyUtils"
@@ -50,21 +54,18 @@ object PubKeyUtils {
                 ", bytes=" + encoded.size + "]"
     }
 
-    //    private static byte[] encrypt(byte[] cleartext, String secret) throws Exception {
-    //        byte[] salt = new byte[SALT_SIZE];
-    //
-    //        byte[] ciphertext = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext);
-    //
-    //        byte[] complete = new byte[salt.length + ciphertext.length];
-    //
-    //        System.arraycopy(salt, 0, complete, 0, salt.length);
-    //        System.arraycopy(ciphertext, 0, complete, salt.length, ciphertext.length);
-    //
-    //        Arrays.fill(salt, (byte) 0x00);
-    //        Arrays.fill(ciphertext, (byte) 0x00);
-    //
-    //        return complete;
-    //    }
+    @Throws(java.lang.Exception::class)
+    private fun encrypt(cleartext: ByteArray, secret: String): ByteArray {
+        val salt = ByteArray(SALT_SIZE)
+        val ciphertext: ByteArray = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext)
+        val complete = ByteArray(salt.size + ciphertext.size)
+        System.arraycopy(salt, 0, complete, 0, salt.size)
+        System.arraycopy(ciphertext, 0, complete, salt.size, ciphertext.size)
+        Arrays.fill(salt, 0x00.toByte())
+        Arrays.fill(ciphertext, 0x00.toByte())
+        return complete
+    }
+
     @Throws(Exception::class)
     private fun decrypt(saltAndCiphertext: ByteArray, secret: String): ByteArray {
         val salt = ByteArray(SALT_SIZE)
@@ -74,13 +75,12 @@ object PubKeyUtils {
         return decrypt(salt, ITERATIONS, secret, ciphertext)
     }
 
-    //    public static byte[] getEncodedPrivate(PrivateKey pk, String secret) throws Exception {
-    //        final byte[] encoded = pk.getEncoded();
-    //        if (secret == null || secret.length() == 0) {
-    //            return encoded;
-    //        }
-    //        return encrypt(pk.getEncoded(), secret);
-    //    }
+    @Throws(java.lang.Exception::class)
+    fun getEncodedPrivate(pk: PrivateKey, secret: String?): ByteArray {
+        val encoded = pk.encoded
+        return if (secret.isNullOrEmpty()) encoded else encrypt(pk.encoded, secret)
+    }
+
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
     fun decodePrivate(encoded: ByteArray?, keyType: String?): PrivateKey {
         val privKeySpec = PKCS8EncodedKeySpec(encoded)
@@ -90,25 +90,19 @@ object PubKeyUtils {
 
     @Throws(Exception::class)
     fun decodePrivate(encoded: ByteArray, keyType: String?, secret: String?): PrivateKey {
-        return if (secret != null && secret.isNotEmpty()) decodePrivate(decrypt(encoded, secret), keyType) else decodePrivate(encoded, keyType)
+        return if (!secret.isNullOrEmpty()) decodePrivate(decrypt(encoded, secret), keyType) else decodePrivate(encoded, keyType)
     }
 
-    //    public static int getBitStrength(byte[] encoded, String keyType) throws InvalidKeySpecException,
-    //            NoSuchAlgorithmException {
-    //        final PublicKey pubKey = PubKeyUtils.decodePublic(encoded, keyType);
-    //        if (PubKeyBean.KEY_TYPE_RSA.equals(keyType)) {
-    //            return ((RSAPublicKey) pubKey).getModulus().bitLength();
-    //        } else if (PubKeyBean.KEY_TYPE_DSA.equals(keyType)) {
-    //            return 1024;
-    //        } else if (PubKeyBean.KEY_TYPE_EC.equals(keyType)) {
-    //            return ((ECPublicKey) pubKey).getParams().getCurve().getField()
-    //                    .getFieldSize();
-    //        } else if (PubKeyBean.KEY_TYPE_ED25519.equals(keyType)) {
-    //            return 256;
-    //        } else {
-    //            return 0;
-    //        }
-    //    }
+    fun getBitStrength(encoded : ByteArray, keyType: String) : Int {
+        val pubKey = PubKeyUtils.decodePublic(encoded, keyType);
+        return when (keyType) {
+            PubKeyBean.KEY_TYPE_RSA -> (pubKey as RSAPublicKey).modulus.bitLength();
+            PubKeyBean.KEY_TYPE_DSA -> 1024;
+            PubKeyBean.KEY_TYPE_EC -> (pubKey as ECPublicKey).params.curve.field.fieldSize;
+            PubKeyBean.KEY_TYPE_ED25519 -> 256;
+            else -> { 0; }
+        }
+    }
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
     fun decodePublic(encoded: ByteArray?, keyType: String?): PublicKey {
         val pubKeySpec = X509EncodedKeySpec(encoded)
@@ -242,33 +236,28 @@ object PubKeyUtils {
     /*
      * OpenSSH compatibility methods
      */
-    //    public static String convertToOpenSSHFormat(PublicKey pk, String origNickname) throws IOException, InvalidKeyException {
-    //        String nickname = origNickname;
-    //        if (nickname == null)
-    //            nickname = "connectbot@android";
-    //
-    //        if (pk instanceof RSAPublicKey) {
-    //            String data = "ssh-rsa ";
-    //            data += String.valueOf(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey((RSAPublicKey) pk)));
-    //            return data + " " + nickname;
-    //        } else if (pk instanceof DSAPublicKey) {
-    //            String data = "ssh-dss ";
-    //            data += String.valueOf(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey((DSAPublicKey) pk)));
-    //            return data + " " + nickname;
-    //        } else if (pk instanceof ECPublicKey) {
-    //            ECPublicKey ecPub = (ECPublicKey) pk;
-    //            String keyType = ECDSASHA2Verify.getCurveName(ecPub.getParams().getCurve().getField().getFieldSize());
-    //            String keyData = String.valueOf(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(ecPub)));
-    //            return ECDSASHA2Verify.ECDSA_SHA2_PREFIX + keyType + " " + keyData + " " + nickname;
-    //        } else if (pk instanceof EdDSAPublicKey) {
-    //            EdDSAPublicKey edPub = (EdDSAPublicKey) pk;
-    //            return Ed25519Verify.ED25519_ID + " " +
-    //                    String.valueOf(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(edPub))) +
-    //                    " " + nickname;
-    //        }
-    //
-    //        throw new InvalidKeyException("Unknown key type");
-    //    }
+    fun convertToOpenSSHFormat(pk: PublicKey, nickName: String) : String {
+        Log.e("PUBKEYORIG", String(Base64.encode(pk.encoded)))
+        return when (pk) {
+            is RSAPublicKey -> {
+                var data = "ssh-rsa "
+                data += String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk)))
+                "$data $nickName"
+            }
+            is DSAPublicKey -> {
+                var data = "ssh-dss "
+                data += String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))
+                "$data $nickName"
+            }
+            is ECPublicKey -> {
+                val keyType = ECDSASHA2Verify.getCurveName(pk.params.curve.field.fieldSize)
+                val data = String(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(pk)))
+                "${ECDSASHA2Verify.ECDSA_SHA2_PREFIX} $keyType $data $nickName"
+            }
+            is EdDSAPublicKey -> "${Ed25519Verify.ED25519_ID} ${String(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(pk)))} $nickName"
+            else -> throw InvalidKeyException("Unknown Key Type")
+        }
+    }
     /*
      * OpenSSH compatibility methods
      */

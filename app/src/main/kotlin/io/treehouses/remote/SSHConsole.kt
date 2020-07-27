@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.treehouses.remote.Fragments
+package io.treehouses.remote
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
@@ -45,9 +45,6 @@ import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
 import io.treehouses.remote.Views.terminal.vt320
-import io.treehouses.remote.InitialActivity
-import io.treehouses.remote.PreferenceConstants
-import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.*
 import io.treehouses.remote.SSH.Terminal.TerminalManager.TerminalBinder
@@ -247,7 +244,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         updatePromptVisible()
 
         // If we just closed the last bridge, go back to the previous activity.
-        if (bind.pager.childCount == 0) finish()
+        if (bind.pager.childCount == 0) {
+            Log.e("FINISHING SSH", "FINISH")
+            finish()
+        }
     }
 
     private fun findCurrentView(id: Int): View? {

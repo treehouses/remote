@@ -6,6 +6,8 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
     @JvmField
     var name: String
     @JvmField
+    var size: Int = -1
+    @JvmField
     var serviceStatus: Int
     @JvmField
     var icon: String? = null
@@ -23,8 +25,10 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
     }
 
     //Services
-    constructor(name: String, serviceStatus: Int, icon: String?, info: String?, autorun: String?, usesEnv: String?) {
+
+    constructor(name: String, size: Int, serviceStatus: Int, icon: String?, info: String?, autorun: String?) {
         this.name = name
+        this.size = size
         this.serviceStatus = serviceStatus
         this.icon = icon
         this.info = info

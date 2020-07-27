@@ -8,7 +8,7 @@ class HostBean {
     var nickname: String? = "treehouses"
     var hostname: String? = "192.168.1.29"
     var username: String? = "pi"
-    val pubkeyId: Long = -1
+    var keyName: String = ""
 
     var protocol: String? = "ssh"
     var port = 22
@@ -85,7 +85,6 @@ class HostBean {
         var flag = false
         other as HostBean
         flag = when {
-            fontSize != other.fontSize -> false
             nickname != other.nickname -> false
             hostname != other.hostname -> false
             username != other.username -> false

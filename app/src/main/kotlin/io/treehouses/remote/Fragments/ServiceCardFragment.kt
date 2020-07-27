@@ -36,6 +36,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         binding!!.serviceInfo.isFocusable = true
         if (!serviceData.isHeader) {
             setServiceInfo(serviceData.info)
+            setServiceSize(serviceData.size)
             showIcon(serviceData.icon)
             updateButtons(serviceData.serviceStatus)
             setAutorun(serviceData.autorun)
@@ -109,6 +110,11 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         Linkify.addLinks(spannableString, Linkify.ALL)
         binding!!.serviceInfo.text = s
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    private fun setServiceSize(sz: Int) {
+        if(sz != -1)
+            binding!!.serviceSize.text = "$sz MB"
     }
 
     override fun onClick(v: View) {

@@ -1,11 +1,9 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.TextUtils
@@ -139,65 +137,59 @@ class TerminalFragment : BaseTerminalFragment() {
         if (mChatService.state == Constants.STATE_NONE) mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
     }
 
-    private fun btnSendClickListener() {
+    private fun sendMessage() {
+        // Send a message using content of the edit text widget
+        val view = view
+        if (null != view) {
+            listener.sendMessage(bind.editTextOut.text.toString())
+            if(bind.editTextOut.text.toString() == "reboot") {
+                Thread.sleep(1000)
+                listener.openCallFragment(HomeFragment())
+                Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
+                requireActivity().title = "Home"
+            }
+            checkIfTreehouses()
+        }
+    }
 
+    private fun getInfo() {
+        when {
+            jsonSent -> Toast.makeText(context, "Please Wait", Toast.LENGTH_SHORT).show()
+            helpJsonString.isNotEmpty() -> showHelpDialog(helpJsonString)
+            else -> {
+                jsonSend(true)
+                listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
+            }
+        }
+    }
+
+    private fun getPreviousCommand() {
+        try {
+            bind.editTextOut.setText(commandList[--i].trim())
+            bind.editTextOut.setSelection(bind.editTextOut.length())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun btnSendClickListener() {
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener {
-            // Send a message using content of the edit text widget
-            val view = view
-            if (null != view) {
-                listener.sendMessage(bind.editTextOut.text.toString())
-                if(bind.editTextOut.text.toString() == "reboot") {
-                    Thread.sleep(1000)
-                    listener.openCallFragment(HomeFragment())
-                    Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
-                    requireActivity().title = "Home"
-                }
-                if(treehouses) {
-                    bind.editTextOut.setText("treehouses ")
-                    bind.editTextOut.setSelection(bind.editTextOut.text.length)
-                }
-                else {
-                    bind.editTextOut.setText("")
-                }
-            }
+            sendMessage()
         }
         bind.btnPrevious.setOnClickListener {
-            try {
-                bind.editTextOut.setText(commandList[--i].trim())
-                bind.editTextOut.setSelection(bind.editTextOut.length())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            getPreviousCommand()
         }
         bind.infoButton.setOnClickListener {
-            when {
-                jsonSent -> Toast.makeText(context, "Please Wait", Toast.LENGTH_SHORT).show()
-                helpJsonString.isNotEmpty() -> showHelpDialog(helpJsonString)
-                else -> {
-                    jsonSend(true)
-                    listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
-                }
-            }
+            getInfo()
         }
-
-       bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+        bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
            treehouses = isChecked
-           if(treehouses) {
-               bind.editTextOut.setText("treehouses ")
-               bind.editTextOut.setSelection(bind.editTextOut.text.length)
-           }
-           else {
-               bind.editTextOut.setText("")
-           }
-
+           checkIfTreehouses()
         }
-
         bind.editTextOut.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (TextUtils.isEmpty(s.toString().trim())) {
-                    bind.treehousesBtn.isChecked= false
-                }
+                if (TextUtils.isEmpty(s.toString().trim())) bind.treehousesBtn.isChecked= false
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -206,6 +198,16 @@ class TerminalFragment : BaseTerminalFragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
+    }
+
+    private fun checkIfTreehouses() {
+        if(treehouses) {
+            bind.editTextOut.setText("treehouses ")
+            bind.editTextOut.setSelection(bind.editTextOut.text.length)
+        }
+        else {
+            bind.editTextOut.setText("")
+        }
     }
 
     private fun showHelpDialog(jsonString: String) {
@@ -304,28 +306,25 @@ class TerminalFragment : BaseTerminalFragment() {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    @SuppressLint("HandlerLeak")
-    private val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
-                Constants.MESSAGE_WRITE -> {
-                    isRead = false
-                    addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    match(readMessage)
-                    isRead = true
-                    if (readMessage.contains("unknown")) jsonSend(false)
-                    if (jsonSent) handleJson(readMessage)
-                    else {
-                        filterMessages(readMessage, mConversationArrayAdapter, terminalList)
-                    }
-                }
-                Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
-                Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
+            Constants.MESSAGE_WRITE -> {
+                isRead = false
+                addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
             }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                val s = match(readMessage)
+                isRead = true
+                if (readMessage.contains("unknown")) jsonSend(false)
+                if (jsonSent) handleJson(readMessage)
+                else {
+                    filterMessages(readMessage, mConversationArrayAdapter, terminalList)
+                }
+            }
+            Constants.MESSAGE_DEVICE_NAME -> handlerCaseName(msg, activity)
+            Constants.MESSAGE_TOAST -> handlerCaseToast(msg)
         }
     }
 

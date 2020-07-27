@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.R
+import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
@@ -27,12 +28,14 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
         val reactivateTutorials = findPreference<Preference>("reactivate_tutorials")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
+        val clearSSHKeys = findPreference<Preference>("ssh_keys")
 
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
         setClickListener(reactivateTutorials)
         setClickListener(clearSSHHosts)
+        setClickListener(clearSSHKeys)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -80,6 +83,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "network_profiles" -> networkProfiles()
             "reactivate_tutorials" -> reactivateTutorialsPrompt()
             "ssh_hosts" -> clearSSHHosts()
+            "ssh_keys" -> clearSSHKeys()
         }
         return false
     }
@@ -97,11 +101,13 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun clearSSHHosts() {
-        createAlertDialog("Clear All SSH Hosts", " Would you like to delete all SSH Hosts? ", "Clear", CLEAR_SSH_HOSTS)
+        createAlertDialog("Clear All SSH Hosts", "Would you like to delete all SSH Hosts? ", "Clear", CLEAR_SSH_HOSTS)
     }
 
+    private fun clearSSHKeys() = createAlertDialog("Clear All SSH Keys", "Would you like to delete all SSH Keys?", "Clear", CLEAR_SSH_KEYS)
+
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        var dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        val dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positive) { _: DialogInterface?, _: Int -> onClickDialog(ID) }
@@ -140,6 +146,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             NETWORK_PROFILES_ID -> clearNetworkProfiles()
             REACTIVATE_TUTORIALS -> reactivateTutorials()
             CLEAR_SSH_HOSTS -> SaveUtils.deleteAllHosts(requireContext())
+            CLEAR_SSH_KEYS -> KeyUtils.deleteAllKeys(requireContext())
         }
     }
 
@@ -158,5 +165,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         private const val NETWORK_PROFILES_ID = 3
         private const val REACTIVATE_TUTORIALS = 4
         private const val CLEAR_SSH_HOSTS = 5
+        private const val CLEAR_SSH_KEYS = 6
     }
 }
