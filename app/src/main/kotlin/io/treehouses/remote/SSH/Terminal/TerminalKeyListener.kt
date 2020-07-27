@@ -154,7 +154,8 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         }
     }
 
-    private fun checkReturn(interpretAsHardKeyboard: Boolean, keyCode: Int): Boolean {
+    private fun needReturn(interpretAsHardKeyboard: Boolean, keyCode: Int, event: KeyEvent): Boolean {
+        setDerivedMetaState(event)
         var shouldReturn = false
         val shiftedNumbersAreFKeys = shiftedNumbersAreFKeysOnHardKeyboard && interpretAsHardKeyboard
         val controlNumbersAreFKeys = controlNumbersAreFKeysOnSoftKeyboard && !interpretAsHardKeyboard
@@ -198,7 +199,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         }
     }
 
-    private fun handleNonCtrlChar(): Boolean {
+    private fun hasNonCtrlChar(): Boolean {
         // If we have a defined non-control character
         if (uchar >= 0x20) {
             if (derivedMetaState and HC_META_CTRL_ON != 0) uchar = keyAsControl(uchar)
@@ -211,7 +212,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         return false
     }
 
-    private fun removeShift(keyCode: Int): Boolean {
+    private fun hasShift(keyCode: Int): Boolean {
         // Remove shift from the modifier state as it has already been used by getUnicodeChar.
         derivedMetaState = derivedMetaState and KeyEvent.META_SHIFT_ON.inv()
         if (uchar and KeyCharacterMap.COMBINING_ACCENT != 0) {
@@ -225,7 +226,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         return false
     }
 
-    private fun handleMultiCharInput(event: KeyEvent, keyCode: Int): Boolean {
+    private fun hasMultiCharInput(event: KeyEvent, keyCode: Int): Boolean {
         if (keyCode == KeyEvent.KEYCODE_UNKNOWN && event.action == KeyEvent.ACTION_MULTIPLE) {
             bridge.transport!!.write(event.characters.toByteArray(charset(encoding ?: "UTF-8")))
             return true
@@ -254,15 +255,11 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             bridge.resetScrollPosition()
 
             // Handle potentially multi-character IME input.
-            if (handleMultiCharInput(event, keyCode) || flagRaised(event, keyCode)) return true
+            if (hasMultiCharInput(event, keyCode) || flagRaised(event, keyCode) || needReturn(interpretAsHardKeyboard, keyCode, event)) return true
 
-            setDerivedMetaState(event)
-
-            var shouldReturn = checkReturn(interpretAsHardKeyboard, keyCode)
-            if (shouldReturn) return true
             getUnicode(event)
 
-            if (removeShift(keyCode) || handleNonCtrlChar() || handleKeyCode(keyCode)) return true
+            if (hasShift(keyCode) || hasNonCtrlChar() || hasKeyCode(keyCode)) return true
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
@@ -310,7 +307,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         }
     }
 
-    private fun handleKeyCode(keyCode: Int): Boolean {
+    private fun hasKeyCode(keyCode: Int): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_ESCAPE -> sendEscape()
             KeyEvent.KEYCODE_TAB -> bridge.transport!!.write(0x09)
