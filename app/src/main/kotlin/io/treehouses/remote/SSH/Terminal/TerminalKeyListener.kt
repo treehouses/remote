@@ -267,17 +267,20 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             if (shouldReturn) return true
             getUnicode(event)
 
-            if (removeShift(keyCode)) return true
-
-            if (handleNonCtrlChar()) return true
-
-            if (handleKeyCode(keyCode)) return true
+            if (handleEvents(keyCode)) return true
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
             Log.d(TAG, "Input before connection established ignored.")
             return true
         }
+        return false
+    }
+
+    private fun handleEvents(keyCode: Int): Boolean {
+        if (removeShift(keyCode)) return true
+        if (handleNonCtrlChar()) return true
+        if (handleKeyCode(keyCode)) return true
         return false
     }
 
