@@ -114,21 +114,8 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     private fun handleDpadCenter(keyCode: Int, flag: Boolean): Boolean {
         var newFlag = flag
         if (!newFlag && keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-            if (selectingForCopy) {
-                if (selectionArea.isSelectingOrigin) selectionArea.finishSelectingOrigin() else {
-                    if (clipboard != null) {
-                        // copy selected area to clipboard
-                        val copiedText = selectionArea.copyFrom(buffer)
-                        clipboard!!.text = copiedText
-                        // XXX STOPSHIP
-//							manager.notifyUser(manager.getString(
-//									R.string.console_copy_done,
-//									copiedText.length()));
-                        selectingForCopy = false
-                        selectionArea.reset()
-                    }
-                }
-            } else {
+            if (selectingForCopy) handleSelection()
+            else {
                 if (metaState and OUR_CTRL_ON != 0) {
                     sendEscape()
                     metaState = metaState and OUR_CTRL_ON.inv()
@@ -138,6 +125,22 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             newFlag = true
         }
         return newFlag
+    }
+
+    private fun handleSelection() {
+        if (selectionArea.isSelectingOrigin) selectionArea.finishSelectingOrigin() else {
+            if (clipboard != null) {
+                // copy selected area to clipboard
+                val copiedText = selectionArea.copyFrom(buffer)
+                clipboard!!.text = copiedText
+                // XXX STOPSHIP
+//							manager.notifyUser(manager.getString(
+//									R.string.console_copy_done,
+//									copiedText.length()));
+                selectingForCopy = false
+                selectionArea.reset()
+            }
+        }
     }
 
     private fun setDerivedMetaState(event: KeyEvent) {
