@@ -27,6 +27,15 @@
         android:hint="user@hostname:port"
         android:padding="@dimen/padding_normal"
         android:textColorHint="@color/md_grey_500" />
+    <Button
+        android:id="@+id/connect_ssh"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:background="@drawable/ripple"
+        android:text="Connect"
+        android:textColor="@color/bg_white" />
 
     <TextView
         android:layout_width="match_parent"
@@ -67,34 +76,41 @@
             android:layout_marginTop="@dimen/margin_medium"
             android:text="There are no saved hosts!"/>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/connect_ssh"
-        android:layout_width="150dp"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_large"
-        android:background="@drawable/ripple"
-        android:text="Connect"
-        android:textColor="@color/bg_white" />
-
-    <Button
-        android:id="@+id/generate_keys"
-        android:layout_width="150dp"
+        app:fontFamily="@font/roboto_bold"
+        android:padding="@dimen/padding_normal"
+        android:textColor="@color/daynight_textColor"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:text="SSH Keys"
+        android:textSize="@dimen/text_size_mid" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_large"
-        android:background="@drawable/service_button"
-        android:text="Generate Key"
-        android:textColor="@color/bg_white" />
-    <Button
-        android:id="@+id/show_keys"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_large"
-        android:background="@drawable/service_button"
-        android:text="View All Keys"
-        android:textColor="@color/bg_white" />
+        android:layout_marginBottom="@dimen/margin_large">
+        <Button
+            android:id="@+id/generate_keys"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:background="@drawable/service_button"
+            android:text="Generate Key"
+            android:textColor="@color/bg_white"
+            android:layout_marginRight="@dimen/margin_medium" />
+        <Button
+            android:id="@+id/show_keys"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginLeft="@dimen/margin_medium"
+            android:layout_gravity="center"
+            android:background="@drawable/service_button"
+            android:text="View All Keys"
+            android:textColor="@color/bg_white" />
+    </LinearLayout>
 
 </LinearLayout>

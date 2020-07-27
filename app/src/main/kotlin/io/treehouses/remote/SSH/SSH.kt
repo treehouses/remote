@@ -39,6 +39,7 @@ import java.io.OutputStream
 import java.security.KeyPair
 import java.security.NoSuchAlgorithmException
 import java.security.PrivateKey
+import java.security.PublicKey
 import java.security.interfaces.*
 import java.security.spec.InvalidKeySpecException
 import java.util.*
@@ -158,12 +159,8 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             val fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
             val algorithmName: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
             return when (hosts.verifyHostkey(matchName, serverHostKeyAlgorithm, serverHostKey)) {
-                KnownHosts.HOSTKEY_IS_OK -> {
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_sucess, algorithmName, fingerprint))
-                    true
-                }
+                KnownHosts.HOSTKEY_IS_OK -> onKeyOk(algorithmName, fingerprint)
                 KnownHosts.HOSTKEY_IS_NEW -> {
-                    // prompt user
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
                     bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
                     Log.e("HOST KEY", Arrays.toString(serverHostKey))
@@ -171,34 +168,45 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //                        // save this key in known database
 //                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
 //                    }
-                    if (continueConnecting()) {
-                        KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
-                        true
-                    } else false
+                    promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
                 }
                 KnownHosts.HOSTKEY_HAS_CHANGED -> {
-                    val header = String.format("@   %s   @",
-                            manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
-                    val atsigns = CharArray(header.length)
-                    Arrays.fill(atsigns, '@')
-                    val border = String(atsigns)
-                    bridge!!.outputLine(border)
-                    bridge!!.outputLine(header)
-                    bridge!!.outputLine(border)
-                    outputLine(R.string.host_verification_failure_warning)
-                    bridge!!.outputLine(String.format(manager!!.res!!.getString(R.string.host_fingerprint), algorithmName, fingerprint))
-
-                    // Users have no way to delete keys, so we'll prompt them for now.
-                    if (continueConnecting()) {
-                        KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
-                        true
-                    } else false
+                    onHostKeyChanged(algorithmName, fingerprint)
+                    promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
                 }
-                else -> {
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
-                    false
-                }
+                else -> onKeyFailed()
             }
+        }
+
+        private fun onKeyOk(algorithmName: String, fingerprint: String): Boolean {
+            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_sucess, algorithmName, fingerprint))
+            return true
+        }
+
+        private fun onKeyFailed(): Boolean {
+            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_failed))
+            return false
+        }
+
+        private fun onHostKeyChanged(algorithmName: String, fingerprint: String) {
+            val header = String.format("@   %s   @",
+                    manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
+            val atsigns = CharArray(header.length)
+            Arrays.fill(atsigns, '@')
+            val border = String(atsigns)
+            bridge!!.outputLine(border)
+            bridge!!.outputLine(header)
+            bridge!!.outputLine(border)
+            outputLine(R.string.host_verification_failure_warning)
+            bridge!!.outputLine(String.format(manager!!.res!!.getString(R.string.host_fingerprint), algorithmName, fingerprint))
+        }
+
+        private fun promptKeys(hostname: String, port: Int, serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
+            // Users have no way to delete keys, so we'll prompt them for now.
+            if (continueConnecting()) {
+                KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
+                return true
+            } else return false
         }
 
         private fun continueConnecting() : Boolean = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
@@ -218,7 +226,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
-    private fun authenticate() {
+    private fun tryNoneAuthentication() {
         try {
             if (connection!!.authenticateWithNone(host!!.username)) {
                 finishConnection()
@@ -227,6 +235,41 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         } catch (e: Exception) {
             Log.d(TAG, "Host does not support 'none' authentication.")
         }
+    }
+
+    private fun tryInMemKeys(pubkeyId: String) {
+        // try each of the in-memory keys
+        Log.e("HERE", "YAY: $pubkeyId")
+        outputLine(R.string.terminal_auth_pubkey_any)
+        for ((key, value) in manager!!.loadedKeypairs) {
+            if (value?.bean!!.isConfirmUse && !promptForPubkeyUse(key)) continue
+            if (this.tryPublicKey(host!!.username, key, value.pair)) {
+                finishConnection()
+                break
+            }
+        }
+    }
+
+    private fun promptForPw(pubkeyId: String) {
+        outputLine(R.string.terminal_auth_pubkey_specific)
+        // use a specific key for this host, as requested
+        val pubkey = KeyUtils.getKey(manager!!.applicationContext, pubkeyId)
+
+        if (pubkey == null) bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
+        else if (tryPublicKey(pubkey)) finishConnection()
+    }
+
+    private fun tryInteractiveAuth() {
+        // this auth method will talk with us using InteractiveCallback interface
+        // it blocks until authentication finishes
+        outputLine(R.string.terminal_auth_ki)
+        interactiveCanContinue = false
+        if (connection!!.authenticateWithKeyboardInteractive(host!!.username, this)) finishConnection()
+        else outputLine(R.string.terminal_auth_ki_fail)
+    }
+
+    private fun authenticate() {
+        tryNoneAuthentication()
         outputLine(R.string.terminal_auth)
         try {
             val pubkeyId = host!!.keyName
@@ -235,48 +278,17 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
                 // if explicit pubkey defined for this host, then prompt for password as needed
                 // otherwise just try all in-memory keys held in terminalmanager
-                if (pubkeyId.isEmpty() || pubkeyId == NO_KEY) {
-                    // try each of the in-memory keys
-                    Log.e("HERE", "YAY: $pubkeyId")
-                    outputLine(R.string.terminal_auth_pubkey_any)
-                    for ((key, value) in manager!!.loadedKeypairs) {
-                        if (value?.bean!!.isConfirmUse && !promptForPubkeyUse(key)) continue
-                        if (this.tryPublicKey(host!!.username, key, value.pair)) {
-                            finishConnection()
-                            break
-                        }
-                    }
-                } else {
-                    outputLine(R.string.terminal_auth_pubkey_specific)
-                    // use a specific key for this host, as requested
-                    val pubkey = KeyUtils.getKey(manager!!.applicationContext, pubkeyId)
-
-                    if (pubkey == null)
-                        bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
-                    else if (tryPublicKey(pubkey))
-                        finishConnection()
-                }
+                if (pubkeyId.isEmpty() || pubkeyId == NO_KEY) tryInMemKeys(pubkeyId)
+                else promptForPw(pubkeyId)
                 pubkeysExhausted = true
-            } else if (interactiveCanContinue &&
-                    connection!!.isAuthMethodAvailable(host!!.username, AUTH_KEYBOARDINTERACTIVE)) {
-                // this auth method will talk with us using InteractiveCallback interface
-                // it blocks until authentication finishes
-                outputLine(R.string.terminal_auth_ki)
-                interactiveCanContinue = false
-                if (connection!!.authenticateWithKeyboardInteractive(host!!.username, this)) finishConnection()
-                else outputLine(R.string.terminal_auth_ki_fail)
-
+            } else if (interactiveCanContinue && connection!!.isAuthMethodAvailable(host!!.username, AUTH_KEYBOARDINTERACTIVE)) {
+                tryInteractiveAuth()
             } else if (connection!!.isAuthMethodAvailable(host!!.username, AUTH_PASSWORD)) {
                 outputLine(R.string.terminal_auth_pass)
                 val password = bridge!!.promptHelper!!.requestStringPrompt(null, manager!!.res!!.getString(R.string.prompt_password))
-                if (password != null && connection!!.authenticateWithPassword(host!!.username, password)) {
-                    finishConnection()
-                } else {
-                    outputLine(R.string.terminal_auth_pass_fail)
-                }
-            } else {
-                outputLine(R.string.terminal_auth_pass_fail)
-            }
+                if (password != null && connection!!.authenticateWithPassword(host!!.username, password)) finishConnection()
+                else outputLine(R.string.terminal_auth_pass_fail)
+            } else outputLine(R.string.terminal_auth_pass_fail)
         } catch (e: IllegalStateException) {
             Log.e(TAG, "Connection went away while we were trying to authenticate", e)
             return
@@ -313,8 +325,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             var password: String? = null
 
             if (pubkey.isEncrypted) {
-                password = bridge!!.promptHelper!!.requestStringPrompt(null,
-                        manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
+                password = bridge!!.promptHelper!!.requestStringPrompt(null, manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
 
                 // Something must have interrupted the prompt.
                 if (password == null) return false
@@ -324,22 +335,31 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             privKey = try {
                 PubKeyUtils.decodePrivate(pubkey.privateKey!!, pubkey.type, password)
             } catch (e: Exception) {
-                val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
-                Log.e(TAG, message, e)
-                bridge!!.outputLine(message)
-                return false
+                return onBadPassword(pubkey, e)
             }
             val pubKey = PubKeyUtils.decodePublic(pubkey.publicKey!!, pubkey.type)
 
-            // convert key to trilead format
-            pair = KeyPair(pubKey, privKey)
-            Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
-            Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
-
-            // save this key in memory
-            manager!!.addKey(pubkey, pair)
+            pair = convertAndSaveKey(pubKey, privKey, pubkey)
         }
         return tryPublicKey(host!!.username, pubkey.nickname, pair)
+    }
+
+    private fun onBadPassword(pubkey: PubKeyBean, e: Exception): Boolean {
+        val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
+        Log.e(TAG, message, e)
+        bridge!!.outputLine(message)
+        return false
+    }
+
+    private fun convertAndSaveKey(pubKey: PublicKey, privKey: PrivateKey, pubkey: PubKeyBean): KeyPair {
+        // convert key to trilead format
+        val pair = KeyPair(pubKey, privKey)
+        Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
+        Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
+
+        // save this key in memory
+        manager!!.addKey(pubkey, pair)
+        return pair
     }
 
     @Throws(IOException::class)
@@ -389,6 +409,21 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
+    private fun displayAlgorithms() {
+        val connectionInfo = connection!!.connect(HostKeyVerifier())
+        isConnected = true
+        bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_kex_algorithm,
+                connectionInfo.keyExchangeAlgorithm))
+        if ((connectionInfo.clientToServerCryptoAlgorithm
+                        == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
+                        == connectionInfo.serverToClientMACAlgorithm)) {
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
+        } else {
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
+        }
+    }
+
     fun connect() {
         connection = Connection(host!!.hostname, host!!.port)
         connection!!.addConnectionMonitor(this)
@@ -409,18 +444,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 			Logger.enabled = true;
 			Logger.logger = logger;
 			*/
-            val connectionInfo = connection!!.connect(HostKeyVerifier())
-            isConnected = true
-            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_kex_algorithm,
-                    connectionInfo.keyExchangeAlgorithm))
-            if ((connectionInfo.clientToServerCryptoAlgorithm
-                            == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
-                            == connectionInfo.serverToClientMACAlgorithm)) {
-                outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
-            } else {
-                outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
-                outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
-            }
+            displayAlgorithms()
         } catch (e: IOException) {
             Log.e(TAG, "Problem in SSH connection thread during authentication", e)
 
@@ -434,6 +458,10 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             onDisconnect()
             return
         }
+        tryAuthentication()
+    }
+
+    private fun tryAuthentication() {
         try {
             // enter a loop to keep trying until authentication
             var tries = 0
