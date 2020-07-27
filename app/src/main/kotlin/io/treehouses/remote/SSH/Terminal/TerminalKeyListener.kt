@@ -162,21 +162,20 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         // Test for modified numbers becoming function keys
         if (shiftedNumbersAreFKeys && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && sendFunctionKey(keyCode)) shouldReturn = true
         else if (controlNumbersAreFKeys && derivedMetaState and HC_META_CTRL_ON != 0 && !shouldReturn && sendFunctionKey(keyCode)) shouldReturn = true
-        else if (keyCode == KeyEvent.KEYCODE_C && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
-            bridge.copyCurrentSelection()
-            shouldReturn = true
+        else if (derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
+            if (keyCode == KeyEvent.KEYCODE_C) {
+                bridge.copyCurrentSelection()
+                shouldReturn = true
+                // CTRL-SHIFT-V to paste.
+            } else if (keyCode == KeyEvent.KEYCODE_V && clipboard!!.hasText()) {
+                bridge.injectString(clipboard!!.text.toString())
+                shouldReturn = true
+            } else if (keyCode == KeyEvent.KEYCODE_EQUALS || keyCode == KeyEvent.KEYCODE_PLUS) {
+                bridge.increaseFontSize()
+                shouldReturn = true
+            }
         }
-
-        // CTRL-SHIFT-V to paste.
-        else if (keyCode == KeyEvent.KEYCODE_V && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && clipboard!!.hasText()) {
-            bridge.injectString(clipboard!!.text.toString())
-            shouldReturn = true
-        } else if (keyCode == KeyEvent.KEYCODE_EQUALS && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0
-                || (keyCode == KeyEvent.KEYCODE_PLUS
-                        && derivedMetaState and HC_META_CTRL_ON != 0)) {
-            bridge.increaseFontSize()
-            shouldReturn = true
-        } else if (keyCode == KeyEvent.KEYCODE_MINUS && derivedMetaState and HC_META_CTRL_ON != 0) {
+        else if (keyCode == KeyEvent.KEYCODE_MINUS && derivedMetaState and HC_META_CTRL_ON != 0) {
             bridge.decreaseFontSize()
             shouldReturn = true
         }
