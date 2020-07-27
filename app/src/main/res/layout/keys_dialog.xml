@@ -75,6 +75,43 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:padding="@dimen/padding_large"
+        android:text="Strength:"
+        android:textColor="@color/daynight_textColor"
+        android:textSize="@dimen/text_size_mid" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginLeft="@dimen/margin_medium">
+
+        <EditText
+            android:inputType="number"
+            android:id="@+id/strengthShow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:background="@drawable/rectangle_border"
+            android:textColor="@color/grey_to_light_grey"
+            android:text="1024" />
+
+        <SeekBar
+            android:id="@+id/keyStrength"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:progress="50"
+            android:entries="@array/key_types" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
