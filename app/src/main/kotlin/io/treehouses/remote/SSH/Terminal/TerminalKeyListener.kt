@@ -294,42 +294,17 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         }
     }
 
-    private fun handleDpadLeft() {
+    private fun handleDpad(direction: String, key: Int) {
         if (selectingForCopy) {
-            selectionArea.decrementColumn()
+            when (direction) {
+                "up" -> selectionArea.decrementRow()
+                "down" -> selectionArea.incrementRow()
+                "left" -> selectionArea.decrementColumn()
+                "right" -> selectionArea.incrementColumn()
+            }
             bridge.redraw()
         } else {
-            sendPressedKey(vt320.KEY_LEFT)
-            bridge.tryKeyVibrate()
-        }
-    }
-
-    private fun handleDpadUp() {
-        if (selectingForCopy) {
-            selectionArea.decrementRow()
-            bridge.redraw()
-        } else {
-            sendPressedKey(vt320.KEY_UP)
-            bridge.tryKeyVibrate()
-        }
-    }
-
-    private fun handleDpadDown() {
-        if (selectingForCopy) {
-            selectionArea.incrementRow()
-            bridge.redraw()
-        } else {
-            sendPressedKey(vt320.KEY_DOWN)
-            bridge.tryKeyVibrate()
-        }
-    }
-
-    private fun handleDpadRight() {
-        if (selectingForCopy) {
-            selectionArea.incrementColumn()
-            bridge.redraw()
-        } else {
-            sendPressedKey(vt320.KEY_RIGHT)
+            sendPressedKey(key)
             bridge.tryKeyVibrate()
         }
     }
@@ -341,10 +316,10 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             KeyEvent.KEYCODE_CAMERA -> handleCamera()
             KeyEvent.KEYCODE_DEL -> sendPressedKey(vt320.KEY_BACK_SPACE)
             KeyEvent.KEYCODE_ENTER -> (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
-            KeyEvent.KEYCODE_DPAD_LEFT -> handleDpadLeft()
-            KeyEvent.KEYCODE_DPAD_UP -> handleDpadUp()
-            KeyEvent.KEYCODE_DPAD_DOWN -> handleDpadDown()
-            KeyEvent.KEYCODE_DPAD_RIGHT -> handleDpadRight()
+            KeyEvent.KEYCODE_DPAD_LEFT -> handleDpad("left", vt320.KEY_LEFT)
+            KeyEvent.KEYCODE_DPAD_UP -> handleDpad("up", vt320.KEY_UP)
+            KeyEvent.KEYCODE_DPAD_DOWN -> handleDpad("down", vt320.KEY_DOWN)
+            KeyEvent.KEYCODE_DPAD_RIGHT -> handleDpad("right", vt320.KEY_RIGHT)
             KEYCODE_INSERT -> sendPressedKey(vt320.KEY_INSERT)
             KEYCODE_FORWARD_DEL -> sendPressedKey(vt320.KEY_DELETE)
             KEYCODE_MOVE_HOME -> sendPressedKey(vt320.KEY_HOME)
