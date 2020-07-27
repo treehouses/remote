@@ -15,7 +15,6 @@ import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
-import java.security.KeyPair
 import java.security.KeyPairGenerator
 
 class SSHKeyGen : FullScreenDialogFragment() {
@@ -90,7 +89,7 @@ class SSHKeyGen : FullScreenDialogFragment() {
     private fun setUpStrengthListeners() {
         bind.keyStrength.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                bind.strengthShow.setText(getBitSize().toString())
+                if (fromUser) bind.strengthShow.setText(getBitSize().toString())
                 changeECtoClosest(progress)
             }
 
@@ -114,6 +113,10 @@ class SSHKeyGen : FullScreenDialogFragment() {
             override fun afterTextChanged(s: Editable?) {
                 val isValid = validate(bind.keyNameInput.text.toString())
                 bind.generateKey.isEnabled = isValid
+                val strength = if (s.isNullOrEmpty()) 0 else Integer.parseInt(s.toString())
+                if (validateBitSize(strength, getSelectedAlgo())) {
+                    setStrength(strength, false)
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
