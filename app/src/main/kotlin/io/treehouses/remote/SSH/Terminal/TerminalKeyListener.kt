@@ -43,8 +43,13 @@ class TerminalKeyListener(private val manager: TerminalManager?,
     private val deviceHasHardKeyboard: Boolean
     private var shiftedNumbersAreFKeysOnHardKeyboard = false
     private var controlNumbersAreFKeysOnSoftKeyboard = false
+    private var rightModifiersAreSlashAndTab = false
+    private var leftModifiersAreSlashAndTab = false
+    private var derivedMetaState = 0
     private var volumeKeysChangeFontSize = false
+    private var interpretAsHardKeyboard = false
     private var stickyMetas = 0
+    private var uchar = 0
     var metaState = 0
         private set
     var deadKey = 0
@@ -73,6 +78,164 @@ class TerminalKeyListener(private val manager: TerminalManager?,
                 true
             } else false
     }
+
+    private fun handleModifierKeyCode(keyCode: Int): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_ALT_RIGHT -> metaState = metaState or OUR_SLASH
+            KeyEvent.KEYCODE_SHIFT_RIGHT -> metaState = metaState or OUR_TAB
+            KeyEvent.KEYCODE_SHIFT_LEFT -> metaPress(OUR_SHIFT_ON)
+            KeyEvent.KEYCODE_ALT_LEFT -> metaPress(OUR_ALT_ON)
+            else -> return false
+        }
+        return true
+    }
+
+    private fun handleModifierKeys(event: KeyEvent, keyCode: Int, flag: Boolean): Boolean {
+        var newFlag = flag
+        /// Handle alt and shift keys if they aren't repeating
+        if (event.repeatCount == 0) {
+            when {
+                rightModifiersAreSlashAndTab -> newFlag = handleModifierKeyCode(keyCode)
+                leftModifiersAreSlashAndTab -> newFlag = handleModifierKeyCode(keyCode)
+                else -> {
+                    when (keyCode) {
+                        KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> metaPress(OUR_ALT_ON)
+                        KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> metaPress(OUR_SHIFT_ON)
+                        else -> newFlag = false
+                    }
+                }
+            }
+            if (!newFlag && (keyCode == KEYCODE_CTRL_LEFT || keyCode == KEYCODE_CTRL_RIGHT)) metaPress(OUR_CTRL_ON)
+            else newFlag = false
+        }
+        return newFlag
+    }
+
+    private fun handleDpadCenter(keyCode: Int, flag: Boolean): Boolean {
+        var newFlag = flag
+        if (!newFlag && keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+            if (selectingForCopy) {
+                if (selectionArea.isSelectingOrigin) selectionArea.finishSelectingOrigin() else {
+                    if (clipboard != null) {
+                        // copy selected area to clipboard
+                        val copiedText = selectionArea.copyFrom(buffer)
+                        clipboard!!.text = copiedText
+                        // XXX STOPSHIP
+//							manager.notifyUser(manager.getString(
+//									R.string.console_copy_done,
+//									copiedText.length()));
+                        selectingForCopy = false
+                        selectionArea.reset()
+                    }
+                }
+            } else {
+                if (metaState and OUR_CTRL_ON != 0) {
+                    sendEscape()
+                    metaState = metaState and OUR_CTRL_ON.inv()
+                } else metaPress(OUR_CTRL_ON, true)
+            }
+            bridge.redraw()
+            newFlag = true
+        }
+        return newFlag
+    }
+
+    private fun setDerivedMetaState(event: KeyEvent) {
+        derivedMetaState = event.metaState
+        if (metaState and OUR_SHIFT_MASK != 0) derivedMetaState = derivedMetaState or KeyEvent.META_SHIFT_ON
+        if (metaState and OUR_ALT_MASK != 0) derivedMetaState = derivedMetaState or KeyEvent.META_ALT_ON
+        if (metaState and OUR_CTRL_MASK != 0) derivedMetaState = derivedMetaState or HC_META_CTRL_ON
+        if (metaState and OUR_TRANSIENT != 0) {
+            metaState = metaState and OUR_TRANSIENT.inv()
+            bridge.redraw()
+        }
+    }
+
+    private fun checkReturn(interpretAsHardKeyboard: Boolean, keyCode: Int): Boolean {
+        var shouldReturn = false
+        val shiftedNumbersAreFKeys = shiftedNumbersAreFKeysOnHardKeyboard && interpretAsHardKeyboard
+        val controlNumbersAreFKeys = controlNumbersAreFKeysOnSoftKeyboard && !interpretAsHardKeyboard
+        // Test for modified numbers becoming function keys
+        if (shiftedNumbersAreFKeys && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && sendFunctionKey(keyCode)) shouldReturn = true
+        else if (controlNumbersAreFKeys && derivedMetaState and HC_META_CTRL_ON != 0 && !shouldReturn && sendFunctionKey(keyCode)) shouldReturn = true
+        else if (keyCode == KeyEvent.KEYCODE_C && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
+            bridge.copyCurrentSelection()
+            shouldReturn = true
+        }
+
+        // CTRL-SHIFT-V to paste.
+        else if (keyCode == KeyEvent.KEYCODE_V && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && clipboard!!.hasText()) {
+            bridge.injectString(clipboard!!.text.toString())
+            shouldReturn = true
+        } else if (keyCode == KeyEvent.KEYCODE_EQUALS && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0
+                || (keyCode == KeyEvent.KEYCODE_PLUS
+                        && derivedMetaState and HC_META_CTRL_ON != 0)) {
+            bridge.increaseFontSize()
+            shouldReturn = true
+        } else if (keyCode == KeyEvent.KEYCODE_MINUS && derivedMetaState and HC_META_CTRL_ON != 0) {
+            bridge.decreaseFontSize()
+            shouldReturn = true
+        }
+        return shouldReturn
+    }
+
+    private fun getUnicode(event: KeyEvent) {
+        // Ask the system to use the keymap to give us the unicode character for this key,
+        // with our derived modifier state applied.
+        uchar = event.getUnicodeChar(derivedMetaState and HC_META_CTRL_MASK.inv())
+        val ucharWithoutAlt = event.getUnicodeChar(
+                derivedMetaState and (HC_META_ALT_MASK or HC_META_CTRL_MASK).inv())
+        if (uchar == 0) {
+            // Keymap doesn't know the key with alt on it, so just go with the unmodified version
+            uchar = ucharWithoutAlt
+        } else if (uchar != ucharWithoutAlt) {
+            // The alt key was used to modify the character returned; therefore, drop the alt
+            // modifier from the state so we don't end up sending alt+key.
+            derivedMetaState = derivedMetaState and HC_META_ALT_MASK.inv()
+        }
+    }
+
+    private fun handleNonCtrlChar(): Boolean {
+        // If we have a defined non-control character
+        if (uchar >= 0x20) {
+            if (derivedMetaState and HC_META_CTRL_ON != 0) uchar = keyAsControl(uchar)
+            if (derivedMetaState and KeyEvent.META_ALT_ON != 0) sendEscape()
+            if (uchar < 0x80) bridge.transport!!.write(uchar) else  // TODO write encoding routine that doesn't allocate each time
+                bridge.transport!!.write(String(Character.toChars(uchar))
+                        .toByteArray(charset(encoding ?: "UTF-8")))
+            return true
+        }
+        return false
+    }
+
+    private fun removeShift(keyCode: Int): Boolean {
+        // Remove shift from the modifier state as it has already been used by getUnicodeChar.
+        derivedMetaState = derivedMetaState and KeyEvent.META_SHIFT_ON.inv()
+        if (uchar and KeyCharacterMap.COMBINING_ACCENT != 0) {
+            deadKey = uchar and KeyCharacterMap.COMBINING_ACCENT_MASK
+            return true
+        }
+        if (deadKey != 0) {
+            uchar = KeyCharacterMap.getDeadChar(deadKey, keyCode)
+            deadKey = 0
+        }
+        return false
+    }
+
+    private fun handleMultiCharInput(event: KeyEvent, keyCode: Int): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_UNKNOWN && event.action == KeyEvent.ACTION_MULTIPLE) {
+            bridge.transport!!.write(event.characters.toByteArray(charset(encoding ?: "UTF-8")))
+            return true
+        }
+        return false
+    }
+
+    private fun checkOptions() {
+        interpretAsHardKeyboard = deviceHasHardKeyboard && !manager!!.hardKeyboardHidden
+        rightModifiersAreSlashAndTab = interpretAsHardKeyboard && PreferenceConstants.KEYMODE_RIGHT == keymode
+        leftModifiersAreSlashAndTab = interpretAsHardKeyboard && PreferenceConstants.KEYMODE_LEFT == keymode
+    }
+
     /**
      * Handle onKey() events coming down from a [TerminalView] above us.
      * Modify the keys to make more sense to a host then pass it to the transport.
@@ -81,219 +244,31 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         try {
             // skip keys if we aren't connected yet or have been disconnected
             if (bridge.isDisconnected || bridge.transport == null) return false
-            val interpretAsHardKeyboard = deviceHasHardKeyboard &&
-                    !manager!!.hardKeyboardHidden
-            val rightModifiersAreSlashAndTab = interpretAsHardKeyboard && PreferenceConstants.KEYMODE_RIGHT == keymode
-            val leftModifiersAreSlashAndTab = interpretAsHardKeyboard && PreferenceConstants.KEYMODE_LEFT == keymode
-            val shiftedNumbersAreFKeys = shiftedNumbersAreFKeysOnHardKeyboard &&
-                    interpretAsHardKeyboard
-            val controlNumbersAreFKeys = controlNumbersAreFKeysOnSoftKeyboard &&
-                    !interpretAsHardKeyboard
+            checkOptions()
             if (event.action == KeyEvent.ACTION_UP) return specialKeys(keyCode, leftModifiersAreSlashAndTab, rightModifiersAreSlashAndTab)
 
             //Log.i("CBKeyDebug", KeyEventUtil.describeKeyEvent(keyCode, event));
             bridge.resetScrollPosition()
 
             // Handle potentially multi-character IME input.
-            if (keyCode == KeyEvent.KEYCODE_UNKNOWN &&
-                    event.action == KeyEvent.ACTION_MULTIPLE) {
-                val input = event.characters.toByteArray(charset(encoding ?: "UTF-8"))
-                bridge.transport!!.write(input)
-                return true
-            }
-            var flag = true
-            /// Handle alt and shift keys if they aren't repeating
-            if (event.repeatCount == 0) {
-                when {
-                    rightModifiersAreSlashAndTab -> {
-                        when (keyCode) {
-                            KeyEvent.KEYCODE_ALT_RIGHT -> metaState = metaState or OUR_SLASH
-                            KeyEvent.KEYCODE_SHIFT_RIGHT -> metaState = metaState or OUR_TAB
-                            KeyEvent.KEYCODE_SHIFT_LEFT -> metaPress(OUR_SHIFT_ON)
-                            KeyEvent.KEYCODE_ALT_LEFT -> metaPress(OUR_ALT_ON)
-                            else -> flag = false
-                        }
-                    }
-                    leftModifiersAreSlashAndTab -> {
-                        when (keyCode) {
-                            KeyEvent.KEYCODE_ALT_LEFT -> metaState = metaState or OUR_SLASH
-                            KeyEvent.KEYCODE_SHIFT_LEFT -> metaState = metaState or OUR_TAB
-                            KeyEvent.KEYCODE_SHIFT_RIGHT -> metaPress(OUR_SHIFT_ON)
-                            KeyEvent.KEYCODE_ALT_RIGHT -> metaPress(OUR_ALT_ON)
-                            else -> flag = false
-                        }
-                    }
-                    else -> {
-                        when (keyCode) {
-                            KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> metaPress(OUR_ALT_ON)
-                            KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT -> metaPress(OUR_SHIFT_ON)
-                            else -> flag = false
-                        }
-                    }
-                }
-                if (!flag && (keyCode == KEYCODE_CTRL_LEFT || keyCode == KEYCODE_CTRL_RIGHT)) metaPress(OUR_CTRL_ON)
-                else flag = false
-            }
+            if (handleMultiCharInput(event, keyCode)) return true
 
-            if (!flag && keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-                if (selectingForCopy) {
-                    if (selectionArea.isSelectingOrigin) selectionArea.finishSelectingOrigin() else {
-                        if (clipboard != null) {
-                            // copy selected area to clipboard
-                            val copiedText = selectionArea.copyFrom(buffer)
-                            clipboard!!.text = copiedText
-                            // XXX STOPSHIP
-//							manager.notifyUser(manager.getString(
-//									R.string.console_copy_done,
-//									copiedText.length()));
-                            selectingForCopy = false
-                            selectionArea.reset()
-                        }
-                    }
-                } else {
-                    if (metaState and OUR_CTRL_ON != 0) {
-                        sendEscape()
-                        metaState = metaState and OUR_CTRL_ON.inv()
-                    } else metaPress(OUR_CTRL_ON, true)
-                }
-                bridge.redraw()
-                flag = true
-            }
+            var flag = true
+            flag = handleModifierKeys(event, keyCode, flag)
+            flag = handleDpadCenter(keyCode, flag)
             if (flag) return true
 
-            var derivedMetaState = event.metaState
-            if (metaState and OUR_SHIFT_MASK != 0) derivedMetaState = derivedMetaState or KeyEvent.META_SHIFT_ON
-            if (metaState and OUR_ALT_MASK != 0) derivedMetaState = derivedMetaState or KeyEvent.META_ALT_ON
-            if (metaState and OUR_CTRL_MASK != 0) derivedMetaState = derivedMetaState or HC_META_CTRL_ON
-            if (metaState and OUR_TRANSIENT != 0) {
-                metaState = metaState and OUR_TRANSIENT.inv()
-                bridge.redraw()
-            }
+            setDerivedMetaState(event)
 
-            var shouldReturn = false
-
-            // Test for modified numbers becoming function keys
-            if (shiftedNumbersAreFKeys && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && sendFunctionKey(keyCode)) shouldReturn = true
-            else if (controlNumbersAreFKeys && derivedMetaState and HC_META_CTRL_ON != 0 && !shouldReturn && sendFunctionKey(keyCode)) shouldReturn = true
-            else if (keyCode == KeyEvent.KEYCODE_C && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0) {
-                bridge.copyCurrentSelection()
-                shouldReturn = true
-            }
-
-            // CTRL-SHIFT-V to paste.
-            else if (keyCode == KeyEvent.KEYCODE_V && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0 && clipboard!!.hasText()) {
-                bridge.injectString(clipboard!!.text.toString())
-                shouldReturn = true
-            } else if (keyCode == KeyEvent.KEYCODE_EQUALS && derivedMetaState and HC_META_CTRL_ON != 0 && derivedMetaState and KeyEvent.META_SHIFT_ON != 0
-                    || (keyCode == KeyEvent.KEYCODE_PLUS
-                            && derivedMetaState and HC_META_CTRL_ON != 0)) {
-                bridge.increaseFontSize()
-                shouldReturn = true
-            } else if (keyCode == KeyEvent.KEYCODE_MINUS && derivedMetaState and HC_META_CTRL_ON != 0) {
-                bridge.decreaseFontSize()
-                shouldReturn = true
-            }
+            var shouldReturn = checkReturn(interpretAsHardKeyboard, keyCode)
             if (shouldReturn) return true
-            // Ask the system to use the keymap to give us the unicode character for this key,
-            // with our derived modifier state applied.
-            var uchar = event.getUnicodeChar(derivedMetaState and HC_META_CTRL_MASK.inv())
-            val ucharWithoutAlt = event.getUnicodeChar(
-                    derivedMetaState and (HC_META_ALT_MASK or HC_META_CTRL_MASK).inv())
-            if (uchar == 0) {
-                // Keymap doesn't know the key with alt on it, so just go with the unmodified version
-                uchar = ucharWithoutAlt
-            } else if (uchar != ucharWithoutAlt) {
-                // The alt key was used to modify the character returned; therefore, drop the alt
-                // modifier from the state so we don't end up sending alt+key.
-                derivedMetaState = derivedMetaState and HC_META_ALT_MASK.inv()
-            }
+            getUnicode(event)
 
-            // Remove shift from the modifier state as it has already been used by getUnicodeChar.
-            derivedMetaState = derivedMetaState and KeyEvent.META_SHIFT_ON.inv()
-            if (uchar and KeyCharacterMap.COMBINING_ACCENT != 0) {
-                deadKey = uchar and KeyCharacterMap.COMBINING_ACCENT_MASK
-                return true
-            }
-            if (deadKey != 0) {
-                uchar = KeyCharacterMap.getDeadChar(deadKey, keyCode)
-                deadKey = 0
-            }
+            if (removeShift(keyCode)) return true
 
-            // If we have a defined non-control character
-            if (uchar >= 0x20) {
-                if (derivedMetaState and HC_META_CTRL_ON != 0) uchar = keyAsControl(uchar)
-                if (derivedMetaState and KeyEvent.META_ALT_ON != 0) sendEscape()
-                if (uchar < 0x80) bridge.transport!!.write(uchar) else  // TODO write encoding routine that doesn't allocate each time
-                    bridge.transport!!.write(String(Character.toChars(uchar))
-                            .toByteArray(charset(encoding ?: "UTF-8")))
-                return true
-            }
+            if (handleNonCtrlChar()) return true
 
-            when (keyCode) {
-                KeyEvent.KEYCODE_ESCAPE -> sendEscape()
-                KeyEvent.KEYCODE_TAB -> bridge.transport!!.write(0x09)
-                KeyEvent.KEYCODE_CAMERA -> {
-                    // check to see which shortcut the camera button triggers
-                    when (manager!!.prefs!!.getString(PreferenceConstants.CAMERA, PreferenceConstants.CAMERA_CTRLA_SPACE)) {
-                        PreferenceConstants.CAMERA_CTRLA_SPACE -> {
-                            bridge.transport!!.write(0x01)
-                            bridge.transport!!.write(' '.toInt())
-                        }
-                        PreferenceConstants.CAMERA_CTRLA -> bridge.transport!!.write(0x01)
-                        PreferenceConstants.CAMERA_ESC -> (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
-                        PreferenceConstants.CAMERA_ESC_A -> {
-                            sendEscape()
-                            bridge.transport!!.write('a'.toInt())
-                        }
-                    }
-                }
-                KeyEvent.KEYCODE_DEL -> sendPressedKey(vt320.KEY_BACK_SPACE)
-                KeyEvent.KEYCODE_ENTER -> (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
-                KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if (selectingForCopy) {
-                        selectionArea.decrementColumn()
-                        bridge.redraw()
-                    } else {
-                        sendPressedKey(vt320.KEY_LEFT)
-                        bridge.tryKeyVibrate()
-                    }
-                }
-                KeyEvent.KEYCODE_DPAD_UP -> {
-                    if (selectingForCopy) {
-                        selectionArea.decrementRow()
-                        bridge.redraw()
-                    } else {
-                        sendPressedKey(vt320.KEY_UP)
-                        bridge.tryKeyVibrate()
-                    }
-                }
-                KeyEvent.KEYCODE_DPAD_DOWN -> {
-                    if (selectingForCopy) {
-                        selectionArea.incrementRow()
-                        bridge.redraw()
-                    } else {
-                        sendPressedKey(vt320.KEY_DOWN)
-                        bridge.tryKeyVibrate()
-                    }
-                }
-                KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                    if (selectingForCopy) {
-                        selectionArea.incrementColumn()
-                        bridge.redraw()
-                    } else {
-                        sendPressedKey(vt320.KEY_RIGHT)
-                        bridge.tryKeyVibrate()
-                    }
-                }
-                KEYCODE_INSERT -> sendPressedKey(vt320.KEY_INSERT)
-                KEYCODE_FORWARD_DEL -> sendPressedKey(vt320.KEY_DELETE)
-                KEYCODE_MOVE_HOME -> sendPressedKey(vt320.KEY_HOME)
-                KEYCODE_MOVE_END -> sendPressedKey(vt320.KEY_END)
-                KEYCODE_PAGE_UP -> sendPressedKey(vt320.KEY_PAGE_UP)
-                KEYCODE_PAGE_DOWN -> sendPressedKey(vt320.KEY_DOWN)
-                else -> return false
-            }
-            return true
+            if (handleKeyCode(keyCode)) return true
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
@@ -301,6 +276,84 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             return true
         }
         return false
+    }
+
+    private fun handleCamera() {
+        // check to see which shortcut the camera button triggers
+        when (manager!!.prefs!!.getString(PreferenceConstants.CAMERA, PreferenceConstants.CAMERA_CTRLA_SPACE)) {
+            PreferenceConstants.CAMERA_CTRLA_SPACE -> {
+                bridge.transport!!.write(0x01)
+                bridge.transport!!.write(' '.toInt())
+            }
+            PreferenceConstants.CAMERA_CTRLA -> bridge.transport!!.write(0x01)
+            PreferenceConstants.CAMERA_ESC -> (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
+            PreferenceConstants.CAMERA_ESC_A -> {
+                sendEscape()
+                bridge.transport!!.write('a'.toInt())
+            }
+        }
+    }
+
+    private fun handleDpadLeft() {
+        if (selectingForCopy) {
+            selectionArea.decrementColumn()
+            bridge.redraw()
+        } else {
+            sendPressedKey(vt320.KEY_LEFT)
+            bridge.tryKeyVibrate()
+        }
+    }
+
+    private fun handleDpadUp() {
+        if (selectingForCopy) {
+            selectionArea.decrementRow()
+            bridge.redraw()
+        } else {
+            sendPressedKey(vt320.KEY_UP)
+            bridge.tryKeyVibrate()
+        }
+    }
+
+    private fun handleDpadDown() {
+        if (selectingForCopy) {
+            selectionArea.incrementRow()
+            bridge.redraw()
+        } else {
+            sendPressedKey(vt320.KEY_DOWN)
+            bridge.tryKeyVibrate()
+        }
+    }
+
+    private fun handleDpadRight() {
+        if (selectingForCopy) {
+            selectionArea.incrementColumn()
+            bridge.redraw()
+        } else {
+            sendPressedKey(vt320.KEY_RIGHT)
+            bridge.tryKeyVibrate()
+        }
+    }
+
+    private fun handleKeyCode(keyCode: Int): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_ESCAPE -> sendEscape()
+            KeyEvent.KEYCODE_TAB -> bridge.transport!!.write(0x09)
+            KeyEvent.KEYCODE_CAMERA -> handleCamera()
+            KeyEvent.KEYCODE_DEL -> sendPressedKey(vt320.KEY_BACK_SPACE)
+            KeyEvent.KEYCODE_ENTER -> (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
+            KeyEvent.KEYCODE_DPAD_LEFT -> handleDpadLeft()
+            KeyEvent.KEYCODE_DPAD_UP -> handleDpadUp()
+            KeyEvent.KEYCODE_DPAD_DOWN -> handleDpadDown()
+            KeyEvent.KEYCODE_DPAD_RIGHT -> handleDpadRight()
+            KEYCODE_INSERT -> sendPressedKey(vt320.KEY_INSERT)
+            KEYCODE_FORWARD_DEL -> sendPressedKey(vt320.KEY_DELETE)
+            KEYCODE_MOVE_HOME -> sendPressedKey(vt320.KEY_HOME)
+            KEYCODE_MOVE_END -> sendPressedKey(vt320.KEY_END)
+            KEYCODE_PAGE_UP -> sendPressedKey(vt320.KEY_PAGE_UP)
+            KEYCODE_PAGE_DOWN -> sendPressedKey(vt320.KEY_DOWN)
+            else -> return false
+        }
+        return true
     }
 
     private fun keyAsControl(keyIn: Int): Int {
