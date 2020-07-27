@@ -111,6 +111,7 @@ class DiscoverFragment : BaseFragment() {
     private fun showDialog(title: String, message: String) {
         val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
                 .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
