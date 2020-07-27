@@ -254,12 +254,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             bridge.resetScrollPosition()
 
             // Handle potentially multi-character IME input.
-            if (handleMultiCharInput(event, keyCode)) return true
-
-            var flag = true
-            flag = handleModifierKeys(event, keyCode, flag)
-            flag = handleDpadCenter(keyCode, flag)
-            if (flag) return true
+            if (handleMultiCharInput(event, keyCode) || flagRaised(event, keyCode)) return true
 
             setDerivedMetaState(event)
 
@@ -267,7 +262,7 @@ class TerminalKeyListener(private val manager: TerminalManager?,
             if (shouldReturn) return true
             getUnicode(event)
 
-            if (handleEvents(keyCode)) return true
+            if (removeShift(keyCode) || handleNonCtrlChar() || handleKeyCode(keyCode)) return true
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
@@ -277,11 +272,11 @@ class TerminalKeyListener(private val manager: TerminalManager?,
         return false
     }
 
-    private fun handleEvents(keyCode: Int): Boolean {
-        if (removeShift(keyCode)) return true
-        if (handleNonCtrlChar()) return true
-        if (handleKeyCode(keyCode)) return true
-        return false
+    private fun flagRaised(event: KeyEvent, keyCode: Int): Boolean {
+        var flag = true
+        flag = handleModifierKeys(event, keyCode, flag)
+        flag = handleDpadCenter(keyCode, flag)
+        return flag
     }
 
     private fun handleCamera() {
