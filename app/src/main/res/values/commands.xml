@@ -56,6 +56,7 @@
     <string name="TREEHOUSES_SERVICES_URL_TOR">treehouses services \"%1$s\" url tor</string>
     <string name="TREEHOUSES_SERVICES_AUTORUN">treehouses services \"%1$s\" autorun \"%2$s\" </string>
 
+    <string name="TREEHOUSES_BLOCKER_CHECK">treehouses blocker</string>
     <string name="TREEHOUSES_BLOCKER">treehouses blocker \"%1$s\"</string>
     <string name="TREEHOUSES_CAMERA">treehouses camera</string>
     <string name="TREEHOUSES_CAMERA_ON">treehouses camera on</string>
