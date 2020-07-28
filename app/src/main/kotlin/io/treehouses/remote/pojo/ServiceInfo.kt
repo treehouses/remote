@@ -26,7 +26,7 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
 
     //Services
 
-    constructor(name: String, size: Int, serviceStatus: Int, icon: String?, info: String?, autorun: String?) {
+    constructor(name: String, size: Int, serviceStatus: Int, icon: String?, info: String?, autorun: String?, usesEnv: String?) {
         this.name = name
         this.size = size
         this.serviceStatus = serviceStatus
