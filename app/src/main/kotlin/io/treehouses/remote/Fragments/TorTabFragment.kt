@@ -47,6 +47,8 @@ class TorTabFragment : BaseFragment() {
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         bind!!.btnHostName.visibility = View.GONE
+        bind!!.notifyNow.visibility = View.GONE
+        bind!!.switchNotification.visibility = View.GONE
         bind!!.btnHostName.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             builder.setTitle("Tor Hostname")
@@ -175,6 +177,8 @@ class TorTabFragment : BaseFragment() {
             Log.d("Tor reply", "" + readMessage)
             if (readMessage.contains("inactive")) {
                 bind!!.btnHostName.visibility = View.GONE
+                bind!!.notifyNow.visibility = View.GONE
+                bind!!.switchNotification.visibility = View.GONE
                 startButton!!.text = "Start Tor"
                 startButton!!.isEnabled = true
                 listener.sendMessage("treehouses tor notice")
@@ -182,6 +186,8 @@ class TorTabFragment : BaseFragment() {
                 listener.sendMessage("treehouses tor status")
             } else if (readMessage.contains(".onion")) {
                 bind!!.btnHostName.visibility = View.VISIBLE
+                bind!!.notifyNow.visibility = View.VISIBLE
+                bind!!.switchNotification.visibility = View.VISIBLE
                 hostName = readMessage
                 listener.sendMessage("treehouses tor notice")
             } else if (readMessage.contains("Error")) {
