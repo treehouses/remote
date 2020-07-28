@@ -25,6 +25,7 @@ import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.databinding.EnvVarBinding
+import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
@@ -173,18 +174,17 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private fun showEditDialog(name: String, size: Int, vars: List<String>) {
         val inflater = requireActivity().layoutInflater; val dialogBinding = EnvVarBinding.inflate(inflater)
         for (i in 0 until size) {
-            val envName = TextView(requireContext()); val newVal = TextInputEditText(requireContext()); val row = LinearLayout(requireContext())
-            envName.setText(vars[i].trim { it <= '\"'} + ":")
-            envName.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            newVal.setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            envName.gravity = Gravity.CENTER; newVal.gravity = Gravity.CENTER
+            val rowBinding = EnvVarItemBinding.inflate(inflater)
+            val envName = rowBinding.envName
+            val newVal = rowBinding.newVal
+
+            envName.text = vars[i].trim { it <= '\"'} + ":"
             newVal.id = i
-            envName.hint = "New Value"
-            row.addView(envName); row.addView(newVal)
             envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor)); newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
-            dialogBinding.varList.addView(row)
+            dialogBinding.varList.addView(rowBinding.root)
         }
         val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
