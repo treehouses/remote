@@ -1,15 +1,20 @@
 package io.treehouses.remote
 
-import android.util.TypedValue
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.FocusShape
+import me.toptas.fancyshowcase.listener.OnViewInflateListener
 
 object Tutorials {
+    private var queue = FancyShowCaseQueue()
     fun homeTutorials(bind: ActivityHomeFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
@@ -123,6 +128,12 @@ object Tutorials {
     private fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return FancyShowCaseView.Builder(activity)
                 .focusOn(view)
+                .customView(R.layout.tutorial, object : OnViewInflateListener {
+                    override fun onViewInflated(view: View) {
+                       val skipButton = view.findViewById<Button>(R.id.skipBtn)
+                        skipButton.setOnClickListener(mClickListener);
+                    }
+                })
                 .title(title)
                 .enableAutoTextPosition()
                 .backgroundColor(R.color.focusColor)
@@ -142,11 +153,13 @@ object Tutorials {
     }
 
     private fun show(vararg view: FancyShowCaseView) {
-        val queue = FancyShowCaseQueue()
+        queue = FancyShowCaseQueue()
         for(v in view) {
             queue.add(v)
         }
         queue.show()
     }
+
+    private var mClickListener = View.OnClickListener { queue.cancel(true) }
 }
 
