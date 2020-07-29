@@ -46,6 +46,7 @@ class EditHostDialog : FullScreenDialogFragment() {
         bind.selectFontSize.value = host.fontSize
         bind.deleteButton.setOnClickListener {
             SaveUtils.deleteHost(requireContext(), host)
+            Toast.makeText(context, "Host has been deleted", Toast.LENGTH_LONG).show()
             dismiss()
         }
     }
