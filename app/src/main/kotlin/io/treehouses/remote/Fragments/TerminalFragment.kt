@@ -28,6 +28,7 @@ import io.treehouses.remote.bases.BaseTerminalFragment
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.CommandsList
+import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match

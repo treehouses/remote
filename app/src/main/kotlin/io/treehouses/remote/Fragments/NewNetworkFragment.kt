@@ -25,6 +25,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.NewNetworkBinding
+import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
 
