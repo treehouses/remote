@@ -19,7 +19,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="20dp"
 
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:background="@drawable/tor_btn"
             android:text="Hostname"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -28,7 +28,7 @@
         <Button
             android:id="@+id/notify_now"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:background="@drawable/gitter_button"
             android:layout_height="35dp"
             android:layout_marginStart="0dp"
@@ -60,13 +60,13 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:background="@drawable/tor_btn"
             android:text="@string/start_tor"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:textColor="@color/bg_white" />
 
         <Switch
             android:id="@+id/switchNotification"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:layout_height="wrap_content"
             android:text="@string/notification"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
