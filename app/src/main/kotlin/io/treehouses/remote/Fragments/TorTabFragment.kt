@@ -219,52 +219,58 @@ class TorTabFragment : BaseFragment() {
                 startButton!!.text = "Stop Tor"
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR))
                 startButton!!.isEnabled = true
-            } else if (readMessage.contains("OK.")) {
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-            } else if (readMessage.contains("Status: on")) {
-                notification!!.isChecked = true
-                notification!!.isEnabled = true
-            } else if (readMessage.contains("Status: off")) {
-                notification!!.isChecked = false
-                notification!!.isEnabled = true
-            } //regex to match ports text
-            else if (readMessage.matches("(([0-9]+:[0-9]+)\\s?)+".toRegex())) {
-                addPortButton!!.text = "Add Port"
-                portList!!.isEnabled = true
-                addPortButton!!.isEnabled = true
-                val ports = readMessage.split(" ".toRegex()).toTypedArray()
-                for (i in ports.indices) {
-                    if(i == ports.size - 1){
-                        break
-                    }
-                    portsName!!.add(ports[i])
-                }
-                adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-                val portList = requireView().findViewById<ListView>(R.id.portList)
-                portList.adapter = adapter
-                listener.sendMessage("treehouses tor status")
-            } else if (readMessage.contains("No ports found")) {
-                addPortButton!!.text = "Add Port"
-                portList!!.isEnabled = true
-                addPortButton!!.isEnabled = true
-                portsName = ArrayList()
-                adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
-                val portList = requireView().findViewById<ListView>(R.id.portList)
-                portList.adapter = adapter
-                listener.sendMessage("treehouses tor status")
-            } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
-                listener.sendMessage("treehouses tor ports")
-                portsName = ArrayList()
-                addPortButton!!.text = "Retrieving port.... Please wait"
-                if (readMessage.contains("the port has been added")) {
-                    Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-                } else if (readMessage.contains("has been deleted")) {
-                    Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-                }
-                else if( readMessage.contains("Thanks for the feedback!")){
-                    Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
-                    nowButton!!.isEnabled = true
-                }
+            } else handleOtherMessages(readMessage)
+        }
+    }
+
+    private fun handleOtherMessages(readMessage: String) {
+        if (readMessage.contains("OK.")) {
+            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+        } else if (readMessage.contains("Status: on")) {
+            notification!!.isChecked = true
+            notification!!.isEnabled = true
+        } else if (readMessage.contains("Status: off")) {
+            notification!!.isChecked = false
+            notification!!.isEnabled = true
+        } //regex to match ports text
+        else if (readMessage.matches("(([0-9]+:[0-9]+)\\s?)+".toRegex())) {
+            addPortButton!!.text = "Add Port"
+            portList!!.isEnabled = true
+            addPortButton!!.isEnabled = true
+            val ports = readMessage.split(" ".toRegex()).toTypedArray()
+            for (i in ports.indices) {
+                if(i == ports.size - 1) break
+                portsName!!.add(ports[i])
+            }
+            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+            val portList = requireView().findViewById<ListView>(R.id.portList)
+            portList.adapter = adapter
+            listener.sendMessage("treehouses tor status")
+        } else handleMoreMessages(readMessage)
+    }
+
+    private fun handleMoreMessages(readMessage: String) {
+        if (readMessage.contains("No ports found")) {
+            addPortButton!!.text = "Add Port"
+            portList!!.isEnabled = true
+            addPortButton!!.isEnabled = true
+            portsName = ArrayList()
+            adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+            val portList = requireView().findViewById<ListView>(R.id.portList)
+            portList.adapter = adapter
+            listener.sendMessage("treehouses tor status")
+        } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
+            listener.sendMessage("treehouses tor ports")
+            portsName = ArrayList()
+            addPortButton!!.text = "Retrieving port.... Please wait"
+            if (readMessage.contains("the port has been added")) {
+                Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
+            } else if (readMessage.contains("has been deleted")) {
+                Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
+            }
+            else if( readMessage.contains("Thanks for the feedback!")){
+                Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
+                nowButton!!.isEnabled = true
             }
         }
     }
