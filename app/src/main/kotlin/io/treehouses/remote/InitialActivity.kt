@@ -129,7 +129,11 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, f)
         fragmentTransaction.addToBackStack("")
-        fragmentTransaction.commit()
+        try {
+            fragmentTransaction.commit()
+        } catch (exception:IllegalStateException ){
+            Log.e("Error", exception.toString())
+        }
         //        menuItem.setChecked(true);
 //        title = "Treehouses Remote"
         //        drawer.closeDrawers();
