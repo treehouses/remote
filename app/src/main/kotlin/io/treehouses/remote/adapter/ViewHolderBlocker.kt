@@ -8,9 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
-import com.mikepenz.iconics.utils.Utils.getString
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.StatusFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
@@ -40,19 +38,19 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         mChatService.updateHandler(mHandler)
         listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER_CHECK))
 
-        fun setBlocker(command:String, msg:String) {
-            listener.sendMessage(command)
+        fun setBlocker(level:String, msg:String) {
+            listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_BLOCKER, level))
             context.toast(msg)
         }
 
         radioGroup.setOnCheckedChangeListener { _: RadioGroup?, i: Int ->
             when (i) {
-                R.id.radioButton1 -> setBlocker(context.resources.getString(R.string.TREEHOUSES_BLOCKER, "0"),"Blocker Disabled")
-                R.id.radioButton2 -> setBlocker(context.resources.getString(R.string.TREEHOUSES_BLOCKER, "1"),"Blocker set to level 1")
-                R.id.radioButton3 -> setBlocker(context.resources.getString(R.string.TREEHOUSES_BLOCKER, "2"),"Blocker set to level 2")
-                R.id.radioButton4 -> setBlocker(context.resources.getString(R.string.TREEHOUSES_BLOCKER, "3"),"Blocker set to level 3")
-                R.id.radioButton5 -> setBlocker(context.resources.getString(R.string.TREEHOUSES_BLOCKER, "4"),"Blocker set to level 4")
-                R.id.radioButton6 -> setBlocker(context.resources.getString(R.string.TREEHOUSES_BLOCKER, "max"),"Blocker set to maximum level")
+                R.id.radioButton1 -> setBlocker("0","Blocker Disabled")
+                R.id.radioButton2 -> setBlocker("1","Blocker set to level 1")
+                R.id.radioButton3 -> setBlocker("2","Blocker set to level 2")
+                R.id.radioButton4 -> setBlocker("3","Blocker set to level 3")
+                R.id.radioButton5 -> setBlocker("4","Blocker set to level 4")
+                R.id.radioButton6 -> setBlocker("max","Blocker set to maximum level")
             }
         }
     }
