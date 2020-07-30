@@ -2,6 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/title"
     android:background="@color/preference_background"
+    android:textStyle="bold"
     android:paddingStart="@dimen/padding_large"
     android:paddingLeft="@dimen/padding_large"
     android:paddingTop="4dp"
