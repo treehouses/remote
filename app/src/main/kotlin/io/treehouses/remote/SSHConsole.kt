@@ -617,8 +617,8 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             val bridge = view!!.bridge
             sessionOpen = bridge.isSessionOpen
             disconnected = bridge.isDisconnected
-            return Pair(sessionOpen, disconnected)
-        } else return Pair(sessionOpen, disconnected)
+        }
+        return Pair(sessionOpen, disconnected)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
