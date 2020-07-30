@@ -478,7 +478,8 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun promptListeners() {
-        bind.consolePassword.setOnKeyListener(View.OnKeyListener { _: View?, keyCode: Int, event: KeyEvent ->
+        val onKeyListener = View.OnKeyListener {
+            _: View?, keyCode: Int, event: KeyEvent ->
             if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
 
             // pass collected password down to current terminal
@@ -490,8 +491,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             bind.consolePassword.setText("")
             updatePromptVisible()
             true
-        })
-        fun update(b:Boolean, helper:PromptHelper){
+        }
+        bind.consolePassword.setOnKeyListener(onKeyListener)
+
+        fun update(b:Boolean, helper:PromptHelper) {
             helper.setResponse(b)
             updatePromptVisible()
         }

@@ -13,7 +13,9 @@ class TunnelPageAdapter : FragmentStatePagerAdapter {
     var data: ArrayList<ServiceInfo>? = null
         private set
 
-    constructor(fm: FragmentManager?) : super(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {}
+
+    constructor(fm: FragmentManager?) : super(fm!!, BEHAVIOR_SET_USER_VISIBLE_HINT) {}
+
 
     override fun getCount(): Int {
         return 2

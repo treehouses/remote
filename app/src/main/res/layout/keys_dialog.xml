@@ -32,6 +32,7 @@
             android:textSize="@dimen/text_size_mid" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/keyNameLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:hintTextColor="@color/md_grey_500"
