@@ -268,14 +268,16 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun showEmulatedKeys(showActionBar: Boolean) {
-        if (bind.keyboard.keyboardGroup.visibility == View.GONE) {
-            bind.keyboard.keyboardGroup.startAnimation(keyboardFadeIn)
-            bind.keyboard.keyboardGroup.visibility = View.VISIBLE
-        }
+        if (bind.keyboard.keyboardGroup.visibility == View.GONE) setAnimation(keyboardFadeIn, View.VISIBLE)
         if (showActionBar) {
             actionBar!!.show()
         }
         autoHideEmulatedKeys()
+    }
+
+    private fun setAnimation(animation: Animation?, visibility: Int) {
+        bind.keyboard.keyboardGroup.startAnimation(animation)
+        bind.keyboard.keyboardGroup.visibility = visibility
     }
 
     private fun autoHideEmulatedKeys() {
@@ -284,10 +286,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             if (bind.keyboard.keyboardGroup.visibility == View.GONE || inActionBarMenu) {
                 return@Runnable
             }
-            if (!keyboardAlwaysVisible) {
-                bind.keyboard.keyboardGroup.startAnimation(keyboardFadeOut)
-                bind.keyboard.keyboardGroup.visibility = View.GONE
-            }
+            if (!keyboardAlwaysVisible) setAnimation(keyboardFadeOut, View.GONE)
             hideActionBarIfRequested()
             keyboardGroupHider = null
         }
@@ -569,13 +568,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         super.onCreateOptionsMenu(menu)
         val view = adapter!!.currentTerminalView
         val activeTerminal = view != null
-        var sessionOpen = false
-        var disconnected = false
-        if (activeTerminal) {
-            val bridge = view!!.bridge
-            sessionOpen = bridge.isSessionOpen
-            disconnected = bridge.isDisconnected
-        }
+        var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         menu.setQwertyMode(true)
         disconnect = menu.add("Disconnect")
         if (hardKeyboard) disconnect!!.alphabeticShortcut = 'w'
@@ -617,18 +610,23 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         return true
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        super.onPrepareOptionsMenu(menu)
-        volumeControlStream = AudioManager.STREAM_NOTIFICATION
-        val view = adapter?.currentTerminalView
-        val activeTerminal = view != null
+    private fun checkSession(view: TerminalView?, activeTerminal: Boolean): Pair<Boolean, Boolean> {
         var sessionOpen = false
         var disconnected = false
         if (activeTerminal) {
             val bridge = view!!.bridge
             sessionOpen = bridge.isSessionOpen
             disconnected = bridge.isDisconnected
-        }
+            return Pair(sessionOpen, disconnected)
+        } else return Pair(sessionOpen, disconnected)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
+        volumeControlStream = AudioManager.STREAM_NOTIFICATION
+        val view = adapter?.currentTerminalView
+        val activeTerminal = view != null
+        var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         disconnect?.isEnabled = activeTerminal
         if (sessionOpen || !disconnected) disconnect?.title = "Disconnect" else disconnect?.title = "Close Console"
         paste?.isEnabled = activeTerminal
