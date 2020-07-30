@@ -16,7 +16,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.testConnection, "Test Bluetooth Connection to RPI", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.testConnection, "Test Bluetooth Connection to RPI")
 
         val b = fancyShowCaseViewRoundedRect(activity, bind.networkProfilesBack, "Configure Network Profiles in the Network Screen to quickly switch between network configurations")
 
@@ -105,7 +105,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
 
-        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.bluetoothBox, "Your Device's Bluetooth details are listed here", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.bluetoothBox, "Your Device's Bluetooth details are listed here")
 
         val b = fancyShowCaseViewRoundedRect(activity, bind.networkBox, "Network details can be found here")
 
@@ -153,8 +153,8 @@ object Tutorials {
                 .build()
     }
 
-    private fun fancyShowCaseViewRoundedRectSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.ROUNDED_RECTANGLE): FancyShowCaseView {
-        return fancyShowCaseViewBuilderSkippable(activity, view, title, focusShape)
+    private fun fancyShowCaseViewRoundedRectSkippable(activity: FragmentActivity, view: View, title: String): FancyShowCaseView {
+        return fancyShowCaseViewBuilderSkippable(activity, view, title, FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .build()
     }
