@@ -11,8 +11,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import android.widget.Toast
-import androidx.core.view.children
-import androidx.core.view.forEach
 import androidx.lifecycle.lifecycleScope
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
