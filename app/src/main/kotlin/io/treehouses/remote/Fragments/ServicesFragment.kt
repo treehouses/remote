@@ -63,7 +63,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 showUI()
             }
         }
-        writeToRPI("treehouses remote allservices\n")
+        writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
     }
 
     private fun showUI(){
@@ -106,11 +106,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 val writeMsg = String((msg.obj as ByteArray))
                 Log.d("WRITE", writeMsg)
             }
-
-            Constants.MESSAGE_WRITE -> {
-                val write_msg = String((msg.obj as ByteArray))
-                Log.d("WRITE", write_msg)
-            }
         }
     }
 
@@ -149,8 +144,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 if(!worked) {
                     mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
                 }
-            }
-            else -> {
             }
         }
         if (fragment != null) {

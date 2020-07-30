@@ -196,7 +196,7 @@ class TunnelSSHFragment : BaseFragment() {
                     hostsPosition = ArrayList()
                     listener.sendMessage("treehouses sshtunnel ports")
                 }
-                else if (readMessage.contains("ole@")) {
+                else if (readMessage.contains("@")) {
                     addPortButton?.isEnabled = true
                     addPortButton?.text = "Add Port"
                     addHostButton?.text = "Add Host"
@@ -208,7 +208,7 @@ class TunnelSSHFragment : BaseFragment() {
                         for (port in ports) {
                             if (port.length >= 3)
                                 portsName!!.add(port)
-                            if (port.contains("ole@")) {
+                            if (port.contains("@")) {
                                 hostsPosition!!.add(Position)
                                 hostsName!!.add(port)
                             }
@@ -243,11 +243,7 @@ class TunnelSSHFragment : BaseFragment() {
                     listener.sendMessage("treehouses sshtunnel ports")
                     Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show()
                 }
-                else if(readMessage.contains("Error")){
-                    Toast.makeText(requireContext(), "Please add a host if you have no host", Toast.LENGTH_SHORT).show()
-                    addPortButton?.isEnabled = false
 
-                }
 
             }
 
