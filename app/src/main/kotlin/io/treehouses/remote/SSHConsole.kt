@@ -477,7 +477,20 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun promptListeners() {
-        val onKeyListener = View.OnKeyListener {
+        val onKeyListener = createOnKeyListener()
+        bind.consolePassword.setOnKeyListener(onKeyListener)
+
+        bind.consolePromptYes.setOnClickListener {
+            updatePrompt(true, currentPromptHelper ?: return@setOnClickListener)
+        }
+        bind.consolePromptNo.setOnClickListener {
+            updatePrompt(false, currentPromptHelper ?: return@setOnClickListener)
+        }
+
+    }
+
+    private fun createOnKeyListener(): View.OnKeyListener {
+        return View.OnKeyListener {
             _: View?, keyCode: Int, event: KeyEvent ->
             if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
 
@@ -491,16 +504,8 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             updatePromptVisible()
             true
         }
-        bind.consolePassword.setOnKeyListener(onKeyListener)
-
-        bind.consolePromptYes.setOnClickListener {
-            updatePrompt(true, currentPromptHelper ?: return@setOnClickListener)
-        }
-        bind.consolePromptNo.setOnClickListener {
-            updatePrompt(false, currentPromptHelper ?: return@setOnClickListener)
-        }
-
     }
+
 
     private fun updatePrompt(b:Boolean, helper:PromptHelper) {
         helper.setResponse(b)
