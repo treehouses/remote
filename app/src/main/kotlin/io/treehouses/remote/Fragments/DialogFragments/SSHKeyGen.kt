@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.widget.addTextChangedListener
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
@@ -52,14 +53,9 @@ class SSHKeyGen : FullScreenDialogFragment() {
     }
 
     private fun addTextChangeListener() {
-        bind.keyNameInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (validate(s.toString())) bind.keyNameLayout.error = null
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        bind.keyNameInput.addTextChangedListener {
+            if (validate(it.toString())) bind.keyNameLayout.error = null
+        }
     }
 
     private fun validate(keyName: String): Boolean {
