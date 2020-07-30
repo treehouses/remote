@@ -85,13 +85,9 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun switchButton(isChecked:Boolean) {
-        if (isChecked) {
-            bind!!.switchNotification.isEnabled = false
-            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_ON))
-        } else {
-            bind!!.switchNotification.isEnabled = false
-            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_OFF))
-        }
+        bind!!.switchNotification.isEnabled = false
+        if (isChecked)  listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_ON))
+        else listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_OFF))
     }
 
     private fun addingHostButton(){
