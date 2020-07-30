@@ -11,6 +11,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.lifecycle.lifecycleScope
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
@@ -183,12 +185,22 @@ class SSHKeyGen : FullScreenDialogFragment() {
     private fun startKeyGen(name: String, algorithm: String, password: String, bitSize: Int) {
         bind.progressBar.visibility = View.VISIBLE
         bind.generateKey.isEnabled = false
+        bind.keyNameInput.isEnabled = false
+        bind.keyTypeSpinner.isEnabled = false
+        bind.keyStrength.isEnabled = false
+        bind.strengthShow.isEnabled = false
+        bind.inBackground.isEnabled = false
+        bind.passwordInput.isEnabled = false
+
         lifecycleScope.launch(Dispatchers.Default) {
             val key = generateKey(name, algorithm, password, bitSize)
-            if (isActive) KeyUtils.saveKey(requireContext(), key)
-            withContext(Dispatchers.Main) {
-                bind.progressBar.visibility = View.GONE
-                dismiss()
+            if (isActive) {
+                withContext(Dispatchers.Main) {
+                    KeyUtils.saveKey(requireContext(), key)
+                    bind.progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
+                    dismiss()
+                }
             }
         }
     }
