@@ -88,8 +88,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
             }
             RESULTS.HOTSPOT_CONNECTED, RESULTS.WIFI_CONNECTED, RESULTS.BRIDGE_CONNECTED -> {
                 showDialog(context,"Network Switched", output)
-                updateNetworkMode()
-                showDialog("Network Switched", output)
+                showDialog(context,"Network Switched", output)
                 //update network mode
                 sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
                 binding.networkPbar.visibility = View.GONE
