@@ -87,10 +87,10 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     private fun switchButton(isChecked:Boolean) {
         if (isChecked) {
             bind!!.switchNotification.isEnabled = false
-            listener.sendMessage("treehouses sshtunnel notice on")
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_ON))
         } else {
             bind!!.switchNotification.isEnabled = false
-            listener.sendMessage("treehouses sshtunnel notice off")
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_OFF))
         }
     }
 
@@ -99,7 +99,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             val s1 = inputInternalHost.text.toString()
             val s2 = inputExternalHost.text.toString()
 
-            listener.sendMessage("treehouses sshtunnel add host $s1 $s2")
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
             addHostButton!!.text = "Adding......"
             addHostButton!!.isEnabled = false
             dialogHosts.dismiss()
@@ -112,7 +112,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             val s2 = inputExternal.text.toString()
             val parts = dropdown?.selectedItem.toString().split(":")[0]
 
-            listener.sendMessage("treehouses sshtunnel add port actual $s2 $s1 $parts")
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL, s2, s1, parts))
             addPortButton!!.text = "Adding......"
             addPortButton!!.isEnabled = false
             dialog.dismiss()
@@ -127,7 +127,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             R.id.btn_adding_port -> { addingPortButton() }
             R.id.notify_now -> {
                 bind!!.notifyNow.isEnabled = false
-                listener.sendMessage("treehouses sshtunnel notice now")
+                listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
             }
             R.id.btn_add_port -> dialog.show()
             R.id.btn_add_hosts -> dialogHosts.show()
@@ -139,7 +139,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             mChatService = listener.getChatService()
             mChatService.updateHandler(mHandler)
 
-            listener.sendMessage("treehouses sshtunnel ports")
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
             bind!!.sshPorts
             portsName = ArrayList()
 
@@ -168,7 +168,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     addHostButton?.text = "Retrieving"
                     portsName = ArrayList()
                     hostsName = ArrayList()
-                    listener.sendMessage("treehouses sshtunnel ports")
+                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
                 else { getMessage2(readMessage) }
             }
@@ -185,21 +185,17 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             for (host in hosts) {
                 val ports = host.split(' ')
                 for (port in ports) {
-                    if (port.length >= 3)
-                        portsName!!.add(port)
-                    if (port.contains("ole@"))
-                        hostsName!!.add(port)
+                    if (port.length >= 3) portsName!!.add(port)
+                    if (port.contains("ole@")) hostsName!!.add(port)
                 }
                 val adapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                 dropdown?.adapter = adapter
             }
-            listener.sendMessage("treehouses sshtunnel notice")
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
             bind!!.sshPorts.adapter = adapter
         }
-        else {
-            getMessage3(readMessage)
-        }
+        else { getMessage3(readMessage) }
     }
 
     private fun getMessage3(readMessage: String) {
@@ -212,12 +208,12 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 bind!!.switchNotification.isChecked = false
                 bind!!.switchNotification.isEnabled = true
                 bind!!.notifyNow.isEnabled = true }
-            readMessage.contains("OK.") -> { listener.sendMessage("treehouses sshtunnel notice") }
+            readMessage.contains("OK.") -> { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
             readMessage.contains("Thanks for the feedback!") -> {
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                 bind!!.notifyNow.isEnabled = true }
             readMessage.contains("Error: only 'list'") -> {
-                listener.sendMessage("treehouses sshtunnel ports")
+                listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show() }
         }
     }
