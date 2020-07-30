@@ -493,18 +493,18 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         }
         bind.consolePassword.setOnKeyListener(onKeyListener)
 
-        fun update(b:Boolean, helper:PromptHelper) {
-            helper.setResponse(b)
-            updatePromptVisible()
-        }
-
         bind.consolePromptYes.setOnClickListener {
-            update(true, currentPromptHelper ?: return@setOnClickListener)
+            updatePrompt(true, currentPromptHelper ?: return@setOnClickListener)
         }
         bind.consolePromptNo.setOnClickListener {
-            update(false, currentPromptHelper ?: return@setOnClickListener)
+            updatePrompt(false, currentPromptHelper ?: return@setOnClickListener)
         }
 
+    }
+
+    private fun updatePrompt(b:Boolean, helper:PromptHelper) {
+        helper.setResponse(b)
+        updatePromptVisible()
     }
 
     private fun addKeyRepeater(view: View) {
