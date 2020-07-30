@@ -569,6 +569,16 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         }
     }
 
+    private fun setDisconnectItemListener() {
+        disconnect!!.setOnMenuItemClickListener {
+            // disconnect or close the currently visible session
+            val terminalView = adapter!!.currentTerminalView
+            val bridge = terminalView!!.bridge
+            bridge.dispatchDisconnect(true)
+            true
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         val view = adapter!!.currentTerminalView
@@ -580,25 +590,28 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         if (!sessionOpen && disconnected) disconnect!!.title = "Close Console"
         disconnect!!.isEnabled = activeTerminal
         disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
-        disconnect!!.setOnMenuItemClickListener {
-            // disconnect or close the currently visible session
-            val terminalView = adapter!!.currentTerminalView
-            val bridge = terminalView!!.bridge
-            bridge.dispatchDisconnect(true)
-            true
-        }
+        setDisconnectItemListener()
         paste = menu.add("Paste")
         if (hardKeyboard) paste!!.alphabeticShortcut = 'v'
         MenuItemCompat.setShowAsAction(paste, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM)
         paste!!.isEnabled = activeTerminal
-        paste!!.setOnMenuItemClickListener {
-            pasteIntoTerminal()
-            true
-        }
+        setPasteItemListener()
         urlScan = menu.add("Scan for URLs")
         if (hardKeyboard) urlScan!!.alphabeticShortcut = 'u'
         urlScan!!.setIcon(android.R.drawable.ic_menu_search)
         urlScan!!.isEnabled = activeTerminal
+        setUrlItemListener()
+        return true
+    }
+
+    private fun setPasteItemListener() {
+        paste!!.setOnMenuItemClickListener {
+            pasteIntoTerminal()
+            true
+        }
+    }
+
+    private fun setUrlItemListener() {
         urlScan!!.setOnMenuItemClickListener {
             val terminalView = adapter!!.currentTerminalView
             val urls = terminalView!!.bridge.scanForURLs()
@@ -612,7 +625,6 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             urlDialog.show()
             true
         }
-        return true
     }
 
     private fun checkSession(view: TerminalView?, activeTerminal: Boolean): Pair<Boolean, Boolean> {
