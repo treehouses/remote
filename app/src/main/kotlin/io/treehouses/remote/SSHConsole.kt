@@ -774,24 +774,14 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
 
         // Hide all the prompts in case a prompt request was canceled
         hideAllPrompts()
-        if (view == null) {
-            // we dont have an active view, so hide any prompts
-            return
-        }
+        // we dont have an active view, so hide any prompts
+        if (view == null) return
         val prompt = view.bridge.promptHelper
         Log.e("GOT", "HERE ")
         when {
             String::class.java == prompt!!.promptRequested -> {
                 hideEmulatedKeys()
-                bind.consolePasswordGroup.visibility = View.VISIBLE
-                val instructions = prompt.promptInstructions
-                if (instructions != null && instructions.isNotEmpty()) {
-                    bind.consolePasswordInstructions.visibility = View.VISIBLE
-                    bind.consolePasswordInstructions.text = instructions
-                } else bind.consolePasswordInstructions.visibility = View.GONE
-                bind.consolePassword.setText("")
-                bind.consolePassword.hint = prompt.promptHint
-                bind.consolePassword.requestFocus()
+                setConsolePassword(prompt)
             }
             Boolean::class.java == prompt.promptRequested -> {
                 hideEmulatedKeys()
@@ -804,6 +794,18 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
                 view.requestFocus()
             }
         }
+    }
+
+    private fun setConsolePassword(prompt: PromptHelper) {
+        bind.consolePasswordGroup.visibility = View.VISIBLE
+        val instructions = prompt.promptInstructions
+        if (instructions != null && instructions.isNotEmpty()) {
+            bind.consolePasswordInstructions.visibility = View.VISIBLE
+            bind.consolePasswordInstructions.text = instructions
+        } else bind.consolePasswordInstructions.visibility = View.GONE
+        bind.consolePassword.setText("")
+        bind.consolePassword.hint = prompt.promptHint
+        bind.consolePassword.requestFocus()
     }
 
     private class URLItemListener internal constructor(context: Context) : OnItemClickListener {
