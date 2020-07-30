@@ -141,32 +141,34 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun updateGatewayInfo(readMessage: String) : Boolean {
-        val ip = findRegex("ip address:\\s+([0-9]+.){3}[0-9]", readMessage)
+        val ip = extractText("ip address:\\s+([0-9]+.){3}[0-9]", "ip address:\\s+", readMessage)
         if(ip != null) {
-            gateway.device.ip = ip.split("ip address:\\s+".toRegex())[1]
+            gateway.device.ip = ip
         }
 
-        val ssid = findRegex("ESSID:\"(.)+\"", readMessage)
+        val ssid = extractText("ESSID:\"(.)+\"", "ESSID:", readMessage)
         if (ssid != null) {
-            var trimmedSsid = ssid.split("ESSID:".toRegex())[1]
-            trimmedSsid = trimmedSsid.substring(1, trimmedSsid.length - 1)
+            var trimmedSsid = ssid.substring(1, ssid.length - 1)
             gateway.ssid = trimmedSsid
         }
 
-        val mac = findRegex("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", readMessage)
+        val mac = extractText("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", "MAC Address:\\s+", readMessage)
         if (mac != null) {
-            gateway.device.mac = mac.split("MAC Address:\\s+".toRegex())[1]
+            gateway.device.mac = mac
         }
-        
+
         return ip.isNullOrEmpty() || ssid.isNullOrEmpty() || mac.isNullOrEmpty()
     }
 
-    private fun findRegex(pattern: String, msg: String): String? {
+    private fun extractText(pattern: String, separator: String, msg: String): String? {
         val regex = pattern.toRegex()
         val res = regex.find(msg)
+        var text: String? = null
 
-        if(res != null) return res.value
-        else return null
+        if(res != null)
+            text = res.value.split(separator.toRegex())[1]
+
+        return text
     }
 
     override fun getMessage(msg: Message) {
