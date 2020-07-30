@@ -142,21 +142,22 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     private fun updateGatewayInfo(readMessage: String) : Boolean {
         val ip = findRegex("ip address:\\s+([0-9]+.){3}[0-9]", readMessage)
-        val ssid = findRegex("ESSID:\"(.)+\"", readMessage)
-        val mac = findRegex("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", readMessage)
-
         if(ip != null) {
             gateway.device.ip = ip.split("ip address:\\s+".toRegex())[1]
         }
+
+        val ssid = findRegex("ESSID:\"(.)+\"", readMessage)
         if (ssid != null) {
             var trimmedSsid = ssid.split("ESSID:".toRegex())[1]
             trimmedSsid = trimmedSsid.substring(1, trimmedSsid.length - 1)
             gateway.ssid = trimmedSsid
         }
+
+        val mac = findRegex("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", readMessage)
         if (mac != null) {
             gateway.device.mac = mac.split("MAC Address:\\s+".toRegex())[1]
         }
-
+        
         return ip.isNullOrEmpty() || ssid.isNullOrEmpty() || mac.isNullOrEmpty()
     }
 
