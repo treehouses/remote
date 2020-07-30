@@ -36,12 +36,10 @@ class TorTabFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         mChatService = listener.getChatService()
+
         mChatService!!.updateHandler(mHandler)
 
-
-
-        listener.sendMessage("treehouses tor ports")
-
+        listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
 
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
@@ -69,10 +67,10 @@ class TorTabFragment : BaseFragment() {
         notification!!.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 notification!!.isEnabled = false
-                listener.sendMessage("treehouses tor notice on")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_ON))
             } else {
                 notification!!.isEnabled = false
-                listener.sendMessage("treehouses tor notice off")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_OFF))
             }
         }
         nowButton = bind!!.notifyNow
@@ -89,7 +87,7 @@ class TorTabFragment : BaseFragment() {
 
             // add the buttons
             builder.setPositiveButton("Confirm") { dialog, _ ->
-                    listener.sendMessage("treehouses tor delete " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+                    listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0]))
                     addPortButton!!.text = "deleting port ....."
                     portList!!.isEnabled = false
                     addPortButton!!.isEnabled = false
@@ -107,6 +105,7 @@ class TorTabFragment : BaseFragment() {
         addPortButton = bind!!.btnAddPort
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
+
         /* start/stop tor button click */
         startButton!!.setOnClickListener {
             if (startButton!!.text.toString() === "Stop Tor") {
@@ -139,7 +138,7 @@ class TorTabFragment : BaseFragment() {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString()
                 val s2 = inputExternal.text.toString()
-                listener.sendMessage("treehouses tor add $s2 $s1")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
                 addPortButton!!.text = "Adding port, please wait for a while ............"
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
@@ -151,6 +150,7 @@ class TorTabFragment : BaseFragment() {
         }
         return bind!!.root
     }
+
     override fun setUserVisibleHint(visible: Boolean) {
         if(visible) {
             if(isListenerInitialized()){
@@ -181,15 +181,15 @@ class TorTabFragment : BaseFragment() {
                 bind!!.switchNotification.visibility = View.GONE
                 startButton!!.text = "Start Tor"
                 startButton!!.isEnabled = true
-                listener.sendMessage("treehouses tor notice")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
             } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
-                listener.sendMessage("treehouses tor status")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
             } else if (readMessage.contains(".onion")) {
                 bind!!.btnHostName.visibility = View.VISIBLE
                 bind!!.notifyNow.visibility = View.VISIBLE
                 bind!!.switchNotification.visibility = View.VISIBLE
                 hostName = readMessage
-                listener.sendMessage("treehouses tor notice")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
             } else if (readMessage.contains("Error")) {
                 Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
                 addPortButton!!.text = "add ports"
@@ -197,10 +197,10 @@ class TorTabFragment : BaseFragment() {
                 portList!!.isEnabled = true
             } else if (readMessage.contains("active")) {
                 startButton!!.text = "Stop Tor"
-                listener.sendMessage("treehouses tor")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR))
                 startButton!!.isEnabled = true
             } else if (readMessage.contains("OK.")) {
-                listener.sendMessage("treehouses tor notice")
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
             } else if (readMessage.contains("Status: on")) {
                 notification!!.isChecked = true
                 notification!!.isEnabled = true

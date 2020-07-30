@@ -63,7 +63,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 showUI()
             }
         }
-        writeToRPI("treehouses remote allservices\n")
+        writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
     }
 
     private fun showUI(){
