@@ -1,8 +1,12 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,10 +49,27 @@ class EditHostDialog : FullScreenDialogFragment() {
         bind.selectFontSize.maxValue = 15
         bind.selectFontSize.value = host.fontSize
         bind.deleteButton.setOnClickListener {
-            SaveUtils.deleteHost(requireContext(), host)
-            Toast.makeText(context, "Host has been deleted", Toast.LENGTH_LONG).show()
-            dismiss()
+            deleteHost()
         }
+    }
+
+    private fun createAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id))
+                .setTitle(title)
+                .setMessage(message)
+    }
+
+    private fun deleteHost() {
+        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Delete Host",
+                "Are you sure you want to delete this host?")
+                .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
+                    SaveUtils.deleteHost(requireContext(), host)
+                    Toast.makeText(context, "Host has been deleted. Please refresh.", Toast.LENGTH_LONG).show()
+                    dialog.dismiss()
+                    dismiss()
+                }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.show()
     }
 
     private fun setUpKeys() {
