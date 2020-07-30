@@ -3,18 +3,24 @@ package io.treehouses.remote.Fragments.DialogFragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
+import androidx.lifecycle.lifecycleScope
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.security.KeyPairGenerator
 
 class SSHKeyGen : FullScreenDialogFragment() {
@@ -164,13 +170,20 @@ class SSHKeyGen : FullScreenDialogFragment() {
     }
 
     private fun generateKey(name: String, algorithm: String, password: String, bitSize: Int) {
-        val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
-            initialize(bitSize)
-        }.generateKeyPair()
-        val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
-        if (password.isNotEmpty()) key.isEncrypted = true
-        KeyUtils.saveKey(requireContext(), key)
-        dismiss()
+        bind.progressBar.visibility = View.VISIBLE
+        lifecycleScope.launch(Dispatchers.Default) {
+            val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
+                initialize(bitSize)
+            }.generateKeyPair()
+            Log.e("GENERATED", "GENERATED KEY")
+            val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
+            if (password.isNotEmpty()) key.isEncrypted = true
+            if (isActive) KeyUtils.saveKey(requireContext(), key)
+            withContext(Dispatchers.Main) {
+                bind.progressBar.visibility = View.GONE
+                dismiss()
+            }
+        }
     }
 
     private fun setStrength(strength: Int, updateText: Boolean = true) {
