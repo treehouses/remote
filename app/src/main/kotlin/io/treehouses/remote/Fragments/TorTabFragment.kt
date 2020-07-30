@@ -91,13 +91,9 @@ class TorTabFragment : BaseFragment() {
 
     private fun addNotificationListener() {
         notification!!.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                notification!!.isEnabled = false
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_ON))
-            } else {
-                notification!!.isEnabled = false
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_OFF))
-            }
+            if (isChecked) listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_ON))
+            else listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_OFF))
+            notification!!.isEnabled = false
         }
     }
 
