@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
@@ -17,11 +18,10 @@ import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.security.KeyPairGenerator
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class SSHKeyGen : FullScreenDialogFragment() {
 
@@ -54,19 +54,30 @@ class SSHKeyGen : FullScreenDialogFragment() {
 
         bind.generateKey.isEnabled = false
         bind.generateKey.setOnClickListener {
-            val name = bind.keyNameInput.text.toString()
-            if (validate(name)) {
-                generateKey(
-                        name = name,
-                        algorithm = bind.keyTypeSpinner.selectedItem.toString(),
-                        password = bind.passwordInput.text.toString(),
-                        bitSize = getBitSize()
-                )
-            }
+            generateKeyOnClick()
         }
         setUpSeekBar(getSelectedAlgo())
         setUpStrengthListeners()
         setUpShowStrength()
+    }
+
+    private fun generateKeyOnClick() {
+        val name = bind.keyNameInput.text.toString()
+        if (!validate(name)) return
+        if (bind.inBackground.isChecked) {
+            startKeyGenInBackground(
+                    name,
+                    bind.keyTypeSpinner.selectedItem as String,
+                    bind.passwordInput.text.toString(),
+                    getBitSize())
+        } else {
+            startKeyGen(
+                    name = name,
+                    algorithm = bind.keyTypeSpinner.selectedItem.toString(),
+                    password = bind.passwordInput.text.toString(),
+                    bitSize = getBitSize()
+            )
+        }
     }
 
     private fun getSelectedAlgo(): String {
@@ -169,15 +180,11 @@ class SSHKeyGen : FullScreenDialogFragment() {
         return validateBitSize(Integer.parseInt(intToParse), getSelectedAlgo())
     }
 
-    private fun generateKey(name: String, algorithm: String, password: String, bitSize: Int) {
+    private fun startKeyGen(name: String, algorithm: String, password: String, bitSize: Int) {
         bind.progressBar.visibility = View.VISIBLE
+        bind.generateKey.isEnabled = false
         lifecycleScope.launch(Dispatchers.Default) {
-            val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
-                initialize(bitSize)
-            }.generateKeyPair()
-            Log.e("GENERATED", "GENERATED KEY")
-            val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
-            if (password.isNotEmpty()) key.isEncrypted = true
+            val key = generateKey(name, algorithm, password, bitSize)
             if (isActive) KeyUtils.saveKey(requireContext(), key)
             withContext(Dispatchers.Main) {
                 bind.progressBar.visibility = View.GONE
@@ -185,6 +192,32 @@ class SSHKeyGen : FullScreenDialogFragment() {
             }
         }
     }
+
+    private fun startKeyGenInBackground(name: String, algorithm: String, password: String, bitSize: Int) {
+        requireActivity().run {
+            GlobalScope.launch(Dispatchers.Default) {
+                val key = generateKey(name, algorithm, password, bitSize)
+                if (isActive) KeyUtils.saveKey(applicationContext, key)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(applicationContext, "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        dismiss()
+    }
+
+    private suspend fun generateKey(name: String, algorithm: String, password: String, bitSize: Int) : PubKeyBean {
+        return suspendCoroutine {
+            val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
+                initialize(bitSize)
+            }.generateKeyPair()
+            Log.e("GENERATED", "KEY")
+            val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
+            if (password.isNotEmpty()) key.isEncrypted = true
+            it.resume(key)
+        }
+    }
+
 
     private fun setStrength(strength: Int, updateText: Boolean = true) {
         if (updateText) bind.strengthShow.setText(strength.toString())

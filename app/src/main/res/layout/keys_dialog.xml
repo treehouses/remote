@@ -163,6 +163,18 @@
 
         </LinearLayout>
 
+        <CheckBox
+            android:id="@+id/inBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginLeft="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:textSize="@dimen/text_size_mid"
+            android:text="Generate in Background"
+            />
+
         <Button
             android:id="@+id/generate_key"
             android:layout_width="match_parent"
