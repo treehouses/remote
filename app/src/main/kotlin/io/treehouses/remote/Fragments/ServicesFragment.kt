@@ -68,7 +68,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         else {
             SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_DETAILS, false)
         }
-        writeToRPI("treehouses remote allservices\n")
+        writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
+
     }
 
     private fun showUI(){
