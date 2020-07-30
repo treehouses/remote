@@ -65,7 +65,7 @@ open class BaseServicesFragment() : BaseFragment() {
     private fun addServicesToList(services: ArrayList<ServiceInfo>) {
         for (service in servicesData!!.available) {
             if (inServiceList(service, services) == -1) {
-                services.add(ServiceInfo(service, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
+                services.add(ServiceInfo(service, servicesData!!.size[service]?.toInt()!!, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
                         servicesData!!.info[service], servicesData!!.autorun[service]))
             }
         }

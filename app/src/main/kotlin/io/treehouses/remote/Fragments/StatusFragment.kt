@@ -47,7 +47,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun refresh() {
-        writeToRPI("treehouses remote statuspage")
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
         bind.refreshBtn.visibility = View.GONE
     }
 
@@ -63,7 +63,7 @@ class StatusFragment : BaseFragment() {
 
     private fun upgradeOnViewClickListener() {
         bind.upgrade.setOnClickListener {
-            writeToRPI("treehouses upgrade")
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE))
             updateRightNow = true
             bind.progressBar.visibility = View.VISIBLE
             bind.upgrade.visibility = View.GONE
@@ -76,7 +76,8 @@ class StatusFragment : BaseFragment() {
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
-        if(lastCommand == "treehouses remote statuspage"){
+
+        if(lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)){
             val statusData = Gson().fromJson(readMessage, StatusData::class.java)
 
             bind.temperature.text = statusData.temperature + "°C"
@@ -95,6 +96,7 @@ class StatusFragment : BaseFragment() {
             bind.tvRpiName.text = "Hostname: " + statusData.hostname
 
             val res = statusData.status.trim().split(" ")
+
             bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
             bind.deviceAddress.text = res[1]
             bind.tvRpiType.text = "Model: " + res[4]
@@ -131,7 +133,7 @@ class StatusFragment : BaseFragment() {
 
     private fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
-            writeToRPI("treehouses upgrade --check")
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE_CHECK))
         } else {
             bind.tvUpgradeCheck.text = "      NO INTERNET"
             bind.upgrade.visibility = View.GONE
@@ -182,7 +184,7 @@ class StatusFragment : BaseFragment() {
                 .setPositiveButton("Rename"
                 ) { _: DialogInterface?, _: Int ->
                     if (mEditText.text.toString() != "") {
-                        writeToRPI("treehouses rename " + mEditText.text.toString())
+                        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
                         Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
                         refresh()
                     } else {

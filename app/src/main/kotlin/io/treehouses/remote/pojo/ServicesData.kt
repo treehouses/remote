@@ -9,5 +9,6 @@ data class ServicesData(val available: List<String> = listOf(),
                         val running: List<String> = listOf(),
                         val icon: HashMap<String, String> = hashMapOf(),
                         val info: HashMap<String, String> = hashMapOf(),
+                        val size: HashMap<String, String> = hashMapOf(),
                         val autorun: HashMap<String, String> =hashMapOf()) : Serializable
 

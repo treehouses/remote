@@ -244,7 +244,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         updatePromptVisible()
 
         // If we just closed the last bridge, go back to the previous activity.
-        if (bind.pager.childCount == 0) finish()
+        if (bind.pager.childCount == 0) {
+            Log.e("FINISHING SSH", "FINISH")
+            finish()
+        }
     }
 
     private fun findCurrentView(id: Int): View? {
@@ -475,7 +478,8 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun promptListeners() {
-        bind.consolePassword.setOnKeyListener(View.OnKeyListener { _: View?, keyCode: Int, event: KeyEvent ->
+        val onKeyListener = View.OnKeyListener {
+            _: View?, keyCode: Int, event: KeyEvent ->
             if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
 
             // pass collected password down to current terminal
@@ -487,8 +491,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             bind.consolePassword.setText("")
             updatePromptVisible()
             true
-        })
-        fun update(b:Boolean, helper:PromptHelper){
+        }
+        bind.consolePassword.setOnKeyListener(onKeyListener)
+
+        fun update(b:Boolean, helper:PromptHelper) {
             helper.setResponse(b)
             updatePromptVisible()
         }

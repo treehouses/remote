@@ -21,9 +21,13 @@ open class BaseFragment : Fragment() {
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
     }
 
+    fun isListenerInitialized() = ::listener.isInitialized
+
+
     open fun chatOpen():Boolean {
         return this::mChatService.isInitialized
     }
+
 
     protected fun onLoad(mHandler: Handler?) {
         mChatService = listener.getChatService()
@@ -44,7 +48,7 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    protected val mHandler: Handler = @SuppressLint("HandlerLeak")
+    protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {

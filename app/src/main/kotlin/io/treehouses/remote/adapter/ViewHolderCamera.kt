@@ -6,6 +6,7 @@ import android.os.Message
 import android.view.View
 import android.widget.Switch
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
@@ -38,14 +39,14 @@ class ViewHolderCamera internal constructor(v: View, private val c: Context, lis
     init {
         mChatService.updateHandler(mHandler)
         cameraSwitch = v.findViewById(R.id.CameraSwitch)
-        listener.sendMessage("treehouses camera")
+        listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA))
         cameraSwitch.isEnabled = false
         cameraSwitch.setOnClickListener {
             if (cameraSwitch.isChecked) {
-                listener.sendMessage("treehouses camera on")
+                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_ON))
                 cameraSwitch.isEnabled = false
             } else {
-                listener.sendMessage("treehouses camera off")
+                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_OFF))
                 cameraSwitch.isEnabled = false
             }
         }

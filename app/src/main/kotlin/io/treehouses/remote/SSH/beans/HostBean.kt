@@ -85,7 +85,6 @@ class HostBean {
         var flag = false
         other as HostBean
         flag = when {
-            fontSize != other.fontSize -> false
             nickname != other.nickname -> false
             hostname != other.hostname -> false
             username != other.username -> false
