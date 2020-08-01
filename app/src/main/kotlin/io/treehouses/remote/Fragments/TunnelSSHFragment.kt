@@ -175,7 +175,6 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             addPortButton?.isEnabled = true
             addPortButton?.text = "Add Port"
             addHostButton?.text = "Add Host"
-            addPortButton!!.isEnabled = true
             addHostButton?.isEnabled = true
             val hosts = readMessage.split('\n')
             for (host in hosts) {
@@ -197,13 +196,19 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     private fun getMessage3(readMessage: String) {
         when {
             readMessage.contains("Status: on") -> {
-                bind!!.switchNotification.isChecked = true
-                bind!!.switchNotification.isEnabled = true
-                bind!!.notifyNow.isEnabled = true }
+                bind?.apply {
+                    switchNotification.isChecked = true
+                    switchNotification.isEnabled = true
+                    notifyNow.isEnabled = true
+                }
+            }
             readMessage.contains("Status: off") -> {
-                bind!!.switchNotification.isChecked = false
-                bind!!.switchNotification.isEnabled = true
-                bind!!.notifyNow.isEnabled = true }
+                bind?.apply {
+                    switchNotification.isChecked = false
+                    switchNotification.isEnabled = true
+                    notifyNow.isEnabled = true
+                }
+            }
             readMessage.contains("OK.") -> { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
             readMessage.contains("Thanks for the feedback!") -> {
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
