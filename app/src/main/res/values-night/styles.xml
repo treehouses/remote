@@ -39,7 +39,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@color/windowBackground</item>
         <item name="android:textColor">@color/daynight_textColor</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
@@ -56,7 +55,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@color/card_background</item>
         <item name="android:textColor">@color/daynight_textColor</item>
         <item name="android:textColorPrimary">@android:color/white</item>
 
