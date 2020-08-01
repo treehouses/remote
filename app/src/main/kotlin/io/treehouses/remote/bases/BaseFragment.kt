@@ -21,6 +21,7 @@ open class BaseFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
+        mChatService = listener.getChatService()
     }
 
     fun isListenerInitialized() = ::listener.isInitialized
@@ -32,7 +33,7 @@ open class BaseFragment : Fragment() {
 
 
     protected fun onLoad(mHandler: Handler?) {
-        mChatService = listener.getChatService()
+//        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler!!)
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 

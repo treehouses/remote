@@ -76,14 +76,6 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <receiver
-            android:name=".Network.BluetoothConnectionReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="restartservice" />
-            </intent-filter>
-        </receiver>
         <service
             android:name=".Network.BluetoothChatService"
             android:label="Bluetooth Connection"

@@ -122,7 +122,6 @@ open class BaseHomeFragment : BaseFragment() {
 
     protected fun showDialogOnce(preferences: SharedPreferences) {
         val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
-        Log.e("REACHED HERE", firstTime.toString())
         if (firstTime) {
 //            showWelcomeDialog()
             Log.e("FIRST", "TIME")

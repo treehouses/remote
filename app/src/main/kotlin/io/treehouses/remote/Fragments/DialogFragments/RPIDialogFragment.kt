@@ -56,7 +56,8 @@ class RPIDialogFragment : BaseDialogFragment() {
         mBluetoothAdapter!!.startDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-        if (mChatService == null) mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
+        if (mChatService == null) mChatService = listener!!.getChatService()
+        mChatService!!.updateHandler(mHandler)
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
@@ -93,7 +94,6 @@ class RPIDialogFragment : BaseDialogFragment() {
 
     private fun listViewOnClickListener(mView: View) {
         bind!!.listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
             val deviceList: List<BluetoothDevice> = if (bind!!.rpiSwitch.isChecked) raspberryDevices else allDevices
             if (checkPiAddress(deviceList[position].address)) {
                 mainDevice = deviceList[position]
@@ -225,7 +225,7 @@ class RPIDialogFragment : BaseDialogFragment() {
                     Constants.STATE_CONNECTED -> {
                         Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen")
                         pDialog!!.dismiss()
-                        listener!!.setChatService(mChatService!!)
+//                        listener!!.setChatService(mChatService!!)
                         checkConnectionState!!.checkConnectionState()
                         mBluetoothAdapter!!.cancelDiscovery()
                         Toast.makeText(mContext, "Bluetooth Connected", Toast.LENGTH_LONG).show()

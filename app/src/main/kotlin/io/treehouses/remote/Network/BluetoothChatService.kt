@@ -78,7 +78,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        Log.e("Bluetooth Service", "ON BIND")
         return mBinder
     }
 
@@ -93,37 +92,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         if (intent?.action.equals("stop")) {
             stopSelf();
         }
-        else if (intent != null && intent.hasExtra("DEVICE")) {
-            mDevice = intent.getParcelableExtra("DEVICE")
-        }
-        if (mDevice != null) connect(mDevice!!, false)
         return START_STICKY
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) startNotification() else startForeground(1, Notification())
-    }
-
-//    override fun onTaskRemoved(rootIntent: Intent?) {
-//        super.onTaskRemoved(rootIntent)
-//        Log.e("SERVICE","TASK REMOVE")
-//        val broadcastIntent = Intent()
-//        if (mDevice != null) broadcastIntent.putExtra("DEVICE", mDevice)
-//        broadcastIntent.action = "restartservice"
-//        broadcastIntent.setClass(this, BluetoothConnectionReceiver::class.java)
-//        this.sendBroadcast(broadcastIntent)
-//    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("SERVICE","OnDestroy")
-        val broadcastIntent = Intent()
-        if (mDevice != null) broadcastIntent.putExtra("DEVICE", mDevice)
-        broadcastIntent.action = "restartservice"
-        broadcastIntent.setClass(this, BluetoothConnectionReceiver::class.java)
-        this.sendBroadcast(broadcastIntent)
-    }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startNotification() {
         val NOTIFICATION_CHANNEL_ID = "bluetooth"
@@ -150,7 +121,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @Synchronized
     private fun updateUserInterfaceTitle() {
         state = state
-        Log.d(TAG, "updateUserInterfaceTitle() " + mNewState + " -> " + state)
+        Log.d(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
         mNewState = state
 
         // Give the new state to the Handler so the UI Activity can update
@@ -236,15 +207,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mConnectedThread = null
         }
 
-        // Cancel the accept thread because we only want to connect to one device
-//        if (mSecureAcceptThread != null) {
-//            mSecureAcceptThread.cancel();
-//            mSecureAcceptThread = null;
-//        }
-//        if (mInsecureAcceptThread != null) {
-//            mInsecureAcceptThread.cancel();
-//            mInsecureAcceptThread = null;
-//        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) startNotification() else startForeground(1, Notification())
 
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = ConnectedThread(socket, socketType)
@@ -320,7 +283,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     private fun connectionLost() {
         // Send a failure message back to the Activity
         callHandler("Device connection was lost")
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        stopForeground(true)
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (mDevice != null && !bNoReconnect && preferences.getBoolean("reconnectBluetooth", true)) {
             connect(mDevice!!, true)
         } else {
