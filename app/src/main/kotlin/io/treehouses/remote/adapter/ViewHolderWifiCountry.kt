@@ -1,6 +1,7 @@
 package io.treehouses.remote.adapter
 
 import android.app.Dialog
+
 import android.content.Context
 import android.os.Handler
 import android.os.Message
@@ -39,6 +40,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
         }
     }
 
+
     private fun getCountryName(country: String): String {
         val l = Locale("", country)
         val countryName = l.displayCountry
@@ -59,13 +61,13 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
     }
 
     init {
-        listener.sendMessage("treehouses wificountry")
+        listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
         for (i in countriesCode.indices) {
             countriesName[i] = getCountryName(countriesCode[i])
         }
-        val adapter = ArrayAdapter(context, android.R.layout.select_dialog_item, countriesName)
+        val adapter = ArrayAdapter(context, R.layout.select_dialog_item_countries, countriesName)
         c = context
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
@@ -81,7 +83,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
             countryList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
                 var selectedString = countryList!!.getItemAtPosition(p).toString()
                 selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
-                listener.sendMessage("treehouses wificountry $selectedString")
+                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY, selectedString))
                 textBar.isEnabled = false
                 textBar.setText("Changing country")
                 dialog.dismiss()
@@ -89,6 +91,7 @@ class ViewHolderWifiCountry internal constructor(v: View, context: Context, list
             searchView = dialog.findViewById(R.id.search_bar)
             searchView!!.isIconifiedByDefault = false
             searchView!!.setOnQueryTextListener(this)
+
             dialog.show()
         }
     }

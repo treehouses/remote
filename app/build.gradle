@@ -30,11 +30,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         //Uncomment for debugging
-        debug {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+//        debug {
+//            minifyEnabled true
+//            shrinkResources true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
 
     }
     lintOptions {
@@ -54,7 +54,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta8'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
@@ -73,15 +73,16 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.preference:preference:1.1.1"
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     implementation 'com.github.parse-community:ParseLiveQuery-Android:1.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     implementation 'me.aflak.libraries:bluetooth:1.3.4'
     implementation 'com.caverock:androidsvg-aar:1.4'
-    implementation "androidx.core:core-ktx:1.3.0"
+    implementation "androidx.core:core-ktx:1.3.1"
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.1.5'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06'
 
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

@@ -244,7 +244,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         updatePromptVisible()
 
         // If we just closed the last bridge, go back to the previous activity.
-        if (bind.pager.childCount == 0) finish()
+        if (bind.pager.childCount == 0) {
+            Log.e("FINISHING SSH", "FINISH")
+            finish()
+        }
     }
 
     private fun findCurrentView(id: Int): View? {
@@ -265,14 +268,16 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun showEmulatedKeys(showActionBar: Boolean) {
-        if (bind.keyboard.keyboardGroup.visibility == View.GONE) {
-            bind.keyboard.keyboardGroup.startAnimation(keyboardFadeIn)
-            bind.keyboard.keyboardGroup.visibility = View.VISIBLE
-        }
+        if (bind.keyboard.keyboardGroup.visibility == View.GONE) setAnimation(keyboardFadeIn, View.VISIBLE)
         if (showActionBar) {
             actionBar!!.show()
         }
         autoHideEmulatedKeys()
+    }
+
+    private fun setAnimation(animation: Animation?, visibility: Int) {
+        bind.keyboard.keyboardGroup.startAnimation(animation)
+        bind.keyboard.keyboardGroup.visibility = visibility
     }
 
     private fun autoHideEmulatedKeys() {
@@ -281,10 +286,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             if (bind.keyboard.keyboardGroup.visibility == View.GONE || inActionBarMenu) {
                 return@Runnable
             }
-            if (!keyboardAlwaysVisible) {
-                bind.keyboard.keyboardGroup.startAnimation(keyboardFadeOut)
-                bind.keyboard.keyboardGroup.visibility = View.GONE
-            }
+            if (!keyboardAlwaysVisible) setAnimation(keyboardFadeOut, View.GONE)
             hideActionBarIfRequested()
             keyboardGroupHider = null
         }
@@ -475,7 +477,21 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun promptListeners() {
-        bind.consolePassword.setOnKeyListener(View.OnKeyListener { _: View?, keyCode: Int, event: KeyEvent ->
+        val onKeyListener = createOnKeyListener()
+        bind.consolePassword.setOnKeyListener(onKeyListener)
+
+        bind.consolePromptYes.setOnClickListener {
+            updatePrompt(true, currentPromptHelper ?: return@setOnClickListener)
+        }
+        bind.consolePromptNo.setOnClickListener {
+            updatePrompt(false, currentPromptHelper ?: return@setOnClickListener)
+        }
+
+    }
+
+    private fun createOnKeyListener(): View.OnKeyListener {
+        return View.OnKeyListener {
+            _: View?, keyCode: Int, event: KeyEvent ->
             if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
 
             // pass collected password down to current terminal
@@ -487,19 +503,13 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             bind.consolePassword.setText("")
             updatePromptVisible()
             true
-        })
-        fun update(b:Boolean, helper:PromptHelper){
-            helper.setResponse(b)
-            updatePromptVisible()
         }
+    }
 
-        bind.consolePromptYes.setOnClickListener {
-            update(true, currentPromptHelper ?: return@setOnClickListener)
-        }
-        bind.consolePromptNo.setOnClickListener {
-            update(false, currentPromptHelper ?: return@setOnClickListener)
-        }
 
+    private fun updatePrompt(b:Boolean, helper:PromptHelper) {
+        helper.setResponse(b)
+        updatePromptVisible()
     }
 
     private fun addKeyRepeater(view: View) {
@@ -559,23 +569,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        super.onCreateOptionsMenu(menu)
-        val view = adapter!!.currentTerminalView
-        val activeTerminal = view != null
-        var sessionOpen = false
-        var disconnected = false
-        if (activeTerminal) {
-            val bridge = view!!.bridge
-            sessionOpen = bridge.isSessionOpen
-            disconnected = bridge.isDisconnected
-        }
-        menu.setQwertyMode(true)
-        disconnect = menu.add("Disconnect")
-        if (hardKeyboard) disconnect!!.alphabeticShortcut = 'w'
-        if (!sessionOpen && disconnected) disconnect!!.title = "Close Console"
-        disconnect!!.isEnabled = activeTerminal
-        disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
+    private fun setDisconnectItemListener() {
         disconnect!!.setOnMenuItemClickListener {
             // disconnect or close the currently visible session
             val terminalView = adapter!!.currentTerminalView
@@ -583,18 +577,41 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             bridge.dispatchDisconnect(true)
             true
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        super.onCreateOptionsMenu(menu)
+        val view = adapter!!.currentTerminalView
+        val activeTerminal = view != null
+        var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
+        menu.setQwertyMode(true)
+        disconnect = menu.add("Disconnect")
+        if (hardKeyboard) disconnect!!.alphabeticShortcut = 'w'
+        if (!sessionOpen && disconnected) disconnect!!.title = "Close Console"
+        disconnect!!.isEnabled = activeTerminal
+        disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
+        setDisconnectItemListener()
         paste = menu.add("Paste")
         if (hardKeyboard) paste!!.alphabeticShortcut = 'v'
         MenuItemCompat.setShowAsAction(paste, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM)
         paste!!.isEnabled = activeTerminal
-        paste!!.setOnMenuItemClickListener {
-            pasteIntoTerminal()
-            true
-        }
+        setPasteItemListener()
         urlScan = menu.add("Scan for URLs")
         if (hardKeyboard) urlScan!!.alphabeticShortcut = 'u'
         urlScan!!.setIcon(android.R.drawable.ic_menu_search)
         urlScan!!.isEnabled = activeTerminal
+        setUrlItemListener()
+        return true
+    }
+
+    private fun setPasteItemListener() {
+        paste!!.setOnMenuItemClickListener {
+            pasteIntoTerminal()
+            true
+        }
+    }
+
+    private fun setUrlItemListener() {
         urlScan!!.setOnMenuItemClickListener {
             val terminalView = adapter!!.currentTerminalView
             val urls = terminalView!!.bridge.scanForURLs()
@@ -608,14 +625,9 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             urlDialog.show()
             true
         }
-        return true
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        super.onPrepareOptionsMenu(menu)
-        volumeControlStream = AudioManager.STREAM_NOTIFICATION
-        val view = adapter?.currentTerminalView
-        val activeTerminal = view != null
+    private fun checkSession(view: TerminalView?, activeTerminal: Boolean): Pair<Boolean, Boolean> {
         var sessionOpen = false
         var disconnected = false
         if (activeTerminal) {
@@ -623,6 +635,15 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             sessionOpen = bridge.isSessionOpen
             disconnected = bridge.isDisconnected
         }
+        return Pair(sessionOpen, disconnected)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        super.onPrepareOptionsMenu(menu)
+        volumeControlStream = AudioManager.STREAM_NOTIFICATION
+        val view = adapter?.currentTerminalView
+        val activeTerminal = view != null
+        var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         disconnect?.isEnabled = activeTerminal
         if (sessionOpen || !disconnected) disconnect?.title = "Disconnect" else disconnect?.title = "Close Console"
         paste?.isEnabled = activeTerminal
@@ -765,24 +786,14 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
 
         // Hide all the prompts in case a prompt request was canceled
         hideAllPrompts()
-        if (view == null) {
-            // we dont have an active view, so hide any prompts
-            return
-        }
+        // we dont have an active view, so hide any prompts
+        if (view == null) return
         val prompt = view.bridge.promptHelper
         Log.e("GOT", "HERE ")
         when {
             String::class.java == prompt!!.promptRequested -> {
                 hideEmulatedKeys()
-                bind.consolePasswordGroup.visibility = View.VISIBLE
-                val instructions = prompt.promptInstructions
-                if (instructions != null && instructions.isNotEmpty()) {
-                    bind.consolePasswordInstructions.visibility = View.VISIBLE
-                    bind.consolePasswordInstructions.text = instructions
-                } else bind.consolePasswordInstructions.visibility = View.GONE
-                bind.consolePassword.setText("")
-                bind.consolePassword.hint = prompt.promptHint
-                bind.consolePassword.requestFocus()
+                setConsolePassword(prompt)
             }
             Boolean::class.java == prompt.promptRequested -> {
                 hideEmulatedKeys()
@@ -795,6 +806,18 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
                 view.requestFocus()
             }
         }
+    }
+
+    private fun setConsolePassword(prompt: PromptHelper) {
+        bind.consolePasswordGroup.visibility = View.VISIBLE
+        val instructions = prompt.promptInstructions
+        if (instructions != null && instructions.isNotEmpty()) {
+            bind.consolePasswordInstructions.visibility = View.VISIBLE
+            bind.consolePasswordInstructions.text = instructions
+        } else bind.consolePasswordInstructions.visibility = View.GONE
+        bind.consolePassword.setText("")
+        bind.consolePassword.hint = prompt.promptHint
+        bind.consolePassword.requestFocus()
     }
 
     private class URLItemListener internal constructor(context: Context) : OnItemClickListener {
