@@ -195,11 +195,17 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_settings) {
-            openCallFragment(SettingsFragment())
-            title = "Settings"
-        } else if (item.itemId == R.id.action_feedback) {
-            FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
+        when (item.itemId) {
+            R.id.action_settings -> {
+                openCallFragment(SettingsFragment())
+                title = "Settings"
+            }
+            R.id.action_feedback -> {
+                FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
+            }
+            R.id.action_community -> {
+                openCallFragment(CommunityFragment())
+            }
         }
         return super.onOptionsItemSelected(item)
     }
