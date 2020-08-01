@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.StatusFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
@@ -17,7 +16,7 @@ import io.treehouses.remote.callback.HomeInteractListener
 class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
     private val radioGroup: RadioGroup = v.findViewById(R.id.radioGroup)
     private var readMessage  = ""
-    private val mChatService: BluetoothChatService
+    private val mChatService: BluetoothChatService = listener.getChatService()
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -36,58 +35,34 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     }
 
     init {
-        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-        listener.sendMessage("treehouses blocker")
+        listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER_CHECK))
+
+        fun setBlocker(level:String, msg:String) {
+            listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_BLOCKER, level))
+            context.toast(msg)
+        }
 
         radioGroup.setOnCheckedChangeListener { _: RadioGroup?, i: Int ->
             when (i) {
-                R.id.radioButton1 -> {
-                    listener.sendMessage("treehouses blocker 0")
-                    context.toast("Blocker Disabled")
-                }
-                R.id.radioButton2 -> {
-                    listener.sendMessage("treehouses blocker 1")
-                    context.toast("Blocker set to level 1")
-                }
-                R.id.radioButton3 -> {
-                    listener.sendMessage("treehouses blocker 2")
-                    context.toast("Blocker set to level 2")
-                }
-                R.id.radioButton4 -> {
-                    listener.sendMessage("treehouses blocker 3")
-                    context.toast("Blocker set to level 3")
-                }
-                R.id.radioButton5 -> {
-                    listener.sendMessage("treehouses blocker 4")
-                    context.toast("Blocker set to level 4")
-                }
-                R.id.radioButton6 -> {
-                    listener.sendMessage("treehouses blocker max")
-                    context.toast("Blocker set to maximum level")
-                }
+                R.id.radioButton1 -> setBlocker("0","Blocker Disabled")
+                R.id.radioButton2 -> setBlocker("1","Blocker set to level 1")
+                R.id.radioButton3 -> setBlocker("2","Blocker set to level 2")
+                R.id.radioButton4 -> setBlocker("3","Blocker set to level 3")
+                R.id.radioButton5 -> setBlocker("4","Blocker set to level 4")
+                R.id.radioButton6 -> setBlocker("max","Blocker set to maximum level")
             }
         }
     }
 
     fun updateSelection(readMessage:String){
-        if(readMessage.contains("blocker 0")){
-            radioGroup.check(R.id.radioButton1);
-        }
-        else if(readMessage.contains("blocker 1")){
-            radioGroup.check(R.id.radioButton2);
-        }
-        else if(readMessage.contains("blocker 2")){
-            radioGroup.check(R.id.radioButton3);
-        }
-        else if(readMessage.contains("blocker 3")){
-            radioGroup.check(R.id.radioButton4);
-        }
-        else if(readMessage.contains("blocker 4")){
-            radioGroup.check(R.id.radioButton5);
-        }
-        else if(readMessage.contains("blocker X")){
-            radioGroup.check(R.id.radioButton6);
+        when {
+            readMessage.contains("blocker 0") -> radioGroup.check(R.id.radioButton1)
+            readMessage.contains("blocker 1") -> radioGroup.check(R.id.radioButton2)
+            readMessage.contains("blocker 2") -> radioGroup.check(R.id.radioButton3)
+            readMessage.contains("blocker 3") -> radioGroup.check(R.id.radioButton4)
+            readMessage.contains("blocker 4") -> radioGroup.check(R.id.radioButton5)
+            readMessage.contains("blocker X") -> radioGroup.check(R.id.radioButton6)
         }
     }
 
