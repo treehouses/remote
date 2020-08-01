@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.47"
-            app:srcCompat="@drawable/delete_icon" />
+            app:srcCompat="@drawable/ic_delete_black_24dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
