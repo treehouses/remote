@@ -25,10 +25,10 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private lateinit var bind : ActivityDiscoverFragmentBinding
     private var gateway = Gateway()
     private var deviceList = ArrayList<Device>()
-    private lateinit var gatewayIcon : ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityDiscoverFragmentBinding.inflate(inflater, container, false)
+        bind.progressBar.visibility = View.VISIBLE
         deviceList.clear()
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
@@ -109,7 +109,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun updateGatewayIcon() {
-        gatewayIcon = bind.iconContainer.icon
+        val gatewayIcon = bind.iconContainer.icon
         bind.iconContainer.removeView(gatewayIcon)
         gatewayIcon.setOnClickListener {
             val message = ("SSID: " + gateway.ssid + "\n") +
@@ -119,6 +119,10 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
             message.lines()
             showDialog(context,"Gateway Information", message)
+        }
+        if(gateway.isComplete()) {
+            bind.progressBar.visibility = View.GONE
+            gatewayIcon.visibility = View.VISIBLE
         }
         bind.iconContainer.addView(gatewayIcon)
     }
@@ -148,8 +152,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
         val ssid = extractText("ESSID:\"(.)+\"", "ESSID:", readMessage)
         if (ssid != null) {
-            var trimmedSsid = ssid.substring(1, ssid.length - 1)
-            gateway.ssid = trimmedSsid
+            gateway.ssid = ssid.substring(1, ssid.length - 1)
         }
 
         val mac = extractText("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", "MAC Address:\\s+", readMessage)
@@ -204,11 +207,19 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         override fun equals(other : Any?) : Boolean {
             return this.ip == (other as Device).ip
         }
+
+        fun isComplete(): Boolean {
+            return this::ip.isInitialized && this::mac.isInitialized
+        }
     }
 
     inner class Gateway {
         var device = Device()
         lateinit var ssid : String
+
+        fun isComplete(): Boolean {
+            return device.isComplete() && this::ssid.isInitialized
+        }
     }
 
     companion object {
