@@ -166,7 +166,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
-                    runServiceCommand("Uninstalling", getString(R.string.TREEHOUSES_SERVICES_CLEANUP, selected.name), selected.name)
+                    runServiceCommand("Uninstalling", selected.name)
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
@@ -174,12 +174,12 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     private fun onInstall(selected: ServiceInfo?) {
         if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
-            runServiceCommand("Installing", getString(R.string.TREEHOUSES_SERVICES_INSTALL, selected.name), selected.name)
+            runServiceCommand("Installing", selected.name)
         else if (installedOrRunning(selected)) showDeleteDialog(selected)
     }
 
-    private fun runServiceCommand(action: String, command: String, name: String) {
-        performService(action, command, name)
+    private fun runServiceCommand(action: String, name: String) {
+        performService(action, name)
         performServiceWait()
     }
 
@@ -190,9 +190,9 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     private fun onStart(selected: ServiceInfo?) {
         if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED)
-            performService("Starting", getString(R.string.TREEHOUSES_SERVICES_UP, selected.name), selected.name)
+            performService("Starting", selected.name)
         else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING)
-            performService("Stopping", getString(R.string.TREEHOUSES_SERVICES_STOP, selected.name), selected.name)
+            performService("Stopping", selected.name)
     }
 
     private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
