@@ -6,7 +6,8 @@
     android:padding="@dimen/padding_normal"
     android:layout_height="match_parent"
     android:theme = "@style/AppTheme"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/windowBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
