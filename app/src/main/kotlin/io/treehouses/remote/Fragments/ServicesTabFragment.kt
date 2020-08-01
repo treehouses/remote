@@ -18,6 +18,7 @@ import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
+import io.treehouses.remote.utils.LogUtils
 
 class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
@@ -49,10 +50,7 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
                     val output = msg.obj as String
                     moreAction(output)
                 }
-                Constants.MESSAGE_WRITE -> {
-                    val write_msg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", write_msg)
-                }
+                Constants.MESSAGE_WRITE -> LogUtils.writeMsg(msg)
                 Constants.MESSAGE_STATE_CHANGE -> {
                     listener.redirectHome()
                 }
