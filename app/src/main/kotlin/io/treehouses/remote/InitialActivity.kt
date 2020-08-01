@@ -22,6 +22,7 @@ import io.treehouses.remote.Fragments.SSHConfig
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
+import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityInitial2Binding
@@ -74,6 +75,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 (supportFragmentManager).popBackStack()
                 title = "Home"
             }
+            if (f is BackPressReceiver) f.onBackPressed()
         }
     }
 
@@ -198,13 +200,14 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         when (item.itemId) {
             R.id.action_settings -> {
                 openCallFragment(SettingsFragment())
-                title = "Settings"
+                title = getString(R.string.action_settings)
             }
             R.id.action_feedback -> {
                 FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
             }
             R.id.action_community -> {
                 openCallFragment(CommunityFragment())
+                title = getString(R.string.action_community)
             }
         }
         return super.onOptionsItemSelected(item)
