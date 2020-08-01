@@ -107,28 +107,22 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     override fun getFilter(): Filter {
-
         return object : Filter() {
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
                 data = results.values as ArrayList<ServiceInfo>
                 notifyDataSetChanged()
             }
-
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val results = FilterResults()
                 val FilteredList: ArrayList<ServiceInfo> = ArrayList()
                 if (constraint == null || constraint.isEmpty()) {
-                    results.values = dataIn
-                    results.count = dataIn.size
+                    results.values = dataIn; results.count = dataIn.size
                 } else {
                     for (i in 0 until dataIn.size) {
                         val data: ServiceInfo = dataIn[i]
-                        if (data.name.toLowerCase().contains(constraint.toString().toLowerCase()) && data.name.toLowerCase() != "Installed" && data.name.toLowerCase() != "Available") {
-                            FilteredList.add(data)
-                        }
+                        if (data.name.toLowerCase().contains(constraint.toString().toLowerCase()) && data.name.toLowerCase() != "Installed" && data.name.toLowerCase() != "Available") FilteredList.add(data)
                     }
-                    results.values = FilteredList
-                    results.count = FilteredList.size
+                    results.values = FilteredList; results.count = FilteredList.size
                 }
                 return results
             }
