@@ -148,22 +148,23 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
 
     private fun addingHostButton(){
         if (inputExternalHost.text.toString().isNotEmpty() && inputInternalHost.text.toString().isNotEmpty() ) {
-            val s1 = inputInternalHost.text.toString()
-            val s2 = inputExternalHost.text.toString()
+            if(inputExternalHost.text.toString().contains("@")) {
+                val s1 = inputInternalHost.text.toString()
+                val s2 = inputExternalHost.text.toString()
+                listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
+                addHostButton!!.text = "Adding......"
+                addHostButton!!.isEnabled = false
+            }
+            else{
+                Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
+            }
 
-            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
-            addHostButton!!.text = "Adding......"
-            addHostButton!!.isEnabled = false
+
             dialogHosts.dismiss()
         }
 
 
-        addingHostButton.setOnClickListener {
-            if (inputExternalHost.text.toString().isNotEmpty() && inputInternalHost.text.toString().isNotEmpty()) {
-                val s1 = inputInternalHost.text.toString()
-                val s2 = inputExternalHost.text.toString()
-            }
-        }
+
 
 
     }
