@@ -47,19 +47,23 @@
 
     <Button
         android:id="@+id/button_send"
-        android:layout_width="@dimen/icon_size_mid"
-        android:layout_height="@dimen/icon_size_mid"
-        android:layout_margin="@dimen/margin_medium"
-        android:background="@drawable/ic_send_black_24dp"
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"
+        android:background="@drawable/ic_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnPrevious" />
 
     <Button
         android:id="@+id/btnPrevious"
-        android:layout_width="@dimen/icon_size_mid"
-        android:layout_height="@dimen/icon_size_mid"
-        android:layout_margin="@dimen/margin_medium"
-        android:background="@drawable/ic_history_black_24dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"
+        android:background="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/treehousesBtn" />
 
@@ -123,11 +127,11 @@
 
         <Button
             android:id="@+id/infoButton"
-            android:layout_width="@dimen/icon_size_mid"
-            android:layout_height="@dimen/icon_size_mid"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginTop="6dp"
-            android:layout_marginRight="2dp"
-            android:background="@drawable/help" />
+            android:layout_marginRight="6dp"
+            android:background="@drawable/ic_info" />
     </LinearLayout>
 
         <ExpandableListView
