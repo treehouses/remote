@@ -89,6 +89,7 @@
 
     <string name="app_project_name">Treehouses Remote</string>
     <string name="action_settings">Settings</string>
+    <string name="action_community">Community</string>
     <string name="title_sync_settings">Sync Settings</string>
     <string name="btn_sync">Sync</string>
 
