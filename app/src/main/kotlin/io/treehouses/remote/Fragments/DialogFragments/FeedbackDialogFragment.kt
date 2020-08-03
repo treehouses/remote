@@ -1,5 +1,8 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -18,6 +21,10 @@ class FeedbackDialogFragment : FullScreenDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogFeedbackBinding.inflate(inflater, container, false)
+
+        val back = ColorDrawable(Color.TRANSPARENT)
+        val inset = InsetDrawable(back, 20)
+        dialog!!.window!!.setBackgroundDrawable(inset)
         return bind.root
     }
 
