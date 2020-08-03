@@ -66,13 +66,11 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                         binding.progressBar.visibility = View.GONE
                     } else {
                         setScreenState(true)
-                        var msg: String = ""
                         if (output.contains("service autorun set")) {
-                            msg = "Switched autorun"
+                            Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
                         } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-                            msg = "An Error occurred"
+                            Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
                         }
-                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     }
                 }
                 Constants.MESSAGE_STATE_CHANGE -> {
