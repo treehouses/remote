@@ -18,22 +18,20 @@
 package io.treehouses.remote.Network
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.*
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
-import com.google.gson.Gson
 import io.treehouses.remote.Constants
+import io.treehouses.remote.InitialActivity
+import io.treehouses.remote.R
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -95,22 +93,24 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         return START_STICKY
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun startNotification() {
-        val NOTIFICATION_CHANNEL_ID = "bluetooth"
-        val channelName = "Bluetooth Connection"
-        val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE)
-        chan.lightColor = Color.BLUE
-        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+//        val disconnectIntent = Intent(this, DisconnectReceiver::class.java).apply {
+//            action = DISCONNECT_ACTION
+//        }
+//        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
 
-        val manager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-        manager.createNotificationChannel(chan)
+        val onClickIntent = Intent(this, InitialActivity::class.java)
+        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
         val notification: Notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("App is running in background")
-                .setPriority(NotificationManager.IMPORTANCE_MIN)
-                .setCategory(Notification.CATEGORY_SERVICE)
+                .setContentTitle("Treehouses Remote is currently running")
+                .setContentText("Connected to ${mDevice?.name}")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setSmallIcon(R.drawable.treehouses2)
+                .setContentIntent(pendingClickIntent)
+//                .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
                 .build()
         startForeground(2, notification)
     }
@@ -207,7 +207,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mConnectedThread = null
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) startNotification() else startForeground(1, Notification())
+        startNotification()
 
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = ConnectedThread(socket, socketType)
@@ -451,10 +451,19 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
+//    inner class DisconnectReceiver : BroadcastReceiver() {
+//        override fun onReceive(context: Context?, intent: Intent?) {
+//            if (intent?.action == DISCONNECT_ACTION) {
+//                stop()
+//            }
+//        }
+//
+//    }
+
     companion object {
         // Debugging
         private const val TAG = "BluetoothChatService"
-
+        private const val DISCONNECT_ACTION = "disconnect"
         //private static final String NAME_INSECURE = "BluetoothChatInsecure";
         // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
         private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")

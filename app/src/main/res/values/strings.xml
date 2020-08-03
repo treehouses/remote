@@ -25,7 +25,9 @@
     <string name="command_hint">commands</string>
     <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>
-
+    <string name="bt_notification_ID">bluetoothChannel</string>
+    <string name="bt_notification_channel">Bluetooth</string>
+    <string name="bt_notification_description">Treehouses Remote is currently connected to a device.</string>
 
     <string name="TestButton">TREEHOUSES</string>
     <string name="DockerButton">DOCKER PS</string>
