@@ -103,7 +103,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) {
                 val host = pastHosts[position]
                 holder.bind(host)
-                if (bound?.getConnectedBridge(host) != null) holder.setConnected(true) else holder.setConnected(false)
+                if (bound?.mHostBridgeMap?.get(host)?.get() != null) holder.setConnected(true) else holder.setConnected(false)
             }
         }
         bind.pastHosts.adapter = adapter

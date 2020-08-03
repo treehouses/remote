@@ -98,7 +98,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 //		pubkeydb = PubkeyDatabase.get(this);
 
         // load all marked pubkeys into memory
-        updateSavingKeys()
+        savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
         //		List<PubkeyBean> pubkeys = pubkeydb.getAllStartPubkeys();
 
 //		for (PubkeyBean pubkey : pubkeys) {
@@ -117,10 +117,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
 
 //		connectivityManager = new ConnectivityReceiver(this, lockingWifi);
-    }
-
-    private fun updateSavingKeys() {
-        savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
     }
 
     override fun onDestroy() {
@@ -166,7 +162,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     @Throws(IllegalArgumentException::class, IOException::class)
     private fun openConnection(host: HostBean): TerminalBridge {
         // throw exception if terminal already open
-        require(getConnectedBridge(host) == null) { "Connection already open for that nickname" }
+        require(mHostBridgeMap[host]?.get() == null) { "Connection already open for that nickname" }
         val bridge = TerminalBridge(this, host)
         bridge.setOnDisconnectedListener(this)
         bridge.startConnection()
@@ -223,30 +219,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     //	private void touchHost(HostBean host) {
     //		hostdb.touchHost(host);
     //	}
-    /**
-     * Find a connected [TerminalBridge] with the given HostBean.
-     *
-     * @param host the HostBean to search for
-     * @return TerminalBridge that uses the HostBean
-     */
-    fun getConnectedBridge(host: HostBean?): TerminalBridge? {
-        val wr = mHostBridgeMap[host]
-        return wr?.get()
-    }
-
-    /**
-     * Find a connected [TerminalBridge] using its nickname.
-     *
-     * @param nickname
-     * @return TerminalBridge that matches nickname
-     */
-    fun getConnectedBridge(nickname: String?): TerminalBridge? {
-        if (nickname == null) {
-            return null
-        }
-        val wr = mNicknameBridgeMap[nickname]
-        return wr?.get()
-    }
 
     /**
      * Called by child bridge when somehow it's been disconnected.
@@ -278,15 +250,11 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 //		}
     }
 
-    fun isKeyLoaded(nickname: String?): Boolean {
-        return loadedKeypairs.containsKey(nickname)
-    }
-
     //
     @JvmOverloads
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
-        removeKey(pubkey.nickname)
+        loadedKeypairs.remove(pubkey.nickname)
         val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair)
         val keyHolder = KeyHolder()
         keyHolder.bean = pubkey
@@ -298,16 +266,11 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             pubkeyTimer!!.schedule(object : TimerTask() {
                 override fun run() {
                     Log.d(TAG, "Unloading from memory key: $nickname")
-                    removeKey(nickname)
+                    loadedKeypairs.remove(pubkey.nickname)
                 }
             }, pubkey.lifetime * 1000.toLong())
         }
         Log.d(TAG, String.format("Added key '%s' to in-memory cache", pubkey.nickname))
-    }
-
-    fun removeKey(nickname: String?): Boolean {
-        Log.d(TAG, String.format("Removed key '%s' to in-memory cache", nickname))
-        return loadedKeypairs.remove(nickname) != null
     }
 
     fun removeKey(publicKey: ByteArray?): Boolean {
@@ -320,7 +283,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         }
         return if (nickname != null) {
             Log.d(TAG, String.format("Removed key '%s' to in-memory cache", nickname))
-            removeKey(nickname)
+            loadedKeypairs.remove(nickname) != null
         } else false
     }
 
@@ -329,13 +292,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             val keyHolder = loadedKeypairs[nickname]
             keyHolder!!.pair
         } else null
-    }
-
-    fun getKey(publicKey: ByteArray?): KeyPair? {
-        for (keyHolder in loadedKeypairs.values) {
-            if (Arrays.equals(keyHolder!!.openSSHPubkey, publicKey)) return keyHolder.pair
-        }
-        return null
     }
 
     fun getKeyNickname(publicKey: ByteArray?): String? {
@@ -437,19 +393,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
     }
 
-    /**
-     * Send system notification to user for a certain host. When user selects
-     * the notification, it will bring them directly to the ConsoleActivity
-     * displaying the host.
-     *
-     * @param host
-     */
-    fun sendActivityNotification(host: HostBean?) {
-        if (!prefs!!.getBoolean(PreferenceConstants.BELL_NOTIFICATION, false)) return
-
-//		ConnectionNotifier.getInstance().showActivityNotification(this, host);
-    }
-
     /* (non-Javadoc)
      * @see android.content.SharedPreferences.OnSharedPreferenceChangeListener#onSharedPreferenceChanged(android.content.SharedPreferences, java.lang.String)
      */
@@ -462,7 +405,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
             //			connectivityManager.setWantWifiLock(lockingWifi);
         } else if (PreferenceConstants.MEMKEYS == key) {
-            updateSavingKeys()
+            savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
         }
     }
 
@@ -472,33 +415,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         @JvmField
         var pair: KeyPair? = null
         var openSSHPubkey: ByteArray? = null
-    }
-
-    /**
-     * Called when connectivity to the network is lost and it doesn't appear
-     * we'll be getting a different connection any time soon.
-     */
-    fun onConnectivityLost() {
-        val t: Thread = object : Thread() {
-            override fun run() {
-                disconnectAll(false, true)
-            }
-        }
-        t.name = "Disconnector"
-        t.start()
-    }
-
-    /**
-     * Called when connectivity to the network is restored.
-     */
-    fun onConnectivityRestored() {
-        val t: Thread = object : Thread() {
-            override fun run() {
-                reconnectPending()
-            }
-        }
-        t.name = "Reconnector"
-        t.start()
     }
 
     /**
