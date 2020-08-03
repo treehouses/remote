@@ -98,42 +98,21 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 
         // load all marked pubkeys into memory
         savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
-        //		List<PubkeyBean> pubkeys = pubkeydb.getAllStartPubkeys();
-
-//		for (PubkeyBean pubkey : pubkeys) {
-//			try {
-//				KeyPair pair = PubkeyUtils.convertToKeyPair(pubkey, null);
-//				addKey(pubkey, pair);
-//			} catch (Exception e) {
-//				Log.d(TAG, String.format("Problem adding key '%s' to in-memory cache", pubkey.getNickname()), e);
-//			}
-//		}
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         wantKeyVibration = prefs!!.getBoolean(PreferenceConstants.BUMPY_ARROWS, true)
 
-//		enableMediaPlayer();
         hardKeyboardHidden = res!!.getConfiguration().hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES
         val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
-
-//		connectivityManager = new ConnectivityReceiver(this, lockingWifi);
     }
 
     override fun onDestroy() {
         Log.i(TAG, "Destroying service")
         disconnectAll(true, false)
 
-//		hostdb = null;
-//		pubkeydb = null;
         synchronized(this) {
             if (idleTimer != null) idleTimer!!.cancel()
             if (pubkeyTimer != null) pubkeyTimer!!.cancel()
         }
-
-//		connectivityManager.cleanup();
-//
-//		ConnectionNotifier.getInstance().hideRunningNotification(this);
-
-//		disableMediaPlayer();
     }
 
     /**
@@ -172,17 +151,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             mNicknameBridgeMap.put(bridge.host!!.nickname!!, wr)
         }
         synchronized(disconnected) { disconnected.remove(bridge.host) }
-
-//		if (bridge.isUsingNetwork()) {
-//			connectivityManager.incRef();
-//		}
-//
-//		if (prefs.getBoolean(PreferenceConstants.CONNECTION_PERSIST, true)) {
-//			ConnectionNotifier.getInstance().showRunningNotification(this);
-//		}
-
-        // also update database with new connected time
-//		touchHost(host);
         notifyHostStatusChanged()
         return bridge
     }
@@ -206,18 +174,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     @Throws(Exception::class)
     fun openConnection(uri: Uri?): TerminalBridge {
-//		HostBean host = TransportFactory.findHost(hostdb, uri);
         var host = if (uri == null) null else SaveUtils.getHost(applicationContext, uri.toString())
         if (host == null) host = HostBean().apply { setHostFromUri(uri) }
         return openConnection(host)
     }
-    //	/**
-    //	 * Update the last-connected value for the given nickname by passing through
-    //	 * to {@link HostDatabase}.
-    //	 */
-    //	private void touchHost(HostBean host) {
-    //		hostdb.touchHost(host);
-    //	}
 
     /**
      * Called by child bridge when somehow it's been disconnected.
@@ -226,27 +186,16 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         var shouldHideRunningNotification = false
         Log.d(TAG, "Bridge Disconnected. Removing it.")
         synchronized(bridges) {
-
-            // remove this bridge from our list
             bridges.remove(bridge)
             mHostBridgeMap.remove(bridge.host)
             mNicknameBridgeMap.remove(bridge.host!!.nickname)
-//            if (bridge.isUsingNetwork) {
-////				connectivityManager.decRef();
-//            }
             if (bridges.isEmpty() && mPendingReconnect.isEmpty()) {
                 shouldHideRunningNotification = true
             }
-
-            // pass notification back up to gui
             if (disconnectListener != null) disconnectListener!!.onDisconnected(bridge)
         }
         synchronized(disconnected) { disconnected.add(bridge.host!!) }
         notifyHostStatusChanged()
-
-//		if (shouldHideRunningNotification) {
-//			ConnectionNotifier.getInstance().hideRunningNotification(this);
-//		}
     }
 
     @JvmOverloads
@@ -373,9 +322,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
     }
 
-    /* (non-Javadoc)
-     * @see android.content.SharedPreferences.OnSharedPreferenceChangeListener#onSharedPreferenceChanged(android.content.SharedPreferences, java.lang.String)
-     */
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
                                            key: String) {
         if (PreferenceConstants.BUMPY_ARROWS == key) {
@@ -383,7 +329,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
                     PreferenceConstants.BUMPY_ARROWS, true)
         } else if (PreferenceConstants.WIFI_LOCK == key) {
             val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
-            //			connectivityManager.setWantWifiLock(lockingWifi);
         } else if (PreferenceConstants.MEMKEYS == key) {
             savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
         }
