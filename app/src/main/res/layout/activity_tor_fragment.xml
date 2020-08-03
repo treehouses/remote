@@ -22,30 +22,31 @@
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="20dp"
 
-            android:layout_weight="4"
+            android:layout_weight="1"
             android:background="@drawable/tor_btn"
             android:text="Hostname"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/bg_white" />
 
         <Button
-            android:id="@+id/notify_now"
+            android:id="@+id/btn_tor_start"
             android:layout_width="0dp"
-            android:layout_weight="5"
-            android:background="@drawable/gitter_button"
             android:layout_height="35dp"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="25dp"
+
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/bg_white"
-            android:text="Gitter Notify"
-            android:layout_marginRight="25dp" />
+            android:background="@drawable/tor_btn"
+            android:text="@string/start_tor"
+            android:layout_weight="1"
+            android:textColor="@color/bg_white" />
+
+
 
     </LinearLayout>
 
@@ -54,26 +55,26 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/btn_tor_start"
+            android:id="@+id/notify_now"
             android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/gitter_button"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
             android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
             android:layout_marginLeft="25dp"
-            android:layout_marginRight="8dp"
-
+            android:layout_marginEnd="20dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:background="@drawable/tor_btn"
-            android:text="@string/start_tor"
-            android:layout_weight="4"
-            android:textColor="@color/bg_white" />
+            android:textColor="@color/bg_white"
+            android:text="Gitter Notify"
+            android:layout_marginRight="20dp" />
+
+
 
         <Switch
             android:id="@+id/switchNotification"
             android:layout_width="0dp"
-            android:layout_weight="5"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/notification"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -81,9 +82,9 @@
             android:textSize="@dimen/text_size_large"
             android:layout_marginTop="10dp"
             android:layout_marginStart="0dp"
-            android:layout_marginLeft="30dp"
             android:layout_marginEnd="25dp"
-            android:layout_marginRight="8dp" />
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="0dp" />
 
 
 
