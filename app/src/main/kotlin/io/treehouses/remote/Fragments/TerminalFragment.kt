@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
@@ -187,17 +188,9 @@ class TerminalFragment : BaseTerminalFragment() {
            treehouses = isChecked
            checkIfTreehouses()
         }
-        bind.editTextOut.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (TextUtils.isEmpty(s.toString().trim())) bind.treehousesBtn.isChecked= false
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
+        bind.editTextOut.addTextChangedListener {
+            if (TextUtils.isEmpty(it.toString().trim())) bind.treehousesBtn.isChecked= false
+        }
     }
 
     private fun checkIfTreehouses() {

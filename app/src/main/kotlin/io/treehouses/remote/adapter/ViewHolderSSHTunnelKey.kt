@@ -113,93 +113,118 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
 
     private val dialogListener = listener
 
+    private fun getPublicKeys(jsonObject: JSONObject): Pair<String, String> {
+        val piPublicKey = jsonObject.getString("public_key")
+        val piPrivateKey = jsonObject.getString("private_key")
+        return Pair(piPublicKey, piPrivateKey)
+    }
+
+    private fun getStoredKeys(profile: String): Pair<String?, String?> {
+        val sharedPreferences: SharedPreferences = c.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
+        val storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
+        val storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
+        return Pair(storedPublicKey, storedPrivateKey)
+    }
+
     private fun buildJSON() {
         try {
             val jsonObject = JSONObject(jsonString)
 
-            val sharedPreferences: SharedPreferences = c.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-
             val profile = jsonObject.getString("profile")
 
-            val piPublicKey = jsonObject.getString("public_key")
-            val piPrivateKey = jsonObject.getString("private_key")
+            val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
 
-            val storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
-            val storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
+            val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
 
             Log.d("profile", profile)
-            Log.d("piPublicKey", piPublicKey)
-            Log.d("piPrivateKey", piPrivateKey)
-            Log.d("storedPublicKey", storedPublicKey)
-            Log.d("storedPrivateKey", storedPrivateKey)
+            logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
+
+            val inPiAndPhone = piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey
+            val inPiOnly = piPublicKey != "No public key found" && piPrivateKey != "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()
+            val inPhoneOnly = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()
+            val inNeither = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()
 
             // Pi and phone keys are the same
-            if(piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey){
-                Toast.makeText(c, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
-            }
+            if(inPiAndPhone) Toast.makeText(c, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
             // Key exists in Pi but not phone
-            else if(piPublicKey != "No public key found" && piPrivateKey != "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
-                val builder = AlertDialog.Builder(c)
-                builder.setTitle("Save Key To Phone")
-                builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
-                        "Pi Private Key for ${profile}: \n$piPrivateKey")
-
-                saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
-                setNeutralButton(builder, "Cancel")
-
-                builder.show()
-            }
+            else if(inPiOnly) handlePhoneKeySave(profile, piPublicKey, piPrivateKey)
             // Key exists in phone but not Pi
-            else if(piPublicKey == "No public key found" && piPrivateKey == "No private key found " && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()){
-                val builder = AlertDialog.Builder(c)
-                builder.setTitle("Save Key To Pi")
-                builder.setMessage(
-                        "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
-                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
-                builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-                    dialogListener.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
-                    Toast.makeText(c, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
-                }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
-                    dialog?.dismiss()
-                }
-                builder.show()
-            }
+            else if(inPhoneOnly) handlePiKeySave(profile, storedPublicKey, storedPrivateKey)
             // Keys don't exist in phone or Pi
-            else if(piPublicKey == "No public key found" && piPrivateKey == "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()){
-                Toast.makeText(c, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
-            }
+            else if(inNeither) Toast.makeText(c, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             // Keys are different, overwrite one or cancel
-            else{
-                val builder = AlertDialog.Builder(c)
-                builder.setTitle("Overwrite On Pi or Phone")
-
-                val strPiPublicKey = "Pi Public Key for ${profile}: \n$piPublicKey"
-                val strPiPrivateKey = "Pi Private Key for ${profile}: \n$piPrivateKey"
-                val strPhonePublicKey = "Phone Public Key for ${profile}: \n$storedPublicKey"
-                val strPhonePrivateKey = "Phone Private Key for ${profile}: \n$storedPrivateKey"
-
-                val message = ("There are different keys on the Pi and the phone. Would you like to overwrite the Pi's key or the phone's key?\n\n" +
-                        strPiPublicKey + "\n\n" +
-                        strPiPrivateKey + "\n\n" +
-                        strPhonePublicKey + "\n\n" +
-                        strPhonePrivateKey)
-
-                builder.setMessage(message)
-
-                saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
-
-                builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-                    dialogListener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
-                    Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
-                }
-                setNeutralButton(builder, "Cancel")
-
-                builder.show()
-            }
+            else handleDifferentKeys(jsonObject)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
     }
+
+    private fun handleDifferentKeys(jsonObject: JSONObject) {
+        val profile = jsonObject.getString("profile")
+        val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
+        val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
+
+        val builder = AlertDialog.Builder(c)
+        builder.setTitle("Overwrite On Pi or Phone")
+
+        val strPiPublicKey = "Pi Public Key for ${profile}: \n$piPublicKey"
+        val strPiPrivateKey = "Pi Private Key for ${profile}: \n$piPrivateKey"
+        val strPhonePublicKey = "Phone Public Key for ${profile}: \n$storedPublicKey"
+        val strPhonePrivateKey = "Phone Private Key for ${profile}: \n$storedPrivateKey"
+
+        val message = ("There are different keys on the Pi and the phone. Would you like to overwrite the Pi's key or the phone's key?\n\n" +
+                strPiPublicKey + "\n\n" +
+                strPiPrivateKey + "\n\n" +
+                strPhonePublicKey + "\n\n" +
+                strPhonePrivateKey)
+
+        builder.setMessage(message)
+
+        saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
+
+        builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
+            dialogListener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
+            Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
+        }
+        setNeutralButton(builder, "Cancel")
+
+        builder.show()
+    }
+
+    private fun logKeys(piPublicKey: String, piPrivateKey: String, storedPublicKey: String?, storedPrivateKey: String?) {
+        Log.d("piPublicKey", piPublicKey)
+        Log.d("piPrivateKey", piPrivateKey)
+        Log.d("storedPublicKey", storedPublicKey)
+        Log.d("storedPrivateKey", storedPrivateKey)
+    }
+
+    private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
+        val builder = AlertDialog.Builder(c)
+        builder.setTitle("Save Key To Pi")
+        builder.setMessage(
+                "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
+                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
+        builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
+            dialogListener.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
+            Toast.makeText(c, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
+        }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
+            dialog?.dismiss()
+        }
+        builder.show()
+    }
+
+    private fun handlePhoneKeySave(profile: String, piPublicKey: String, piPrivateKey: String) {
+        val builder = AlertDialog.Builder(c)
+        builder.setTitle("Save Key To Phone")
+        builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
+                "Pi Private Key for ${profile}: \n$piPrivateKey")
+
+        saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
+        setNeutralButton(builder, "Cancel")
+
+        builder.show()
+    }
+
     private fun saveKeyToPhone(builder: AlertDialog.Builder, profile: String, piPublicKey: String, piPrivateKey: String){
         val sharedPreferences: SharedPreferences = c.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()

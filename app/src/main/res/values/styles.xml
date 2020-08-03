@@ -73,9 +73,7 @@
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
     </style>
-
-    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base"></style>
-
+    
     <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -86,6 +84,7 @@
         <item name="android:itemTextAppearance">@style/MenuTextStyle</item>
         <item name="android:editTextColor">@color/daynight_textColor</item>
         <item name="alertDialogTheme">@style/CustomAlertDialogTheme</item>
+        <item name="bottomSheetDialogTheme">@style/CustomBottomSheetTheme</item>
 
     </style>
 
@@ -98,6 +97,16 @@
         <item name="android:textColor">@color/daynight_textColor</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="textColorAlertDialogListItem">@color/daynight_textColor</item>
+    </style>
+
+    <style name="CustomBottomSheetTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottomsheet_background</item>
     </style>
 
     <style name="MenuTextStyle">
@@ -178,11 +187,6 @@
 
     <style name="KeyboardButton" parent="KeyboardKey">
         <item name="android:background">@drawable/keyboard_button_selector</item>
-    </style>
-
-    <style name="DialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="tutorialTitle">
