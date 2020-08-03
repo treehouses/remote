@@ -46,11 +46,13 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             bound = (service as TerminalManager.TerminalBinder).service
             // update our listview binder to find the service
             setUpAdapter()
-            bound?.registerOnHostStatusChangedListener(this@SSHConfig)
+            if (!bound?.hostStatusChangedListeners?.contains(this@SSHConfig)!!) {
+                bound?.hostStatusChangedListeners?.add(this@SSHConfig)
+            }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            bound?.unregisterOnHostStatusChangedListener(this@SSHConfig)
+            bound?.hostStatusChangedListeners?.remove(this@SSHConfig)
             bound = null
             setUpAdapter()
         }

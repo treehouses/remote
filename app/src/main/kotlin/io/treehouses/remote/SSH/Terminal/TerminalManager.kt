@@ -56,7 +56,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     var defaultBridge: TerminalBridge? = null
     var disconnected: MutableList<HostBean> = ArrayList()
     var disconnectListener: BridgeDisconnectedListener? = null
-    private val hostStatusChangedListeners = ArrayList<OnHostStatusChangedListener>()
+    val hostStatusChangedListeners = ArrayList<OnHostStatusChangedListener>()
     @JvmField
     var loadedKeypairs: MutableMap<String, KeyHolder?> = HashMap()
     @JvmField
@@ -448,26 +448,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             }
             mPendingReconnect.clear()
         }
-    }
-
-    /**
-     * Register a `listener` that wants to know when a host's status materially changes.
-     *
-     * @see .hostStatusChangedListeners
-     */
-    fun registerOnHostStatusChangedListener(listener: OnHostStatusChangedListener) {
-        if (!hostStatusChangedListeners.contains(listener)) {
-            hostStatusChangedListeners.add(listener)
-        }
-    }
-
-    /**
-     * Unregister a `listener` that wants to know when a host's status materially changes.
-     *
-     * @see .hostStatusChangedListeners
-     */
-    fun unregisterOnHostStatusChangedListener(listener: OnHostStatusChangedListener?) {
-        hostStatusChangedListeners.remove(listener)
     }
 
     private fun notifyHostStatusChanged() {
