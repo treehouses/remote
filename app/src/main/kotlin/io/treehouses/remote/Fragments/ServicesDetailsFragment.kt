@@ -66,15 +66,13 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                         binding.progressBar.visibility = View.GONE
                     } else {
                         setScreenState(true)
-                        var msg: String
+                        var msg: String = ""
                         if (output.contains("service autorun set")) {
                             msg = "Switched autorun"
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                         } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
                             msg = "An Error occurred"
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                         }
-
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     }
                 }
                 Constants.MESSAGE_STATE_CHANGE -> {
@@ -155,17 +153,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             if (services[i].isHeader) count++
         }
         return count
-    }
-
-    private fun showDeleteDialog(selected: ServiceInfo?) {
-        var dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-                .setTitle("Delete " + selected!!.name + "?")
-                .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
-                    runServiceCommand("Uninstalling", selected.name)
-                }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.show()
     }
 
     private fun runServiceCommand(action: String, name: String) {
