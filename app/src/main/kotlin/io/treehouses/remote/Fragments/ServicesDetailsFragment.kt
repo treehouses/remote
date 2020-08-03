@@ -58,7 +58,24 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
-                    moreActions(output)
+                    if (wait) {
+                        matchOutput(output.trim { it <= ' ' })
+                    } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
+                        received = true
+                        openLocalURL(output.trim { it <= ' ' })
+                        binding.progressBar.visibility = View.GONE
+                    } else {
+                        setScreenState(true)
+                        var msg: String
+                        if (output.contains("service autorun set")) {
+                            msg = "Switched autorun"
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                        } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
+                            msg = "An Error occurred"
+                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                        }
+
+                    }
                 }
                 Constants.MESSAGE_STATE_CHANGE -> {
                     listener.redirectHome()
@@ -86,27 +103,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         setScreenState(true)
         wait = false
         goToSelected()
-    }
-
-    private fun moreActions(output: String) {
-        if (wait) {
-            matchOutput(output.trim { it <= ' ' })
-        } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
-            received = true
-            openLocalURL(output.trim { it <= ' ' })
-            binding.progressBar.visibility = View.GONE
-        } else {
-            setScreenState(true)
-            var msg = ""
-            if (output.contains("service autorun set")) {
-                msg = "Switched autorun"
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-            } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-                msg = "An Error occurred"
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-            }
-
-        }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -172,18 +168,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         dialog.show()
     }
 
-    private fun onInstall(selected: ServiceInfo?) {
-        if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
-            runServiceCommand("Installing", selected.name)
-        else if (installedOrRunning(selected)) showDeleteDialog(selected)
-    }
-
     private fun runServiceCommand(action: String, name: String) {
         performService(action, name)
-        performServiceWait()
-    }
-
-    private fun performServiceWait() {
         wait = true
         setScreenState(false)
     }
@@ -220,7 +206,18 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     override fun onClickInstall(s: ServiceInfo?) {
-        onInstall(s)
+        if (s!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
+            runServiceCommand("Installing", s.name)
+        else if (installedOrRunning(s)) {
+            var dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
+                    .setTitle("Delete " + selected!!.name + "?")
+                    .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
+                    .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
+                        runServiceCommand("Uninstalling", s.name)
+                    }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
     }
 
     override fun onClickStart(s: ServiceInfo?) {
@@ -236,8 +233,11 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
         setScreenState(false)
-        if (newAutoRun) listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "true"))
-        else listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "false"))
+        fun sendMessage(a1:Int, a2:String, a3:String){
+            listener.sendMessage(getString(a1, a2, a3))
+        }
+        if (newAutoRun) sendMessage(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "true")
+        else sendMessage(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "false")
         Toast.makeText(context, "Switching autorun status to $newAutoRun", Toast.LENGTH_SHORT).show()
     }
 
