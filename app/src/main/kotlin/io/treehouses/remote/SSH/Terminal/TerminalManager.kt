@@ -321,14 +321,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         }
     }
 
-    @Synchronized
-    private fun stopIdleTimer() {
-        if (idleTimer != null) {
-            idleTimer!!.cancel()
-            idleTimer = null
-        }
-    }
-
     inner class TerminalBinder : Binder() {
         val service: TerminalManager
             get() = this@TerminalManager
@@ -345,7 +337,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      * Make sure we stay running to maintain the bridges. Later [.stopNow] should be called to stop the service.
      */
     private fun keepServiceAlive() {
-        stopIdleTimer()
+        if (idleTimer != null) {
+            idleTimer!!.cancel()
+            idleTimer = null
+        }
         startService(Intent(this, TerminalManager::class.java))
     }
 
@@ -386,11 +381,8 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     }
 
     fun tryKeyVibrate() {
-        if (wantKeyVibration) vibrate()
-    }
-
-    private fun vibrate() {
-        if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
+        if (wantKeyVibration)
+            if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
     }
 
     /* (non-Javadoc)
