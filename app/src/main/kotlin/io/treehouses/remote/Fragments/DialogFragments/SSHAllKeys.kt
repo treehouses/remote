@@ -1,24 +1,19 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.adapter.ViewHolderSSHAllKeyRow
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.callback.KeyMenuListener
-import io.treehouses.remote.databinding.DialogDeleteSshKeyBinding
 import io.treehouses.remote.databinding.DialogViewKeysBinding
 import io.treehouses.remote.databinding.RowKeyBinding
 import io.treehouses.remote.utils.KeyUtils

@@ -18,16 +18,16 @@ import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
 
-        class SSHTunnelFragment : BaseServicesFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
+class SSHTunnelFragment : BaseServicesFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
-                    private var tabLayout: TabLayout? = null
-                    private var tunnelView: TunnelViewPager? = null
-                    private var tunnelPageAdapter: TunnelPageAdapter? = null
-                    private lateinit var bind: ActivitySshTunnelFragmentBinding
-                    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-                        bind = ActivitySshTunnelFragmentBinding.inflate(inflater, container, false)
-                        tabLayout = bind.tabLayout
-                tabLayout!!.setTabGravity(TabLayout.GRAVITY_FILL)
+    private var tabLayout: TabLayout? = null
+    private var tunnelView: TunnelViewPager? = null
+    private var tunnelPageAdapter: TunnelPageAdapter? = null
+    private lateinit var bind: ActivitySshTunnelFragmentBinding
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        bind = ActivitySshTunnelFragmentBinding.inflate(inflater, container, false)
+        tabLayout = bind.tabLayout
+        tabLayout!!.setTabGravity(TabLayout.GRAVITY_FILL)
         tabLayout!!.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 replaceFragment(tab.position)

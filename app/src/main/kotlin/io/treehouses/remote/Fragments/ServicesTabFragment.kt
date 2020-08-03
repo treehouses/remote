@@ -19,7 +19,11 @@ import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
+
 import io.treehouses.remote.pojo.ServiceInfo
+
+
+import io.treehouses.remote.utils.LogUtils
 
 
 class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {

@@ -205,7 +205,7 @@ class TorTabFragment : BaseFragment() {
                 textStatus!!.text = readMessage
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
             } else if (readMessage.contains("Error")) {
-                Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error, add a port if its your first time", Toast.LENGTH_SHORT).show()
                 addPortButton!!.text = "add ports"
                 addPortButton!!.isEnabled = true
                 portList!!.isEnabled = true
