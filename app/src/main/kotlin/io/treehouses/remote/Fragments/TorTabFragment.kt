@@ -203,9 +203,7 @@ class TorTabFragment : BaseFragment() {
             Log.d("Tor reply", "" + readMessage)
             if (readMessage.contains("inactive")) {
                 bind!!.btnHostName.visibility = View.GONE
-                startButton!!.text = "Start Tor"
-
-                startButton!!.isEnabled = true
+                startButton!!.text = "Start Tor"; startButton!!.isEnabled = true
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
             } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
