@@ -203,11 +203,10 @@ class TorTabFragment : BaseFragment() {
             Log.d("Tor reply", "" + readMessage)
             if (readMessage.contains("inactive")) {
                 bind!!.btnHostName.visibility = View.GONE
-                startButton!!.text = "Start Tor"; startButton!!.isEnabled = true
+                startButton!!.text = "Start Tor"
+                startButton!!.isEnabled = true
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-            } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
-            } else if (readMessage.contains(".onion")) {
+            }  else if (readMessage.contains(".onion")) {
                 bind!!.btnHostName.visibility = View.VISIBLE
                 hostName = readMessage
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
@@ -272,6 +271,9 @@ class TorTabFragment : BaseFragment() {
             else if( readMessage.contains("Thanks for the feedback!")){
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                 nowButton!!.isEnabled = true
+            }
+            else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
+                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
             }
         }
     }
