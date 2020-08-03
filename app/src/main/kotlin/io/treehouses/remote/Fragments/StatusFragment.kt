@@ -2,11 +2,11 @@ package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -44,8 +44,14 @@ class StatusFragment : BaseFragment() {
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         checkStatusNow()
-        writeToRPI("treehouses remote status")
+        refresh()
+        bind.refreshBtn.setOnClickListener { refresh() }
         return bind.root
+    }
+
+    private fun refresh() {
+        writeToRPI("treehouses remote status")
+        bind.refreshBtn.visibility = View.GONE
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,11 +69,12 @@ class StatusFragment : BaseFragment() {
             writeToRPI("treehouses upgrade")
             updateRightNow = true
             bind.progressBar.visibility = View.VISIBLE
+            bind.upgrade.visibility = View.GONE
         }
     }
 
     private fun rpiNameOnViewClickListener() {
-        bind.editName.setOnClickListener { showRenameDialog() }
+        bind.editName.setOnClickListener {showRenameDialog()}
     }
 
     private fun updateStatus(readMessage: String) {
@@ -93,7 +100,11 @@ class StatusFragment : BaseFragment() {
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
             writeToRPI("treehouses temperature celsius")
-        } else if (lastCommand == "treehouses temperature celsius") {
+        } else checkOtherCommands(lastCommand, readMessage)
+    }
+
+    private fun checkOtherCommands(lastCommand: String, readMessage: String) {
+        if (lastCommand == "treehouses temperature celsius") {
             bind.temperature.text = readMessage
             ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
             writeToRPI("treehouses detect arm")
@@ -108,6 +119,7 @@ class StatusFragment : BaseFragment() {
             writeToRPI("treehouses internet")
         } else if (lastCommand == "treehouses internet") {
             checkWifiStatus(readMessage)
+            bind.refreshBtn.visibility = View.VISIBLE
         } else {
             checkUpgradeStatus(readMessage)
         }
@@ -151,7 +163,7 @@ class StatusFragment : BaseFragment() {
             bind.progressBar.visibility = View.GONE
             Toast.makeText(context, "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show()
             notificationListener!!.setNotification(false)
-            requireActivity().supportFragmentManager.beginTransaction().replace(R.id.fragment_container, StatusFragment()).commit()
+            refresh()
         }
     }
 
@@ -173,6 +185,7 @@ class StatusFragment : BaseFragment() {
         val dialogBinding = DialogRenameStatusBinding.inflate(inflater)
         dialogBinding.hostname.hint = "New Name"
         val alertDialog = createRenameDialog(dialogBinding.root, dialogBinding.hostname)
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
@@ -184,6 +197,7 @@ class StatusFragment : BaseFragment() {
                     if (mEditText.text.toString() != "") {
                         writeToRPI("treehouses rename " + mEditText.text.toString())
                         Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
+                        refresh()
                     } else {
                         Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
                     }
@@ -204,24 +218,21 @@ class StatusFragment : BaseFragment() {
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> checkStatusNow()
-                Constants.MESSAGE_WRITE -> {
-                    val writeBuf = msg.obj as ByteArray
-                    val writeMessage = String(writeBuf)
-                    Log.d(TAG, "writeMessage = $writeMessage")
-                }
-                Constants.MESSAGE_READ -> {
-                    val readMessage = msg.obj as String
-                    Log.d(TAG, "readMessage = $readMessage")
-                    try {
-                        updateStatus(readMessage)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+    override fun getMessage(msg: Message) {
+        when (msg.what) {
+            Constants.MESSAGE_STATE_CHANGE -> checkStatusNow()
+            Constants.MESSAGE_WRITE -> {
+                val writeBuf = msg.obj as ByteArray
+                val writeMessage = String(writeBuf)
+                Log.d(TAG, "writeMessage = $writeMessage")
+            }
+            Constants.MESSAGE_READ -> {
+                val readMessage = msg.obj as String
+                Log.d(TAG, "readMessage = $readMessage")
+                try {
+                    updateStatus(readMessage)
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         }

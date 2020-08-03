@@ -6,6 +6,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 interface HomeInteractListener {
     fun sendMessage(s: String)
     fun openCallFragment(f: Fragment)
+    fun redirectHome()
     fun getChatService(): BluetoothChatService
     fun setChatService(service: BluetoothChatService)
 }

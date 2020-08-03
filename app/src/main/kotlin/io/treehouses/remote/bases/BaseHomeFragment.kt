@@ -36,51 +36,21 @@ open class BaseHomeFragment : BaseFragment() {
     private var rpiVersion: String? = null
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
         when (option) {
-            1 -> {
-                setBackgrounds(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
-            }
-            2 -> {
-                setBackgrounds(green, red, R.drawable.newyear_anim_green, R.drawable.newyear_anim_red)
-            }
-            3 -> {
-                setBackgrounds(green, red, R.drawable.heavymetal_anim_green, R.drawable.heavymetal_anim_red)
-            }
-            4 -> {
-                setBackgrounds(green, red, R.drawable.lunarnewyear_anim_green, R.drawable.lunarnewyear_anim_red)
-            }
-            5 -> {
-                setBackgrounds(green, red, R.drawable.valentine_anim_green, R.drawable.valentine_anim_red)
-            }
-            6 -> {
-                setBackgrounds(green, red, R.drawable.carnival_anim_green, R.drawable.carnival_anim_red)
-            }
-            7 -> {
-                green.setBackgroundResource(R.drawable.stpatricks_anim_green)
-            }
-            8 -> {
-                setBackgrounds(green, red, R.drawable.onam_anim_green, R.drawable.onam_anim_red)
-            }
-            9 -> {
-                setBackgrounds(green, red, R.drawable.easter_anim_green, R.drawable.easter_anim_red)
-            }
-            10 -> {
-                setBackgrounds(green ,red, R.drawable.eid_anim_green, R.drawable.eid_anim_red)
-            }
-            11 -> {
-                setBackgrounds(green, red, R.drawable.kecak_anim_green, R.drawable.kecak_anim_red)
-            }
-            12 -> {
-                setBackgrounds(green, red, R.drawable.christmas_anim_green, R.drawable.christmas_anim_red)
-            }
-            13 -> {
-                setBackgrounds(green, red, R.drawable.diwali_anim_green, R.drawable.diwali_anim_red)
-            }
-            14 -> {
-                setBackgrounds(green, red, R.drawable.lantern_anim_green, R.drawable.lantern_anim_red)
-            }
-            else -> {
-                setBackgrounds(green, red, R.drawable.dance_anim_green, R.drawable.dance_anim_red)
-            }
+            1 -> setBackgrounds(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
+            2 -> setBackgrounds(green, red, R.drawable.newyear_anim_green, R.drawable.newyear_anim_red)
+            3 -> setBackgrounds(green, red, R.drawable.heavymetal_anim_green, R.drawable.heavymetal_anim_red)
+            4 -> setBackgrounds(green, red, R.drawable.lunarnewyear_anim_green, R.drawable.lunarnewyear_anim_red)
+            5 -> setBackgrounds(green, red, R.drawable.valentine_anim_green, R.drawable.valentine_anim_red)
+            6 -> setBackgrounds(green, red, R.drawable.carnival_anim_green, R.drawable.carnival_anim_red)
+            7 -> green.setBackgroundResource(R.drawable.stpatricks_anim_green)
+            8 -> setBackgrounds(green, red, R.drawable.onam_anim_green, R.drawable.onam_anim_red)
+            9 -> setBackgrounds(green, red, R.drawable.easter_anim_green, R.drawable.easter_anim_red)
+            10 -> setBackgrounds(green ,red, R.drawable.eid_anim_green, R.drawable.eid_anim_red)
+            11 -> setBackgrounds(green, red, R.drawable.kecak_anim_green, R.drawable.kecak_anim_red)
+            12 -> setBackgrounds(green, red, R.drawable.christmas_anim_green, R.drawable.christmas_anim_red)
+            13 -> setBackgrounds(green, red, R.drawable.diwali_anim_green, R.drawable.diwali_anim_red)
+            14 -> setBackgrounds(green, red, R.drawable.lantern_anim_green, R.drawable.lantern_anim_red)
+            else -> setBackgrounds(green, red, R.drawable.dance_anim_green, R.drawable.dance_anim_red)
         }
     }
 
@@ -101,7 +71,7 @@ open class BaseHomeFragment : BaseFragment() {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
                 CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
-                        .setPositiveButton("Continue") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show()
+                        .setPositiveButton("Continue") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
             }
         }
     }
@@ -114,7 +84,7 @@ open class BaseHomeFragment : BaseFragment() {
         val date = Calendar.getInstance()
         if (lastDialogShown < date.timeInMillis) {
             if (connectionCount >= 3 && ratingDialog) {
-                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
+                val a = CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
                         "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
                         .setPositiveButton("RATE IT NOW") { _: DialogInterface?, _: Int ->
                             val intent = Intent(Intent.ACTION_VIEW)
@@ -122,7 +92,9 @@ open class BaseHomeFragment : BaseFragment() {
                             startActivity(intent)
                             preferences.edit().putBoolean("ratingDialog", false).apply()
                         }.setNeutralButton("REMIND ME LATER") { _: DialogInterface?, _: Int -> MainApplication.ratingDialog = false }
-                        .setNegativeButton("NO THANKS") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("ratingDialog", false).apply() }.show()
+                        .setNegativeButton("NO THANKS") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("ratingDialog", false).apply() }.create()
+                a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                a.show()
             }
         }
     }
@@ -199,6 +171,7 @@ open class BaseHomeFragment : BaseFragment() {
         animationDrawableGreen.start()
         animationDrawableRed.start()
         val a = createTestConnectionDialog(mView, dismissable, title, messageID)
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
         return a
     }
@@ -226,6 +199,7 @@ open class BaseHomeFragment : BaseFragment() {
                 }
                 .setNegativeButton("Upgrade Later") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
