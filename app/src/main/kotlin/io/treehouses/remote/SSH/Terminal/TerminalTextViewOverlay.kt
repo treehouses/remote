@@ -186,28 +186,12 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         // MouseReport can be "defeated" using the shift key.
         if (!mouseReport || shiftOn) {
             if (event.action == MotionEvent.ACTION_DOWN) {
-                if (event.buttonState == MotionEvent.BUTTON_TERTIARY) {
-                    // Middle click pastes.
-                    pasteClipboard()
-                }
+                // Middle click pastes.
+                if (event.buttonState == MotionEvent.BUTTON_TERTIARY) pasteClipboard()
 
                 // Begin "selection mode"
                 closeSelectionActionMode()
-            } else if (event.action == MotionEvent.ACTION_MOVE) {
-                // In the middle of selection.
-                if (selectionActionMode == null) {
-                    selectionActionMode = startActionMode(TextSelectionActionModeCallback())
-                }
-                var selectionStart = selectionStart
-                var selectionEnd = selectionEnd
-                if (selectionStart > selectionEnd) {
-                    val tempStart = selectionStart
-                    selectionStart = selectionEnd
-                    selectionEnd = tempStart
-                }
-                currentSelection = text.toString().substring(selectionStart, selectionEnd)
-                return false
-            }
+            } else if (event.action == MotionEvent.ACTION_MOVE) return handleShiftMove()
         } else if (event.action == MotionEvent.ACTION_DOWN) {
             terminalView.viewPager.setPagingEnabled(false)
             vtBuffer.mousePressed(
@@ -215,18 +199,37 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
         } else if (event.action == MotionEvent.ACTION_UP) {
             terminalView.viewPager.setPagingEnabled(true)
             vtBuffer.mouseReleased(col, row)
-        } else if (event.action == MotionEvent.ACTION_MOVE) {
-            val buttonState = event.buttonState
-            val button = if (buttonState and MotionEvent.BUTTON_PRIMARY != 0) 0 else if (buttonState and MotionEvent.BUTTON_SECONDARY != 0) 1 else if (buttonState and MotionEvent.BUTTON_TERTIARY != 0) 2 else 3
-            vtBuffer.mouseMoved(
-                    button,
-                    col,
-                    row,
-                    meta and KeyEvent.META_CTRL_ON != 0,
-                    meta and KeyEvent.META_SHIFT_ON != 0,
-                    meta and KeyEvent.META_META_ON != 0)
-        }
+        } else if (event.action == MotionEvent.ACTION_MOVE) handleMove(event, vtBuffer, meta, Pair(col, row))
         return true
+    }
+
+    private fun handleShiftMove(): Boolean {
+        // In the middle of selection.
+        if (selectionActionMode == null) {
+            selectionActionMode = startActionMode(TextSelectionActionModeCallback())
+        }
+        var selectionStart = selectionStart
+        var selectionEnd = selectionEnd
+        if (selectionStart > selectionEnd) {
+            val tempStart = selectionStart
+            selectionStart = selectionEnd
+            selectionEnd = tempStart
+        }
+        currentSelection = text.toString().substring(selectionStart, selectionEnd)
+        return false
+    }
+
+    private fun handleMove(event: MotionEvent, vtBuffer: vt320, meta: Int, colRowPair: Pair<Int, Int>) {
+        val (col, row) = colRowPair
+        val buttonState = event.buttonState
+        val button = if (buttonState and MotionEvent.BUTTON_PRIMARY != 0) 0 else if (buttonState and MotionEvent.BUTTON_SECONDARY != 0) 1 else if (buttonState and MotionEvent.BUTTON_TERTIARY != 0) 2 else 3
+        vtBuffer.mouseMoved(
+                button,
+                col,
+                row,
+                meta and KeyEvent.META_CTRL_ON != 0,
+                meta and KeyEvent.META_SHIFT_ON != 0,
+                meta and KeyEvent.META_META_ON != 0)
     }
 
     override fun onCheckIsTextEditor(): Boolean {
