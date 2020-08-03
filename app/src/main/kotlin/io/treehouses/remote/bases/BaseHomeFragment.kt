@@ -239,13 +239,13 @@ open class BaseHomeFragment : BaseFragment() {
         inputStream?.close()
         val hashed = Utils.hashString(localString!!)
         Log.e("HASHED", hashed)
-        if (hashed != serverHash) {
+        if (hashed.trim() != serverHash.trim()) {
             CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Re-sync Bluetooth Server")
                     .setMessage("The bluetooth server on the Raspberry Pi does not match the one on your device. Would you like to update the CLI bluetooth server?")
                     .setPositiveButton("Upgrade") { _, _ ->
                         Log.e("ENCODED", Utils.compressString(localString))
-                        listener.sendMessage("remotesync ${Utils.compressString(localString).replace("\n","" ) + " cnysetomer"}")
-                        Toast.makeText(requireContext(), "Bluetooth Upgraded. Restart bluetooth to apply the changes.", Toast.LENGTH_LONG).show()
+                        listener.sendMessage("remotesync ${Utils.compressString(localString).replace("\n","" )} cnysetomer\n")
+                        Toast.makeText(requireContext(), "Bluetooth Upgraded. Restarting Bluetooth...", Toast.LENGTH_LONG).show()
                     }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
                         dialog.dismiss()
                     }.show()
