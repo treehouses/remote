@@ -44,21 +44,7 @@ class TorTabFragment : BaseFragment() {
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         bind!!.btnHostName.visibility = View.GONE
-        bind!!.btnHostName.setOnClickListener {
-            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            builder.setTitle("Tor Hostname")
-            builder.setMessage(hostName)
-            builder.setPositiveButton("Copy") { _, _ ->
-                myClipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                myClip = ClipData.newPlainText("text", hostName)
-                myClipboard!!.setPrimaryClip(myClip!!)
-                Toast.makeText(requireContext(), "$hostName copied!", Toast.LENGTH_SHORT).show()
-            }
-            builder.setNegativeButton("Exit", null)
-            val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
-        }
+        addHostNameButonListener()
         notification = bind!!.switchNotification
         notification!!.isEnabled = false
         addNotificationListener()
@@ -77,6 +63,24 @@ class TorTabFragment : BaseFragment() {
 
         addPortButtonListeners(dialog)
         return bind!!.root
+    }
+
+    private fun addHostNameButonListener() {
+        bind!!.btnHostName.setOnClickListener {
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            builder.setTitle("Tor Hostname")
+            builder.setMessage(hostName)
+            builder.setPositiveButton("Copy") { _, _ ->
+                myClipboard = requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                myClip = ClipData.newPlainText("text", hostName)
+                myClipboard!!.setPrimaryClip(myClip!!)
+                Toast.makeText(requireContext(), "$hostName copied!", Toast.LENGTH_SHORT).show()
+            }
+            builder.setNegativeButton("Exit", null)
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
     }
 
     private fun addNowButonListener() {
