@@ -31,7 +31,6 @@ import androidx.preference.PreferenceManager
 import android.util.Log
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.PubKeyUtils
-import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
@@ -250,7 +249,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 //		}
     }
 
-    //
     @JvmOverloads
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
@@ -301,26 +299,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         return null
     }
 
-    private fun stopWithDelay() {
-        // TODO add in a way to check whether keys loaded are encrypted and only
-        // set timer when we have an encrypted key loaded
-        if (loadedKeypairs.size > 0) {
-            synchronized(this) {
-                if (idleTimer == null) idleTimer = Timer("idleTimer", true)
-                idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
-            }
-        } else {
-            Log.d(TAG, "Stopping service immediately")
-            stopSelf()
-        }
-    }
-
-    protected fun stopNow() {
-        if (bridges.size == 0) {
-            stopSelf()
-        }
-    }
-
     inner class TerminalBinder : Binder() {
         val service: TerminalManager
             get() = this@TerminalManager
@@ -363,7 +341,15 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         Log.i(TAG, "Someone unbound from TerminalManager with " + bridges.size + " bridges active")
         isResizeAllowed = true
         if (bridges.size == 0) {
-            stopWithDelay()
+            if (loadedKeypairs.size > 0) {
+                synchronized(this) {
+                    if (idleTimer == null) idleTimer = Timer("idleTimer", true)
+                    idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
+                }
+            } else {
+                Log.d(TAG, "Stopping service immediately")
+                stopSelf()
+            }
         } else {
             // tell each bridge to forget about their previous prompt handler
             for (bridge in bridges) {
@@ -376,7 +362,9 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     private inner class IdleTask : TimerTask() {
         override fun run() {
             Log.d(TAG, String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000))
-            stopNow()
+            if (bridges.size == 0) {
+                stopSelf()
+            }
         }
     }
 
