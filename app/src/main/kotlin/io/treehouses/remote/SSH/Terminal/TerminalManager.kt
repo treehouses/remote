@@ -61,6 +61,9 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     @JvmField
     var res: Resources? = null
 
+    //	public HostStorage hostdb;
+    //	public ColorStorage colordb;
+    //	public PubkeyDatabase pubkeydb;
     var prefs: SharedPreferences? = null
     private val binder: IBinder = TerminalBinder()
 
@@ -89,14 +92,30 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         res = resources
         pubkeyTimer = Timer("pubkeyTimer", true)
 
+//		hostdb = HostDatabase.get(this);
+//		colordb = HostDatabase.get(this);
+//		pubkeydb = PubkeyDatabase.get(this);
+
         // load all marked pubkeys into memory
         savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
+        //		List<PubkeyBean> pubkeys = pubkeydb.getAllStartPubkeys();
 
+//		for (PubkeyBean pubkey : pubkeys) {
+//			try {
+//				KeyPair pair = PubkeyUtils.convertToKeyPair(pubkey, null);
+//				addKey(pubkey, pair);
+//			} catch (Exception e) {
+//				Log.d(TAG, String.format("Problem adding key '%s' to in-memory cache", pubkey.getNickname()), e);
+//			}
+//		}
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         wantKeyVibration = prefs!!.getBoolean(PreferenceConstants.BUMPY_ARROWS, true)
 
+//		enableMediaPlayer();
         hardKeyboardHidden = res!!.getConfiguration().hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES
         val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
+
+//		connectivityManager = new ConnectivityReceiver(this, lockingWifi);
     }
 
     override fun onDestroy() {
@@ -154,6 +173,16 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         }
         synchronized(disconnected) { disconnected.remove(bridge.host) }
 
+//		if (bridge.isUsingNetwork()) {
+//			connectivityManager.incRef();
+//		}
+//
+//		if (prefs.getBoolean(PreferenceConstants.CONNECTION_PERSIST, true)) {
+//			ConnectionNotifier.getInstance().showRunningNotification(this);
+//		}
+
+        // also update database with new connected time
+//		touchHost(host);
         notifyHostStatusChanged()
         return bridge
     }
@@ -177,6 +206,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     @Throws(Exception::class)
     fun openConnection(uri: Uri?): TerminalBridge {
+//		HostBean host = TransportFactory.findHost(hostdb, uri);
         var host = if (uri == null) null else SaveUtils.getHost(applicationContext, uri.toString())
         if (host == null) host = HostBean().apply { setHostFromUri(uri) }
         return openConnection(host)
@@ -377,6 +407,9 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     fun requestReconnect(bridge: TerminalBridge) {
         synchronized(mPendingReconnect) {
             mPendingReconnect.add(WeakReference(bridge))
+            //			if (!bridge.isUsingNetwork() || connectivityManager.isConnected()) {
+//				reconnectPending();
+//			}
             if (!bridge.isUsingNetwork) {
                 /**
                  * Reconnect all bridges that were pending a reconnect when connectivity
