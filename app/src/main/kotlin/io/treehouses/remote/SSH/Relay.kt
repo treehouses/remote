@@ -68,35 +68,37 @@ class Relay(bridge: TerminalBridge, transport: SSH, buffer: vt320, encoding: Str
         val wideAttribute = ByteArray(BUFFER_SIZE)
         byteArray = byteBuffer!!.array()
         charArray = charBuffer!!.array()
-        var result: CoderResult
-        var bytesRead = 0
         byteBuffer!!.limit(0)
-        var bytesToRead: Int
-        var offset: Int
         try {
-            while (true) {
-                bytesToRead = byteBuffer!!.capacity() - byteBuffer!!.limit()
-                offset = byteBuffer!!.arrayOffset() + byteBuffer!!.limit()
-                bytesRead = transport.read(byteArray, offset, bytesToRead)
-                if (bytesRead > 0) {
-                    byteBuffer!!.limit(byteBuffer!!.limit() + bytesRead)
-                    synchronized(this) { result = decoder!!.decode(byteBuffer, charBuffer, false) }
-                    if (result.isUnderflow &&
-                            byteBuffer!!.limit() == byteBuffer!!.capacity()) {
-                        byteBuffer!!.compact()
-                        byteBuffer!!.limit(byteBuffer!!.position())
-                        byteBuffer!!.position(0)
-                    }
-                    offset = charBuffer!!.position()
-                    AndroidCharacter.getEastAsianWidths(charArray, 0, offset, wideAttribute)
-                    buffer.putString(charArray!!, wideAttribute, 0, charBuffer!!.position())
-                    bridge.propagateConsoleText(charArray, charBuffer!!.position())
-                    charBuffer!!.clear()
-                    bridge.redraw()
-                }
-            }
+            handleData(wideAttribute)
         } catch (e: IOException) {
             Log.e(TAG, "Problem while handling incoming data in relay thread", e)
+        }
+    }
+
+    private fun handleData(wideAttribute: ByteArray) {
+        var result: CoderResult
+        var bytesRead: Int; var bytesToRead: Int; var offset: Int
+        while (true) {
+            bytesToRead = byteBuffer!!.capacity() - byteBuffer!!.limit()
+            offset = byteBuffer!!.arrayOffset() + byteBuffer!!.limit()
+            bytesRead = transport.read(byteArray, offset, bytesToRead)
+            if (bytesRead > 0) {
+                byteBuffer!!.limit(byteBuffer!!.limit() + bytesRead)
+                synchronized(this) { result = decoder!!.decode(byteBuffer, charBuffer, false) }
+                if (result.isUnderflow &&
+                        byteBuffer!!.limit() == byteBuffer!!.capacity()) {
+                    byteBuffer!!.compact()
+                    byteBuffer!!.limit(byteBuffer!!.position())
+                    byteBuffer!!.position(0)
+                }
+                offset = charBuffer!!.position()
+                AndroidCharacter.getEastAsianWidths(charArray, 0, offset, wideAttribute)
+                buffer.putString(charArray!!, wideAttribute, 0, charBuffer!!.position())
+                bridge.propagateConsoleText(charArray, charBuffer!!.position())
+                charBuffer!!.clear()
+                bridge.redraw()
+            }
         }
     }
 
