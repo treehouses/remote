@@ -17,14 +17,11 @@
 package io.treehouses.remote.bases
 
 import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.content.res.Configuration
 import androidx.preference.PreferenceManager
 import android.text.ClipboardManager
 import android.util.Log
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
-import android.view.View
 import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
@@ -37,11 +34,10 @@ import java.io.IOException
  * @author kenny
  */
 // for ClipboardManager
-open class BaseTerminalKeyListener() {
-    protected open var manager: TerminalManager? = null
-    protected open lateinit var bridge: TerminalBridge
-    protected open lateinit var buffer: VDUBuffer
-    protected open var encoding: String? = null
+open class BaseTerminalKeyListener(var manager: TerminalManager?,
+                                   var bridge: TerminalBridge,
+                                   var buffer: VDUBuffer,
+                                   var encoding: String?) {
 
     private var keymode: String? = null
     protected var deviceHasHardKeyboard: Boolean = false

@@ -1,6 +1,7 @@
 package io.treehouses.remote.SSH.Terminal
 
 import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.res.Configuration
 import android.util.Log
 import android.view.KeyEvent
@@ -11,10 +12,10 @@ import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
 import java.io.IOException
 
-class TerminalKeyListener(override var manager: TerminalManager?,
-                          override var bridge: TerminalBridge,
-                          override var buffer: VDUBuffer,
-                          override var encoding: String?): BaseTerminalKeyListener(), View.OnKeyListener, SharedPreferences.OnSharedPreferenceChangeListener {
+class TerminalKeyListener(tm: TerminalManager?,
+                          tb: TerminalBridge,
+                          var b: VDUBuffer,
+                          var e: String?): BaseTerminalKeyListener(tm, tb, b, e), View.OnKeyListener, OnSharedPreferenceChangeListener {
 
     private fun specialKeys(keyCode: Int, left: Boolean, right: Boolean) : Boolean {
         // Ignore all key-up events except for the special keys
