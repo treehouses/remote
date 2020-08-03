@@ -164,6 +164,20 @@ class TerminalKeyListener(tm: TerminalManager?,
         }
     }
 
+    protected fun updatePrefs() {
+        keymode = prefs.getString(PreferenceConstants.KEYMODE, PreferenceConstants.KEYMODE_NONE)
+        shiftedNumbersAreFKeysOnHardKeyboard = prefs.getBoolean(PreferenceConstants.SHIFT_FKEYS, false)
+        controlNumbersAreFKeysOnSoftKeyboard = prefs.getBoolean(PreferenceConstants.CTRL_FKEYS, false)
+        volumeKeysChangeFontSize = prefs.getBoolean(PreferenceConstants.VOLUME_FONT, true)
+        val stickyModifiers = prefs.getString(PreferenceConstants.STICKY_MODIFIERS,
+                PreferenceConstants.NO)
+        stickyMetas = when (stickyModifiers) {
+            PreferenceConstants.ALT -> OUR_ALT_ON
+            PreferenceConstants.YES -> OUR_SHIFT_ON or OUR_CTRL_ON or OUR_ALT_ON
+            else -> 0
+        }
+    }
+
     init {
         prefs.registerOnSharedPreferenceChangeListener(this)
         deviceHasHardKeyboard = (manager!!.res!!.configuration.keyboard

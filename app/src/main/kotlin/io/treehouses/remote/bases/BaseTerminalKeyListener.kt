@@ -39,16 +39,16 @@ open class BaseTerminalKeyListener(var manager: TerminalManager?,
                                    var buffer: VDUBuffer,
                                    var encoding: String?) {
 
-    private var keymode: String? = null
+    protected var keymode: String? = null
     protected var deviceHasHardKeyboard: Boolean = false
-    private var shiftedNumbersAreFKeysOnHardKeyboard = false
-    private var controlNumbersAreFKeysOnSoftKeyboard = false
+    protected var shiftedNumbersAreFKeysOnHardKeyboard = false
+    protected var controlNumbersAreFKeysOnSoftKeyboard = false
     protected var rightModifiersAreSlashAndTab = false
     protected var leftModifiersAreSlashAndTab = false
     private var derivedMetaState = 0
-    private var volumeKeysChangeFontSize = false
+    protected var volumeKeysChangeFontSize = false
     protected var interpretAsHardKeyboard = false
-    private var stickyMetas = 0
+    protected var stickyMetas = 0
     private var uchar = 0
     var metaState = 0
         protected set
@@ -282,20 +282,6 @@ open class BaseTerminalKeyListener(var manager: TerminalManager?,
 
     fun setClipboardManager(clipboard: ClipboardManager?) {
         this.clipboard = clipboard
-    }
-
-    protected fun updatePrefs() {
-        keymode = prefs.getString(PreferenceConstants.KEYMODE, PreferenceConstants.KEYMODE_NONE)
-        shiftedNumbersAreFKeysOnHardKeyboard = prefs.getBoolean(PreferenceConstants.SHIFT_FKEYS, false)
-        controlNumbersAreFKeysOnSoftKeyboard = prefs.getBoolean(PreferenceConstants.CTRL_FKEYS, false)
-        volumeKeysChangeFontSize = prefs.getBoolean(PreferenceConstants.VOLUME_FONT, true)
-        val stickyModifiers = prefs.getString(PreferenceConstants.STICKY_MODIFIERS,
-                PreferenceConstants.NO)
-        stickyMetas = when (stickyModifiers) {
-            PreferenceConstants.ALT -> OUR_ALT_ON
-            PreferenceConstants.YES -> OUR_SHIFT_ON or OUR_CTRL_ON or OUR_ALT_ON
-            else -> 0
-        }
     }
 
     fun setCharset(encoding: String) {
