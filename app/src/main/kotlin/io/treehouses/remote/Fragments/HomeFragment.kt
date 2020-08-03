@@ -9,7 +9,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
-import android.util.Log
 import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -19,7 +18,6 @@ import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
@@ -250,6 +248,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         }
         val s = match(output)
         when {
+            hashSent -> {
+                syncBluetooth(output)
+                hashSent = false
+                checkVersionSent = true
+                listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            }
             s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
                 showUpgradeCLI()
                 internetSent = false
@@ -274,12 +278,6 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun moreActions(output: String, result: RESULTS) {
         when {
-            hashSent -> {
-                syncBluetooth(output)
-                hashSent = false
-                checkVersionSent = true
-                listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-            }
             result == RESULTS.UPGRADE_CHECK -> notificationListener?.setNotification(output.contains("true"))
             result == RESULTS.HOTSPOT_CONNECTED || result == RESULTS.WIFI_CONNECTED -> {
                 updateStatus("Switched to $networkSsid")

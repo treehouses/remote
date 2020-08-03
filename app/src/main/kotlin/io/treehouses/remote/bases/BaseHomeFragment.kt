@@ -21,6 +21,7 @@ import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.Matcher
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SaveUtils.Screens
 import io.treehouses.remote.utils.Utils
@@ -212,14 +213,21 @@ open class BaseHomeFragment : BaseFragment() {
         val localString = inputStream?.bufferedReader().use { it?.readText() }
         inputStream?.close()
         val hashed = Utils.hashString(localString!!)
-        Log.e("HASHED", hashed)
-        if (hashed.trim() != serverHash.trim()) {
+        Log.e("HASHED", serverHash)
+        if (Matcher.isError(serverHash)) {
+            CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
+                    .setPositiveButton("Upgrade") { _, _ ->
+                        listener.sendMessage("treehouses upgrade bluetooth\n")
+                    }
+                    .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}.create().show()
+        }
+        else if (hashed.trim() != serverHash.trim()) {
             CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Re-sync Bluetooth Server")
                     .setMessage("The bluetooth server on the Raspberry Pi does not match the one on your device. Would you like to update the CLI bluetooth server?")
                     .setPositiveButton("Upgrade") { _, _ ->
                         Log.e("ENCODED", Utils.compressString(localString))
                         listener.sendMessage("remotesync ${Utils.compressString(localString).replace("\n","" )} cnysetomer\n")
-                        Toast.makeText(requireContext(), "Bluetooth Upgraded. Restarting Bluetooth...", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Bluetooth Upgraded. Please restart Bluetooth to apply the changes.", Toast.LENGTH_LONG).show()
                     }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
                         dialog.dismiss()
                     }.show()
