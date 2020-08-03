@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
+import java.lang.NullPointerException
 
 open class BaseFragment : Fragment() {
     open lateinit var mChatService: BluetoothChatService
@@ -21,9 +23,13 @@ open class BaseFragment : Fragment() {
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
     }
 
+    fun isListenerInitialized() = ::listener.isInitialized
+
+
     open fun chatOpen():Boolean {
         return this::mChatService.isInitialized
     }
+
 
     protected fun onLoad(mHandler: Handler?) {
         mChatService = listener.getChatService()
@@ -44,13 +50,17 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    protected val mHandler: Handler = @SuppressLint("HandlerLeak")
+    protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_STATE_CHANGE -> {
+                    try {
                         Toast.makeText(activity, "Bluetooth disconnected", Toast.LENGTH_LONG).show()
                         listener.redirectHome()
+                    } catch (exception:NullPointerException){
+                        Log.e("Error", exception.toString())
+                    }
                 }
                 else -> getMessage(msg)
             }

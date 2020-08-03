@@ -166,22 +166,21 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setTitle("Delete " + selected!!.name + "?")
                 .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
                 .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
-                    performService("Uninstalling", """treehouses services ${selected.name} cleanup
-""", selected.name)
-                    performServiceWait()
+                    runServiceCommand("Uninstalling", selected.name)
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
     private fun onInstall(selected: ServiceInfo?) {
-        if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) {
-            performService("Installing", """treehouses services ${selected.name} install
-""", selected.name)
-            performServiceWait()
-        } else if (installedOrRunning(selected)) {
-            showDeleteDialog(selected)
-        }
+        if (selected!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
+            runServiceCommand("Installing", selected.name)
+        else if (installedOrRunning(selected)) showDeleteDialog(selected)
+    }
+
+    private fun runServiceCommand(action: String, name: String) {
+        performService(action, name)
+        performServiceWait()
     }
 
     private fun performServiceWait() {
@@ -190,13 +189,10 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     private fun onStart(selected: ServiceInfo?) {
-        if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED) {
-            performService("Starting", """treehouses services ${selected.name} up
-""", selected.name)
-        } else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) {
-            performService("Stopping", """treehouses services ${selected.name} stop
-""", selected.name)
-        }
+        if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED)
+            performService("Starting", selected.name)
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING)
+            performService("Stopping", selected.name)
     }
 
     private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
@@ -212,10 +208,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
         alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        setOnClick(chooseBind.localButton, """treehouses services ${selected!!.name} url local
-""", alertDialog)
-        setOnClick(chooseBind.torButton, """treehouses services ${selected.name} url tor
-""", alertDialog)
+        setOnClick(chooseBind.localButton, getString(R.string.TREEHOUSES_SERVICES_URL_LOCAL, selected!!.name), alertDialog)
+        setOnClick(chooseBind.torButton, getString(R.string.TREEHOUSES_SERVICES_URL_TOR, selected.name), alertDialog)
         alertDialog.show()
     }
 
@@ -242,9 +236,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
         setScreenState(false)
-        if (newAutoRun) listener.sendMessage("""treehouses services ${s!!.name} autorun true
-""") else listener.sendMessage("""treehouses services ${s!!.name} autorun false
-""")
+        if (newAutoRun) listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "true"))
+        else listener.sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "false"))
         Toast.makeText(context, "Switching autorun status to $newAutoRun", Toast.LENGTH_SHORT).show()
     }
 

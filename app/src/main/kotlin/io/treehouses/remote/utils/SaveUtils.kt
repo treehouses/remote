@@ -157,7 +157,7 @@ object SaveUtils {
         prefs.apply()
     }
 
-    fun addHost(context: Context, hostBean: HostBean) {
+    private fun addHost(context: Context, hostBean: HostBean) {
         Log.e("ADDING HOST", "${hostBean.uri}  ${Gson().toJson(hostBean)}")
         val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
@@ -180,11 +180,11 @@ object SaveUtils {
             null
         }
     }
-
+    //Adds host to host list
     fun updateHostList (context: Context, hostBean: HostBean) {
         val allHosts = getAllHosts(context).toMutableList()
-        if (allHosts.contains(hostBean)) {
-            allHosts.remove(hostBean)
+        if (allHosts.map { it.uri }.contains(hostBean.uri)) {
+            allHosts.removeAt(allHosts.map { it.uri }.indexOf(hostBean.uri))   //To get host to the last position of the list
             allHosts.add(hostBean)
             saveStringList(context, allHosts.map { it.uri.toString() }.toMutableList(), SSH_HOSTS)
         } else {
@@ -202,4 +202,12 @@ object SaveUtils {
         editor.apply()
         clearArrayList(context, SSH_HOSTS)
     }
+
+    fun deleteHost(context: Context, hostBean: HostBean) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.remove(hostBean.uri.toString())
+        editor.apply()
+        removeFromArrayList(context, SSH_HOSTS, hostBean.uri.toString())
+    }
+
 }

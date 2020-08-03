@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
@@ -137,73 +138,69 @@ class TerminalFragment : BaseTerminalFragment() {
         if (mChatService.state == Constants.STATE_NONE) mChatService = BluetoothChatService(mHandler, requireActivity().applicationContext)
     }
 
-    private fun btnSendClickListener() {
+    private fun sendMessage() {
+        // Send a message using content of the edit text widget
+        val view = view
+        if (null != view) {
+            listener.sendMessage(bind.editTextOut.text.toString())
+            if(bind.editTextOut.text.toString() == "reboot") {
+                Thread.sleep(1000)
+                listener.openCallFragment(HomeFragment())
+                Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
+                requireActivity().title = "Home"
+            }
+            checkIfTreehouses()
+        }
+    }
 
+    private fun getInfo() {
+        when {
+            jsonSent -> Toast.makeText(context, "Please Wait", Toast.LENGTH_SHORT).show()
+            helpJsonString.isNotEmpty() -> showHelpDialog(helpJsonString)
+            else -> {
+                jsonSend(true)
+                listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
+            }
+        }
+    }
+
+    private fun getPreviousCommand() {
+        try {
+            bind.editTextOut.setText(commandList[--i].trim())
+            bind.editTextOut.setSelection(bind.editTextOut.length())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun btnSendClickListener() {
         // Initialize the send button with a listener that for click events
         bind.buttonSend.setOnClickListener {
-            // Send a message using content of the edit text widget
-            val view = view
-            if (null != view) {
-                listener.sendMessage(bind.editTextOut.text.toString())
-                if(bind.editTextOut.text.toString() == "reboot") {
-                    Thread.sleep(1000)
-                    listener.openCallFragment(HomeFragment())
-                    Toast.makeText(context,"Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
-                    requireActivity().title = "Home"
-                }
-                if(treehouses) {
-                    bind.editTextOut.setText("treehouses ")
-                    bind.editTextOut.setSelection(bind.editTextOut.text.length)
-                }
-                else {
-                    bind.editTextOut.setText("")
-                }
-            }
+            sendMessage()
         }
         bind.btnPrevious.setOnClickListener {
-            try {
-                bind.editTextOut.setText(commandList[--i].trim())
-                bind.editTextOut.setSelection(bind.editTextOut.length())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            getPreviousCommand()
         }
         bind.infoButton.setOnClickListener {
-            when {
-                jsonSent -> Toast.makeText(context, "Please Wait", Toast.LENGTH_SHORT).show()
-                helpJsonString.isNotEmpty() -> showHelpDialog(helpJsonString)
-                else -> {
-                    jsonSend(true)
-                    listener.sendMessage(getString(R.string.TREEHOUSES_HELP_JSON))
-                }
-            }
+            getInfo()
         }
-
-       bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+        bind.treehousesBtn.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
            treehouses = isChecked
-           if(treehouses) {
-               bind.editTextOut.setText("treehouses ")
-               bind.editTextOut.setSelection(bind.editTextOut.text.length)
-           }
-           else {
-               bind.editTextOut.setText("")
-           }
-
+           checkIfTreehouses()
         }
+        bind.editTextOut.addTextChangedListener {
+            if (TextUtils.isEmpty(it.toString().trim())) bind.treehousesBtn.isChecked= false
+        }
+    }
 
-        bind.editTextOut.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (TextUtils.isEmpty(s.toString().trim())) {
-                    bind.treehousesBtn.isChecked= false
-                }
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
+    private fun checkIfTreehouses() {
+        if(treehouses) {
+            bind.editTextOut.setText("treehouses ")
+            bind.editTextOut.setSelection(bind.editTextOut.text.length)
+        }
+        else {
+            bind.editTextOut.setText("")
+        }
     }
 
     private fun showHelpDialog(jsonString: String) {

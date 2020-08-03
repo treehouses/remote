@@ -189,7 +189,6 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
                 if (event.buttonState == MotionEvent.BUTTON_TERTIARY) {
                     // Middle click pastes.
                     pasteClipboard()
-                    return true
                 }
 
                 // Begin "selection mode"
@@ -207,16 +206,15 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
                     selectionEnd = tempStart
                 }
                 currentSelection = text.toString().substring(selectionStart, selectionEnd)
+                return false
             }
         } else if (event.action == MotionEvent.ACTION_DOWN) {
             terminalView.viewPager.setPagingEnabled(false)
             vtBuffer.mousePressed(
                     col, row, mouseEventToJavaModifiers(event))
-            return true
         } else if (event.action == MotionEvent.ACTION_UP) {
             terminalView.viewPager.setPagingEnabled(true)
             vtBuffer.mouseReleased(col, row)
-            return true
         } else if (event.action == MotionEvent.ACTION_MOVE) {
             val buttonState = event.buttonState
             val button = if (buttonState and MotionEvent.BUTTON_PRIMARY != 0) 0 else if (buttonState and MotionEvent.BUTTON_SECONDARY != 0) 1 else if (buttonState and MotionEvent.BUTTON_TERTIARY != 0) 2 else 3
@@ -227,9 +225,8 @@ class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView)
                     meta and KeyEvent.META_CTRL_ON != 0,
                     meta and KeyEvent.META_SHIFT_ON != 0,
                     meta and KeyEvent.META_META_ON != 0)
-            return true
         }
-        return false
+        return true
     }
 
     override fun onCheckIsTextEditor(): Boolean {

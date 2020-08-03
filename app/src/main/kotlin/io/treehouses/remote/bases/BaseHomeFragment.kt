@@ -177,7 +177,7 @@ open class BaseHomeFragment : BaseFragment() {
     }
 
     private fun createTestConnectionDialog(mView: View, dismissable: Boolean, title: String, messageID: Int): AlertDialog {
-        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.ic_action_device_access_bluetooth_searching).setMessage(messageID)
+        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.bluetooth).setMessage(messageID)
         if (dismissable) d.setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         return d.create()
     }

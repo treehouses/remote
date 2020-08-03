@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/margin_medium"
-    android:theme="@style/CardTheme">
+    android:padding="@dimen/margin_medium">
 
     <TextView
         android:layout_width="match_parent"
@@ -13,6 +12,7 @@
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
         android:textStyle="bold"
+        android:textColor="@color/daynight_textColor"
         android:text="WiFi">
 
     </TextView>
@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:hint="SSID"
+            android:textColorHint="@color/md_grey_500"
             android:textColor="@color/daynight_textColor"
             android:inputType="textPersonName" />
 
@@ -50,6 +51,7 @@
         android:layout_marginEnd="@dimen/margin_huge"
         android:layout_marginRight="@dimen/margin_huge"
         android:visibility="gone"
+        android:textColorHint="@color/md_grey_500"
         app:passwordToggleTint="@color/md_blue_600">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -67,6 +69,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:passwordToggleEnabled="true"
+        android:textColorHint="@color/md_grey_500"
         app:passwordToggleTint="@color/md_blue_600">
 
         <com.google.android.material.textfield.TextInputEditText

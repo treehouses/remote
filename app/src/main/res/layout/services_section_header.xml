@@ -8,7 +8,7 @@
     android:paddingTop="@dimen/padding_normal"
     android:paddingBottom="@dimen/padding_normal"
     android:background="@android:color/transparent"
-    android:text="Service"
+    android:text=""
     android:textStyle="bold">
 
 </TextView>

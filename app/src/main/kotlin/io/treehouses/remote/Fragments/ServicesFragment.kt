@@ -18,6 +18,7 @@ import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
 import java.util.*
 
@@ -27,6 +28,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     var worked = false
+    private var currentTab:Int =  0
     private lateinit var array: MutableList<String>
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -38,6 +40,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         bind!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         bind!!.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                currentTab = tab.position
                 replaceFragment(tab.position)
             }
 
@@ -54,15 +57,16 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
     private fun preferences(){
         array = SaveUtils.getStringList(requireContext(), "servicesArray")
-        for (string in array) {
-            val a = performAction(string, services)
-            if (a == 1) {
-                worked = true
-                showUI()
+        if (!SaveUtils.getFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_OVERVIEW)) {
+            for (string in array) {
+                val a = performAction(string, services)
+                if (a == 1) {
+                    worked = true
+                    showUI()
+                }
             }
         }
-        writeToRPI("treehouses remote allservices\n")
-        worked = false
+        writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
     }
 
     private fun showUI(){
@@ -73,7 +77,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         servicesTabFragment?.arguments = bundle
         servicesDetailsFragment?.arguments = bundle
         bind!!.progressBar2.visibility = View.GONE
-        replaceFragment(0)
+        replaceFragment(currentTab)
     }
 
 
@@ -83,6 +87,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             1 -> {
                 array.add(output)
                 SaveUtils.saveStringList(requireContext(), array, "servicesArray")
+                worked = false
                 showUI()
             }
             0 -> {
@@ -100,15 +105,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             Constants.MESSAGE_READ -> {
                 updateListFromRPI(msg)
             }
-            Constants.MESSAGE_WRITE -> {
-                val writeMsg = String((msg.obj as ByteArray))
-                Log.d("WRITE", writeMsg)
-            }
-
-            Constants.MESSAGE_WRITE -> {
-                val write_msg = String((msg.obj as ByteArray))
-                Log.d("WRITE", write_msg)
-            }
+            Constants.MESSAGE_WRITE -> LogUtils.writeMsg(msg)
         }
     }
 
@@ -144,9 +141,9 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             }
             1 -> {
                 fragment = servicesDetailsFragment
-                mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
-            }
-            else -> {
+                if(!worked) {
+                    mChatService.updateHandler(servicesDetailsFragment!!.handlerDetails)
+                }
             }
         }
         if (fragment != null) {
@@ -161,7 +158,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     override fun onClick(s: ServiceInfo?) {
         servicesDetailsFragment!!.setSelected(s!!)
         Objects.requireNonNull(bind!!.tabLayout.getTabAt(1))!!.select()
-        replaceFragment(1)
+        currentTab = 1
+        replaceFragment(currentTab)
     }
 
 

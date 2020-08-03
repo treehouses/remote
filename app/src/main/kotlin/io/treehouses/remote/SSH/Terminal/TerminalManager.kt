@@ -213,11 +213,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     fun openConnection(uri: Uri?): TerminalBridge {
 //		HostBean host = TransportFactory.findHost(hostdb, uri);
         var host = if (uri == null) null else SaveUtils.getHost(applicationContext, uri.toString())
-        if (host == null) {
-            host = HostBean().apply { setHostFromUri(uri) }
-        }
-//		if (host == null)
-//			host = TransportFactory.getTransport(uri.getScheme()).createHost(uri);
+        if (host == null) host = HostBean().apply { setHostFromUri(uri) }
         return openConnection(host)
     }
     //	/**
@@ -264,9 +260,9 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             bridges.remove(bridge)
             mHostBridgeMap.remove(bridge.host)
             mNicknameBridgeMap.remove(bridge.host!!.nickname)
-            if (bridge.isUsingNetwork) {
-//				connectivityManager.decRef();
-            }
+//            if (bridge.isUsingNetwork) {
+////				connectivityManager.decRef();
+//            }
             if (bridges.isEmpty() && mPendingReconnect.isEmpty()) {
                 shouldHideRunningNotification = true
             }
@@ -397,7 +393,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         startService(Intent(this, TerminalManager::class.java))
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         /*
          * We want this service to continue running until it is explicitly
          * stopped, so return sticky.

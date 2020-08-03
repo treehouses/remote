@@ -34,10 +34,11 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/copy_btn"
+        android:id="@+id/actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Copy Public"
+        android:background="@drawable/ic_baseline_more_vert_24"
+        style="@style/Widget.AppCompat.ActionButton"
         android:layout_margin="@dimen/margin_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

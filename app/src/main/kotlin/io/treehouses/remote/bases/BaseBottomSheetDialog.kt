@@ -11,11 +11,6 @@ import io.treehouses.remote.callback.HomeInteractListener
 open class BaseBottomSheetDialog : BottomSheetDialogFragment() {
     protected lateinit var listener: HomeInteractListener
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogStyle)
-        return super.onCreateDialog(savedInstanceState)
-    }
-
     override fun onAttach(c: Context) {
         super.onAttach(c)
         try {

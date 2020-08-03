@@ -14,13 +14,15 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = fancyShowCaseView(activity, bind.testConnection, "Test Bluetooth Connection to RPI", FocusShape.CIRCLE)
+        val a = fancyShowCaseViewRoundedRect(activity, bind.testConnection, "Test Bluetooth Connection to RPI")
 
-        val b = fancyShowCaseViewBuilder(activity, bind.networkProfiles, "Configure Network Profiles in the Network Screen to quickly switch between network configurations")
-                .titleSize(18, TypedValue.COMPLEX_UNIT_SP)
-                .focusCircleRadiusFactor(1.25)
-                .build()
-        show(a,b)
+        val b = fancyShowCaseViewRoundedRect(activity, bind.networkProfilesBack, "Configure Network Profiles in the Network Screen to quickly switch between network configurations")
+
+        val c = fancyShowCaseView(activity, bind.btnConnect, "Disconnect with RPI", FocusShape.ROUNDED_RECTANGLE)
+
+        val d = fancyShowCaseView(activity, bind.btnGetStarted, "Go to Terminal and Send Commands to RPI", FocusShape.ROUNDED_RECTANGLE)
+
+        show(a,b,c,d)
     }
 
     fun networkTutorials(bind: NewNetworkBinding, activity: FragmentActivity) {
@@ -74,7 +76,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilder(activity, bind.listView, "Install and use a variety of services", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilder(activity, bind.linearLayout, "Search, Install and Use a Variety of Services", FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .disableFocusAnimation()
                 .build()
@@ -92,8 +94,8 @@ object Tutorials {
     }
 
     fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
-        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
-        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
         //Put animations here
     }
 
@@ -113,7 +115,9 @@ object Tutorials {
 
         val f = fancyShowCaseViewRoundedRect(activity, bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here")
 
-        show(a,b,c,d,e,f)
+        val g = fancyShowCaseViewRoundedRect(activity, bind.refreshBtn, "Refresh Anytime to Check Everything Again")
+
+        show(a,b,c,d,e,f,g)
     }
 
     private fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {

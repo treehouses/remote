@@ -45,6 +45,7 @@
 -dontwarn retrofit2.Platform$Java8
 -keepattributes Signature
 -keepattributes Exceptions
+-keepattributes InnerClasses
 -keep class com.google.gson.** { *; }
 -keep class com.google.inject.** { *; }
 -keep class org.apache.http.** { *; }
@@ -148,7 +149,6 @@
 -keep public class com.trilead.ssh2.crypto.**
 
 -keep class org.conscrypt.** { *; }
-
 
 
 

@@ -1,10 +1,11 @@
 package io.treehouses.remote.Fragments
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,12 +20,15 @@ import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 
+import io.treehouses.remote.pojo.ServiceInfo
+
+
+import io.treehouses.remote.utils.LogUtils
+
+
 class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
     private var servicesListener: ServicesListener? = null
-    private var used = 0
-
-    private var total = 1
     private var bind: ActivityServicesTabFragmentBinding? = null
 
 
@@ -34,6 +38,13 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
         adapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.bg_white))
         bind!!.listView.adapter = adapter
         bind!!.listView.onItemClickListener = this
+        bind!!.searchBar.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                adapter!!.filter.filter(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable) {}
+        })
         return bind!!.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,14 +56,6 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     val handlerOverview: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    val output = msg.obj as String
-                    moreAction(output)
-                }
-                Constants.MESSAGE_WRITE -> {
-                    val write_msg = String((msg.obj as ByteArray))
-                    Log.d("WRITE", write_msg)
-                }
                 Constants.MESSAGE_STATE_CHANGE -> {
                     listener.redirectHome()
                 }
@@ -60,22 +63,6 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
         }
     }
 
-    private fun moreAction(output: String) {
-        try {
-            val i = output.trim { it <= ' ' }.toInt()
-            if (i >= total) {
-                total = i
-                writeToRPI("treehouses memory used")
-            } else {
-                used = i
-                ObjectAnimator.ofInt(bind!!.spaceLeft, "progress", (used.toFloat() / total * 100).toInt())
-                        .setDuration(600)
-                        .start()
-            }
-        } catch (ignored: NumberFormatException) {
-        }
-        Log.d(TAG, "moreAction: " + String.format("Used: %d / %d ", used, total) + (used.toFloat() / total * 100).toInt() + "%")
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -87,13 +74,9 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-        val selected = services[position]
+        val selected:ServiceInfo = parent!!.getItemAtPosition(position) as ServiceInfo
+        Log.d("SELECTED", "setSelected: " + selected.name)
         if (servicesListener != null) servicesListener!!.onClick(selected)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        writeToRPI("treehouses memory total\n")
     }
 
     companion object {

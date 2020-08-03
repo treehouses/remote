@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
+import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.NetworkListAdapter
 import io.treehouses.remote.adapter.ViewHolderTether
@@ -40,13 +41,13 @@ class SystemFragment : BaseFragment() {
         adapter.setListener(listener)
         bind.listView.setOnGroupExpandListener { groupPosition: Int ->
             if (groupPosition == 1) {
-                listener.sendMessage("treehouses networkmode info\n")
+                listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
                 tether = true
                 return@setOnGroupExpandListener
             } else if (groupPosition == 2) {
                 Log.d("3", "onCreateView: ")
             }
-            listener.sendMessage("treehouses networkmode info\n")
+            listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
         }
         bind.listView.setAdapter(adapter)
         Tutorials.systemTutorials(bind, requireActivity())
@@ -89,7 +90,7 @@ class SystemFragment : BaseFragment() {
         val deviceIp = Formatter.formatIpAddress(wm.connectionInfo.ipAddress)
         val deviceIpAddress = ipToLong(deviceIp)
         if (!convertIp(readMessage, deviceIpAddress, diff)) {
-            listener.sendMessage("treehouses networkmode info\n")
+            listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
             retry = true
         } else {
             retry = false
