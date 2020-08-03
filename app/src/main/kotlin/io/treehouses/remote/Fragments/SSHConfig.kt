@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
@@ -122,20 +123,15 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     }
 
     private fun addTextValidation() {
-        bind.sshTextInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (sshPattern.matcher(s).matches()) {
-                    bind.sshTextInput.error = null
-                    setEnabled(true)
-                } else {
-                    bind.sshTextInput.error = "Unknown Format"
-                    setEnabled(false)
-                }
+        bind.sshTextInput.addTextChangedListener {
+            if (sshPattern.matcher(it.toString()).matches()) {
+                bind.sshTextInput.error = null
+                setEnabled(true)
+            } else {
+                bind.sshTextInput.error = "Unknown Format"
+                setEnabled(false)
             }
-
-        })
+        }
     }
 
     fun setEnabled(bool: Boolean) {

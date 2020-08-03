@@ -1,21 +1,16 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.Toast
-import android.util.Patterns
-import androidx.fragment.app.DialogFragment
+import androidx.core.widget.addTextChangedListener
 import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogFeedbackBinding
-import io.treehouses.remote.utils.Utils
-import java.util.HashMap
+import java.util.*
 
 
 class FeedbackDialogFragment : FullScreenDialogFragment() {
@@ -28,19 +23,10 @@ class FeedbackDialogFragment : FullScreenDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        bind.editEmail.addTextChangedListener (object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-                if(!Patterns.EMAIL_ADDRESS.matcher(bind.editEmail.text.toString()).matches())
-                    bind.editEmail.error = "Enter a valid email"
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
+        bind.editEmail.addTextChangedListener {
+            if(!Patterns.EMAIL_ADDRESS.matcher(it.toString()).matches())
+                bind.editEmail.error = "Enter a valid email"
+        }
 
         feedbackFormButtonListeners()
     }

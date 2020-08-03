@@ -14,6 +14,7 @@
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
         android:textStyle="bold"
+        android:textColor="@color/daynight_textColor"
         android:text="Hotspot">
 
     </TextView>
@@ -26,6 +27,7 @@
         android:hint="ESSID"
         android:inputType="textEmailAddress"
         android:padding="@dimen/margin_medium"
+        android:textColorHint="@color/md_grey_500"
         android:textColor="@color/daynight_textColor"/>
 
 
@@ -35,6 +37,7 @@
         android:layout_height="wrap_content"
         android:elevation="2dp"
         app:passwordToggleEnabled="true"
+        android:textColorHint="@color/md_grey_500"
         app:passwordToggleTint="@color/md_blue_600">
 
         <com.google.android.material.textfield.TextInputEditText

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.widget.addTextChangedListener
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -152,17 +153,12 @@ class SSHKeyGen : FullScreenDialogFragment() {
     }
 
     private fun addTextChangeListener() {
-        bind.keyNameInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (validate(s.toString())) {
-                    bind.keyNameLayout.error = null
-                    bind.generateKey.isEnabled = true
-                } else bind.generateKey.isEnabled = false
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        bind.keyNameInput.addTextChangedListener {
+            if (validate(it.toString())) {
+                bind.keyNameLayout.error = null
+                bind.generateKey.isEnabled = true
+            } else bind.generateKey.isEnabled = false
+        }
     }
 
     private fun validate(keyName: String): Boolean {

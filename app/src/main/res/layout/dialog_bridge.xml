@@ -3,8 +3,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/margin_medium"
-    android:orientation="vertical"
-    android:theme="@style/CardTheme">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -13,6 +12,7 @@
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
         android:textStyle="bold"
+        android:textColor="@color/daynight_textColor"
         android:text="Bridge">
 
     </TextView>
@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/daynight_textColor"
+            android:textColorHint="@color/md_grey_500"
             android:hint="ESSID"
             />
         <Button
@@ -43,6 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
+        android:textColorHint="@color/md_grey_500"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600"
         >
@@ -51,7 +53,6 @@
             android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="true"
             android:fontFamily="sans-serif"
             android:hint="Password"
             android:textColor="@color/daynight_textColor"
@@ -65,6 +66,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:hint="Hotspot ESSID"
+        android:textColorHint="@color/md_grey_500"
         android:textColor="@color/daynight_textColor"
         />
 
@@ -73,6 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
+        android:textColorHint="@color/md_grey_500"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600"
         >
