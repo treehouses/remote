@@ -78,17 +78,18 @@
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:textColor="@color/bg_white"
         android:layout_marginTop="8dp"
-        android:text="Start Configuration" />
+        android:background="@drawable/ic_blue"
+        android:text="Start Configuration"
+        android:textColor="@color/bg_white" />
+
     <Button
         android:id="@+id/set_hotspot_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add Hotspot Profile"
-        android:background="@color/md_grey_300"/>
+        android:background="@drawable/ic_grey"/>
 
 
 </LinearLayout>
