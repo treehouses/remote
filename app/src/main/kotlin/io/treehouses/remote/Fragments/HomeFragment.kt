@@ -243,9 +243,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun readMessage(output: String) {
         notificationListener = try { context as NotificationCallback?
-        } catch (e: ClassCastException) {
-            throw ClassCastException("Activity must implement NotificationListener")
-        }
+        } catch (e: ClassCastException) { throw ClassCastException("Activity must implement NotificationListener") }
         val s = match(output)
         when {
             hashSent -> {
