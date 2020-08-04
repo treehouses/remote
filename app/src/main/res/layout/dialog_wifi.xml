@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/margin_medium">
+    android:padding="@dimen/margin_medium"
+    android:theme="@style/CardTheme"
+    android:background="@color/card_background">
 
     <TextView
         android:layout_width="match_parent"
