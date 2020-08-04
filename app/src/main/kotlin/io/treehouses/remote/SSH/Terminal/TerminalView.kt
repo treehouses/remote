@@ -38,6 +38,7 @@ import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import io.treehouses.remote.bases.BaseTerminalKeyListener
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -208,12 +209,12 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
 
     fun scaleDecorations(canvas: Canvas, metaState: Int) {
         canvas.concat(scaleMatrix)
-        val a = metaState and TerminalKeyListener.OUR_SHIFT_ON != 0
-        val b = metaState and TerminalKeyListener.OUR_SHIFT_LOCK != 0
-        val c = metaState and TerminalKeyListener.OUR_ALT_ON != 0
-        val d = metaState and TerminalKeyListener.OUR_ALT_LOCK != 0
-        val e = metaState and TerminalKeyListener.OUR_CTRL_ON != 0
-        val f = metaState and TerminalKeyListener.OUR_CTRL_LOCK != 0
+        val a = metaState and BaseTerminalKeyListener.OUR_SHIFT_ON != 0
+        val b = metaState and BaseTerminalKeyListener.OUR_SHIFT_LOCK != 0
+        val c = metaState and BaseTerminalKeyListener.OUR_ALT_ON != 0
+        val d = metaState and BaseTerminalKeyListener.OUR_ALT_LOCK != 0
+        val e = metaState and BaseTerminalKeyListener.OUR_CTRL_ON != 0
+        val f = metaState and BaseTerminalKeyListener.OUR_CTRL_LOCK != 0
         var paint:Paint = cursorInversionPaint
         var cursor:Path = shiftCursor
         if(c || d) cursor = altCursor
