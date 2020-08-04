@@ -1,6 +1,8 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -31,6 +33,9 @@ class HelpDialog : FullScreenDialogFragment(), android.widget.SearchView.OnQuery
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogHelpBinding.inflate(inflater, container, false)
         bind.progressBar.visibility = View.VISIBLE
+        val back = ColorDrawable(Color.TRANSPARENT)
+        val inset = InsetDrawable(back, 30)
+        dialog!!.window!!.setBackgroundDrawable(inset)
         return bind.root
     }
 
