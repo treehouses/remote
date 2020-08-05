@@ -2,6 +2,7 @@ package io.treehouses.remote.SSH
 
 import android.util.Log
 import com.trilead.ssh2.Connection
+import com.trilead.ssh2.ConnectionInfo
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.beans.PubKeyBean
@@ -197,6 +198,39 @@ class SSH: BaseSSH() {
 
         if (pubkey == null) bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
         else if (tryPublicKey(pubkey)) finishConnection()
+    }
+
+    private fun displayAlgorithms() {
+        val connectionInfo = connection!!.connect(HostKeyVerifier())
+        isConnected = true
+        bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_kex_algorithm,
+                connectionInfo.keyExchangeAlgorithm))
+        if ((connectionInfo.clientToServerCryptoAlgorithm
+                        == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
+                        == connectionInfo.serverToClientMACAlgorithm)) {
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
+        } else {
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
+            outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
+        }
+    }
+
+    fun close() {
+        isConnected = false
+        if (session != null) {
+            session!!.close()
+            session = null
+        }
+        if (connection != null) {
+            connection!!.close()
+            connection = null
+        }
+    }
+
+    private fun outputCryptoAlgo(connectionInfo: ConnectionInfo, stringRes: Int) {
+        bridge!!.outputLine(manager!!.res!!.getString(stringRes,
+                connectionInfo.clientToServerCryptoAlgorithm,
+                connectionInfo.clientToServerMACAlgorithm))
     }
 
 }

@@ -126,7 +126,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
     @Volatile
     var isConnected = false
-        private set
+        protected set
 
     @Volatile
     var isSessionOpen = false
@@ -134,7 +134,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     protected var pubkeysExhausted = false
     protected var interactiveCanContinue = true
     protected var connection: Connection? = null
-    private var session: Session? = null
+    protected var session: Session? = null
     private var stdin: OutputStream? = null
     private var stdout: InputStream? = null
     private var stderr: InputStream? = null
@@ -277,43 +277,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
-    protected fun displayAlgorithms() {
-        val connectionInfo = connection!!.connect(HostKeyVerifier())
-        isConnected = true
-        bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_kex_algorithm,
-                connectionInfo.keyExchangeAlgorithm))
-        if ((connectionInfo.clientToServerCryptoAlgorithm
-                        == connectionInfo.serverToClientCryptoAlgorithm) && (connectionInfo.clientToServerMACAlgorithm
-                        == connectionInfo.serverToClientMACAlgorithm)) {
-            outputCryptoAlgo(connectionInfo, R.string.terminal_using_algorithm)
-        } else {
-            outputCryptoAlgo(connectionInfo, R.string.terminal_using_c2s_algorithm)
-            outputCryptoAlgo(connectionInfo, R.string.terminal_using_s2c_algorithm)
-        }
-    }
-
-    private fun outputCryptoAlgo(connectionInfo: ConnectionInfo, stringRes: Int) {
-        bridge!!.outputLine(manager!!.res!!.getString(stringRes,
-                connectionInfo.clientToServerCryptoAlgorithm,
-                connectionInfo.clientToServerMACAlgorithm))
-    }
-
-    fun close() {
-        isConnected = false
-        if (session != null) {
-            session!!.close()
-            session = null
-        }
-        if (connection != null) {
-            connection!!.close()
-            connection = null
-        }
-    }
-
-    protected fun onDisconnect() {
-        bridge!!.dispatchDisconnect(false)
-    }
-
 //    @Throws(IOException::class)
 //    fun flush() {
 //        if (stdin != null) stdin!!.flush()
@@ -361,6 +324,10 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //    fun setOptions(options: Map<String?, String?>) {
 //        if (options.containsKey("compression")) compression = java.lang.Boolean.parseBoolean(options["compression"])
 //    }
+
+    protected fun onDisconnect() {
+        bridge!!.dispatchDisconnect(false)
+    }
 
     override fun connectionLost(reason: Throwable) {
         onDisconnect()
