@@ -4,8 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/margin_medium"
-    android:theme="@style/AppTheme"
-    android:background="@color/windowBackground">
+    android:background="@drawable/ic_feedback_back"
+    android:theme="@style/CardTheme">
+
 
     <TextView
         android:layout_width="match_parent"
@@ -21,6 +22,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameWrapper"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -37,6 +40,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailWrapper"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -52,6 +57,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phoneNumberWrapper"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -68,6 +75,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/messageWrapper"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -84,6 +93,8 @@
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/radioButtonBug"
@@ -104,11 +115,17 @@
         android:id="@+id/btn_send_feedback"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
+        android:background="@drawable/ic_yellow"
         android:text="@string/send_feedback" />
     <Button
         android:id="@+id/btn_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
+        android:background="@drawable/ic_cancel"
         android:text="@string/cancel" />
 
 </LinearLayout>
