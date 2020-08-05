@@ -95,7 +95,7 @@
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/start_config"
+        android:background="@drawable/ic_blue"
         android:textColor="@color/start_config_text"
         android:enabled="false"
         android:layout_marginTop="8dp"
@@ -108,6 +108,7 @@
         android:enabled="false"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add Bridge Profile"
-        android:background="@color/md_grey_300"/>
+        android:textColor="#000000"
+        android:background="@drawable/ic_grey"/>
 
 </LinearLayout>
