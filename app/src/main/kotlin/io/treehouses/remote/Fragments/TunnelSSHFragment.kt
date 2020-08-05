@@ -55,13 +55,17 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {Log.d("nothing", "YYYYY ")}
         }
+        addListeners()
+        return bind!!.root
+    }
+
+    private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
         addPortButton!!.setOnClickListener(this)
         addHostButton!!.setOnClickListener(this)
         addingPortButton.setOnClickListener(this)
         addingHostButton.setOnClickListener(this)
         bind!!.notifyNow.setOnClickListener(this)
-        return bind!!.root
     }
 
     private fun initializeDialog(){
@@ -154,9 +158,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                         Toast.makeText(requireContext(), "Please add a host if you have no host. Don't add duplicate host also.", Toast.LENGTH_SHORT).show()
                         addPortButton?.isEnabled = false
                     }
-                    else{
-                        Toast.makeText(requireContext(), "No duplicate hosts allowed", Toast.LENGTH_SHORT).show()
-                    }
+                    else Toast.makeText(requireContext(), "No duplicate hosts allowed", Toast.LENGTH_SHORT).show()
                 }
                 else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added")){
                     Toast.makeText(requireContext(), "Added. Retrieving port list.", Toast.LENGTH_SHORT).show()
@@ -166,7 +168,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     hostsName = ArrayList()
                     listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
-                else { getMessage2(readMessage) }
+                else getMessage2(readMessage)
             }
     }
 
