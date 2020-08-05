@@ -82,9 +82,9 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     private fun updateButtons(statusCode: Int) {
         when (statusCode) {
-            ServiceInfo.SERVICE_AVAILABLE -> setButtons(false, false)
-            ServiceInfo.SERVICE_INSTALLED -> setButtons(false, true)
-            ServiceInfo.SERVICE_RUNNING -> setButtons(true, true)
+            ServiceInfo.SERVICE_AVAILABLE -> setButtons(started = false, installed = false)
+            ServiceInfo.SERVICE_INSTALLED -> setButtons(started = false, installed = true)
+            ServiceInfo.SERVICE_RUNNING -> setButtons(started = true, installed = true)
         }
     }
 

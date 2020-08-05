@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogDeleteSshKeyBinding
 import io.treehouses.remote.utils.KeyUtils
@@ -31,11 +32,9 @@ class DeleteSSHKey : FullScreenDialogFragment() {
         bind.title.text = titleText
 
         bind.deleteKeyConfirmation.hint = keyToDelete
-        bind.deleteKeyConfirmation.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) { setEnabled(s?.toString() == keyToDelete) }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        bind.deleteKeyConfirmation.addTextChangedListener {
+            setEnabled(it?.toString() == keyToDelete)
+        }
 
         setEnabled(false)
         bind.deleteButton.setOnClickListener {
