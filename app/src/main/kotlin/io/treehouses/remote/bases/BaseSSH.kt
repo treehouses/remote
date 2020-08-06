@@ -22,10 +22,8 @@ import com.trilead.ssh2.signature.DSASHA1Verify
 import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
-import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog.Companion.NO_KEY
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Ed25519Provider.Companion.insertIfNeeded
-import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
@@ -37,11 +35,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.KeyPair
-import java.security.NoSuchAlgorithmException
-import java.security.PrivateKey
-import java.security.PublicKey
 import java.security.interfaces.*
-import java.security.spec.InvalidKeySpecException
 import java.util.*
 import java.util.regex.Pattern
 
