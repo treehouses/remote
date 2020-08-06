@@ -56,16 +56,16 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     var emulation: String? = null
 
     companion object {
-        const val protocolName = "ssh"
+        //const val protocolName = "ssh"
         const val TAG = "CB.SSH"
-        const val defaultPort = 22
+        //const val defaultPort = 22
         const val AUTH_PUBLICKEY = "publickey"
         const val AUTH_PASSWORD = "password"
         const val AUTH_KEYBOARDINTERACTIVE = "keyboard-interactive"
         const val AUTH_TRIES = 20
         private val hostmask = Pattern.compile(
                 "^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
-        private const val conditions = (ChannelCondition.STDOUT_DATA
+        const val conditions = (ChannelCondition.STDOUT_DATA
                 or ChannelCondition.STDERR_DATA
                 or ChannelCondition.CLOSED
                 or ChannelCondition.EOF)
@@ -119,8 +119,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         this.manager = manager
     }
 
-    protected var compression = false
-
     @Volatile
     private var authenticated = false
 
@@ -135,9 +133,9 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     protected var interactiveCanContinue = true
     protected var connection: Connection? = null
     protected var session: Session? = null
-    private var stdin: OutputStream? = null
-    private var stdout: InputStream? = null
-    private var stderr: InputStream? = null
+    protected var stdin: OutputStream? = null
+    protected var stdout: InputStream? = null
+    protected var stderr: InputStream? = null
 
     //    private List<PortForwardBean> portForwards = new ArrayList<>();
     private var columns = 0
@@ -277,32 +275,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
-//    @Throws(IOException::class)
-//    fun flush() {
-//        if (stdin != null) stdin!!.flush()
-//    }
-//
-//    @Throws(IOException::class)
-//    fun read(buffer: ByteArray?, start: Int, len: Int): Int {
-//        var bytesRead = 0
-//        if (session == null) return 0
-//        val newConditions = session!!.waitForCondition(conditions, 0)
-//        if (newConditions and ChannelCondition.STDOUT_DATA != 0) {
-//            bytesRead = stdout!!.read(buffer, start, len)
-//        }
-//        if (newConditions and ChannelCondition.STDERR_DATA != 0) {
-//            val discard = ByteArray(256)
-//            while (stderr!!.available() > 0) {
-//                stderr!!.read(discard)
-//            }
-//        }
-//        if (newConditions and ChannelCondition.EOF != 0) {
-//            close()
-//            onDisconnect()
-//            throw IOException("Remote end closed connection")
-//        }
-//        return bytesRead
-//    }
 
     @Throws(IOException::class)
     fun write(buffer: ByteArray?) {
@@ -469,17 +441,17 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     //            return false;
     //        }
     //    }
-//    fun setDimensions(columns: Int, rows: Int, width: Int, height: Int) {
-//        this.columns = columns
-//        this.rows = rows
-//        if (isSessionOpen) {
-//            try {
-//                session!!.resizePTY(columns, rows, width, height)
-//            } catch (e: IOException) {
-//                Log.e(TAG, "Couldn't send resize PTY packet", e)
-//            }
-//        }
-//    }
+    fun setDimensions(columns: Int, rows: Int, width: Int, height: Int) {
+        this.columns = columns
+        this.rows = rows
+        if (isSessionOpen) {
+            try {
+                session!!.resizePTY(columns, rows, width, height)
+            } catch (e: IOException) {
+                Log.e(TAG, "Couldn't send resize PTY packet", e)
+            }
+        }
+    }
 //
 //    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
 //        return if (port == defaultPort) {
@@ -520,13 +492,9 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //        return host
 //    }
 
-//    fun setCompression(compression: Boolean) {
-//        this.compression = compression
-//    }
-//
-//    fun setUseAuthAgent(useAuthAgent: String) {
-//        this.useAuthAgent = useAuthAgent
-//    }
+    fun setUseAuthAgent(useAuthAgent: String) {
+        this.useAuthAgent = useAuthAgent
+    }
 
     override fun retrieveIdentities(): Map<String, ByteArray> {
         val pubKeys: MutableMap<String, ByteArray> = HashMap(manager!!.loadedKeypairs.size)
@@ -599,10 +567,4 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         return true
     }
 
-    /* (non-Javadoc)
-     * @see org.connectbot.transport.AbsTransport#usesNetwork()
-     */
-//    fun usesNetwork(): Boolean {
-//        return true
-//    }
 }

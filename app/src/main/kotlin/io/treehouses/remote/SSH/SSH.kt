@@ -1,6 +1,7 @@
 package io.treehouses.remote.SSH
 
 import android.util.Log
+import com.trilead.ssh2.ChannelCondition
 import com.trilead.ssh2.Connection
 import com.trilead.ssh2.ConnectionInfo
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
@@ -16,6 +17,8 @@ import java.security.PublicKey
 import java.security.spec.InvalidKeySpecException
 
 class SSH: BaseSSH() {
+    private var compression = false
+
     fun connect() {
         connection = Connection(host!!.hostname, host!!.port)
         connection!!.addConnectionMonitor(this)
@@ -227,10 +230,48 @@ class SSH: BaseSSH() {
         }
     }
 
+    @Throws(IOException::class)
+    fun flush() {
+        if (stdin != null) stdin!!.flush()
+    }
+
+    @Throws(IOException::class)
+    fun read(buffer: ByteArray?, start: Int, len: Int): Int {
+        var bytesRead = 0
+        if (session == null) return 0
+        val newConditions = session!!.waitForCondition(conditions, 0)
+        if (newConditions and ChannelCondition.STDOUT_DATA != 0) {
+            bytesRead = stdout!!.read(buffer, start, len)
+        }
+        if (newConditions and ChannelCondition.STDERR_DATA != 0) {
+            val discard = ByteArray(256)
+            while (stderr!!.available() > 0) {
+                stderr!!.read(discard)
+            }
+        }
+        if (newConditions and ChannelCondition.EOF != 0) {
+            close()
+            onDisconnect()
+            throw IOException("Remote end closed connection")
+        }
+        return bytesRead
+    }
+
     private fun outputCryptoAlgo(connectionInfo: ConnectionInfo, stringRes: Int) {
         bridge!!.outputLine(manager!!.res!!.getString(stringRes,
                 connectionInfo.clientToServerCryptoAlgorithm,
                 connectionInfo.clientToServerMACAlgorithm))
+    }
+
+    fun setCompression(compression: Boolean) {
+        this.compression = compression
+    }
+
+    /* (non-Javadoc)
+     * @see org.connectbot.transport.AbsTransport#usesNetwork()
+     */
+    fun usesNetwork(): Boolean {
+        return true
     }
 
 }
