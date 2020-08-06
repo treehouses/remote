@@ -11,13 +11,14 @@ import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.Fragments.TextBoxValidation
+import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ChpassDialogBinding
 
 /**
  * Created by going-gone on 4/19/2018.
  */
-class ChPasswordDialogFragment : DialogFragment() {
+class ChPasswordDialogFragment : DialogFragment(), FragmentDialogInterface {
     //    private EditText passwordEditText;
     //    private EditText confirmPassEditText;
     var bind: ChpassDialogBinding? = null
@@ -38,7 +39,7 @@ class ChPasswordDialogFragment : DialogFragment() {
 
     //creates the dialog for the change password dialog
     protected fun getAlertDialog(mView: View?): AlertDialog {
-        return createAlertDialog(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle), mView, R.string.change_password, android.R.drawable.ic_dialog_alert)
+        return CreateAlertDialog(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle), mView, R.string.change_password, android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.change_password
                 ) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
@@ -50,13 +51,6 @@ class ChPasswordDialogFragment : DialogFragment() {
                 }
                 .setNegativeButton(R.string.cancel) { _: DialogInterface?, _: Int -> targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent) }
                 .create()
-    }
-
-    private fun createAlertDialog(con:ContextThemeWrapper, mView: View?, title:Int, icon:Int):AlertDialog.Builder{
-        return AlertDialog.Builder(con)
-                .setView(mView)
-                .setTitle(title)
-                .setIcon(icon)
     }
 
     //listener for text change within this dialog

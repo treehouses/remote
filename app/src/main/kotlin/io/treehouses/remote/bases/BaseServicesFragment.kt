@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
+import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.utils.RESULTS
@@ -41,7 +42,12 @@ open class BaseServicesFragment() : BaseFragment() {
         mChatService.write(ping.toByteArray())
     }
 
-    protected fun performService(action: String, command: String, name: String) {
+    protected fun performService(action: String, name: String) {
+        var command = ""
+        if (action == "Starting") command = getString(R.string.TREEHOUSES_SERVICES_UP, name)
+        else if (action == "Installing") command = getString(R.string.TREEHOUSES_SERVICES_INSTALL, name)
+        else if (action == "Stopping") command = getString(R.string.TREEHOUSES_SERVICES_STOP, name)
+        else command = getString(R.string.TREEHOUSES_SERVICES_CLEANUP, name)
         Log.d("SERVICES", "$action $name")
         Toast.makeText(context, "$name $action", Toast.LENGTH_LONG).show()
         writeToRPI(command)

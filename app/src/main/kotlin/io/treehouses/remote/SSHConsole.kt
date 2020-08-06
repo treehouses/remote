@@ -49,6 +49,7 @@ import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.*
 import io.treehouses.remote.SSH.Terminal.TerminalManager.TerminalBinder
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
+import io.treehouses.remote.bases.BaseTerminalKeyListener
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 import java.lang.ref.WeakReference
 
@@ -190,7 +191,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     private fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
         var flag = true
         when (v.id) {
-            R.id.button_ctrl -> handler.metaPress(TerminalKeyListener.OUR_CTRL_ON, true)
+            R.id.button_ctrl -> handler.metaPress(BaseTerminalKeyListener.OUR_CTRL_ON, true)
             R.id.button_esc -> handler.sendEscape()
             R.id.button_tab -> handler.sendTab()
             else -> flag = false
@@ -225,10 +226,10 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun sendKeys(v: View, handler: TerminalKeyListener) : Boolean {
-        if (isSpecialButton(v, handler)) return true
+        return if (isSpecialButton(v, handler)) true
         else {
             checkButtons(v, handler)
-            return false
+            false
         }
     }
 
@@ -535,7 +536,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     private fun setupTabLayoutWithViewPager() {
         tabs!!.setTabsFromPagerAdapter(adapter)
         bind.pager.addOnPageChangeListener(TabLayoutOnPageChangeListener(tabs))
-        tabs!!.setOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(bind.pager))
+        tabs!!.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(bind.pager))
         if (adapter!!.count > 0) {
             val curItem = bind.pager.currentItem
             if (tabs!!.selectedTabPosition != curItem) {

@@ -60,13 +60,17 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {Log.d("nothing", "YYYYY ")}
         }
+        addListeners()
+        return bind!!.root
+    }
+
+    private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
         addPortButton!!.setOnClickListener(this)
         addHostButton!!.setOnClickListener(this)
         addingPortButton.setOnClickListener(this)
         addingHostButton.setOnClickListener(this)
         bind!!.notifyNow.setOnClickListener(this)
-        return bind!!.root
     }
 
     private fun initializeDialog(){
@@ -223,6 +227,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 if(readMessage.contains("Host / port not found")) {
                     addHostButton?.isEnabled = true
                     addHostButton?.text = "Add Host"
+
                     addPortButton?.text = "Add Port"
                     portList?.isEnabled = true
                     addHostButton?.isEnabled = true
@@ -240,6 +245,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
 //                    else{
 //                        Toast.makeText(requireContext(), "Please add host, and also no duplicate hosts allowed", Toast.LENGTH_SHORT).show()
 //                    }
+
                 }
                 else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")){
                     Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
@@ -252,6 +258,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     hostsPosition = ArrayList()
                     listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
+
                 else if (readMessage.contains("@")) {
                     addPortButton?.isEnabled = true
                     addPortButton?.text = "Add Port"
@@ -301,7 +308,8 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
 
                 }
-                else { getMessage2(readMessage) }
+                else  getMessage2(readMessage)
+
             }
     }
 

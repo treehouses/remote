@@ -30,7 +30,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     }
 
     override fun getChildrenCount(position: Int): Int {
-        return if (position > 6) 0 else 1
+        return if (position > list.size - 1) 0 else 1
     }
 
     override fun getGroup(i: Int): Any {
@@ -81,6 +81,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
             R.layout.configure_wificountry -> ViewHolderWifiCountry(convertView, context, listener!!)
             R.layout.configure_blocker -> ViewHolderBlocker(convertView, context, listener!!)
             R.layout.configure_sshtunnel_key -> ViewHolderSSHTunnelKey(convertView, context, listener!!)
+            R.layout.configure_discover -> ViewHolderDiscover(convertView, listener!!)
         }
         views[i] = convertView
         return convertView
@@ -99,6 +100,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     init {
         inflater = LayoutInflater.from(context)
         this.list = list
-        views = arrayOfNulls(7)
+        views = arrayOfNulls(8)
     }
 }

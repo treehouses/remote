@@ -18,6 +18,7 @@ import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
 import java.util.*
 
@@ -56,11 +57,13 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
     private fun preferences(){
         array = SaveUtils.getStringList(requireContext(), "servicesArray")
-        for (string in array) {
-            val a = performAction(string, services)
-            if (a == 1) {
-                worked = true
-                showUI()
+        if (!SaveUtils.getFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_OVERVIEW)) {
+            for (string in array) {
+                val a = performAction(string, services)
+                if (a == 1) {
+                    worked = true
+                    showUI()
+                }
             }
         }
         writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
@@ -102,10 +105,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             Constants.MESSAGE_READ -> {
                 updateListFromRPI(msg)
             }
-            Constants.MESSAGE_WRITE -> {
-                val writeMsg = String((msg.obj as ByteArray))
-                Log.d("WRITE", writeMsg)
-            }
+            Constants.MESSAGE_WRITE -> LogUtils.writeMsg(msg)
         }
     }
 
