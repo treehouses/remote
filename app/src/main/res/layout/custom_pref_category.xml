@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/title"
-    style="?android:attr/listSeparatorTextViewStyle"
+    android:background="@color/preference_background"
+    android:textStyle="bold"
     android:paddingStart="@dimen/padding_large"
     android:paddingLeft="@dimen/padding_large"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     android:paddingEnd="0dp"
+    android:textSize="18sp"
     android:paddingRight="0dp"
-    android:textColor="@color/accent" />
+    android:textColor="@color/accent"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"/>

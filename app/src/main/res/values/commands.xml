@@ -8,6 +8,7 @@
     <string name="TREEHOUSES_REMOTE_CHECK">treehouses remote check\n</string>
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
     <string name="TREEHOUSES_REMOTE_STATUS">treehouses remote status\n</string>
+    <string name="TREEHOUSES_REMOTE_STATUSPAGE">treehouses remote statuspage</string>
     <string name="TREEHOUSES_REMOTE_COMMANDS">treehouses remote commands</string>
     <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
@@ -33,6 +34,8 @@
     <string name="TREEHOUSES_ETHERNET">treehouses ethernet \"%1$s\" \"%2$s\" \"%3$s\" \"%4$s\"\n</string>
     <string name="TREEHOUSES_COMMANDS_JSON">treehouses remote commands json\n</string>
     <string name="TREEHOUSES_PASSWORD">treehouses password %1$s</string>
+    <string name="TREEHOUSES_DISCOVER_GATEWAY">treehouses discover gateway\n</string>
+    <string name="TREEHOUSES_DISCOVER_GATEWAY_LIST">treehouses discover gateway list\n</string>
 
     <string name="TREEHOUSES_WIFI_ENTERPRISE">treehouses wifi \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_WIFI_HIDDEN_ENTERPRISE">treehouses wifihidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
@@ -49,6 +52,15 @@
     <string name="TREEHOUSES_TOR_NOTICE">treehouses tor notice</string>
     <string name="TREEHOUSES_TOR_STATUS">treehouses tor status</string>
     <string name="TREEHOUSES_TOR">treehouses tor</string>
+
+    <string name="TREEHOUSES_SSHTUNNEL_NOTICE">treehouses sshtunnel notice</string>
+    <string name="TREEHOUSES_SSHTUNNEL_NOTICE_ON">treehouses sshtunnel notice on</string>
+    <string name="TREEHOUSES_SSHTUNNEL_NOTICE_OFF">treehouses sshtunnel notice off</string>
+    <string name="TREEHOUSES_SSHTUNNEL_ADD_HOST">treehouses sshtunnel add host \"%1$s\" \"%2$s\"</string>
+    <string name="TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL">treehouses sshtunnel add port actual \"%1$s\" \"%2$s\" \"%3$s\"</string>
+    <string name="TREEHOUSES_SSHTUNNEL_NOTICE_NOW">treehouses sshtunnel notice now</string>
+    <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
+
     <string name="TREEHOUSES_SERVICES_CLEANUP">treehouses services \"%1$s\" cleanup</string>
     <string name="TREEHOUSES_SERVICES_INSTALL">treehouses services \"%1$s\" install</string>
     <string name="TREEHOUSES_SERVICES_UP">treehouses services \"%1$s\" up</string>

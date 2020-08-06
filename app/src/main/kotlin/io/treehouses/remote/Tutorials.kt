@@ -76,7 +76,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilder(activity, bind.listView, "Install and use a variety of services", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilder(activity, bind.linearLayout, "Search, Install and Use a Variety of Services", FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .disableFocusAnimation()
                 .build()

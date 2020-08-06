@@ -5,7 +5,8 @@
     android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center"
-    android:theme = "@style/AppTheme">
+    android:theme = "@style/AppTheme"
+    android:background="@color/windowBackground">
 
     <ImageView
         android:id="@+id/splash_logo"
