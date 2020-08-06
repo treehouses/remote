@@ -8,7 +8,6 @@ import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
-import java.security.KeyPair
 import java.util.*
 
 object SaveUtils {
@@ -17,6 +16,7 @@ object SaveUtils {
     private const val COMMANDS_VALUES_KEY = "commands_values"
     private const val NETWORK_PROFILES_KEY = "network_profile_keys"
     private const val SSH_HOSTS = "ssh_hosts_values"
+    private const val CURRENT_FRAGMENT_NAME = "current_fragment_name"
 
     enum class Screens {
         FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS
@@ -210,4 +210,14 @@ object SaveUtils {
         removeFromArrayList(context, SSH_HOSTS, hostBean.uri.toString())
     }
 
+    fun setCurrentFragmentName(context: Context, fragmentName: String) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.putString(CURRENT_FRAGMENT_NAME, fragmentName)
+        editor.apply()
+        Log.e("asdf", "SET")
+    }
+
+    fun getCurrentFragmentName(context: Context): String {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(CURRENT_FRAGMENT_NAME, null)!!
+    }
 }
