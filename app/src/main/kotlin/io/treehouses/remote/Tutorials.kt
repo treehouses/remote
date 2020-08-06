@@ -17,7 +17,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.HOME)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.HOME, false)
         //Put animations here
-        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.testConnection, "Test Bluetooth Connection to RPI", R.layout.tutorial)
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.testConnection, "Test Bluetooth Connection to RPI")
 
         val b = fancyShowCaseViewRoundedRect(activity, bind.networkProfilesBack, "Configure Network Profiles in the Network Screen to quickly switch between network configurations")
 
@@ -32,7 +32,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.NETWORK)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.NETWORK, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilderSkippable(activity, bind.networkWifi, "Touch Here to Connect to a WiFi Network", FocusShape.CIRCLE, R.layout.tutorial).build()
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.networkWifi, "Touch Here to Connect to a WiFi Network", FocusShape.CIRCLE).build()
 
         val b = fancyShowCaseView(activity, bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", FocusShape.CIRCLE)
 
@@ -60,7 +60,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TERMINAL, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilderSkippable(activity, bind.editTextOut, "Enter Commands here to run on Pi Remotely", FocusShape.ROUNDED_RECTANGLE, R.layout.tutorial).build()
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.editTextOut, "Enter Commands here to run on Pi Remotely", FocusShape.ROUNDED_RECTANGLE).build()
 
         val b = fancyShowCaseView(activity, bind.infoButton, "Get Information on what Treehouses Commands are Available and how to use them", FocusShape.CIRCLE)
 
@@ -69,8 +69,6 @@ object Tutorials {
         val d = fancyShowCaseView(activity, bind.btnPrevious, "Access Recently used Commands on Successive taps of this button", FocusShape.CIRCLE)
 
         val e = fancyShowCaseView(activity, bind.treehousesBtn, "Use this button for quick treehouses commands", FocusShape.ROUNDED_RECTANGLE)
-
-
 
         show(a,b,c,d,e)
     }
@@ -106,7 +104,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
 
-        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.bluetoothBox, "Your Device's Bluetooth details are listed here", R.layout.tutorial)
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.bluetoothBox, "Your Device's Bluetooth details are listed here")
 
         val b = fancyShowCaseViewRoundedRect(activity, bind.networkBox, "Network details can be found here")
 
@@ -123,9 +121,9 @@ object Tutorials {
         show(a,b,c,d,e,f,g)
     }
 
-    private fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE, layout:Int): FancyShowCaseView.Builder {
+    private fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape)
-                .customView(layout, object : OnViewInflateListener {
+                .customView(R.layout.tutorial, object : OnViewInflateListener {
                     override fun onViewInflated(view: View) {
                        val skipButton = view.findViewById<Button>(R.id.skipBtn)
                         skipButton.setOnClickListener(mClickListener)
@@ -156,8 +154,8 @@ object Tutorials {
                 .build()
     }
 
-    private fun fancyShowCaseViewRoundedRectSkippable(activity: FragmentActivity, view: View, title: String, layout:Int): FancyShowCaseView {
-        return fancyShowCaseViewBuilderSkippable(activity, view, title, FocusShape.ROUNDED_RECTANGLE, layout)
+    private fun fancyShowCaseViewRoundedRectSkippable(activity: FragmentActivity, view: View, title: String): FancyShowCaseView {
+        return fancyShowCaseViewBuilderSkippable(activity, view, title, FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .build()
     }
