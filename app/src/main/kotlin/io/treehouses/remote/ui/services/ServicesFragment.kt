@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments
+package io.treehouses.remote.ui.services
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -14,7 +14,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo

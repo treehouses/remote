@@ -1,4 +1,4 @@
-package io.treehouses.remote.bases
+package io.treehouses.remote.ui.services
 
 import android.content.Intent
 import android.net.Uri
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
+import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.utils.RESULTS

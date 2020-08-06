@@ -1,4 +1,4 @@
-package io.treehouses.remote.bases
+package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
 import android.content.Context
@@ -7,21 +7,17 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
-import android.text.SpannableString
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import io.treehouses.remote.*
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Network.ParseDbService
+import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
-import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SaveUtils.Screens
 import java.util.*
 

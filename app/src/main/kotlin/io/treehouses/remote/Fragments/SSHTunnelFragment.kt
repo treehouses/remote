@@ -13,7 +13,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.treehouses.remote.Views.TunnelViewPager
 import io.treehouses.remote.adapter.TunnelPageAdapter
-import io.treehouses.remote.bases.BaseServicesFragment
+import io.treehouses.remote.ui.services.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo

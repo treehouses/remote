@@ -26,7 +26,6 @@ import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Fragments.TerminalFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.adapter.ProfilesListAdapter
-import io.treehouses.remote.bases.BaseHomeFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding

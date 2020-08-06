@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments
+package io.treehouses.remote.ui.services
 
 import android.animation.ObjectAnimator
 import android.content.Context
@@ -15,7 +15,6 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServicesListAdapter
-import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 
