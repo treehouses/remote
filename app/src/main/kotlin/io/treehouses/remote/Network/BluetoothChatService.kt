@@ -63,7 +63,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
     private var bNoReconnect = false
     private val context: Context
     fun updateHandler(handler: Handler) {
-        write("killlast\n".toByteArray())
         mHandler = handler
     }
 
