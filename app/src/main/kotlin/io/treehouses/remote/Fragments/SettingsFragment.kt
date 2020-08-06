@@ -1,6 +1,7 @@
 package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -15,11 +16,13 @@ import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.R
+import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
     private var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
+    private lateinit var listener : HomeInteractListener
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
         setPreferencesFromResource(R.xml.app_preferences, rootKey)
@@ -29,6 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val reactivateTutorials = findPreference<Preference>("reactivate_tutorials")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
+        val showBluetoothFile = findPreference<Preference>("bluetooth_file")
 
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
@@ -36,6 +40,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         setClickListener(reactivateTutorials)
         setClickListener(clearSSHHosts)
         setClickListener(clearSSHKeys)
+        setClickListener(showBluetoothFile)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -84,6 +89,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "reactivate_tutorials" -> reactivateTutorialsPrompt()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
+            "bluetooth_file" -> openBluetoothFile()
         }
         return false
     }
@@ -106,6 +112,9 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     private fun clearSSHKeys() = createAlertDialog("Clear All SSH Keys", "Would you like to delete all SSH Keys?", "Clear", CLEAR_SSH_KEYS)
 
+    private fun openBluetoothFile() {
+        listener.openCallFragment(ShowBluetoothFile())
+    }
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
         val dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
@@ -157,6 +166,12 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     private fun reactivateTutorials() {
         for(screen in SaveUtils.Screens.values()) SaveUtils.setFragmentFirstTime(requireContext(), screen, true)
         Toast.makeText(context, "Tutorials reactivated", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = if (context is HomeInteractListener) context
+                    else throw Exception("Context does not implement HomeInteractListener")
     }
 
     companion object {
