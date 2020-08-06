@@ -38,12 +38,12 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return initView(position, convertView, parent)
+        return initView(position, parent)
     }
 
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return initView(position, convertView, parent)
+        return initView(position, parent)
     }
 
     override fun isEnabled(position: Int): Boolean {
@@ -80,7 +80,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
     }
 
-    private fun initView(position: Int, convertView: View?, parent: ViewGroup): View {
+    private fun initView(position: Int, parent: ViewGroup): View {
         val convertView: View?
         convertView = if (flag(position)) {
             LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false)
@@ -114,19 +114,24 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
             }
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val results = FilterResults()
-                val FilteredList: ArrayList<ServiceInfo> = ArrayList()
                 if (constraint == null || constraint.isEmpty()) {
                     results.values = dataIn; results.count = dataIn.size
                 } else {
-                    for (i in 0 until dataIn.size) {
-                        val data: ServiceInfo = dataIn[i]
-                        if (data.name.toLowerCase().contains(constraint.toString().toLowerCase()) && data.name.toLowerCase() != "Installed" && data.name.toLowerCase() != "Available") FilteredList.add(data)
-                    }
+                    val FilteredList: ArrayList<ServiceInfo> = createFilteredList(constraint)
                     results.values = FilteredList; results.count = FilteredList.size
                 }
                 return results
             }
         }
+    }
+
+    private fun createFilteredList(constraint: CharSequence): ArrayList<ServiceInfo> {
+        val FilteredList: ArrayList<ServiceInfo> = ArrayList()
+        for (i in 0 until dataIn.size) {
+            val data: ServiceInfo = dataIn[i]
+            if (data.name.toLowerCase().contains(constraint.toString().toLowerCase()) && data.name.toLowerCase() != "Installed" && data.name.toLowerCase() != "Available") FilteredList.add(data)
+        }
+        return FilteredList
     }
 
 }
