@@ -27,8 +27,6 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
-import io.treehouses.remote.utils.SaveUtils
-import kotlinx.android.synthetic.main.app_bar_initial.*
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     private var validBluetoothConnection = false
