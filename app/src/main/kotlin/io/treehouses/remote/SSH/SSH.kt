@@ -6,6 +6,9 @@ import com.trilead.ssh2.Connection
 import com.trilead.ssh2.ConnectionInfo
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.R
+import io.treehouses.remote.SSH.Terminal.TerminalBridge
+import io.treehouses.remote.SSH.Terminal.TerminalManager
+import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.BaseSSH
 import io.treehouses.remote.utils.KeyUtils
@@ -16,8 +19,21 @@ import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.spec.InvalidKeySpecException
 
-class SSH: BaseSSH() {
+class SSH: BaseSSH {
     private var compression = false
+
+    constructor() : super()
+
+    /**
+     * @param host
+     * @param bridge
+     * @param manager
+     */
+    constructor(host: HostBean?, bridge: TerminalBridge?, manager: TerminalManager?) : super() {
+        this.host = host
+        this.bridge = bridge
+        this.manager = manager
+    }
 
     fun connect() {
         connection = Connection(host!!.hostname, host!!.port)
@@ -274,4 +290,25 @@ class SSH: BaseSSH() {
         return true
     }
 
+    fun setDimensions(columns: Int, rows: Int, width: Int, height: Int) {
+        this.columns = columns
+        this.rows = rows
+        if (isSessionOpen) {
+            try {
+                session!!.resizePTY(columns, rows, width, height)
+            } catch (e: IOException) {
+                Log.e(TAG, "Couldn't send resize PTY packet", e)
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    fun write(buffer: ByteArray?) {
+        if (stdin != null) stdin!!.write(buffer)
+    }
+
+    @Throws(IOException::class)
+    fun write(c: Int) {
+        if (stdin != null) stdin!!.write(c)
+    }
 }

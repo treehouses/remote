@@ -106,19 +106,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
-    constructor() : super() {}
-
-    /**
-     * @param host
-     * @param bridge
-     * @param manager
-     */
-    constructor(host: HostBean?, bridge: TerminalBridge?, manager: TerminalManager?) {
-        this.host = host
-        this.bridge = bridge
-        this.manager = manager
-    }
-
     @Volatile
     private var authenticated = false
 
@@ -138,8 +125,8 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     protected var stderr: InputStream? = null
 
     //    private List<PortForwardBean> portForwards = new ArrayList<>();
-    private var columns = 0
-    private var rows = 0
+    protected var columns = 0
+    protected var rows = 0
     private val width = 0
     private val height = 0
     private var useAuthAgent = "no"
@@ -273,17 +260,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         } catch (e1: IOException) {
             Log.e(TAG, "Problem while trying to create PTY in finishConnection()", e1)
         }
-    }
-
-
-    @Throws(IOException::class)
-    fun write(buffer: ByteArray?) {
-        if (stdin != null) stdin!!.write(buffer)
-    }
-
-    @Throws(IOException::class)
-    fun write(c: Int) {
-        if (stdin != null) stdin!!.write(c)
     }
 
 //    val options: Map<String, String>
@@ -441,17 +417,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     //            return false;
     //        }
     //    }
-    fun setDimensions(columns: Int, rows: Int, width: Int, height: Int) {
-        this.columns = columns
-        this.rows = rows
-        if (isSessionOpen) {
-            try {
-                session!!.resizePTY(columns, rows, width, height)
-            } catch (e: IOException) {
-                Log.e(TAG, "Couldn't send resize PTY packet", e)
-            }
-        }
-    }
+
 //
 //    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
 //        return if (port == defaultPort) {
