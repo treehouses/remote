@@ -34,6 +34,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
+    private lateinit var currentTitle: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
@@ -49,7 +51,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
         checkStatusNow()
         openCallFragment(HomeFragment())
-        SaveUtils.setCurrentFragmentName(applicationContext, "Home")
+        currentTitle = "Home"
         setUpDrawer()
         title = "Home"
         GPSService(this)
@@ -75,7 +77,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             if (f is HomeFragment) finish()
             else if (f is SettingsFragment) {
                 (supportFragmentManager).popBackStack()
-                title = SaveUtils.getCurrentFragmentName(f.requireContext())
+                title = currentTitle
             }
             if (f is BackPressReceiver) f.onBackPressed()
         }
@@ -100,7 +102,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             }
         }
         title = item.title
-        SaveUtils.setCurrentFragmentName(applicationContext, title.toString())
+        currentTitle = item.title.toString()
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }

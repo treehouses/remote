@@ -209,15 +209,4 @@ object SaveUtils {
         editor.apply()
         removeFromArrayList(context, SSH_HOSTS, hostBean.uri.toString())
     }
-
-    fun setCurrentFragmentName(context: Context, fragmentName: String) {
-        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-        editor.putString(CURRENT_FRAGMENT_NAME, fragmentName)
-        editor.apply()
-        Log.e("asdf", "SET")
-    }
-
-    fun getCurrentFragmentName(context: Context): String {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(CURRENT_FRAGMENT_NAME, null)!!
-    }
 }
