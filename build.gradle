@@ -14,7 +14,6 @@ buildscript {
         // in the individual module build.gradle files
     }
     def f = new File('app/src/main/assets/bluetooth-server.txt')
-    // Change This to master branch: https://raw.githubusercontent.com/treehouses/control/master/server.py once it is merged
     new URL('https://raw.githubusercontent.com/treehouses/control/master/server.py').withInputStream{ i -> f.withOutputStream{ it << i }}
 }
 
