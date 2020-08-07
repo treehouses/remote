@@ -313,7 +313,7 @@ class SSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     private fun tryPublicKey(pubkey: PubKeyBean): Boolean {
         var pair: KeyPair?
 
-        if (manager!!.isKeyLoaded(pubkey.nickname)) {
+        if (manager!!.loadedKeypairs.containsKey(pubkey.nickname)) {
             // load this key from memory if its already there
             Log.d(TAG, String.format("Found unlocked key '%s' already in-memory", pubkey.nickname))
             if (pubkey.isConfirmUse) {

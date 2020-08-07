@@ -93,7 +93,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
             bound!!.disconnectListener = this@SSHConsole
             bound!!.isResizeAllowed = true
             val requestedNickname = if (requested != null) requested!!.fragment else null
-            var requestedBridge = bound!!.getConnectedBridge(requestedNickname)
+            var requestedBridge = bound!!.mNicknameBridgeMap[requestedNickname]?.get()
 
             // If we didn't find the requested connection, try opening it
             if (requestedNickname != null && requestedBridge == null) {
@@ -718,7 +718,7 @@ open class SSHConsole : AppCompatActivity(), BridgeDisconnectedListener {
     }
 
     private fun setIntentRequested() {
-        val requestedBridge = bound!!.getConnectedBridge(requested!!.fragment)
+        val requestedBridge = bound!!.mNicknameBridgeMap[requested!!.fragment]?.get()
         var requestedIndex = 0
         synchronized(bind.pager) {
             if (requestedBridge == null) {

@@ -31,7 +31,6 @@ import androidx.preference.PreferenceManager
 import android.util.Log
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.PubKeyUtils
-import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
@@ -56,7 +55,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     var defaultBridge: TerminalBridge? = null
     var disconnected: MutableList<HostBean> = ArrayList()
     var disconnectListener: BridgeDisconnectedListener? = null
-    private val hostStatusChangedListeners = ArrayList<OnHostStatusChangedListener>()
+    val hostStatusChangedListeners = ArrayList<OnHostStatusChangedListener>()
     @JvmField
     var loadedKeypairs: MutableMap<String, KeyHolder?> = HashMap()
     @JvmField
@@ -98,7 +97,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 //		pubkeydb = PubkeyDatabase.get(this);
 
         // load all marked pubkeys into memory
-        updateSavingKeys()
+        savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
         //		List<PubkeyBean> pubkeys = pubkeydb.getAllStartPubkeys();
 
 //		for (PubkeyBean pubkey : pubkeys) {
@@ -117,10 +116,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
 
 //		connectivityManager = new ConnectivityReceiver(this, lockingWifi);
-    }
-
-    private fun updateSavingKeys() {
-        savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
     }
 
     override fun onDestroy() {
@@ -166,7 +161,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     @Throws(IllegalArgumentException::class, IOException::class)
     private fun openConnection(host: HostBean): TerminalBridge {
         // throw exception if terminal already open
-        require(getConnectedBridge(host) == null) { "Connection already open for that nickname" }
+        require(mHostBridgeMap[host]?.get() == null) { "Connection already open for that nickname" }
         val bridge = TerminalBridge(this, host)
         bridge.setOnDisconnectedListener(this)
         bridge.startConnection()
@@ -223,30 +218,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     //	private void touchHost(HostBean host) {
     //		hostdb.touchHost(host);
     //	}
-    /**
-     * Find a connected [TerminalBridge] with the given HostBean.
-     *
-     * @param host the HostBean to search for
-     * @return TerminalBridge that uses the HostBean
-     */
-    fun getConnectedBridge(host: HostBean?): TerminalBridge? {
-        val wr = mHostBridgeMap[host]
-        return wr?.get()
-    }
-
-    /**
-     * Find a connected [TerminalBridge] using its nickname.
-     *
-     * @param nickname
-     * @return TerminalBridge that matches nickname
-     */
-    fun getConnectedBridge(nickname: String?): TerminalBridge? {
-        if (nickname == null) {
-            return null
-        }
-        val wr = mNicknameBridgeMap[nickname]
-        return wr?.get()
-    }
 
     /**
      * Called by child bridge when somehow it's been disconnected.
@@ -278,15 +249,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 //		}
     }
 
-    fun isKeyLoaded(nickname: String?): Boolean {
-        return loadedKeypairs.containsKey(nickname)
-    }
-
-    //
     @JvmOverloads
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
-        removeKey(pubkey.nickname)
+        loadedKeypairs.remove(pubkey.nickname)
         val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair)
         val keyHolder = KeyHolder()
         keyHolder.bean = pubkey
@@ -298,16 +264,11 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             pubkeyTimer!!.schedule(object : TimerTask() {
                 override fun run() {
                     Log.d(TAG, "Unloading from memory key: $nickname")
-                    removeKey(nickname)
+                    loadedKeypairs.remove(pubkey.nickname)
                 }
             }, pubkey.lifetime * 1000.toLong())
         }
         Log.d(TAG, String.format("Added key '%s' to in-memory cache", pubkey.nickname))
-    }
-
-    fun removeKey(nickname: String?): Boolean {
-        Log.d(TAG, String.format("Removed key '%s' to in-memory cache", nickname))
-        return loadedKeypairs.remove(nickname) != null
     }
 
     fun removeKey(publicKey: ByteArray?): Boolean {
@@ -320,7 +281,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         }
         return if (nickname != null) {
             Log.d(TAG, String.format("Removed key '%s' to in-memory cache", nickname))
-            removeKey(nickname)
+            loadedKeypairs.remove(nickname) != null
         } else false
     }
 
@@ -331,46 +292,11 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         } else null
     }
 
-    fun getKey(publicKey: ByteArray?): KeyPair? {
-        for (keyHolder in loadedKeypairs.values) {
-            if (Arrays.equals(keyHolder!!.openSSHPubkey, publicKey)) return keyHolder.pair
-        }
-        return null
-    }
-
     fun getKeyNickname(publicKey: ByteArray?): String? {
         for ((key, value) in loadedKeypairs) {
             if (Arrays.equals(value!!.openSSHPubkey, publicKey)) return key
         }
         return null
-    }
-
-    private fun stopWithDelay() {
-        // TODO add in a way to check whether keys loaded are encrypted and only
-        // set timer when we have an encrypted key loaded
-        if (loadedKeypairs.size > 0) {
-            synchronized(this) {
-                if (idleTimer == null) idleTimer = Timer("idleTimer", true)
-                idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
-            }
-        } else {
-            Log.d(TAG, "Stopping service immediately")
-            stopSelf()
-        }
-    }
-
-    protected fun stopNow() {
-        if (bridges.size == 0) {
-            stopSelf()
-        }
-    }
-
-    @Synchronized
-    private fun stopIdleTimer() {
-        if (idleTimer != null) {
-            idleTimer!!.cancel()
-            idleTimer = null
-        }
     }
 
     inner class TerminalBinder : Binder() {
@@ -389,7 +315,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      * Make sure we stay running to maintain the bridges. Later [.stopNow] should be called to stop the service.
      */
     private fun keepServiceAlive() {
-        stopIdleTimer()
+        if (idleTimer != null) {
+            idleTimer!!.cancel()
+            idleTimer = null
+        }
         startService(Intent(this, TerminalManager::class.java))
     }
 
@@ -412,7 +341,15 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         Log.i(TAG, "Someone unbound from TerminalManager with " + bridges.size + " bridges active")
         isResizeAllowed = true
         if (bridges.size == 0) {
-            stopWithDelay()
+            if (loadedKeypairs.size > 0) {
+                synchronized(this) {
+                    if (idleTimer == null) idleTimer = Timer("idleTimer", true)
+                    idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
+                }
+            } else {
+                Log.d(TAG, "Stopping service immediately")
+                stopSelf()
+            }
         } else {
             // tell each bridge to forget about their previous prompt handler
             for (bridge in bridges) {
@@ -425,29 +362,15 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     private inner class IdleTask : TimerTask() {
         override fun run() {
             Log.d(TAG, String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000))
-            stopNow()
+            if (bridges.size == 0) {
+                stopSelf()
+            }
         }
     }
 
     fun tryKeyVibrate() {
-        if (wantKeyVibration) vibrate()
-    }
-
-    private fun vibrate() {
-        if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
-    }
-
-    /**
-     * Send system notification to user for a certain host. When user selects
-     * the notification, it will bring them directly to the ConsoleActivity
-     * displaying the host.
-     *
-     * @param host
-     */
-    fun sendActivityNotification(host: HostBean?) {
-        if (!prefs!!.getBoolean(PreferenceConstants.BELL_NOTIFICATION, false)) return
-
-//		ConnectionNotifier.getInstance().showActivityNotification(this, host);
+        if (wantKeyVibration)
+            if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
     }
 
     /* (non-Javadoc)
@@ -462,7 +385,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
             //			connectivityManager.setWantWifiLock(lockingWifi);
         } else if (PreferenceConstants.MEMKEYS == key) {
-            updateSavingKeys()
+            savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
         }
     }
 
@@ -472,33 +395,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         @JvmField
         var pair: KeyPair? = null
         var openSSHPubkey: ByteArray? = null
-    }
-
-    /**
-     * Called when connectivity to the network is lost and it doesn't appear
-     * we'll be getting a different connection any time soon.
-     */
-    fun onConnectivityLost() {
-        val t: Thread = object : Thread() {
-            override fun run() {
-                disconnectAll(false, true)
-            }
-        }
-        t.name = "Disconnector"
-        t.start()
-    }
-
-    /**
-     * Called when connectivity to the network is restored.
-     */
-    fun onConnectivityRestored() {
-        val t: Thread = object : Thread() {
-            override fun run() {
-                reconnectPending()
-            }
-        }
-        t.name = "Reconnector"
-        t.start()
     }
 
     /**
@@ -515,43 +411,19 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 //				reconnectPending();
 //			}
             if (!bridge.isUsingNetwork) {
-                reconnectPending()
+                /**
+                 * Reconnect all bridges that were pending a reconnect when connectivity
+                 * was lost.
+                 */
+                synchronized(mPendingReconnect) {
+                    for (ref in mPendingReconnect) {
+                        val bridge = ref.get() ?: continue
+                        bridge.startConnection()
+                    }
+                    mPendingReconnect.clear()
+                }
             }
         }
-    }
-
-    /**
-     * Reconnect all bridges that were pending a reconnect when connectivity
-     * was lost.
-     */
-    private fun reconnectPending() {
-        synchronized(mPendingReconnect) {
-            for (ref in mPendingReconnect) {
-                val bridge = ref.get() ?: continue
-                bridge.startConnection()
-            }
-            mPendingReconnect.clear()
-        }
-    }
-
-    /**
-     * Register a `listener` that wants to know when a host's status materially changes.
-     *
-     * @see .hostStatusChangedListeners
-     */
-    fun registerOnHostStatusChangedListener(listener: OnHostStatusChangedListener) {
-        if (!hostStatusChangedListeners.contains(listener)) {
-            hostStatusChangedListeners.add(listener)
-        }
-    }
-
-    /**
-     * Unregister a `listener` that wants to know when a host's status materially changes.
-     *
-     * @see .hostStatusChangedListeners
-     */
-    fun unregisterOnHostStatusChangedListener(listener: OnHostStatusChangedListener?) {
-        hostStatusChangedListeners.remove(listener)
     }
 
     private fun notifyHostStatusChanged() {
