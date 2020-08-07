@@ -127,9 +127,8 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
     private fun createFilteredList(constraint: CharSequence): ArrayList<ServiceInfo> {
         val FilteredList: ArrayList<ServiceInfo> = ArrayList()
-        for (i in 0 until dataIn.size) {
-            val data: ServiceInfo = dataIn[i]
-            if (data.name.toLowerCase().contains(constraint.toString().toLowerCase()) && data.name.toLowerCase() != "Installed" && data.name.toLowerCase() != "Available") FilteredList.add(data)
+        dataIn.forEach {
+            if (it.name.toLowerCase().contains(constraint.toString().toLowerCase()) && it.name.toLowerCase() != "Installed" && it.name.toLowerCase() != "Available") FilteredList.add(it)
         }
         return FilteredList
     }
