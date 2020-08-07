@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
@@ -34,6 +35,7 @@ class StatusFragment : BaseFragment() {
     private var deviceName = ""
     private var rpiVersion = ""
     private lateinit var bind: ActivityStatusFragmentBinding
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
@@ -53,12 +55,25 @@ class StatusFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addRefreshListener(view)
         bind.tvBluetooth.text = deviceName
         Log.e("STATUS", "device name: $deviceName")
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())
         bind.upgrade.visibility = View.GONE
+    }
+
+    private fun addRefreshListener(view: View) {
+        refreshLayout = view.findViewById<SwipeRefreshLayout?>(R.id.swiperefresh)!!
+        refreshLayout.setOnRefreshListener {
+            refresh()
+        }
+        refreshLayout.setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
     }
 
     private fun upgradeOnViewClickListener() {
@@ -107,7 +122,7 @@ class StatusFragment : BaseFragment() {
             checkWifiStatus(statusData.internet)
 
             bind.refreshBtn.visibility = View.VISIBLE
-
+            refreshLayout.isRefreshing = false
         } else {
             checkUpgradeStatus(readMessage)
         }
