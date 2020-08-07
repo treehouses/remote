@@ -57,7 +57,6 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
     private fun preferences(){
         array = SaveUtils.getStringList(requireContext(), "servicesArray")
-
         if (!SaveUtils.getFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_OVERVIEW)) {
             for (string in array) {
                 val a = performAction(string, services)
@@ -67,11 +66,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 }
             }
         }
-        else {
-            SaveUtils.setFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_DETAILS, false)
-        }
         writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
-
     }
 
     private fun showUI(){
