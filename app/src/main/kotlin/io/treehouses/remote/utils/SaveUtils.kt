@@ -34,6 +34,12 @@ object SaveUtils {
         e.apply()
     }
 
+    fun removeStringList(context: Context, arrayName: String) {
+        val e = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        e.remove(arrayName)
+        e.apply()
+    }
+
     fun getStringList(context: Context, arrayName: String): MutableList<String> {
         val strList: List<String>
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)

@@ -24,9 +24,12 @@
         <Preference
             android:title="Reactivate Tutorials"
             android:key="reactivate_tutorials"
-            android:layout="@layout/custom_pref_middle">
-        </Preference>
+            android:layout="@layout/custom_pref_middle"/>
 
+        <Preference
+            android:title="Clear Services Cache"
+            android:key="clear_services"
+            android:layout="@layout/custom_pref_middle"/>
 
         <SwitchPreferenceCompat android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
             android:summary="Enable to reconnect to Bluetooth automatically when a connection fails. Warning: this may affect battery life."
