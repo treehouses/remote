@@ -8,19 +8,20 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Message
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
 import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
@@ -41,6 +42,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     private lateinit var bind: DialogSshBinding
     private lateinit var pastHosts: List<HostBean>
     private lateinit var adapter : RecyclerView.Adapter<ViewHolderSSHRow>
+    private lateinit var refreshLayout: SwipeRefreshLayout
     private var bound : TerminalManager? = null
     private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -72,6 +74,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         super.onViewCreated(view, savedInstanceState)
         setEnabled(false)
         addTextValidation()
+        addRefreshListener(view)
         bind.connectSsh.setOnClickListener {
             var uriString = bind.sshTextInput.text.toString()
             if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
@@ -87,6 +90,18 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
 
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
+    }
+
+    private fun addRefreshListener(view: View) {
+        refreshLayout = view.findViewById<SwipeRefreshLayout?>(R.id.swiperefresh)!!
+        refreshLayout.setOnRefreshListener {
+            setUpAdapter()
+        }
+        refreshLayout.setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
     }
 
     private fun setUpAdapter() {
@@ -110,7 +125,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             }
         }
         bind.pastHosts.adapter = adapter
-
+        refreshLayout.isRefreshing = false
         addItemTouchListener()
     }
     private fun addItemTouchListener() {

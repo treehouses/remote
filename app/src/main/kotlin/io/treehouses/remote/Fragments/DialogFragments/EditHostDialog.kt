@@ -64,7 +64,7 @@ class EditHostDialog : FullScreenDialogFragment() {
                 "Are you sure you want to delete this host?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
                     SaveUtils.deleteHost(requireContext(), host)
-                    Toast.makeText(context, "Host has been deleted. Please refresh.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Host has been deleted. Please swipe up to refresh.", Toast.LENGTH_LONG).show()
                     dialog.dismiss()
                     dismiss()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()

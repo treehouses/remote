@@ -46,15 +46,25 @@
         android:text="Previously Connected Hosts"
         android:textSize="@dimen/text_size_mid" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/past_hosts"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@color/windowBackground"
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="@dimen/margin_large"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="10"
-        tools:listitem="@layout/row_ssh" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/past_hosts"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/margin_large"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="10"
+            tools:listitem="@layout/row_ssh" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/no_hosts"
