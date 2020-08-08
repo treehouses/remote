@@ -34,6 +34,12 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         requestNetworkInfo()
+        bind.refreshIcon.setOnClickListener {
+            bind.progressBar.visibility = View.VISIBLE
+            bind.container.visibility = View.GONE
+            bind.iconContainer.visibility = View.GONE
+            requestNetworkInfo()
+        }
         return bind.root
     }
 
@@ -122,7 +128,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             showDialog(context,"Gateway Information", message)
         }
         if(gateway.isComplete()) {
-            gatewayIcon.visibility = View.VISIBLE
+            bind.iconContainer.visibility = View.VISIBLE
             bind.container.visibility = View.VISIBLE
             bind.progressBar.visibility = View.GONE
         }
