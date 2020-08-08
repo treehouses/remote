@@ -13,6 +13,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
 import java.lang.Exception
@@ -21,7 +22,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
+class DiscoverFragment : BaseFragment(), FragmentDialogInterface, BackPressReceiver {
     private lateinit var bind : ActivityDiscoverFragmentBinding
     private var gateway = Gateway()
     private var deviceList = ArrayList<Device>()
@@ -222,6 +223,10 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         fun isComplete(): Boolean {
             return device.isComplete() && this::ssid.isInitialized
         }
+    }
+
+    override fun onBackPressed() {
+        listener.openCallFragment(SystemFragment())
     }
 
     companion object {
