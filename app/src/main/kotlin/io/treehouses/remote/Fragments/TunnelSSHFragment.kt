@@ -220,10 +220,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 var Position:Int = 0
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
-//<<<<<<< HEAD
-//                if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")){
-//                    Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
-//=======
+
                 if(readMessage.contains("Host / port not found")) {
                     addHostButton?.isEnabled = true
                     addHostButton?.text = "Add Host"
@@ -232,20 +229,6 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     portList?.isEnabled = true
                     addHostButton?.isEnabled = true
                     Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
-//Host / port not found
-//
-//
-//                    else if(readMessage.contains("treehouses sshtunnel ports")) {
-//                        Toast.makeText(requireContext(), "Swipe slower as you having an older rpi", Toast.LENGTH_SHORT).show()
-//                        portsName = ArrayList()
-//                        hostsName = ArrayList()
-//                        hostsPosition = ArrayList()
-//                        listener.sendMessage("treehouses sshtunnel ports")
-//                    }
-//                    else{
-//                        Toast.makeText(requireContext(), "Please add host, and also no duplicate hosts allowed", Toast.LENGTH_SHORT).show()
-//                    }
-
                 }
                 else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")){
                     Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
