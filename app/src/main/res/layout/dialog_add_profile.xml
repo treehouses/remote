@@ -18,7 +18,7 @@
 
 
     <EditText
-        android:id="@+id/Server_Address"
+        android:id="@+id/Server_Host"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
@@ -29,7 +29,7 @@
         android:padding="@dimen/padding_normal" />
 
     <EditText
-        android:id="@+id/delete_key_confirmation"
+        android:id="@+id/Local_Address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_medium"
@@ -90,7 +90,7 @@
             android:text="Cancel" />
 
         <Button
-            android:id="@+id/deleteButton"
+            android:id="@+id/addingProfileButton"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -11,12 +11,14 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.appcompat.widget.AppCompatEditText
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
+import kotlinx.android.synthetic.main.dialog_add_profile.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -26,6 +28,7 @@ class SocksFragment : BaseFragment() {
     private var nowButton: Button? = null
     private var startButton: Button? = null
     private var addProfileButton: Button? = null
+    private var addingProfileButton: Button? = null
     private var textStatus: TextView? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
@@ -35,7 +38,11 @@ class SocksFragment : BaseFragment() {
     private var portList: ListView? = null
     private var notification: Switch? = null
     private lateinit var dialog:Dialog
-
+    private lateinit var password: AppCompatEditText
+    private lateinit var serverPort: AppCompatEditText
+    private lateinit var localPort: AppCompatEditText
+    private lateinit var localAddress: AppCompatEditText
+    private lateinit var serverHost: AppCompatEditText
     var bind: ActivitySocksFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
@@ -55,6 +62,13 @@ addProfileButton = bind!!.btnAddProfile
 
 
         dialog.setContentView(R.layout.dialog_add_profile)
+
+        serverHost = dialog.findViewById(R.id.Server_Host)
+        localAddress = dialog.findViewById(R.id.Local_Address)
+        localPort = dialog.findViewById(R.id.local_port)
+        serverPort = dialog.findViewById(R.id.server_port)
+        password = dialog.findViewById(R.id.password)
+        addingProfileButton = dialog.findViewById(R.id.addingProfileButton)
 //        inputExternal = dialog.findViewById(R.id.ExternalTextInput)
 //        inputInternal = dialog.findViewById(R.id.InternalTextInput)
 //
@@ -142,6 +156,22 @@ addProfileButton = bind!!.btnAddProfile
             dialog.show()
         }
 
+        addingProfileButton!!.setOnClickListener {
+            if (serverHost.text.toString().isNotEmpty() && localAddress.text.toString().isNotEmpty() && localPort.text.toString().isNotEmpty() && serverPort.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
+                val s1 = serverHost.text.toString()
+                val s2 = localAddress.text.toString()
+                val s3 = localPort.text.toString()
+                val s4 = serverPort.text.toString()
+                val s5 = password.text.toString()
+
+                val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$s1\\\", \\\"local_address\\\": \\\"$s2\\\", \\\"local_port\\\": $s3, \\\"server_port\\\": $s4, \\\"password\\\": \\\"$s5\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
+                listener.sendMessage(message)
+                addProfileButton!!.text = "Adding......"
+                addProfileButton!!.isEnabled = false
+                dialog.dismiss()
+            }
+        }
+
 //        val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
 //        addingPortButton.setOnClickListener {
 //            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -186,6 +216,11 @@ addProfileButton = bind!!.btnAddProfile
                 profileName = ArrayList()
                 listener.sendMessage("treehouses shadowsocks list")
             }
+            else if(readMessage.contains("Use `treehouses shadowsock")){
+                addProfileButton!!.text = "Add Profile"
+                profileName = ArrayList()
+                listener.sendMessage("treehouses shadowsocks list")
+            }
             else if (readMessage.contains("tmptmp")){
 
                 if(readMessage.contains(' '))
@@ -196,6 +231,7 @@ addProfileButton = bind!!.btnAddProfile
                 adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, profileName!!)
                 bind!!.profiles.adapter = adapter
             }
+
 
         }
     }
