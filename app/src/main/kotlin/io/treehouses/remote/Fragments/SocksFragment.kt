@@ -218,6 +218,7 @@ addProfileButton = bind!!.btnAddProfile
             }
             else if(readMessage.contains("Use `treehouses shadowsock")){
                 addProfileButton!!.text = "Add Profile"
+                addProfileButton!!.isEnabled = true
                 profileName = ArrayList()
                 listener.sendMessage("treehouses shadowsocks list")
             }
