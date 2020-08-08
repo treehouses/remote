@@ -118,9 +118,6 @@ class TorTabFragment : BaseFragment() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             builder.setTitle("Delete Port " + portsName!![position] + " ?")
-//            builder.setMessage("Would you like to delete?");
-
-            // add the buttons
             builder.setPositiveButton("Confirm") { dialog, _ ->
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0]))
                 addPortButton!!.text = "deleting port ....."
@@ -130,7 +127,6 @@ class TorTabFragment : BaseFragment() {
             }
             builder.setNegativeButton("Cancel", null)
 
-            // create and show the alert dialog
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
