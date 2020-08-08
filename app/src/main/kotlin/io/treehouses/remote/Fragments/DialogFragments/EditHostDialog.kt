@@ -25,6 +25,8 @@ class EditHostDialog : FullScreenDialogFragment() {
     private lateinit var initialHostUri: String
 
     private lateinit var allKeys: List<String>
+    private lateinit var dismissListener : DialogInterface.OnDismissListener
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = EditHostBinding.inflate(inflater, container, false)
         Log.e("ARGUMENT: ", arguments?.getString(SELECTED_HOST_URI, "")!!)
@@ -109,6 +111,15 @@ class EditHostDialog : FullScreenDialogFragment() {
         host.fontSize = bind.selectFontSize.value
         SaveUtils.updateHost(requireContext(), initialHostUri, host)
         dismiss()
+    }
+
+    fun setOnDismissListener(dl: DialogInterface.OnDismissListener) {
+        dismissListener = dl
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (dismissListener != null) dismissListener.onDismiss(dialog)
     }
 
     companion object {

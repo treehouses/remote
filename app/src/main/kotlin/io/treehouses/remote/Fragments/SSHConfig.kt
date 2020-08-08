@@ -1,9 +1,6 @@
 package io.treehouses.remote.Fragments
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
@@ -42,7 +39,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     private lateinit var bind: DialogSshBinding
     private lateinit var pastHosts: List<HostBean>
     private lateinit var adapter : RecyclerView.Adapter<ViewHolderSSHRow>
-    private lateinit var refreshLayout: SwipeRefreshLayout
     private var bound : TerminalManager? = null
     private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -74,7 +70,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         super.onViewCreated(view, savedInstanceState)
         setEnabled(false)
         addTextValidation()
-        addRefreshListener(view)
         bind.connectSsh.setOnClickListener {
             var uriString = bind.sshTextInput.text.toString()
             if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
@@ -90,18 +85,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
 
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
-    }
-
-    private fun addRefreshListener(view: View) {
-        refreshLayout = view.findViewById<SwipeRefreshLayout?>(R.id.swiperefresh)!!
-        refreshLayout.setOnRefreshListener {
-            setUpAdapter()
-        }
-        refreshLayout.setColorSchemeColors(
-                ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
-                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
-                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
-                ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
     }
 
     private fun setUpAdapter() {
@@ -125,7 +108,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             }
         }
         bind.pastHosts.adapter = adapter
-        refreshLayout.isRefreshing = false
         addItemTouchListener()
     }
     private fun addItemTouchListener() {
@@ -194,6 +176,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
 
     override fun onButtonClick(position: Int) {
         val edit = EditHostDialog()
+        edit.setOnDismissListener(DialogInterface.OnDismissListener { setUpAdapter() })
         edit.arguments = Bundle().apply { putString(EditHostDialog.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
         edit.show(childFragmentManager, "EditHost")
     }
