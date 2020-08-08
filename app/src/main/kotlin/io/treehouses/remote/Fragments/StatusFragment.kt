@@ -89,6 +89,10 @@ class StatusFragment : BaseFragment() {
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
 
+            val usedStoragePercentage = statusData.storage.split(" ")[3].dropLast(1)
+            ObjectAnimator.ofInt(bind.storageBar, "progress", usedStoragePercentage.toInt()).setDuration(600).start()
+            bind.storage.text = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
+
             bind.cpuModelText.text = "CPU: ARM " + statusData.arm
 
             writeNetworkInfo(statusData.networkmode, statusData.info)
