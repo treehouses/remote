@@ -99,22 +99,26 @@ class StatusFragment : BaseFragment() {
 
             bind.tvRpiName.text = "Hostname: " + statusData.hostname
 
-            val res = statusData.status.trim().split(" ")
-
-            bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
-            bind.deviceAddress.text = res[1]
-            bind.tvRpiType.text = "Model: " + res[4]
-            rpiVersion = res[3]
-
-            bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
-
-            checkWifiStatus(statusData.internet)
-
-            bind.refreshBtn.visibility = View.VISIBLE
+            updateStatusMore(statusData)
 
         } else {
             checkUpgradeStatus(readMessage)
         }
+    }
+
+    private fun updateStatusMore(statusData:StatusData) {
+        val res = statusData.status.trim().split(" ")
+
+        bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
+        bind.deviceAddress.text = res[1]
+        bind.tvRpiType.text = "Model: " + res[4]
+        rpiVersion = res[3]
+
+        bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
+
+        checkWifiStatus(statusData.internet)
+
+        bind.refreshBtn.visibility = View.VISIBLE
     }
 
 
