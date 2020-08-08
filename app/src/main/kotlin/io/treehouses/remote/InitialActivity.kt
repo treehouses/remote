@@ -18,7 +18,6 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
-import io.treehouses.remote.Fragments.SSHConfig
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
@@ -33,6 +32,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
+    private lateinit var currentTitle: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
@@ -48,6 +49,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
         checkStatusNow()
         openCallFragment(HomeFragment())
+        currentTitle = "Home"
         setUpDrawer()
         title = "Home"
         GPSService(this)
@@ -71,9 +73,9 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
-            else if (f is SettingsFragment) {
+            else if (f is SettingsFragment || f is CommunityFragment) {
                 (supportFragmentManager).popBackStack()
-                title = "Home"
+                title = currentTitle
             }
             if (f is BackPressReceiver) f.onBackPressed()
         }
@@ -98,23 +100,26 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             }
         }
         title = item.title
+        currentTitle = item.title.toString()
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
     private fun onNavigationItemClicked(id: Int) {
-        when (id) {
-            R.id.menu_home -> openCallFragment(HomeFragment())
-            R.id.menu_network -> openCallFragment(NewNetworkFragment())
-            R.id.menu_system -> openCallFragment(SystemFragment())
-            R.id.menu_terminal -> openCallFragment(TerminalFragment())
-            R.id.menu_services -> openCallFragment(ServicesFragment())
-            R.id.menu_about -> openCallFragment(AboutFragment())
-            R.id.menu_status -> openCallFragment(StatusFragment())
-            R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
-            R.id.menu_ssh -> openCallFragment(SSHConfig())
-            else -> openCallFragment(HomeFragment())
+        val fragment = when (id) {
+            R.id.menu_home -> HomeFragment()
+            R.id.menu_network -> NewNetworkFragment()
+            R.id.menu_system -> SystemFragment()
+            R.id.menu_terminal -> TerminalFragment()
+            R.id.menu_services -> ServicesFragment()
+            R.id.menu_about -> AboutFragment()
+            R.id.menu_status -> StatusFragment()
+            R.id.menu_tunnel2 -> SSHTunnelFragment()
+            R.id.menu_ssh -> SSHConfig()
+            else -> HomeFragment()
         }
+
+        openCallFragment(fragment)
     }
 
     override fun openCallFragment(f: Fragment) {

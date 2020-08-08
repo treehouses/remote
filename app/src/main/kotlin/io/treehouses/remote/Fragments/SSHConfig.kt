@@ -47,11 +47,13 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             bound = (service as TerminalManager.TerminalBinder).service
             // update our listview binder to find the service
             setUpAdapter()
-            bound?.registerOnHostStatusChangedListener(this@SSHConfig)
+            if (!bound?.hostStatusChangedListeners?.contains(this@SSHConfig)!!) {
+                bound?.hostStatusChangedListeners?.add(this@SSHConfig)
+            }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            bound?.unregisterOnHostStatusChangedListener(this@SSHConfig)
+            bound?.hostStatusChangedListeners?.remove(this@SSHConfig)
             bound = null
             setUpAdapter()
         }
@@ -104,7 +106,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) {
                 val host = pastHosts[position]
                 holder.bind(host)
-                if (bound?.getConnectedBridge(host) != null) holder.setConnected(true) else holder.setConnected(false)
+                if (bound?.mHostBridgeMap?.get(host)?.get() != null) holder.setConnected(true) else holder.setConnected(false)
             }
         }
         bind.pastHosts.adapter = adapter
