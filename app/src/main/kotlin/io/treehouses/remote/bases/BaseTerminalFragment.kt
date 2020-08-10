@@ -89,7 +89,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     private fun filterMessage(readMessage: String): Boolean {
         val a = !readMessage.contains("1 packets") && !readMessage.contains("64 bytes") && !readMessage.contains("google.com") && !readMessage.contains("rtt") && readMessage.trim { it <= ' ' }.isNotEmpty()
-        val b = !readMessage.startsWith("treehouses ") && !readMessage.contains("treehouses remote commands") && !jsonSent
+        val b = !readMessage.startsWith("treehouses ") && !readMessage.contains(getString(R.string.TREEHOUSES_REMOTE_COMMANDS)) && !jsonSent
         return a && b
     }
 

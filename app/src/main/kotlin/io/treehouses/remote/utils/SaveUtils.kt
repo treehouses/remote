@@ -34,6 +34,12 @@ object SaveUtils {
         e.apply()
     }
 
+    fun removeStringList(context: Context, arrayName: String) {
+        val e = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        e.remove(arrayName)
+        e.apply()
+    }
+
     fun getStringList(context: Context, arrayName: String): MutableList<String> {
         val strList: List<String>
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -200,5 +206,12 @@ object SaveUtils {
         getAllHosts(context).forEach { editor.remove(it.uri.toString()) }
         editor.apply()
         clearArrayList(context, SSH_HOSTS)
+    }
+
+    fun deleteHost(context: Context, hostBean: HostBean) {
+        val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        editor.remove(hostBean.uri.toString())
+        editor.apply()
+        removeFromArrayList(context, SSH_HOSTS, hostBean.uri.toString())
     }
 }

@@ -3,6 +3,7 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -12,16 +13,17 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
-import io.treehouses.remote.Fragments.SSHConfig
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
+import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityInitial2Binding
@@ -34,6 +36,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
+    private lateinit var currentTitle: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
@@ -49,6 +53,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         }
         checkStatusNow()
         openCallFragment(HomeFragment())
+        currentTitle = "Home"
         setUpDrawer()
         title = "Home"
         GPSService(this)
@@ -65,17 +70,20 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.navView.setNavigationItemSelectedListener(this)
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onBackPressed() {
         if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             bind.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            if (f is HomeFragment) finish()
-            else if (f is SettingsFragment) {
-                (supportFragmentManager).popBackStack()
-                title = "Home"
+            if (f is HomeFragment) {
+                finishAffinity()
             }
+            else if (f is SettingsFragment || f is CommunityFragment) {
+                (supportFragmentManager).popBackStack()
+                title = currentTitle
+            }
+            if (f is BackPressReceiver) f.onBackPressed()
         }
     }
 
@@ -98,31 +106,26 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             }
         }
         title = item.title
+        currentTitle = item.title.toString()
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
     private fun onNavigationItemClicked(id: Int) {
-        when (id) {
-            R.id.menu_home -> openCallFragment(HomeFragment())
-            R.id.menu_network -> openCallFragment(NewNetworkFragment())
-            R.id.menu_system -> openCallFragment(SystemFragment())
-            R.id.menu_terminal -> openCallFragment(TerminalFragment())
-            else -> checkMore(id)
-        }
-    }
-
-    private fun checkMore(id: Int) {
-        when (id) {
-            R.id.menu_services -> openCallFragment(ServicesFragment())
-            R.id.menu_about -> openCallFragment(AboutFragment())
-            R.id.menu_status -> openCallFragment(StatusFragment())
-            R.id.menu_tunnel2 -> openCallFragment(SSHTunnelFragment())
-            R.id.menu_ssh -> openCallFragment(SSHConfig())
-            else -> openCallFragment(HomeFragment())
-
+        val fragment = when (id) {
+            R.id.menu_home -> HomeFragment()
+            R.id.menu_network -> NewNetworkFragment()
+            R.id.menu_system -> SystemFragment()
+            R.id.menu_terminal -> TerminalFragment()
+            R.id.menu_services -> ServicesFragment()
+            R.id.menu_about -> AboutFragment()
+            R.id.menu_status -> StatusFragment()
+            R.id.menu_tunnel2 -> SSHTunnelFragment()
+            R.id.menu_ssh -> SSHConfig()
+            else -> HomeFragment()
         }
 
+        openCallFragment(fragment)
     }
 
     override fun openCallFragment(f: Fragment) {
@@ -131,7 +134,11 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, f)
         fragmentTransaction.addToBackStack("")
-        fragmentTransaction.commit()
+        try {
+            fragmentTransaction.commit()
+        } catch (exception:IllegalStateException ){
+            Log.e("Error", exception.toString())
+        }
         //        menuItem.setChecked(true);
 //        title = "Treehouses Remote"
         //        drawer.closeDrawers();
@@ -193,11 +200,18 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_settings) {
-            openCallFragment(SettingsFragment())
-            title = "Settings"
-        } else if (item.itemId == R.id.action_feedback) {
-            FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
+        when (item.itemId) {
+            R.id.action_settings -> {
+                openCallFragment(SettingsFragment())
+                title = getString(R.string.action_settings)
+            }
+            R.id.action_feedback -> {
+                FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
+            }
+            R.id.action_community -> {
+                openCallFragment(CommunityFragment())
+                title = getString(R.string.action_community)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

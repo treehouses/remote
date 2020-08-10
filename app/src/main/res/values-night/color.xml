@@ -18,7 +18,9 @@
     <color name="card_background">@color/cardview_dark_background</color>
     <color name="focusColor">#FFFFFF</color>
     <color name="preference_category">@color/bg_white</color>
-    <color name="preference_title">@color/md_grey_500</color>
+    <color name="preference_background">#000000</color>
+    <color name="preference_title">#FFFFFF</color>
+    <color name="pref_box_color">#303030</color>
     <color name="tor_background">#B5B5B5</color>
     <color name="expandable_list_row">#4E4E4E</color>
     <color name="expandable_child_text">#A6A6A6</color>

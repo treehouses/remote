@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:background="@color/services_detail_background">
 
-    <ListView
-        android:id="@+id/listView"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
@@ -16,67 +16,46 @@
         android:layout_marginRight="32dp"
         android:layout_marginBottom="32dp"
         android:background="@drawable/profiles_back"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="10.0sp"
-        android:padding="28dp"
-        app:layout_constraintBottom_toTopOf="@id/organizer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
 
-    </ListView>
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor = "#FFFFFF"
+            android:textColorHint="@color/md_grey_400"
+            android:hint = "Search"
+            android:layout_marginTop = "14dp"
+            android:layout_marginBottom = "14dp"
+            android:layout_marginLeft = "24dp"
+            android:layout_marginRight="24dp"/>
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"
+            android:paddingBottom="28dp"
+            android:paddingRight="28dp"
+            android:paddingLeft="28dp">
+
+        </ListView>
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_message"
-        app:layout_constraintBottom_toBottomOf="@+id/listView"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/listView" />
+        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"
-        android:id="@+id/organizer"
-        android:gravity="center_horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_gravity="center_vertical"
-            app:fontFamily="@font/roboto_bold"
-            android:text="Memory Used"
-            android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_mid"/>
-
-        <ProgressBar
-            android:id="@+id/space_left"
-            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-            android:layout_width="210dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginBottom="32dp"
-            android:maxHeight="25dp"
-            android:minHeight="25dp"
-            android:progress="0"
-            android:progressDrawable="@drawable/custom_progress_bar" />
-
-        <TextView
-            android:id="@+id/memory_percentage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_gravity="center_vertical"
-            app:fontFamily="@font/roboto_bold"
-            android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_mid" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

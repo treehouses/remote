@@ -2,10 +2,10 @@ package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
 import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.R
 
@@ -65,24 +65,15 @@ class TextBoxValidation {
      *
      */
     private fun textboxValidation(context: Context, type: String, toWatch: EditText?) {
-        toWatch!!.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                when (type) {
-                    "ethernet" -> {
-        //                    validateETHERNET(context);
-                    }
-                    "wifi" -> {
-                        validateWIFI(context)
-                    }
-                    "bridge" -> {
-                        validateBridge()
-                    }
+        toWatch!!.addTextChangedListener {
+            when (type) {
+                "ethernet" -> {
+                    //                    validateETHERNET(context);
                 }
+                "wifi" -> validateWIFI(context)
+                "bridge" -> validateBridge()
             }
-
-            override fun afterTextChanged(editable: Editable) {}
-        })
+        }
     }
 
     /**
@@ -95,14 +86,9 @@ class TextBoxValidation {
     }
 
     private fun addTextChangedListener(layout: TextInputLayout, toWatch: EditText?, confirmPWD: EditText, context: Context) {
-        toWatch!!.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                validateChangedPassword(layout, confirmPWD, context)
-            }
-
-            override fun afterTextChanged(editable: Editable) {}
-        })
+        toWatch!!.doOnTextChanged { _, _, _, _ ->
+            validateChangedPassword(layout, confirmPWD, context)
+        }
     }
 
     /**
