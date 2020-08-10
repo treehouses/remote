@@ -43,7 +43,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         bind!!.switchNotification.isEnabled = false
         bind!!.notifyNow.isEnabled = false
         portList = bind!!.sshPorts
-        initializeDialog()
+        initializeDialog1()
         addPortButton = bind!!.btnAddPort
 
         addHostButton = bind!!.btnAddHosts
@@ -74,9 +74,9 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         bind!!.notifyNow.setOnClickListener(this)
     }
 
-    private fun initializeDialog(){
-        dialog = Dialog(requireContext())
 
+    private fun initializeDialog1() {
+        dialog = Dialog(requireContext())
         dialogHosts = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_sshtunnel_ports)
         dropdown = dialog.findViewById(R.id.hosts)
@@ -96,6 +96,10 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         windowHost!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        initializeDialog2()
+    }
+
+    private fun initializeDialog2(){
         portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             if(portsName!![position].contains("@")){
@@ -110,38 +114,35 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 }
             }
             else{
-                builder.setTitle("Delete Port " + portsName!![position] + " ?")
-                builder.setPositiveButton("Confirm") { dialog, _ ->
-                    var myPos:Int = 0
-                    for(pos in hostsPosition!!.indices){
-                        if(hostsPosition!![pos] > position){
-                            myPos = pos
-                            break
-                        }
-
-                    }
-                    if(hostsPosition!!.last() < position){
-                        myPos = hostsPosition!!.lastIndex
-                    }
-                    Log.d("dasda", myPos.toString())
-                    listener.sendMessage("treehouses sshtunnel remove port " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0])
-                    addPortButton!!.text = "deleting port ....."
-                    portList!!.isEnabled = false
-                    addPortButton!!.isEnabled = false
-                    dialog.dismiss()
-                }
+                initializeDialog3(builder, position)
             }
-//            builder.setMessage("Would you like to delete?");
-
-            // add the buttons
-
             builder.setNegativeButton("Cancel", null)
-
-            // create and show the alert dialog
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             Log.d("dialoging", "dialog")
             dialog.show()
+        }
+    }
+
+    private fun initializeDialog3(builder:AlertDialog.Builder, position:Int){
+        builder.setTitle("Delete Port " + portsName!![position] + " ?")
+        builder.setPositiveButton("Confirm") { dialog, _ ->
+            var myPos:Int = 0
+            for(pos in hostsPosition!!.indices){
+                if(hostsPosition!![pos] > position){
+                    myPos = pos
+                    break
+                }
+            }
+            if(hostsPosition!!.last() < position){
+                myPos = hostsPosition!!.lastIndex
+            }
+            Log.d("dasda", myPos.toString())
+            listener.sendMessage("treehouses sshtunnel remove port " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0])
+            addPortButton!!.text = "deleting port ....."
+            portList!!.isEnabled = false
+            addPortButton!!.isEnabled = false
+            dialog.dismiss()
         }
     }
 
