@@ -7,4 +7,5 @@ interface ServiceAction {
     fun onClickStart(s: ServiceInfo?)
     fun onClickLink(s: ServiceInfo?)
     fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean)
+    fun onClickEditEnvVar(s: ServiceInfo?)
 }

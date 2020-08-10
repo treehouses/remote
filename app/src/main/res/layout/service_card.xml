@@ -179,6 +179,21 @@
                 android:textColor="@color/bg_white"
                 android:background="@drawable/ripple"/>
 
+            <Button
+                android:id="@+id/editEnvButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:background="@drawable/service_button"
+                android:text="Edit Environment Variables"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_white" />
+
         </LinearLayout>
     </FrameLayout>
 
