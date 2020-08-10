@@ -9,15 +9,24 @@
         android:layout_height="match_parent">
         
         <TextView
+            android:id="@+id/goto_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
+            android:text="Go to "
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:textSize="18sp"/>
+
+        <TextView
             android:id="@+id/discover_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/daynight_textColor"
-            android:text="Go to Discover"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp"
-            android:textSize="20sp"/>
-
+            android:text="@string/discover_text_underlined"
+            android:layout_toRightOf="@id/goto_text"
+            android:layout_toEndOf="@id/goto_text"
+            android:textSize="18sp"/>
     </RelativeLayout>
 
 </LinearLayout>
