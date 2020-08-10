@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/padding_normal">
+    android:padding="@dimen/padding_normal"
+    android:theme="@style/CardTheme"
+    android:background="@color/card_background">
 
     <TextView
         android:layout_width="match_parent"
@@ -58,7 +60,7 @@
         android:id="@+id/btn_start_config"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
+        android:background="@drawable/ic_blue"
         android:textColor="@color/bg_white"
         android:layout_marginTop="8dp"
         android:text="Start Configuration" />

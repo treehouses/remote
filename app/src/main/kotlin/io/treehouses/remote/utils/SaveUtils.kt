@@ -8,7 +8,6 @@ import io.treehouses.remote.Fragments.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
-import java.security.KeyPair
 import java.util.*
 
 object SaveUtils {
@@ -32,6 +31,12 @@ object SaveUtils {
         }
         val e = PreferenceManager.getDefaultSharedPreferences(context).edit()
         e.putString(arrayName, strArr.toString())
+        e.apply()
+    }
+
+    fun removeStringList(context: Context, arrayName: String) {
+        val e = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        e.remove(arrayName)
         e.apply()
     }
 
@@ -209,5 +214,4 @@ object SaveUtils {
         editor.apply()
         removeFromArrayList(context, SSH_HOSTS, hostBean.uri.toString())
     }
-
 }

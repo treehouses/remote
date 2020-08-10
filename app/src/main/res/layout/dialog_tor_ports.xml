@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add Port"
-        android:textColor="#000000"
-        android:background="@color/md_grey_300"/>
+        android:background="@drawable/ic_green"
+        android:textColor="#FFFFFF"/>
 
 </LinearLayout>

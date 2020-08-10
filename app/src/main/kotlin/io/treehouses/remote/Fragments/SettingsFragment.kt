@@ -30,6 +30,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val resetCommandsList = findPreference<Preference>("reset_commands")
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
         val reactivateTutorials = findPreference<Preference>("reactivate_tutorials")
+        val clearServices = findPreference<Preference>("clear_services")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
         val showBluetoothFile = findPreference<Preference>("bluetooth_file")
@@ -38,6 +39,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
         setClickListener(reactivateTutorials)
+        setClickListener(clearServices)
         setClickListener(clearSSHHosts)
         setClickListener(clearSSHKeys)
         setClickListener(showBluetoothFile)
@@ -86,6 +88,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "clear_commands" -> clearCommands()
             "reset_commands" -> resetCommands()
             "network_profiles" -> networkProfiles()
+            "clear_services" -> clearServicesPrompt()
             "reactivate_tutorials" -> reactivateTutorialsPrompt()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
@@ -156,7 +159,17 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             REACTIVATE_TUTORIALS -> reactivateTutorials()
             CLEAR_SSH_HOSTS -> SaveUtils.deleteAllHosts(requireContext())
             CLEAR_SSH_KEYS -> KeyUtils.deleteAllKeys(requireContext())
+            CLEAR_SERVICES -> clearServices()
         }
+    }
+
+    private fun clearServicesPrompt() {
+        createAlertDialog("Clear Services Cache", "Would you like to Clear Stored Services List? This will increase the loading time on next visit to Services.", "Clear", CLEAR_SERVICES)
+    }
+
+    private fun clearServices() {
+        SaveUtils.removeStringList(requireContext(),"servicesArray")
+        Toast.makeText(context, "Services Cache Cleared", Toast.LENGTH_LONG).show()
     }
 
     private fun reactivateTutorialsPrompt() {
@@ -181,5 +194,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         private const val REACTIVATE_TUTORIALS = 4
         private const val CLEAR_SSH_HOSTS = 5
         private const val CLEAR_SSH_KEYS = 6
+        private const val CLEAR_SERVICES = 7
     }
 }
