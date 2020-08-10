@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -18,7 +20,7 @@ import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 
-class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
+class ServicesOverviewFragment() : BaseServicesFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
     private var servicesListener: ServicesListener? = null
     private var used = 0
@@ -28,11 +30,14 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        getViewModel()
         mChatService = listener.getChatService()
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
-        adapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.bg_white))
-        bind!!.listView.adapter = adapter
-        bind!!.listView.onItemClickListener = this
+        viewModel.servicesData.observe(viewLifecycleOwner, Observer {
+            adapter = ServicesListAdapter(requireContext(), it, ContextCompat.getColor(requireContext(), R.color.bg_white))
+            bind!!.listView.adapter = adapter
+            bind!!.listView.onItemClickListener = this
+        })
         return bind!!.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +91,7 @@ class ServicesTabFragment() : BaseServicesFragment(), OnItemClickListener {
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-        val selected = services[position]
+        val selected = viewModel.servicesData.value!![position]
         if (servicesListener != null) servicesListener!!.onClick(selected)
     }
 

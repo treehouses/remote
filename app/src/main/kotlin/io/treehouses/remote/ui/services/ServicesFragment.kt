@@ -22,17 +22,17 @@ import java.util.*
 
 
 class ServicesFragment : BaseServicesFragment(), ServicesListener {
-    private var servicesTabFragment: ServicesTabFragment? = null
+    private var servicesTabFragment: ServicesOverviewFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     var worked = false
     private var currentTab:Int =  0
-    private lateinit var array: MutableList<String>
-    override fun onSaveInstanceState(outState: Bundle) {
+    private lateinit var services: ArrayList<ServiceInfo>
 
-    }
+    private lateinit var cachedServices: MutableList<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        getViewModel()
         bind = ActivityServicesFragmentBinding.inflate(inflater, container, false)
         services = ArrayList()
         bind!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
@@ -54,8 +54,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun preferences(){
-        array = SaveUtils.getStringList(requireContext(), "servicesArray")
-        for (string in array) {
+        cachedServices = SaveUtils.getStringList(requireContext(), "servicesArray")
+        for (string in cachedServices) {
             val a = performAction(string, services)
             if (a == 1) {
                 worked = true
@@ -66,12 +66,9 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun showUI(){
-        servicesTabFragment = ServicesTabFragment()
+        servicesTabFragment = ServicesOverviewFragment()
         servicesDetailsFragment = ServicesDetailsFragment()
-        val bundle = Bundle()
-        bundle.putSerializable("services", services)
-        servicesTabFragment?.arguments = bundle
-        servicesDetailsFragment?.arguments = bundle
+        viewModel.servicesData.value = services
         bind!!.progressBar2.visibility = View.GONE
         replaceFragment(currentTab)
     }
@@ -81,8 +78,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         val output:String? = msg.obj as String
         when (performAction(output!!, services)) {
             1 -> {
-                array.add(output)
-                SaveUtils.saveStringList(requireContext(), array, "servicesArray")
+                cachedServices.add(output)
+                SaveUtils.saveStringList(requireContext(), cachedServices, "servicesArray")
                 worked = false
                 showUI()
             }
@@ -91,7 +88,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 showUpdateCliAlert()
             }
             else -> {
-                array.add(output)
+                cachedServices.add(output)
             }
         }
     }
