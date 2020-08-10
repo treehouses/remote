@@ -111,9 +111,16 @@ open class BaseTerminalBridge : VDUDisplay {
     // We don't have a scroll bar.
     override fun updateScrollBar() {}
 
-    protected fun discardBitmap() {
-        if (bitmap != null) bitmap!!.recycle()
-        bitmap = null
+    fun checkBitMap(width: Int, height: Int) {
+        // reallocate new bitmap if needed
+        var newBitmap = bitmap == null
+        if (bitmap != null) newBitmap = bitmap!!.width != width || bitmap!!.height != height
+        if (newBitmap) {
+            if (bitmap != null) bitmap!!.recycle()
+            bitmap = null
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            canvas.setBitmap(bitmap)
+        }
     }
 
     fun propagateConsoleText(rawText: CharArray?, length: Int) {
@@ -287,6 +294,37 @@ open class BaseTerminalBridge : VDUDisplay {
         defaultPaint.strokeWidth = 0.0f
         if (width >= borderX) canvas.drawLine(borderX.toFloat(), 0f, borderX.toFloat(), borderY + 1.toFloat(), defaultPaint)
         if (height >= borderY) canvas.drawLine(0f, borderY.toFloat(), borderX + 1.toFloat(), borderY.toFloat(), defaultPaint)
+    }
+
+    fun copyCurrentSelection() {
+        if (parent != null) {
+            parent!!.copyCurrentSelectionToClipboard()
+        }
+    }
+
+    /**
+     *
+     */
+    fun resetScrollPosition() {
+        // if we're in scrollback, scroll to bottom of window on input
+        if (vDUBuffer!!.windowBase != vDUBuffer!!.screenBase) vDUBuffer!!.setBaseWindow(vDUBuffer!!.screenBase)
+    }
+
+    /**
+     * Inject a specific string into this terminal. Used for post-login strings
+     * and pasting clipboard.
+     */
+    fun injectString(string: String?) {
+        if (string == null || string.length == 0) return
+        val injectStringThread = Thread(Runnable {
+            try {
+                transport!!.write(string.toByteArray(charset(host!!.encoding)))
+            } catch (e: Exception) {
+                Log.e(TAG, "Couldn't inject string to remote host: ", e)
+            }
+        })
+        injectStringThread.name = "InjectString"
+        injectStringThread.start()
     }
 
     companion object {

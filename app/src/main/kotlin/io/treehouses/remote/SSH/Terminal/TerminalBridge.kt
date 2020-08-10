@@ -195,29 +195,6 @@ class TerminalBridge : BaseTerminalBridge {
 //        keyHandler.setCharset(encoding!!)
 //    }
 
-    fun copyCurrentSelection() {
-        if (parent != null) {
-            parent!!.copyCurrentSelectionToClipboard()
-        }
-    }
-
-    /**
-     * Inject a specific string into this terminal. Used for post-login strings
-     * and pasting clipboard.
-     */
-    fun injectString(string: String?) {
-        if (string == null || string.length == 0) return
-        val injectStringThread = Thread(Runnable {
-            try {
-                transport!!.write(string.toByteArray(charset(host!!.encoding)))
-            } catch (e: Exception) {
-                Log.e(TAG, "Couldn't inject string to remote host: ", e)
-            }
-        })
-        injectStringThread.name = "InjectString"
-        injectStringThread.start()
-    }
-
     /**
      * Internal method to request actual PTY terminal once we've finished
      * authentication. If called before authenticated, it will just fail.
@@ -427,17 +404,6 @@ class TerminalBridge : BaseTerminalBridge {
         forceRedraw(parent)
     }
 
-    fun checkBitMap(width: Int, height: Int) {
-        // reallocate new bitmap if needed
-        var newBitmap = bitmap == null
-        if (bitmap != null) newBitmap = bitmap!!.width != width || bitmap!!.height != height
-        if (newBitmap) {
-            discardBitmap()
-            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            canvas.setBitmap(bitmap)
-        }
-    }
-
     fun checkDimensions(width: Int, height: Int) : Boolean {
         // recalculate buffer size
         val newColumns: Int
@@ -620,14 +586,6 @@ class TerminalBridge : BaseTerminalBridge {
      */
     val isUsingNetwork: Boolean
         get() = transport!!.usesNetwork()
-
-    /**
-     *
-     */
-    fun resetScrollPosition() {
-        // if we're in scrollback, scroll to bottom of window on input
-        if (vDUBuffer!!.windowBase != vDUBuffer!!.screenBase) vDUBuffer!!.setBaseWindow(vDUBuffer!!.screenBase)
-    }
 
     /**
      * Convenience function to increase the font size by a given step.
