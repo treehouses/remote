@@ -37,6 +37,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     private lateinit var dialog:Dialog
     private lateinit var addingPortButton: Button
     private lateinit var addingHostButton: Button
+    private lateinit var adapter2: ArrayAdapter<String>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         bind!!.switchNotification.isEnabled = false
@@ -262,14 +263,14 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                         }
 
                     }
-                    val adapter2: ArrayAdapter<String> = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                   adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                     dropdown?.adapter = adapter2
                     adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
                     bind!!.sshPorts.adapter = adapter
                     portList!!.isEnabled = true
                 }
                 else if(readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")){
-                    val adapter2: ArrayAdapter<String> = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                    adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                     dropdown?.adapter = adapter2
                     adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
                     bind!!.sshPorts.adapter = adapter
