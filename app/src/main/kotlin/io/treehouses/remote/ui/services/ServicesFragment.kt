@@ -22,19 +22,17 @@ import java.util.*
 
 
 class ServicesFragment : BaseServicesFragment(), ServicesListener {
-    private var servicesTabFragment: ServicesTabFragment? = null
+    private var servicesTabFragment: ServicesOverviewFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     var worked = false
     private var currentTab:Int =  0
-    private lateinit var array: MutableList<String>
-    override fun onSaveInstanceState(outState: Bundle) {
-
-    }
+    private lateinit var cachedServicesData: MutableList<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         bind = ActivityServicesFragmentBinding.inflate(inflater, container, false)
-        services = ArrayList()
+
         bind!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         bind!!.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -54,9 +52,9 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun preferences(){
-        array = SaveUtils.getStringList(requireContext(), "servicesArray")
-        for (string in array) {
-            val a = performAction(string, services)
+        cachedServicesData = SaveUtils.getStringList(requireContext(), "servicesArray")
+        for (string in cachedServicesData) {
+            val a = performAction(string, viewModel.servicesData.value!!)
             if (a == 1) {
                 worked = true
                 showUI()
@@ -66,12 +64,12 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun showUI(){
-        servicesTabFragment = ServicesTabFragment()
+        servicesTabFragment = ServicesOverviewFragment()
         servicesDetailsFragment = ServicesDetailsFragment()
-        val bundle = Bundle()
-        bundle.putSerializable("services", services)
-        servicesTabFragment?.arguments = bundle
-        servicesDetailsFragment?.arguments = bundle
+//        val bundle = Bundle()
+//        bundle.putSerializable("services", services)
+//        servicesTabFragment?.arguments = bundle
+//        servicesDetailsFragment?.arguments = bundle
         bind!!.progressBar2.visibility = View.GONE
         replaceFragment(currentTab)
     }
@@ -79,10 +77,10 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
     private fun updateListFromRPI(msg:Message){
         val output:String? = msg.obj as String
-        when (performAction(output!!, services)) {
+        when (performAction(output!!, viewModel.servicesData.value!!)) {
             1 -> {
-                array.add(output)
-                SaveUtils.saveStringList(requireContext(), array, "servicesArray")
+                cachedServicesData.add(output)
+                SaveUtils.saveStringList(requireContext(), cachedServicesData, "servicesArray")
                 worked = false
                 showUI()
             }
@@ -91,7 +89,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 showUpdateCliAlert()
             }
             else -> {
-                array.add(output)
+                cachedServicesData.add(output)
             }
         }
     }
@@ -130,7 +128,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun replaceFragment(position: Int) {
-        if (services.isEmpty()) return
+        if (viewModel.servicesData.value.isNullOrEmpty()) return
         setTabEnabled(true)
         var fragment: Fragment? = null
         when (position) {

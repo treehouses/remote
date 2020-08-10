@@ -4,7 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.pojo.ServiceInfo
@@ -18,16 +22,14 @@ import java.util.*
 open class BaseServicesFragment() : BaseFragment() {
     private var startJson = ""
     private var gettingJSON = false
-    lateinit var services: ArrayList<ServiceInfo>
+//    lateinit var services: ArrayList<ServiceInfo>
     private var servicesData: ServicesData? = null
+    lateinit var viewModel: ServicesViewModel
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        viewModel = activity?.run { ViewModelProvider(this)[ServicesViewModel::class.java] }!!
+        return super.onCreateView(inflater, container, savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            if (it.containsKey("services"))
-                services = it.getSerializable("services") as ArrayList<ServiceInfo>
-        }
     }
 
     protected fun openLocalURL(url: String) {
@@ -124,7 +126,7 @@ open class BaseServicesFragment() : BaseFragment() {
             }
             gettingJSON = false
             i = 1
-        } else if (output.trim { it <= ' ' }.startsWith("{")) {
+        } else if (output.trim().startsWith("{")) {
             Log.d("STARTED", "performAction: ")
             startJson = output.trim { it <= ' ' }
             gettingJSON = true
