@@ -65,28 +65,35 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                     val output = msg.obj as String
                     if (wait) {
                         matchOutput(output.trim { it <= ' ' })
-                    } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
-                        received = true
-                        openLocalURL(output.trim { it <= ' ' })
-                        binding.progressBar.visibility = View.GONE
-                    } else if (editEnv) {
-                        var tokens = output.split(" ")
-                        val name = tokens[2]
-                        tokens = tokens.subList(6, tokens.size-1)
-                        editEnv = false
-                        showEditDialog(name, tokens.size, tokens)
-                    } else {
-                        setScreenState(true)
-                        if (output.contains("service autorun set")) {
-                            Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
-                        } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-                            Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
-                        }
+                    }
+                    else{
+                        handleMore(output)
                     }
                 }
                 Constants.MESSAGE_STATE_CHANGE -> {
                     listener.redirectHome()
                 }
+            }
+        }
+    }
+
+    private fun handleMore(output:String){
+        if (isLocalUrl(output, received) || isTorURL(output, received)) {
+            received = true
+            openLocalURL(output.trim { it <= ' ' })
+            binding.progressBar.visibility = View.GONE
+        } else if (editEnv) {
+            var tokens = output.split(" ")
+            val name = tokens[2]
+            tokens = tokens.subList(6, tokens.size-1)
+            editEnv = false
+            showEditDialog(name, tokens.size, tokens)
+        } else {
+            setScreenState(true)
+            if (output.contains("service autorun set")) {
+                Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
+            } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
+                Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
             }
         }
     }
