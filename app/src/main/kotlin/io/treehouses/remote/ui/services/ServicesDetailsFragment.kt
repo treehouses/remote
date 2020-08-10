@@ -24,7 +24,6 @@ import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener, OnPageChangeListener, ServiceAction {
     private var received = false
@@ -35,24 +34,21 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private var scrolled = false
     private lateinit var binding: ActivityServicesDetailsBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
         mChatService = listener.getChatService()
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
+        spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
+        binding.pickService.adapter = spinnerAdapter
+        binding.pickService.setSelection(1)
+        binding.pickService.onItemSelectedListener = this
+        serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
+        binding.servicesCards.adapter = serviceCardAdapter
+        binding.servicesCards.addOnPageChangeListener(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
-        viewModel.servicesData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            spinnerAdapter = ServicesListAdapter(requireContext(), it, resources.getColor(R.color.md_grey_600))
-            binding.pickService.adapter = spinnerAdapter
-            binding.pickService.setSelection(1)
-            binding.pickService.onItemSelectedListener = this
-            serviceCardAdapter = ServiceCardAdapter(childFragmentManager, it)
-            binding.servicesCards.adapter = serviceCardAdapter
-            binding.servicesCards.addOnPageChangeListener(this)
-        })
     }
 
     @JvmField
@@ -83,7 +79,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         } else {
             return
         }
-        viewModel.servicesData.value = viewModel.servicesData.value?.apply { sort() } ?: ArrayList()
+        services.sort()
         serviceCardAdapter!!.notifyDataSetChanged()
         spinnerAdapter!!.notifyDataSetChanged()
         setScreenState(true)
@@ -114,7 +110,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
-            val statusCode = viewModel.servicesData.value!![position].serviceStatus
+            val statusCode = services[position].serviceStatus
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
             val count = countHeadersBefore(position)
             binding.servicesCards.currentItem = position - count
@@ -129,7 +125,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     private fun goToSelected() {
         if (selected != null) {
-            val pos = inServiceList(selected!!.name, viewModel.servicesData.value!!)
+            val pos = inServiceList(selected!!.name, services)
             val count = countHeadersBefore(pos)
             binding.servicesCards.currentItem = pos - count
             binding.pickService.setSelection(pos)
@@ -159,7 +155,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private fun countHeadersBefore(position: Int): Int {
         var count = 0
         for (i in 0..position) {
-            if (viewModel.servicesData.value!![i].isHeader) count++
+            if (services[i].isHeader) count++
         }
         return count
     }
