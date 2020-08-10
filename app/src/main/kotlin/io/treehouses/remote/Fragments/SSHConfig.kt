@@ -1,26 +1,24 @@
 package io.treehouses.remote.Fragments
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Message
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
 import io.treehouses.remote.Fragments.DialogFragments.SSHKeyGen
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
@@ -110,7 +108,6 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             }
         }
         bind.pastHosts.adapter = adapter
-
         addItemTouchListener()
     }
     private fun addItemTouchListener() {
@@ -179,6 +176,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
 
     override fun onButtonClick(position: Int) {
         val edit = EditHostDialog()
+        edit.setOnDismissListener(DialogInterface.OnDismissListener { setUpAdapter() })
         edit.arguments = Bundle().apply { putString(EditHostDialog.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
         edit.show(childFragmentManager, "EditHost")
     }
