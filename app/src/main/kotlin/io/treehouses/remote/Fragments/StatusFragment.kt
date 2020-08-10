@@ -127,7 +127,7 @@ class StatusFragment : BaseFragment() {
             bind.storage.text = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
 
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
-            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
+            bind.memory.text = usedMemory.toString() + "GB" + "/" + totalMemory.toString() + "GB"
 
             bind.cpuModelText.text = "CPU: ARM " + statusData.arm
 
@@ -135,20 +135,25 @@ class StatusFragment : BaseFragment() {
 
             bind.tvRpiName.text = "Hostname: " + statusData.hostname
 
-            val res = statusData.status.trim().split(" ")
+            updateStatusPage(statusData)
 
-            bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
-            bind.deviceAddress.text = res[1]
-            bind.tvRpiType.text = "Model: " + res[4]
-            rpiVersion = res[3]
-
-            bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
-
-            checkWifiStatus(statusData.internet)
-
-            bind.refreshBtn.visibility = View.VISIBLE
-            refreshLayout.isRefreshing = false
         } else checkUpgradeStatus(readMessage)
+    }
+
+    private fun updateStatusPage(statusData:StatusData) {
+        val res = statusData.status.trim().split(" ")
+
+        bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
+        bind.deviceAddress.text = res[1]
+        bind.tvRpiType.text = "Model: " + res[4]
+        rpiVersion = res[3]
+
+        bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
+
+        checkWifiStatus(statusData.internet)
+
+        bind.refreshBtn.visibility = View.VISIBLE
+        refreshLayout.isRefreshing = false
     }
 
 
