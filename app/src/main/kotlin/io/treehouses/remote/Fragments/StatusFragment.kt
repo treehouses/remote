@@ -67,8 +67,10 @@ class StatusFragment : BaseFragment() {
         bind.tvUpgradeCheck.text = "Checking Version..."
         bind.temperature.text = "Checking......"
         bind.memory.text = "Checking......"
+        bind.storage.text = "Checking......"
         bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
         ObjectAnimator.ofInt(bind.memoryBar, "progress", 0).setDuration(600).start()
+        ObjectAnimator.ofInt(bind.storageBar, "progress", 0).setDuration(600).start()
         ObjectAnimator.ofInt(bind.temperatureBar, "progress", 0).setDuration(600).start()
     }
 
@@ -119,6 +121,10 @@ class StatusFragment : BaseFragment() {
 
             val usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
             val totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
+
+            val usedStoragePercentage = statusData.storage.split(" ")[3].dropLast(1)
+            ObjectAnimator.ofInt(bind.storageBar, "progress", usedStoragePercentage.toInt()).setDuration(600).start()
+            bind.storage.text = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
 
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
             bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
