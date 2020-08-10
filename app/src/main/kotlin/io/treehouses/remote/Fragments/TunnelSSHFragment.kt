@@ -138,7 +138,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 myPos = hostsPosition!!.lastIndex
             }
             Log.d("dasda", myPos.toString())
-            listener.sendMessage("treehouses sshtunnel remove port " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0])
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
             addPortButton!!.text = "deleting port ....."
             portList!!.isEnabled = false
             addPortButton!!.isEnabled = false
@@ -227,7 +227,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     addHostButton?.isEnabled = true
                     Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
                 }
-                else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")) {
+                else if((readMessage.contains("ssh-rsa") || readMessage.contains("Added")) || readMessage.contains("Removed")) {
                     Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
                     addPortButton?.text = "Retrieving"
                     addHostButton?.text = "Retrieving"
