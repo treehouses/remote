@@ -8,6 +8,6 @@
     android:textColor="@color/daynight_textColor"
     android:gravity="center_vertical"
     android:drawableRight="@drawable/delete_icon"
-    android:paddingRight="26dip"
+    android:paddingRight="0dip"
     android:ellipsize="marquee"
     />

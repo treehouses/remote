@@ -25,6 +25,8 @@ class EditHostDialog : FullScreenDialogFragment() {
     private lateinit var initialHostUri: String
 
     private lateinit var allKeys: List<String>
+    private lateinit var dismissListener : DialogInterface.OnDismissListener
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = EditHostBinding.inflate(inflater, container, false)
         Log.e("ARGUMENT: ", arguments?.getString(SELECTED_HOST_URI, "")!!)
@@ -64,7 +66,6 @@ class EditHostDialog : FullScreenDialogFragment() {
                 "Are you sure you want to delete this host?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
                     SaveUtils.deleteHost(requireContext(), host)
-                    Toast.makeText(context, "Host has been deleted. Please refresh.", Toast.LENGTH_LONG).show()
                     dialog.dismiss()
                     dismiss()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
@@ -109,6 +110,15 @@ class EditHostDialog : FullScreenDialogFragment() {
         host.fontSize = bind.selectFontSize.value
         SaveUtils.updateHost(requireContext(), initialHostUri, host)
         dismiss()
+    }
+
+    fun setOnDismissListener(dl: DialogInterface.OnDismissListener) {
+        dismissListener = dl
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (dismissListener != null) dismissListener.onDismiss(dialog)
     }
 
     companion object {
