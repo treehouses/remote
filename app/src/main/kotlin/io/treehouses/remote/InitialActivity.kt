@@ -3,6 +3,7 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -12,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -66,13 +68,15 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.navView.setNavigationItemSelectedListener(this)
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onBackPressed() {
         if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             bind.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            if (f is HomeFragment) finish()
+            if (f is HomeFragment) {
+                finishAffinity()
+            }
             else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle

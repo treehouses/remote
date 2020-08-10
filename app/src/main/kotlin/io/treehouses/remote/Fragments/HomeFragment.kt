@@ -167,26 +167,23 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         mChatService = listener.getChatService()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
-            transition(true, arrayOf(150f, 110f, 70f))
+            transition(true)
             connectionState = true
             checkVersionSent = true
             listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
             Tutorials.homeTutorials(bind, requireActivity())
         } else {
-            transition(false, arrayOf(0f, 0f, 0f))
+            transition(false)
             connectionState = false
             MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
     }
 
-    private fun transition(connected: Boolean, values: Array<Float>) {
+    private fun transition(connected: Boolean) {
         bind.btnConnect.text = if (connected) "Disconnect" else "Connect to RPI"
         bind.btnGetStarted.text = if (connected) "Go to Terminal" else "Get Started"
         bind.btnConnect.setBackgroundResource(if (connected) R.drawable.ic_disconnect_rpi else R.drawable.ic_connect_to_rpi)
-        bind.backgroundHome.animate().translationY(values[0])
-        bind.btnConnect.animate().translationY(values[1])
-        bind.btnGetStarted.animate().translationY(values[2])
         val b1 = if (connected) View.GONE else View.VISIBLE     //Show on Boot
         val b2 = if (connected) View.VISIBLE else View.GONE     //Show when connected
         bind.welcomeHome.visibility = b1
