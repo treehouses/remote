@@ -35,6 +35,7 @@ import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.SelectionArea
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import io.treehouses.remote.bases.BaseTerminalBridge
 import java.io.IOException
 import java.nio.charset.Charset
 import java.util.*
@@ -51,77 +52,12 @@ import java.util.regex.Pattern
  * prompting.
  */
 // for ClipboardManager
-class TerminalBridge : VDUDisplay {
-    private var displayDensity = 0f
-    private var systemFontScale = 0f
-    var color = Colors.defaults
-    var defaultFg = 7
-    var defaultBg = 0
-    protected val manager: TerminalManager?
-    var host: HostBean? = null
-
-    /* package */
-    var transport: SSH? = null
-    val defaultPaint: Paint
-    private var relay: Relay? = null
-    private val emulation: String?
-    private val scrollback: Int
-    var bitmap: Bitmap? = null
-    override var vDUBuffer: VDUBuffer? = null
-    private var parent: TerminalView? = null
-    private val canvas = Canvas()
-
-    /**
-     * @return whether this connection had started and subsequently disconnected
-     */
-    var isDisconnected = false
-        private set
-
-    /**
-     * @return whether the TerminalBridge should close
-     */
-    var isAwaitingClose = false
-        private set
-    private var forcedSize = false
-    private var columns = 0
-    private var rows = 0
-
-    /**
-     * @return
-     */
-    val keyHandler: TerminalKeyListener
-    /**
-     * Only intended for pre-Honeycomb devices.
-     */
-    /**
-     * Only intended for pre-Honeycomb devices.
-     */
-    var isSelectingForCopy = false
-
-    /**
-     * Only intended for pre-Honeycomb devices.
-     */
-    val selectionArea: SelectionArea
-    var charWidth = -1
-    var charHeight = -1
-    private var charTop = -1
-    private var fontSizeDp = -1f
-    private val fontSizeChangedListeners: MutableList<FontSizeChangedListener>
-    private val localOutput: MutableList<String>
-
-    /**
-     * Flag indicating if we should perform a full-screen redraw during our next
-     * rendering pass.
-     */
-    private var fullRedraw = false
-    @JvmField
-    var promptHelper: PromptHelper? = null
-    private var disconnectListener: BridgeDisconnectedListener? = null
+class TerminalBridge : BaseTerminalBridge {
 
     /**
      * Create a new terminal bridge suitable for unit testing.
      */
-    constructor() {
+    constructor(): super() {
         vDUBuffer = object : vt320() {
             override fun write(b: ByteArray?) {}
             override fun write(b: Int) {}
@@ -146,7 +82,7 @@ class TerminalBridge : VDUDisplay {
      * launch thread to start SSH connection and handle any hostkey verification
      * and password authentication.
      */
-    constructor(manager: TerminalManager, host: HostBean) {
+    constructor(manager: TerminalManager, host: HostBean): super() {
         this.manager = manager
         this.host = host
         emulation = manager.emulation
@@ -245,8 +181,8 @@ class TerminalBridge : VDUDisplay {
     /**
      * @return charset in use by bridge
      */
-    val charset: Charset?
-        get() = relay!!.charset
+//    val charset: Charset?
+//        get() = relay!!.charset
 
     /**
      * Sets the encoding used by the terminal. If the connection is live,
@@ -254,10 +190,10 @@ class TerminalBridge : VDUDisplay {
      *
      * @param encoding the canonical name of the character encoding
      */
-    fun setCharset(encoding: String?) {
-        if (relay != null) relay!!.setCharset(encoding!!)
-        keyHandler.setCharset(encoding!!)
-    }
+//    fun setCharset(encoding: String?) {
+//        if (relay != null) relay!!.setCharset(encoding!!)
+//        keyHandler.setCharset(encoding!!)
+//    }
 
     /**
      * Convenience method for writing text into the underlying terminal buffer.
@@ -476,9 +412,9 @@ class TerminalBridge : VDUDisplay {
      *
      * @param listener
      */
-    fun removeFontSizeChangedListener(listener: FontSizeChangedListener?) {
-        fontSizeChangedListeners.remove(listener)
-    }
+//    fun removeFontSizeChangedListener(listener: FontSizeChangedListener?) {
+//        fontSizeChangedListeners.remove(listener)
+//    }
 
     /**
      * Something changed in our parent [TerminalView], maybe it's a new
@@ -487,7 +423,7 @@ class TerminalBridge : VDUDisplay {
      */
     @Synchronized
     fun parentChanged(parent: TerminalView) {
-        if (manager != null && !manager.isResizeAllowed) {
+        if (manager != null && !manager!!.isResizeAllowed) {
             Log.d(TAG, "Resize is not allowed now")
             return
         }
@@ -583,22 +519,11 @@ class TerminalBridge : VDUDisplay {
      * Somehow our parent [TerminalView] was destroyed. Now we don't need
      * to redraw anywhere, and we can recycle our internal bitmap.
      */
-    @Synchronized
-    fun parentDestroyed() {
-        parent = null
-        discardBitmap()
-    }
-
-    private fun discardBitmap() {
-        if (bitmap != null) bitmap!!.recycle()
-        bitmap = null
-    }
-
-    fun propagateConsoleText(rawText: CharArray?, length: Int) {
-        if (parent != null) {
-            parent!!.propagateConsoleText(rawText, length)
-        }
-    }
+//    @Synchronized
+//    fun parentDestroyed() {
+//        parent = null
+//        discardBitmap()
+//    }
 
     fun onDraw() {
         synchronized(vDUBuffer!!) {
@@ -726,13 +651,6 @@ class TerminalBridge : VDUDisplay {
         canvas.drawPaint(defaultPaint)
     }
 
-    override fun redraw() {
-        if (parent != null) parent!!.postInvalidate()
-    }
-
-    // We don't have a scroll bar.
-    override fun updateScrollBar() {}
-
     /**
      * Resize terminal to fit [rows]x[cols] in screen of size [width]x[height]
      *
@@ -741,46 +659,46 @@ class TerminalBridge : VDUDisplay {
      * @param width  width of screen in pixels
      * @param height height of screen in pixels
      */
-    @Synchronized
-    fun resizeComputed(cols: Int, rows: Int, width: Int, height: Int) {
-        var sizeDp = 8.0f
-        var step = 8.0f
-        val limit = 0.125f
-        var direction: Int
-        while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } < 0) sizeDp += step
-        if (direction == 0) return
-        step /= 2.0f
-        sizeDp -= step
-        while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } != 0 && step >= limit) {
-            step /= 2.0f
-            if (direction > 0) sizeDp -= step
-            else sizeDp += step
-        }
-        if (direction > 0) sizeDp -= step
-        columns = cols
-        this.rows = rows
-        fontSize = sizeDp
-        forcedSize = true
-    }
+//    @Synchronized
+//    fun resizeComputed(cols: Int, rows: Int, width: Int, height: Int) {
+//        var sizeDp = 8.0f
+//        var step = 8.0f
+//        val limit = 0.125f
+//        var direction: Int
+//        while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } < 0) sizeDp += step
+//        if (direction == 0) return
+//        step /= 2.0f
+//        sizeDp -= step
+//        while (fontSizeCompare(sizeDp, cols, rows, width, height).also { direction = it } != 0 && step >= limit) {
+//            step /= 2.0f
+//            if (direction > 0) sizeDp -= step
+//            else sizeDp += step
+//        }
+//        if (direction > 0) sizeDp -= step
+//        columns = cols
+//        this.rows = rows
+//        fontSize = sizeDp
+//        forcedSize = true
+//    }
 
-    private fun fontSizeCompare(sizeDp: Float, cols: Int, rows: Int, width: Int, height: Int): Int {
-        // read new metrics to get exact pixel dimensions
-        defaultPaint.setTextSize((sizeDp * displayDensity * systemFontScale + 0.5f))
-        val fm = defaultPaint.fontMetrics
-        val widths = FloatArray(1)
-        defaultPaint.getTextWidths("X", widths)
-        val termWidth = widths[0].toInt() * cols
-        val termHeight = Math.ceil(fm.descent - fm.top.toDouble()).toInt() * rows
-        Log.d("fontsize", String.format("font size %fdp resulted in %d x %d", sizeDp, termWidth, termHeight))
-
-        // Check to see if it fits in resolution specified.
-        if (termWidth > width || termHeight > height) return 1
-        return if (termWidth == width || termHeight == height) 0 else -1
-    }
+//    private fun fontSizeCompare(sizeDp: Float, cols: Int, rows: Int, width: Int, height: Int): Int {
+//        // read new metrics to get exact pixel dimensions
+//        defaultPaint.setTextSize((sizeDp * displayDensity * systemFontScale + 0.5f))
+//        val fm = defaultPaint.fontMetrics
+//        val widths = FloatArray(1)
+//        defaultPaint.getTextWidths("X", widths)
+//        val termWidth = widths[0].toInt() * cols
+//        val termHeight = Math.ceil(fm.descent - fm.top.toDouble()).toInt() * rows
+//        Log.d("fontsize", String.format("font size %fdp resulted in %d x %d", sizeDp, termWidth, termHeight))
+//
+//        // Check to see if it fits in resolution specified.
+//        if (termWidth > width || termHeight > height) return 1
+//        return if (termWidth == width || termHeight == height) 0 else -1
+//    }
 
     fun refreshOverlayFontSize() {
         val newDensity = manager!!.resources.displayMetrics.density
-        val newFontScale = Settings.System.getFloat(manager.contentResolver,
+        val newFontScale = Settings.System.getFloat(manager!!.contentResolver,
                 Settings.System.FONT_SCALE, 1.0f)
         if (newDensity != displayDensity || newFontScale != systemFontScale) {
             displayDensity = newDensity
@@ -851,57 +769,6 @@ class TerminalBridge : VDUDisplay {
     //		return transport.disablePortForward(portForward);
     //	}
 
-    /* (non-Javadoc)
-     * @see io.treehouses.remote.Views.terminal.VDUDisplay#setColor(byte, byte, byte, byte)
-     */
-    override fun setColor(index: Int, red: Int, green: Int, blue: Int) {
-        // Don't allow the system colors to be overwritten for now. May violate specs.
-        if (index < color.size && index >= 16) color[index] = -0x1000000 or (red shl 16) or (green shl 8) or blue
-    }
-
-    override fun resetColors() {
-//		int[] defaults = manager.colordb.getDefaultColorsForScheme(HostDatabase.DEFAULT_COLOR_SCHEME);
-//		defaultFg = Colors.defaults[0];
-//		defaultBg = defaults[1];
-
-//		color = manager.colordb.getColorsForScheme(HostDatabase.DEFAULT_COLOR_SCHEME);
-    }
-
-    private object PatternHolder {
-        var urlPattern: Pattern? = null
-
-        init {
-            // based on http://www.ietf.org/rfc/rfc2396.txt
-            val scheme = "[A-Za-z][-+.0-9A-Za-z]*"
-            val unreserved = "[-._~0-9A-Za-z]"
-            val pctEncoded = "%[0-9A-Fa-f]{2}"
-            val subDelims = "[!$&'()*+,;:=]"
-            val userinfo = "(?:$unreserved|$pctEncoded|$subDelims|:)*"
-            val h16 = "[0-9A-Fa-f]{1,4}"
-            val decOctet = "(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
-            val ipv4address: String = "$decOctet\\.$decOctet\\.$decOctet\\.$decOctet"
-            val ls32 = "(?:$h16:$h16|$ipv4address)"
-            val ipv6address = "(?:(?:$h16){6}$ls32)"
-            val ipvfuture = "v[0-9A-Fa-f]+.(?:$unreserved|$subDelims|:)+"
-            val ipLiteral = "\\[(?:$ipv6address|$ipvfuture)\\]"
-            val regName = "(?:$unreserved|$pctEncoded|$subDelims)*"
-            val host = "(?:$ipLiteral|$ipv4address|$regName)"
-            val port = "[0-9]*"
-            val authority = "(?:$userinfo@)?$host(?::$port)?"
-            val pchar = "(?:$unreserved|$pctEncoded|$subDelims|@)"
-            val segment: String = "$pchar*"
-            val pathAbempty = "(?:/$segment)*"
-            val segmentNz: String = "$pchar+"
-            val pathAbsolute = "/(?:$segmentNz(?:/$segment)*)?"
-            val pathRootless: String = "$segmentNz(?:/$segment)*"
-            val hierPart = "(?://$authority$pathAbempty|$pathAbsolute|$pathRootless)"
-            val query = "(?:$pchar|/|\\?)*"
-            val fragment = "(?:$pchar|/|\\?)*"
-            val uriRegex: String = "$scheme:$hierPart(?:$query)?(?:#$fragment)?"
-            urlPattern = Pattern.compile(uriRegex)
-        }
-    }
-
     /**
      * @return
      */
@@ -943,9 +810,4 @@ class TerminalBridge : VDUDisplay {
         fontSize = fontSizeDp - FONT_SIZE_STEP
     }
 
-    companion object {
-        const val TAG = "CB.TerminalBridge"
-        private const val DEFAULT_FONT_SIZE_DP = 10
-        private const val FONT_SIZE_STEP = 2
-    }
 }
