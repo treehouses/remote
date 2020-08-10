@@ -256,7 +256,6 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     notifyNow.isEnabled = true
                 }
             }
-            readMessage.contains("OK.") -> { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
             readMessage.contains("Thanks for the feedback!") -> {
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                 bind!!.notifyNow.isEnabled = true }
@@ -289,6 +288,8 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             hostsPosition = ArrayList()
             listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
         }
+        else if(readMessage.contains("OK.")) {
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
         else getMessage4(readMessage)
     }
 
@@ -298,14 +299,12 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             addPortButton?.isEnabled = true
             addPortButton?.text = "Add Port"
             addHostButton?.text = "Add Host"
-            addPortButton!!.isEnabled = true
             addHostButton?.isEnabled = true
             val hosts = readMessage.split('\n')
             for (host in hosts) {
                 val ports = host.split(' ')
                 for (port in ports) {
-                    if (port.length >= 3)
-                        portsName!!.add(port)
+                    if (port.length >= 3) portsName!!.add(port)
                     if (port.contains("@")) {
                         hostsPosition!!.add(Position)
                         hostsName!!.add(port)
