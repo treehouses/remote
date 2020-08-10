@@ -288,35 +288,39 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             hostsPosition = ArrayList()
             listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
         }
-        else if(readMessage.contains("OK.")) {
-            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
         else getMessage4(readMessage)
     }
 
     private fun getMessage4(readMessage: String) {
-        var Position:Int = 0
         if (readMessage.contains("@")) {
-            addPortButton?.isEnabled = true
-            addPortButton?.text = "Add Port"
-            addHostButton?.text = "Add Host"
-            addHostButton?.isEnabled = true
-            val hosts = readMessage.split('\n')
-            for (host in hosts) {
-                val ports = host.split(' ')
-                for (port in ports) {
-                    if (port.length >= 3) portsName!!.add(port)
-                    if (port.contains("@")) {
-                        hostsPosition!!.add(Position)
-                        hostsName!!.add(port)
-                    }
-                    Position += 1
-                }
-            }
+            getMessage5(readMessage)
             adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
             dropdown?.adapter = adapter2
             adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
             bind!!.sshPorts.adapter = adapter
             portList!!.isEnabled = true
+        }
+        else if(readMessage.contains("OK.")) {
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
+    }
+
+    private fun getMessage5(readMessage: String) {
+        var Position:Int = 0
+        addPortButton?.isEnabled = true
+        addPortButton?.text = "Add Port"
+        addHostButton?.text = "Add Host"
+        addHostButton?.isEnabled = true
+        val hosts = readMessage.split('\n')
+        for (host in hosts) {
+            val ports = host.split(' ')
+            for (port in ports) {
+                if (port.length >= 3) portsName!!.add(port)
+                if (port.contains("@")) {
+                    hostsPosition!!.add(Position)
+                    hostsName!!.add(port)
+                }
+                Position += 1
+            }
         }
     }
 
