@@ -73,7 +73,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finish()
-            else if (f is SettingsFragment || f is CommunityFragment) {
+            else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle
             }

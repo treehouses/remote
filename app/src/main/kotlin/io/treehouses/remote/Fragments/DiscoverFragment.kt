@@ -22,7 +22,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class DiscoverFragment : BaseFragment(), FragmentDialogInterface, BackPressReceiver {
+class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private lateinit var bind : ActivityDiscoverFragmentBinding
     private var gateway = Gateway()
     private var deviceList = ArrayList<Device>()
@@ -223,10 +223,6 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface, BackPressRecei
         fun isComplete(): Boolean {
             return device.isComplete() && this::ssid.isInitialized
         }
-    }
-
-    override fun onBackPressed() {
-        listener.openCallFragment(SystemFragment())
     }
 
     companion object {
