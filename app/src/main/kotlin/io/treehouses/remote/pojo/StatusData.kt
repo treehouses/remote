@@ -12,4 +12,4 @@ data class StatusData(val status: String,
                         val temperature: String,
                         val networkmode: String,
                         val info: String,
-                        val storage:String)
+                        val storage: String)
