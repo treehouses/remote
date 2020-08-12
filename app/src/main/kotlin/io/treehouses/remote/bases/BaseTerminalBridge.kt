@@ -184,12 +184,14 @@ open class BaseTerminalBridge : VDUDisplay {
         var fgcolor = defaultFg
         var bgcolor = defaultBg
 
+        val newFg = (currAttr and VDUBuffer.COLOR_FG shr VDUBuffer.COLOR_FG_SHIFT).toInt() - 1
+        val newBg = (currAttr and VDUBuffer.COLOR_BG shr VDUBuffer.COLOR_BG_SHIFT).toInt() - 1
         // check if foreground color attribute is set
-        if (currAttr and VDUBuffer.COLOR_FG != 0L) fgcolor = (currAttr and VDUBuffer.COLOR_FG shr VDUBuffer.COLOR_FG_SHIFT).toInt() - 1
+        if (currAttr and VDUBuffer.COLOR_FG != 0L) fgcolor = newFg
         val fg = if (fgcolor < 8 && currAttr and VDUBuffer.BOLD != 0L) color[fgcolor + 8] else if (fgcolor < 256) color[fgcolor] else -0x1000000 or fgcolor - 256
 
         // check if background color attribute is set
-        if (currAttr and VDUBuffer.COLOR_BG != 0L) bgcolor = (currAttr and VDUBuffer.COLOR_BG shr VDUBuffer.COLOR_BG_SHIFT).toInt() - 1
+        if (currAttr and VDUBuffer.COLOR_BG != 0L) bgcolor = newBg
         val bg = if (bgcolor < 256) color[bgcolor] else -0x1000000 or bgcolor - 256
         return Pair(fg, bg)
     }
