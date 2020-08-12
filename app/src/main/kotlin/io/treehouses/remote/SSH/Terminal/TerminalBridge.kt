@@ -16,18 +16,12 @@
  */
 package io.treehouses.remote.SSH.Terminal
 
-import android.content.Context
 import android.graphics.*
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
-import android.text.ClipboardManager
 import android.util.Log
-import io.treehouses.remote.Views.terminal.VDUBuffer
-import io.treehouses.remote.Views.terminal.VDUDisplay
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.Colors
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Relay
 import io.treehouses.remote.SSH.SSH
@@ -35,12 +29,9 @@ import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.SelectionArea
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
-import io.treehouses.remote.bases.BaseTerminalBridge
 import io.treehouses.remote.bases.DerivedTerminalBridge
 import java.io.IOException
-import java.nio.charset.Charset
 import java.util.*
-import java.util.regex.Pattern
 
 /**
  * Provides a bridge between a MUD terminal buffer and a possible TerminalView.
@@ -54,7 +45,6 @@ import java.util.regex.Pattern
  */
 // for ClipboardManager
 class TerminalBridge : DerivedTerminalBridge {
-
     /**
      * Create a new terminal bridge suitable for unit testing.
      */
@@ -277,7 +267,7 @@ class TerminalBridge : DerivedTerminalBridge {
         }
     }
 
-    fun startDisconnectPromptThread() {
+    private fun startDisconnectPromptThread() {
         if (host!!.stayConnected) {
             manager!!.requestReconnect(this)
             return

@@ -155,7 +155,7 @@ open class BaseTerminalBridge : VDUDisplay {
         }
     }
 
-    fun writeText(c: Int, l: Int, addr: Int, currAttr: Long) {
+    private fun writeText(c: Int, l: Int, addr: Int, currAttr: Long) {
         // write the text string starting at 'c' for 'addr' number of characters
         if (currAttr and VDUBuffer.INVISIBLE == 0L) vDUBuffer!!.charArray!![vDUBuffer!!.windowBase + l]?.let {
             canvas.drawText(it, c,
@@ -164,7 +164,7 @@ open class BaseTerminalBridge : VDUDisplay {
         }
     }
 
-    fun clearDirtyArea(c: Int, l: Int, addr: Int, isWideCharacter: Boolean) {
+    private fun clearDirtyArea(c: Int, l: Int, addr: Int, isWideCharacter: Boolean) {
         // clear this dirty area with background color
         if (isWideCharacter) {
             canvas.clipRect(c * charWidth,
@@ -180,7 +180,7 @@ open class BaseTerminalBridge : VDUDisplay {
         canvas.drawPaint(defaultPaint)
     }
 
-    fun setColors(currAttr: Long) : Pair<Int, Int> {
+    private fun setColors(currAttr: Long) : Pair<Int, Int> {
         var fgcolor = defaultFg
         var bgcolor = defaultBg
 
@@ -194,7 +194,7 @@ open class BaseTerminalBridge : VDUDisplay {
         return Pair(fg, bg)
     }
 
-    fun setAttributes(c: Int, addr: Int, l: Int, currAttr: Long) : Pair<Int, Boolean> {
+    private fun setAttributes(c: Int, addr: Int, l: Int, currAttr: Long) : Pair<Int, Boolean> {
         // set underlined attributes if requested
         var newAddr = addr
         defaultPaint.isUnderlineText = currAttr and VDUBuffer.UNDERLINE != 0L
@@ -239,7 +239,7 @@ open class BaseTerminalBridge : VDUDisplay {
         }
     }
 
-    fun walkThroughLine(l: Int) {
+    private fun walkThroughLine(l: Int) {
         // walk through all characters in this line
         var fg: Int; var bg: Int; var isWideCharacter: Boolean; var c = 0
         while (c < vDUBuffer!!.columns) {
@@ -274,7 +274,7 @@ open class BaseTerminalBridge : VDUDisplay {
         }
     }
 
-    fun checkAndSwap(currAttr: Long, bg: Int, fg: Int) : Pair<Int, Int> {
+    private fun checkAndSwap(currAttr: Long, bg: Int, fg: Int) : Pair<Int, Int> {
         var newBg = bg
         var newFg = fg
         // support character inversion by swapping background and foreground color
@@ -332,5 +332,4 @@ open class BaseTerminalBridge : VDUDisplay {
         const val DEFAULT_FONT_SIZE_DP = 10
         const val FONT_SIZE_STEP = 2
     }
-
 }

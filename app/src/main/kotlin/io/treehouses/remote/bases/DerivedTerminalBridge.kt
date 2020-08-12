@@ -8,9 +8,9 @@ import android.util.Log
 import io.treehouses.remote.SSH.Terminal.PatternHolder
 import io.treehouses.remote.SSH.Terminal.TerminalView
 import java.util.ArrayList
+import kotlin.math.ceil
 
 open class DerivedTerminalBridge: BaseTerminalBridge() {
-
     /**
      * Request a different font size. Will make call to parentChanged() to make
      * sure we resize PTY if needed.
@@ -29,11 +29,11 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
 
             // read new metrics to get exact pixel dimensions
             val fm = defaultPaint.fontMetrics
-            charTop = Math.ceil(fm.top.toDouble()).toInt()
+            charTop = ceil(fm.top.toDouble()).toInt()
             val widths = FloatArray(1)
             defaultPaint.getTextWidths("X", widths)
-            charWidth = Math.ceil(widths[0].toDouble()).toInt()
-            charHeight = Math.ceil(fm.descent - fm.top.toDouble()).toInt()
+            charWidth = ceil(widths[0].toDouble()).toInt()
+            charHeight = ceil(fm.descent - fm.top.toDouble()).toInt()
 
             // refresh any bitmap with new font size
             if (parent != null) {
@@ -84,12 +84,10 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
         forceRedraw(parent)
     }
 
-    fun checkDimensions(width: Int, height: Int) : Boolean {
+    private fun checkDimensions(width: Int, height: Int) : Boolean {
         // recalculate buffer size
-        val newColumns: Int
-        val newRows: Int
-        newColumns = width / charWidth
-        newRows = height / charHeight
+        val newColumns: Int = width / charWidth
+        val newRows: Int = height / charHeight
 
         // If nothing has changed in the terminal dimensions and not an intial
         // draw then don't blow away scroll regions and such.
@@ -100,7 +98,7 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
         return false
     }
 
-    fun requestResize(width: Int, height: Int) {
+    private fun requestResize(width: Int, height: Int) {
         try {
             // request a terminal pty resize
             synchronized(vDUBuffer!!) { vDUBuffer!!.setScreenSize(columns, rows, true) }
@@ -130,7 +128,7 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
         if (newDensity != displayDensity || newFontScale != systemFontScale) {
             displayDensity = newDensity
             systemFontScale = newFontScale
-            defaultPaint.setTextSize((fontSizeDp * displayDensity * systemFontScale + 0.5f))
+            defaultPaint.textSize = (fontSizeDp * displayDensity * systemFontScale + 0.5f)
             fontSize = fontSizeDp
         }
     }
