@@ -79,7 +79,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             if (f is HomeFragment) {
                 finishAffinity()
             }
-            else if (f is SettingsFragment || f is CommunityFragment) {
+            else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle
             }
