@@ -29,6 +29,7 @@ class SocksFragment : BaseFragment() {
     private var startButton: Button? = null
     private var addProfileButton: Button? = null
     private var addingProfileButton: Button? = null
+    private var cancelProfileButton: Button? = null
     private var textStatus: TextView? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
@@ -69,6 +70,7 @@ addProfileButton = bind!!.btnAddProfile
         serverPort = dialog.findViewById(R.id.server_port)
         password = dialog.findViewById(R.id.password)
         addingProfileButton = dialog.findViewById(R.id.addingProfileButton)
+        cancelProfileButton = dialog.findViewById(R.id.cancel)
 //        inputExternal = dialog.findViewById(R.id.ExternalTextInput)
 //        inputInternal = dialog.findViewById(R.id.InternalTextInput)
 //
@@ -147,15 +149,13 @@ addProfileButton = bind!!.btnAddProfile
     }
 
     private fun addProfileButtonListeners(dialog: Dialog) {
-//        val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
-//        val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
 
         addProfileButton!!.setOnClickListener {
-//            inputExternal.clearFocus()
-//            inputInternal.clearFocus()
             dialog.show()
         }
-
+        cancelProfileButton!!.setOnClickListener {
+            dialog.dismiss()
+        }
         addingProfileButton!!.setOnClickListener {
             if (serverHost.text.toString().isNotEmpty() && localAddress.text.toString().isNotEmpty() && localPort.text.toString().isNotEmpty() && serverPort.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
                 val s1 = serverHost.text.toString()
@@ -170,24 +170,10 @@ addProfileButton = bind!!.btnAddProfile
                 addProfileButton!!.isEnabled = false
                 dialog.dismiss()
             }
+            else{
+                Toast.makeText(requireContext(), "Missing Information", Toast.LENGTH_SHORT).show()
+            }
         }
-
-//        val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
-//        addingPortButton.setOnClickListener {
-//            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-//            if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
-//                val s1 = inputInternal.text.toString()
-//                val s2 = inputExternal.text.toString()
-//                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
-//                addPortButton!!.text = "Adding port, please wait for a while ............"
-//                portList!!.isEnabled = false
-//                addPortButton!!.isEnabled = false
-//                dialog.dismiss()
-//                inputInternal.text?.clear()
-//                inputExternal.text?.clear()
-//                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-//            }
-//        }
     }
 
 
@@ -229,7 +215,7 @@ addProfileButton = bind!!.btnAddProfile
                 else
                     profileName!!.add(readMessage)
 
-                adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, profileName!!)
+                adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, profileName!!)
                 bind!!.profiles.adapter = adapter
             }
 
