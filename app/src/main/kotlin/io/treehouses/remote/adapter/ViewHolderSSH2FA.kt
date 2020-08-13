@@ -87,11 +87,6 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
         }
         c.startActivity(intent)
     }
-
-    fun Context?.toast(s: String): Toast {
-        return Toast.makeText(this, s, Toast.LENGTH_SHORT).apply { show() }
-    }
-
-
+    
 }
 
