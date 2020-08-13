@@ -60,7 +60,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogSshBinding.inflate(inflater, container, false)
         if (listener.getChatService().state == Constants.STATE_CONNECTED) {
-            listener.sendMessage("treehouses networkmode info")
+            listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
             listener.getChatService().updateHandler(mHandler)
         }
         return bind.root
