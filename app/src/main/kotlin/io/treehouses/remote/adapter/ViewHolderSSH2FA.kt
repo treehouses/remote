@@ -18,6 +18,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
 
 
@@ -76,15 +77,9 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     private fun openAuthenticator(key:String){
         val uri:String = "otpauth://totp/" + "pi@treehouses" + "?secret=" + key + "&issuer=treehouses"
         val intent:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-        val activities = c.packageManager.queryIntentActivities(intent, 0)
-        if (activities.size == 0) {
-            Snackbar.make(v, "No Authenticator Client Installed on your Device", Snackbar.LENGTH_LONG).setAction("Install") {
-                val intent1 = Intent(Intent.ACTION_VIEW)
-                intent1.data = Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2")
-                c.startActivity(intent1)
-            }.show()
-            return
-        }
+
+        if (Utils.checkAppIsInstalled(c, v, intent, "No Authenticator Client Installed on your Device", "Install", "https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2")) return
+
         c.startActivity(intent)
     }
     
