@@ -35,7 +35,6 @@ class StatusFragment : BaseFragment() {
     private var deviceName = ""
     private var rpiVersion = ""
     private lateinit var bind: ActivityStatusFragmentBinding
-    private lateinit var refreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
@@ -86,11 +85,10 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun addRefreshListener(view: View) {
-        refreshLayout = view.findViewById<SwipeRefreshLayout?>(R.id.swiperefresh)!!
-        refreshLayout.setOnRefreshListener {
+        bind.swiperefresh.setOnRefreshListener {
             refresh()
         }
-        refreshLayout.setColorSchemeColors(
+        bind.swiperefresh.setColorSchemeColors(
                 ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
                 ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
                 ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
@@ -151,9 +149,10 @@ class StatusFragment : BaseFragment() {
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
         checkWifiStatus(statusData.internet)
-
+        
         bind.refreshBtn.visibility = View.VISIBLE
-        refreshLayout.isRefreshing = false
+        bind.swiperefresh.isRefreshing = false
+
     }
 
 
