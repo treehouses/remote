@@ -1,7 +1,9 @@
 package io.treehouses.remote
 
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.databinding.*
@@ -9,6 +11,7 @@ import io.treehouses.remote.utils.SaveUtils
 import me.toptas.fancyshowcase.FancyShowCaseQueue
 import me.toptas.fancyshowcase.FancyShowCaseView
 import me.toptas.fancyshowcase.FocusShape
+import me.toptas.fancyshowcase.listener.DismissListener
 import me.toptas.fancyshowcase.listener.OnViewInflateListener
 
 object Tutorials {
@@ -25,7 +28,7 @@ object Tutorials {
 
         val d = fancyShowCaseView(activity, bind.btnGetStarted, "Go to Terminal and Send Commands to RPI", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d)
+        show(a, b, c, d)
     }
 
     fun networkTutorials(bind: NewNetworkBinding, activity: FragmentActivity) {
@@ -46,7 +49,7 @@ object Tutorials {
 
         val g = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d,e,f,g)
+        show(a, b, c, d, e, f, g)
     }
 
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
@@ -70,7 +73,7 @@ object Tutorials {
 
         val e = fancyShowCaseView(activity, bind.treehousesBtn, "Use this button for quick treehouses commands", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d,e)
+        show(a, b, c, d, e)
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
@@ -112,20 +115,37 @@ object Tutorials {
 
         val d = fancyShowCaseView(activity, bind.editName, "Edit your hostname here, new hostname will show up the next time you visit Status", FocusShape.CIRCLE)
 
-        val e = fancyShowCaseViewRoundedRect(activity, bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available")
+        val e = fancyShowCaseViewRoundedRect(activity, bind.cliVersionBox, "You can check your CLI Version here and Upgrade if a new Version is Available").apply {
+            dismissListener = object : DismissListener {
+                override fun onDismiss(id: String?) = smoothScrollTo(bind.scrollView, bind.measurablesBox.bottom)
+                override fun onSkipped(id: String?) {}
+            }
+        }
 
-        val f = fancyShowCaseViewRoundedRect(activity, bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here")
+        val f = fancyShowCaseViewRoundedRect(activity, bind.measurablesBox, "RAM Usage and Temperature of CPU can be found here").apply {
+            dismissListener = object : DismissListener {
+                override fun onDismiss(id: String?) = smoothScrollTo(bind.scrollView, bind.scrollView.top)
+                override fun onSkipped(id: String?) {}
+            }
+        }
 
         val g = fancyShowCaseViewRoundedRect(activity, bind.refreshBtn, "Refresh Anytime to Check Everything Again")
 
-        show(a,b,c,d,e,f,g)
+        show(a, b, c, d, e, f, g)
+    }
+
+    private fun smoothScrollTo(scrollView: ScrollView, scrollTo: Int) {
+        Log.e("SMOOTH SCROLL", "CALLED")
+        scrollView.post {
+            scrollView.smoothScrollTo(0, scrollTo)
+        }
     }
 
     private fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape)
                 .customView(R.layout.tutorial, object : OnViewInflateListener {
                     override fun onViewInflated(view: View) {
-                       val skipButton = view.findViewById<Button>(R.id.skipBtn)
+                        val skipButton = view.findViewById<Button>(R.id.skipBtn)
                         skipButton.setOnClickListener(mClickListener)
                         val text = view.findViewById<TextView>(R.id.text)
                         text.text = title
@@ -148,8 +168,8 @@ object Tutorials {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape).build()
     }
 
-    private fun fancyShowCaseViewRoundedRect(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.ROUNDED_RECTANGLE): FancyShowCaseView {
-        return fancyShowCaseViewBuilder(activity, view, title, focusShape)
+    private fun fancyShowCaseViewRoundedRect(activity: FragmentActivity, view: View, title: String, onDismiss: (ScrollView, View) -> Unit = {_, _ -> Unit}): FancyShowCaseView {
+        return fancyShowCaseViewBuilder(activity, view, title, FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .build()
     }
@@ -162,7 +182,7 @@ object Tutorials {
 
     private fun show(vararg view: FancyShowCaseView) {
         queue = FancyShowCaseQueue()
-        for(v in view) {
+        for (v in view) {
             queue.add(v)
         }
         queue.show()
