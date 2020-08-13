@@ -82,6 +82,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
             R.layout.configure_blocker -> ViewHolderBlocker(convertView, context, listener!!)
             R.layout.configure_sshtunnel_key -> ViewHolderSSHTunnelKey(convertView, context, listener!!)
             R.layout.configure_discover -> ViewHolderDiscover(convertView, listener!!)
+            R.layout.configure_ssh2fa -> ViewHolderSSH2FA(convertView, context, listener!!)
         }
         views[i] = convertView
         return convertView
@@ -100,6 +101,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     init {
         inflater = LayoutInflater.from(context)
         this.list = list
-        views = arrayOfNulls(8)
+        views = arrayOfNulls(9)
     }
 }

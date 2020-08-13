@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/enableHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/daynight_textColor"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Enable or Disable 2 Factor Authentication" />
+
+
+    <LinearLayout
+        android:id="@+id/onOffBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/enableHeader"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/enableBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Enable"
+            android:textColor="#ffffff"
+            android:layout_weight="1"
+            android:theme="@style/PrimaryButton"
+            tools:layout_editor_absoluteX="188dp"
+            tools:layout_editor_absoluteY="83dp" />
+
+        <Button
+            android:id="@+id/disableBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Disable"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:theme="@style/PrimaryButton"
+            tools:layout_editor_absoluteX="188dp"
+            tools:layout_editor_absoluteY="83dp" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/userHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
+        android:textColor="@color/daynight_textColor"
+        app:layout_constraintTop_toBottomOf="@id/onOffBtns"
+        android:text="Add or Remove User" />
+
+    <EditText
+        android:id="@+id/user"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/daynight_textColor"
+        android:textColorHint="@color/expandable_child_text"
+        app:layout_constraintTop_toBottomOf="@id/userHeader"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="pi" />
+
+    <LinearLayout
+        android:id="@+id/addRemoveBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/user"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/addBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:textColor="#ffffff"
+        android:theme="@style/PrimaryButton"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="188dp"
+        tools:layout_editor_absoluteY="83dp" />
+
+    <Button
+        android:id="@+id/removeBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Remove"
+        android:textColor="#ffffff"
+        android:theme="@style/PrimaryButton"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="188dp"
+        tools:layout_editor_absoluteY="83dp" />
+
+    </LinearLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

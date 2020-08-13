@@ -17,6 +17,7 @@ class NetworkListItem(var title: String, var layout: Int) {
                 systemList.add(NetworkListItem("Blocker Level", R.layout.configure_blocker))
                 systemList.add(NetworkListItem("SSH Tunnel Key", R.layout.configure_sshtunnel_key))
                 systemList.add(NetworkListItem("Discover", R.layout.configure_discover))
+                systemList.add(NetworkListItem("SSH 2 Factor Authentication", R.layout.configure_ssh2fa))
                 return systemList
             }
     }
