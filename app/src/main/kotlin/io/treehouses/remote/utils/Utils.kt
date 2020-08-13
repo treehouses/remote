@@ -55,12 +55,12 @@ object Utils {
         return Toast.makeText(this, s, duration).apply { show() }
     }
 
-    fun checkAppIsInstalled(c:Context, v: View, intent:Intent, String1:String, String2:String, String3:String):Boolean{
+    fun checkAppIsInstalled(c:Context, v: View, intent:Intent, StringArr:Array<String>):Boolean{
         val activities = c.packageManager.queryIntentActivities(intent, 0)
         return if (activities.size == 0) {
-            Snackbar.make(v, String1, Snackbar.LENGTH_LONG).setAction(String2) {
+            Snackbar.make(v, StringArr[0], Snackbar.LENGTH_LONG).setAction(StringArr[1]) {
                 val intent1 = Intent(Intent.ACTION_VIEW)
-                intent1.data = Uri.parse(String3)
+                intent1.data = Uri.parse(StringArr[2])
                 c.startActivity(intent1)
             }.show()
             true

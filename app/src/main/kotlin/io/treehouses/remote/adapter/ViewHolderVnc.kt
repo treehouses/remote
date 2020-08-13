@@ -18,7 +18,7 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
     private fun openVnc(context: Context, v: View, `in`: TextInputEditText) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")))
 
-        if (checkAppIsInstalled(context, v, intent, "No VNC Client installed on you device", "Install", "https://play.google.com/store/apps/details?id=com.realvnc.viewer.android")) return
+        if (checkAppIsInstalled(context, v, intent, arrayOf("No VNC Client installed on you device", "Install", "https://play.google.com/store/apps/details?id=com.realvnc.viewer.android"))) return
 
         val ip = `in`.text.toString()
         if (TextUtils.isEmpty(ip)) {
