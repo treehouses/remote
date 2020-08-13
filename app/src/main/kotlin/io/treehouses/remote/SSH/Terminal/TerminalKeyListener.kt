@@ -59,8 +59,9 @@ class TerminalKeyListener(tm: TerminalManager?,
             getUnicode(event)
 
             // Handle potentially multi-character IME input.
-            if (hasMultiCharInput(event, keyCode) || flagRaised(event, keyCode) || needReturn(interpretAsHardKeyboard, keyCode, event) ||
-                    hasShift(keyCode) || hasNonCtrlChar() || hasKeyCode(keyCode)) return true
+            var handleInput = hasMultiCharInput(event, keyCode) || flagRaised(event, keyCode) || needReturn(interpretAsHardKeyboard, keyCode, event)
+            handleInput = handleInput || hasShift(keyCode) || hasNonCtrlChar() || hasKeyCode(keyCode)
+            if (handleInput) return true
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
