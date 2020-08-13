@@ -50,8 +50,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         requestPermission()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        checkStatusNow()
-        openCallFragment(HomeFragment())
         currentTitle = "Home"
         setUpDrawer()
         title = "Home"
@@ -63,6 +61,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             mChatService.updateHandler(mHandler)
             openCallFragment(HomeFragment())
         }
+        checkStatusNow()
+        openCallFragment(HomeFragment())
     }
 
 
