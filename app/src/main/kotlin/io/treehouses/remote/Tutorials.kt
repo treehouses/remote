@@ -177,10 +177,8 @@ object Tutorials {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape).build()
     }
 
-    private fun fancyShowCaseViewRoundedRect(activity: FragmentActivity, view: View, title: String, onDismiss: (ScrollView, View) -> Unit = {_, _ -> Unit}): FancyShowCaseView {
-        return fancyShowCaseViewBuilder(activity, view, title, FocusShape.ROUNDED_RECTANGLE)
-                .roundRectRadius(80)
-                .build()
+    private fun fancyShowCaseViewRoundedRect(activity: FragmentActivity, view: View, title: String, shape: FocusShape = FocusShape.ROUNDED_RECTANGLE): FancyShowCaseView {
+        return fancyShowCaseViewBuilder(activity, view, title, shape).roundRectRadius(80).build()
     }
 
     private fun fancyShowCaseViewRoundedRectSkippable(activity: FragmentActivity, view: View, title: String): FancyShowCaseView {
