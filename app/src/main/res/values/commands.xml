@@ -62,6 +62,11 @@
     <string name="TREEHOUSES_SSHTUNNEL_NOTICE_NOW">treehouses sshtunnel notice now</string>
     <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
 
+    <string name="TREEHOUSES_SSH_2FA_ADD">treehouses ssh 2fa add \"%1$s\"</string>
+    <string name="TREEHOUSES_SSH_2FA_REMOVE">treehouses ssh 2fa remove \"%1$s\"</string>
+    <string name="TREEHOUSES_SSH_2FA_ENABLE">treehouses ssh 2fa enable"</string>
+    <string name="TREEHOUSES_SSH_2FA_DISABLE">treehouses ssh 2fa disable"</string>
+
     <string name="TREEHOUSES_SERVICES_CLEANUP">treehouses services \"%1$s\" cleanup</string>
     <string name="TREEHOUSES_SERVICES_INSTALL">treehouses services \"%1$s\" install</string>
     <string name="TREEHOUSES_SERVICES_UP">treehouses services \"%1$s\" up</string>

@@ -1,19 +1,14 @@
 package io.treehouses.remote.adapter
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
-import com.google.android.material.snackbar.Snackbar
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
@@ -52,16 +47,16 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
         mChatService.updateHandler(mHandler)
 
         addUser.setOnClickListener {
-            listener.sendMessage("treehouses ssh 2fa add " + user.text)
+            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_ADD, user.text))
         }
         removeUser.setOnClickListener {
-            listener.sendMessage("treehouses ssh 2fa remove " + user.text)
+            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_REMOVE, user.text))
         }
         enable.setOnClickListener {
-            listener.sendMessage("treehouses ssh 2fa enable")
+            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_ENABLE))
         }
         disable.setOnClickListener {
-            listener.sendMessage("treehouses ssh 2fa disable")
+            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_DISABLE))
         }
     }
 
