@@ -10,10 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import io.github.kbiakov.codeview.CodeView
 import io.github.kbiakov.codeview.adapters.Options
 import io.github.kbiakov.codeview.highlight.ColorTheme
-import io.treehouses.remote.R
 import io.treehouses.remote.databinding.CodeViewBinding
 import io.treehouses.remote.databinding.FragmentShowBluetoothFileBinding
-import kotlinx.android.synthetic.main.code_view.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
