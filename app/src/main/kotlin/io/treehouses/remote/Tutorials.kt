@@ -134,6 +134,15 @@ object Tutorials {
         show(a, b, c, d, e, f, g)
     }
 
+//    private fun applySmoothScrollTo(scrollView: ScrollView, scrollTo: Int, showCaseView: FancyShowCaseView) : FancyShowCaseView {
+//        showCaseView.apply {
+//            dismissListener = object : DismissListener {
+//                override fun onDismiss(id: String?) = smoothScrollTo(scrollView, scrollTo)
+//                override fun onSkipped(id: String?) {}
+//            }
+//        }
+//    }
+
     private fun smoothScrollTo(scrollView: ScrollView, scrollTo: Int) {
         Log.e("SMOOTH SCROLL", "CALLED")
         scrollView.post {
