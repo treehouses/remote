@@ -213,7 +213,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             bind!!.sshPorts
             portsName = ArrayList()
 //            listener.sendMessage("treehouses sshtunnel notice")
-            adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
             Log.i("Tag", "Reload fragment")
         }
     }
