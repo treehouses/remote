@@ -87,10 +87,13 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("BLUETOOTH","START COMMAND")
-        if (intent?.action.equals("stop")) {
-            stopSelf();
-        }
-        return START_STICKY
+        return START_NOT_STICKY
+    }
+
+    override fun onDestroy() {
+        Log.e("BLUETOOTH","Destroying...")
+        stop()
+        super.onDestroy()
     }
 
     private fun startNotification() {
