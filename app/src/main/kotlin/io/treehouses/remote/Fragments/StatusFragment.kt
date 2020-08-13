@@ -1,8 +1,6 @@
 package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -16,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -24,6 +24,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
+import io.treehouses.remote.pojo.StatusData
 import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class StatusFragment : BaseFragment() {
@@ -33,9 +34,6 @@ class StatusFragment : BaseFragment() {
     private var lastCommand = ""
     private var deviceName = ""
     private var rpiVersion = ""
-    private var usedMemory = 0.0
-    private var totalMemory = 0.0
-    private var networkMode = ""
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,18 +48,51 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun refresh() {
-        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUS))
+        setChecking()
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
         bind.refreshBtn.visibility = View.GONE
+    }
+
+    private fun setChecking() {
+        bind.deviceAddress.text = "dc.."
+        bind.networkModeTitle.text = "Checking Network Mode....."
+        bind.ipAdrText.text = "IP Address: Checking....."
+        bind.ssidText.text = "SSID: Checking....."
+        bind.tvRpiName.text = "Hostname: Checking.."
+        bind.tvRpiType.text = "Model: Checking.."
+        bind.cpuModelText.text = "CPU: Checking.."
+        bind.imageText.text = "Image Version: Checking.."
+        bind.remoteVersionText.text = "Remote Version: Checking"
+        bind.tvUpgradeCheck.text = "Checking Version..."
+        bind.temperature.text = "Checking......"
+        bind.memory.text = "Checking......"
+        bind.storage.text = "Checking......"
+        bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
+        ObjectAnimator.ofInt(bind.memoryBar, "progress", 0).setDuration(600).start()
+        ObjectAnimator.ofInt(bind.storageBar, "progress", 0).setDuration(600).start()
+        ObjectAnimator.ofInt(bind.temperatureBar, "progress", 0).setDuration(600).start()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addRefreshListener(view)
         bind.tvBluetooth.text = deviceName
         Log.e("STATUS", "device name: $deviceName")
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())
         bind.upgrade.visibility = View.GONE
+    }
+
+    private fun addRefreshListener(view: View) {
+        bind.swiperefresh.setOnRefreshListener {
+            refresh()
+        }
+        bind.swiperefresh.setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
     }
 
     private fun upgradeOnViewClickListener() {
@@ -79,53 +110,53 @@ class StatusFragment : BaseFragment() {
 
     private fun updateStatus(readMessage: String) {
         Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
-        if (readMessage.trim().split(" ").size == 5 && lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUS)) {
-            val res = readMessage.trim().split(" ")
-            bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
-            bind.deviceAddress.text = res[1]
-            bind.tvRpiType.text = "Model: " + res[4]
-            rpiVersion = res[3]
-            //also set remote version
-            bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
-            Log.e("REACHED", "YAYY")
-            writeToRPI(requireActivity().getString(R.string.HOSTNAME))
-        } else if (lastCommand == requireActivity().getString(R.string.HOSTNAME)){
-            bind.tvRpiName.text = "Hostname: " + readMessage
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_MEMORY_USED_GB))
-        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_MEMORY_USED_GB)) {
-            usedMemory = readMessage.trim { it <= ' ' }.toDouble()
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_MEMORY_TOTAL_GB))
-        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_MEMORY_TOTAL_GB)) {
-            totalMemory = readMessage.trim { it <= ' ' }.toDouble()
+
+        if(lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)){
+            val statusData = Gson().fromJson(readMessage, StatusData::class.java)
+
+            bind.temperature.text = statusData.temperature + "°C"
+            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (statusData.temperature.toFloat() / 80 * 100).toInt()).setDuration(600).start()
+
+            val usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
+            val totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
+
+            val usedStoragePercentage = statusData.storage.split(" ")[3].dropLast(1)
+            ObjectAnimator.ofInt(bind.storageBar, "progress", usedStoragePercentage.toInt()).setDuration(600).start()
+            bind.storage.text = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
+
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
-            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS))
-        } else checkOtherCommands(lastCommand, readMessage)
+            bind.memory.text = usedMemory.toString() + "GB" + "/" + totalMemory.toString() + "GB"
+
+            bind.cpuModelText.text = "CPU: ARM " + statusData.arm
+
+            writeNetworkInfo(statusData.networkmode, statusData.info)
+
+            bind.tvRpiName.text = "Hostname: " + statusData.hostname
+
+            updateStatusPage(statusData)
+
+        } else checkUpgradeStatus(readMessage)
     }
 
-    private fun checkOtherCommands(lastCommand: String, readMessage: String) {
-        if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_TEMPERATURE_CELSIUS)) {
-            bind.temperature.text = readMessage
-            ObjectAnimator.ofInt(bind.temperatureBar, "progress", (readMessage.dropLast(3).toFloat() / 80 * 100).toInt()).setDuration(600).start()
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_DETECT_ARM))
-        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_DETECT_ARM)) {
-            bind.cpuModelText.text = "CPU: ARM " + readMessage
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE))
-        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE)) {
-            networkMode = readMessage.dropLast(1)
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
-        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO)) {
-            writeNetworkInfo(readMessage)
-            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_INTERNET))
-        } else if (lastCommand == requireActivity().getString(R.string.TREEHOUSES_INTERNET)) {
-            checkWifiStatus(readMessage)
-            bind.refreshBtn.visibility = View.VISIBLE
-        } else {
-            checkUpgradeStatus(readMessage)
-        }
+    private fun updateStatusPage(statusData:StatusData) {
+        val res = statusData.status.trim().split(" ")
+
+        bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
+        bind.deviceAddress.text = res[1]
+        bind.tvRpiType.text = "Model: " + res[4]
+        rpiVersion = res[3]
+
+        bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
+
+        checkWifiStatus(statusData.internet)
+        
+        bind.refreshBtn.visibility = View.VISIBLE
+        bind.swiperefresh.isRefreshing = false
+
     }
 
-    private fun writeNetworkInfo(readMessage: String) {
+
+    private fun writeNetworkInfo(networkMode:String, readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
         var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
         when(networkMode){

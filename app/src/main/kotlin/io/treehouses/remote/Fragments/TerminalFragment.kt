@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
@@ -28,6 +29,7 @@ import io.treehouses.remote.bases.BaseTerminalFragment
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.CommandsList
+import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
@@ -187,17 +189,9 @@ class TerminalFragment : BaseTerminalFragment() {
            treehouses = isChecked
            checkIfTreehouses()
         }
-        bind.editTextOut.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (TextUtils.isEmpty(s.toString().trim())) bind.treehousesBtn.isChecked= false
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
+        bind.editTextOut.addTextChangedListener {
+            if (TextUtils.isEmpty(it.toString().trim())) bind.treehousesBtn.isChecked= false
+        }
     }
 
     private fun checkIfTreehouses() {
@@ -222,7 +216,12 @@ class TerminalFragment : BaseTerminalFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             Constants.REQUEST_ENABLE_BT -> onResultCaseEnable(resultCode)
-            Constants.REQUEST_DIALOG_FRAGMENT_CHPASS -> onResultCaseDialogChpass(resultCode, data)
+            Constants.REQUEST_DIALOG_FRAGMENT_CHPASS -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val chPWD = if (data!!.getStringExtra("password") == null) "" else data.getStringExtra("password")
+                    listener.sendMessage(getString(R.string.TREEHOUSES_PASSWORD, chPWD))
+                }
+            }
             Constants.REQUEST_DIALOG_FRAGMENT_ADD_COMMAND -> if (resultCode == Activity.RESULT_OK) {
                 expandableListDetail.clear()
                 expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
@@ -252,35 +251,18 @@ class TerminalFragment : BaseTerminalFragment() {
         dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), tag)
     }
 
-    private fun addToCommandList(writeMessage: String) {
-        commandList.add(writeMessage)
-        i = commandList.size
-    }
-
-    private fun onResultCaseDialogChpass(resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            //get password change request
-            val chPWD = if (data!!.getStringExtra("password") == null) "" else data.getStringExtra("password")
-            listener.sendMessage(getString(R.string.TREEHOUSES_PASSWORD, chPWD))
-        }
-    }
-
-    private fun buildJSON() {
-        try {
-            val jsonObject = JSONObject(jsonString)
-            commands = Gson().fromJson(jsonObject.toString(), CommandsList::class.java)
-            updateArrayAdapters(commands)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-    }
-
     private fun handleJson(readMessage: String) {
         val s = match(readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
             if (s == RESULTS.END_JSON_COMMANDS) {
-                buildJSON()
+                try {
+                    val jsonObject = JSONObject(jsonString)
+                    commands = Gson().fromJson(jsonObject.toString(), CommandsList::class.java)
+                    updateArrayAdapters(commands)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
                 jsonSend(false)
             } else if (s == RESULTS.END_HELP) {
                 showHelpDialog(jsonString)
@@ -311,7 +293,8 @@ class TerminalFragment : BaseTerminalFragment() {
             Constants.MESSAGE_STATE_CHANGE -> checkStatus(mChatService, bind.pingStatus, bind.PING)
             Constants.MESSAGE_WRITE -> {
                 isRead = false
-                addToCommandList(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
+                commandList.add(handlerCaseWrite(TAG, mConversationArrayAdapter, msg))
+                i = commandList.size
             }
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String

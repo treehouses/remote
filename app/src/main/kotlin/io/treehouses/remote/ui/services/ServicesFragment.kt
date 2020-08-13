@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments
+package io.treehouses.remote.ui.services
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -14,26 +14,26 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
 import java.util.*
 
 
 class ServicesFragment : BaseServicesFragment(), ServicesListener {
-    private var servicesTabFragment: ServicesTabFragment? = null
+    private var servicesTabFragment: ServicesOverviewFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     var bind: ActivityServicesFragmentBinding? = null
     var worked = false
     private var currentTab:Int =  0
-    private lateinit var array: MutableList<String>
-    override fun onSaveInstanceState(outState: Bundle) {
+    private lateinit var services: ArrayList<ServiceInfo>
 
-    }
+    private lateinit var cachedServices: MutableList<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        getViewModel()
         bind = ActivityServicesFragmentBinding.inflate(inflater, container, false)
         services = ArrayList()
         bind!!.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
@@ -55,24 +55,23 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
     }
 
     private fun preferences(){
-        array = SaveUtils.getStringList(requireContext(), "servicesArray")
-        for (string in array) {
-            val a = performAction(string, services)
-            if (a == 1) {
-                worked = true
-                showUI()
+        cachedServices = SaveUtils.getStringList(requireContext(), "servicesArray")
+        if (!SaveUtils.getFragmentFirstTime(requireContext(), SaveUtils.Screens.SERVICES_OVERVIEW)) {
+            for (string in cachedServices) {
+                val a = performAction(string, services)
+                if (a == 1) {
+                    worked = true
+                    showUI()
+                }
             }
         }
         writeToRPI(getString(R.string.TREEHOUSES_REMOTE_ALLSERVICES))
     }
 
     private fun showUI(){
-        servicesTabFragment = ServicesTabFragment()
+        servicesTabFragment = ServicesOverviewFragment()
         servicesDetailsFragment = ServicesDetailsFragment()
-        val bundle = Bundle()
-        bundle.putSerializable("services", services)
-        servicesTabFragment?.arguments = bundle
-        servicesDetailsFragment?.arguments = bundle
+        viewModel.servicesData.value = services
         bind!!.progressBar2.visibility = View.GONE
         replaceFragment(currentTab)
     }
@@ -82,8 +81,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
         val output:String? = msg.obj as String
         when (performAction(output!!, services)) {
             1 -> {
-                array.add(output)
-                SaveUtils.saveStringList(requireContext(), array, "servicesArray")
+                cachedServices.add(output)
+                SaveUtils.saveStringList(requireContext(), cachedServices, "servicesArray")
                 worked = false
                 showUI()
             }
@@ -92,7 +91,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
                 showUpdateCliAlert()
             }
             else -> {
-                array.add(output)
+                cachedServices.add(output)
             }
         }
     }
@@ -102,10 +101,7 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
             Constants.MESSAGE_READ -> {
                 updateListFromRPI(msg)
             }
-            Constants.MESSAGE_WRITE -> {
-                val writeMsg = String((msg.obj as ByteArray))
-                Log.d("WRITE", writeMsg)
-            }
+            Constants.MESSAGE_WRITE -> LogUtils.writeMsg(msg)
         }
     }
 

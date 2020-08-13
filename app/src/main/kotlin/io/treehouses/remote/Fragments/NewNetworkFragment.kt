@@ -1,7 +1,6 @@
 package io.treehouses.remote.Fragments
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -9,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,14 +19,16 @@ import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.Etherne
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.HotspotBottomSheet
 import io.treehouses.remote.Fragments.DialogFragments.BottomSheetDialogs.WifiBottomSheet
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment
+import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.NewNetworkBinding
+import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
 
-class NewNetworkFragment : BaseFragment(), View.OnClickListener {
+class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: NewNetworkBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = NewNetworkBinding.inflate(inflater, container, false)
@@ -84,24 +84,18 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
                 sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
             }
             RESULTS.ERROR -> {
-                showDialog("Error", output)
+                showDialog(context,"Error", output)
                 binding.networkPbar.visibility = View.GONE
             }
             RESULTS.HOTSPOT_CONNECTED, RESULTS.WIFI_CONNECTED, RESULTS.BRIDGE_CONNECTED -> {
-                showDialog("Network Switched", output)
+                showDialog(context,"Network Switched", output)
+                showDialog(context,"Network Switched", output)
                 //update network mode
                 sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
                 binding.networkPbar.visibility = View.GONE
             }
             else -> Log.e("NewNetworkFragment", "Result not Found")
         }
-    }
-
-    private fun showDialog(title: String, message: String) {
-        val alertDialog = createAlertDialog(context, R.style.CustomAlertDialogStyle,title,message)
-                .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        alertDialog.show()
     }
 
     private fun rebootHelper() {
@@ -121,7 +115,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun reboot() {
-        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
+        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
                 "Are you sure you want to reboot your device?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
                     rebootHelper()
@@ -132,7 +126,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun resetNetwork() {
-        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
+        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
                 "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK), "Switching to default network...")
@@ -145,13 +139,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener {
         listener.sendMessage(msg)
         Toast.makeText(context, toastMsg, Toast.LENGTH_LONG).show()
     }
-
-    private fun createAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, id))
-                .setTitle(title)
-                .setMessage(message)
-    }
-
+  
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {

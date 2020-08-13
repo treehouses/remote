@@ -1,32 +1,41 @@
-package io.treehouses.remote.bases
+package io.treehouses.remote.ui.services
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
+import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.NullPointerException
 import java.util.*
 
 open class BaseServicesFragment() : BaseFragment() {
     private var startJson = ""
     private var gettingJSON = false
-    lateinit var services: ArrayList<ServiceInfo>
     private var servicesData: ServicesData? = null
+
+    lateinit var viewModel: ServicesViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            if (it.containsKey("services"))
-                services = it.getSerializable("services") as ArrayList<ServiceInfo>
-        }
+//        arguments?.let {
+//            if (it.containsKey("services"))
+//                services = it.getSerializable("services") as ArrayList<ServiceInfo>
+//        }
+    }
+
+    fun getViewModel() {
+        viewModel = activity?.run {ViewModelProvider(this)[ServicesViewModel::class.java]}!!
     }
 
     protected fun openLocalURL(url: String) {
@@ -41,7 +50,12 @@ open class BaseServicesFragment() : BaseFragment() {
         mChatService.write(ping.toByteArray())
     }
 
-    protected fun performService(action: String, command: String, name: String) {
+    protected fun performService(action: String, name: String) {
+        var command = ""
+        if (action == "Starting") command = getString(R.string.TREEHOUSES_SERVICES_UP, name)
+        else if (action == "Installing") command = getString(R.string.TREEHOUSES_SERVICES_INSTALL, name)
+        else if (action == "Stopping") command = getString(R.string.TREEHOUSES_SERVICES_STOP, name)
+        else command = getString(R.string.TREEHOUSES_SERVICES_CLEANUP, name)
         Log.d("SERVICES", "$action $name")
         Toast.makeText(context, "$name $action", Toast.LENGTH_LONG).show()
         writeToRPI(command)
@@ -65,8 +79,12 @@ open class BaseServicesFragment() : BaseFragment() {
     private fun addServicesToList(services: ArrayList<ServiceInfo>) {
         for (service in servicesData!!.available) {
             if (inServiceList(service, services) == -1) {
-                services.add(ServiceInfo(service, servicesData!!.size[service]?.toInt()!!, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
-                        servicesData!!.info[service], servicesData!!.autorun[service]))
+                try {
+                    services.add(ServiceInfo(service, servicesData!!.size[service]?.toInt()!!, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
+                            servicesData!!.info[service], servicesData!!.autorun[service]))
+                } catch (exception:NullPointerException){
+                    Log.e("Error", exception.toString())
+                }
             }
         }
     }

@@ -1,68 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/services_tab_background"
     android:orientation="vertical">
-
+    <ImageView
+        android:id="@+id/treehouse_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:srcCompat="@drawable/tor" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_hostName"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+
+            android:layout_weight="1"
+            android:background="@drawable/tor_btn"
+            android:text="Hostname"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/bg_white" />
+
         <Button
             android:id="@+id/btn_tor_start"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
             android:layout_marginLeft="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
 
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:background="@drawable/service_button"
+            android:background="@drawable/tor_btn"
             android:text="@string/start_tor"
             android:layout_weight="1"
             android:textColor="@color/bg_white" />
 
+
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tor_status_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:gravity="center"
-        android:padding="@dimen/margin_medium"
-        android:textColor="@color/daynight_textColor"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="@dimen/text_size_mid" />
+
     <LinearLayout  android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <Switch
-            android:id="@+id/switchNotification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/margin_medium"
-            android:layout_marginRight="20dp"
-            android:layout_marginEnd="20dp"
-            android:text="@string/notification"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/daynight_textColor"
-            android:textSize="@dimen/text_size_large" />
 
         <Button
             android:id="@+id/notify_now"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-
+            android:background="@drawable/gitter_button"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginEnd="20dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/bg_white"
+            android:text="Gitter Notify"
+            android:layout_marginRight="20dp" />
+
+
+
+        <Switch
+            android:id="@+id/switchNotification"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/notification"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/daynight_textColor"
+            android:textSize="@dimen/text_size_large"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="25dp"
             android:layout_marginRight="8dp"
-            android:text="@string/notify_now" />
+            android:layout_marginLeft="0dp" />
+
+
 
     </LinearLayout>
 
@@ -73,15 +97,15 @@
             android:id="@+id/btn_add_port"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="25dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="20dp"
 
             android:layout_weight="1"
-            android:background="@color/md_green_200"
+            android:background="@drawable/ic_green"
             android:text="@string/add_port"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/bg_white" />
@@ -92,7 +116,8 @@
         android:background="#00FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/margin_large"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
         android:fadeScrollbars="false"
         android:layout_weight="1"/>
 

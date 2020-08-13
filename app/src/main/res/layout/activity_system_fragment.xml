@@ -13,5 +13,4 @@
         android:layout_weight="1"
         android:padding="@dimen/margin_medium" />
 
-
 </LinearLayout>
