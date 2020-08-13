@@ -132,7 +132,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
             return@filter when(constraint.toString().toLowerCase(Locale.ROOT)) {
                 "installed" -> it.serviceStatus == ServiceInfo.SERVICE_INSTALLED
                 "available" -> it.serviceStatus == ServiceInfo.SERVICE_AVAILABLE
-                else -> it.name.toLowerCase(Locale.ROOT).contains(constraint) && !it.isHeader
+                else -> it.name.toLowerCase(Locale.ROOT).contains(constraint.toString().toLowerCase(Locale.ROOT)) && !it.isHeader
             }
         }
     }
