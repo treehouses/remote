@@ -46,17 +46,25 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     init {
         mChatService.updateHandler(mHandler)
 
+        fun sendCommand1(id:Int){
+            listener.sendMessage(c.resources.getString(id))
+        }
+
+        fun sendCommand2(id:Int){
+            listener.sendMessage(c.resources.getString(id, user.text))
+        }
+
         addUser.setOnClickListener {
-            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_ADD, user.text))
+            sendCommand2(R.string.TREEHOUSES_SSH_2FA_ADD)
         }
         removeUser.setOnClickListener {
-            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_REMOVE, user.text))
+            sendCommand2(R.string.TREEHOUSES_SSH_2FA_REMOVE)
         }
         enable.setOnClickListener {
-            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_ENABLE))
+            sendCommand1(R.string.TREEHOUSES_SSH_2FA_ENABLE)
         }
         disable.setOnClickListener {
-            listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSH_2FA_DISABLE))
+            sendCommand1(R.string.TREEHOUSES_SSH_2FA_DISABLE)
         }
     }
 
