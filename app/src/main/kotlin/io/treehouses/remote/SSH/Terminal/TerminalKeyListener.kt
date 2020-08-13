@@ -65,7 +65,6 @@ class TerminalKeyListener(tm: TerminalManager?,
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
             Log.d(TAG, "Input before connection established ignored.")
-            return true
         }
         return false
     }
