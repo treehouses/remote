@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments
+package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -17,39 +17,43 @@ import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
+import io.treehouses.remote.Fragments.AboutFragment
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
+import io.treehouses.remote.Fragments.TerminalFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.adapter.ProfilesListAdapter
-import io.treehouses.remote.bases.BaseHomeFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.match
 import io.treehouses.remote.utils.Utils.toast
-import kotlinx.android.synthetic.main.activity_home_fragment.*
+import io.treehouses.remote.utils.match
 import java.util.*
 
 class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private var notificationListener: NotificationCallback? = null
     private var progressDialog: ProgressDialog? = null
-    private var connectionState = false
-    private var testConnectionResult = false
     private var testConnectionDialog: AlertDialog? = null
     private var selectedLed = 0
     private var checkVersionSent = false
     private var internetSent = false
+    private var connectionState = false
+    private var testConnectionResult = false
     private var networkSsid = ""
     private var networkProfile: NetworkProfile? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
+    private lateinit var viewModel : HomeViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+
         mChatService = listener.getChatService()
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -260,8 +264,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun checkPackage(output: String) {
         internetSent = false
-        if (output.contains("true")) internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-        else internetstatus?.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+        if (output.contains("true")) bind.internetstatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+        else bind.internetstatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
         listener.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
     }
 

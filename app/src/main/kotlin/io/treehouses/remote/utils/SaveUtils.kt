@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
-import io.treehouses.remote.Fragments.HomeFragment
+import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile

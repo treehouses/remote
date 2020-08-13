@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments
+package io.treehouses.remote.ui.services
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -21,7 +21,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServiceCardAdapter
 import io.treehouses.remote.adapter.ServicesListAdapter
-import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
@@ -40,15 +39,18 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private var editEnv = false
     private lateinit var binding: ActivityServicesDetailsBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        getViewModel()
         mChatService = listener.getChatService()
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
-        spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
-        binding.pickService.adapter = spinnerAdapter
-        binding.pickService.setSelection(1)
-        binding.pickService.onItemSelectedListener = this
-        serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
-        binding.servicesCards.adapter = serviceCardAdapter
-        binding.servicesCards.addOnPageChangeListener(this)
+        viewModel.servicesData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {services ->
+            spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
+            binding.pickService.adapter = spinnerAdapter
+            binding.pickService.setSelection(1)
+            binding.pickService.onItemSelectedListener = this
+            serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
+            binding.servicesCards.adapter = serviceCardAdapter
+            binding.servicesCards.addOnPageChangeListener(this)
+        })
         return binding.root
     }
 
@@ -111,7 +113,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         } else {
             return
         }
-        services.sort()
+        viewModel.servicesData.value?.sort()
+        viewModel.servicesData.value = viewModel.servicesData.value
         serviceCardAdapter!!.notifyDataSetChanged()
         spinnerAdapter!!.notifyDataSetChanged()
         setScreenState(true)
@@ -121,7 +124,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
-            val statusCode = services[position].serviceStatus
+            val statusCode = viewModel.servicesData.value!![position].serviceStatus
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
             val count = countHeadersBefore(position)
             binding.servicesCards.currentItem = position - count
@@ -136,7 +139,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     private fun goToSelected() {
         if (selected != null) {
-            val pos = inServiceList(selected!!.name, services)
+            val pos = inServiceList(selected!!.name, viewModel.servicesData.value!!)
             val count = countHeadersBefore(pos)
             binding.servicesCards.currentItem = pos - count
             binding.pickService.setSelection(pos)
@@ -166,7 +169,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private fun countHeadersBefore(position: Int): Int {
         var count = 0
         for (i in 0..position) {
-            if (services[i].isHeader) count++
+            if (viewModel.servicesData.value!![i].isHeader) count++
         }
         return count
     }
