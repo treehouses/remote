@@ -3,6 +3,7 @@ package io.treehouses.remote.Fragments.DialogFragments
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -92,6 +93,7 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
                 putString(DeleteSSHKey.KEY_TO_DELETE, allKeys[position].nickname)
             }
         }
+        dialog.setOnDismissListener(DialogInterface.OnDismissListener { setUpKeys() })
         dialog.show(parentFragmentManager, "Delete_key")
     }
 
