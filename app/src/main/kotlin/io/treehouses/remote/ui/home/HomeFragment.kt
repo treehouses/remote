@@ -53,6 +53,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private lateinit var viewModel : HomeViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
+
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         mChatService = listener.getChatService()
@@ -169,7 +170,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
     override fun checkConnectionState() {
-        mChatService = listener.getChatService()
+//        mChatService = listener.getChatService()
         if (mChatService.state == Constants.STATE_CONNECTED) {
             showLogDialog(preferences!!)
             transition(true)

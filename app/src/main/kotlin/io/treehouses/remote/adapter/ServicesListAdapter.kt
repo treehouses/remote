@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
+import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
@@ -114,23 +115,26 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
             }
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val results = FilterResults()
-                if (constraint == null || constraint.isEmpty()) {
+                if (constraint.isEmpty()) {
                     results.values = dataIn; results.count = dataIn.size
                 } else {
-                    val FilteredList: ArrayList<ServiceInfo> = createFilteredList(constraint)
-                    results.values = FilteredList; results.count = FilteredList.size
+                    val filteredList: List<ServiceInfo> = createFilteredList(constraint)
+                    results.values = filteredList; results.count = filteredList.size
                 }
                 return results
             }
         }
     }
 
-    private fun createFilteredList(constraint: CharSequence): ArrayList<ServiceInfo> {
-        val FilteredList: ArrayList<ServiceInfo> = ArrayList()
-        dataIn.forEach {
-            if (it.name.toLowerCase().contains(constraint.toString().toLowerCase()) && it.name.toLowerCase() != "Installed" && it.name.toLowerCase() != "Available") FilteredList.add(it)
+    private fun createFilteredList(constraint: CharSequence): List<ServiceInfo> {
+        if (constraint.isEmpty()) return dataIn
+        return dataIn.filter {
+            return@filter when(constraint.toString().toLowerCase(Locale.ROOT)) {
+                "installed" -> it.serviceStatus == ServiceInfo.SERVICE_INSTALLED
+                "available" -> it.serviceStatus == ServiceInfo.SERVICE_AVAILABLE
+                else -> it.name.toLowerCase(Locale.ROOT).contains(constraint.toString().toLowerCase(Locale.ROOT)) && !it.isHeader
+            }
         }
-        return FilteredList
     }
 
 }

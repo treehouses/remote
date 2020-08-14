@@ -427,14 +427,13 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp">
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
 
                     <TextView
-                        android:id="@+id/tvMemoryStatus"
                         android:layout_width="200dp"
                         android:layout_height="43dp"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginBottom="60dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:text="Memory"
@@ -454,7 +453,7 @@
                             android:layout_height="0dp"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="5dp"
                             android:layout_weight="1"
                             android:progressDrawable="@drawable/green_progress_bar" />
 
@@ -468,9 +467,53 @@
                             android:text="Checking......"
                             android:textColor="@color/daynight_textColor" />
                     </LinearLayout>
+                </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
 
+                    <TextView
+                        android:layout_width="200dp"
+                        android:layout_height="43dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Storage"
+                        android:textColor="@color/daynight_textColor"
+                        android:textStyle="bold" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ProgressBar
+                            android:id="@+id/storageBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:progressDrawable="@drawable/blue_progress_bar" />
+
+                        <TextView
+                            android:id="@+id/storage"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:text="Checking......"
+                            android:textColor="@color/daynight_textColor" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -518,10 +561,6 @@
                             android:text="Checking......"
                             android:textColor="@color/daynight_textColor" />
                     </LinearLayout>
-
-
-
-
                 </LinearLayout>
 
             </LinearLayout>

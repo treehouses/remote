@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.ACTION_PICK_WIFI_NETWORK" />
     <uses-permission android:name="android.Manifest.permission.OVERRIDE_WIFI_CONFIG" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" /> <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
@@ -74,6 +75,12 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service
+            android:name=".Network.BluetoothChatService"
+            android:label="Bluetooth Connection"
+            android:enabled="true">
+        </service>
     </application>
 
 </manifest>
