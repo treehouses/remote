@@ -54,7 +54,7 @@ object Matcher {
     private fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
 
     fun isError(output: String): Boolean {
-        val keys = listOf("error ", "unknown command", "usage: ", "not a valid option", "error: ")
+        val keys = listOf("error ", "unknown command", "usage: ", "not a valid option", "error: ", "not found")
         if (output.contains("{") || output.contains("}")) return false
         for (k in keys) if (toLC(output).contains(k)) return true
         return false
