@@ -94,6 +94,14 @@
             android:layout="@layout/custom_pref_bottom"
             android:summary="Delete all SSH keys">
         </Preference>
+
+        <SwitchPreference
+            android:title="Keep Bluetooth Alive"
+            android:key="keep_bluetooth_alive"
+            android:defaultValue="false"
+            android:layout="@layout/custom_pref_bottom"
+            android:summary="Keep Bluetooth service alive when Treehouses Remote is closed.">
+        </SwitchPreference>
     </PreferenceCategory>
 
 

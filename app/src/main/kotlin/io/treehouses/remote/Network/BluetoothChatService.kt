@@ -17,22 +17,27 @@
 */
 package io.treehouses.remote.Network
 
+import android.app.Notification
+import android.app.PendingIntent
+import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.os.Bundle
-import android.os.Handler
-import android.os.Message
+import android.content.Intent
+import android.os.*
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.InitialActivity
+import io.treehouses.remote.R
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
 import java.util.*
+
 
 /**
  * Created by yubo on 7/11/17.
@@ -43,7 +48,7 @@ import java.util.*
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-class BluetoothChatService(handler: Handler, applicationContext: Context) : Serializable {
+class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : Service(), Serializable {
     // Member fields
     private val mAdapter: BluetoothAdapter
     private var mDevice: BluetoothDevice? = null
@@ -53,6 +58,8 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
     private var mConnectThread: ConnectThread? = null
     private var mConnectedThread: ConnectedThread? = null
 
+    private val mBinder = LocalBinder()
+
     /**
      * Return the current connection state.
      */
@@ -61,9 +68,54 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         private set
     private var mNewState: Int
     private var bNoReconnect = false
-    private val context: Context
+    var context: Context?
+
+
     fun updateHandler(handler: Handler) {
         mHandler = handler
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return mBinder
+    }
+
+    inner class LocalBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods
+        val service: BluetoothChatService
+            get() = this@BluetoothChatService
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.e("BLUETOOTH","START COMMAND")
+        return START_NOT_STICKY
+    }
+
+    override fun onDestroy() {
+        Log.e("BLUETOOTH","Destroying...")
+        stop()
+        super.onDestroy()
+    }
+
+    private fun startNotification() {
+//        val disconnectIntent = Intent(this, DisconnectReceiver::class.java).apply {
+//            action = DISCONNECT_ACTION
+//        }
+//        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
+
+        val onClickIntent = Intent(this, InitialActivity::class.java)
+        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
+        val notification: Notification = notificationBuilder.setOngoing(true)
+                .setContentTitle("Treehouses Remote is currently running")
+                .setContentText("Connected to ${mDevice?.name}")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setSmallIcon(R.drawable.treehouses2)
+                .setContentIntent(pendingClickIntent)
+//                .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
+                .build()
+        startForeground(2, notification)
     }
 
     /**
@@ -72,7 +124,7 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
     @Synchronized
     private fun updateUserInterfaceTitle() {
         state = state
-        Log.d(TAG, "updateUserInterfaceTitle() " + mNewState + " -> " + state)
+        Log.d(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
         mNewState = state
 
         // Give the new state to the Handler so the UI Activity can update
@@ -100,15 +152,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
             mConnectedThread = null
         }
 
-        // Start the thread to listen on a BluetoothServerSocket
-//        if (mSecureAcceptThread == null) {
-//            mSecureAcceptThread = new AcceptThread(true);
-//            mSecureAcceptThread.start();
-//        }
-//        if (mInsecureAcceptThread == null) {
-//            mInsecureAcceptThread = new AcceptThread(false);
-//            mInsecureAcceptThread.start();
-//        }
         // Update UI title
         updateUserInterfaceTitle()
     }
@@ -167,15 +210,7 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
             mConnectedThread = null
         }
 
-        // Cancel the accept thread because we only want to connect to one device
-//        if (mSecureAcceptThread != null) {
-//            mSecureAcceptThread.cancel();
-//            mSecureAcceptThread = null;
-//        }
-//        if (mInsecureAcceptThread != null) {
-//            mInsecureAcceptThread.cancel();
-//            mInsecureAcceptThread = null;
-//        }
+        startNotification()
 
         // Start the thread to manage the connection and perform transmissions
         mConnectedThread = ConnectedThread(socket, socketType)
@@ -206,16 +241,7 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
             mConnectedThread!!.cancel()
             mConnectedThread = null
         }
-
-//        if (mSecureAcceptThread != null) {
-//            mSecureAcceptThread.cancel();
-//            mSecureAcceptThread = null;
-//        }
-
-//        if (mInsecureAcceptThread != null) {
-//            mInsecureAcceptThread.cancel();
-//            mInsecureAcceptThread = null;
-//        }
+        
         state = Constants.STATE_NONE
         // Update UI title
         updateUserInterfaceTitle()
@@ -260,7 +286,9 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
     private fun connectionLost() {
         // Send a failure message back to the Activity
         callHandler("Device connection was lost")
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        stopForeground(true)
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (mDevice != null && !bNoReconnect && preferences.getBoolean("reconnectBluetooth", true)) {
             connect(mDevice!!, true)
         } else {
@@ -279,104 +307,6 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         msg?.data = bundle
         mHandler?.sendMessage(msg ?: Message())
     }
-    /**
-     * This thread runs while listening for incoming connections. It behaves
-     * like a server-side client. It runs until a connection is accepted
-     * (or until cancelled).
-     */
-    // Uncomment this if phone needs to be able to accept connections from other devices
-    //    private class AcceptThread extends Thread {
-    //        // The local server socket
-    //        private final BluetoothServerSocket mmServerSocket;
-    //        private String mSocketType;
-    //
-    //        public AcceptThread(boolean secure) {
-    //            BluetoothServerSocket tmp = null;
-    //            mSocketType = secure ? "Secure" : "Insecure";
-    //
-    //            // Create a new listening server socket
-    //            try {
-    ////                if (secure) {
-    //                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, MY_UUID_SECURE);
-    ////                } else {
-    ////                    tmp = mAdapter.listenUsingInsecureRfcommWithServiceRecord(NAME_INSECURE, MY_UUID_INSECURE);
-    ////                }
-    //            } catch (Exception e) {
-    //                Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
-    //            }
-    //            mmServerSocket = tmp;
-    //            mCurrentState = Constants.STATE_LISTEN;
-    //        }
-    //
-    //        @Override
-    //        public void run() {
-    //            Log.d(TAG, "Socket Type: " + mSocketType + "BEGIN mAcceptThread" + this);
-    //            setName("AcceptThread" + mSocketType);
-    //
-    //            // Listen to the server socket if we're not connected
-    //            while (mCurrentState != Constants.STATE_CONNECTED) {
-    //                try {
-    //                    // This is a blocking call and will only return on a successful connection or an exception
-    //                    Log.e("TAG", "currentState: " + mCurrentState);
-    //
-    //                    socket = mmServerSocket.accept();
-    //                } catch (Exception e) {
-    //                    Log.e(TAG, "Socket Type: " + mSocketType + " accept() failed" + e);
-    //                    mCurrentState = Constants.STATE_NONE;
-    //                    updateUserInterfaceTitle();
-    //                    checkConnection("connectionCheck");
-    //                    break;
-    //                }
-    //
-    //                // If a connection was accepted
-    //                if (socket != null) {
-    //                    synchronized (BluetoothChatService.this) {
-    //                        switch (mCurrentState) {
-    //                            case Constants.STATE_LISTEN:
-    //                            case Constants.STATE_CONNECTING:
-    //                                // Situation normal. Start the connected thread.
-    //                                connected(socket, socket.getRemoteDevice(), mSocketType);
-    //                                break;
-    //                            case Constants.STATE_NONE:
-    //                            case Constants.STATE_CONNECTED:
-    //                                // Either not ready or already connected. Terminate new socket.
-    //                                try {
-    //                                    mmServerSocket.close();
-    //                                    HomeFragment homeFragment = new HomeFragment();
-    //                                    homeFragment.checkConnectionState();
-    //                                } catch (IOException e) {
-    //                                    Log.e(TAG, "Could not close unwanted socket", e);
-    //                                }
-    //                                break;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            Log.i(TAG, "END mAcceptThread, socket Type: " + mSocketType);
-    //
-    //        }
-    //
-    //        public void cancel() {
-    //            Log.d(TAG, "Socket Type" + mSocketType + "cancel " + this);
-    //            try {
-    //                mmServerSocket.close();
-    //            } catch (IOException e) {
-    //                Log.e(TAG, "Socket Type" + mSocketType + "close() of server failed", e);
-    //            }
-    //        }
-    //    }
-    //
-    //    private void checkConnection(String message) {
-    //        mCurrentState = getState();
-    //        if (mCurrentState == Constants.STATE_CONNECTED) {
-    //            Message msg = mHandler.obtainMessage(Constants.MESSAGE_READ);
-    //            Bundle bundle = new Bundle();
-    //            bundle.putString(Constants.TOAST, message);
-    //            msg.setData(bundle);
-    //            RPIDialogFragment rpiDialogFragment = new RPIDialogFragment();
-    //            rpiDialogFragment.getmHandler().handleMessage(msg);
-    //        }
-    //    }
     /**
      * This thread runs while attempting to make an outgoing connection
      * with a device. It runs straight through; the connection either
@@ -524,10 +454,19 @@ class BluetoothChatService(handler: Handler, applicationContext: Context) : Seri
         }
     }
 
+//    inner class DisconnectReceiver : BroadcastReceiver() {
+//        override fun onReceive(context: Context?, intent: Intent?) {
+//            if (intent?.action == DISCONNECT_ACTION) {
+//                stop()
+//            }
+//        }
+//
+//    }
+
     companion object {
         // Debugging
         private const val TAG = "BluetoothChatService"
-
+        private const val DISCONNECT_ACTION = "disconnect"
         //private static final String NAME_INSECURE = "BluetoothChatInsecure";
         // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
         private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
