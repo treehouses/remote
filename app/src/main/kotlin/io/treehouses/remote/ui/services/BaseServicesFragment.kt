@@ -81,7 +81,7 @@ open class BaseServicesFragment() : BaseFragment() {
             if (inServiceList(service, services) == -1) {
                 try {
                     services.add(ServiceInfo(service, servicesData!!.size[service]?.toInt()!!, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
-                            servicesData!!.info[service], servicesData!!.autorun[service]))
+                            servicesData!!.info[service], servicesData!!.autorun[service], servicesData!!.usesEnv[service]))
                 } catch (exception:NullPointerException){
                     Log.e("Error", exception.toString())
                 }
