@@ -32,12 +32,23 @@ Vagrant.configure("2") do |config|
       ln -sr /vagrant /root/remote
       ln -sr /vagrant /home/vagrant/remote
       #windows
-      dos2unix /vagrant/*/*/*/* /vagrant/*/*/* /vagrant/*/* /vagrant/*
+      dos2unix /vagrant/*/*/*/*/*/*/*/*/*/* /vagrant/*/*/*/*/*/*/*/*/* /vagrant/*/*/*/*/*/*/*/*/* /vagrant/*/*/*/*/*/*/*/* /vagrant/*/*/*/*/*/*/* /vagrant/*/*/*/*/*/* /vagrant/*/*/*/*/* /vagrant/*/*/*/* /vagrant/*/*/* /vagrant/*/* /vagrant/*
+      unix2dos /vagrant/gradlew.bat
+      #codeclimate
+      docker pull codeclimate/codeclimate
+      echo "alias codeclimate=\\\"docker run --interactive --tty --rm --env CODECLIMATE_CODE=\\\$PWD --volume \\\$PWD:/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate\\\"" > /home/vagrant/.bash_aliases
+      chown vagrant: /home/vagrant/.bash_aliases
     SHELL
 
     # Run binding on each startup make sure the mount is available on VM restart
     remote.vm.provision "shell", run: "always", inline: <<-SHELL
       docker pull codeclimate/codeclimate
+      echo
+      echo
+      echo "vagrant ssh"
+      echo "cd remote"
+      echo "git checkout <branch>"
+      echo "codeclimate help"
     SHELL
   end
 end
