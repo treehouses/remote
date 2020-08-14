@@ -56,18 +56,16 @@ class TerminalKeyListener(tm: TerminalManager?,
 
             //Log.i("CBKeyDebug", KeyEventUtil.describeKeyEvent(keyCode, event));
             bridge.resetScrollPosition()
-
-            // Handle potentially multi-character IME input.
-            if (hasMultiCharInput(event, keyCode) || flagRaised(event, keyCode) || needReturn(interpretAsHardKeyboard, keyCode, event)) return true
-
             getUnicode(event)
 
-            if (hasShift(keyCode) || hasNonCtrlChar() || hasKeyCode(keyCode)) return true
+            // Handle potentially multi-character IME input.
+            var handleInput = hasMultiCharInput(event, keyCode) || flagRaised(event, keyCode) || needReturn(interpretAsHardKeyboard, keyCode, event)
+            handleInput = handleInput || hasShift(keyCode) || hasNonCtrlChar() || hasKeyCode(keyCode)
+            if (handleInput) return true
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
             Log.d(TAG, "Input before connection established ignored.")
-            return true
         }
         return false
     }
