@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="About" android:layout="@layout/custom_pref_category">
+    <Preference
+        android:title="Contributors"
+        android:key="contributors"
+        android:layout="@layout/custom_pref_top">
+        <intent android:action="android.intent.action.VIEW"
+            android:data="https://github.com/treehouses/remote/graphs/contributors" />
+    </Preference>
+    <Preference
+        android:title="Help"
+        android:key="help_button"
+        android:layout="@layout/custom_pref_middle">
+        <intent android:action="android.intent.action.VIEW"
+            android:data="https://treehouses.io/#!index.md" />
+    </Preference>
+    <Preference
+        android:title="Report an Issue"
+        android:key="reportIssue"
+        android:layout="@layout/custom_pref_bottom">
+        <intent android:action="android.intent.action.VIEW"
+            android:data="https://github.com/treehouses/remote/issues"/>
+    </Preference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

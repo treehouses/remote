@@ -13,8 +13,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import io.treehouses.remote.Fragments.PreferenceFragments.AboutPreference
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.KeyUtils
@@ -34,7 +36,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
         val showBluetoothFile = findPreference<Preference>("bluetooth_file")
-
+        val about = findPreference<Preference>("about")
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
@@ -43,6 +45,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         setClickListener(clearSSHHosts)
         setClickListener(clearSSHKeys)
         setClickListener(showBluetoothFile)
+        setClickListener(about)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -93,8 +96,20 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
             "bluetooth_file" -> openBluetoothFile()
+            "about" -> openFragment(AboutPreference())
         }
         return false
+    }
+
+    private fun openFragment(f: Fragment) {
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragment_container, f)
+        fragmentTransaction.addToBackStack(null)
+        try {
+            fragmentTransaction.commit()
+        } catch (exception:IllegalStateException ){
+            Log.e("Error", exception.toString())
+        }
     }
 
     private fun clearCommands() {
