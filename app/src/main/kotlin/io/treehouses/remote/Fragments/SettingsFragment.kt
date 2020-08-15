@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.Fragments.PreferenceFragments.AboutPreference
+import io.treehouses.remote.Fragments.PreferenceFragments.AdvancedPreference
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.KeyUtils
@@ -35,8 +36,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val clearServices = findPreference<Preference>("clear_services")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
-        val showBluetoothFile = findPreference<Preference>("bluetooth_file")
         val about = findPreference<Preference>("about")
+        val advanced = findPreference<Preference>("advanced")
         setClickListener(clearCommandsList)
         setClickListener(resetCommandsList)
         setClickListener(clearNetworkProfiles)
@@ -44,8 +45,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         setClickListener(clearServices)
         setClickListener(clearSSHHosts)
         setClickListener(clearSSHKeys)
-        setClickListener(showBluetoothFile)
         setClickListener(about)
+        setClickListener(advanced)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -95,8 +96,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "reactivate_tutorials" -> reactivateTutorialsPrompt()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
-            "bluetooth_file" -> openBluetoothFile()
             "about" -> openFragment(AboutPreference())
+            "advanced" -> openFragment(AdvancedPreference())
         }
         return false
     }
@@ -130,9 +131,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     private fun clearSSHKeys() = createAlertDialog("Clear All SSH Keys", "Would you like to delete all SSH Keys?", "Clear", CLEAR_SSH_KEYS)
 
-    private fun openBluetoothFile() {
-        listener.openCallFragment(ShowBluetoothFile())
-    }
     private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
         val dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)

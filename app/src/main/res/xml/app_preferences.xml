@@ -110,12 +110,10 @@
         android:layout="@layout/custom_pref_whole">
     </Preference>
 
-    <PreferenceCategory android:title="Advanced" android:layout="@layout/custom_pref_category">
-        <Preference
-            android:layout="@layout/custom_pref_top"
-            android:icon="@drawable/bluetooth"
-            android:key="bluetooth_file"
-            android:title="View Bluetooth Server File"/>
-    </PreferenceCategory>
+    <Preference
+        android:title="Advanced"
+        android:key="advanced"
+        android:layout="@layout/custom_pref_whole">
+    </Preference>
 
 </PreferenceScreen>
