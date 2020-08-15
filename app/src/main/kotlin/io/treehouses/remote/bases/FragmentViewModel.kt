@@ -27,12 +27,13 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
     val connectionStatus : LiveData<Int>
         get() = _connectionStatus
 
-    /**
-     * Contains the boolean whether this device is currently connected to bluetooth or not
-     */
-    val connected : LiveData<Boolean> = Transformations.map(connectionStatus) {
-        return@map it == Constants.STATE_CONNECTED
-    }
+//    /**
+//     * Contains the boolean whether this device is currently connected to bluetooth or not
+//     */
+//    val connected : LiveData<Boolean> = Transformations.map(_connectionStatus) {
+//        Log.e("UPDATED", "CONNECTED to $it")
+//        return@map it == Constants.STATE_CONNECTED
+//    }
 
     /**
      * Handler to handle all messages from the bluetooth service
@@ -42,14 +43,14 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_STATE_CHANGE -> {
-                    try {
-                        Toast.makeText(application, "Bluetooth disconnected", Toast.LENGTH_LONG).show()
-                    } catch (exception: NullPointerException) {
-                        Log.e("Error", exception.toString())
+                    if (msg.arg1 == Constants.STATE_NONE) {
+                        try { Toast.makeText(application, "Bluetooth disconnected", Toast.LENGTH_LONG).show() }
+                        catch (exception: NullPointerException) { Log.e("Error", exception.toString()) }
                     }
-                    _connectionStatus.value = msg.arg1
+                    Log.e("RECEIVED", "CONNECTION ${msg.arg1}")
+                    _connectionStatus.value= msg.arg1
                 }
-                Constants.MESSAGE_WRITE -> onWrite(msg.obj.toString())
+                Constants.MESSAGE_WRITE -> onWrite(String(msg.obj as ByteArray))
                 Constants.MESSAGE_READ -> onRead(msg.obj as String)
                 else -> onOtherMessage(msg)
             }
@@ -85,7 +86,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * @param toSend : String = A string to send to the Raspberry Pi
      */
     fun sendMessage(toSend: String) {
-        if (connected.value != true) {
+        if (_connectionStatus.value != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplication(), "Not Connected to Bluetooth", Toast.LENGTH_LONG).show()
         }
         else mChatService.write(toSend.toByteArray())
@@ -95,8 +96,15 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * Load the bluetooth service and update the handler and connection status
      */
     fun loadBT() {
-        Log.e("UPDATED", "AND LOADED")
         mChatService = getApplication<MainApplication>().getCurrentBluetoothService()!!
+        mChatService.updateHandler(mHandler)
+        _connectionStatus.value = mChatService.state
+    }
+
+    /**
+     * Update the current handler back to the scope of this ViewModel
+     */
+    fun refreshHandler() {
         mChatService.updateHandler(mHandler)
         _connectionStatus.value = mChatService.state
     }
@@ -113,8 +121,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * @param stringRes : Int = The resource ID to retrieve
      * @return = The resolved string resource
      */
-    protected fun getString(stringRes : Int, vararg params: Any) : String {
-        if (params.isNotEmpty()) return getApplication<MainApplication>().getString(stringRes, params)
+    protected fun getString(stringRes : Int) : String {
         return getApplication<MainApplication>().getString(stringRes)
     }
 

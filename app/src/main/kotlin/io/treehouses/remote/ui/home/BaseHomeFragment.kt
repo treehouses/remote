@@ -1,10 +1,7 @@
 package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
 import android.util.Log
@@ -25,10 +22,6 @@ import java.util.*
 
 open class BaseHomeFragment : BaseFragment() {
     protected var preferences: SharedPreferences? = null
-    private var imageVersion = ""
-    private var treehousesVersion = ""
-    private var bluetoothMac = ""
-    private var rpiVersion: String? = null
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
         when (option) {
             1 -> setBackgrounds(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
@@ -136,11 +129,9 @@ open class BaseHomeFragment : BaseFragment() {
         return d.create()
     }
 
-    protected fun showRPIDialog(s: SetDisconnect?) {
+    protected fun showRPIDialog() {
         val dialogFrag = RPIDialogFragment.newInstance(123)
-        (dialogFrag as RPIDialogFragment).setCheckConnectionState(s)
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT)
-        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "rpiDialog")
+        dialogFrag.show(childFragmentManager.beginTransaction(), "rpiDialog")
     }
 
 
@@ -185,5 +176,21 @@ open class BaseHomeFragment : BaseFragment() {
                         dialog.dismiss()
                     }.show()
         }
+    }
+
+    protected fun updateTreehousesRemote() {
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+                .setTitle("Update Required")
+                .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
+                .setPositiveButton("Update") { _: DialogInterface?, _: Int ->
+                    val appPackageName = requireActivity().packageName // getPackageName() from Context or Activity object
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
+                    } catch (anfe: ActivityNotFoundException) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
+                    }
+                }.create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.show()
     }
 }

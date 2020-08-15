@@ -123,8 +123,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     @Synchronized
     private fun updateUserInterfaceTitle() {
-        state = state
-        Log.d(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
+        Log.e(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
         mNewState = state
 
         // Give the new state to the Handler so the UI Activity can update
@@ -318,7 +317,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         override fun run() {
             Log.i(TAG, "BEGIN mConnectThread SocketType:$mSocketType")
             name = "ConnectThread$mSocketType"
-
+            this@BluetoothChatService.state = Constants.STATE_CONNECTING
             // Always cancel discovery because it will slow down a connection
             mAdapter.cancelDiscovery()
 
@@ -364,14 +363,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 //                if (secure) {
                 tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
                 //                } else {
-//                    tmp = device.createInsecureRfcommSocketToServiceRecord(
-//                            MY_UUID_INSECURE);
-//                }
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
             } catch (e: Exception) {
                 Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e)
                 this@BluetoothChatService.state = Constants.STATE_NONE
             }
+            this@BluetoothChatService.updateUserInterfaceTitle()
             mmSocket = tmp
         }
     }
@@ -451,6 +448,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mmInStream = tmpIn
             mmOutStream = tmpOut
             this@BluetoothChatService.state = Constants.STATE_CONNECTED
+            this@BluetoothChatService.updateUserInterfaceTitle()
         }
     }
 

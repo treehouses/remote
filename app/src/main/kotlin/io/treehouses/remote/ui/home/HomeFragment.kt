@@ -3,14 +3,13 @@ package io.treehouses.remote.ui.home
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
-import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,8 @@ import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.AboutFragment
@@ -28,39 +28,33 @@ import io.treehouses.remote.Fragments.TerminalFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.callback.NotificationCallback
-import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
-import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
-import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
-import io.treehouses.remote.utils.match
-import java.util.*
 
-class HomeFragment : BaseHomeFragment(), SetDisconnect {
+class HomeFragment : BaseHomeFragment() {
     private var notificationListener: NotificationCallback? = null
     private var progressDialog: ProgressDialog? = null
     private var testConnectionDialog: AlertDialog? = null
+    private var connectionDialog: ProgressDialog? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
-    private lateinit var viewModel : HomeViewModel
+    private val viewModel : HomeViewModel by viewModels(ownerProducer = {this})
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
-
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupProfiles()
         showDialogOnce(preferences!!)
-        checkConnectionState()
         connectRpiListener()
         testConnectionListener()
         return bind.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        observeConnectionState()
         bind.btnGetStarted.setOnClickListener {
             instance!!.checkStatusNow()
             if (instance!!.hasValidConnection()) {
@@ -94,6 +88,8 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         viewModel.hashSent.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.status == Status.SUCCESS) syncBluetooth(it.data ?: "error")
         })
+
+        observeNetworkProfileSwitch()
 
     }
 
@@ -151,16 +147,15 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibe.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
                 else vibe.vibrate(10)
             }
-            if (viewModel.connected.value == true) {
+            if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
                 RPIDialogFragment.instance!!.bluetoothCheck("unregister")
                 viewModel.disconnectBT()
-                checkConnectionState()
                 return@setOnClickListener
             }
             if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
                 startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT)
                 context.toast( "Bluetooth is disabled", Toast.LENGTH_LONG)
-            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog(this@HomeFragment)
+            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog()
         }
     }
 
@@ -178,20 +173,40 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
         }
     }
 
-    override fun checkConnectionState() {
-        viewModel.connected.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
-            transition(connected)
-            if (connected) {
-                showLogDialog(preferences!!)
-                viewModel.sendMessage("remotehash")
-                viewModel.hashSent.value = Resource.loading("")
-                Tutorials.homeTutorials(bind, requireActivity())
-            } else {
-                viewModel.hashSent.value = Resource.nothing()
-                (activity?.application as MainApplication).logSent = false
+    private fun observeConnectionState() {
+        viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
+            Log.e("CONNECTED", "STATE $connected")
+            transition(connected == Constants.STATE_CONNECTED)
+            connectionDialog?.dismiss()
+            when(connected) {
+                Constants.STATE_CONNECTED -> {
+                    showLogDialog(preferences!!)
+                    viewModel.sendMessage("remotehash")
+                    viewModel.hashSent.value = Resource.loading("")
+                    Tutorials.homeTutorials(bind, requireActivity())
+                }
+                Constants.STATE_CONNECTING -> {
+                    showBTConnectionDialog()
+                }
+                else -> {
+                    viewModel.hashSent.value = Resource.nothing()
+                    (activity?.application as MainApplication).logSent = false
+                }
             }
         })
         viewModel.loadBT()
+    }
+
+    private fun showBTConnectionDialog() {
+        connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        connectionDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        connectionDialog!!.setTitle("Connecting...")
+        connectionDialog!!.setMessage("""
+    Device Name: ${viewModel.device?.name}
+    Device Address: ${viewModel.device?.address}
+    """.trimIndent())
+        connectionDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        connectionDialog!!.show()
     }
 
     private fun transition(connected: Boolean) {
@@ -223,31 +238,12 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     }
 
 
-    private fun updateTreehousesRemote() {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Update Required")
-                .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
-                .setPositiveButton("Update") { _: DialogInterface?, _: Int ->
-                    val appPackageName = requireActivity().packageName // getPackageName() from Context or Activity object
-                    try {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
-                    } catch (anfe: ActivityNotFoundException) {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
-                    }
-                }.create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        alertDialog.show()
-    }
-
-
     override fun onResume() {
         super.onResume()
-        if (mChatService.state == Constants.STATE_CONNECTED) {
-//            mChatService.updateHandler(mHandler)
-            viewModel.loadBT()
+        viewModel.refreshHandler()
+        if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
             viewModel.checkVersionSent = true
             viewModel.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-//            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
         }
     }
 

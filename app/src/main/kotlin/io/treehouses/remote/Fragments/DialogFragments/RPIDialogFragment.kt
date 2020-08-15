@@ -1,7 +1,5 @@
 package io.treehouses.remote.Fragments.DialogFragments
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
@@ -12,9 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.text.TextUtils
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -24,14 +19,13 @@ import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
+import androidx.fragment.app.viewModels
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.RPIListAdapter
 import io.treehouses.remote.bases.BaseDialogFragment
-import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
+import io.treehouses.remote.ui.home.HomeViewModel
 import java.util.*
 
 class RPIDialogFragment : BaseDialogFragment() {
@@ -40,15 +34,15 @@ class RPIDialogFragment : BaseDialogFragment() {
     private var pairedDevices: Set<BluetoothDevice>? = null
     private var mArrayAdapter: ArrayAdapter<*>? = null
     private var mBluetoothAdapter: BluetoothAdapter? = null
-    private var checkConnectionState: SetDisconnect? = null
-    private var mContext:Context? = null
     private var mDialog: AlertDialog? = null
     private val raspberryDevicesText: MutableList<DeviceInfo> = ArrayList()
     private val allDevicesText: MutableList<DeviceInfo> = ArrayList()
     private var pDialog: ProgressDialog? = null
+
+    private val viewModel : HomeViewModel by viewModels(ownerProducer = {requireParentFragment()})
+
     private var bind: ActivityRpiDialogFragmentBinding? = null
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        mContext = requireContext()
         instance = this
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         bluetoothCheck()
@@ -56,8 +50,8 @@ class RPIDialogFragment : BaseDialogFragment() {
         mBluetoothAdapter!!.startDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-        if (mChatService == null) mChatService = listener!!.getChatService()
-        mChatService!!.updateHandler(mHandler)
+//        if (mChatService == null) mChatService = listener!!.getChatService()
+//        mChatService!!.updateHandler(mHandler)
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
@@ -68,7 +62,41 @@ class RPIDialogFragment : BaseDialogFragment() {
         }
         intentFilter()
         mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
         return mDialog!!
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        observeConnectionStatus()
+    }
+
+    private fun observeConnectionStatus() {
+//        viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+//            when(it) {
+//                Constants.STATE_CONNECTED -> {
+//                    Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen")
+//                    pDialog?.dismiss()
+//                    mBluetoothAdapter?.cancelDiscovery()
+//                    Toast.makeText(requireContext(), "Bluetooth Connected", Toast.LENGTH_LONG).show()
+//                }
+//                Constants.STATE_CONNECTING -> {
+//                    Log.e("HEREERER", "NICEE")
+//                    pDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+//                    pDialog!!.setTitle("Connecting...")
+//                    pDialog!!.setMessage("""
+//    Device Name: ${mainDevice!!.name}
+//    Device Address: ${mainDevice!!.address}
+//    """.trimIndent())
+//                    pDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+//                    pDialog!!.show()
+//                }
+//                Constants.STATE_NONE -> {
+//                    pDialog?.dismiss()
+//                    Toast.makeText(requireContext(), "Connection Failed: Please Try Again", Toast.LENGTH_LONG).show()
+//                    Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None")
+//                }
+//            }
+//        })
     }
 
     private fun initDialog() {
@@ -96,20 +124,10 @@ class RPIDialogFragment : BaseDialogFragment() {
         bind!!.listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val deviceList: List<BluetoothDevice> = if (bind!!.rpiSwitch.isChecked) raspberryDevices else allDevices
             if (checkPiAddress(deviceList[position].address)) {
-                mainDevice = deviceList[position]
-                mChatService!!.connect(deviceList[position], true)
-                val status = mChatService!!.state
+                viewModel.connect(deviceList[position])
                 mDialog!!.cancel()
-                finish(status, mView)
-                Log.e("Connecting Bluetooth", "Position: $position ;; Status: $status")
-                pDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-                pDialog!!.setTitle("Connecting...")
-                pDialog!!.setMessage("""
-    Device Name: ${mainDevice!!.name}
-    Device Address: ${mainDevice!!.address}
-    """.trimIndent())
-                pDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                pDialog!!.show()
+                finish(mView)
+                Log.e("Connecting Bluetooth", "Position: $position ;; Status: ${viewModel.connectionStatus.value}")
             } else {
                 Toast.makeText(context, "Device Unsupported", Toast.LENGTH_LONG).show()
             }
@@ -130,14 +148,10 @@ class RPIDialogFragment : BaseDialogFragment() {
         }
     }
 
-    fun setCheckConnectionState(checkConnectionState: SetDisconnect?) {
-        this.checkConnectionState = checkConnectionState
-    }
-
-    private fun finish(status: Int, mView: View) {
+    private fun finish(mView: View) {
         val mDialog = getAlertDialog(mView)
         mDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        if (status == 3) mDialog.setTitle("BLUETOOTH IS CONNECTED") else if (status == 2) mDialog.setTitle("BLUETOOTH IS CONNECTING...") else mDialog.setTitle("BLUETOOTH IS NOT CONNECTED")
+//        if (status == 3) mDialog.setTitle("BLUETOOTH IS CONNECTED") else if (status == 2) mDialog.setTitle("BLUETOOTH IS CONNECTING...") else mDialog.setTitle("BLUETOOTH IS NOT CONNECTED")
         setAdapterNotNull(ArrayList())
     }
 
@@ -157,22 +171,23 @@ class RPIDialogFragment : BaseDialogFragment() {
     fun bluetoothCheck(vararg args: String) {
         if (mBluetoothAdapter == null) {
             Toast.makeText(activity, "Your Bluetooth Is Not Enabled or Not Supported", Toast.LENGTH_LONG).show()
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent)
+            dismiss()
+//            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, requireActivity().intent)
             try {
-                mContext!!.unregisterReceiver(mReceiver)
+                requireContext().unregisterReceiver(mReceiver)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
         if (args.isNotEmpty() && args[0] == "unregister") {
             try {
-                mContext!!.unregisterReceiver(mReceiver)
+                requireContext().unregisterReceiver(mReceiver)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            val intent = Intent()
-            intent.putExtra("mChatService", mChatService)
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+//            val intent = Intent()
+//            intent.putExtra("mChatService", mChatService)
+//            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         }
     }
 
@@ -214,35 +229,33 @@ class RPIDialogFragment : BaseDialogFragment() {
         return piAddress.contains(deviceHardwareAddress.substring(0, 7)) || piAddress.contains(deviceHardwareAddress.substring(0, 8))
     }
 
-    @SuppressLint("HandlerLeak")
-    val mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            Log.e("RPIDialogFragment", "" + msg.what)
-            val readMessage = msg.obj as? String
-            if (!TextUtils.isEmpty(readMessage) && readMessage == "connectionCheck") pDialog!!.dismiss()
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
-                    Constants.STATE_CONNECTED -> {
-                        Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen")
-                        pDialog!!.dismiss()
-//                        listener!!.setChatService(mChatService!!)
-                        checkConnectionState!!.checkConnectionState()
-                        mBluetoothAdapter!!.cancelDiscovery()
-                        Toast.makeText(mContext, "Bluetooth Connected", Toast.LENGTH_LONG).show()
-                    }
-                    Constants.STATE_NONE -> {
-                        pDialog!!.dismiss()
-                        Toast.makeText(mContext, "Connection Failed: Please Try Again", Toast.LENGTH_LONG).show()
-                        Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None")
-                    }
-                }
-                Constants.MESSAGE_DEVICE_NAME -> Log.e("RPIDialogFragment", "Device Name " + msg.data.getString(Constants.DEVICE_NAME))
-            }
-        }
-    }
+//    @SuppressLint("HandlerLeak")
+//    val mHandler: Handler = object : Handler() {
+//        override fun handleMessage(msg: Message) {
+//            Log.e("RPIDialogFragment", "" + msg.what)
+//            val readMessage = msg.obj as? String
+//            if (!TextUtils.isEmpty(readMessage) && readMessage == "connectionCheck") pDialog!!.dismiss()
+//            when (msg.what) {
+//                Constants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
+//                    Constants.STATE_CONNECTED -> {
+//                        Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen")
+//                        pDialog!!.dismiss()
+////                        listener!!.setChatService(mChatService!!)
+//                        mBluetoothAdapter!!.cancelDiscovery()
+//                        Toast.makeText(mContext, "Bluetooth Connected", Toast.LENGTH_LONG).show()
+//                    }
+//                    Constants.STATE_NONE -> {
+//                        pDialog!!.dismiss()
+//                        Toast.makeText(mContext, "Connection Failed: Please Try Again", Toast.LENGTH_LONG).show()
+//                        Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None")
+//                    }
+//                }
+//                Constants.MESSAGE_DEVICE_NAME -> Log.e("RPIDialogFragment", "Device Name " + msg.data.getString(Constants.DEVICE_NAME))
+//            }
+//        }
+//    }
 
     companion object {
-        private var mChatService: BluetoothChatService? = null
         var instance: RPIDialogFragment? = null
             private set
         private var mainDevice: BluetoothDevice? = null

@@ -1,6 +1,7 @@
 package io.treehouses.remote.ui.home
 
 import android.app.Application
+import android.bluetooth.BluetoothDevice
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
@@ -31,6 +32,12 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
     val internetStatus : MutableLiveData<Boolean> = MutableLiveData()
     val networkProfileResult : MutableLiveData<Resource<NetworkProfile>> = MutableLiveData()
 
+    var device: BluetoothDevice? = null
+
+    fun connect(device: BluetoothDevice) {
+        this.device = device
+        mChatService.connect(device, true)
+    }
 
     override fun onRead(output: String) {
         val s = match(output)
@@ -77,20 +84,20 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
             profile.isWifi -> {
                 //WIFI
                 sendMessage(
-                        getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
+                        getApplication<MainApplication>().getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
                                 profile.ssid, profile.password))
                 networkSsid = profile.ssid
             }
             profile.isHotspot -> {
                 //Hotspot
                 sendMessage(
-                        getString(if (profile.isHidden) R.string.TREEHOUSES_AP_HIDDEN else R.string.TREEHOUSES_AP,
+                        getApplication<MainApplication>().getString(if (profile.isHidden) R.string.TREEHOUSES_AP_HIDDEN else R.string.TREEHOUSES_AP,
                                 profile.option, profile.ssid, profile.password))
                 networkSsid = profile.ssid
             }
             profile.isBridge -> {
                 //Bridge
-                sendMessage(getString(R.string.TREEHOUSES_BRIDGE, profile.ssid, profile.hotspot_ssid,
+                sendMessage(getApplication<MainApplication>().getString(R.string.TREEHOUSES_BRIDGE, profile.ssid, profile.hotspot_ssid,
                         profile.password, profile.hotspot_password))
             }
         }
