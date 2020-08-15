@@ -17,4 +17,5 @@ gen/
 /build
 /captures
 .externalNativeBuild
-
+app/src/main/assets/bluetooth-server.txt
+.vagrant

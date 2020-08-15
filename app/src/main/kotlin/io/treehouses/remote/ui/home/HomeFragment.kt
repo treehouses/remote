@@ -9,6 +9,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.*
+import androidx.preference.PreferenceManager
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +19,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.AboutFragment
@@ -43,6 +43,7 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
     private var selectedLed = 0
     private var checkVersionSent = false
     private var internetSent = false
+    private var hashSent = false
     private var connectionState = false
     private var testConnectionResult = false
     private var networkSsid = ""
@@ -174,12 +175,13 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
             showLogDialog(preferences!!)
             transition(true)
             connectionState = true
-            checkVersionSent = true
-            listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            listener.sendMessage("remotehash")
+            hashSent = true
             Tutorials.homeTutorials(bind, requireActivity())
         } else {
             transition(false)
             connectionState = false
+            hashSent = false
             MainApplication.logSent = false
         }
         mChatService.updateHandler(mHandler)
@@ -243,11 +245,15 @@ class HomeFragment : BaseHomeFragment(), SetDisconnect {
 
     private fun readMessage(output: String) {
         notificationListener = try { context as NotificationCallback?
-        } catch (e: ClassCastException) {
-            throw ClassCastException("Activity must implement NotificationListener")
-        }
+        } catch (e: ClassCastException) { throw ClassCastException("Activity must implement NotificationListener") }
         val s = match(output)
         when {
+            hashSent -> {
+                syncBluetooth(output)
+                hashSent = false
+                checkVersionSent = true
+                listener.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
+            }
             s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
                 showUpgradeCLI()
                 internetSent = false

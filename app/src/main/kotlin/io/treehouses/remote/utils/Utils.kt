@@ -3,9 +3,15 @@ package io.treehouses.remote.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.util.Base64
 import android.widget.Toast
+import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
+import java.nio.charset.Charset
+import java.security.MessageDigest
 import java.util.*
+import java.util.zip.DeflaterOutputStream
+
 
 object Utils {
     fun Context.copyToClipboard(clickedData: String) {
@@ -49,5 +55,27 @@ object Utils {
 
     fun Context?.toast(s: String, duration: Int = Toast.LENGTH_LONG): Toast {
         return Toast.makeText(this, s, duration).apply { show() }
+    }
+
+    fun hashString(toHash: String) : String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(toHash.toByteArray(Charset.forName("UTF-8")))
+
+        val hexString = StringBuffer()
+        for (c in hash) {
+            val hex = Integer.toHexString(0xff and c.toInt())
+            if (hex.length == 1) hexString.append('0')
+            hexString.append(hex)
+        }
+        return hexString.toString()
+    }
+
+    fun compressString(toCompress: String) : String{
+        val baos = ByteArrayOutputStream()
+        val dos = DeflaterOutputStream(baos)
+        dos.write(toCompress.toByteArray(Charset.forName("UTF-8")))
+        dos.flush()
+        dos.close()
+        return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
     }
 }
