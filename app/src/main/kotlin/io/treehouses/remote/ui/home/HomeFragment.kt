@@ -71,7 +71,12 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.remoteUpdateRequired.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             updateTreehousesRemote()
         })
+        observers()
+        observeNetworkProfileSwitch()
 
+    }
+
+    private fun observers() {
         viewModel.newCLIUpgradeAvailable.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             notificationListener?.setNotification(it)
         })
@@ -88,9 +93,6 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.hashSent.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             if (it.status == Status.SUCCESS) syncBluetooth(it.data ?: "error")
         })
-
-        observeNetworkProfileSwitch()
-
     }
 
     private fun observeNetworkProfileSwitch() {
