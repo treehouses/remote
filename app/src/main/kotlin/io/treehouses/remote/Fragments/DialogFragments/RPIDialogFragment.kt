@@ -229,32 +229,6 @@ class RPIDialogFragment : BaseDialogFragment() {
         return piAddress.contains(deviceHardwareAddress.substring(0, 7)) || piAddress.contains(deviceHardwareAddress.substring(0, 8))
     }
 
-//    @SuppressLint("HandlerLeak")
-//    val mHandler: Handler = object : Handler() {
-//        override fun handleMessage(msg: Message) {
-//            Log.e("RPIDialogFragment", "" + msg.what)
-//            val readMessage = msg.obj as? String
-//            if (!TextUtils.isEmpty(readMessage) && readMessage == "connectionCheck") pDialog!!.dismiss()
-//            when (msg.what) {
-//                Constants.MESSAGE_STATE_CHANGE -> when (msg.arg1) {
-//                    Constants.STATE_CONNECTED -> {
-//                        Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State Listen")
-//                        pDialog!!.dismiss()
-////                        listener!!.setChatService(mChatService!!)
-//                        mBluetoothAdapter!!.cancelDiscovery()
-//                        Toast.makeText(mContext, "Bluetooth Connected", Toast.LENGTH_LONG).show()
-//                    }
-//                    Constants.STATE_NONE -> {
-//                        pDialog!!.dismiss()
-//                        Toast.makeText(mContext, "Connection Failed: Please Try Again", Toast.LENGTH_LONG).show()
-//                        Log.e("RPIDialogFragment", "Bluetooth Connection Status Change: State None")
-//                    }
-//                }
-//                Constants.MESSAGE_DEVICE_NAME -> Log.e("RPIDialogFragment", "Device Name " + msg.data.getString(Constants.DEVICE_NAME))
-//            }
-//        }
-//    }
-
     companion object {
         var instance: RPIDialogFragment? = null
             private set
