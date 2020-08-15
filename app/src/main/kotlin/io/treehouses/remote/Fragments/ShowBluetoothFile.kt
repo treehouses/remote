@@ -27,21 +27,21 @@ class ShowBluetoothFile : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind.pbar.visibility = View.VISIBLE
-        lifecycleScope.launch(Dispatchers.IO) {
-            val code = context?.assets?.open("bluetooth-server.txt")?.bufferedReader().use { it?.readText() }
-            Log.e("GOT CODE", code)
+        val code = context?.assets?.open("bluetooth-server.txt")?.bufferedReader().use { it?.readText() }
+        if (code.isNullOrEmpty()) {
+            bind.fileNotFound.visibility = View.VISIBLE
+        }
+        else {
+            launchCreateCodeView(code)
+        }
+
+    }
+    private fun launchCreateCodeView(code : String) {
+        lifecycleScope.launch(Dispatchers.Default) {
+            val codeView = createCodeView(code)
             withContext(Dispatchers.Main) {
-                if (code == null) {
-                    bind.fileNotFound.visibility = View.VISIBLE
-                } else {
-                    withContext(Dispatchers.Default) {
-                        val codeView = createCodeView(code)
-                        withContext(Dispatchers.Main) {
-                            bind.scriptContainer.addView(codeView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-                            bind.pbar.visibility = View.GONE
-                        }
-                    }
-                }
+                bind.scriptContainer.addView(codeView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+                bind.pbar.visibility = View.GONE
             }
         }
     }
