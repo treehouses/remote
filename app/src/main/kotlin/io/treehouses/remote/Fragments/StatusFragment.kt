@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
@@ -47,18 +48,51 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun refresh() {
+        setChecking()
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
         bind.refreshBtn.visibility = View.GONE
     }
 
+    private fun setChecking() {
+        bind.deviceAddress.text = "dc.."
+        bind.networkModeTitle.text = "Checking Network Mode....."
+        bind.ipAdrText.text = "IP Address: Checking....."
+        bind.ssidText.text = "SSID: Checking....."
+        bind.tvRpiName.text = "Hostname: Checking.."
+        bind.tvRpiType.text = "Model: Checking.."
+        bind.cpuModelText.text = "CPU: Checking.."
+        bind.imageText.text = "Image Version: Checking.."
+        bind.remoteVersionText.text = "Remote Version: Checking"
+        bind.tvUpgradeCheck.text = "Checking Version..."
+        bind.temperature.text = "Checking......"
+        bind.memory.text = "Checking......"
+        bind.storage.text = "Checking......"
+        bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
+        ObjectAnimator.ofInt(bind.memoryBar, "progress", 0).setDuration(600).start()
+        ObjectAnimator.ofInt(bind.storageBar, "progress", 0).setDuration(600).start()
+        ObjectAnimator.ofInt(bind.temperatureBar, "progress", 0).setDuration(600).start()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        addRefreshListener(view)
         bind.tvBluetooth.text = deviceName
         Log.e("STATUS", "device name: $deviceName")
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())
         bind.upgrade.visibility = View.GONE
+    }
+
+    private fun addRefreshListener(view: View) {
+        bind.swiperefresh.setOnRefreshListener {
+            refresh()
+        }
+        bind.swiperefresh.setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
+                ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
     }
 
     private fun upgradeOnViewClickListener() {
@@ -86,8 +120,12 @@ class StatusFragment : BaseFragment() {
             val usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
             val totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
 
+            val usedStoragePercentage = statusData.storage.split(" ")[3].dropLast(1)
+            ObjectAnimator.ofInt(bind.storageBar, "progress", usedStoragePercentage.toInt()).setDuration(600).start()
+            bind.storage.text = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
+
             ObjectAnimator.ofInt(bind.memoryBar, "progress", (usedMemory/totalMemory*100).toInt()).setDuration(600).start()
-            bind.memory.text = usedMemory.toString() + "/" + totalMemory.toString() + " GB"
+            bind.memory.text = usedMemory.toString() + "GB" + "/" + totalMemory.toString() + "GB"
 
             bind.cpuModelText.text = "CPU: ARM " + statusData.arm
 
@@ -95,22 +133,26 @@ class StatusFragment : BaseFragment() {
 
             bind.tvRpiName.text = "Hostname: " + statusData.hostname
 
-            val res = statusData.status.trim().split(" ")
+            updateStatusPage(statusData)
 
-            bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
-            bind.deviceAddress.text = res[1]
-            bind.tvRpiType.text = "Model: " + res[4]
-            rpiVersion = res[3]
+        } else checkUpgradeStatus(readMessage)
+    }
 
-            bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
+    private fun updateStatusPage(statusData:StatusData) {
+        val res = statusData.status.trim().split(" ")
 
-            checkWifiStatus(statusData.internet)
+        bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
+        bind.deviceAddress.text = res[1]
+        bind.tvRpiType.text = "Model: " + res[4]
+        rpiVersion = res[3]
 
-            bind.refreshBtn.visibility = View.VISIBLE
+        bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
-        } else {
-            checkUpgradeStatus(readMessage)
-        }
+        checkWifiStatus(statusData.internet)
+        
+        bind.refreshBtn.visibility = View.VISIBLE
+        bind.swiperefresh.isRefreshing = false
+
     }
 
 

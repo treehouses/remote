@@ -43,6 +43,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             binding!!.installButton.setOnClickListener(this)
             binding!!.startButton.setOnClickListener(this)
             binding!!.openLink.setOnClickListener(this)
+            binding!!.editEnvButton.setOnClickListener(this)
             binding!!.autorunChecked.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean -> actionListener!!.onClickAutorun(serviceData, isChecked) }
         }
         return binding!!.root
@@ -73,10 +74,15 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             visibility2 = View.VISIBLE
             visibility3 = View.VISIBLE
         }
+        var visibility4 = View.GONE
+
+        if (installed && !started && serviceData.usesEnv == "true")
+            visibility4 = View.VISIBLE
 
         binding!!.installButton.text = string2
         binding!!.startButton.visibility = visibility2
         binding!!.autorunChecked.visibility = visibility3
+        binding!!.editEnvButton.visibility = visibility4
 
     }
 
@@ -118,6 +124,8 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             actionListener!!.onClickStart(serviceData)
         } else if (binding!!.openLink == v) {
             actionListener!!.onClickLink(serviceData)
+        } else if (binding!!.editEnvButton == v) {
+            actionListener!!.onClickEditEnvVar(serviceData)
         }
     }
 

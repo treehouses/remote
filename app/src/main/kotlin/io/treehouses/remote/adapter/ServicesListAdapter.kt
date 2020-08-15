@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
+import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
@@ -38,12 +39,12 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return initView(position, convertView, parent)
+        return initView(position, parent)
     }
 
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return initView(position, convertView, parent)
+        return initView(position, parent)
     }
 
     override fun isEnabled(position: Int): Boolean {
@@ -80,7 +81,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
     }
 
-    private fun initView(position: Int, convertView: View?, parent: ViewGroup): View {
+    private fun initView(position: Int, parent: ViewGroup): View {
         val convertView: View?
         convertView = if (flag(position)) {
             LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false)
@@ -114,17 +115,24 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
             }
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val results = FilterResults()
-                val FilteredList: ArrayList<ServiceInfo> = ArrayList()
-                if (constraint == null || constraint.isEmpty()) {
+                if (constraint.isEmpty()) {
                     results.values = dataIn; results.count = dataIn.size
                 } else {
-                    for (i in 0 until dataIn.size) {
-                        val data: ServiceInfo = dataIn[i]
-                        if (data.name.toLowerCase().contains(constraint.toString().toLowerCase()) && data.name.toLowerCase() != "Installed" && data.name.toLowerCase() != "Available") FilteredList.add(data)
-                    }
-                    results.values = FilteredList; results.count = FilteredList.size
+                    val filteredList: List<ServiceInfo> = createFilteredList(constraint)
+                    results.values = filteredList; results.count = filteredList.size
                 }
                 return results
+            }
+        }
+    }
+
+    private fun createFilteredList(constraint: CharSequence): List<ServiceInfo> {
+        if (constraint.isEmpty()) return dataIn
+        return dataIn.filter {
+            return@filter when(constraint.toString().toLowerCase(Locale.ROOT)) {
+                "installed" -> it.serviceStatus == ServiceInfo.SERVICE_INSTALLED
+                "available" -> it.serviceStatus == ServiceInfo.SERVICE_AVAILABLE
+                else -> it.name.toLowerCase(Locale.ROOT).contains(constraint.toString().toLowerCase(Locale.ROOT)) && !it.isHeader
             }
         }
     }

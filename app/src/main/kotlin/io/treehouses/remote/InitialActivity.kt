@@ -3,6 +3,7 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -12,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -25,13 +27,19 @@ import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityInitial2Binding
+import io.treehouses.remote.ui.home.HomeFragment
+import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
+
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
+
+    /** Defines callbacks for service binding, passed to bindService()  */
+
     private lateinit var currentTitle: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,18 +50,66 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         requestPermission()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        if (mChatService == null) {
-            mChatService = BluetoothChatService(mHandler, applicationContext)
-        } else {
-            mChatService!!.updateHandler(mHandler)
-        }
-        checkStatusNow()
-        openCallFragment(HomeFragment())
         currentTitle = "Home"
         setUpDrawer()
         title = "Home"
         GPSService(this)
+        val a = (application as MainApplication).getCurrentBluetoothService()
+        if (a != null) {
+            Log.e("NOT", "NULL")
+            mChatService = a
+            mChatService.updateHandler(mHandler)
+            openCallFragment(HomeFragment())
+        }
+        checkStatusNow()
+        openCallFragment(HomeFragment())
     }
+
+
+//    override fun onStart() {
+//        super.onStart()
+        // Bind to LocalService
+//        if (!isBluetoothServiceRunning(BluetoothChatService::class.java)) {
+//            Log.e("InitialActivity", "STARTING SERVICE")
+//            Intent(this, BluetoothChatService::class.java).also { intent ->
+//                bindService(intent, connection, Context.BIND_AUTO_CREATE)
+//            }
+//        }
+//    }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        try {
+//            unbindService(connection)
+//        } catch (e: IllegalArgumentException) {
+//            e.printStackTrace()
+//        }
+
+//    }
+
+//    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+//        override fun onReceive(context: Context, intent: Intent) {
+//            Log.e("RECEIVED", "RECEIVE")
+//            Toast.makeText(applicationContext, "received", Toast.LENGTH_SHORT).show()
+//            val a = (application as MainApplication).getCurrentBluetoothService()
+//            if (a != null ) {
+//                setChatService(a)
+//                openCallFragment(HomeFragment())
+//            }
+//        }
+//    }
+
+//    override fun onResume() {
+//        val filter = IntentFilter()
+//        filter.addAction(MainApplication.BLUETOOTH_SERVICE_CONNECTED)
+//        applicationContext.registerReceiver(receiver, filter)
+//        super.onResume()
+//    }
+//
+//    override fun onPause() {
+//        applicationContext.unregisterReceiver(receiver)
+//        super.onPause()
+//    }
 
     private fun setUpDrawer() {
         val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
@@ -65,15 +121,16 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         toggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
     }
-
-
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onBackPressed() {
         if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             bind.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            if (f is HomeFragment) finish()
-            else if (f is SettingsFragment || f is CommunityFragment) {
+            if (f is HomeFragment) {
+                finishAffinity()
+            }
+            else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle
             }
@@ -176,7 +233,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     fun checkStatusNow() {
-        validBluetoothConnection = when (mChatService!!.state) {
+        validBluetoothConnection = when (mChatService.state) {
             Constants.STATE_CONNECTED -> {
                 LogUtils.mConnect()
                 true
@@ -269,6 +326,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         @JvmStatic
         var instance: InitialActivity? = null
             private set
-        private var mChatService: BluetoothChatService? = null
+        private lateinit var mChatService: BluetoothChatService
     }
 }

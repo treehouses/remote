@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat.getColor
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
 import java.lang.Exception
@@ -100,7 +102,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         val canvas = Canvas(bitmap)
         val p4 = Paint()
         p4.isAntiAlias = true
-        p4.color = Color.BLACK
+        p4.color = resources.getColor(R.color.daynight_textColor)
         p4.strokeWidth = 10f
         canvas.drawLine(startX, startY, endX, endY, p4)
 

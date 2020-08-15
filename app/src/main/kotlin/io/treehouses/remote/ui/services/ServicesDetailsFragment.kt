@@ -1,4 +1,4 @@
-package io.treehouses.remote.Fragments
+package io.treehouses.remote.ui.services
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -13,16 +13,19 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServiceCardAdapter
 import io.treehouses.remote.adapter.ServicesListAdapter
-import io.treehouses.remote.bases.BaseServicesFragment
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
+import io.treehouses.remote.databinding.EnvVarBinding
+import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
@@ -33,17 +36,21 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private var selected: ServiceInfo? = null
     private var serviceCardAdapter: ServiceCardAdapter? = null
     private var scrolled = false
+    private var editEnv = false
     private lateinit var binding: ActivityServicesDetailsBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        getViewModel()
         mChatService = listener.getChatService()
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
-        spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
-        binding.pickService.adapter = spinnerAdapter
-        binding.pickService.setSelection(1)
-        binding.pickService.onItemSelectedListener = this
-        serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
-        binding.servicesCards.adapter = serviceCardAdapter
-        binding.servicesCards.addOnPageChangeListener(this)
+        viewModel.servicesData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {services ->
+            spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
+            binding.pickService.adapter = spinnerAdapter
+            binding.pickService.setSelection(1)
+            binding.pickService.onItemSelectedListener = this
+            serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
+            binding.servicesCards.adapter = serviceCardAdapter
+            binding.servicesCards.addOnPageChangeListener(this)
+        })
         return binding.root
     }
 
@@ -60,22 +67,35 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                     val output = msg.obj as String
                     if (wait) {
                         matchOutput(output.trim { it <= ' ' })
-                    } else if (isLocalUrl(output, received) || isTorURL(output, received)) {
-                        received = true
-                        openLocalURL(output.trim { it <= ' ' })
-                        binding.progressBar.visibility = View.GONE
-                    } else {
-                        setScreenState(true)
-                        if (output.contains("service autorun set")) {
-                            Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
-                        } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-                            Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
-                        }
+                    }
+                    else{
+                        handleMore(output)
                     }
                 }
                 Constants.MESSAGE_STATE_CHANGE -> {
                     listener.redirectHome()
                 }
+            }
+        }
+    }
+
+    private fun handleMore(output:String){
+        if (isLocalUrl(output, received) || isTorURL(output, received)) {
+            received = true
+            openLocalURL(output.trim { it <= ' ' })
+            binding.progressBar.visibility = View.GONE
+        } else if (editEnv) {
+            var tokens = output.split(" ")
+            val name = tokens[2]
+            tokens = tokens.subList(6, tokens.size-1)
+            editEnv = false
+            showEditDialog(name, tokens.size, tokens)
+        } else {
+            setScreenState(true)
+            if (output.contains("service autorun set")) {
+                Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
+            } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
+                Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -93,7 +113,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         } else {
             return
         }
-        services.sort()
+        viewModel.servicesData.value?.sort()
+        viewModel.servicesData.value = viewModel.servicesData.value
         serviceCardAdapter!!.notifyDataSetChanged()
         spinnerAdapter!!.notifyDataSetChanged()
         setScreenState(true)
@@ -103,7 +124,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
-            val statusCode = services[position].serviceStatus
+            val statusCode = viewModel.servicesData.value!![position].serviceStatus
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
             val count = countHeadersBefore(position)
             binding.servicesCards.currentItem = position - count
@@ -118,7 +139,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     private fun goToSelected() {
         if (selected != null) {
-            val pos = inServiceList(selected!!.name, services)
+            val pos = inServiceList(selected!!.name, viewModel.servicesData.value!!)
             val count = countHeadersBefore(pos)
             binding.servicesCards.currentItem = pos - count
             binding.pickService.setSelection(pos)
@@ -148,7 +169,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private fun countHeadersBefore(position: Int): Int {
         var count = 0
         for (i in 0..position) {
-            if (services[i].isHeader) count++
+            if (viewModel.servicesData.value!![i].isHeader) count++
         }
         return count
     }
@@ -205,6 +226,38 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         }
     }
 
+    private fun showEditDialog(name: String, size: Int, vars: List<String>) {
+        val inflater = requireActivity().layoutInflater; val dialogBinding = EnvVarBinding.inflate(inflater)
+        for (i in 0 until size) {
+            val rowBinding = EnvVarItemBinding.inflate(inflater)
+            val envName = rowBinding.envName
+            val newVal = rowBinding.newVal
+
+            envName.text = vars[i].trim { it <= '\"'} + ":"
+            newVal.id = i
+            envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor)); newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
+            dialogBinding.varList.addView(rowBinding.root)
+        }
+        val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.show()
+    }
+    private fun createEditDialog(view: View, name: String, size: Int, vars: List<String>): AlertDialog {
+        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
+                .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
+                .setPositiveButton("Edit"
+                ) { _: DialogInterface?, _: Int ->
+                    var command = "treehouses services " + name + " config edit send"
+                    for (i in 0 until size) {
+                        command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
+                    }
+                    writeToRPI(command)
+                    Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
+                }
+                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                .create()
+    }
+
     override fun onClickStart(s: ServiceInfo?) {
         onStart(s)
         wait = true
@@ -214,6 +267,11 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     override fun onClickLink(s: ServiceInfo?) {
         onLink(s)
         received = false
+    }
+
+    override fun onClickEditEnvVar(s: ServiceInfo?) {
+        editEnv = true
+        writeToRPI("treehouses services " + s!!.name + " config edit request")
     }
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {

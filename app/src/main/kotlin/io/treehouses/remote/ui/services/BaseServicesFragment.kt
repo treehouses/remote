@@ -1,11 +1,13 @@
-package io.treehouses.remote.bases
+package io.treehouses.remote.ui.services
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
+import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.ServicesData
@@ -19,16 +21,21 @@ import java.util.*
 open class BaseServicesFragment() : BaseFragment() {
     private var startJson = ""
     private var gettingJSON = false
-    lateinit var services: ArrayList<ServiceInfo>
     private var servicesData: ServicesData? = null
+
+    lateinit var viewModel: ServicesViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            if (it.containsKey("services"))
-                services = it.getSerializable("services") as ArrayList<ServiceInfo>
-        }
+//        arguments?.let {
+//            if (it.containsKey("services"))
+//                services = it.getSerializable("services") as ArrayList<ServiceInfo>
+//        }
+    }
+
+    fun getViewModel() {
+        viewModel = activity?.run {ViewModelProvider(this)[ServicesViewModel::class.java]}!!
     }
 
     protected fun openLocalURL(url: String) {
@@ -74,7 +81,7 @@ open class BaseServicesFragment() : BaseFragment() {
             if (inServiceList(service, services) == -1) {
                 try {
                     services.add(ServiceInfo(service, servicesData!!.size[service]?.toInt()!!, ServiceInfo.SERVICE_AVAILABLE, servicesData!!.icon[service],
-                            servicesData!!.info[service], servicesData!!.autorun[service]))
+                            servicesData!!.info[service], servicesData!!.autorun[service], servicesData!!.usesEnv[service]))
                 } catch (exception:NullPointerException){
                     Log.e("Error", exception.toString())
                 }
