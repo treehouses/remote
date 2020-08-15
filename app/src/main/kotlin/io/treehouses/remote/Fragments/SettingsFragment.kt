@@ -18,6 +18,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.Fragments.PreferenceFragments.AboutPreference
 import io.treehouses.remote.Fragments.PreferenceFragments.AdvancedPreference
+import io.treehouses.remote.Fragments.PreferenceFragments.PrivacyPreference
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.KeyUtils
@@ -36,6 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val clearServices = findPreference<Preference>("clear_services")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
+        val privacy = findPreference<Preference>("privacy")
         val about = findPreference<Preference>("about")
         val advanced = findPreference<Preference>("advanced")
         setClickListener(clearCommandsList)
@@ -45,6 +47,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         setClickListener(clearServices)
         setClickListener(clearSSHHosts)
         setClickListener(clearSSHKeys)
+        setClickListener(privacy)
         setClickListener(about)
         setClickListener(advanced)
 
@@ -96,6 +99,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
             "reactivate_tutorials" -> reactivateTutorialsPrompt()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
+            "privacy" -> openFragment(PrivacyPreference())
             "about" -> openFragment(AboutPreference())
             "advanced" -> openFragment(AdvancedPreference())
         }
