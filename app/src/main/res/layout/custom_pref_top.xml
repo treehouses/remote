@@ -9,6 +9,7 @@
     android:paddingLeft="8dp"
     android:layout_marginLeft="6dp"
     android:layout_marginRight="6dp"
+    android:layout_marginTop="12dp"
     android:paddingEnd="?android:attr/scrollbarSize"
     android:paddingRight="?android:attr/scrollbarSize">
 

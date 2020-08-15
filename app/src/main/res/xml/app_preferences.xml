@@ -4,13 +4,13 @@
     <Preference
         android:title="General"
         android:key="general"
-        android:layout="@layout/custom_pref_whole">
+        android:layout="@layout/custom_pref_top">
     </Preference>
 
     <Preference
         android:title="Privacy"
         android:key="privacy"
-        android:layout="@layout/custom_pref_whole">
+        android:layout="@layout/custom_pref_middle">
     </Preference>
 
     <PreferenceCategory android:title="User Customization" android:layout="@layout/custom_pref_category">
@@ -45,7 +45,7 @@
         <Preference
             android:title="Clear SSH Keys"
             android:key="ssh_keys"
-            android:layout="@layout/custom_pref_bottom"
+            android:layout="@layout/custom_pref_middle"
             android:summary="Delete all SSH keys">
         </Preference>
 
@@ -61,13 +61,13 @@
     <Preference
         android:title="About"
         android:key="about"
-        android:layout="@layout/custom_pref_whole">
+        android:layout="@layout/custom_pref_middle">
     </Preference>
 
     <Preference
         android:title="Advanced"
         android:key="advanced"
-        android:layout="@layout/custom_pref_whole">
+        android:layout="@layout/custom_pref_bottom">
     </Preference>
 
 </PreferenceScreen>
