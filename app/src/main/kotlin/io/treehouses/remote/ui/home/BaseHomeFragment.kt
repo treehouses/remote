@@ -18,7 +18,12 @@ import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.Matcher
+import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SaveUtils.Screens
+import io.treehouses.remote.utils.Utils
+import okhttp3.internal.Util
+import java.nio.charset.Charset
 import java.util.*
 
 open class BaseHomeFragment : BaseFragment() {
@@ -118,7 +123,6 @@ open class BaseHomeFragment : BaseFragment() {
 
     protected fun showDialogOnce(preferences: SharedPreferences) {
         val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
-        Log.e("REACHED HERE", firstTime.toString())
         if (firstTime) {
 //            showWelcomeDialog()
             Log.e("FIRST", "TIME")
@@ -198,5 +202,31 @@ open class BaseHomeFragment : BaseFragment() {
 
     private fun CreateAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
         return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
+    }
+
+    protected fun syncBluetooth(serverHash: String) {
+        val inputStream = context?.assets?.open("bluetooth-server.txt")
+        val localString = inputStream?.bufferedReader().use { it?.readText() }
+        inputStream?.close()
+        val hashed = Utils.hashString(localString!!)
+        Log.e("HASHED", serverHash)
+        if (Matcher.isError(serverHash)) {
+            CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
+                    .setPositiveButton("Upgrade") { _, _ ->
+                        listener.sendMessage("treehouses upgrade bluetooth\n")
+                    }
+                    .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}.create().show()
+        }
+        else if (hashed.trim() != serverHash.trim()) {
+            CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Re-sync Bluetooth Server")
+                    .setMessage("The bluetooth server on the Raspberry Pi does not match the one on your device. Would you like to update the CLI bluetooth server?")
+                    .setPositiveButton("Upgrade") { _, _ ->
+                        Log.e("ENCODED", Utils.compressString(localString))
+                        listener.sendMessage("remotesync ${Utils.compressString(localString).replace("\n","" )} cnysetomer\n")
+                        Toast.makeText(requireContext(), "Bluetooth Upgraded. Please restart Bluetooth to apply the changes.", Toast.LENGTH_LONG).show()
+                    }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+                        dialog.dismiss()
+                    }.show()
+        }
     }
 }

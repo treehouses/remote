@@ -59,6 +59,8 @@ object Constants {
     const val DEVICE_NAME = "device_name"
     const val TOAST = "toast"
 
+    const val KEEP_BLUETOOTH_ALIVE = "keep_bluetooth_alive"
+
     //JSON String bundle
     const val JSON_STRING = "jsonString"
 }
