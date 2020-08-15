@@ -9,6 +9,7 @@ import android.os.Message
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
@@ -21,6 +22,7 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     val v = v
     private val mChatService: BluetoothChatService = listener.getChatService()
     private var readMessage  = ""
+
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
@@ -39,9 +41,8 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
 
     private val addUser: Button = v.findViewById(R.id.addBtn)
     private val removeUser: Button = v.findViewById(R.id.removeBtn)
-    private val enable: Button = v.findViewById(R.id.enableBtn)
-    private val disable: Button = v.findViewById(R.id.disableBtn)
     private val user:EditText = v.findViewById(R.id.user)
+    private val twoFASwitch: Switch = v.findViewById(R.id.switch2FA)
 
     init {
         mChatService.updateHandler(mHandler)
@@ -49,6 +50,8 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
         fun sendCommand1(id:Int){
             listener.sendMessage(c.resources.getString(id))
         }
+
+        sendCommand1(R.string.TREEHOUSES_SSH_2FA)
 
         fun sendCommand2(id:Int){
             listener.sendMessage(c.resources.getString(id, user.text))
@@ -60,19 +63,39 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
         removeUser.setOnClickListener {
             sendCommand2(R.string.TREEHOUSES_SSH_2FA_REMOVE)
         }
-        enable.setOnClickListener {
-            sendCommand1(R.string.TREEHOUSES_SSH_2FA_ENABLE)
-        }
-        disable.setOnClickListener {
-            sendCommand1(R.string.TREEHOUSES_SSH_2FA_DISABLE)
+        twoFASwitch.isEnabled = false
+        twoFASwitch.setOnClickListener {
+            if (twoFASwitch.isChecked) {
+                sendCommand1(R.string.TREEHOUSES_SSH_2FA_ENABLE)
+                twoFASwitch.isEnabled = false
+            } else {
+                sendCommand1(R.string.TREEHOUSES_SSH_2FA_DISABLE)
+                twoFASwitch.isEnabled = false
+            }
         }
     }
 
     fun showResponse(readMessage:String){
         when {
-            readMessage.contains("Authentication enabled") -> c.toast(readMessage)
-            readMessage.contains("Authentication disabled") -> c.toast(readMessage)
+
+            readMessage.contains("Authentication enabled") -> {
+                c.toast(readMessage)
+                twoFASwitch.isEnabled = true
+            }
+            readMessage.contains("Authentication disabled") -> {
+                c.toast(readMessage)
+                twoFASwitch.isEnabled = true
+            }
+            readMessage.contains("on") -> {
+                twoFASwitch.isChecked = true
+                twoFASwitch.isEnabled = true
+            }
+            readMessage.contains("off") -> {
+                twoFASwitch.isChecked = false
+                twoFASwitch.isEnabled = true
+            }
             readMessage.contains("No") -> c.toast(readMessage)
+            readMessage.contains("already exists") -> c.toast(readMessage)
             readMessage.contains("Your new secret key is:") -> openAuthenticator(readMessage.substringAfter(":"))
         }
     }

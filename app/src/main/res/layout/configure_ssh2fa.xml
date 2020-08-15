@@ -5,77 +5,65 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_margin="10dp"
-        android:id="@+id/enableHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="@color/daynight_textColor"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="Enable or Disable 2 Factor Authentication" />
+
 
 
     <LinearLayout
         android:id="@+id/onOffBtns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/enableHeader"
-        android:weightSum="2"
+        app:layout_constraintTop_toTopOf="parent"
+        android:weightSum="6"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/enableBtn"
-            android:layout_width="0dp"
+        <Switch
+            android:id="@+id/switch2FA"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enable"
-            android:textColor="#ffffff"
-            android:layout_weight="1"
-            android:theme="@style/PrimaryButton"
-            tools:layout_editor_absoluteX="188dp"
-            tools:layout_editor_absoluteY="83dp" />
-
-        <Button
-            android:id="@+id/disableBtn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Disable"
-            android:layout_weight="1"
-            android:textColor="#ffffff"
-            android:theme="@style/PrimaryButton"
-            tools:layout_editor_absoluteX="188dp"
-            tools:layout_editor_absoluteY="83dp" />
+            android:layout_margin="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/daynight_textColor"
+            android:text="2 Factor Authentication" />
 
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/userLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/onOffBtns"
+        android:weightSum="10"
+        android:orientation="horizontal">
+
     <TextView
         android:id="@+id/userHeader"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:layout_margin="10dp"
         android:textColor="@color/daynight_textColor"
-        app:layout_constraintTop_toBottomOf="@id/onOffBtns"
+        android:layout_weight="6"
         android:text="Add or Remove User" />
 
     <EditText
         android:id="@+id/user"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_margin="10dp"
         android:layout_height="wrap_content"
         android:textColor="@color/daynight_textColor"
         android:textColorHint="@color/expandable_child_text"
-        app:layout_constraintTop_toBottomOf="@id/userHeader"
+        android:layout_weight="4"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="pi" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/addRemoveBtns"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/user"
+        app:layout_constraintTop_toBottomOf="@id/userLayout"
         android:weightSum="2"
         android:orientation="horizontal">
 
