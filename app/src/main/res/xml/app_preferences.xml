@@ -1,34 +1,62 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Preference
-        android:title="General"
-        android:key="general"
-        android:layout="@layout/custom_pref_top">
-    </Preference>
+    <PreferenceCategory android:title="General" app:layout="@layout/custom_pref_category">
+        <Preference
+            android:title="General"
+            android:key="general"
+            android:layout="@layout/custom_pref_whole">
+        </Preference>
+    </PreferenceCategory>
 
-    <Preference
-        android:title="Privacy"
-        android:key="privacy"
-        android:layout="@layout/custom_pref_middle">
-    </Preference>
+    <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">
+        <SwitchPreferenceCompat
+            android:title="Share Data"
+            android:layout="@layout/custom_pref_whole"
+            android:summary="Please enable to share data with the Treehouses Remote Team. This will help us to improve our services to give you the best possible experience!"
+            android:key="send_log"
+            />
 
-    <Preference
-        android:title="User Customizations"
-        android:key="user_customizations"
-        android:layout="@layout/custom_pref_middle">
-    </Preference>
+    </PreferenceCategory>
 
-    <Preference
-        android:title="About"
-        android:key="about"
-        android:layout="@layout/custom_pref_middle">
-    </Preference>
+    <PreferenceCategory android:title="User Customizations" app:layout="@layout/custom_pref_category">
+        <Preference
+            android:title="User Customizations"
+            android:key="user_customizations"
+            android:layout="@layout/custom_pref_whole">
+        </Preference>
+    </PreferenceCategory>
 
-    <Preference
-        android:title="Advanced"
-        android:key="advanced"
-        android:layout="@layout/custom_pref_bottom">
-    </Preference>
+    <PreferenceCategory android:title="About" app:layout="@layout/custom_pref_category">
+        <Preference
+            android:title="Contributors"
+            android:key="contributors"
+            android:layout="@layout/custom_pref_top">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/treehouses/remote/graphs/contributors" />
+        </Preference>
+        <Preference
+            android:title="Help"
+            android:key="help_button"
+            android:layout="@layout/custom_pref_middle">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://treehouses.io/#!index.md" />
+        </Preference>
+        <Preference
+            android:title="Report an Issue"
+            android:key="reportIssue"
+            android:layout="@layout/custom_pref_bottom">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/treehouses/remote/issues"/>
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Advanced" app:layout="@layout/custom_pref_category">
+        <Preference
+        android:layout="@layout/custom_pref_whole"
+        android:icon="@drawable/bluetooth"
+        android:key="bluetooth_file"
+        android:title="View Bluetooth Server File"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>
