@@ -5,7 +5,7 @@
         <Preference
             android:title="General"
             android:key="general"
-            android:layout="@layout/custom_pref_whole">
+            android:layout="@layout/custom_pref_whole_expandable">
         </Preference>
     </PreferenceCategory>
 
@@ -23,7 +23,7 @@
         <Preference
             android:title="User Customizations"
             android:key="user_customizations"
-            android:layout="@layout/custom_pref_whole">
+            android:layout="@layout/custom_pref_whole_expandable">
         </Preference>
     </PreferenceCategory>
 
