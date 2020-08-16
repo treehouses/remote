@@ -16,7 +16,6 @@
             android:summary="Please enable to share data with the Treehouses Remote Team. This will help us to improve our services to give you the best possible experience!"
             android:key="send_log"
             />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="User Customizations" app:layout="@layout/custom_pref_category">

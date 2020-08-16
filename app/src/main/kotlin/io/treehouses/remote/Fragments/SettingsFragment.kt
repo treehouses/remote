@@ -1,14 +1,10 @@
 package io.treehouses.remote.Fragments
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
@@ -17,8 +13,6 @@ import io.treehouses.remote.Fragments.PreferenceFragments.GeneralPreference
 import io.treehouses.remote.Fragments.PreferenceFragments.UserCustomizationPreference
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
-import io.treehouses.remote.utils.KeyUtils
-import io.treehouses.remote.utils.SaveUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
     private var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
