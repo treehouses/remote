@@ -9,6 +9,13 @@ An Android app that communicates with headless Raspberry Pi mobile server runnin
 
 Check our [issues](https://github.com/treehouses/remote/issues) to see what features we are working on.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/io.treehouses.remote/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=io.treehouses.remote)
+
 ## Setting Up the Raspberry Pi
 Within this section we will cover the required hardware and software you will need to contribute to the System's Engineering team, then explore the first steps you should take as a Virtual Intern.
 
@@ -65,7 +72,7 @@ The process will take approximately 10 min to complete.
 
 2. Connect the RPi to power, if there in an "on" switch or button ensure the Rpi has power.
 
-3. If you possess an android phone, find the Treehouses Remote app on Google Play Store and [download](https://play.google.com/store/apps/details?id=io.treehouses.remote) it.
+3. If you possess an android phone, find the Treehouses Remote app on [Google Play](https://play.google.com/store/apps/details?id=io.treehouses.remote) or on [F-Droid](https://f-droid.org/packages/io.treehouses.remote/).
 
 4. Wait for a minute or two and look for `treehouses` in your Android device's Bluetooth pairing screen.
 
@@ -94,7 +101,6 @@ We assume you've already installed [Android Studio](https://developer.android.co
   - Use buttons on the lower part of the screen to performe various commands.
   - The circle on the upper left corner shows the Raspberry Pi's internet connectivity status using color green and red.
   - To return to dashboard, click on the back button at the bottom of the device.
-
 
 
 ## Tools
