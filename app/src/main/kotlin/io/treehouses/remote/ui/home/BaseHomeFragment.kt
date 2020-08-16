@@ -1,10 +1,7 @@
 package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
 import android.util.Log
@@ -19,19 +16,12 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.SetDisconnect
 import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.Matcher
-import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SaveUtils.Screens
 import io.treehouses.remote.utils.Utils
-import okhttp3.internal.Util
-import java.nio.charset.Charset
 import java.util.*
 
 open class BaseHomeFragment : BaseFragment() {
     protected var preferences: SharedPreferences? = null
-    private var imageVersion = ""
-    private var tresshousesVersion = ""
-    private var bluetoothMac = ""
-    private var rpiVersion: String? = null
     private fun setAnimatorBackgrounds(green: ImageView, red: ImageView, option: Int) {
         when (option) {
             1 -> setBackgrounds(green, red, R.drawable.thanksgiving_anim_green, R.drawable.thanksgiving_anim_red)
@@ -97,30 +87,6 @@ open class BaseHomeFragment : BaseFragment() {
         }
     }
 
-    protected fun checkImageInfo(readMessage: List<String>, deviceName: String) {
-        bluetoothMac = readMessage[0]
-        imageVersion = readMessage[1]
-        tresshousesVersion = readMessage[2]
-        rpiVersion = readMessage[3]
-        sendLog(deviceName)
-    }
-
-    private fun sendLog(deviceName: String) {
-        val connectionCount = preferences!!.getInt("connection_count", 0)
-        val sendLog = preferences!!.getBoolean("send_log", true)
-        preferences!!.edit().putInt("connection_count", connectionCount + 1).apply()
-        if (connectionCount >= 3 && sendLog) {
-            val map = HashMap<String, String?>()
-            map["imageVersion"] = imageVersion
-            map["treehousesVersion"] = tresshousesVersion
-            map["bluetoothMacAddress"] = bluetoothMac
-            map["rpiVersion"] = rpiVersion
-            val preferences:SharedPreferences = preferences!!
-            ParseDbService.sendLog(activity, deviceName, map, preferences)
-            MainApplication.logSent = true
-        }
-    }
-
     protected fun showDialogOnce(preferences: SharedPreferences) {
         val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
         if (firstTime) {
@@ -134,22 +100,6 @@ open class BaseHomeFragment : BaseFragment() {
         }
     }
 
-//    private fun showWelcomeDialog(): AlertDialog {
-//        val s = SpannableString("""Treehouses Remote only works with our treehouses images, or a raspbian image enhanced by "control" and "cli". There is more information under "Get Started"
-//
-//https://treehouses.io/#!pages/download.md
-//https://github.com/treehouses/control
-//https://github.com/treehouses/cli""")
-//        Linkify.addLinks(s, Linkify.ALL)
-//        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Friendly Reminder" )
-//                .setIcon(R.drawable.dialog_icon)
-//                .setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-//                .setMessage(s)
-//                .create()
-//        d.show()
-//        (d.findViewById<View>(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
-//        return d
-//    }
 
     protected fun showTestConnectionDialog(dismissable: Boolean, title: String, messageID: Int, selected_LED: Int): AlertDialog {
         val mView = layoutInflater.inflate(R.layout.dialog_test_connection, null)
@@ -179,11 +129,9 @@ open class BaseHomeFragment : BaseFragment() {
         return d.create()
     }
 
-    protected fun showRPIDialog(s: SetDisconnect?) {
+    protected fun showRPIDialog() {
         val dialogFrag = RPIDialogFragment.newInstance(123)
-        (dialogFrag as RPIDialogFragment).setCheckConnectionState(s)
-        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT_HOTSPOT)
-        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "rpiDialog")
+        dialogFrag.show(childFragmentManager.beginTransaction(), "rpiDialog")
     }
 
 
@@ -228,5 +176,21 @@ open class BaseHomeFragment : BaseFragment() {
                         dialog.dismiss()
                     }.show()
         }
+    }
+
+    protected fun updateTreehousesRemote() {
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+                .setTitle("Update Required")
+                .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
+                .setPositiveButton("Update") { _: DialogInterface?, _: Int ->
+                    val appPackageName = requireActivity().packageName // getPackageName() from Context or Activity object
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
+                    } catch (anfe: ActivityNotFoundException) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
+                    }
+                }.create()
+        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.show()
     }
 }
