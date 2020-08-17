@@ -7,6 +7,9 @@ An Android app that communicates with headless Raspberry Pi mobile server runnin
 - Get detailed software and hardware information of a Raspberry Pi.
 - Configure a Raspberry Pi through user-friendly interface.
 
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png)](https://play.google.com/store/apps/details?id=io.treehouses.remote)
+[![Get it on F-Droid](https://fdroid.gitlab.io/artwork/badge/get-it-on.png)](https://f-droid.org/packages/io.treehouses.remote/)
+
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
      alt="Get it on Google Play"
      height="40">](https://play.google.com/store/apps/details?id=io.treehouses.remote)
