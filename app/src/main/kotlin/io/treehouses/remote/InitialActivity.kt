@@ -319,16 +319,16 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         mActionBarDrawerToggle.toolbarNavigationClickListener = View.OnClickListener {
             //reset to burger icon
             supportFragmentManager.popBackStack()
-            mActionBarDrawerToggle.setDrawerIndicatorEnabled(true);
-            bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mActionBarDrawerToggle.isDrawerIndicatorEnabled = true
+            bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         }
         //add back button
         bind.drawerLayout.setDrawerListener(mActionBarDrawerToggle)
         mActionBarDrawerToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        mActionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-        bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        mActionBarDrawerToggle.isDrawerIndicatorEnabled = false
+        bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     fun hasValidConnection() : Boolean {

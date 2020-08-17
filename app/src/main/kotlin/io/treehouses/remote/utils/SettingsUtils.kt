@@ -1,10 +1,6 @@
 package io.treehouses.remote.utils
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.util.Log
-import android.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.Preference
@@ -29,5 +25,4 @@ object SettingsUtils {
             Log.e("SETTINGS", "Unknown key")
         }
     }
-
 }
