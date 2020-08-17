@@ -50,7 +50,7 @@ class WifiDialogFragment : DialogFragment() {
 
     private fun setAdapter() {
         val listView = mView!!.findViewById<ListView>(R.id.listView)
-        val arrayAdapter = ArrayAdapter(mContext!!, android.R.layout.simple_list_item_1, wifiList)
+        val arrayAdapter = ArrayAdapter(mContext!!, R.layout.simple_list_item, wifiList)
         listView.adapter = arrayAdapter
         listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             SSID = wifiList[position]
