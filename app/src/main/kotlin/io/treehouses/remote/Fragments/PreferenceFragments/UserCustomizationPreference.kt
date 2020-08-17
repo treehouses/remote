@@ -18,6 +18,7 @@ import io.treehouses.remote.utils.SaveUtils
 
 class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
     private var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.user_customization_preferences, rootKey)
         val clearCommandsList = findPreference<Preference>("clear_commands")

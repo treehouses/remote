@@ -34,7 +34,6 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
                 darkMode(sharedPreferences.getString(key, "").toString())
             }
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,5 +120,4 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
         private const val REACTIVATE_TUTORIALS = 1
         private const val CLEAR_SERVICES = 2
     }
-
 }

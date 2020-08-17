@@ -80,5 +80,4 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         listener = if (context is HomeInteractListener) context
                     else throw Exception("Context does not implement HomeInteractListener")
     }
-
 }
