@@ -20,6 +20,7 @@ import io.treehouses.remote.utils.SaveUtils
 import java.util.*
 
 class MainApplication : Application() {
+    var logSent = false
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
@@ -119,8 +120,6 @@ class MainApplication : Application() {
         var showLogDialog = true
         @JvmField
         var ratingDialog = true
-
-        var logSent = false
 
         var mChatService : BluetoothChatService? = null
 
