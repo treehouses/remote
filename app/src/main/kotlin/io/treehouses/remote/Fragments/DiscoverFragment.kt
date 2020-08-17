@@ -152,7 +152,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun addDevices(readMessage : String) : Boolean {
-        var regex = "([0-9]+.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
+        var regex = "([0-9]+\\.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
         val devices = regex.findAll(readMessage)
 
         devices.forEach {
@@ -169,7 +169,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun updatePiInfo(readMessage: String): Boolean {
-        val ip = extractText("([0-9]+.){3}[0-9]+", "", readMessage)
+        val ip = extractText("([0-9]+\\.){3}[0-9]+", "", readMessage)
 
         if(ip != null) {
             Log.e(TAG, "Found IP")
@@ -197,7 +197,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun updateGatewayInfo(readMessage: String) : Boolean {
-        val ip = extractText("ip address:\\s+([0-9]+.){3}[0-9]", "ip address:\\s+", readMessage)
+        val ip = extractText("ip address:\\s+([0-9]+\\.){3}[0-9]", "ip address:\\s+", readMessage)
         if(ip != null) {
             gateway.device.ip = ip
         }
