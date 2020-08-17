@@ -209,10 +209,7 @@ class RPIDialogFragment : BaseDialogFragment() {
         mArrayAdapter!!.notifyDataSetChanged()
     }
 
-    private fun checkPiAddress(deviceHardwareAddress: String): Boolean {
-        val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32"))
-        return piAddress.contains(deviceHardwareAddress.substring(0, 7)) || piAddress.contains(deviceHardwareAddress.substring(0, 8))
-    }
+
 
     @SuppressLint("HandlerLeak")
     val mHandler: Handler = object : Handler() {
@@ -252,6 +249,14 @@ class RPIDialogFragment : BaseDialogFragment() {
             bundle.putInt("num", num)
             rpiDialogFragment.arguments = bundle
             return rpiDialogFragment
+        }
+
+        fun checkPiAddress(deviceHardwareAddress: String): Boolean {
+            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "B8-27-EB", "DC-A6-32", "B827.EB", "DCA6.32",  "b8:27:eb", "dc:a6:32", "b8-27-eb", "dc-a6-32", "b827.eb", "dca6.32"))
+            for(item in piAddress){
+                if(deviceHardwareAddress.contains(item)) return true
+            }
+            return false
         }
 
     }

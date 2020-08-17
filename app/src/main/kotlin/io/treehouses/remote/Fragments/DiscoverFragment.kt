@@ -14,8 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import com.parse.Parse.getApplicationContext
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
@@ -87,8 +90,11 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         val ipAddress = formatIpAddress(wifiInfo.ipAddress)
 
         val imageView = ImageView(context)
+
         if(d.ip == ipAddress){
             imageView.setImageResource(R.drawable.android_icon)
+        } else if (RPIDialogFragment.checkPiAddress(d.mac)) {
+            imageView.setImageResource(R.drawable.raspi_logo)
         } else {
             imageView.setImageResource(R.drawable.circle_yellow)
         }
