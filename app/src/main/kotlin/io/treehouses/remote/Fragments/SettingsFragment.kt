@@ -13,6 +13,7 @@ import io.treehouses.remote.Fragments.PreferenceFragments.GeneralPreference
 import io.treehouses.remote.Fragments.PreferenceFragments.UserCustomizationPreference
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.SettingsUtils
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
     private var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
@@ -22,9 +23,9 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val general = findPreference<Preference>("general")
         val usercustomization = findPreference<Preference>("user_customization")
         val showBluetoothFile = findPreference<Preference>("bluetooth_file")
-        setClickListener(showBluetoothFile)
-        setClickListener(general)
-        setClickListener(usercustomization)
+        SettingsUtils.setClickListener(this, showBluetoothFile)
+        SettingsUtils.setClickListener(this, general)
+        SettingsUtils.setClickListener(this, usercustomization)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,14 +44,6 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
-    private fun setClickListener(preference: Preference?) {
-        if (preference != null) {
-            preference.onPreferenceClickListener = this
-        } else {
-            Log.e("SETTINGS", "Unknown key")
-        }
-    }
-
     override fun onPreferenceClick(preference: Preference): Boolean {
         when (preference.key) {
             "bluetooth_file" -> openBluetoothFile()
@@ -62,13 +55,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
 
     private fun openFragment(f: Fragment) {
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, f)
-        fragmentTransaction.addToBackStack(null)
-        try {
-            fragmentTransaction.commit()
-        } catch (exception:IllegalStateException ){
-            Log.e("Error", exception.toString())
-        }
+        SettingsUtils.openFragment(false, fragmentTransaction, f)
     }
 
     private fun openBluetoothFile() {

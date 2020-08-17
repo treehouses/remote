@@ -16,6 +16,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.SettingsUtils
 
 class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
     private var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
@@ -27,11 +28,11 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
-        setClickListener(clearCommandsList)
-        setClickListener(resetCommandsList)
-        setClickListener(clearNetworkProfiles)
-        setClickListener(clearSSHHosts)
-        setClickListener(clearSSHKeys)
+        SettingsUtils.setClickListener(this, clearCommandsList)
+        SettingsUtils.setClickListener(this, resetCommandsList)
+        SettingsUtils.setClickListener(this, clearNetworkProfiles)
+        SettingsUtils.setClickListener(this, clearSSHHosts)
+        SettingsUtils.setClickListener(this, clearSSHKeys)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,14 +54,6 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
 
     override fun onBackPressed() {
         parentFragmentManager.popBackStack()
-    }
-
-    private fun setClickListener(preference: Preference?) {
-        if (preference != null) {
-            preference.onPreferenceClickListener = this
-        } else {
-            Log.e("SETTINGS", "Unknown key")
-        }
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {

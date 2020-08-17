@@ -32,6 +32,7 @@ import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.SettingsUtils
 
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
@@ -184,13 +185,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, f)
-        fragmentTransaction.addToBackStack("")
-        try {
-            fragmentTransaction.commit()
-        } catch (exception:IllegalStateException ){
-            Log.e("Error", exception.toString())
-        }
+        SettingsUtils.openFragment(true, fragmentTransaction, f)
         //        menuItem.setChecked(true);
 //        title = "Treehouses Remote"
         //        drawer.closeDrawers();

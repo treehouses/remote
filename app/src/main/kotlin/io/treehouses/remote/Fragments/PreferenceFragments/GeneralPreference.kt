@@ -16,6 +16,7 @@ import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.SettingsUtils
 
 
 class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
@@ -25,8 +26,8 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
         setPreferencesFromResource(R.xml.general_preferences, rootKey)
         val reactivateTutorials = findPreference<Preference>("reactivate_tutorials")
         val clearServices = findPreference<Preference>("clear_services")
-        setClickListener(reactivateTutorials)
-        setClickListener(clearServices)
+        SettingsUtils.setClickListener(this, reactivateTutorials)
+        SettingsUtils.setClickListener(this, clearServices)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "dark_mode") {
@@ -50,14 +51,6 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
     override fun onPause() {
         super.onPause()
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
-    private fun setClickListener(preference: Preference?) {
-        if (preference != null) {
-            preference.onPreferenceClickListener = this
-        } else {
-            Log.e("SETTINGS", "Unknown key")
-        }
     }
 
     override fun onBackPressed() {
