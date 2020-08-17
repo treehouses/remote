@@ -54,6 +54,7 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
 
     override fun onBackPressed() {
         parentFragmentManager.popBackStack()
+        (requireActivity() as InitialActivity).resetMenuIcon()
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {

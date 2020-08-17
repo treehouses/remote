@@ -39,7 +39,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
-
+    private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
     /** Defines callbacks for service binding, passed to bindService()  */
 
     private lateinit var currentTitle: String
@@ -113,14 +113,19 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 //        super.onPause()
 //    }
 
+    override fun onResume() {
+        super.onResume()
+        resetMenuIcon()
+    }
+
     private fun setUpDrawer() {
-        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        mActionBarDrawerToggle = object : ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             override fun onDrawerOpened(drawerView: View) {
                 (this@InitialActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(window.decorView.windowToken, 0)
             }
         }
-        bind.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        bind.drawerLayout.addDrawerListener(mActionBarDrawerToggle)
+        mActionBarDrawerToggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
     }
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -315,12 +320,11 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     fun changeAppBar() {
-        val mActionBarDrawerToggle = ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), 0, 0)
+        mActionBarDrawerToggle = ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), 0, 0)
         mActionBarDrawerToggle.toolbarNavigationClickListener = View.OnClickListener {
             //reset to burger icon
             supportFragmentManager.popBackStack()
-            mActionBarDrawerToggle.isDrawerIndicatorEnabled = true
-            bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            resetMenuIcon()
         }
         //add back button
         bind.drawerLayout.setDrawerListener(mActionBarDrawerToggle)
@@ -333,6 +337,11 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     fun hasValidConnection() : Boolean {
         return validBluetoothConnection
+    }
+
+    fun resetMenuIcon() {
+        mActionBarDrawerToggle.isDrawerIndicatorEnabled = true
+        bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
     companion object {
