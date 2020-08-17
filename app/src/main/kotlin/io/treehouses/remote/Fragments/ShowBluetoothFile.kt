@@ -17,28 +17,28 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ShowBluetoothFile : Fragment() {
-    private lateinit var bind : FragmentShowBluetoothFileBinding
+    private lateinit var bluetoothBind : FragmentShowBluetoothFileBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        bind = FragmentShowBluetoothFileBinding.inflate(inflater, container, false)
-        return bind.root
+        bluetoothBind = FragmentShowBluetoothFileBinding.inflate(inflater, container, false)
+        return bluetoothBind.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bind.pbar.visibility = View.VISIBLE
+        bluetoothBind.pbar.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
             val code = context?.assets?.open("bluetooth-server.txt")?.bufferedReader().use { it?.readText() }
             Log.e("GOT CODE", code)
             withContext(Dispatchers.Main) {
                 if (code == null) {
-                    bind.fileNotFound.visibility = View.VISIBLE
+                    bluetoothBind.fileNotFound.visibility = View.VISIBLE
                 } else {
                     withContext(Dispatchers.Default) {
                         val codeView = createCodeView(code)
                         withContext(Dispatchers.Main) {
-                            bind.scriptContainer.addView(codeView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-                            bind.pbar.visibility = View.GONE
+                            bluetoothBind.scriptContainer.addView(codeView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+                            bluetoothBind.pbar.visibility = View.GONE
                         }
                     }
                 }
