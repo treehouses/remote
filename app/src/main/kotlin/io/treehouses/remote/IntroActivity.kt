@@ -53,28 +53,28 @@ class IntroActivity : AppCompatActivity() {
         }
     }
     class IntroSlideWelcome(val listener: IntroPagerListener) : Fragment() {
-        private lateinit var bind: IntroScreenWelcomeBinding
+        private lateinit var welcomeBind: IntroScreenWelcomeBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            bind = IntroScreenWelcomeBinding.inflate(inflater, container, false)
-            return bind.root
+            welcomeBind = IntroScreenWelcomeBinding.inflate(inflater, container, false)
+            return welcomeBind.root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            bind.nextBtn.setOnClickListener { listener.goToPosition(1) }
+            welcomeBind.nextBtn.setOnClickListener { listener.goToPosition(1) }
         }
     }
 
     class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
-        private lateinit var bind: IntroScreenDownloadBinding
+        private lateinit var downloadBind: IntroScreenDownloadBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            bind = IntroScreenDownloadBinding.inflate(inflater, container, false)
-            return bind.root
+            downloadBind = IntroScreenDownloadBinding.inflate(inflater, container, false)
+            return downloadBind.root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            bind.downloadBtn.setOnClickListener {
+            downloadBind.downloadBtn.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://treehouses.io/#!pages/download.md"))
                 startActivity(intent)
             }
@@ -83,15 +83,15 @@ class IntroActivity : AppCompatActivity() {
     }
 
     class IntroSlideBluetooth(val listener: IntroPagerListener) : Fragment() {
-        private lateinit var bind: IntroScreenBluetoothBinding
+        private lateinit var bluetoothBind: IntroScreenBluetoothBinding
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            bind = IntroScreenBluetoothBinding.inflate(inflater, container, false)
-            return bind.root
+            bluetoothBind = IntroScreenBluetoothBinding.inflate(inflater, container, false)
+            return bluetoothBind.root
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            bind.nextBtn.setOnClickListener { listener.goToMain() }
+            bluetoothBind.nextBtn.setOnClickListener { listener.goToMain() }
         }
     }
 
