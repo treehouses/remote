@@ -16,6 +16,7 @@ import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import kotlinx.android.synthetic.main.dialog_container.view.*
 import kotlinx.android.synthetic.main.dialog_rename.*
 import kotlinx.android.synthetic.main.hotspot_dialog.*
+import java.lang.Exception
 import kotlin.math.log
 
 
@@ -96,7 +97,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         windowHost!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        initializeDialog2()
+        try{ initializeDialog2()} catch (exception:Exception){Log.e("Error1", exception.toString())}
     }
 
     private fun initializeDialog2(){
