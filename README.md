@@ -7,32 +7,32 @@ An Android app that communicates with headless Raspberry Pi mobile server runnin
 - Get detailed software and hardware information of a Raspberry Pi.
 - Configure a Raspberry Pi through user-friendly interface.
 
-Check our [issues](https://github.com/treehouses/remote/issues) to see what features we are working on.
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/io.treehouses.remote/)
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
      alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=io.treehouses.remote)
+     height="40">](https://play.google.com/store/apps/details?id=io.treehouses.remote)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="40">](https://f-droid.org/packages/io.treehouses.remote/)
+
+Check our [issues](https://github.com/treehouses/remote/issues) to see what features we are working on.
 
 ## Setting Up the Raspberry Pi
 Within this section we will cover the required hardware and software you will need to contribute to the System's Engineering team, then explore the first steps you should take as a Virtual Intern.
 
 ### Prerequisites
-<!---
-#please move to builder
---->
+
 We will need a few hardware and software components as follows:
 
-* Raspberry versions:
-	• Pi 3 
-	• Zero W
-	• Pi 3b+
+* officially supported Raspberry Pi versions:
+  - Pi 3b/3b+
+  - Pi 4b
+  - Zero W
+  - and Pi 3a+
 
-* 5V 2.4A (1.2A for Zero) power supply with microUSB connector
-
-**NOTE**: A Raspberry Pi 4 would be a bonus purchase as of recently our latest images are not supported yet with the device
+* power supply
+  - 5V 2.4A with microUSB connector for 3b/3+ and 3a+
+  - 5V 1.2A with microUSB connector for Zero W
+  - 5V 3A with usb-c connector for 4b
 
 * A microSD card reader (check to see if your computer has an SD slot)  
 
