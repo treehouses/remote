@@ -18,10 +18,10 @@
             />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="User Customizations" app:layout="@layout/custom_pref_category">
+    <PreferenceCategory android:title="User Customization" app:layout="@layout/custom_pref_category">
         <Preference
-            android:title="User Customizations"
-            android:key="user_customizations"
+            android:title="User Customization"
+            android:key="user_customization"
             android:layout="@layout/custom_pref_whole_expandable">
         </Preference>
     </PreferenceCategory>

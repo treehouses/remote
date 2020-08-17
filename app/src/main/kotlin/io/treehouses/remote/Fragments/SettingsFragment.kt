@@ -20,7 +20,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.app_preferences, rootKey)
         val general = findPreference<Preference>("general")
-        val usercustomization = findPreference<Preference>("user_customizations")
+        val usercustomization = findPreference<Preference>("user_customization")
         val showBluetoothFile = findPreference<Preference>("bluetooth_file")
         setClickListener(showBluetoothFile)
         setClickListener(general)
@@ -55,7 +55,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         when (preference.key) {
             "bluetooth_file" -> openBluetoothFile()
             "general" -> openFragment(GeneralPreference())
-            "user_customizations" -> openFragment(UserCustomizationPreference())
+            "user_customization" -> openFragment(UserCustomizationPreference())
         }
         return false
     }
