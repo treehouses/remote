@@ -1,27 +1,31 @@
 package io.treehouses.remote.Fragments
 
-import android.graphics.*
+import android.content.Context.WIFI_SERVICE
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.Message
+import android.text.format.Formatter.formatIpAddress
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat.getColor
+import com.parse.Parse.getApplicationContext
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
-import java.lang.Exception
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
+
 
 class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private lateinit var bind : ActivityDiscoverFragmentBinding
@@ -78,8 +82,16 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun addIcon(x: Float, y: Float, size: Int, d: Device) {
+        val wifiMgr = getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiMgr.connectionInfo
+        val ipAddress = formatIpAddress(wifiInfo.ipAddress)
+
         val imageView = ImageView(context)
-        imageView.setImageResource(R.drawable.circle_yellow)
+        if(d.ip == ipAddress){
+            imageView.setImageResource(R.drawable.android_icon)
+        } else {
+            imageView.setImageResource(R.drawable.circle_yellow)
+        }
         imageView.layoutParams = LinearLayout.LayoutParams(size, size)
         imageView.x = x
         imageView.y = y
