@@ -2,22 +2,21 @@ package io.treehouses.remote.Fragments.PreferenceFragments
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import io.treehouses.remote.Fragments.SettingsFragment
+import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.BackPressReceiver
-import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import androidx.appcompat.app.AppCompatDelegate
+
 
 class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
     private var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
@@ -40,6 +39,7 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.windowBackground))
         setDivider(null)
+        (requireActivity() as InitialActivity).changeAppBar()
     }
 
     override fun onResume() {

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.utils.KeyUtils
@@ -37,6 +38,7 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.windowBackground))
         setDivider(null)
+        (requireActivity() as InitialActivity).changeAppBar()
     }
 
     override fun onResume() {

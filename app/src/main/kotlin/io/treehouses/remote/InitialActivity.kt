@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
@@ -316,6 +317,23 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         val menu = bind.navView.menu.findItem(R.id.menu_home)
         onNavigationItemSelected(menu)
         bind.navView.setCheckedItem(menu)
+    }
+
+    fun changeAppBar() {
+        val mActionBarDrawerToggle = ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), 0, 0)
+        mActionBarDrawerToggle.toolbarNavigationClickListener = View.OnClickListener {
+            //reset to burger icon
+            supportFragmentManager.popBackStack()
+            mActionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+            bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+        //add back button
+        bind.drawerLayout.setDrawerListener(mActionBarDrawerToggle)
+        mActionBarDrawerToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        mActionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+        bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
     }
 
     fun hasValidConnection() : Boolean {
