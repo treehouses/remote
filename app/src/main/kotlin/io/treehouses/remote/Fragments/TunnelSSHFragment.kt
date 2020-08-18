@@ -317,6 +317,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                     switchNotification.isChecked = false
                     switchNotification.isEnabled = true
                     notifyNow.isEnabled = true
+                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
             }
             readMessage.contains("OK.") -> { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
