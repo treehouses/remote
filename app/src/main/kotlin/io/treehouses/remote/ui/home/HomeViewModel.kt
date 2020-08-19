@@ -39,10 +39,24 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
         mChatService.connect(device, true)
     }
 
+    /**
+     * @see FragmentViewModel.onRead
+     * Matches the output to the command that was sent. Since values can be processed asynchronously, the order
+     * in which we receive the commands may not be the same as sent.
+     *
+     * When HomeFragment is loaded, this is the desired flow of input.
+     *
+     * INITIALIZATION FLOW:
+     * CHECK_INTERNET -> SEND_HASH -> CHECK_TREEHOUSES_REMOTE_VERSION -> TREEHOUSES_REMOTE_CHECK -> CLI_UPGRADE_CHECK
+     *
+     * Also, needs to listen for Network Profile configuration changes, and Test Connection Dialog
+     * @see moreActions
+     */
     override fun onRead(output: String) {
         val s = match(output)
         when {
-            hashSent.value?.status == Status.LOADING -> {
+            s == RESULTS.BOOLEAN && internetSent -> checkPackage(output)
+            hashSent.value?.status == Status.LOADING && output.length > 30 -> {
                 hashSent.value = Resource.success(output)
                 checkVersionSent = true
                 sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
@@ -54,14 +68,15 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
             s == RESULTS.VERSION && checkVersionSent -> checkVersion(output)
             s == RESULTS.REMOTE_CHECK -> {
                 sendLog(mChatService.connectedDeviceName, output.trim().split(" "))
-                sendMessage(getString(R.string.TREEHOUSES_INTERNET))
-                internetSent = true
+                sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
             }
-            s == RESULTS.BOOLEAN && internetSent -> checkPackage(output)
             else -> moreActions(output, s)
         }
     }
 
+    /**
+     * Interactive user checks (Network profile switches, and test connection result)
+     */
     private fun moreActions(output: String, result: RESULTS) {
         when {
             result == RESULTS.UPGRADE_CHECK -> newCLIUpgradeAvailable.value = output.contains("true")
@@ -78,6 +93,9 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
         }
     }
 
+    /**
+     * Once the response from treehouses default network is received, it is now safe to switch network configurations
+     */
     private fun updateNetworkProfile(profile: NetworkProfile?) {
         if (profile == null) return
         when {
@@ -103,6 +121,9 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
         }
     }
 
+    /**
+     * Check if the version of the remote matches the CLI required version
+     */
     private fun checkVersion(output: String) {
         checkVersionSent = false
         if (output.contains("Usage") || output.contains("command")) {
@@ -114,16 +135,26 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
         }
     }
 
+    /**
+     * Verify RPI internet connection
+     */
     private fun checkPackage(output: String) {
         internetSent = false
         internetStatus.value = output.contains("true")
-        sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+        sendMessage("remotehash\n")
+        hashSent.value = Resource.loading("")
     }
 
+    /**
+     * @see FragmentViewModel.onWrite
+     */
     override fun onWrite(input: String) {
         Log.e("ON WRITE", input)
     }
 
+    /**
+     * Uses the TREEHOUSES_REMOTE_CHECK to send data to Parse DB
+     */
     private fun sendLog(deviceName: String, readMessage: List<String>) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(getApplication())
         val connectionCount = preferences!!.getInt("connection_count", 0)

@@ -18,7 +18,6 @@ import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
@@ -41,7 +40,6 @@ class HomeFragment : BaseHomeFragment() {
     private var connectionDialog: ProgressDialog? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
-    private val viewModel : HomeViewModel by viewModels(ownerProducer = {this})
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
 
@@ -107,6 +105,7 @@ class HomeFragment : BaseHomeFragment() {
                     progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
                     progressDialog?.show()
                 }
+                Status.NOTHING -> Log.e("NOTHING", "NOTHING")
             }
         })
     }
@@ -157,7 +156,10 @@ class HomeFragment : BaseHomeFragment() {
             if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_OFF) {
                 startActivityForResult(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT)
                 context.toast( "Bluetooth is disabled", Toast.LENGTH_LONG)
-            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) showRPIDialog()
+            } else if (mBluetoothAdapter?.state == BluetoothAdapter.STATE_ON) {
+                val dialogFrag = RPIDialogFragment.newInstance(123)
+                dialogFrag.show(childFragmentManager.beginTransaction(), "rpiDialog")
+            }
         }
     }
 
@@ -183,8 +185,9 @@ class HomeFragment : BaseHomeFragment() {
             when(connected) {
                 Constants.STATE_CONNECTED -> {
                     showLogDialog(preferences!!)
-                    viewModel.sendMessage("remotehash")
-                    viewModel.hashSent.value = Resource.loading("")
+                    viewModel.internetSent = true
+                    viewModel.sendMessage("if nc -w 10 -z 8.8.8.8 53; then echo \"true\"; else echo \"false\"; fi\n")
+//                    viewModel.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                     Tutorials.homeTutorials(bind, requireActivity())
                 }
                 Constants.STATE_CONNECTING -> {

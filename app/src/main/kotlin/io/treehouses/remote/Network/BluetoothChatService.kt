@@ -124,10 +124,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @Synchronized
     private fun updateUserInterfaceTitle() {
         Log.e(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
+        if (mNewState != state) mHandler!!.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1))
         mNewState = state
-
-        // Give the new state to the Handler so the UI Activity can update
-        mHandler!!.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, mNewState, -1))
     }
 
     var connectedDeviceName: String = ""
