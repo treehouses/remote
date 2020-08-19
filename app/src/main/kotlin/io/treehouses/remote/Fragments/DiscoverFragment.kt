@@ -88,7 +88,6 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         val wifiMgr = getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager
         val wifiInfo = wifiMgr.connectionInfo
         val ipAddress = formatIpAddress(wifiInfo.ipAddress)
-
         val imageView = ImageView(context)
 
         if(d.ip == ipAddress){
