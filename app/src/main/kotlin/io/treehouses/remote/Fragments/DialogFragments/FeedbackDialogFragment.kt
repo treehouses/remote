@@ -51,7 +51,7 @@ class FeedbackDialogFragment : FullScreenDialogFragment() {
                 Toast.makeText(context, "Feedback sent successfully", Toast.LENGTH_LONG).show()
                 dismiss()
             } else {
-                Toast.makeText(context, "Name and message are required fields", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Name, type, and message are required fields", Toast.LENGTH_LONG).show()
             }
         }
 
