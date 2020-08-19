@@ -1,25 +1,15 @@
 package io.treehouses.remote.Fragments.PreferenceFragments
 
-import android.app.AlertDialog
-import android.content.DialogInterface
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
-import io.treehouses.remote.callback.BackPressReceiver
+import io.treehouses.remote.bases.BasePreferenceFragment
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SettingsUtils
 
-class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
-    private var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+class UserCustomizationPreference: BasePreferenceFragment(), Preference.OnPreferenceClickListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.user_customization_preferences, rootKey)
@@ -33,28 +23,6 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
         SettingsUtils.setClickListener(this, clearNetworkProfiles)
         SettingsUtils.setClickListener(this, clearSSHHosts)
         SettingsUtils.setClickListener(this, clearSSHKeys)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.windowBackground))
-        setDivider(null)
-        (requireActivity() as InitialActivity).changeAppBar()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
-    override fun onBackPressed() {
-        parentFragmentManager.popBackStack()
-        (requireActivity() as InitialActivity).resetMenuIcon()
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {
@@ -86,17 +54,6 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
 
     private fun clearSSHKeys() = createAlertDialog("Clear All SSH Keys", "Would you like to delete all SSH Keys?", "Clear", CLEAR_SSH_KEYS)
 
-    private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        val dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(positive) { _: DialogInterface?, _: Int -> onClickDialog(ID) }
-                .setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> }
-                .create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.show()
-    }
-
     private fun clearNetworkProfiles() {
         clear("profiles", "Network Profiles have been reset")
     }
@@ -113,7 +70,7 @@ class UserCustomizationPreference: PreferenceFragmentCompat(), BackPressReceiver
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
-    private fun onClickDialog(id: Int) {
+    override fun onClickDialog(id: Int) {
         when (id) {
             CLEAR_COMMANDS_ID -> {
                 clear("commandsList", "Commands List has been Cleared")

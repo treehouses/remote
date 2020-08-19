@@ -1,26 +1,16 @@
 package io.treehouses.remote.Fragments.PreferenceFragments
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
-import io.treehouses.remote.callback.BackPressReceiver
+import io.treehouses.remote.bases.BasePreferenceFragment
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SettingsUtils
 
-
-class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
-    private var preferenceChangeListener: OnSharedPreferenceChangeListener? = null
+class GeneralPreference: BasePreferenceFragment(), Preference.OnPreferenceClickListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.general_preferences, rootKey)
@@ -36,28 +26,6 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.windowBackground))
-        setDivider(null)
-        (requireActivity() as InitialActivity).changeAppBar()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
-    override fun onBackPressed() {
-        parentFragmentManager.popBackStack()
-        (requireActivity() as InitialActivity).resetMenuIcon()
-    }
-
     override fun onPreferenceClick(preference: Preference): Boolean {
         when (preference.key) {
             "clear_services" -> clearServicesPrompt()
@@ -66,18 +34,7 @@ class GeneralPreference: PreferenceFragmentCompat(), BackPressReceiver, Preferen
         return false
     }
 
-    private fun createAlertDialog(title: String, message: String, positive: String, ID: Int) {
-        val dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(positive) { _: DialogInterface?, _: Int -> onClickDialog(ID) }
-                .setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> }
-                .create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.show()
-    }
-
-    private fun onClickDialog(id: Int) {
+    override fun onClickDialog(id: Int) {
         when (id) {
             REACTIVATE_TUTORIALS -> reactivateTutorials()
             CLEAR_SERVICES -> clearServices()
