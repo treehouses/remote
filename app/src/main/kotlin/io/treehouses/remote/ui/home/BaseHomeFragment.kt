@@ -211,10 +211,12 @@ open class BaseHomeFragment : BaseFragment() {
      * https://raw.githubusercontent.com/treehouses/control/master/server.py
      */
     private fun noInternetForBluetoothUpgrade() {
-        CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "No Internet!").setMessage("There is a new version of bluetooth available, however, your Raspberry Pi is not connected to the Internet. Please connect to a network to upgrade your bluetooth.")
+        val dialog = CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "No Internet!").setMessage("There is a new version of bluetooth available, however, your Raspberry Pi is not connected to the Internet. Please connect to a network to upgrade your bluetooth.")
                 .setPositiveButton("Ok") { d, _ ->
                     d.dismiss()
-                }.show()
+                }.create()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     /**
@@ -222,11 +224,13 @@ open class BaseHomeFragment : BaseFragment() {
      * allowing for a pull from master https://raw.githubusercontent.com/treehouses/control/master/server.py
      */
     private fun askForBluetoothUpgradeOverInternet() {
-        CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
+        val dialog = CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
                 .setPositiveButton("Upgrade") { _, _ ->
                     viewModel.sendMessage("treehouses upgrade bluetooth master\n")
                 }
-                .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}.create().show()
+                .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}.create()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     /**
@@ -235,7 +239,7 @@ open class BaseHomeFragment : BaseFragment() {
      */
     private fun askForBluetoothUpgradeStable(localFile : String) {
         val compressedLocalFile = Utils.compressString(localFile).replace("\n","" )
-        CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Re-sync Bluetooth Server")
+        val dialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Re-sync Bluetooth Server")
                 .setMessage("The bluetooth server on the Raspberry Pi does not match the one on your device. Would you like to update the CLI bluetooth server?")
                 .setPositiveButton("Upgrade") { _, _ ->
                     Log.e("ENCODED", compressedLocalFile)
@@ -243,7 +247,9 @@ open class BaseHomeFragment : BaseFragment() {
                     Toast.makeText(requireContext(), "Bluetooth Upgraded. Please reboot Raspberry Pi to apply the changes.", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
-                }.show()
+                }.create()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     /**
