@@ -200,9 +200,9 @@ open class BaseHomeFragment : BaseFragment() {
             noInternetForBluetoothUpgrade()
         }
         //If there is no error, compare the server hashes to determine whether an upgrade is needed
-        else if (hashed.trim() != serverHash.trim()) {
-            askForBluetoothUpgradeStable(localString)
-        }
+//        else if (hashed.trim() != serverHash.trim()) {
+//            askForBluetoothUpgradeStable(localString)
+//        }
     }
 
     /**
