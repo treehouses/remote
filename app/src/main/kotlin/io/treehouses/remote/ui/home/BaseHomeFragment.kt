@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.preference.PreferenceManager
 import io.treehouses.remote.IntroActivity
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
@@ -200,9 +201,9 @@ open class BaseHomeFragment : BaseFragment() {
             noInternetForBluetoothUpgrade()
         }
         //If there is no error, compare the server hashes to determine whether an upgrade is needed
-//        else if (hashed.trim() != serverHash.trim()) {
-//            askForBluetoothUpgradeStable(localString)
-//        }
+        else if (hashed.trim() != serverHash.trim() && PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("bluetooth_file_local_upgrade", false)) {
+            askForBluetoothUpgradeStable(localString)
+        }
     }
 
     /**
