@@ -164,7 +164,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
         val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
 
-        val builder = AlertDialog.Builder(c)
+        var builder = AlertDialog.Builder(c)
         builder.setTitle("Overwrite On Pi or Phone")
 
         val strPiPublicKey = "Pi Public Key for ${profile}: \n$piPublicKey"
@@ -182,9 +182,8 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
 
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
 
-        builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            receiveKey(storedPublicKey, storedPrivateKey, profile, "The Pi's key has been overwritten with the phone's key successfully ")
-        }
+        builder = receiveKey(builder, arrayOf(storedPublicKey, storedPrivateKey, profile, "The Pi's key has been overwritten with the phone's key successfully "), false)
+
         setNeutralButton(builder, "Cancel")
 
         builder.show()
@@ -197,22 +196,31 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         Log.d("storedPrivateKey", storedPrivateKey)
     }
 
-    private fun receiveKey(storedPublicKey:String?, storedPrivateKey:String?, profile:String, msg:String){
-        dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile))
-        Toast.makeText(c, msg, Toast.LENGTH_LONG).show()
+    private fun receiveKey(builder: AlertDialog.Builder, arr:Array<String?>, flag:Boolean):AlertDialog.Builder{
+        if(flag){
+            builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
+                dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, arr[0], arr[1], arr[2]))
+                Toast.makeText(c, arr[3], Toast.LENGTH_LONG).show()
+            }
+        } else {
+            builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
+                dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, arr[0], arr[1], arr[2]))
+                Toast.makeText(c, arr[3], Toast.LENGTH_LONG).show()
+            }
+        }
+        return builder
     }
 
-    private fun handlePiKeySave(profile2: String, storedPublicKey2: String?, storedPrivateKey2: String?) {
-        val builder = AlertDialog.Builder(c)
+    private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
+        var builder = AlertDialog.Builder(c)
         builder.setTitle("Save Key To Pi")
         builder.setMessage(
-                "Phone Public Key for ${profile2}: \n$storedPublicKey2\n\n" +
-                        "Phone Private Key for ${profile2}: \n$storedPrivateKey2")
-        builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            receiveKey(storedPublicKey2, storedPrivateKey2, profile2, "Key saved to Pi successfully")
-        }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
+                "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
+                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
+        builder.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
             dialog?.dismiss()
         }
+        builder = receiveKey(builder, arrayOf(storedPublicKey, storedPrivateKey, profile, "Key saved to Pi successfully"), true)
         builder.show()
     }
 
