@@ -107,7 +107,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 builder.setTitle("Delete Host  " + portsName!![position] + " ?")
                 builder.setPositiveButton("Confirm") { dialog, _ ->
                     val parts = portsName!![position].split(":")[0]
-                    listener.sendMessage("treehouses sshtunnel remove host $parts")
+                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts))
                     addHostButton!!.text = "deleting host ....."
                     portList!!.isEnabled = false
                     addHostButton!!.isEnabled = false
@@ -139,7 +139,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 myPos = hostsPosition!!.lastIndex
             }
             Log.d("dasda", myPos.toString())
-            listener.sendMessage("treehouses sshtunnel remove port " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0])
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
             addPortButton!!.text = "deleting port ....."
             portList!!.isEnabled = false
             addPortButton!!.isEnabled = false

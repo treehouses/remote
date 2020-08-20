@@ -224,7 +224,7 @@ open class BaseHomeFragment : BaseFragment() {
     private fun askForBluetoothUpgradeOverInternet() {
         CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
                 .setPositiveButton("Upgrade") { _, _ ->
-                    viewModel.sendMessage("treehouses upgrade bluetooth master\n")
+                    viewModel.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_BLUETOOTH_MASTER))
                 }
                 .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}.create().show()
     }
