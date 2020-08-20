@@ -22,6 +22,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
@@ -185,16 +186,12 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         val msg = c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile)
         val toastMsg = "The Pi's key has been overwritten with the phone's key successfully "
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            sendMsg(msg, toastMsg)
+            Utils.sendMessage(dialogListener, msg, toastMsg, c)
         }
 
         setNeutralButton(builder, "Cancel")
 
         builder.show()
-    }
-
-    private fun sendMsg(msg: String, toastMsg: String) {
-        dialogListener.sendMessage(msg); Toast.makeText(c, toastMsg, Toast.LENGTH_LONG).show()
     }
 
     private fun logKeys(piPublicKey: String, piPrivateKey: String, storedPublicKey: String?, storedPrivateKey: String?) {
@@ -213,7 +210,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
             val msg = c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile)
             val toastMsg = "Key saved to Pi successfully"
-            sendMsg(msg, toastMsg)
+            Utils.sendMessage(dialogListener, msg, toastMsg, c)
         }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
             dialog?.dismiss()
         }
