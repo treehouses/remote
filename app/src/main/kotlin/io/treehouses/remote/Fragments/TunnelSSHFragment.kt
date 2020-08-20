@@ -201,10 +201,8 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
             }
             R.id.btn_add_port -> {dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                dialog.window!!.setGravity(Gravity.CENTER)
                 dialog.show()}
             R.id.btn_add_hosts -> {dialogHosts.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                dialog.window!!.setGravity(Gravity.CENTER)
                     dialogHosts.show()}
         }
     }
