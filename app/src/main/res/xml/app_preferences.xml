@@ -1,52 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <PreferenceCategory android:title="General" app:layout="@layout/custom_pref_category">
-        <SwitchPreferenceCompat
-            android:title="Splash Screen"
-            android:layout="@layout/custom_pref_top"
-            android:key="splashScreen"
-            android:defaultValue="true"/>
-        <CheckBoxPreference
-            android:title="Terminal Autocomplete"
-            android:layout="@layout/custom_pref_middle"
-            android:key="autocomplete"
-            android:defaultValue="true" />
-
-        <ListPreference
-            android:defaultValue="Follow System"
-            android:entries="@array/dark_mode_options"
-            android:entryValues="@array/dark_mode_options"
-            android:layout="@layout/custom_pref_middle"
-            android:key="dark_mode"
-            android:title="Dark Mode"
-            android:summary="Set the Dark Mode Preference"/>
-
         <Preference
-            android:title="Reactivate Tutorials"
-            android:key="reactivate_tutorials"
-            android:layout="@layout/custom_pref_middle"/>
-
-        <Preference
-            android:title="Clear Services Cache"
-            android:key="clear_services"
-            android:layout="@layout/custom_pref_middle"/>
-
-        <SwitchPreferenceCompat android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
-            android:summary="Enable to reconnect to Bluetooth automatically when a connection fails. Warning: this may affect battery life."
-            android:layout="@layout/custom_pref_middle"
-            android:key="reconnectBluetooth"/>
-
-
-
-        <ListPreference
-            android:defaultValue="LED Heavy Metal"
-            android:entries="@array/led_options"
-            android:entryValues="@array/led_options"
-            android:key="led_pattern"
-            android:title="LED Pattern"
-            android:layout="@layout/custom_pref_bottom"
-            android:summary="Set the Test Connection LED Pattern"/>
-
+            android:title="General"
+            android:key="general"
+            android:layout="@layout/custom_pref_whole_expandable">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">
@@ -56,57 +16,17 @@
             android:summary="Please enable to share data with the Treehouses Remote Team. This will help us to improve our services to give you the best possible experience!"
             android:key="send_log"
             />
-
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="User Customization" android:layout="@layout/custom_pref_category">
+    <PreferenceCategory android:title="User Customization" app:layout="@layout/custom_pref_category">
         <Preference
-            android:title="Clear Commands List"
-            android:key="clear_commands"
-            android:layout="@layout/custom_pref_top"
-            android:summary="Clear the customizable commands list in terminal">
+            android:title="User Customization"
+            android:key="user_customization"
+            android:layout="@layout/custom_pref_whole_expandable">
         </Preference>
-
-        <Preference
-            android:title="Default Commands List"
-            android:key="reset_commands"
-            android:layout="@layout/custom_pref_middle"
-            android:summary="Reset list to the default commands in terminal">
-        </Preference>
-
-        <Preference
-            android:title="Clear Network Profiles"
-            android:key="network_profiles"
-            android:layout="@layout/custom_pref_middle"
-            android:summary="Clear all Network Profiles (WIFI, Hotspot, Bridge)">
-        </Preference>
-
-        <Preference
-            android:title="Clear SSH Hosts"
-            android:key="ssh_hosts"
-            android:layout="@layout/custom_pref_middle"
-            android:summary="Delete all SSH hosts">
-        </Preference>
-
-        <Preference
-            android:title="Clear SSH Keys"
-            android:key="ssh_keys"
-            android:layout="@layout/custom_pref_bottom"
-            android:summary="Delete all SSH keys">
-        </Preference>
-
-        <SwitchPreference
-            android:title="Keep Bluetooth Alive"
-            android:key="keep_bluetooth_alive"
-            android:defaultValue="false"
-            android:layout="@layout/custom_pref_bottom"
-            android:summary="Keep Bluetooth service alive when Treehouses Remote is closed.">
-        </SwitchPreference>
     </PreferenceCategory>
 
-
-
-    <PreferenceCategory android:title="About" android:layout="@layout/custom_pref_category">
+    <PreferenceCategory android:title="About" app:layout="@layout/custom_pref_category">
         <Preference
             android:title="Contributors"
             android:key="contributors"
@@ -128,16 +48,14 @@
             <intent android:action="android.intent.action.VIEW"
                 android:data="https://github.com/treehouses/remote/issues"/>
         </Preference>
-
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Advanced" android:layout="@layout/custom_pref_category">
+    <PreferenceCategory android:title="Advanced" app:layout="@layout/custom_pref_category">
         <Preference
-            android:layout="@layout/custom_pref_top"
-            android:icon="@drawable/bluetooth"
-            android:key="bluetooth_file"
-            android:title="View Bluetooth Server File"/>
+        android:layout="@layout/custom_pref_whole"
+        android:icon="@drawable/bluetooth"
+        android:key="bluetooth_file"
+        android:title="View Bluetooth Server File"/>
     </PreferenceCategory>
-
 
 </PreferenceScreen>
