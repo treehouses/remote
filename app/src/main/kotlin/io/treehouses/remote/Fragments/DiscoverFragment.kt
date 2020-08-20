@@ -179,11 +179,11 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         val mac2 = extractText("wlan0:\\s+([0-9a-z]+:){5}[0-9a-z]+", "wlan0:\\s+", readMessage)
 
         if(mac1 != null) {
-            pi.mac = "\n" + mac1 + " (ethernet)\n"
+            pi.mac = "\n$mac1 (ethernet)\n"
         }
 
         if(mac2 != null) {
-            pi.mac += mac2 + " (wlan)\n"
+            pi.mac += "$mac2 (wlan)\n"
         }
 
         if(pi.isComplete() && pi.mac.matches("\n(.)+\n(.)+\n".toRegex()))
@@ -197,19 +197,21 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     private fun updateGatewayInfo(readMessage: String) : Boolean {
         val ip = extractText("ip address:\\s+([0-9]+\\.){3}[0-9]", "ip address:\\s+", readMessage)
-        if(ip != null) {
-            gateway.device.ip = ip
-        }
+//        if(ip != null) {
+            gateway.device.ip = ip?:"N/A"
+//        }
 
         val ssid = extractText("ESSID:\"(.)+\"", "ESSID:", readMessage)
         if (ssid != null) {
             gateway.ssid = ssid.substring(1, ssid.length - 1)
+        }else{
+            gateway.ssid = "N/A"
         }
 
         val mac = extractText("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", "MAC Address:\\s+", readMessage)
-        if (mac != null) {
-            gateway.device.mac = mac
-        }
+//        if (mac != null) {
+            gateway.device.mac = mac?:"N/A"
+//        }
 
         return !ip.isNullOrEmpty() || !ssid.isNullOrEmpty() || !mac.isNullOrEmpty()
     }
