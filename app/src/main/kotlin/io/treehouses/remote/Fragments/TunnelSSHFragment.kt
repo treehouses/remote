@@ -13,12 +13,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 
-import kotlinx.android.synthetic.main.dialog_container.view.*
-import kotlinx.android.synthetic.main.dialog_rename.*
-import kotlinx.android.synthetic.main.hotspot_dialog.*
-import java.lang.Exception
-import kotlin.math.log
-
 
 class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     private var addPortButton: Button? = null
