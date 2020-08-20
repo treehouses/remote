@@ -182,8 +182,10 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
 
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
 
+        val msg = c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile)
+        val toastMsg = "The Pi's key has been overwritten with the phone's key successfully "
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile), "The Pi's key has been overwritten with the phone's key successfully ")
+            sendMessage(msg, toastMsg)
         }
 
         setNeutralButton(builder, "Cancel")
@@ -210,7 +212,9 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
                         "Phone Private Key for ${profile}: \n$storedPrivateKey")
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile), "Key saved to Pi successfully")
+            val msg = c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile)
+            val toastMsg = "Key saved to Pi successfully"
+            sendMessage(msg, toastMsg)
         }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
             dialog?.dismiss()
         }
