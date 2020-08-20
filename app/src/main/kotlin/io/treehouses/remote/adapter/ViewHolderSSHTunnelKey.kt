@@ -202,14 +202,14 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         Toast.makeText(c, msg, Toast.LENGTH_LONG).show()
     }
 
-    private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
+    private fun handlePiKeySave(profile2: String, storedPublicKey2: String?, storedPrivateKey2: String?) {
         val builder = AlertDialog.Builder(c)
         builder.setTitle("Save Key To Pi")
         builder.setMessage(
-                "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
-                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
+                "Phone Public Key for ${profile2}: \n$storedPublicKey2\n\n" +
+                        "Phone Private Key for ${profile2}: \n$storedPrivateKey2")
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            receiveKey(storedPublicKey, storedPrivateKey, profile, "Key saved to Pi successfully")
+            receiveKey(storedPublicKey2, storedPrivateKey2, profile2, "Key saved to Pi successfully")
         }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
             dialog?.dismiss()
         }
