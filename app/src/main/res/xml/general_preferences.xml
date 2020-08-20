@@ -7,10 +7,12 @@
             android:title="Splash Screen"
             android:layout="@layout/custom_pref_top"
             android:key="splashScreen"
+            android:summary="Toggle the Start Logo Screen ON or OFF"
             android:defaultValue="true"/>
         <CheckBoxPreference
             android:title="Terminal Autocomplete"
             android:layout="@layout/custom_pref_middle"
+            android:summary="Enable or Disable Autocomplete Suggestions of Commands in Terminal"
             android:key="autocomplete"
             android:defaultValue="true" />
 
@@ -21,16 +23,18 @@
             android:layout="@layout/custom_pref_middle"
             android:key="dark_mode"
             android:title="Dark Mode"
-            android:summary="Set the Dark Mode Preference"/>
+            android:summary="Set the App Theme to Dark Mode or Back to Normal"/>
 
         <Preference
             android:title="Reactivate Tutorials"
             android:key="reactivate_tutorials"
-            android:layout="@layout/custom_pref_middle"/>
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Get Help by Going Through the Tutorials Again"/>
 
         <Preference
             android:title="Clear Services Cache"
             android:key="clear_services"
+            android:summary="Delete Locally Stored Services List That Makes Services Load Faster"
             android:layout="@layout/custom_pref_middle"/>
 
         <SwitchPreferenceCompat android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
