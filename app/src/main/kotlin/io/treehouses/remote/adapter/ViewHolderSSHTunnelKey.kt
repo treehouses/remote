@@ -197,17 +197,15 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
     }
 
     private fun receiveKey(builder: AlertDialog.Builder, arr:Array<String?>, flag:Boolean):AlertDialog.Builder{
+        Toast.makeText(c, arr[3], Toast.LENGTH_LONG).show()
+        fun sendCommand(){ dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, arr[0], arr[1], arr[2])) }
+        val btnText = "Save to Pi"
         if(flag){
-            builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-                dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, arr[0], arr[1], arr[2]))
-                Toast.makeText(c, arr[3], Toast.LENGTH_LONG).show()
-            }
+            builder.setPositiveButton(btnText) { _: DialogInterface?, _: Int -> sendCommand() }
         } else {
-            builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-                dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, arr[0], arr[1], arr[2]))
-                Toast.makeText(c, arr[3], Toast.LENGTH_LONG).show()
-            }
+            builder.setNegativeButton(btnText) { _: DialogInterface?, _: Int -> sendCommand() }
         }
+
         return builder
     }
 
