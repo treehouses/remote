@@ -130,13 +130,10 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onBackPressed() {
-        if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            bind.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
+        if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) bind.drawerLayout.closeDrawer(GravityCompat.START)
+        else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            if (f is HomeFragment) {
-                finishAffinity()
-            }
+            if (f is HomeFragment) finishAffinity()
             else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle
@@ -154,17 +151,15 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         // Handle navigation view item clicks here.
         val id = item.itemId
         checkStatusNow()
-        if (validBluetoothConnection) {
-            onNavigationItemClicked(id)
-        } else {
+        if (validBluetoothConnection) onNavigationItemClicked(id)
+        else {
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
                 R.id.menu_ssh -> openCallFragment(SSHConfig())
             }
         }
-        title = item.title
-        currentTitle = item.title.toString()
+        title = item.title; currentTitle = item.title.toString()
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }

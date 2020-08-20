@@ -7,15 +7,14 @@ import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.BackPressReceiver
 
-abstract class BasePreferenceFragment: PreferenceFragmentCompat(), BackPressReceiver {
+abstract class BasePreferenceFragment: PreferenceFragmentCompat(), BackPressReceiver, Preference.OnPreferenceClickListener {
     protected var preferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
-
-    abstract override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,5 +49,5 @@ abstract class BasePreferenceFragment: PreferenceFragmentCompat(), BackPressRece
         dialog.show()
     }
 
-    abstract fun onClickDialog(id: Int)
+    protected abstract fun onClickDialog(id: Int)
 }
