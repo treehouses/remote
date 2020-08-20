@@ -16,84 +16,34 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!--  BluetoothChat -->
-    <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
-    <string name="title_connecting">connecting...</string>
-    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="title_not_connected">not connected</string>
-    <string name="command_hint">commands</string>
-    <string name="Docker">DOCKER</string>
     <string name="change_password">Change pi user password</string>
     <string name="bt_notification_ID">bluetoothChannel</string>
     <string name="bt_notification_channel">Bluetooth</string>
     <string name="bt_notification_description">Treehouses Remote is currently connected to a device.</string>
 
     <string name="TestButton">TREEHOUSES</string>
-    <string name="DockerButton">DOCKER PS</string>
-    <string name="VersionButton">TREEHOUSES DETECTRPI</string>
-    <string name="PingWIFI">TREEHOUSES PING</string>
     <!-- ProgressDialog -->
-    <string name="progress_dialog_title">Configuring RPi\'s Wi-Fi setting</string>
-    <string name="progress_dialog_title_hotspot">Configuring RPi as a Hotspot</string>
-    <string name="progress_dialog_message">Wait while configuring...</string>
 
     <!--  DeviceListActivity -->
-    <string name="scanning">Scanning for devices...</string>
     <string name="select_device">Select a device to connect</string>
-    <string name="none_paired">No devices have been paired</string>
-    <string name="none_found">No devices found</string>
-    <string name="title_paired_devices">Paired Devices</string>
-    <string name="title_other_devices">Other Available Devices</string>
-    <string name="button_scan">Scan for devices</string>
 
     <!-- Options Menu -->
-    <string name="secure_connect">Connect a device - Secure</string>
-    <string name="insecure_connect">Connect a device - Insecure</string>
-    <string name="discoverable">Make discoverable</string>
 
     <string name="app_name">Treehouses Remote</string>
 
-    <string name="intro_message">
-        <![CDATA[
-
-
-            This application allows two Android devices to carry out two-way text chat over
-            Bluetooth. It demonstrates all the fundamental Bluetooth API capabilities, such as:
-              (1) Scanning for other Bluetooth devices
-              (2) Querying the local Bluetooth adapter for paired Bluetooth devices
-              (3) Establishing RFCOMM channels/sockets
-              (4) Connecting to a remote device
-              (5) Transferring data over Bluetooth
-
-
-        ]]>
-    </string>
-
     <!-- WifiDialogFragment -->
     <string name="cancel">Cancel</string>
-    <string name="start_configuration">Start Configuration</string>
-    <string name="dialog_message">Configure RPi\'s Wi-Fi setting</string>
-    <string name="ssid">SSID</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="error_ssid_empty">Type in the name of the network \nyou want to use </string>
     <string name="error_pwd_length">Password must have at least \neight characters.</string>
     <string name="error_pwd_confirm">Passwords do not match </string>
-    <string name="config_configuring">Start configuring...</string>
-    <string name="config_success">Configure Wifi successfully, IP: </string>
-    <string name="config_fail">Fail to configure Wifi! Please check SSID and/or password and try again.</string>
-    <string name="config_alreadyConfig">You have already configured the wifi</string>
     <!--Hotspot-->
-    <string name="create_hotspot">Create Hotspot</string>
-    <string name="dialog_message_hotspot">Configure RPi\'s Hotspot setting</string>
-    <string name="config_alreadyConfig_hotspot">You have already configured the hotspot</string>
 
-    <string name="app_project_name">Treehouses Remote</string>
     <string name="action_settings">Settings</string>
     <string name="action_community">Community</string>
-    <string name="title_sync_settings">Sync Settings</string>
-    <string name="btn_sync">Sync</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_network">Network</string>
@@ -116,19 +66,12 @@
     <string name="suggestion">Suggestion</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="contributors">Contributors</string>
-    <string name="version_text">Version</string>
     <string name="bStatusOffline">Bluetooth Status: Offline</string>
     <string name="bStatusIdle">Bluetooth: Idle (not Connected or trying to Connect)</string>
     <string name="bStatusConnected">Bluetooth: Connected</string>
-    <string name="title_activity_initial">InitialActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="menu_tunnel">Tunnel</string>
     <string name="yes">yes</string>
-    <string name="treehouses">treehouses</string>
     <string-array name="spinner_hotspot">
         <item>internet</item>
         <item>local</item>
@@ -142,9 +85,6 @@
     <!--Home Fragment-->
     <string name="test_connection_message">You should be able to see a flashing green light on your Raspberry Pi right now.</string>
     <string name="test_finished">The flashing has now stopped.</string>
-
-    <string name="collect_data_title">Sharing is Caring</string>
-    <string name="collect_data_message">We would like to collect your usage data in order to help us improve the Treehouses experience. This information would include location, device name and model number, and successful connections. Would you be willing to help Treehouses by sharing this data?</string>
 
     <!--Add Command Dialog-->
     <string name="add_command_title">Add a Command</string>
@@ -191,11 +131,6 @@
         <item>treehouses led diwali</item>
         <item>treehouses led lantern</item>
     </string-array>
-
-    <plurals name="console_copy_done">
-        <item quantity="one">"Copied %1$d byte to clipboard"</item>
-        <item quantity="other">"Copied %1$d bytes to clipboard"</item>
-    </plurals>
 
     <string name="terminal_connecting">"Connecting to %1$s:%2$d via %3$s"</string>
     <!-- Text for the "Esc" button in virtual keyboard. -->
@@ -265,10 +200,7 @@
     <string name="terminal_auth_ki">"Attempting 'keyboard-interactive' authentication"</string>
     <string name="terminal_auth_ki_fail">"Authentication method 'keyboard-interactive' failed"</string>
 
-    <string name="terminal_auth_fail">"[Your host doesn't support 'password' or 'keyboard-interactive' authentication.]"</string>
-
     <string name="terminal_no_session">"Session will not be started due to host preference."</string>
-    <string name="terminal_enable_portfoward">"Enable port forward: %1$s"</string>
 
     <!-- In a list of all the key pairs the user has generated or imported into their device.
 	     Describes a key type of the RSA algorithm with a certain strength described in
@@ -292,7 +224,6 @@
     <!-- In a list of all the key pairs the user has generated or imported into their device.
          Added to the end of a key description to indicate that the key is encrypted (i.e,
          password protected). -->
-    <string name="key_attribute_encrypted">(encrypted)</string>
 
     <!-- The header of the warning a user gets when the host key has changed. Note that this can be a very serious attack, so we try to be as "loud" to the user as possible. -->
     <string name="host_verification_failure_warning_header">"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"</string>
@@ -309,18 +240,13 @@
     <string name="prompt_password">"Password:"</string>
     <string name="prompt_pubkey_password">"Password for key '%1$s'"</string>
     <!-- Part of the formatting hints that will be used like: username@hostname:port -->
-    <string name="format_username">"username"</string>
     <!-- Part of the formatting hints that will be used like: username@hostname:port -->
-    <string name="format_hostname">"hostname"</string>
     <!-- Part of the formatting hints that will be used like: username@hostname:port -->
-    <string name="format_port">"port"</string>
 
     <string name="prompt_allow_agent_to_use_key">"Allow remote host to"\n"use key '%1$s'?"</string>
 
-    <string name="treehouses_logo">Treehouses Logo</string>
     <string name="start_tor">Start Tor</string>
     <string name="add_port">Add Port</string>
-    <string name="notify_now">Notify Now</string>
     <string name="notification">Notification: </string>
 
     <string-array name="dark_mode_options">
@@ -330,7 +256,6 @@
     </string-array>
 
     <string name="intro_slide_1_m1">Treehouses Remote requires a Raspberry Pi running a Treehouses Image in order to function properly.</string>
-    <string name="intro_slide_welcome_m1">Treehouses Remote </string>
     <string name="delete_key_message"><b>Warning</b>: This action is cannot be undone. To confirm, please type the name of the key in the space below:</string>
     <string name="discover_text_underlined"><u>Discover</u></string>
 
