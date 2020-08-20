@@ -93,8 +93,8 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         hostsPosition = ArrayList()
         val window = dialog.window
         val windowHost = dialogHosts.window
-        window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        windowHost!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         try{ initializeDialog2()} catch (exception:Exception){Log.e("Error1", exception.toString())}
@@ -192,7 +192,10 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-
+        fun showDialog(dialog:Dialog){
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
         when (v?.id) {
             R.id.btn_adding_host -> { addingHostButton() }
             R.id.btn_adding_port -> { addingPortButton() }
@@ -200,8 +203,9 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 bind!!.notifyNow.isEnabled = false
                 listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
             }
-            R.id.btn_add_port -> dialog.show()
-            R.id.btn_add_hosts -> dialogHosts.show()
+
+            R.id.btn_add_port -> showDialog(dialog)
+            R.id.btn_add_hosts -> showDialog(dialogHosts)
         }
     }
 
