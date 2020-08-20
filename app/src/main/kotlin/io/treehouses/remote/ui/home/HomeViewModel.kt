@@ -2,10 +2,12 @@ package io.treehouses.remote.ui.home
 
 import android.app.Application
 import android.bluetooth.BluetoothDevice
+import android.os.Message
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.BuildConfig
+import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.R
@@ -27,6 +29,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
     var hashSent = MutableLiveData<Resource<String>>()
     var testConnectionResult = MutableLiveData<Resource<Boolean>>()
     val error : MutableLiveData<String> = MutableLiveData()
+    val errorConnecting : MutableLiveData<String> = MutableLiveData()
     val remoteUpdateRequired : MutableLiveData<Boolean> = MutableLiveData()
     val newCLIUpgradeAvailable : MutableLiveData<Boolean> = MutableLiveData()
     val internetStatus : MutableLiveData<Boolean> = MutableLiveData()
@@ -34,6 +37,10 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
 
     var device: BluetoothDevice? = null
 
+    /**
+     * Connects to a Bluetooth device
+     * @param device : BluetoothDevice = Device to connect to
+     */
     fun connect(device: BluetoothDevice) {
         this.device = device
         mChatService.connect(device, true)
@@ -150,6 +157,12 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      */
     override fun onWrite(input: String) {
         Log.e("ON WRITE", input)
+    }
+
+    override fun onOtherMessage(msg: Message) {
+        if (msg.what == Constants.MESSAGE_ERROR) {
+            errorConnecting.value = msg.obj as String
+        }
     }
 
     /**

@@ -174,6 +174,18 @@
         <item>DSA</item>
     </string-array>
 
+    <string-array name="faq_issues">
+        <item>My Raspberry Pi is not getting discovered by my device over Bluetooth. What do I do?</item>
+        <item>My device is not connecting to the Bluetooth Server on the Raspberry Pi.</item>
+        <item>I just upgraded my Bluetooth, and now it is not connecting. What do I do?</item>
+    </string-array>
+
+    <string-array name="faq_answers">
+        <item>Most likely, the Bluetooth server has not started/was not configured properly. If rebooting the Raspberry Pi did not work, please download the latest image from: https://treehouses.io/#!pages/download.md</item>
+        <item>First, ensure that the Raspberry Pi is on and in range of your device. If so, try restarting Treehouses Remote app, and then try reconnecting. If that also fails, try going to the device settings and connect to the Raspberry Pi from there, and come back to the app.</item>
+        <item>If SSH is available, try running "treehouses bluetooth restart". If that fails, try rebooting the Raspberry Pi.</item>
+    </string-array>
+
     <string-array name="led_options_commands">
         <item>treehouses led dance</item>
         <item>treehouses led thanksgiving</item>
