@@ -183,7 +183,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
 
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile))
+            receiveKey(dialogListener, storedPublicKey, storedPrivateKey, profile)
             Toast.makeText(c, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
         }
         setNeutralButton(builder, "Cancel")
@@ -198,6 +198,10 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
         Log.d("storedPrivateKey", storedPrivateKey)
     }
 
+    private fun receiveKey(dialogListener:HomeInteractListener, storedPublicKey:String?, storedPrivateKey:String?, profile:String){
+        dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile))
+    }
+
     private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
         val builder = AlertDialog.Builder(c)
         builder.setTitle("Save Key To Pi")
@@ -205,7 +209,7 @@ class ViewHolderSSHTunnelKey internal constructor(v: View, private val c: Contex
                 "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
                         "Phone Private Key for ${profile}: \n$storedPrivateKey")
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            dialogListener.sendMessage(c.getString(R.string.TREEHOUSES_REMOTE_KEY_RECEIVE, storedPublicKey, storedPrivateKey, profile))
+            receiveKey(dialogListener, storedPublicKey, storedPrivateKey, profile)
             Toast.makeText(c, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
         }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int ->
             dialog?.dismiss()
