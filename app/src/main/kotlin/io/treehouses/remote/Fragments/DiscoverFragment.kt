@@ -197,11 +197,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         gateway.device.ip = ip ?: "N/A"
 
         val ssid = extractText("ESSID:\"(.)+\"", "ESSID:", readMessage)
-        if (ssid != null) {
-            gateway.ssid = ssid.substring(1, ssid.length - 1)
-        } else {
-            gateway.ssid = "N/A"
-        }
+        gateway.ssid = ssid?.substring(1, ssid.length - 1) ?: "N/A"
 
         val mac = extractText("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", "MAC Address:\\s+", readMessage)
         gateway.device.mac = mac ?: "N/A"
