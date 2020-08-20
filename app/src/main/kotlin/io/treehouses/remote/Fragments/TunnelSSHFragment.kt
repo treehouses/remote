@@ -192,7 +192,10 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-
+        fun showDialog(dialog:Dialog){
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
         when (v?.id) {
             R.id.btn_adding_host -> { addingHostButton() }
             R.id.btn_adding_port -> { addingPortButton() }
@@ -200,10 +203,9 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 bind!!.notifyNow.isEnabled = false
                 listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
             }
-            R.id.btn_add_port -> {dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                dialog.show()}
-            R.id.btn_add_hosts -> {dialogHosts.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                    dialogHosts.show()}
+
+            R.id.btn_add_port -> showDialog(dialog)
+            R.id.btn_add_hosts -> showDialog(dialogHosts)
         }
     }
 
