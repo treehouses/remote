@@ -36,7 +36,7 @@ import kotlin.math.floor
  * @author rhansby
  */
 @TargetApi(11)
-class TerminalTextViewOverlay(context: Context?, var terminalView: TerminalView) : AppCompatTextView(context) {
+class TerminalTextViewOverlay(context: Context, var terminalView: TerminalView) : AppCompatTextView(context) {
     private var currentSelection = ""
     private var selectionActionMode: ActionMode? = null
     private val clipboard: ClipboardManager = getContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

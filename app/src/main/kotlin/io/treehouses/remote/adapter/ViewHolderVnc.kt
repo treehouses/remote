@@ -32,11 +32,13 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
 
     companion object {
         lateinit var editTextIp: TextInputEditText
+        lateinit var vnc:Switch
     }
 
     init {
+        listener.sendMessage("treehouses vnc")
         val btnStartConfig = v.findViewById<Button>(R.id.btn_start_config)
-        val vnc = v.findViewById<Switch>(R.id.switchVnc)
+        vnc = v.findViewById<Switch>(R.id.switchVnc)
         editTextIp = v.findViewById(R.id.editTextIp)
         btnStartConfig.setOnClickListener { openVnc(context, v, editTextIp) }
         vnc.setOnClickListener {

@@ -171,6 +171,10 @@ class SystemFragment : BaseFragment() {
             Toast.makeText(context, "VNC enabled", Toast.LENGTH_LONG).show()
         } else if (readMessage.contains("Success: the vnc service has been stopped")) {
             Toast.makeText(context, "VNC disabled", Toast.LENGTH_LONG).show()
+        } else if (readMessage.contains("system.")) {
+            ViewHolderVnc.vnc.isChecked = false
+        } else if (readMessage.contains("You can now")) {
+            ViewHolderVnc.vnc.isChecked = true
         }
     }
 

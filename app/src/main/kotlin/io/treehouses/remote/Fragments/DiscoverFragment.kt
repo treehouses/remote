@@ -1,31 +1,39 @@
 package io.treehouses.remote.Fragments
 
-import android.graphics.*
+import android.content.Context.WIFI_SERVICE
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.Message
+import android.text.format.Formatter.formatIpAddress
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat.getColor
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
+import com.parse.Parse.getApplicationContext
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
-import java.lang.Exception
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
+
 class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private lateinit var bind : ActivityDiscoverFragmentBinding
     private var gateway = Gateway()
+    private var pi = Device()
     private var deviceList = ArrayList<Device>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,6 +52,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         try {
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY_LIST))
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY))
+            listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_SELF))
         }
         catch (e : Exception) {
             Log.e(TAG, "Error Requesting Network Information")
@@ -76,8 +85,18 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun addIcon(x: Float, y: Float, size: Int, d: Device) {
+        val wifiMgr = getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiMgr.connectionInfo
+        val ipAddress = formatIpAddress(wifiInfo.ipAddress)
         val imageView = ImageView(context)
-        imageView.setImageResource(R.drawable.circle_yellow)
+
+        if(d.ip == ipAddress){
+            imageView.setImageResource(R.drawable.android_icon)
+        } else if (RPIDialogFragment.checkPiAddress(d.mac)) {
+            imageView.setImageResource(R.drawable.raspi_logo)
+        } else {
+            imageView.setImageResource(R.drawable.circle_yellow)
+        }
         imageView.layoutParams = LinearLayout.LayoutParams(size, size)
         imageView.x = x
         imageView.y = y
@@ -132,7 +151,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun addDevices(readMessage : String) : Boolean {
-        val regex = "([0-9]+.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
+        var regex = "([0-9]+\\.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
         val devices = regex.findAll(readMessage)
 
         devices.forEach {
@@ -148,8 +167,36 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         return !devices.none()
     }
 
+    private fun updatePiInfo(readMessage: String): Boolean {
+        val ip = extractText("([0-9]+\\.){3}[0-9]+", "", readMessage)
+
+        if(ip != null) {
+            Log.e(TAG, "Found IP")
+            pi.ip = ip
+        }
+
+        val mac1 = extractText("eth0:\\s+([0-9a-z]+:){5}[0-9a-z]+", "eth0:\\s+", readMessage)
+        val mac2 = extractText("wlan0:\\s+([0-9a-z]+:){5}[0-9a-z]+", "wlan0:\\s+", readMessage)
+
+        if(mac1 != null) {
+            pi.mac = "\n" + mac1 + " (ethernet)\n"
+        }
+
+        if(mac2 != null) {
+            pi.mac += mac2 + " (wlan)\n"
+        }
+
+        if(pi.isComplete() && pi.mac.matches("\n(.)+\n(.)+\n".toRegex()))
+            if(!deviceList.contains(pi)) {
+                deviceList.add(pi)
+                setupIcons()
+            }
+
+        return !ip.isNullOrEmpty() || mac1.isNullOrEmpty() || !mac2.isNullOrEmpty()
+    }
+
     private fun updateGatewayInfo(readMessage: String) : Boolean {
-        val ip = extractText("ip address:\\s+([0-9]+.){3}[0-9]", "ip address:\\s+", readMessage)
+        val ip = extractText("ip address:\\s+([0-9]+\\.){3}[0-9]", "ip address:\\s+", readMessage)
         if(ip != null) {
             gateway.device.ip = ip
         }
@@ -164,7 +211,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             gateway.device.mac = mac
         }
 
-        return ip.isNullOrEmpty() || ssid.isNullOrEmpty() || mac.isNullOrEmpty()
+        return !ip.isNullOrEmpty() || !ssid.isNullOrEmpty() || !mac.isNullOrEmpty()
     }
 
     private fun extractText(pattern: String, separator: String, msg: String): String? {
@@ -172,8 +219,10 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         val res = regex.find(msg)
         var text: String? = null
 
-        if(res != null)
-            text = res.value.split(separator.toRegex())[1]
+        if(res != null) {
+            if(separator == "") text = res.value
+            else text = res.value.split(separator.toRegex())[1]
+        }
 
         return text
     }
@@ -188,10 +237,11 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                 val readMessage = msg.obj as String
                 Log.d(TAG, "READ = $readMessage")
 
-                if(addDevices(readMessage))
-                    setupIcons()
-                else if (updateGatewayInfo(readMessage))
-                    updateGatewayIcon()
+                when {
+                    addDevices(readMessage) -> setupIcons()
+                    updateGatewayInfo(readMessage) -> updateGatewayIcon()
+                    else -> updatePiInfo(readMessage)
+                }
             }
         }
     }
