@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import io.treehouses.remote.databinding.ListGroupBinding
 import io.treehouses.remote.databinding.RowTroubleshootBinding
-import java.util.*
 
 class BluetoothTroubleshootAdapter(private val context: Context, private val questions: List<String>, private val answers: List<String>) : BaseExpandableListAdapter() {
     override fun getGroupCount(): Int = questions.size
@@ -32,9 +31,9 @@ class BluetoothTroubleshootAdapter(private val context: Context, private val que
     }
 
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View {
-        val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val rowBinding = RowTroubleshootBinding.inflate(layoutInflater, parent, false)
-        rowBinding.answer.text = answers[groupPosition]
+        val rowBinding = RowTroubleshootBinding.inflate(context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater, parent, false).apply {
+            answer.text = answers[groupPosition]
+        }
         return rowBinding.root
     }
 
