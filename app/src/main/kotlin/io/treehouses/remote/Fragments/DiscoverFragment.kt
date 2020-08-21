@@ -194,13 +194,19 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     private fun updateGatewayInfo(readMessage: String): Boolean {
         val ip = extractText("ip address:\\s+([0-9]+\\.){3}[0-9]", "ip address:\\s+", readMessage)
-        gateway.device.ip = ip ?: "N/A"
+        if (ip != null) {
+            gateway.device.ip = ip
+        }
 
         val ssid = extractText("ESSID:\"(.)+\"", "ESSID:", readMessage)
-        gateway.ssid = ssid?.substring(1, ssid.length - 1) ?: "N/A"
+        if (ssid != null) {
+            gateway.ssid = ssid.substring(1, ssid.length - 1)
+        }
 
         val mac = extractText("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", "MAC Address:\\s+", readMessage)
-        gateway.device.mac = mac ?: "N/A"
+        if (mac != null) {
+            gateway.device.mac = mac
+        }
 
         return !ip.isNullOrEmpty() || !ssid.isNullOrEmpty() || !mac.isNullOrEmpty()
     }
@@ -233,6 +239,11 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                     updateGatewayInfo(readMessage) -> updateGatewayIcon()
                     else -> updatePiInfo(readMessage)
                 }
+                if (readMessage.startsWith("Ports:") && !gateway.isComplete()) {
+                    bind.progressBar.visibility = View.GONE
+                    CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
+                }
+
             }
         }
     }
