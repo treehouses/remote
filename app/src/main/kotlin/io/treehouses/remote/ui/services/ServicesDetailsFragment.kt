@@ -3,8 +3,6 @@ package io.treehouses.remote.ui.services
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -14,9 +12,10 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.textfield.TextInputEditText
-import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServiceCardAdapter
@@ -27,6 +26,7 @@ import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.databinding.EnvVarBinding
 import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.pojo.enum.Status
 import java.util.*
 
 class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener, OnPageChangeListener, ServiceAction {
@@ -37,19 +37,22 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private var serviceCardAdapter: ServiceCardAdapter? = null
     private var scrolled = false
     private var editEnv = false
+
     private lateinit var binding: ActivityServicesDetailsBinding
+    private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {requireParentFragment()})
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        getViewModel()
-        mChatService = listener.getChatService()
+//        mChatService = listener.getChatService()
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
-        viewModel.servicesData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {services ->
-            spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
-            binding.pickService.adapter = spinnerAdapter
-            binding.pickService.setSelection(1)
-            binding.pickService.onItemSelectedListener = this
-            serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
-            binding.servicesCards.adapter = serviceCardAdapter
-            binding.servicesCards.addOnPageChangeListener(this)
+
+        viewModel.servicesData.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {populateServices(viewModel.formattedServices)}
+//                Status.LOADING -> {}
+//                Status.ERROR -> {}
+                else -> {}
+            }
+
         })
         return binding.root
     }
@@ -57,27 +60,48 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
+
+        viewModel.clickedService.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                selected = it
+                viewModel.clickedService.value = null
+                val pos = inServiceList(it.name, viewModel.formattedServices)
+                val count = countHeadersBefore(pos)
+                binding.servicesCards.currentItem = pos - count
+                binding.pickService.setSelection(pos)
+            }
+        })
     }
 
-    @JvmField
-    val handlerDetails: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_READ -> {
-                    val output = msg.obj as String
-                    if (wait) {
-                        matchOutput(output.trim { it <= ' ' })
-                    }
-                    else{
-                        handleMore(output)
-                    }
-                }
-                Constants.MESSAGE_STATE_CHANGE -> {
-                    listener.redirectHome()
-                }
-            }
-        }
+    private fun populateServices(services: MutableList<ServiceInfo>) {
+        spinnerAdapter = ServicesListAdapter(requireContext(), services, resources.getColor(R.color.md_grey_600))
+        binding.pickService.adapter = spinnerAdapter
+        binding.pickService.setSelection(1)
+        binding.pickService.onItemSelectedListener = this
+        serviceCardAdapter = ServiceCardAdapter(childFragmentManager, services)
+        binding.servicesCards.adapter = serviceCardAdapter
+        binding.servicesCards.addOnPageChangeListener(this)
     }
+
+//    @JvmField
+//    val handlerDetails: Handler = object : Handler() {
+//        override fun handleMessage(msg: Message) {
+//            when (msg.what) {
+//                Constants.MESSAGE_READ -> {
+//                    val output = msg.obj as String
+//                    if (wait) {
+//                        matchOutput(output.trim { it <= ' ' })
+//                    }
+//                    else{
+//                        handleMore(output)
+//                    }
+//                }
+//                Constants.MESSAGE_STATE_CHANGE -> {
+//                    listener.redirectHome()
+//                }
+//            }
+//        }
+//    }
 
     private fun handleMore(output:String){
         if (isLocalUrl(output, received) || isTorURL(output, received)) {
@@ -113,8 +137,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         } else {
             return
         }
-        viewModel.servicesData.value?.sort()
-        viewModel.servicesData.value = viewModel.servicesData.value
+        viewModel.formattedServices.sort()
         serviceCardAdapter!!.notifyDataSetChanged()
         spinnerAdapter!!.notifyDataSetChanged()
         setScreenState(true)
@@ -124,7 +147,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
-            val statusCode = viewModel.servicesData.value!![position].serviceStatus
+            val statusCode = viewModel.formattedServices[position].serviceStatus
             if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
             val count = countHeadersBefore(position)
             binding.servicesCards.currentItem = position - count
@@ -132,14 +155,14 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
-    fun setSelected(s: ServiceInfo) {
-        Log.d("SELECTED", "setSelected: " + s.name)
-        selected = s
-    }
+//    fun setSelected(s: ServiceInfo) {
+//        Log.d("SELECTED", "setSelected: " + s.name)
+//        selected = s
+//    }
 
     private fun goToSelected() {
         if (selected != null) {
-            val pos = inServiceList(selected!!.name, viewModel.servicesData.value!!)
+            val pos = inServiceList(selected!!.name, viewModel.formattedServices)
             val count = countHeadersBefore(pos)
             binding.servicesCards.currentItem = pos - count
             binding.pickService.setSelection(pos)
@@ -169,7 +192,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     private fun countHeadersBefore(position: Int): Int {
         var count = 0
         for (i in 0..position) {
-            if (viewModel.servicesData.value!![i].isHeader) count++
+            if (viewModel.formattedServices[i].isHeader) count++
         }
         return count
     }
@@ -178,13 +201,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         performService(action, name)
         wait = true
         setScreenState(false)
-    }
-
-    private fun onStart(selected: ServiceInfo?) {
-        if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED)
-            performService("Starting", selected.name)
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING)
-            performService("Stopping", selected.name)
     }
 
     private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
@@ -211,21 +227,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         if (state) binding.progressBar.visibility = View.GONE else binding.progressBar.visibility = View.VISIBLE
     }
 
-    override fun onClickInstall(s: ServiceInfo?) {
-        if (s!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
-            runServiceCommand("Installing", s.name)
-        else if (installedOrRunning(s)) {
-            var dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-                    .setTitle("Delete " + selected!!.name + "?")
-                    .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-                    .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
-                        runServiceCommand("Uninstalling", s.name)
-                    }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
-        }
-    }
-
     private fun showEditDialog(name: String, size: Int, vars: List<String>) {
         val inflater = requireActivity().layoutInflater; val dialogBinding = EnvVarBinding.inflate(inflater)
         for (i in 0 until size) {
@@ -247,7 +248,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Edit"
                 ) { _: DialogInterface?, _: Int ->
-                    var command = "treehouses services " + name + " config edit send"
+                    var command = "treehouses services $name config edit send"
                     for (i in 0 until size) {
                         command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
                     }
@@ -259,9 +260,13 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     override fun onClickStart(s: ServiceInfo?) {
-        onStart(s)
+        viewModel.onStartClicked(s)
         wait = true
         setScreenState(false)
+    }
+
+    override fun onClickInstall(s: ServiceInfo?) {
+        viewModel.onInstallClicked(s)
     }
 
     override fun onClickLink(s: ServiceInfo?) {

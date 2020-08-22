@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -22,16 +23,16 @@ import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 
 class ServicesOverviewFragment() : BaseServicesFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
-    private var servicesListener: ServicesListener? = null
+//    private var servicesListener: ServicesListener? = null
     private lateinit var bind: ActivityServicesTabFragmentBinding
 
+    private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {requireParentFragment()})
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        getViewModel()
-        mChatService = listener.getChatService()
+//        mChatService = listener.getChatService()
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
         viewModel.servicesData.observe(viewLifecycleOwner, Observer {
-            adapter = ServicesListAdapter(requireContext(), it, ContextCompat.getColor(requireContext(), R.color.bg_white))
+            adapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.bg_white))
             bind.listView.adapter = adapter
             bind.listView.onItemClickListener = this
         })
@@ -49,30 +50,31 @@ class ServicesOverviewFragment() : BaseServicesFragment(), OnItemClickListener {
         Tutorials.servicesOverviewTutorials(bind!!, requireActivity())
     }
 
-    @JvmField
-    val handlerOverview: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                Constants.MESSAGE_STATE_CHANGE -> {
-                    listener.redirectHome()
-                }
-            }
-        }
-    }
+//    @JvmField
+//    val handlerOverview: Handler = object : Handler() {
+//        override fun handleMessage(msg: Message) {
+//            when (msg.what) {
+//                Constants.MESSAGE_STATE_CHANGE -> {
+//                    listener.redirectHome()
+//                }
+//            }
+//        }
+//    }
 
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            servicesListener = parentFragment as ServicesListener?
-        } catch (e: ClassCastException) {
-            e.printStackTrace()
-        }
-    }
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//        try {
+//            servicesListener = parentFragment as ServicesListener?
+//        } catch (e: ClassCastException) {
+//            e.printStackTrace()
+//        }
+//    }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-        val selected = viewModel.servicesData.value!![position]
-        if (servicesListener != null) servicesListener!!.onClick(selected)
+        val selected = viewModel.formattedServices[position]
+        viewModel.clickedService.value = selected
+//        if (servicesListener != null) servicesListener!!.onClick(selected)
     }
 
     companion object {
