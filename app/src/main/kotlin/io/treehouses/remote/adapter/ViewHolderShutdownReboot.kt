@@ -35,14 +35,18 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
         }
     }
 
+
+
     init {
+        fun action(command:Int, toast:String){
+            listener.sendMessage(context!!.getString(command))
+            context.toast(toast)
+            listener.openCallFragment(HomeFragment())
+        }
+
         mChatService.updateHandler(mHandler)
-        rebootBtn.setOnClickListener { listener.sendMessage(context!!.getString(R.string.TREEHOUSES_REBOOTS_NOW))
-            context.toast("Rebooting Device")
-            listener.openCallFragment(HomeFragment()) }
-        shutdownBtn.setOnClickListener { listener.sendMessage(context!!.getString(R.string.TREEHOUSES_SHUTDOWN_NOW))
-            context.toast("Shutting Down Device")
-            listener.openCallFragment(HomeFragment())}
+        rebootBtn.setOnClickListener { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device")}
+        shutdownBtn.setOnClickListener { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device")}
     }
 
 
