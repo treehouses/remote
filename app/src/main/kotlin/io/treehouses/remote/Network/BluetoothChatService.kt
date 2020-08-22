@@ -124,7 +124,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @Synchronized
     private fun updateUserInterfaceTitle() {
         Log.e(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
-        if (mNewState != state) mHandler!!.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1))
+        if (mNewState != state) mHandler?.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1))
         mNewState = state
     }
 
@@ -269,6 +269,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     private fun connectionFailed() {
         // Send a failure message back to the Activity
         callHandler("Unable to connect to device")
+        mHandler?.obtainMessage(Constants.MESSAGE_ERROR, "Error while connecting; Unable to connect to device")?.sendToTarget()
+
         state = Constants.STATE_NONE
         // Update UI title
         updateUserInterfaceTitle()
@@ -326,6 +328,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 mmSocket!!.connect()
             } catch (e: Exception) {
                 // Close the socket
+                Log.e("ERROR WHILE CONNECTING", e.toString(), e)
                 try {
                     mmSocket!!.close()
                 } catch (e2: Exception) {

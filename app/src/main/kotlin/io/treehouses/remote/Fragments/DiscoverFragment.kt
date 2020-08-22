@@ -238,6 +238,11 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                 if (readMessage.startsWith("Ports:")) {
                     transition()
                 }
+                if (readMessage.startsWith("Ports:") && !gateway.isComplete()) {
+                    bind.progressBar.visibility = View.GONE
+                    CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
+                }
+
             }
         }
     }
