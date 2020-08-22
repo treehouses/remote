@@ -21,7 +21,6 @@ import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
-import kotlinx.android.synthetic.main.activity_discover_fragment.*
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
 import kotlin.math.PI
 import kotlin.math.cos
@@ -129,19 +128,17 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private fun updateGatewayIcon() {
         val gatewayIcon = bind.gatewayContainer.gateway_icon
         bind.gatewayContainer.removeView(gatewayIcon)
-        gatewayIcon.setOnClickListener {
-            val message = ("SSID: " + gateway.ssid + "\n") +
-                    ("IP Address: " + gateway.device.ip + "\n") +
-                    ("MAC Address: " + gateway.device.mac + "\n") +
-                    ("Connected Devices: " + (deviceList.size - 1))
 
-            message.lines()
-            showDialog(context, "Gateway Information", message)
-        }
         if (gateway.isComplete()) {
             gatewayIcon.visibility = View.VISIBLE
-            bind.deviceContainer.visibility = View.VISIBLE
-            bind.progressBar.visibility = View.GONE
+            gatewayIcon.setOnClickListener {
+                val message = ("SSID: " + gateway.ssid + "\n") +
+                        ("IP Address: " + gateway.device.ip + "\n") +
+                        ("MAC Address: " + gateway.device.mac + "\n") +
+                        ("Connected Devices: " + (deviceList.size - 1))
+                message.lines()
+                showDialog(context, "Gateway Information", message)
+            }
         }
         bind.gatewayContainer.addView(gatewayIcon)
     }
@@ -238,11 +235,6 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                 if (readMessage.startsWith("Ports:")) {
                     transition()
                 }
-                if (readMessage.startsWith("Ports:") && !gateway.isComplete()) {
-                    bind.progressBar.visibility = View.GONE
-                    CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
-                }
-
             }
         }
     }
