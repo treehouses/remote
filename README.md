@@ -49,7 +49,7 @@ We will need a few hardware and software components as follows:
 After getting your microSD cards and card reader/adapter, our first step will be to burn an image of the treehouse onto the a microSD card which we will later insert into our Rasperry Pi.
 
 ### Prepping the microSD card
-1. Download the treehouse image that is available [here](https://treehouses.io/#!pages/download.md)
+1. Download the newest treehouse image that is available [here](https://treehouses.io/#!pages/download.md)
 
 2. Download and install [Etcher](https://etcher.io) or another software.
 
