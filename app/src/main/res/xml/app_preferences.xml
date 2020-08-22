@@ -52,10 +52,17 @@
 
     <PreferenceCategory android:title="Advanced" app:layout="@layout/custom_pref_category">
         <Preference
-        android:layout="@layout/custom_pref_whole"
-        android:icon="@drawable/bluetooth"
-        android:key="bluetooth_file"
-        android:title="View Bluetooth Server File"/>
+            android:layout="@layout/custom_pref_top"
+            android:icon="@drawable/bluetooth"
+            android:key="bluetooth_file"
+            android:title="View Bluetooth Server File"/>
+
+        <SwitchPreference
+            android:layout="@layout/custom_pref_bottom"
+            android:defaultValue="false"
+            android:key="bluetooth_file_local_upgrade"
+            android:title="Sync Bluetooth File with Local File"
+            android:summary="Prompt for replacing the Bluetooth server on the Raspberry Pi with the one that is compatible with the one that is on the Remote."/>
     </PreferenceCategory>
 
 </PreferenceScreen>

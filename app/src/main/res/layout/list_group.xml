@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_size_mid"
         android:background="@color/card_background"
         android:textColor="@color/daynight_textColor" />
 
