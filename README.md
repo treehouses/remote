@@ -95,7 +95,7 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 6. Go to Terminal in the treehouses app 
 
-7. In the Terminal window type `treehouses detectrpi` and "send" it 
+7. In the Terminal window type `treehouses detectrpi` and send it 
 
 8. Now type `treehouses default network`  
 
