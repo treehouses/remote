@@ -91,7 +91,7 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 4. Select your Raspberry Pi (`treehouses-<4-digit-number>`)i.e. `treehouses-8930` 
 
-5. Once you have connected to your Raspberry Pi, tap the menu button on the top left of your screen to view awhole host of options to interact with your Raspberry Pi.  
+5. Once you have connected to your Raspberry Pi, tap the menu button on the top left of your screen to view a whole host of options to interact with your Raspberry Pi  
 
 6. Go to Terminal in the treehouses app 
 
