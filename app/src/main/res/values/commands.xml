@@ -7,7 +7,7 @@
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
     <string name="TREEHOUSES_REMOTE_STATUSPAGE">treehouses remote statuspage</string>
     <string name="TREEHOUSES_REMOTE_COMMANDS">treehouses remote commands</string>
-    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
+    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
     <string name="TREEHOUSES_RENAME">treehouses rename \"%1$s\"</string>
