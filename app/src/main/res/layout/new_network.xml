@@ -124,7 +124,7 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:background="@drawable/ic_green"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:layout_margin="30dp"
         android:textColor="@color/bg_white"
         app:layout_constraintTop_toBottomOf="@+id/commands_back_layout"
@@ -140,6 +140,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Commands"
+        android:textColor="@color/expandable_child_text"
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -163,7 +164,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            android:src="@drawable/background_commands" />
+            android:src="@drawable/profiles_back" />
 
         <LinearLayout
             android:layout_width="match_parent"
