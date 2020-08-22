@@ -250,15 +250,18 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         deviceList.clear()
 
         bind.swiperefresh.isRefreshing = false
+        bind.swiperefresh.isEnabled = false
         bind.swiperefresh.setOnRefreshListener(null)
 
         requestNetworkInfo()
     }
 
     private fun transition() {
+        bind.swiperefresh.isEnabled = true
         bind.swiperefresh.setOnRefreshListener {
             load()
         }
+
         setupIcons()
         if(gateway.isComplete())
             updateGatewayIcon()
