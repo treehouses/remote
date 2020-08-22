@@ -86,6 +86,9 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
                 c.toast(readMessage)
                 twoFASwitch.isEnabled = true
             }
+            readMessage.contains("No") -> c.toast(readMessage)
+            readMessage.contains("already exists") -> c.toast("2 Factor Authentication Already Exists For This User. Remove This User Before Attempting to Add Again.")
+            readMessage.contains("Your new secret key is:") -> openAuthenticator(readMessage.substringAfter(":"))
             readMessage.contains("on") -> {
                 twoFASwitch.isChecked = true
                 twoFASwitch.isEnabled = true
@@ -94,9 +97,8 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
                 twoFASwitch.isChecked = false
                 twoFASwitch.isEnabled = true
             }
-            readMessage.contains("No") -> c.toast(readMessage)
-            readMessage.contains("already exists") -> c.toast(readMessage)
-            readMessage.contains("Your new secret key is:") -> openAuthenticator(readMessage.substringAfter(":"))
+            readMessage.contains("specify") -> c.toast(readMessage)
+
         }
     }
 
