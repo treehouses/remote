@@ -32,6 +32,11 @@ open class BaseFragment : Fragment() {
         return this::mChatService.isInitialized
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (listener.getChatService().state == Constants.STATE_CONNECTED) listener.sendMessage("killall\n")
+    }
+
 
     protected fun onLoad(mHandler: Handler?) {
 //        mChatService = listener.getChatService()
