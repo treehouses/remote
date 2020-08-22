@@ -1,46 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/windowBackground"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/swiperefresh"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-
-    <RelativeLayout
-        android:id="@+id/container"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/windowBackground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/icon_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        <RelativeLayout
+            android:id="@+id/device_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="200px"
-            android:layout_height="200px"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/ic_download_icon"
-            android:visibility="invisible">
-        </ImageView>
+        </RelativeLayout>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/gateway_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/gateway_icon"
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_download_icon"
+                android:visibility="invisible">
+            </ImageView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
