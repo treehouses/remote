@@ -63,7 +63,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
             mChatService.updateHandler(mHandler)
             openCallFragment(HomeFragment())
         }
-        checkStatusNow()
+        try { checkStatusNow() } catch (exception:Exception){Log.e("Error", exception.toString())}
         openCallFragment(HomeFragment())
     }
 
@@ -205,7 +205,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        checkStatusNow()
+        try {checkStatusNow()} catch(e:java.lang.Exception){Log.e("Error", e.toString())}
         for (x in 1 until bind.navView.menu.size() - 2) {
             val item = bind.navView.menu.getItem(x)
             item.isEnabled = validBluetoothConnection

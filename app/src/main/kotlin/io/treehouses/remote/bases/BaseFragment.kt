@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
+import java.lang.Exception
 import java.lang.NullPointerException
 
 open class BaseFragment : Fragment() {
@@ -21,7 +22,7 @@ open class BaseFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
-        mChatService = listener.getChatService()
+        try {mChatService = listener.getChatService()} catch (e:Exception) {Log.e("Error", e.toString())}
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     }
 

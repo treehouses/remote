@@ -13,6 +13,7 @@ import androidx.lifecycle.Transformations
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.BluetoothChatService
+import java.lang.Exception
 
 open class FragmentViewModel(application: Application) : AndroidViewModel(application) {
     /**
@@ -130,6 +131,6 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
     }
 
     init {
-        loadBT()
+        try{ loadBT() } catch(e:Exception){Log.e("Error", e.toString())}
     }
 }

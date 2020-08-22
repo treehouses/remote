@@ -32,6 +32,7 @@ import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
+import java.lang.Exception
 
 class HomeFragment : BaseHomeFragment() {
     private var notificationListener: NotificationCallback? = null
@@ -52,7 +53,7 @@ class HomeFragment : BaseHomeFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        observeConnectionState()
+        try {observeConnectionState()} catch(e:Exception){Log.e("Error", e.toString())}
         bind.btnGetStarted.setOnClickListener {
             instance!!.checkStatusNow()
             if (instance!!.hasValidConnection()) {
@@ -245,7 +246,7 @@ class HomeFragment : BaseHomeFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshHandler()
+        try {viewModel.refreshHandler()} catch (e:Exception){Log.e("Error", e.toString())}
         if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
             viewModel.checkVersionSent = true
             viewModel.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
