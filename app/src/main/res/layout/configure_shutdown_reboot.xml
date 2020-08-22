@@ -18,18 +18,21 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <Button
                 android:id="@+id/shutdownBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="130dp"
+                android:layout_marginTop="2dp"
+                android:layout_width= "100dp"
+                android:layout_height="100dp"
                 android:scaleX="1.2"
                 android:scaleY="1.2"
-                app:srcCompat="@drawable/shutdown" />
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/shutdown" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
+                android:textColor="@color/daynight_textColor"
                 android:layout_gravity="center_horizontal"
                 android:text="Shutdown" />
 
@@ -41,16 +44,19 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <ImageView
+            <Button
                 android:id="@+id/rebootBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="130dp"
-                app:srcCompat="@drawable/restart" />
+                android:layout_width= "100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/restart" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/daynight_textColor"
                 android:layout_gravity="center_horizontal"
                 android:text="Reboot" />
 
