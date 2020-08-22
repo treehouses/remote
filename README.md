@@ -45,7 +45,7 @@ We will need a few hardware and software components as follows:
 * Wi-Fi or a ethernet connection
 
 
-##Get It Up and Running
+## Get It Up and Running
 After getting your microSD cards and card reader/adapter, our first step will be to burn an image of the treehouse onto the a microSD card which we will later insert into our Rasperry Pi.
 
 ### Prepping the microSD card
@@ -110,7 +110,7 @@ We assume you've already installed [Android Studio](https://developer.android.co
 - The connection status is shown on the action bar.
 - In `cmd`
   - Use the Wi-Fi icon on the action bar to comfigure the Raspberry Pi to connect to a Wi-Fi network.
-  - Use buttons on the lower part of the screen to performe various commands.
+  - Use buttons on the lower part of the screen to perform various commands.
   - The circle on the upper left corner shows the Raspberry Pi's internet connectivity status using color green and red.
   - To return to dashboard, click on the back button at the bottom of the device.
 
