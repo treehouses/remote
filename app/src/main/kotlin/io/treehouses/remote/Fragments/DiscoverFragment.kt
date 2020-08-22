@@ -38,6 +38,9 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityDiscoverFragmentBinding.inflate(inflater, container, false)
+
+        Toast.makeText(context, "Searching Devices", Toast.LENGTH_LONG).show()
+        
         bind.progressBar.visibility = View.VISIBLE
         bind.container.visibility = View.INVISIBLE
         deviceList.clear()
