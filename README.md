@@ -83,15 +83,27 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 ### Connect to Raspsberry Pi via Bluetooth
 
-1. In the android bluetooth settings, scan and pair with the Pi device.
+1. In the android bluetooth settings, scan and pair with the Pi device (look for `treehouses`)
 
-2. Click on the three dots (menu icon) at the upper right corner of the app. 
+2. Open the `treehouses remote` app 
 
-3. Click on `Connect a device - Insecure` to display paired Bluetooth devices or scan for new devices around you.
+3. Click on "Connect to RPI"  
 
-4. Select `raspberrypi` or whatever name that is given to your Raspberry Pi device to connect to the Raspberry Pi.
+4. Select your Raspberry Pi (`treehouses-<4-digit-number>`)i.e. `treehouses-8930` 
 
-5. If it does not work, please click on `cmd` button and repeat steps 1 through 3.
+5. Once you have connected to your Raspberry Pi, tap the menu button on the top left of your screen to view awhole host of options to interact with your Raspberry Pi.  
+
+6. Go to Terminal in the treehouses app 
+
+7. In the Terminal window type `treehouses detectrpi` and "send" it 
+
+8. Now type `treehouses default network`  
+
+9. Reboot the system by entering the command `reboot` and go back to the home screen to re-connect to your Pi.  
+
+10. Back in the terminal, type `treehouses bridge "wifiname" treehouses "wifipassword"`, and replace `wifiname` with the name of your wifi network, and `wifipassword` with the password 
+
+11. Reboot once again. 
 
 ### Features
 
