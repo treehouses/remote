@@ -131,7 +131,10 @@ open class BaseTerminalFragment : BaseFragment() {
             autoComplete.threshold = 0
             autoComplete.setAdapter(arrayAdapter1)
             addTextChangeListener(autoComplete)
-            addSpaces(autoComplete)
+            autoComplete.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, _: Int, _: Long ->
+                autoComplete.postDelayed({ autoComplete.showDropDown() }, 100)
+                autoComplete.append(" ")
+            }
         }
     }
 
@@ -188,13 +191,6 @@ open class BaseTerminalFragment : BaseFragment() {
                 arrayAdapter3?.add(data.commands!![i])
                 inThirdLevel?.add(data.commands!![i])
             }
-        }
-    }
-
-    private fun addSpaces(autoComplete: AutoCompleteTextView) {
-        autoComplete.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, _: Int, _: Long ->
-            autoComplete.postDelayed({ autoComplete.showDropDown() }, 100)
-            autoComplete.append(" ")
         }
     }
 
