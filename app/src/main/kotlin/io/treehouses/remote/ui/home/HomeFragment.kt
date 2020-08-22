@@ -18,10 +18,12 @@ import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.AboutFragment
+import io.treehouses.remote.Fragments.DialogFragments.BluetoothFailedDialog
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Fragments.TerminalFragment
 import io.treehouses.remote.InitialActivity.Companion.instance
@@ -80,11 +82,22 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.remoteUpdateRequired.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             updateTreehousesRemote()
         })
+
         observers()
+        errorConnecting()
         observeNetworkProfileSwitch()
 
     }
 
+    private fun errorConnecting() {
+        viewModel.errorConnecting.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+            connectionDialog?.dismiss()
+            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialog.DONT_SHOW_DIALOG, false)
+            if (!noDialog) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
+            viewModel.errorConnecting.value = null
+        })
+    }
     /**
      * Observe different viewModel states to implement changes to the UI
      */
@@ -113,16 +126,16 @@ class HomeFragment : BaseHomeFragment() {
     private fun observeNetworkProfileSwitch() {
         viewModel.networkProfileResult.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when(it.status) {
-                Status.SUCCESS, Status.ERROR -> {
+                Status.SUCCESS, Status.ERROR, Status.NOTHING -> {
                     if (progressDialog != null) progressDialog!!.dismiss()
-                    context.toast(it.message)
+                    if (it.message.isNotEmpty()) context.toast(it.message)
                 }
                 Status.LOADING -> {
+                    if (it == null) return@Observer
                     progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + it.data?.ssid, true)
                     progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
                     progressDialog?.show()
                 }
-                Status.NOTHING -> Log.e("NOTHING", "NOTHING")
             }
         })
     }
