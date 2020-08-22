@@ -233,6 +233,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                 val writeMsg = String((msg.obj as ByteArray))
                 Log.d("WRITE", writeMsg)
             }
+            
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
                 Log.d(TAG, "READ = $readMessage")
