@@ -99,11 +99,11 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 8. Now type `treehouses default network`  
 
-9. Reboot the system by entering the command `reboot` and go back to the home screen to re-connect to your Pi.  
+9. Reboot the system by entering the command `reboot` and go back to the home screen to re-connect to your Pi
 
 10. Back in the terminal, type `treehouses bridge "wifiname" treehouses "wifipassword"`, and replace `wifiname` with the name of your wifi network, and `wifipassword` with the password 
 
-11. Reboot once again. 
+11. Reboot once again
 
 ### Features
 
