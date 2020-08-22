@@ -12,6 +12,8 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.ui.home.HomeFragment
+import io.treehouses.remote.utils.Utils.toast
 
 class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
     private var readMessage  = ""
@@ -35,7 +37,12 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
 
     init {
         mChatService.updateHandler(mHandler)
-
+        rebootBtn.setOnClickListener { listener.sendMessage(context!!.getString(R.string.TREEHOUSES_REBOOTS_NOW))
+            context.toast("Rebooting Device")
+            listener.openCallFragment(HomeFragment()) }
+        shutdownBtn.setOnClickListener { listener.sendMessage(context!!.getString(R.string.TREEHOUSES_SHUTDOWN_NOW))
+            context.toast("Shutting Down Device")
+            listener.openCallFragment(HomeFragment())}
     }
 
 
