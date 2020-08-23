@@ -20,6 +20,7 @@ before_install:
   - sudo apt-add-repository universe
   - yes | sudo add-apt-repository ppa:deadsnakes/ppa
   - sudo apt update
+  - sudo apt upgrade
   - sudo apt-get update
   - sudo apt install python3.7
   - sudo ln -sf `which python3.7` `which python3`
