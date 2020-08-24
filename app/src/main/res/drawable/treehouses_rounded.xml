@@ -4,7 +4,7 @@
     <item android:drawable="@drawable/circle_pink"
         android:width="200dp"
         android:height="200dp"/>
-    <item android:drawable="@drawable/treehouses2"
+    <item android:drawable="@drawable/treehouses_white"
         android:width="170dp"
         android:height="170dp"
         android:gravity="center"/>
