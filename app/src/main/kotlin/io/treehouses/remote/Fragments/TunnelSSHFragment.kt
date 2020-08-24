@@ -216,102 +216,105 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             Log.i("Tag", "Reload fragment")
         }
     }
-
-    private fun handleHostNotFound() {
-        addHostButton?.isEnabled = true
-        addHostButton?.text = "Add Host"
-
-        addPortButton?.text = "Add Port"
-        portList?.isEnabled = true
-        addHostButton?.isEnabled = true
-        Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun handleModifiedList() {
-        Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
-
-        addPortButton?.text = "Retrieving"
-        addHostButton?.text = "Retrieving"
-        portsName = ArrayList()
-        hostsName = ArrayList()
-
-        hostsPosition = ArrayList()
-        listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
-    }
-
     override fun getMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
+                var Position:Int = 0
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
-                val modifyKeywords = arrayOf("ssh-rsa", "Added", "Removed")
-                if (readMessage.contains("Host / port not found")) handleHostNotFound()
-                else if((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
-                else if (readMessage.contains("@")) handleNewList(readMessage)
-                else if(readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
-                else if(readMessage.contains("Status: on")) handleOnStatus()
-                else getOtherMessages(readMessage)
-            }
-    }
 
-    private fun handleNewList(readMessage: String) {
-        var position = 0
-        addPortButton?.isEnabled = true
-        addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
-        addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
-        val hosts = readMessage.split('\n')
-        for (host in hosts) {
-            val ports = host.split(' ')
-            for (port in ports) {
-                if (port.length >= 3)
-                    portsName!!.add(port)
-                if (port.contains("@")) {
-                    hostsPosition!!.add(position)
-                    hostsName!!.add(port)
+                if(readMessage.contains("Host / port not found")) {
+                    addHostButton?.isEnabled = true
+                    addHostButton?.text = "Add Host"
+
+                    addPortButton?.text = "Add Port"
+                    portList?.isEnabled = true
+                    addHostButton?.isEnabled = true
+                    Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
                 }
-                position += 1
+                else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")){
+                    Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
+
+                    addPortButton?.text = "Retrieving"
+                    addHostButton?.text = "Retrieving"
+                    portsName = ArrayList()
+                    hostsName = ArrayList()
+
+                    hostsPosition = ArrayList()
+                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+                }
+
+                else if (readMessage.contains("@")) {
+                    addPortButton?.isEnabled = true
+                    addPortButton?.text = "Add Port"
+                    addHostButton?.text = "Add Host"
+                    addPortButton!!.isEnabled = true
+                    addHostButton?.isEnabled = true
+                    val hosts = readMessage.split('\n')
+                    for (host in hosts) {
+                        val ports = host.split(' ')
+                        for (port in ports) {
+                            if (port.length >= 3)
+                                portsName!!.add(port)
+                            if (port.contains("@")) {
+                                hostsPosition!!.add(Position)
+                                hostsName!!.add(port)
+                            }
+                            Position += 1
+                        }
+
+                    }
+                   adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                    dropdown?.adapter = adapter2
+                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+                    bind!!.sshPorts.adapter = adapter
+                    portList!!.isEnabled = true
+                }
+                else if(readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")){
+                    adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                    dropdown?.adapter = adapter2
+                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+                    bind!!.sshPorts.adapter = adapter
+                    portList!!.isEnabled = true
+                    addPortButton!!.text = "Add Port"
+                    addHostButton!!.text = "Add Host"
+                    addPortButton!!.isEnabled = false
+                    addHostButton!!.isEnabled = true
+                    Toast.makeText(requireContext(), "Add a host", Toast.LENGTH_SHORT).show()
+
+                }
+                else if(readMessage.contains("Status: on")){
+                    bind!!.switchNotification.isChecked = true;
+                    bind!!.switchNotification.isEnabled = true;
+                    bind!!.notifyNow.isEnabled = true
+                    portsName = ArrayList()
+                    hostsName = ArrayList()
+                    hostsPosition = ArrayList()
+                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+
+                }
+                else  getMessage2(readMessage)
+
             }
-        }
-        adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-        dropdown?.adapter = adapter2
-        adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-        bind!!.sshPorts.adapter = adapter
-        portList!!.isEnabled = true
     }
 
-    private fun handleOnStatus() {
-        bind!!.switchNotification.isChecked = true;
-        bind!!.switchNotification.isEnabled = true;
-        bind!!.notifyNow.isEnabled = true
-        portsName = ArrayList()
-        hostsName = ArrayList()
-        hostsPosition = ArrayList()
-        listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+    private fun getMessage2(readMessage: String) {
+
+         getMessage3(readMessage)
     }
 
-    private fun handleNoPorts() {
-        adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-        dropdown?.adapter = adapter2
-        adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-        bind!!.sshPorts.adapter = adapter
-        portList!!.isEnabled = true
-        addPortButton!!.text = "Add Port"
-        addHostButton!!.text = "Add Host"
-        addPortButton!!.isEnabled = false
-        addHostButton!!.isEnabled = true
-        Toast.makeText(requireContext(), "Add a host", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getOtherMessages(readMessage: String) {
+    private fun getMessage3(readMessage: String) {
         when {
             readMessage.contains("Status: on") -> {
                 bind?.apply {
-                    switchNotification.isChecked = true; switchNotification.isEnabled = true
+                    switchNotification.isChecked = true
+                    switchNotification.isEnabled = true
                     notifyNow.isEnabled = true
                 }
             }
             readMessage.contains("Status: off") -> {
                 bind?.apply {
-                    switchNotification.isChecked = false; switchNotification.isEnabled = true
+                    switchNotification.isChecked = false
+                    switchNotification.isEnabled = true
                     notifyNow.isEnabled = true
                     listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }

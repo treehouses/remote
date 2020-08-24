@@ -5,16 +5,20 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Message
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import com.google.gson.Gson
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment
+import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
 import io.treehouses.remote.MainApplication.Companion.commandList
 import io.treehouses.remote.MainApplication.Companion.terminalList
 import io.treehouses.remote.Network.BluetoothChatService
@@ -24,13 +28,18 @@ import io.treehouses.remote.adapter.CommandListAdapter
 import io.treehouses.remote.bases.BaseTerminalFragment
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandListItem
+import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.ui.home.HomeFragment
+import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.match
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.*
 
 class TerminalFragment : BaseTerminalFragment() {
     private lateinit var expandableListAdapter: ExpandableListAdapter
+    private lateinit var commands: CommandsList
     private var i = 0
     private lateinit var expandableListTitle: List<String>
     private lateinit var expandableListDetail: HashMap<String, List<CommandListItem>>
@@ -43,6 +52,12 @@ class TerminalFragment : BaseTerminalFragment() {
     /**
      * Member object for the chat services
      */
+
+    private var jsonString = ""
+    private var helpJsonString = ""
+
+
+    private lateinit var bind: ActivityTerminalFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false)
@@ -189,6 +204,15 @@ class TerminalFragment : BaseTerminalFragment() {
         }
     }
 
+    private fun showHelpDialog(jsonString: String) {
+        val b = Bundle()
+        b.putString(Constants.JSON_STRING, jsonString)
+        val dialogFrag: DialogFragment = HelpDialog()
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
+        dialogFrag.arguments = b
+        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "helpDialog")
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             Constants.REQUEST_ENABLE_BT -> onResultCaseEnable(resultCode)
@@ -225,6 +249,40 @@ class TerminalFragment : BaseTerminalFragment() {
         // Create an instance of the dialog fragment and show it
         dialogFrag.setTargetFragment(this, requestCode)
         dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), tag)
+    }
+
+    private fun handleJson(readMessage: String) {
+        val s = match(readMessage)
+        if (jsonReceiving) {
+            jsonString += readMessage
+            if (s == RESULTS.END_JSON_COMMANDS) {
+                try {
+                    val jsonObject = JSONObject(jsonString)
+                    commands = Gson().fromJson(jsonObject.toString(), CommandsList::class.java)
+                    updateArrayAdapters(commands)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+                jsonSend(false)
+            } else if (s == RESULTS.END_HELP) {
+                showHelpDialog(jsonString)
+                helpJsonString = jsonString
+                jsonSend(false)
+            }
+        } else if (s == RESULTS.START_JSON) {
+            jsonReceiving = true
+            jsonString = readMessage.trim()
+        }
+    }
+
+    private fun jsonSend(sent: Boolean) {
+        jsonSent = sent
+        if (sent) {
+            bind.progressBar.visibility = View.VISIBLE
+        } else {
+            bind.progressBar.visibility = View.GONE
+            jsonReceiving = false
+        }
     }
 
     /**

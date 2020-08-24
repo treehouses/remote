@@ -54,9 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun openFragment(f: Fragment) {
-        val fragmentTransaction = parentFragmentManager
-                .beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
         SettingsUtils.openFragment(false, fragmentTransaction, f)
     }
 

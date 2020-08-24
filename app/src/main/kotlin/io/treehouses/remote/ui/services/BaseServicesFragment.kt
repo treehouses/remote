@@ -25,6 +25,15 @@ open class BaseServicesFragment() : BaseFragment() {
 
     lateinit var viewModel: ServicesViewModel
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        arguments?.let {
+//            if (it.containsKey("services"))
+//                services = it.getSerializable("services") as ArrayList<ServiceInfo>
+//        }
+    }
+
     fun getViewModel() {
         viewModel = activity?.run {ViewModelProvider(this)[ServicesViewModel::class.java]}!!
     }

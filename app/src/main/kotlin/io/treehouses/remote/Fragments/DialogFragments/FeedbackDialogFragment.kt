@@ -51,7 +51,7 @@ class FeedbackDialogFragment : FullScreenDialogFragment() {
                 Toast.makeText(context, "Feedback sent successfully", Toast.LENGTH_LONG).show()
                 dismiss()
             } else {
-                Toast.makeText(context, "Name, message, message type, and one contact source are required.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Name, email, type, and message are required fields", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -62,7 +62,7 @@ class FeedbackDialogFragment : FullScreenDialogFragment() {
 
     private fun notBlank(): Boolean {
         return bind.editName.text.toString().isNotBlank() &&
-                (bind.editEmail.text.toString().isNotBlank() || bind.editPhoneNumber.text.toString().isNotBlank()) &&
+                bind.editEmail.text.toString().isNotBlank() &&
                 bind.editMessage.text.toString().isNotBlank() &&
                 (bind.radioButtonBug.isChecked || bind.radioButtonSuggestion.isChecked)
     }
