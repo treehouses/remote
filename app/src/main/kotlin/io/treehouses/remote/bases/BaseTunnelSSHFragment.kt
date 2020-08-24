@@ -186,10 +186,7 @@ open class BaseTunnelSSHFragment: BaseFragment() {
     }
 
     private fun logKeys(piPublicKey: String, piPrivateKey: String, storedPublicKey: String?, storedPrivateKey: String?) {
-        Log.d("piPublicKey", piPublicKey)
-        Log.d("piPrivateKey", piPrivateKey)
-        Log.d("storedPublicKey", storedPublicKey)
-        Log.d("storedPrivateKey", storedPrivateKey)
+        Log.d("piPublicKey", piPublicKey); Log.d("piPrivateKey", piPrivateKey); Log.d("storedPublicKey", storedPublicKey); Log.d("storedPrivateKey", storedPrivateKey)
     }
 
     private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
@@ -237,12 +234,8 @@ open class BaseTunnelSSHFragment: BaseFragment() {
     }
 
     protected fun handleOnStatus() {
-        bind!!.switchNotification.isChecked = true;
-        bind!!.switchNotification.isEnabled = true;
-        bind!!.notifyNow.isEnabled = true
-        portsName = ArrayList()
-        hostsName = ArrayList()
-        hostsPosition = ArrayList()
+        bind!!.switchNotification.isChecked = true; bind!!.switchNotification.isEnabled = true; bind!!.notifyNow.isEnabled = true
+        portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
@@ -252,32 +245,22 @@ open class BaseTunnelSSHFragment: BaseFragment() {
         adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
         bind!!.sshPorts.adapter = adapter
         portList!!.isEnabled = true
-        addPortButton!!.text = "Add Port"
-        addHostButton!!.text = "Add Host"
-        addPortButton!!.isEnabled = false
-        addHostButton!!.isEnabled = true
+        addPortButton!!.text = "Add Port"; addHostButton!!.text = "Add Host"
+        addPortButton!!.isEnabled = false; addHostButton!!.isEnabled = true
         Toast.makeText(requireContext(), "Add a host", Toast.LENGTH_SHORT).show()
     }
 
     protected fun handleHostNotFound() {
-        addHostButton?.isEnabled = true
-        addHostButton?.text = "Add Host"
-
-        addPortButton?.text = "Add Port"
-        portList?.isEnabled = true
-        addHostButton?.isEnabled = true
+        addHostButton?.isEnabled = true; portList?.isEnabled = true; addHostButton?.isEnabled = true
+        addHostButton?.text = "Add Host"; addPortButton?.text = "Add Port"
         Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
     }
 
     protected fun handleModifiedList() {
         Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
 
-        addPortButton?.text = "Retrieving"
-        addHostButton?.text = "Retrieving"
-        portsName = ArrayList()
-        hostsName = ArrayList()
-
-        hostsPosition = ArrayList()
+        addPortButton?.text = "Retrieving"; addHostButton?.text = "Retrieving"
+        portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
