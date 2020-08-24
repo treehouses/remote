@@ -58,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="25dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/ic_green"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -70,15 +70,31 @@
             android:id="@+id/btn_add_port"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="20dp"
             android:textColor="@color/bg_white"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:background="@drawable/ic_green"
             android:text="Add Port"
             android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btn_keys"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/bg_white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:background="@drawable/ic_green"
+            android:text="Keys"
+            android:layout_weight="1"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="25dp" />
+
     </LinearLayout>
 
     <ListView
