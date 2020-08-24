@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
@@ -31,13 +32,14 @@ import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.SettingsUtils
 
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     private var validBluetoothConnection = false
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
-
+    private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
     /** Defines callbacks for service binding, passed to bindService()  */
 
     private lateinit var currentTitle: String
@@ -111,25 +113,27 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 //        super.onPause()
 //    }
 
+    override fun onResume() {
+        super.onResume()
+        resetMenuIcon()
+    }
+
     private fun setUpDrawer() {
-        val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+        mActionBarDrawerToggle = object : ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             override fun onDrawerOpened(drawerView: View) {
                 (this@InitialActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(window.decorView.windowToken, 0)
             }
         }
-        bind.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        bind.drawerLayout.addDrawerListener(mActionBarDrawerToggle)
+        mActionBarDrawerToggle.syncState()
         bind.navView.setNavigationItemSelectedListener(this)
     }
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onBackPressed() {
-        if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            bind.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
+        if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) bind.drawerLayout.closeDrawer(GravityCompat.START)
+        else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
-            if (f is HomeFragment) {
-                finishAffinity()
-            }
+            if (f is HomeFragment) finishAffinity()
             else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle
@@ -147,17 +151,15 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         // Handle navigation view item clicks here.
         val id = item.itemId
         checkStatusNow()
-        if (validBluetoothConnection) {
-            onNavigationItemClicked(id)
-        } else {
+        if (validBluetoothConnection) onNavigationItemClicked(id)
+        else {
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
                 R.id.menu_ssh -> openCallFragment(SSHConfig())
             }
         }
-        title = item.title
-        currentTitle = item.title.toString()
+        title = item.title; currentTitle = item.title.toString()
         bind.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -183,13 +185,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.decorView.windowToken, 0)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, f)
-        fragmentTransaction.addToBackStack("")
-        try {
-            fragmentTransaction.commit()
-        } catch (exception:IllegalStateException ){
-            Log.e("Error", exception.toString())
-        }
+        SettingsUtils.openFragment(true, fragmentTransaction, f)
         //        menuItem.setChecked(true);
 //        title = "Treehouses Remote"
         //        drawer.closeDrawers();
@@ -318,8 +314,29 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         bind.navView.setCheckedItem(menu)
     }
 
+    fun changeAppBar() {
+        mActionBarDrawerToggle = ActionBarDrawerToggle(this, bind.drawerLayout, findViewById(R.id.toolbar), 0, 0)
+        mActionBarDrawerToggle.toolbarNavigationClickListener = View.OnClickListener {
+            //reset to burger icon
+            supportFragmentManager.popBackStack()
+            resetMenuIcon()
+        }
+        //add back button
+        bind.drawerLayout.setDrawerListener(mActionBarDrawerToggle)
+        mActionBarDrawerToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        mActionBarDrawerToggle.isDrawerIndicatorEnabled = false
+        bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
     fun hasValidConnection() : Boolean {
         return validBluetoothConnection
+    }
+
+    fun resetMenuIcon() {
+        mActionBarDrawerToggle.isDrawerIndicatorEnabled = true
+        bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
     companion object {
