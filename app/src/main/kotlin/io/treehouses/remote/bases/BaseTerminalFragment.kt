@@ -3,6 +3,7 @@ package io.treehouses.remote.bases
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
 import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,15 +11,21 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
 import io.treehouses.remote.Fragments.TerminalFragment
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
+import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils.copyToClipboard
 import io.treehouses.remote.utils.match
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.*
 
 open class BaseTerminalFragment : BaseFragment() {
@@ -30,7 +37,13 @@ open class BaseTerminalFragment : BaseFragment() {
     private var arrayAdapter3: ArrayAdapter<String>? = null
 
     protected var jsonSent = false
-    protected  var jsonReceiving = false
+    private var jsonReceiving = false
+
+    protected lateinit var commands: CommandsList
+    private var jsonString = ""
+    protected var helpJsonString = ""
+
+    protected lateinit var bind: ActivityTerminalFragmentBinding
 
     fun handlerCaseWrite(TAG: String?, mConversationArrayAdapter: ArrayAdapter<String>?, msg: Message): String {
         val writeBuf = msg.obj as ByteArray
@@ -118,7 +131,10 @@ open class BaseTerminalFragment : BaseFragment() {
             autoComplete.threshold = 0
             autoComplete.setAdapter(arrayAdapter1)
             addTextChangeListener(autoComplete)
-            addSpaces(autoComplete)
+            autoComplete.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, _: Int, _: Long ->
+                autoComplete.postDelayed({ autoComplete.showDropDown() }, 100)
+                autoComplete.append(" ")
+            }
         }
     }
 
@@ -159,7 +175,7 @@ open class BaseTerminalFragment : BaseFragment() {
         return stringBuilder.toString()
     }
 
-    protected fun updateArrayAdapters(data: CommandsList) {
+    private fun updateArrayAdapters(data: CommandsList) {
         if (data.commands == null) {
             Toast.makeText(requireContext(), "Error has occurred. Please Refresh", Toast.LENGTH_SHORT).show()
             return
@@ -178,10 +194,46 @@ open class BaseTerminalFragment : BaseFragment() {
         }
     }
 
-    private fun addSpaces(autoComplete: AutoCompleteTextView) {
-        autoComplete.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, _: Int, _: Long ->
-            autoComplete.postDelayed({ autoComplete.showDropDown() }, 100)
-            autoComplete.append(" ")
+    protected fun jsonSend(sent: Boolean) {
+        jsonSent = sent
+        if (sent) {
+            bind.progressBar.visibility = View.VISIBLE
+        } else {
+            bind.progressBar.visibility = View.GONE
+            jsonReceiving = false
         }
+    }
+
+    protected fun handleJson(readMessage: String) {
+        val s = match(readMessage)
+        if (jsonReceiving) {
+            jsonString += readMessage
+            if (s == RESULTS.END_JSON_COMMANDS) {
+                try {
+                    val jsonObject = JSONObject(jsonString)
+                    commands = Gson().fromJson(jsonObject.toString(), CommandsList::class.java)
+                    updateArrayAdapters(commands)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+                jsonSend(false)
+            } else if (s == RESULTS.END_HELP) {
+                showHelpDialog(jsonString)
+                helpJsonString = jsonString
+                jsonSend(false)
+            }
+        } else if (s == RESULTS.START_JSON) {
+            jsonReceiving = true
+            jsonString = readMessage.trim()
+        }
+    }
+
+    protected fun showHelpDialog(jsonString: String) {
+        val b = Bundle()
+        b.putString(Constants.JSON_STRING, jsonString)
+        val dialogFrag: DialogFragment = HelpDialog()
+        dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
+        dialogFrag.arguments = b
+        dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "helpDialog")
     }
 }

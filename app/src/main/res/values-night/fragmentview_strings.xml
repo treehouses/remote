@@ -13,7 +13,4 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<resources>
-    <string name="sample_show_log">Show Log</string>
-    <string name="sample_hide_log">Hide Log</string>
-</resources>
+<resources></resources>
