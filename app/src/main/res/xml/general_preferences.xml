@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="General" app:layout="@layout/custom_pref_category">
+        <SwitchPreferenceCompat
+            android:title="Splash Screen"
+            android:layout="@layout/custom_pref_top"
+            android:key="splashScreen"
+            android:summary="Toggle the Start Logo Screen ON or OFF"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:title="Terminal Autocomplete"
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Enable or Disable Autocomplete Suggestions of Commands in Terminal"
+            android:key="autocomplete"
+            android:defaultValue="true" />
+
+        <ListPreference
+            android:defaultValue="Follow System"
+            android:entries="@array/dark_mode_options"
+            android:entryValues="@array/dark_mode_options"
+            android:layout="@layout/custom_pref_middle"
+            android:key="dark_mode"
+            android:title="Dark Mode"
+            android:summary="Set the App Theme to Dark Mode or Back to Normal"/>
+
+        <Preference
+            android:title="Reactivate Tutorials"
+            android:key="reactivate_tutorials"
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Get Help by Going Through the Tutorials Again"/>
+
+        <Preference
+            android:title="Clear Services Cache"
+            android:key="clear_services"
+            android:summary="Delete Locally Stored Services List That Makes Services Load Faster"
+            android:layout="@layout/custom_pref_middle"/>
+
+        <SwitchPreferenceCompat android:defaultValue="true" android:title="Reconnect Bluetooth Automatically"
+            android:summary="Enable to reconnect to Bluetooth automatically when a connection fails. Warning: this may affect battery life."
+            android:layout="@layout/custom_pref_middle"
+            android:key="reconnectBluetooth"/>
+
+
+
+        <ListPreference
+            android:defaultValue="LED Heavy Metal"
+            android:entries="@array/led_options"
+            android:entryValues="@array/led_options"
+            android:key="led_pattern"
+            android:title="LED Pattern"
+            android:layout="@layout/custom_pref_bottom"
+            android:summary="Set the Test Connection LED Pattern"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
