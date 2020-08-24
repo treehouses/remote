@@ -264,6 +264,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             updateGatewayIcon()
         else CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
 
+        bind.deviceContainer.visibility = View.VISIBLE
         bind.progressBar.visibility = View.GONE
     }
 
