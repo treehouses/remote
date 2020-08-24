@@ -240,7 +240,8 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                     else -> updatePiInfo(readMessage)
                 }
                 if (readMessage.startsWith("Ports:") && !gateway.isComplete()) {
-                    bind.progressBar.visibility = View.GONE
+                    bind.loading1.visibility = View.GONE
+                    bind.loading2.visibility = View.GONE
                     CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
                 }
 
