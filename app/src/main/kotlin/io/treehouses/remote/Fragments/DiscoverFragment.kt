@@ -36,7 +36,6 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityDiscoverFragmentBinding.inflate(inflater, container, false)
-        bind.progressBar.visibility = View.VISIBLE
         bind.container.visibility = View.INVISIBLE
         deviceList.clear()
         mChatService = listener.getChatService()
@@ -142,7 +141,8 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         if (gateway.isComplete()) {
             gatewayIcon.visibility = View.VISIBLE
             bind.container.visibility = View.VISIBLE
-            bind.progressBar.visibility = View.GONE
+            bind.loading1.visibility = View.GONE
+            bind.loading2.visibility = View.GONE
         }
         bind.iconContainer.addView(gatewayIcon)
     }
