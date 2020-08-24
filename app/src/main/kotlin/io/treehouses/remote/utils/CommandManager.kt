@@ -49,9 +49,17 @@ fun match (output: String) : RESULTS {
     return RESULTS.RESULT_NOT_FOUND
 }
 
+class Output (val output: String) {
+    fun isOneOf(p1 :String, p2 : String) : Boolean {
+        return Matcher.toLC(output).contains(p1) || Matcher.toLC(output).contains(p2)
+    }
+    fun isOneOf(p1 :String, vararg p : String) : Boolean {
+        return isOneOf(p1, p[0]) || isOneOf(p[0], *p)
+    }
+}
 //Could remove IDs and simply use these functions
 object Matcher {
-    private fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
+    fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
 
     fun isError(output: String): Boolean {
         val keys = listOf("error ", "unknown command", "usage: ", "not a valid option", "error: ", "not found")

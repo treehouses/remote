@@ -12,18 +12,11 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
-import io.treehouses.remote.pojo.ServiceInfo
-import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
-import io.treehouses.remote.utils.LogUtils
-import io.treehouses.remote.utils.SaveUtils
 import java.util.*
 
 
@@ -33,14 +26,12 @@ class ServicesFragment : BaseServicesFragment() {
     lateinit var bind: ActivityServicesFragmentBinding
     var worked = false
     private var currentTab:Int =  0
-//    private lateinit var services: ArrayList<ServiceInfo>
 
 //    private lateinit var cachedServices: MutableList<String>
     private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {this})
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityServicesFragmentBinding.inflate(inflater, container, false)
-//        services = ArrayList()
         bind.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         bind.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -52,8 +43,6 @@ class ServicesFragment : BaseServicesFragment() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
         setTabEnabled(false)
-//        mChatService = listener.getChatService()
-//        mChatService.updateHandler(mHandler)
 
         worked = false
         viewModel.fetchServicesFromServer()
@@ -75,6 +64,7 @@ class ServicesFragment : BaseServicesFragment() {
         })
 
         viewModel.clickedService.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            viewModel.selectedService.value = it
             Objects.requireNonNull(bind.tabLayout.getTabAt(1))?.select()
             currentTab = 1
             replaceFragment(currentTab)
@@ -108,15 +98,6 @@ class ServicesFragment : BaseServicesFragment() {
 //            }
 //        }
     }
-
-//    override fun getMessage(msg: Message) {
-//        when (msg.what) {
-//            Constants.MESSAGE_READ -> {
-//                updateListFromRPI(msg)
-//            }
-//            Constants.MESSAGE_WRITE -> LogUtils.writeMsg(msg)
-//        }
-//    }
 
     private fun showUpdateCliAlert() {
         val alertDialog = createDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle),

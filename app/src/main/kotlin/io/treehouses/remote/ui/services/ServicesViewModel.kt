@@ -18,8 +18,7 @@ import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status.LOADING
 import io.treehouses.remote.pojo.enum.Status.SUCCESS
-import io.treehouses.remote.utils.constructServiceListFromData
-import io.treehouses.remote.utils.formatServices
+import io.treehouses.remote.utils.*
 
 class ServicesViewModel(application: Application) : FragmentViewModel(application) {
 
@@ -42,7 +41,14 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
     var formattedServices = mutableListOf<ServiceInfo>()
 
+    val selectedService = MutableLiveData<ServiceInfo>()
     val clickedService = MutableLiveData<ServiceInfo>()
+
+    val serviceAction = MutableLiveData<Resource<ServiceInfo>>()
+
+    val autoRunAction = MutableLiveData<Resource<Boolean>>()
+
+    val error = MutableLiveData<String>()
 
     /**
      * Send the request to receive the JSON file containing all services data
@@ -57,7 +63,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * Get the services from the cache if it exists
      */
     fun fetchServicesFromCache() {
-
+//        getApplication<MainApplication>().getString()
     }
 
     /**
@@ -69,7 +75,12 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     override fun onRead(output: String) {
         Log.e("GOT", output)
         when {
+            match(output) == RESULTS.ERROR -> error.value = output
             rawServicesData.value?.status == LOADING -> receiveJSON(output.trim())
+            serviceAction.value?.status == LOADING && containsServiceAction(output) -> matchServiceAction(output.trim())
+            autoRunAction.value?.status == LOADING && output.contains("service autorun set") -> {
+                autoRunAction.value = Resource.success(autoRunAction.value?.data)
+            }
         }
     }
 
@@ -93,36 +104,53 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
             currentlyReceivingJSON = true
         }
     }
-
-    fun onInstallClicked(service: ServiceInfo?) {
-        if (service == null) return
-//        if (service.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
-//            runServiceCommand("Installing", s.name)
-//        else if (installedOrRunning(s)) {
-//            val dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-//                    .setTitle("Delete " + selected!!.name + "?")
-//                    .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
-//                    .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
-//                        runServiceCommand("Uninstalling", s.name)
-//                    }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-//            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-//            dialog.show()
-//        }
+    private fun matchServiceAction(output: String) : Boolean {
+        if (output.contains("started")) {
+            selectedService.value?.serviceStatus = ServiceInfo.SERVICE_RUNNING
+        } else if (output.contains("stopped and removed")) {
+            selectedService.value?.serviceStatus = ServiceInfo.SERVICE_AVAILABLE
+        } else if (output.contains("stopped") || output.contains("installed")) {
+            selectedService.value?.serviceStatus = ServiceInfo.SERVICE_INSTALLED
+        } else {
+            return false
+        }
+        formattedServices.sort()
+        serviceAction.value = Resource.success(selectedService.value)
+        return true
     }
 
-    fun onStartClicked(service: ServiceInfo?) {
-        if (service == null) return
+    fun onInstallClicked(service: ServiceInfo) {
+        selectedService.value = service
+
+        if (service.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
+            sendMessage(getString(R.string.TREEHOUSES_SERVICES_INSTALL, service.name))
+        else if (service.serviceStatus == ServiceInfo.SERVICE_INSTALLED || service.serviceStatus == ServiceInfo.SERVICE_RUNNING)
+            sendMessage(getString(R.string.TREEHOUSES_SERVICES_CLEANUP, service.name))
+
+        serviceAction.value = Resource.loading(service)
+    }
+
+    fun onStartClicked(service: ServiceInfo) {
+        selectedService.value = service
+
         if (service.serviceStatus == ServiceInfo.SERVICE_INSTALLED)
-            sendMessage(getApplication<MainApplication>().getString(R.string.TREEHOUSES_SERVICES_UP))
+            sendMessage(getString(R.string.TREEHOUSES_SERVICES_UP, service.name))
         else if (service.serviceStatus == ServiceInfo.SERVICE_RUNNING)
-            sendMessage(getApplication<MainApplication>().getString(R.string.TREEHOUSES_SERVICES_UP))
+            sendMessage(getString(R.string.TREEHOUSES_SERVICES_STOP, service.name))
+
+        serviceAction.value = Resource.loading(service)
     }
 
     fun editEnvVariable(service: ServiceInfo) {}
 
-    fun switchAutoRun(service: ServiceInfo) {}
+    fun switchAutoRun(service: ServiceInfo, newValue: Boolean) {
+        sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, service.name, newValue.toString()))
+        autoRunAction.value = Resource.loading()
+    }
 
-    fun getLocalLink(service: ServiceInfo) {}
+    fun getLocalLink(service: ServiceInfo) {
+
+    }
     fun getTorLink(service: ServiceInfo) {}
 
 

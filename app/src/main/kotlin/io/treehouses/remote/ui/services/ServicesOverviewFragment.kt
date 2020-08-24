@@ -1,9 +1,6 @@
 package io.treehouses.remote.ui.services
 
-import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -14,11 +11,9 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.ServicesListAdapter
-import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 
 class ServicesOverviewFragment() : BaseServicesFragment(), OnItemClickListener {
@@ -47,34 +42,12 @@ class ServicesOverviewFragment() : BaseServicesFragment(), OnItemClickListener {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Tutorials.servicesOverviewTutorials(bind!!, requireActivity())
+        Tutorials.servicesOverviewTutorials(bind, requireActivity())
     }
-
-//    @JvmField
-//    val handlerOverview: Handler = object : Handler() {
-//        override fun handleMessage(msg: Message) {
-//            when (msg.what) {
-//                Constants.MESSAGE_STATE_CHANGE -> {
-//                    listener.redirectHome()
-//                }
-//            }
-//        }
-//    }
-
-
-//    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        try {
-//            servicesListener = parentFragment as ServicesListener?
-//        } catch (e: ClassCastException) {
-//            e.printStackTrace()
-//        }
-//    }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
         val selected = viewModel.formattedServices[position]
         viewModel.clickedService.value = selected
-//        if (servicesListener != null) servicesListener!!.onClick(selected)
     }
 
     companion object {

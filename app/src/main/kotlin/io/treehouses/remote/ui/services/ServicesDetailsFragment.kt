@@ -27,13 +27,15 @@ import io.treehouses.remote.databinding.EnvVarBinding
 import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.isLocalUrl
+import io.treehouses.remote.utils.isTorURL
 import java.util.*
 
 class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener, OnPageChangeListener, ServiceAction {
     private var received = false
-    private var wait = false
+//    private var wait = false
     private var spinnerAdapter: ServicesListAdapter? = null
-    private var selected: ServiceInfo? = null
+//    private var selected: ServiceInfo? = null
     private var serviceCardAdapter: ServiceCardAdapter? = null
     private var scrolled = false
     private var editEnv = false
@@ -46,13 +48,9 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
 
         viewModel.servicesData.observe(viewLifecycleOwner, Observer {
-            when (it.status) {
-                Status.SUCCESS -> {populateServices(viewModel.formattedServices)}
-//                Status.LOADING -> {}
-//                Status.ERROR -> {}
-                else -> {}
+            if (it.status == Status.SUCCESS) {
+                populateServices(viewModel.formattedServices)
             }
-
         })
         return binding.root
     }
@@ -61,15 +59,35 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
 
-        viewModel.clickedService.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                selected = it
-                viewModel.clickedService.value = null
-                val pos = inServiceList(it.name, viewModel.formattedServices)
-                val count = countHeadersBefore(pos)
-                binding.servicesCards.currentItem = pos - count
-                binding.pickService.setSelection(pos)
+        viewModel.selectedService.observe(viewLifecycleOwner, Observer {
+            goToSelected()
+        })
+
+        viewModel.serviceAction.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    setScreenState(false)
+                    return@Observer
+                }
+                Status.SUCCESS -> {
+                    serviceCardAdapter?.notifyDataSetChanged()
+                    spinnerAdapter?.notifyDataSetChanged()
+                    goToSelected()
+                }
+                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction")
             }
+            setScreenState(true)
+        })
+        viewModel.autoRunAction.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    setScreenState(false)
+                    return@Observer
+                }
+                Status.SUCCESS -> Toast.makeText(context, "Switched autorun to $it", Toast.LENGTH_SHORT).show()
+                else -> Log.e("UNKNOWN", "RECEIVED in AutoRun boolean")
+            }
+            setScreenState(true)
         })
     }
 
@@ -83,26 +101,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
         binding.servicesCards.addOnPageChangeListener(this)
     }
 
-//    @JvmField
-//    val handlerDetails: Handler = object : Handler() {
-//        override fun handleMessage(msg: Message) {
-//            when (msg.what) {
-//                Constants.MESSAGE_READ -> {
-//                    val output = msg.obj as String
-//                    if (wait) {
-//                        matchOutput(output.trim { it <= ' ' })
-//                    }
-//                    else{
-//                        handleMore(output)
-//                    }
-//                }
-//                Constants.MESSAGE_STATE_CHANGE -> {
-//                    listener.redirectHome()
-//                }
-//            }
-//        }
-//    }
-
     private fun handleMore(output:String){
         if (isLocalUrl(output, received) || isTorURL(output, received)) {
             received = true
@@ -115,57 +113,46 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             editEnv = false
             showEditDialog(name, tokens.size, tokens)
         } else {
-            setScreenState(true)
             if (output.contains("service autorun set")) {
                 Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
-            } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-                Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun matchOutput(s: String) {
-        selected = binding.pickService.selectedItem as ServiceInfo
-        Log.d("Entered", "matchOutput: $s")
-        if (s.contains("started")) {
-            selected!!.serviceStatus = ServiceInfo.SERVICE_RUNNING
-        } else if (s.contains("stopped and removed")) {
-            selected!!.serviceStatus = ServiceInfo.SERVICE_AVAILABLE
-            Log.d("STOP", "matchOutput: ")
-        } else if (s.contains("stopped") || s.contains("installed")) {
-            selected!!.serviceStatus = ServiceInfo.SERVICE_INSTALLED
-        } else {
-            return
-        }
-        viewModel.formattedServices.sort()
-        serviceCardAdapter!!.notifyDataSetChanged()
-        spinnerAdapter!!.notifyDataSetChanged()
-        setScreenState(true)
-        wait = false
-        goToSelected()
-    }
+//    private fun onServiceStatusChanged() {
+////        viewModel.selectedService.value = binding.pickService.selectedItem as ServiceInfo
+////        Log.d("Entered", "matchOutput: $s")
+////        if (s.contains("started")) {
+////            viewModel.selectedService.value?.serviceStatus = ServiceInfo.SERVICE_RUNNING
+////        } else if (s.contains("stopped and removed")) {
+////            viewModel.selectedService.value?.serviceStatus = ServiceInfo.SERVICE_AVAILABLE
+////        } else if (s.contains("stopped") || s.contains("installed")) {
+////            viewModel.selectedService.value?.serviceStatus = ServiceInfo.SERVICE_INSTALLED
+////        } else {
+////            return
+////        }
+////        viewModel.formattedServices.sort()
+//    }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
-            val statusCode = viewModel.formattedServices[position].serviceStatus
-            if (statusCode == ServiceInfo.SERVICE_HEADER_AVAILABLE || statusCode == ServiceInfo.SERVICE_HEADER_INSTALLED) return
+            if (viewModel.formattedServices[position].isHeader) return
             val count = countHeadersBefore(position)
             binding.servicesCards.currentItem = position - count
         }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
-//    fun setSelected(s: ServiceInfo) {
-//        Log.d("SELECTED", "setSelected: " + s.name)
-//        selected = s
-//    }
 
     private fun goToSelected() {
-        if (selected != null) {
-            val pos = inServiceList(selected!!.name, viewModel.formattedServices)
-            val count = countHeadersBefore(pos)
-            binding.servicesCards.currentItem = pos - count
+        if (viewModel.selectedService.value == null) return
+        val pos = indexOfService(viewModel.selectedService.value!!.name, viewModel.formattedServices)
+        if (binding.pickService.selectedItemPosition != pos) {
             binding.pickService.setSelection(pos)
+        }
+        val count = countHeadersBefore(pos)
+        if (binding.servicesCards.currentItem != pos - count) {
+            binding.servicesCards.currentItem = pos - count
         }
     }
 
@@ -176,7 +163,10 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onPause() {
         super.onPause()
-        selected = binding.pickService.selectedItem as ServiceInfo
+        if (viewModel.selectedService.value != binding.pickService.selectedItem as ServiceInfo) {
+            viewModel.selectedService.value = binding.pickService.selectedItem as ServiceInfo
+        }
+
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -195,12 +185,6 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             if (viewModel.formattedServices[i].isHeader) count++
         }
         return count
-    }
-
-    private fun runServiceCommand(action: String, name: String) {
-        performService(action, name)
-        wait = true
-        setScreenState(false)
     }
 
     private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
@@ -260,13 +244,26 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     override fun onClickStart(s: ServiceInfo?) {
+        if (s == null) return
         viewModel.onStartClicked(s)
-        wait = true
-        setScreenState(false)
     }
 
     override fun onClickInstall(s: ServiceInfo?) {
-        viewModel.onInstallClicked(s)
+        when {
+            s == null -> return
+            s.serviceStatus == ServiceInfo.SERVICE_AVAILABLE -> viewModel.onInstallClicked(s)
+            s.isOneOf(ServiceInfo.SERVICE_INSTALLED, ServiceInfo.SERVICE_RUNNING) -> {
+                val dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
+                        .setTitle("Delete " + viewModel.selectedService.value?.name + "?")
+                        .setMessage("Are you sure you would like to delete this service? All of its data will be lost and the service must be reinstalled.")
+                        .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
+                            viewModel.onInstallClicked(s)
+                        }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+                dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.show()
+            }
+        }
+        viewModel.onInstallClicked(s!!)
     }
 
     override fun onClickLink(s: ServiceInfo?) {
@@ -280,12 +277,14 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
-        setScreenState(false)
-        fun sendMessage(a1:Int, a2:String, a3:String){
-            listener.sendMessage(getString(a1, a2, a3))
-        }
-        if (newAutoRun) sendMessage(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "true")
-        else sendMessage(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "false")
+        if (s == null) return
+//        setScreenState(false)
+//        fun sendMessage(a1:Int, a2:String, a3:String){
+//            listener.sendMessage(getString(a1, a2, a3))
+//        }
+        viewModel.switchAutoRun(s, newAutoRun)
+//        if (newAutoRun) sendMessage(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "true")
+//        else sendMessage(R.string.TREEHOUSES_SERVICES_AUTORUN, s!!.name, "false")
         Toast.makeText(context, "Switching autorun status to $newAutoRun", Toast.LENGTH_SHORT).show()
     }
 
