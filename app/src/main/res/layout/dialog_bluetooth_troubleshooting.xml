@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/alertdialog_background">
+
+    <TextView
+        android:id="@+id/textView4"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawableStart="@drawable/ic_update_alert"
+        android:drawableLeft="@drawable/ic_update_alert"
+        android:drawablePadding="@dimen/padding_large"
+        android:text="Bluetooth Connection Failed"
+        android:textColor="@color/daynight_textColor"
+        app:drawableLeftCompat="@drawable/ic_update_alert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UseCompatTextViewDrawableXml" />
+
+    <TextView
+        android:id="@+id/reasons_title"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_large"
+        android:gravity="center_horizontal"
+        android:text="Troubleshooting"
+        android:textAlignment="center"
+        android:textColor="@color/daynight_textColor"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <ExpandableListView
+        android:id="@+id/faq_list"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="@dimen/margin_large"
+        android:minHeight="300dp"
+        app:layout_constraintBottom_toTopOf="@+id/closeButton"
+        app:layout_constraintTop_toBottomOf="@+id/reasons_title" />
+
+    <CheckBox
+        android:id="@+id/show_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginRight="@dimen/margin_large"
+        android:textColor="@color/grey_to_light_grey"
+        android:text="Don't Show Again"
+        app:layout_constraintBottom_toBottomOf="@+id/closeButton"
+        app:layout_constraintEnd_toStartOf="@+id/closeButton"
+        app:layout_constraintTop_toTopOf="@+id/closeButton" />
+
+    <Button
+        android:id="@+id/closeButton"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:text="Close"
+        android:textSize="@dimen/text_size_mid"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
