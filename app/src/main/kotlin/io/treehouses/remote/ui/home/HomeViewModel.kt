@@ -2,10 +2,12 @@ package io.treehouses.remote.ui.home
 
 import android.app.Application
 import android.bluetooth.BluetoothDevice
+import android.os.Message
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.BuildConfig
+import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.ParseDbService
 import io.treehouses.remote.R
@@ -18,22 +20,56 @@ import io.treehouses.remote.utils.match
 import java.util.*
 
 class HomeViewModel(application: Application) : FragmentViewModel(application) {
+    /**
+     * The selected LED that is currently showing in the Test Connection Dialog
+     */
     var selectedLed = 0
+
+    /**
+     * Boolean value to see if the version check has been sent
+     * @see R.string.TREEHOUSES_REMOTE_VERSION
+     */
     var checkVersionSent = false
+
+    /**
+     * Boolean value to see if internet check has been sent
+     */
     var internetSent = false
+
+    /**
+     * Stores the SSID of the Network Profile that was chosen. Could be removed since networkProfile
+     * is also being passed now
+     */
     var networkSsid = ""
+
+    /**
+     * The Network Profile that was selected by the user
+     */
     var networkProfile: NetworkProfile? = null
 
     var hashSent = MutableLiveData<Resource<String>>()
     var testConnectionResult = MutableLiveData<Resource<Boolean>>()
+
+    /**
+     * Generic error has occurred; Let the user know.
+     */
     val error : MutableLiveData<String> = MutableLiveData()
+    val errorConnecting : MutableLiveData<String> = MutableLiveData()
     val remoteUpdateRequired : MutableLiveData<Boolean> = MutableLiveData()
     val newCLIUpgradeAvailable : MutableLiveData<Boolean> = MutableLiveData()
     val internetStatus : MutableLiveData<Boolean> = MutableLiveData()
     val networkProfileResult : MutableLiveData<Resource<NetworkProfile>> = MutableLiveData()
 
+    /**
+     * Bluetooth device to connect to. Selected from the RPIDialogFragment
+     * @see io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
+     */
     var device: BluetoothDevice? = null
 
+    /**
+     * Connects to a Bluetooth device
+     * @param device : BluetoothDevice = Device to connect to
+     */
     fun connect(device: BluetoothDevice) {
         this.device = device
         mChatService.connect(device, true)
@@ -150,6 +186,12 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      */
     override fun onWrite(input: String) {
         Log.e("ON WRITE", input)
+    }
+
+    override fun onOtherMessage(msg: Message) {
+        if (msg.what == Constants.MESSAGE_ERROR) {
+            errorConnecting.value = msg.obj as String
+        }
     }
 
     /**
