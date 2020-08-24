@@ -220,6 +220,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             if (separator == "") text = res.value
             else text = res.value.split(separator.toRegex())[1]
         }
+
         return text
     }
 
