@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -18,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.SSH.Terminal.TerminalViewPager
@@ -25,6 +27,11 @@ import io.treehouses.remote.SSH.Terminal.TerminalViewPager
 open class DerivedSSHConsole: BaseSSHConsole() {
     private var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }
     private var keyRepeatHandler = Handler()
+    private val currentPromptHelper: PromptHelper?
+        get() {
+            val view = viewModel.adapter!!.currentTerminalView ?: return null
+            return view.bridge.promptHelper
+        }
 
     protected var promptHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -295,5 +302,34 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         bind.keyboard.buttonF10.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonF11.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonF12.setOnClickListener(emulatedKeysListener)
+    }
+
+    protected fun promptListeners() {
+        val onKeyListener = createOnKeyListener()
+        bind.consolePassword.setOnKeyListener(onKeyListener)
+
+        bind.consolePromptYes.setOnClickListener {
+            updatePrompt(true, currentPromptHelper ?: return@setOnClickListener)
+        }
+        bind.consolePromptNo.setOnClickListener {
+            updatePrompt(false, currentPromptHelper ?: return@setOnClickListener)
+        }
+    }
+
+    private fun createOnKeyListener(): View.OnKeyListener {
+        return View.OnKeyListener {
+            _: View?, keyCode: Int, event: KeyEvent ->
+            if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
+
+            // pass collected password down to current terminal
+            val value = bind.consolePassword.text.toString()
+            val helper = currentPromptHelper ?: return@OnKeyListener false
+            helper.setResponse(value)
+
+            // finally clear password for next user
+            bind.consolePassword.setText("")
+            updatePromptVisible()
+            true
+        }
     }
 }

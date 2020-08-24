@@ -103,12 +103,6 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         }
     }
 
-    private val currentPromptHelper: PromptHelper?
-        get() {
-            val view = viewModel.adapter!!.currentTerminalView ?: return null
-            return view.bridge.promptHelper
-        }
-
     @SuppressLint("ClickableViewAccessibility")
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -162,36 +156,6 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
                 }
             }
             false
-        }
-    }
-
-    private fun promptListeners() {
-        val onKeyListener = createOnKeyListener()
-        bind.consolePassword.setOnKeyListener(onKeyListener)
-
-        bind.consolePromptYes.setOnClickListener {
-            updatePrompt(true, currentPromptHelper ?: return@setOnClickListener)
-        }
-        bind.consolePromptNo.setOnClickListener {
-            updatePrompt(false, currentPromptHelper ?: return@setOnClickListener)
-        }
-
-    }
-
-    private fun createOnKeyListener(): View.OnKeyListener {
-        return View.OnKeyListener {
-            _: View?, keyCode: Int, event: KeyEvent ->
-            if (event.action == KeyEvent.ACTION_UP || keyCode != KeyEvent.KEYCODE_ENTER) return@OnKeyListener false
-
-            // pass collected password down to current terminal
-            val value = bind.consolePassword.text.toString()
-            val helper = currentPromptHelper ?: return@OnKeyListener false
-            helper.setResponse(value)
-
-            // finally clear password for next user
-            bind.consolePassword.setText("")
-            updatePromptVisible()
-            true
         }
     }
 
