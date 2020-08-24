@@ -11,12 +11,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import bolts.Task.delay
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.R
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 
 class AboutFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,6 +42,7 @@ class AboutFragment : Fragment() {
         hyperLinks(images, "https://treehouses.io/#!pages/download.md")
         hyperLinks(gitter, "https://gitter.im/open-learning-exchange/raspberrypi")
         hyperLinks(contributors, "https://github.com/treehouses/remote/graphs/contributors")
+
     }
 
     private fun setFeedback(view : View) {
@@ -70,10 +73,21 @@ class AboutFragment : Fragment() {
     }
 
     private fun hyperLinks(view: View, url: String) {
+        var click = true
         view.setOnClickListener {
             val i = Intent(Intent.ACTION_VIEW)
             i.data = Uri.parse(url)
+            if (click) {
+                view.setBackgroundColor(resources.getColor(R.color.colorPrimaryLight))
+                click = false
+            } else {
+                view.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                click = true
+            }
             startActivity(i)
         }
+
+
+
     }
 }
