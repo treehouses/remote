@@ -28,7 +28,7 @@ class SSHConsoleViewModel: ViewModel() {
     var tabs: TabLayout? = null
     var toolbar: Toolbar? = null
     var bound: TerminalManager? = null
-    var adapter: SSHConsole.TerminalPagerAdapter? = null
+    var adapter: DerivedSSHConsole.TerminalPagerAdapter? = null
     var prefs: SharedPreferences? = null
 
     // determines whether or not menuitem accelerators are bound

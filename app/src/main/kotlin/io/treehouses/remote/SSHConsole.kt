@@ -55,7 +55,7 @@ import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 import io.treehouses.remote.ui.services.ServicesViewModel
 import java.lang.ref.WeakReference
 
-open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
+open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -92,12 +92,6 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
             updateEmptyVisible()
         }
     }
-    protected var promptHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            // someone below us requested to display a prompt
-            updatePromptVisible()
-        }
-    }
 
     override fun onDisconnected(bridge: TerminalBridge) {
         synchronized(viewModel.adapter!!) {
@@ -109,30 +103,11 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
         }
     }
 
-    private var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }
-    private var keyRepeatHandler = Handler()
-
-
-    private fun findCurrentView(id: Int): View? {
-        val view = bind.pager.findViewWithTag<View>(viewModel.adapter!!.getBridgeAtPosition(bind.pager.currentItem))
-                ?: return null
-        return view.findViewById(id)
-    }
-
     private val currentPromptHelper: PromptHelper?
         get() {
             val view = viewModel.adapter!!.currentTerminalView ?: return null
             return view.bridge.promptHelper
         }
-
-    private fun showEmulatedKeys(showActionBar: Boolean) {
-        if (bind.keyboard.keyboardGroup.visibility == View.GONE) setAnimation(viewModel.keyboardFadeIn, View.VISIBLE)
-        if (showActionBar) {
-            actionBar!!.show()
-        }
-        autoHideEmulatedKeys()
-    }
-
 
     @SuppressLint("ClickableViewAccessibility")
     public override fun onCreate(icicle: Bundle?) {
@@ -162,120 +137,6 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
 
         detectSoftVisibility()
 
-    }
-
-    private fun setUpTerminalPager() {
-        bind.pager.addOnPageChangeListener(
-                object : SimpleOnPageChangeListener() {
-                    override fun onPageSelected(position: Int) {
-                        title = viewModel.adapter!!.getPageTitle(position)
-                        onTerminalChanged()
-                    }
-                })
-        viewModel.adapter = TerminalPagerAdapter()
-        bind.pager.adapter = viewModel.adapter
-        if (viewModel.tabs != null) setupTabLayoutWithViewPager()
-        bind.pager.setOnClickListener { showEmulatedKeys(true) }
-    }
-
-    private fun setUpActionBar() {
-        viewModel.actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar!!.setDisplayHomeAsUpEnabled(true)
-            if (viewModel.titleBarHide) {
-                actionBar!!.hide()
-            }
-            actionBar!!.addOnMenuVisibilityListener { isVisible: Boolean ->
-                viewModel.inActionBarMenu = isVisible
-                if (!isVisible) {
-                    hideEmulatedKeys()
-                }
-            }
-        }
-    }
-
-    private fun detectSoftVisibility() {
-        // Change keyboard button image according to soft keyboard visibility
-        // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
-        viewModel.mContentView = findViewById(android.R.id.content)
-        viewModel.mContentView!!.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect()
-            viewModel.mContentView!!.getWindowVisibleDisplayFrame(r)
-            val screenHeight = viewModel.mContentView!!.rootView.height
-            val keypadHeight = screenHeight - r.bottom
-            if (keypadHeight > screenHeight * 0.15) {
-                // keyboard is opened
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
-            } else {
-                // keyboard is closed
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
-            }
-        }
-    }
-
-    private fun setUpKeyboard() {
-        viewModel.fadeOutDelayed = AnimationUtils.loadAnimation(this, R.anim.fade_out_delayed)
-
-        // Preload animation for keyboard button
-        viewModel.keyboardFadeIn = AnimationUtils.loadAnimation(this, R.anim.keyboard_fade_in)
-        viewModel.keyboardFadeOut = AnimationUtils.loadAnimation(this, R.anim.keyboard_fade_out)
-        viewModel.keyboardAlwaysVisible = viewModel.prefs!!.getBoolean(PreferenceConstants.KEY_ALWAYS_VISIBLE, false)
-        if (viewModel.keyboardAlwaysVisible) {
-            // equivalent to android:layout_above=keyboard_group
-            var layoutParams = RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
-            layoutParams.addRule(RelativeLayout.ABOVE, R.id.keyboard_group)
-            bind.pager.layoutParams = layoutParams
-            layoutParams = RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT)
-            layoutParams.addRule(RelativeLayout.ABOVE, R.id.keyboard_group)
-            findViewById<View>(R.id.console_password_group).layoutParams = layoutParams
-            findViewById<View>(R.id.console_boolean_group).layoutParams = layoutParams
-
-            // Show virtual keyboard
-            bind.keyboard.keyboardGroup.visibility = View.VISIBLE
-        }
-    }
-
-    private fun addKeyboardListeners() {
-        bind.keyboard.buttonKeyboard.setOnClickListener {
-            val terminal = viewModel.adapter!!.currentTerminalView ?: return@setOnClickListener
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.toggleSoftInputFromWindow(terminal.applicationWindowToken,
-                    InputMethodManager.SHOW_FORCED, 0)
-            terminal.requestFocus()
-            hideEmulatedKeys()
-        }
-        bind.keyboard.buttonCtrl.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonEsc.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonTab.setOnClickListener(emulatedKeysListener)
-        addKeyRepeater(bind.keyboard.buttonUp)
-        addKeyRepeater(bind.keyboard.buttonUp)
-        addKeyRepeater(bind.keyboard.buttonDown)
-        addKeyRepeater(bind.keyboard.buttonLeft)
-        addKeyRepeater(bind.keyboard.buttonRight)
-        setButtonListeners()
-    }
-
-    private fun setButtonListeners() {
-        bind.keyboard.buttonHome.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonEnd.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonPgup.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonPgdn.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF1.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF2.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF3.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF4.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF5.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF6.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF7.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF8.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF9.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF10.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF11.setOnClickListener(emulatedKeysListener)
-        bind.keyboard.buttonF12.setOnClickListener(emulatedKeysListener)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -334,38 +195,6 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
         }
     }
 
-    private fun addKeyRepeater(view: View) {
-        val keyRepeater = KeyRepeater(keyRepeatHandler, view)
-        view.setOnClickListener(keyRepeater)
-        view.setOnTouchListener(keyRepeater)
-    }
-
-    /**
-     * Ties the [TabLayout] to the [TerminalViewPager].
-     *
-     *
-     * This method will:
-     *
-     *  * Add a [TerminalViewPager.OnPageChangeListener] that will forward events to
-     * this TabLayout.
-     *  * Populate the TabLayout's tabs from the ViewPager's [PagerAdapter].
-     *  * Set our [TabLayout.OnTabSelectedListener] which will forward
-     * selected events to the ViewPager
-     *
-     *
-     */
-    private fun setupTabLayoutWithViewPager() {
-        viewModel.tabs!!.setTabsFromPagerAdapter(viewModel.adapter)
-        bind.pager.addOnPageChangeListener(TabLayoutOnPageChangeListener(viewModel.tabs))
-        viewModel.tabs!!.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(bind.pager))
-        if (viewModel.adapter!!.count > 0) {
-            val curItem = bind.pager.currentItem
-            if (viewModel.tabs!!.selectedTabPosition != curItem) {
-                viewModel.tabs!!.getTabAt(curItem)!!.select()
-            }
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         val view = viewModel.adapter!!.currentTerminalView
@@ -389,22 +218,6 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
         viewModel.urlScan!!.isEnabled = activeTerminal
         setUrlItemListener()
         return true
-    }
-
-    private fun setUrlItemListener() {
-        viewModel.urlScan!!.setOnMenuItemClickListener {
-            val terminalView = viewModel.adapter!!.currentTerminalView
-            val urls = terminalView!!.bridge.scanForURLs()
-            val urlDialog = Dialog(this@SSHConsole)
-            urlDialog.setTitle("Scan for URLs")
-            val urlListView = ListView(this@SSHConsole)
-            val urlListener = URLItemListener(this@SSHConsole)
-            urlListView.onItemClickListener = urlListener
-            urlListView.adapter = ArrayAdapter(this@SSHConsole, android.R.layout.simple_list_item_1, urls)
-            urlDialog.setContentView(urlListView)
-            urlDialog.show()
-            true
-        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
@@ -485,32 +298,6 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
         setIntentRequested()
     }
 
-    private fun setIntentRequested() {
-        val requestedBridge = viewModel.bound!!.mNicknameBridgeMap[viewModel.requested!!.fragment]?.get()
-        var requestedIndex = 0
-        synchronized(bind.pager) {
-            if (requestedBridge == null) {
-                // If we didn't find the requested connection, try opening it
-                try {
-                    Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
-                            "so creating one now", viewModel.requested.toString(), viewModel.requested!!.fragment))
-                    viewModel.bound!!.openConnection(viewModel.requested)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Problem while trying to create new requested bridge from URI", e)
-                    return
-                }
-                viewModel.adapter!!.notifyDataSetChanged()
-                requestedIndex = viewModel.adapter!!.count
-            } else {
-                val flipIndex = viewModel.bound!!.bridges.indexOf(requestedBridge)
-                if (flipIndex > requestedIndex) {
-                    requestedIndex = flipIndex
-                }
-            }
-            setDisplayedTerminal(requestedIndex)
-        }
-    }
-
     public override fun onStop() {
         super.onStop()
         unbindService(connection)
@@ -539,123 +326,6 @@ open class SSHConsole : BaseSSHConsole(), BridgeDisconnectedListener {
             viewModel.bound!!.hardKeyboardHidden = newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES
             bind.keyboard.buttonKeyboard.visibility = if (viewModel.bound!!.hardKeyboardHidden) View.VISIBLE else View.GONE
         }
-    }
-
-    /**
-     * Called whenever the displayed terminal is changed.
-     */
-    private fun onTerminalChanged() {
-        val terminalNameOverlay = findCurrentView(R.id.terminal_name_overlay)
-        terminalNameOverlay?.startAnimation(viewModel.fadeOutDelayed)
-        viewModel.updateDefault()
-        updatePromptVisible()
-        ActivityCompat.invalidateOptionsMenu(this@SSHConsole)
-    }
-
-    /**
-     * Displays the child in the ViewPager at the requestedIndex and updates the prompts.
-     *
-     * @param requestedIndex the index of the terminal view to display
-     */
-    private fun setDisplayedTerminal(requestedIndex: Int) {
-        bind.pager.currentItem = requestedIndex
-        // set activity title
-        title = viewModel.adapter!!.getPageTitle(requestedIndex)
-        onTerminalChanged()
-    }
-
-    inner class TerminalPagerAdapter : PagerAdapter() {
-        override fun getCount(): Int {
-            return if (viewModel.bound != null) {
-                viewModel.bound!!.bridges.size
-            } else {
-                0
-            }
-        }
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            if (viewModel.bound == null || viewModel.bound!!.bridges.size <= position) {
-                Log.w(TAG, "Activity not bound when creating TerminalView.")
-            }
-            val bridge = viewModel.bound!!.bridges[position]
-            bridge.promptHelper!!.setHandler(promptHandler)
-
-            // inflate each terminal view
-            val view = layoutInflater.inflate(R.layout.item_terminal, container, false) as RelativeLayout
-
-            // set the terminal name overlay text
-            val terminalNameOverlay = view.findViewById<TextView>(R.id.terminal_name_overlay)
-            terminalNameOverlay.text = bridge.host!!.nickname
-
-            // and add our terminal view control, using index to place behind overlay
-            val terminal = TerminalView(container.context, bridge, bind.pager)
-            terminal.id = R.id.terminal_view
-            view.addView(terminal, 0)
-
-            // Tag the view with its bridge so it can be retrieved later.
-            view.tag = bridge
-            container.addView(view)
-            terminalNameOverlay.startAnimation(viewModel.fadeOutDelayed)
-            return view
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            val view = `object` as View
-            container.removeView(view)
-        }
-
-        override fun getItemPosition(`object`: Any): Int {
-            if (viewModel.bound == null) {
-                return POSITION_NONE
-            }
-            val view = `object` as View
-            val terminal: TerminalView = view.findViewById(R.id.terminal_view)
-            val host = terminal.bridge.host
-            var itemIndex = POSITION_NONE
-            var i = 0
-            for (bridge in viewModel.bound!!.bridges) {
-                if (bridge.host == host) {
-                    itemIndex = i
-                    break
-                }
-                i++
-            }
-            return itemIndex
-        }
-
-        fun getBridgeAtPosition(position: Int): TerminalBridge? {
-            if (viewModel.bound == null) {
-                return null
-            }
-            val bridges = viewModel.bound!!.bridges
-            return if (position < 0 || position >= bridges.size) {
-                null
-            } else bridges[position]
-        }
-
-        override fun notifyDataSetChanged() {
-            super.notifyDataSetChanged()
-            if (viewModel.tabs != null) {
-                viewModel.toolbar!!.visibility = if (this.count > 1) View.VISIBLE else View.GONE
-                viewModel.tabs!!.setTabsFromPagerAdapter(this)
-            }
-        }
-
-        override fun isViewFromObject(view: View, `object`: Any): Boolean {
-            return view === `object`
-        }
-
-        override fun getPageTitle(position: Int): CharSequence? {
-            val bridge = getBridgeAtPosition(position) ?: return "???"
-            return "Treehouses Remote: " + bridge.host!!.nickname
-        }
-
-        val currentTerminalView: TerminalView?
-            get() {
-                val currentView = bind.pager.findViewWithTag<View>(getBridgeAtPosition(bind.pager.currentItem))
-                        ?: return null
-                return currentView.findViewById<View>(R.id.terminal_view) as TerminalView
-            }
     }
 
 }

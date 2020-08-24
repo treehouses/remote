@@ -18,6 +18,7 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import io.treehouses.remote.SSH.PromptHelper
@@ -233,6 +234,61 @@ open class BaseSSHConsole: AppCompatActivity() {
                 viewModel.forcedOrientation = false
             }
         }
+    }
+
+    protected fun setIntentRequested() {
+        val requestedBridge = viewModel.bound!!.mNicknameBridgeMap[viewModel.requested!!.fragment]?.get()
+        var requestedIndex = 0
+        synchronized(bind.pager) {
+            if (requestedBridge == null) {
+                // If we didn't find the requested connection, try opening it
+                try {
+                    Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
+                            "so creating one now", viewModel.requested.toString(), viewModel.requested!!.fragment))
+                    viewModel.bound!!.openConnection(viewModel.requested)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Problem while trying to create new requested bridge from URI", e)
+                    return
+                }
+                viewModel.adapter!!.notifyDataSetChanged()
+                requestedIndex = viewModel.adapter!!.count
+            } else {
+                val flipIndex = viewModel.bound!!.bridges.indexOf(requestedBridge)
+                if (flipIndex > requestedIndex) {
+                    requestedIndex = flipIndex
+                }
+            }
+            setDisplayedTerminal(requestedIndex)
+        }
+    }
+
+    /**
+     * Displays the child in the ViewPager at the requestedIndex and updates the prompts.
+     *
+     * @param requestedIndex the index of the terminal view to display
+     */
+    protected fun setDisplayedTerminal(requestedIndex: Int) {
+        bind.pager.currentItem = requestedIndex
+        // set activity title
+        title = viewModel.adapter!!.getPageTitle(requestedIndex)
+        onTerminalChanged()
+    }
+
+    private fun findCurrentView(id: Int): View? {
+        val view = bind.pager.findViewWithTag<View>(viewModel.adapter!!.getBridgeAtPosition(bind.pager.currentItem))
+                ?: return null
+        return view.findViewById(id)
+    }
+
+    /**
+     * Called whenever the displayed terminal is changed.
+     */
+    protected fun onTerminalChanged() {
+        val terminalNameOverlay = findCurrentView(R.id.terminal_name_overlay)
+        terminalNameOverlay?.startAnimation(viewModel.fadeOutDelayed)
+        viewModel.updateDefault()
+        updatePromptVisible()
+        ActivityCompat.invalidateOptionsMenu(this@BaseSSHConsole)
     }
 
     companion object {
