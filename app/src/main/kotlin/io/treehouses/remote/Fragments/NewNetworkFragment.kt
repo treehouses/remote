@@ -50,6 +50,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         binding.buttonNetworkMode.setOnClickListener(this)
         binding.rebootRaspberry.setOnClickListener(this)
         binding.resetNetwork.setOnClickListener(this)
+        binding.discoverBtn.setOnClickListener(this)
         Tutorials.networkTutorials(binding, requireActivity())
     }
 
@@ -67,6 +68,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
             binding.buttonNetworkMode == v -> sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
+            binding.discoverBtn == v-> listener.openCallFragment(DiscoverFragment())
         }
     }
 
@@ -139,7 +141,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         listener.sendMessage(msg)
         Toast.makeText(context, toastMsg, Toast.LENGTH_LONG).show()
     }
-  
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {
