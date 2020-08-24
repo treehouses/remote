@@ -23,8 +23,10 @@ import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.*
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -49,6 +51,15 @@ import java.util.*
  * thread for performing data transmissions when connected.
  */
 class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : Service(), Serializable {
+    inner class DisconnectReceiver: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent?.action
+            if (action == DISCONNECT_ACTION) {
+                stop()
+            }
+        }
+    }
+
     // Member fields
     private val mAdapter: BluetoothAdapter
     private var mDevice: BluetoothDevice? = null
@@ -59,6 +70,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     private var mConnectedThread: ConnectedThread? = null
 
     private val mBinder = LocalBinder()
+
+    private val receiver = DisconnectReceiver()
 
     /**
      * Return the current connection state.
@@ -86,21 +99,27 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.e("BLUETOOTH","START COMMAND")
+        Log.e("BLUETOOTH", "START COMMAND")
         return START_NOT_STICKY
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        val i = IntentFilter()
+        i.addAction(DISCONNECT_ACTION)
+        registerReceiver(receiver, i)
+    }
+
     override fun onDestroy() {
-        Log.e("BLUETOOTH","Destroying...")
+        Log.e("BLUETOOTH", "Destroying...")
         stop()
+        unregisterReceiver(receiver)
         super.onDestroy()
     }
 
     private fun startNotification() {
-//        val disconnectIntent = Intent(this, DisconnectReceiver::class.java).apply {
-//            action = DISCONNECT_ACTION
-//        }
-//        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
+        val disconnectIntent = Intent(DISCONNECT_ACTION)
+        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
 
         val onClickIntent = Intent(this, InitialActivity::class.java)
         val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -113,7 +132,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setSmallIcon(R.drawable.treehouses2)
                 .setContentIntent(pendingClickIntent)
-//                .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
+                .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
                 .build()
         startForeground(2, notification)
     }
@@ -240,6 +259,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
         
         state = Constants.STATE_NONE
+        stopForeground(true)
         // Update UI title
         updateUserInterfaceTitle()
     }

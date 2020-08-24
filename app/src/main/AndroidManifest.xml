@@ -81,6 +81,7 @@
             android:label="Bluetooth Connection"
             android:enabled="true">
         </service>
+
     </application>
 
 </manifest>
