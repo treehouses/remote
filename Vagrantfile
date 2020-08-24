@@ -36,8 +36,8 @@ Vagrant.configure("2") do |config|
       unix2dos /vagrant/gradlew.bat
       #codeclimate
       docker pull codeclimate/codeclimate
-      echo "alias codeclimate=\\\"docker run --interactive --tty --rm --env CODECLIMATE_CODE=\\\$PWD --volume \\\$PWD:/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate\\\"" > /home/vagrant/.bash_aliases
-      chown vagrant: /home/vagrant/.bash_aliases
+      wget https://raw.githubusercontent.com/codeclimate/codeclimate/master/codeclimate-wrapper -O /usr/local/bin/codeclimate
+      chmod +x /usr/local/bin/codeclimate
     SHELL
 
     # Run binding on each startup make sure the mount is available on VM restart

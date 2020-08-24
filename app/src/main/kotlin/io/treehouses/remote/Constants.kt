@@ -55,6 +55,8 @@ object Constants {
     const val MESSAGE_DEVICE_NAME = 4
     const val MESSAGE_TOAST = 5
 
+    const val MESSAGE_ERROR = -1
+
     // Key names received from the BluetoothChatService Handler
     const val DEVICE_NAME = "device_name"
     const val TOAST = "toast"
