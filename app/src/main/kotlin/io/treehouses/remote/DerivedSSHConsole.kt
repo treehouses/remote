@@ -134,22 +134,6 @@ open class DerivedSSHConsole: BaseSSHConsole() {
             }
     }
 
-    protected fun setUrlItemListener() {
-        viewModel.urlScan!!.setOnMenuItemClickListener {
-            val terminalView = viewModel.adapter!!.currentTerminalView
-            val urls = terminalView!!.bridge.scanForURLs()
-            val urlDialog = Dialog(this@DerivedSSHConsole)
-            urlDialog.setTitle("Scan for URLs")
-            val urlListView = ListView(this@DerivedSSHConsole)
-            val urlListener = URLItemListener(this@DerivedSSHConsole)
-            urlListView.onItemClickListener = urlListener
-            urlListView.adapter = ArrayAdapter(this@DerivedSSHConsole, android.R.layout.simple_list_item_1, urls)
-            urlDialog.setContentView(urlListView)
-            urlDialog.show()
-            true
-        }
-    }
-
     protected fun setUpTerminalPager() {
         bind.pager.addOnPageChangeListener(
                 object : ViewPager.SimpleOnPageChangeListener() {
@@ -210,25 +194,6 @@ open class DerivedSSHConsole: BaseSSHConsole() {
                 if (!isVisible) {
                     hideEmulatedKeys()
                 }
-            }
-        }
-    }
-
-    protected fun detectSoftVisibility() {
-        // Change keyboard button image according to soft keyboard visibility
-        // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
-        viewModel.mContentView = findViewById(android.R.id.content)
-        viewModel.mContentView!!.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect()
-            viewModel.mContentView!!.getWindowVisibleDisplayFrame(r)
-            val screenHeight = viewModel.mContentView!!.rootView.height
-            val keypadHeight = screenHeight - r.bottom
-            if (keypadHeight > screenHeight * 0.15) {
-                // keyboard is opened
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
-            } else {
-                // keyboard is closed
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
             }
         }
     }
