@@ -15,7 +15,7 @@ before_install:
   - mkdir "$ANDROID_HOME/licenses" || true
   - chmod +x gradlew - yes | sdkmanager "platforms;android-28"
   - "./gradlew dependencies || true"
-  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 762E3157
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
   - sudo apt-get update
   - sudo apt update
   - sudo apt install software-properties-common
