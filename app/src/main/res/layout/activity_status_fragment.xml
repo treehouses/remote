@@ -390,7 +390,7 @@
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="10dp"
                             android:background="@drawable/ic_connect_to_rpi"
-                            android:text="Upgrade?"
+                            android:text="Upgrade"
                             android:theme="@style/PrimaryButton"
                             android:visibility="visible"
                             app:layout_constraintTop_toBottomOf="@id/tvUpgradeCheck" />
