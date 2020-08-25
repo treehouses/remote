@@ -8,6 +8,8 @@
     <string name="TREEHOUSES_VNC">treehouses vnc</string>
     <string name="TREEHOUSES_VNC_ON">treehouses vnc on</string>
     <string name="TREEHOUSES_VNC_OFF">treehouses vnc off</string>
+    <string name="TREEHOUSES_REBOOTS_NOW">treehouses reboots now</string>
+    <string name="TREEHOUSES_SHUTDOWN_NOW">treehouses shutdown now</string>
 
     <string name="TREEHOUSES_REMOTE_CHECK">treehouses remote check\n</string>
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
@@ -16,7 +18,7 @@
     <string name="TREEHOUSES_REMOTE_KEY_SEND">treehouses remote key send \"%1$s\"</string>
     <string name="TREEHOUSES_REMOTE_KEY_RECEIVE">treehouses remote key receive \"%1$s\" \"%2$s\" \"%3$s\"</string>
 
-    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
+    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
     <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master</string>
 
