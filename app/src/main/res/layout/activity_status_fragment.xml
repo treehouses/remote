@@ -135,7 +135,6 @@
                 android:background="@drawable/lightrounded"
                 android:orientation="vertical"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.433"
                 app:layout_constraintStart_toStartOf="parent"
@@ -200,7 +199,6 @@
                         android:layout_marginRight="20dp"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/ipAdrBox">
@@ -270,8 +268,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="20dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:text="Hostname: Checking.."
                         android:textColor="@color/daynight_textColor"
                         android:textStyle="bold" />
@@ -283,7 +279,6 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="20dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:text="Model: Checking.."
                         android:textColor="@color/daynight_textColor"
                         android:textStyle="bold" />
@@ -295,7 +290,6 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="20dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:text="CPU: Checking.."
                         android:textColor="@color/daynight_textColor"
                         android:textStyle="bold" />
@@ -307,7 +301,6 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="0dp"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
                         android:text="Image Version: Checking.."
                         android:textColor="@color/daynight_textColor"
                         android:textStyle="bold" />
@@ -333,7 +326,7 @@
                     android:layout_marginLeft="10dp"
                     android:background="@drawable/lightrounded"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
+                    android:paddingTop="5dp"
                     android:paddingBottom="10dp"
                     android:layout_weight="1"
                     app:layout_constraintTop_toBottomOf="@+id/rpiDetailBox"
@@ -380,11 +373,11 @@
                         <TextView
                             android:id="@+id/tvUpgradeCheck"
                             android:layout_width="match_parent"
-                            android:layout_height="80dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
                             android:layout_marginRight="15dp"
-                            android:paddingTop="10dp"
-                            android:paddingBottom="10dp"
+                            android:paddingTop="1dp"
+                            android:paddingBottom="1dp"
                             android:text="Checking Version..."
                             android:textColor="@color/daynight_textColor"
                             android:textStyle="bold"
@@ -397,7 +390,7 @@
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="10dp"
                             android:background="@drawable/ic_connect_to_rpi"
-                            android:text="Upgrade?"
+                            android:text="Upgrade"
                             android:theme="@style/PrimaryButton"
                             android:visibility="visible"
                             app:layout_constraintTop_toBottomOf="@id/tvUpgradeCheck" />
@@ -418,6 +411,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="12dp"
+                android:paddingTop="10dp"
                 android:background="@drawable/lightrounded"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/rpiDetailBox_cliBox">
@@ -427,7 +421,6 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
                     <TextView
@@ -474,7 +467,6 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
                     <TextView
@@ -521,7 +513,6 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:orientation="horizontal"
-                    android:paddingTop="10dp"
                     android:paddingBottom="10dp">
 
                     <TextView
