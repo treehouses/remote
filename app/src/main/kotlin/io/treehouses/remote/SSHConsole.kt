@@ -17,43 +17,28 @@
 package io.treehouses.remote
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.app.Dialog
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.graphics.Rect
 import android.media.AudioManager
 import android.net.Uri
-import android.os.*
+import android.os.Bundle
+import android.os.IBinder
+import android.os.StrictMode
 import android.text.ClipboardManager
 import android.util.Log
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
+import android.widget.HorizontalScrollView
 import androidx.core.view.MenuItemCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
-import io.treehouses.remote.Views.terminal.vt320
-import io.treehouses.remote.SSH.PromptHelper
-import io.treehouses.remote.SSH.Terminal.*
+import io.treehouses.remote.SSH.Terminal.TerminalBridge
+import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalManager.TerminalBinder
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
-import io.treehouses.remote.bases.BaseTerminalKeyListener
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
-import io.treehouses.remote.ui.services.ServicesViewModel
-import java.lang.ref.WeakReference
 
 open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 

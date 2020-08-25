@@ -1,6 +1,5 @@
 package io.treehouses.remote
 
-import android.annotation.TargetApi
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Handler
@@ -8,15 +7,12 @@ import android.text.ClipboardManager
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.view.animation.Animation
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModel
 import com.google.android.material.tabs.TabLayout
-import io.treehouses.remote.SSH.PromptHelper
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalView
@@ -115,7 +111,7 @@ class SSHConsoleViewModel: ViewModel() {
         bound!!.defaultBridge = view.bridge
     }
 
-    fun pasteIntoTerminal() {
+    private fun pasteIntoTerminal() {
         // force insert of clipboard text into current console
         val terminalView = adapter!!.currentTerminalView
         val bridge = terminalView!!.bridge

@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout

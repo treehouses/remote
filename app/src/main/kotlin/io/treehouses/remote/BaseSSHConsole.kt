@@ -1,32 +1,22 @@
 package io.treehouses.remote
 
 import android.annotation.TargetApi
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.text.ClipboardManager
 import android.util.Log
-import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.animation.Animation
-import android.widget.TextView
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.tabs.TabLayout
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
-import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
-import io.treehouses.remote.ui.services.ServicesViewModel
 
 open class BaseSSHConsole: AppCompatActivity() {
 
@@ -87,8 +77,8 @@ open class BaseSSHConsole: AppCompatActivity() {
         hideActionBarIfRequested()
     }
 
-    protected fun hideActionBarIfRequested() {
-        if (viewModel.titleBarHide && actionBar != null) actionBar!!.hide()
+    private fun hideActionBarIfRequested() {
+        if (viewModel.titleBarHide && viewModel.actionBar != null) viewModel.actionBar!!.hide()
     }
 
     private fun setConsolePassword(prompt: PromptHelper) {
