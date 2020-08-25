@@ -79,7 +79,7 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
             val ssid = editTextSSID.text.toString()
             val password = editTextPassword.text.toString()
             if (ssid.isNotEmpty()) {
-                listener.sendMessage("treehouses wifi " + ssid + " " + if (password.isEmpty()) "" else password)
+                listener.sendMessage(context.getString(R.string.TREEHOUSES_WIFI, ssid, if (password.isEmpty()) "" else password))
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(context, "Error: Invalid SSID", Toast.LENGTH_LONG).show()
