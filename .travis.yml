@@ -19,7 +19,10 @@ before_install:
   - docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
   - sleep 10
   - docker ps
-  - curl --url "http://localhost:8000/api/v1/scans" -H "Authorization:ac82388d8f4fd6e74ceaa4029f814760e525b07ac726c890df36c0c973bce685"
+  - wget http://localhost:8000/api_docs
+  - MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
+  - MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
+  - curl --url "http://localhost:8000/api/v1/scans" -H "Authorization:$MOBSF_API_KEY"
 install:
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
