@@ -17,7 +17,8 @@ before_install:
   - "./gradlew dependencies || true"
   - docker pull opensecurity/mobile-security-framework-mobsf
   - docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
-  - sleep 5
+  - sleep 10
+  - docker ps
   - curl --url "http://localhost:8000/api/v1/scans" -H "Authorization:ac82388d8f4fd6e74ceaa4029f814760e525b07ac726c890df36c0c973bce685"
 install:
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
