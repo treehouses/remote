@@ -15,23 +15,10 @@ before_install:
   - mkdir "$ANDROID_HOME/licenses" || true
   - chmod +x gradlew - yes | sdkmanager "platforms;android-28"
   - "./gradlew dependencies || true"
-#  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
-#  - sudo apt-get update
-#  - sudo apt update
-#  - sudo apt install software-properties-common
-#  - sudo apt-add-repository universe
-#  - yes | sudo add-apt-repository ppa:deadsnakes/ppa
-#  - sudo apt-get update
-#  - sudo apt update
-#  - sudo apt-get install python3.7
-#  - sudo ln -sf `which python3.7` `which python3`
-#  - sudo apt install python3-dev python3-venv python3-pip build-essential libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev wkhtmltopdf
-#  - git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git
-#  - cd Mobile-Security-Framework-MobSF/
-#  - ./setup.sh
-#  - cd ..
   - docker pull opensecurity/mobile-security-framework-mobsf
-  - docker run -it -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
+  - screen -dm bash -c "docker run -it -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest"
+  - sleep 5
+  - curl --url "http://localhost:8000/api/v1/scans" -H "Authorization:ac82388d8f4fd6e74ceaa4029f814760e525b07ac726c890df36c0c973bce685"
 install:
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
