@@ -42,17 +42,12 @@ open class DerivedSSHConsole: BaseSSHConsole() {
 
     inner class TerminalPagerAdapter : PagerAdapter() {
         override fun getCount(): Int {
-            return if (viewModel.bound != null) {
-                viewModel.bound!!.bridges.size
-            } else {
-                0
-            }
+            return if (viewModel.bound != null) viewModel.bound!!.bridges.size
+            else 0
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            if (viewModel.bound == null || viewModel.bound!!.bridges.size <= position) {
-                Log.w(TAG, "Activity not bound when creating TerminalView.")
-            }
+            if (viewModel.bound == null || viewModel.bound!!.bridges.size <= position) Log.w(TAG, "Activity not bound when creating TerminalView.")
             val bridge = viewModel.bound!!.bridges[position]
             bridge.promptHelper!!.setHandler(promptHandler)
 
@@ -81,9 +76,7 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         }
 
         override fun getItemPosition(`object`: Any): Int {
-            if (viewModel.bound == null) {
-                return POSITION_NONE
-            }
+            if (viewModel.bound == null) return POSITION_NONE
             val view = `object` as View
             val terminal: TerminalView = view.findViewById(R.id.terminal_view)
             val host = terminal.bridge.host
@@ -100,13 +93,10 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         }
 
         fun getBridgeAtPosition(position: Int): TerminalBridge? {
-            if (viewModel.bound == null) {
-                return null
-            }
+            if (viewModel.bound == null) return null
             val bridges = viewModel.bound!!.bridges
-            return if (position < 0 || position >= bridges.size) {
-                null
-            } else bridges[position]
+            return if (position < 0 || position >= bridges.size) null
+            else bridges[position]
         }
 
         override fun notifyDataSetChanged() {
@@ -132,6 +122,22 @@ open class DerivedSSHConsole: BaseSSHConsole() {
                         ?: return null
                 return currentView.findViewById<View>(R.id.terminal_view) as TerminalView
             }
+    }
+
+    protected fun setUrlItemListener() {
+        viewModel.urlScan!!.setOnMenuItemClickListener {
+            val terminalView = viewModel.adapter!!.currentTerminalView
+            val urls = terminalView!!.bridge.scanForURLs()
+            val urlDialog = Dialog(this@DerivedSSHConsole)
+            urlDialog.setTitle("Scan for URLs")
+            val urlListView = ListView(this@DerivedSSHConsole)
+            val urlListener = URLItemListener(this@DerivedSSHConsole)
+            urlListView.onItemClickListener = urlListener
+            urlListView.adapter = ArrayAdapter(this@DerivedSSHConsole, android.R.layout.simple_list_item_1, urls)
+            urlDialog.setContentView(urlListView)
+            urlDialog.show()
+            true
+        }
     }
 
     protected fun setUpTerminalPager() {
@@ -168,17 +174,13 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         viewModel.tabs!!.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(bind.pager))
         if (viewModel.adapter!!.count > 0) {
             val curItem = bind.pager.currentItem
-            if (viewModel.tabs!!.selectedTabPosition != curItem) {
-                viewModel.tabs!!.getTabAt(curItem)!!.select()
-            }
+            if (viewModel.tabs!!.selectedTabPosition != curItem) viewModel.tabs!!.getTabAt(curItem)!!.select()
         }
     }
 
     protected fun showEmulatedKeys(showActionBar: Boolean) {
         if (bind.keyboard.keyboardGroup.visibility == View.GONE) setAnimation(viewModel.keyboardFadeIn, View.VISIBLE)
-        if (showActionBar) {
-            viewModel.actionBar!!.show()
-        }
+        if (showActionBar) viewModel.actionBar!!.show()
         autoHideEmulatedKeys()
     }
 
@@ -186,15 +188,27 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         viewModel.actionBar = supportActionBar
         if (viewModel.actionBar != null) {
             viewModel.actionBar!!.setDisplayHomeAsUpEnabled(true)
-            if (viewModel.titleBarHide) {
-                viewModel.actionBar!!.hide()
-            }
+            if (viewModel.titleBarHide) viewModel.actionBar!!.hide()
             viewModel.actionBar!!.addOnMenuVisibilityListener { isVisible: Boolean ->
                 viewModel.inActionBarMenu = isVisible
-                if (!isVisible) {
-                    hideEmulatedKeys()
-                }
+                if (!isVisible) hideEmulatedKeys()
             }
+        }
+    }
+
+    protected fun detectSoftVisibility() {
+        // Change keyboard button image according to soft keyboard visibility
+        // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
+        viewModel.mContentView = findViewById(android.R.id.content)
+        viewModel.mContentView!!.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            viewModel.mContentView!!.getWindowVisibleDisplayFrame(r)
+            val screenHeight = viewModel.mContentView!!.rootView.height
+            val keypadHeight = screenHeight - r.bottom
+            // keyboard is opened
+            if (keypadHeight > screenHeight * 0.15) bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
+            else bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
+            // keyboard is closed
         }
     }
 
@@ -236,18 +250,15 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         bind.keyboard.buttonCtrl.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonEsc.setOnClickListener(emulatedKeysListener)
         bind.keyboard.buttonTab.setOnClickListener(emulatedKeysListener)
-        addKeyRepeater(bind.keyboard.buttonUp)
-        addKeyRepeater(bind.keyboard.buttonUp)
-        addKeyRepeater(bind.keyboard.buttonDown)
-        addKeyRepeater(bind.keyboard.buttonLeft)
+        addKeyRepeater(bind.keyboard.buttonUp); addKeyRepeater(bind.keyboard.buttonUp)
+        addKeyRepeater(bind.keyboard.buttonDown); addKeyRepeater(bind.keyboard.buttonLeft)
         addKeyRepeater(bind.keyboard.buttonRight)
         setButtonListeners()
     }
 
     private fun addKeyRepeater(view: View) {
         val keyRepeater = KeyRepeater(keyRepeatHandler, view)
-        view.setOnClickListener(keyRepeater)
-        view.setOnTouchListener(keyRepeater)
+        view.setOnClickListener(keyRepeater); view.setOnTouchListener(keyRepeater)
     }
 
     private fun setButtonListeners() {

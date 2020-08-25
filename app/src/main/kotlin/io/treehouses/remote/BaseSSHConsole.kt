@@ -1,11 +1,9 @@
 package io.treehouses.remote
 
 import android.annotation.TargetApi
-import android.app.Dialog
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,8 +14,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.animation.Animation
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -293,41 +289,6 @@ open class BaseSSHConsole: AppCompatActivity() {
         viewModel.updateDefault()
         updatePromptVisible()
         ActivityCompat.invalidateOptionsMenu(this@BaseSSHConsole)
-    }
-
-    protected fun detectSoftVisibility() {
-        // Change keyboard button image according to soft keyboard visibility
-        // How to detect keyboard visibility: http://stackoverflow.com/q/4745988
-        viewModel.mContentView = findViewById(android.R.id.content)
-        viewModel.mContentView!!.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect()
-            viewModel.mContentView!!.getWindowVisibleDisplayFrame(r)
-            val screenHeight = viewModel.mContentView!!.rootView.height
-            val keypadHeight = screenHeight - r.bottom
-            if (keypadHeight > screenHeight * 0.15) {
-                // keyboard is opened
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard_hide)
-            } else {
-                // keyboard is closed
-                bind.keyboard.buttonKeyboard.setImageResource(R.drawable.ic_keyboard)
-            }
-        }
-    }
-
-    protected fun setUrlItemListener() {
-        viewModel.urlScan!!.setOnMenuItemClickListener {
-            val terminalView = viewModel.adapter!!.currentTerminalView
-            val urls = terminalView!!.bridge.scanForURLs()
-            val urlDialog = Dialog(this@BaseSSHConsole)
-            urlDialog.setTitle("Scan for URLs")
-            val urlListView = ListView(this@BaseSSHConsole)
-            val urlListener = URLItemListener(this@BaseSSHConsole)
-            urlListView.onItemClickListener = urlListener
-            urlListView.adapter = ArrayAdapter(this@BaseSSHConsole, android.R.layout.simple_list_item_1, urls)
-            urlDialog.setContentView(urlListView)
-            urlDialog.show()
-            true
-        }
     }
 
     companion object {
