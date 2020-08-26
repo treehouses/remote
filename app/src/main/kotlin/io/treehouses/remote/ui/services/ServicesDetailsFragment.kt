@@ -231,7 +231,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Edit"
                 ) { _: DialogInterface?, _: Int ->
-                    var command = "treehouses services " + name + " config edit send"
+                    var command = getString(R.string.TREEHOUSES_SERVICES_CONFIG_SEND, name)
                     for (i in 0 until size) {
                         command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
                     }
@@ -255,7 +255,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onClickEditEnvVar(s: ServiceInfo?) {
         editEnv = true
-        writeToRPI("treehouses services " + s!!.name + " config edit request")
+        writeToRPI(getString(R.string.TREEHOUSES_SERVICES_CONFIG_REQUEST, s!!.name))
     }
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {

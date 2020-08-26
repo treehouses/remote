@@ -27,7 +27,7 @@
             android:layout_height="200px"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/ic_download_icon"
+            app:srcCompat="@drawable/router_icon_circle"
             android:visibility="invisible">
         </ImageView>
 

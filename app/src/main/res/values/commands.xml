@@ -3,12 +3,25 @@
 
     <string name="REBOOT">reboot\n</string>
 
+    <string name="TREEHOUSES_INTERNET">treehouses internet\n</string>
+
+    <string name="TREEHOUSES_VNC">treehouses vnc</string>
+    <string name="TREEHOUSES_VNC_ON">treehouses vnc on</string>
+    <string name="TREEHOUSES_VNC_OFF">treehouses vnc off</string>
+    <string name="TREEHOUSES_REBOOTS_NOW">treehouses reboots now</string>
+    <string name="TREEHOUSES_SHUTDOWN_NOW">treehouses shutdown now</string>
+
     <string name="TREEHOUSES_REMOTE_CHECK">treehouses remote check\n</string>
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
     <string name="TREEHOUSES_REMOTE_STATUSPAGE">treehouses remote statuspage</string>
     <string name="TREEHOUSES_REMOTE_COMMANDS">treehouses remote commands</string>
-    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
+    <string name="TREEHOUSES_REMOTE_KEY_SEND">treehouses remote key send \"%1$s\"</string>
+    <string name="TREEHOUSES_REMOTE_KEY_RECEIVE">treehouses remote key receive \"%1$s\" \"%2$s\" \"%3$s\"</string>
+
+    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
+    <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master</string>
+
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
     <string name="TREEHOUSES_RENAME">treehouses rename \"%1$s\"</string>
 
@@ -52,6 +65,8 @@
     <string name="TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL">treehouses sshtunnel add port actual \"%1$s\" \"%2$s\" \"%3$s\"</string>
     <string name="TREEHOUSES_SSHTUNNEL_NOTICE_NOW">treehouses sshtunnel notice now</string>
     <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host \"%1$s\" </string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port \"%1$s\" </string>
 
     <string name="TREEHOUSES_SSH_2FA">treehouses ssh 2fa"</string>
     <string name="TREEHOUSES_SSH_2FA_ADD">treehouses ssh 2fa add \"%1$s\"</string>
@@ -66,6 +81,8 @@
     <string name="TREEHOUSES_SERVICES_URL_LOCAL">treehouses services \"%1$s\" url local</string>
     <string name="TREEHOUSES_SERVICES_URL_TOR">treehouses services \"%1$s\" url tor</string>
     <string name="TREEHOUSES_SERVICES_AUTORUN">treehouses services \"%1$s\" autorun \"%2$s\" </string>
+    <string name="TREEHOUSES_SERVICES_CONFIG_SEND">treehouses services \"%1$s\" config edit send</string>
+    <string name="TREEHOUSES_SERVICES_CONFIG_REQUEST">treehouses services \"%1$s\" config edit request</string>
 
     <string name="TREEHOUSES_BLOCKER_CHECK">treehouses blocker</string>
     <string name="TREEHOUSES_BLOCKER">treehouses blocker \"%1$s\"</string>
@@ -73,8 +90,7 @@
     <string name="TREEHOUSES_CAMERA_ON">treehouses camera on</string>
     <string name="TREEHOUSES_CAMERA_OFF">treehouses camera off</string>
     <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add \"%1$s\"</string>
-    <string name="TREEHOUSES_VNC_ON">treehouses vnc on</string>
-    <string name="TREEHOUSES_VNC_OFF">treehouses vnc off</string>
+
 
 
 

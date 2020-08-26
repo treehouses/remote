@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
+import io.treehouses.remote.callback.HomeInteractListener
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
 import java.nio.charset.Charset
@@ -95,5 +96,10 @@ object Utils {
         dos.close()
         return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
 
+    }
+
+    fun sendMessage(listener: HomeInteractListener, msg: String, toastMsg: String, c: Context?) {
+        listener.sendMessage(msg)
+        Toast.makeText(c, toastMsg, Toast.LENGTH_LONG).show()
     }
 }

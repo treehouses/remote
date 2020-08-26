@@ -9,6 +9,7 @@ class NetworkListItem(var title: String, var layout: Int) {
         val systemList: List<NetworkListItem>
             get() {
                 val systemList: MutableList<NetworkListItem> = ArrayList()
+                systemList.add(NetworkListItem("Shutdown & Reboot", R.layout.configure_shutdown_reboot))
                 systemList.add(NetworkListItem("Open VNC", R.layout.open_vnc))
                 systemList.add(NetworkListItem("Configure Tethering (beta)", R.layout.configure_tethering))
                 systemList.add(NetworkListItem("Add SSH Key", R.layout.configure_ssh_key))
