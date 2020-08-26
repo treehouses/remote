@@ -1,6 +1,5 @@
 package io.treehouses.remote
 
-import android.app.Activity
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -35,26 +33,6 @@ class MainApplication : Application() {
                 .build()
         )
         SaveUtils.initCommandsList(applicationContext)
-        registerLifecycleCallbacks()
-    }
-
-    private fun registerLifecycleCallbacks() {
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            override fun onActivityPaused(activity: Activity) {}
-            override fun onActivityStarted(activity: Activity) {}
-            override fun onActivityDestroyed(activity: Activity) {
-                Log.e("ACTIVITY", "DESTROYED. Remaining: $numActivities")
-                numActivities--
-                if (numActivities <= 0) stopBluetoothService()
-            }
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-            override fun onActivityStopped(activity: Activity) {}
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                Log.e("ACTIVITY", "CREATED. Number: $numActivities")
-                numActivities++
-            }
-            override fun onActivityResumed(activity: Activity) {}
-        })
     }
 
     private val connection = object : ServiceConnection {
@@ -122,8 +100,5 @@ class MainApplication : Application() {
         var ratingDialog = true
 
         var mChatService : BluetoothChatService? = null
-
-        var numActivities = 0
-
     }
 }

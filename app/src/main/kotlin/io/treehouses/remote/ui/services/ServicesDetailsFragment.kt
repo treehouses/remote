@@ -65,16 +65,10 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     val output = msg.obj as String
-                    if (wait) {
-                        matchOutput(output.trim { it <= ' ' })
-                    }
-                    else{
-                        handleMore(output)
-                    }
+                    if (wait) matchOutput(output.trim { it <= ' ' })
+                    else handleMore(output)
                 }
-                Constants.MESSAGE_STATE_CHANGE -> {
-                    listener.redirectHome()
-                }
+                Constants.MESSAGE_STATE_CHANGE -> listener.redirectHome()
             }
         }
     }
@@ -92,27 +86,20 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
             showEditDialog(name, tokens.size, tokens)
         } else {
             setScreenState(true)
-            if (output.contains("service autorun set")) {
-                Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
-            } else if (output.toLowerCase(Locale.ROOT).contains("error")) {
-                Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
-            }
+            if (output.contains("service autorun set")) Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
+            else if (output.toLowerCase(Locale.ROOT).contains("error")) Toast.makeText(context,"An Error occurred", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun matchOutput(s: String) {
         selected = binding.pickService.selectedItem as ServiceInfo
         Log.d("Entered", "matchOutput: $s")
-        if (s.contains("started")) {
-            selected!!.serviceStatus = ServiceInfo.SERVICE_RUNNING
-        } else if (s.contains("stopped and removed")) {
+        if (s.contains("started")) selected!!.serviceStatus = ServiceInfo.SERVICE_RUNNING
+        else if (s.contains("stopped and removed")) {
             selected!!.serviceStatus = ServiceInfo.SERVICE_AVAILABLE
             Log.d("STOP", "matchOutput: ")
-        } else if (s.contains("stopped") || s.contains("installed")) {
-            selected!!.serviceStatus = ServiceInfo.SERVICE_INSTALLED
-        } else {
-            return
-        }
+        } else if (s.contains("stopped") || s.contains("installed")) selected!!.serviceStatus = ServiceInfo.SERVICE_INSTALLED
+        else return
         viewModel.servicesData.value?.sort()
         viewModel.servicesData.value = viewModel.servicesData.value
         serviceCardAdapter!!.notifyDataSetChanged()
@@ -181,10 +168,8 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     private fun onStart(selected: ServiceInfo?) {
-        if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED)
-            performService("Starting", selected.name)
-        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING)
-            performService("Stopping", selected.name)
+        if (selected!!.serviceStatus == ServiceInfo.SERVICE_INSTALLED) performService("Starting", selected.name)
+        else if (selected.serviceStatus == ServiceInfo.SERVICE_RUNNING) performService("Stopping", selected.name)
     }
 
     private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
@@ -212,8 +197,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
     }
 
     override fun onClickInstall(s: ServiceInfo?) {
-        if (s!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE)
-            runServiceCommand("Installing", s.name)
+        if (s!!.serviceStatus == ServiceInfo.SERVICE_AVAILABLE) runServiceCommand("Installing", s.name)
         else if (installedOrRunning(s)) {
             var dialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                     .setTitle("Delete " + selected!!.name + "?")
@@ -247,7 +231,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
                 .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Edit"
                 ) { _: DialogInterface?, _: Int ->
-                    var command = "treehouses services " + name + " config edit send"
+                    var command = getString(R.string.TREEHOUSES_SERVICES_CONFIG_SEND, name)
                     for (i in 0 until size) {
                         command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
                     }
@@ -271,7 +255,7 @@ class ServicesDetailsFragment() : BaseServicesFragment(), OnItemSelectedListener
 
     override fun onClickEditEnvVar(s: ServiceInfo?) {
         editEnv = true
-        writeToRPI("treehouses services " + s!!.name + " config edit request")
+        writeToRPI(getString(R.string.TREEHOUSES_SERVICES_CONFIG_REQUEST, s!!.name))
     }
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
