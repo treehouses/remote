@@ -54,15 +54,16 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun setChecking() {
+        bind.upgrade.visibility = View.GONE
         bind.deviceAddress.text = "dc.."
         bind.networkModeTitle.text = "Checking Network Mode....."
         bind.ipAdrText.text = "IP Address: Checking....."
         bind.ssidText.text = "SSID: Checking....."
-        bind.tvRpiName.text = "Hostname: Checking.."
-        bind.tvRpiType.text = "Model: Checking.."
-        bind.cpuModelText.text = "CPU: Checking.."
-        bind.imageText.text = "Image Version: Checking.."
-        bind.remoteVersionText.text = "Remote Version: Checking"
+        bind.tvRpiName.text = "Hostname: ⏳"
+        bind.tvRpiType.text = "Model: ⏳"
+        bind.cpuModelText.text = "CPU: ⏳"
+        bind.imageText.text = "Image Version: ⏳"
+        bind.remoteVersionText.text = "Remote Version: ⏳"
         bind.tvUpgradeCheck.text = "Checking Version..."
         bind.temperature.text = "Checking......"
         bind.memory.text = "Checking......"
