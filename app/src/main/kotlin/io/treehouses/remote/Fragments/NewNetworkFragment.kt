@@ -148,11 +148,6 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         a.show()
     }
 
-    private fun sendMessage(msg: String, toastMsg: String) {
-        listener.sendMessage(msg)
-        Toast.makeText(context, toastMsg, Toast.LENGTH_LONG).show()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {
