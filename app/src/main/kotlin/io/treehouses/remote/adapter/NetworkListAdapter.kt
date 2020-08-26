@@ -102,6 +102,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     init {
         inflater = LayoutInflater.from(context)
         this.list = list
-        views = arrayOfNulls(9)
+        views = arrayOfNulls(10)
     }
 }
