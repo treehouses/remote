@@ -26,17 +26,20 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.NewNetworkBinding
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.match
 
 class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: NewNetworkBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
+        val toastMsg = "Network Mode retrieved"
         binding = NewNetworkBinding.inflate(inflater, container, false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
         //update Network mode
-        sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
+        Utils.sendMessage(listener, msg, toastMsg, context)
         return binding.root
     }
 
@@ -60,12 +63,14 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
     }
 
     override fun onClick(v: View) {
+        val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
+        val toastMsg = "Network Mode retrieved"
         when {
             binding.networkWifi == v -> showBottomSheet(WifiBottomSheet(), "wifi")
             binding.networkHotspot == v -> showBottomSheet(HotspotBottomSheet(), "hotspot")
             binding.networkBridge == v -> showBottomSheet(BridgeBottomSheet(), "bridge")
             binding.networkEthernet == v -> showBottomSheet(EthernetBottomSheet(), "ethernet")
-            binding.buttonNetworkMode == v -> sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
+            binding.buttonNetworkMode == v -> Utils.sendMessage(listener, msg, toastMsg, context)
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
             binding.discoverBtn == v-> listener.openCallFragment(DiscoverFragment())
@@ -81,19 +86,23 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
             RESULTS.DEFAULT_CONNECTED -> {
+                val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
+                val toastMsg = "Network Mode retrieved"
                 Toast.makeText(context, "Network Mode switched to default", Toast.LENGTH_LONG).show()
                 //update network mode
-                sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
+                Utils.sendMessage(listener, msg, toastMsg, context)
             }
             RESULTS.ERROR -> {
                 showDialog(context,"Error", output)
                 binding.networkPbar.visibility = View.GONE
             }
             RESULTS.HOTSPOT_CONNECTED, RESULTS.WIFI_CONNECTED, RESULTS.BRIDGE_CONNECTED -> {
+                val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
+                val toastMsg = "Network Mode retrieved"
                 showDialog(context,"Network Switched", output)
                 showDialog(context,"Network Switched", output)
                 //update network mode
-                sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE), "Network Mode retrieved")
+                Utils.sendMessage(listener, msg, toastMsg, context)
                 binding.networkPbar.visibility = View.GONE
             }
             else -> Log.e("NewNetworkFragment", "Result not Found")
@@ -131,7 +140,9 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
                 "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                    sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK), "Switching to default network...")
+                    val msg = getString(R.string.TREEHOUSES_DEFAULT_NETWORK)
+                    val toastMsg = "Switching to default network..."
+                    Utils.sendMessage(listener, msg, toastMsg, context)
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()

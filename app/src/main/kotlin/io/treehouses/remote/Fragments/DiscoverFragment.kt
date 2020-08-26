@@ -32,6 +32,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private lateinit var bind: ActivityDiscoverFragmentBinding
     private var gateway = Gateway()
     private var pi = Device()
+    private var piIP = ""
     private var deviceList = ArrayList<Device>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -89,6 +90,8 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
         if (d.ip == ipAddress) {
             imageView.setImageResource(R.drawable.android_icon)
+        }else if (d.ip == piIP) {
+            imageView.setImageResource(R.drawable.treehouses_rounded)
         } else if (RPIDialogFragment.checkPiAddress(d.mac)) {
             imageView.setImageResource(R.drawable.raspi_logo)
         } else {
@@ -170,6 +173,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         if (ip != null) {
             Log.e(TAG, "Found IP")
             pi.ip = ip
+            piIP = ip
         }
 
         val mac1 = extractText("eth0:\\s+([0-9a-z]+:){5}[0-9a-z]+", "eth0:\\s+", readMessage)
