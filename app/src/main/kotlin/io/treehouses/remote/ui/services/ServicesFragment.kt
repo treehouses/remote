@@ -107,8 +107,8 @@ class ServicesFragment : BaseServicesFragment(), ServicesListener {
 
     private fun showUpdateCliAlert() {
         val alertDialog = createDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle),
-                "Please update CLI",
-                "Please update to the latest CLI version to access services.")
+                "Please update CLI to access services",
+                "Please go to Status page to update CLI to the latest version.")
                 .create()
         alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
