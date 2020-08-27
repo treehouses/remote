@@ -103,12 +103,18 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
                 twoFASwitch.isChecked = false
                 twoFASwitch.isEnabled = true
             }
+            else -> showResponse2(readMessage)
+
+        }
+    }
+
+    fun showResponse2(readMessage:String){
+        when {
             readMessage.contains("specify") -> c.toast(readMessage)
 
             readMessage.contains("Emergency") -> keysDisplay.text = readMessage
 
             readMessage.contains("is disabled.") -> c.toast(readMessage)
-
         }
     }
 
