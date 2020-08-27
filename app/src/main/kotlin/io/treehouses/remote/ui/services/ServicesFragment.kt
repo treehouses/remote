@@ -1,10 +1,7 @@
 package io.treehouses.remote.ui.services
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +12,13 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.treehouses.remote.R
+import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.enum.Status
 import java.util.*
 
 
-class ServicesFragment : BaseServicesFragment() {
+class ServicesFragment : BaseFragment() {
     private var servicesTabFragment: ServicesOverviewFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     lateinit var bind: ActivityServicesFragmentBinding
@@ -45,21 +43,21 @@ class ServicesFragment : BaseServicesFragment() {
         setTabEnabled(false)
 
         worked = false
+        showUI()
+        viewModel.fetchServicesFromCache()
         viewModel.fetchServicesFromServer()
-
         return bind.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.servicesData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.serverServiceData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it.status) {
-                Status.SUCCESS -> showUI()
                 Status.LOADING -> bind.progressBar2.visibility = View.VISIBLE
                 Status.ERROR -> {
                     bind.progressBar2.visibility = View.GONE
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
-                else -> { }
+                else -> bind.progressBar2.visibility = View.GONE
             }
         })
 
@@ -74,42 +72,7 @@ class ServicesFragment : BaseServicesFragment() {
     private fun showUI(){
         servicesTabFragment = ServicesOverviewFragment()
         servicesDetailsFragment = ServicesDetailsFragment()
-//        viewModel.servicesData.value = Resource.success(services)
-        bind.progressBar2.visibility = View.GONE
         replaceFragment(currentTab)
-    }
-
-
-    private fun updateListFromRPI(msg:Message){
-        val output:String? = msg.obj as String
-//        when (performAction(output!!, services)) {
-//            1 -> {
-//                cachedServices.add(output)
-//                SaveUtils.saveStringList(requireContext(), cachedServices, "servicesArray")
-//                worked = false
-//                showUI()
-//            }
-//            0 -> {
-//                bind!!.progressBar2.visibility = View.GONE
-//                showUpdateCliAlert()
-//            }
-//            else -> {
-//                cachedServices.add(output)
-//            }
-//        }
-    }
-
-    private fun showUpdateCliAlert() {
-        val alertDialog = createDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle),
-                "Please update CLI",
-                "Please update to the latest CLI version to access services.")
-                .create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        alertDialog.show()
-    }
-
-    private fun createDialog(con:ContextThemeWrapper,  title:String,  message:String):AlertDialog.Builder {
-        return AlertDialog.Builder(con).setTitle(title).setMessage(message)
     }
 
     private fun setTabEnabled(enabled: Boolean) {
@@ -121,7 +84,6 @@ class ServicesFragment : BaseServicesFragment() {
     }
 
     private fun replaceFragment(position: Int) {
-        if (viewModel.formattedServices.isEmpty()) return
         setTabEnabled(true)
         var fragment: Fragment? = null
         when (position) {

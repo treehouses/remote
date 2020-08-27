@@ -50,11 +50,11 @@ fun match (output: String) : RESULTS {
 }
 
 class Output (val output: String) {
-    fun isOneOf(p1 :String, p2 : String) : Boolean {
-        return Matcher.toLC(output).contains(p1) || Matcher.toLC(output).contains(p2)
-    }
-    fun isOneOf(p1 :String, vararg p : String) : Boolean {
-        return isOneOf(p1, p[0]) || isOneOf(p[0], *p)
+    fun isOneOf(vararg param : String) : Boolean {
+        for (p in param) {
+            if (output.contains(p)) return true
+        }
+        return false
     }
 }
 //Could remove IDs and simply use these functions

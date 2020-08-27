@@ -37,14 +37,24 @@ fun formatServices(data: HashMap<String, ServiceInfo>) : MutableList<ServiceInfo
     return formattedServices
 }
 
-fun isTorURL(output: String, received: Boolean): Boolean {
-    return output.contains(".onion") && !received
-}
+//fun isTorURL(output: String): Boolean {
+//    return output.contains(".onion")
+//}
+//
+//fun isLocalUrl(output: String): Boolean {
+//    return output.contains(".") && output.contains(":") && output.length < 30
+//}
 
-fun isLocalUrl(output: String, received: Boolean): Boolean {
-    return output.contains(".") && output.contains(":") && output.length < 25 && !received
+fun isURL(output: String) : Boolean {
+    return output.contains(".") && output.contains(":") && output.length < 30 || output.contains(".onion")
 }
 
 fun containsServiceAction(output: String) : Boolean {
     return Output(output).isOneOf("started", "stopped and removed", "stopped", "installed")
+}
+fun indexOfService(name: String, services: MutableList<ServiceInfo>): Int {
+    for (i in services.indices) {
+        if (services[i].name == name) return i
+    }
+    return -1
 }

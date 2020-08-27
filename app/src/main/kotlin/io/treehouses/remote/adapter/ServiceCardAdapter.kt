@@ -10,7 +10,7 @@ import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
 class ServiceCardAdapter(fm: FragmentManager?, data: MutableList<ServiceInfo>) : FragmentStatePagerAdapter(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    val data: ArrayList<ServiceInfo>
+    var data: ArrayList<ServiceInfo>
     private fun removeHeaders(data: MutableList<ServiceInfo>): ArrayList<ServiceInfo> {
         val tmp = ArrayList(data)
         val iterator = tmp.iterator()
@@ -37,7 +37,8 @@ class ServiceCardAdapter(fm: FragmentManager?, data: MutableList<ServiceInfo>) :
     }
 
     override fun notifyDataSetChanged() {
-        Collections.sort(data)
+        this.data = removeHeaders(data)
+        data.sort()
         super.notifyDataSetChanged()
     }
 
