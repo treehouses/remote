@@ -107,9 +107,11 @@ class TorTabFragment : BaseFragment() {
     }
 
     private fun addNotificationListener() {
+        val noticeOn = getString(R.string.TREEHOUSES_TOR_NOTICE_ON)
+        val noticeOff = getString(R.string.TREEHOUSES_TOR_NOTICE_OFF)
         notification!!.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_ON))
-            else listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_OFF))
+            if (isChecked) listener.sendMessage(noticeOn)
+            else listener.sendMessage(noticeOff)
             notification!!.isEnabled = false
         }
     }
@@ -119,7 +121,8 @@ class TorTabFragment : BaseFragment() {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             builder.setTitle("Delete Port " + portsName!![position] + " ?")
             builder.setPositiveButton("Confirm") { dialog, _ ->
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0]))
+                val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+                listener.sendMessage(msg)
                 addPortButton!!.text = "deleting port ....."
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
@@ -162,8 +165,7 @@ class TorTabFragment : BaseFragment() {
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
                 dialog.dismiss()
-                inputInternal.text?.clear()
-                inputExternal.text?.clear()
+                inputInternal.text?.clear(); inputExternal.text?.clear()
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
@@ -224,14 +226,11 @@ class TorTabFragment : BaseFragment() {
     }
 
     private fun handleOtherMessages(readMessage: String) {
-        if (readMessage.contains("OK.")) {
-            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-        } else if (readMessage.contains("Status: on")) {
-            notification!!.isChecked = true
-            notification!!.isEnabled = true
+        if (readMessage.contains("OK.")) listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+        else if (readMessage.contains("Status: on")) {
+            notification!!.isChecked = true; notification!!.isEnabled = true
         } else if (readMessage.contains("Status: off")) {
-            notification!!.isChecked = false
-            notification!!.isEnabled = true
+            notification!!.isChecked = false; notification!!.isEnabled = true
         } //regex to match ports text
         else if (readMessage.matches("(([0-9]+:[0-9]+)\\s?)+".toRegex())) {
             addPortButton!!.text = "Add Port"
@@ -252,8 +251,7 @@ class TorTabFragment : BaseFragment() {
     private fun handleMoreMessages(readMessage: String) {
         if (readMessage.contains("No ports found")) {
             addPortButton!!.text = "Add Port"
-            portList!!.isEnabled = true
-            addPortButton!!.isEnabled = true
+            portList!!.isEnabled = true; addPortButton!!.isEnabled = true
             portsName = ArrayList()
             adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
             val portList = requireView().findViewById<ListView>(R.id.portList)
