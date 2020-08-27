@@ -133,8 +133,6 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
 
         if (gateway.isComplete()) {
-            bind.loading1.visibility = View.GONE
-            bind.loading2.visibility = View.GONE
             gatewayIcon.visibility = View.VISIBLE
             gatewayIcon.setOnClickListener {
                 val message = ("SSID: " + gateway.ssid + "\n") +
