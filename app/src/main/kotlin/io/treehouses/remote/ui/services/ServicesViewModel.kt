@@ -23,10 +23,26 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     private var servicesJSON = ""
     private var currentlyReceivingJSON = false
 
+    /**
+     * LiveData to fetch the cached services data
+     */
     private val cacheServiceData = MutableLiveData<ServicesData>()
+
+    /**
+     * LiveData to observe the status of the Server Services result
+     */
     val serverServiceData = MutableLiveData<Resource<ServicesData>>()
+
+    /**
+     * MediatorLiveData to consolidate server and cached values
+     * @see serverServiceData
+     * @see cacheServiceData
+     */
     private val rawServicesData = MediatorLiveData<Resource<ServicesData>>()
 
+    /**
+     * Format for fast retrieval of a services info; Publicly observable
+     */
     val servicesData : LiveData<Resource<HashMap<String, ServiceInfo>>> = Transformations.map(rawServicesData) {
         return@map when (it.status) {
             SUCCESS -> {
@@ -43,14 +59,27 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
     var formattedServices = mutableListOf<ServiceInfo>()
 
+    /**
+     * Stores the currently selected service in the Details Screen
+     */
     val selectedService = MutableLiveData<ServiceInfo>()
+
+    /**
+     * If a service was clicked in the OverView screen, this value is set
+     */
     val clickedService = MutableLiveData<ServiceInfo>()
 
+    /**
+     * LiveData to observe different service actions
+     */
     val serviceAction = MutableLiveData<Resource<ServiceInfo>>()
     val autoRunAction = MutableLiveData<Resource<Boolean>>()
     val getLinkAction = MutableLiveData<Resource<String>>()
     val editEnvAction = MutableLiveData<Resource<MutableList<String>>>()
 
+    /**
+     * Easy array to iterate over livedatas and update their values upon error
+     */
     private val lives = listOf(serviceAction, autoRunAction, getLinkAction, editEnvAction)
     val error = MutableLiveData<String>()
 
@@ -78,17 +107,22 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
 
     /**
-     * Saves the updated services to cache
+     * Saves a JSON string to the cache
      */
     fun updateServicesCache(newJSON: String) {
         Log.e("SAVING", newJSON)
         PreferenceManager.getDefaultSharedPreferences(getApplication()).edit().putString(SERVICES_CACHE, newJSON).apply()
     }
 
+    /**
+     * Ideally called as a result of one of two actions:
+     *  1. Getting all the services data
+     *  2. A specific service action was triggered
+     */
     override fun onRead(output: String) {
         Log.e("GOT", output)
         when {
-            match(output) == RESULTS.ERROR -> {
+            match(output) == RESULTS.ERROR && !output.contains("kill [") && !output.contains("tput: No") -> {       //kill to fix temporary issue
                 error.value = output
                 lives.forEach { it.value = Resource.nothing() }
             }
@@ -108,6 +142,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
 
     /**
      * Receive JSON All Services data
+     * @param current : String = the current line of output
      */
     private fun receiveJSON(current: String) {
         servicesJSON += current
@@ -129,6 +164,11 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
             currentlyReceivingJSON = true
         }
     }
+
+    /**
+     * For a service state change, update the corresponding service status
+     * @param output : String = current line of output
+     */
     private fun matchServiceAction(output: String) : Boolean {
         if (output.contains("started")) {
             selectedService.value?.serviceStatus = ServiceInfo.SERVICE_RUNNING
@@ -144,6 +184,10 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         return true
     }
 
+    /**
+     * Called to Install or delete a service
+     * @param service : ServiceInfo = Selected service to perform action
+     */
     fun onInstallClicked(service: ServiceInfo) {
         selectedService.value = service
 
@@ -155,6 +199,11 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         serviceAction.value = Resource.loading(service)
     }
 
+    /**
+     * Called to stop or start a service
+     * @param service : ServiceInfo = The service to switch the running/stopped state
+     *
+     */
     fun onStartClicked(service: ServiceInfo) {
         selectedService.value = service
 
@@ -166,32 +215,56 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         serviceAction.value = Resource.loading(service)
     }
 
+    /**
+     * Called to edit a service Environment Configuration
+     * @param service : ServiceInfo = Clicked
+     */
     fun editEnvVariableRequest(service: ServiceInfo) {
         sendMessage("treehouses services " + service.name + " config edit request")
         editEnvAction.value = Resource.loading()
     }
 
+    /**
+     * Called to switch the autorun boolean
+     * @param service : ServiceInfo = Service to switch
+     * @param newValue : Boolean = the new value of the desired autorun config
+     */
     fun switchAutoRun(service: ServiceInfo, newValue: Boolean) {
         sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, service.name, newValue.toString()))
         autoRunAction.value = Resource.loading()
     }
 
+    /**
+     * Get the service's local URL link
+     * @param service : ServiceInfo = Service clicked
+     */
     fun getLocalLink(service: ServiceInfo) {
         sendMessage(getString(R.string.TREEHOUSES_SERVICES_URL_LOCAL, service.name))
         getLinkAction.value = Resource.loading()
     }
 
+    /**
+     * Get the service's Tor URL Link
+     * @param service : ServiceInfo = Service clicked
+     */
     fun getTorLink(service: ServiceInfo) {
         sendMessage(getString(R.string.TREEHOUSES_SERVICES_URL_TOR, service.name))
         getLinkAction.value = Resource.loading()
     }
 
+    /**
+     * When the viewModel is cleared, make sure to save the most recent Service data
+     */
     override fun onCleared() {
         super.onCleared()
         if (error.value.isNullOrEmpty() && rawServicesData.value != null) {
             updateServicesCache(Gson().toJson(rawServicesData.value!!.data))
         }
     }
+
+    /**
+     * Add the sources for the raw Services Data
+     */
     init {
         rawServicesData.addSource(serverServiceData) {
             rawServicesData.value = it

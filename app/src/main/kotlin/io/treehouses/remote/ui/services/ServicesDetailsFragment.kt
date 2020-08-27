@@ -29,6 +29,7 @@ import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.databinding.EnvVarBinding
 import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.indexOfService
 
@@ -42,9 +43,6 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
-//        spinnerAdapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, resources.getColor(R.color.md_grey_600))
-//        serviceCardAdapter = ServiceCardAdapter(childFragmentManager, viewModel.formattedServices)
-//        populateServices()
 
         viewModel.servicesData.observe(viewLifecycleOwner, Observer {
             if (it.status == Status.SUCCESS) {
@@ -66,7 +64,6 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         })
 
         viewModel.serviceAction.observe(viewLifecycleOwner, Observer {
-            Log.e("SERVICEACTION", it.data.toString())
             when (it.status) {
                 Status.LOADING -> {
                     setScreenState(false)
@@ -100,7 +97,10 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                     setScreenState(false)
                     return@Observer
                 }
-                Status.SUCCESS -> Toast.makeText(context, "Switched autorun to ${it.data}", Toast.LENGTH_SHORT).show()
+                Status.SUCCESS -> {
+                    Toast.makeText(context, "Switched autorun to ${it.data}", Toast.LENGTH_SHORT).show()
+                    viewModel.autoRunAction.value = Resource.nothing()
+                }
                 else -> Log.e("UNKNOWN", "RECEIVED in AutoRun boolean")
             }
             setScreenState(true)
@@ -111,6 +111,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                 Status.SUCCESS -> {
                     openURL(it.data.toString())
                     binding.progressBar.visibility = View.GONE
+                    viewModel.getLinkAction.value = Resource.nothing()
                 }
                 Status.LOADING -> binding.progressBar.visibility = View.VISIBLE
                 else -> binding.progressBar.visibility = View.GONE
@@ -123,6 +124,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                 val name = tokens[2]
                 tokens = tokens.subList(6, tokens.size - 1)
                 showEditDialog(name, tokens.size, tokens)
+                viewModel.editEnvAction.value = Resource.nothing()
             }
         })
     }
@@ -144,35 +146,6 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-
-    private fun handleMore(output:String){
-//        if (editEnv) {
-//            var tokens = output.split(" ")
-//            val name = tokens[2]
-//            tokens = tokens.subList(6, tokens.size - 1)
-//            showEditDialog(name, tokens.size, tokens)
-//        }
-//        } else {
-//            if (output.contains("service autorun set")) {
-//                Toast.makeText(context, "Switched autorun", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-    }
-
-//    private fun onServiceStatusChanged() {
-////        viewModel.selectedService.value = binding.pickService.selectedItem as ServiceInfo
-////        Log.d("Entered", "matchOutput: $s")
-////        if (s.contains("started")) {
-////            viewModel.selectedService.value?.serviceStatus = ServiceInfo.SERVICE_RUNNING
-////        } else if (s.contains("stopped and removed")) {
-////            viewModel.selectedService.value?.serviceStatus = ServiceInfo.SERVICE_AVAILABLE
-////        } else if (s.contains("stopped") || s.contains("installed")) {
-////            viewModel.selectedService.value?.serviceStatus = ServiceInfo.SERVICE_INSTALLED
-////        } else {
-////            return
-////        }
-////        viewModel.formattedServices.sort()
-//    }
 
     private fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))

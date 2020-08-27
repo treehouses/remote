@@ -53,13 +53,13 @@
     <string name="TREEHOUSES_SSHTUNNEL_NOTICE_NOW">treehouses sshtunnel notice now</string>
     <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
 
-    <string name="TREEHOUSES_SERVICES_CLEANUP">treehouses services \"%1$s\" cleanup</string>
-    <string name="TREEHOUSES_SERVICES_INSTALL">treehouses services \"%1$s\" install</string>
-    <string name="TREEHOUSES_SERVICES_UP">treehouses services \"%1$s\" up</string>
-    <string name="TREEHOUSES_SERVICES_STOP">treehouses services \"%1$s\" stop</string>
-    <string name="TREEHOUSES_SERVICES_URL_LOCAL">treehouses services \"%1$s\" url local</string>
-    <string name="TREEHOUSES_SERVICES_URL_TOR">treehouses services \"%1$s\" url tor</string>
-    <string name="TREEHOUSES_SERVICES_AUTORUN">treehouses services \"%1$s\" autorun \"%2$s\" </string>
+    <string name="TREEHOUSES_SERVICES_CLEANUP">treehouses services %1$s cleanup</string>
+    <string name="TREEHOUSES_SERVICES_INSTALL">treehouses services %1$s install</string>
+    <string name="TREEHOUSES_SERVICES_UP">treehouses services %1$s up</string>
+    <string name="TREEHOUSES_SERVICES_STOP">treehouses services %1$s stop</string>
+    <string name="TREEHOUSES_SERVICES_URL_LOCAL">treehouses services %1$s url local</string>
+    <string name="TREEHOUSES_SERVICES_URL_TOR">treehouses services %1$s url tor</string>
+    <string name="TREEHOUSES_SERVICES_AUTORUN">treehouses services %1$s autorun %2$s </string>
 
     <string name="TREEHOUSES_BLOCKER_CHECK">treehouses blocker</string>
     <string name="TREEHOUSES_BLOCKER">treehouses blocker \"%1$s\"</string>
