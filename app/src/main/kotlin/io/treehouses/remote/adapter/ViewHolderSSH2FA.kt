@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
+import android.widget.TextView
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
@@ -41,8 +42,10 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
 
     private val addUser: Button = v.findViewById(R.id.addBtn)
     private val removeUser: Button = v.findViewById(R.id.removeBtn)
+    private val showUser: Button = v.findViewById(R.id.showBtn)
     private val user:EditText = v.findViewById(R.id.user)
     private val twoFASwitch: Switch = v.findViewById(R.id.switch2FA)
+    private val keysDisplay: TextView = v.findViewById(R.id.keysDisplay)
 
     init {
         mChatService.updateHandler(mHandler)
@@ -62,6 +65,9 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
         }
         removeUser.setOnClickListener {
             sendCommand2(R.string.TREEHOUSES_SSH_2FA_REMOVE)
+        }
+        showUser.setOnClickListener {
+            sendCommand2(R.string.TREEHOUSES_SSH_2FA_SHOW)
         }
         twoFASwitch.isEnabled = false
         twoFASwitch.setOnClickListener {
@@ -98,6 +104,10 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
                 twoFASwitch.isEnabled = true
             }
             readMessage.contains("specify") -> c.toast(readMessage)
+
+            readMessage.contains("Emergency") -> keysDisplay.text = readMessage
+
+            readMessage.contains("is disabled.") -> c.toast(readMessage)
 
         }
     }

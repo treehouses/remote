@@ -71,6 +71,7 @@
     <string name="TREEHOUSES_SSH_2FA">treehouses ssh 2fa"</string>
     <string name="TREEHOUSES_SSH_2FA_ADD">treehouses ssh 2fa add \"%1$s\"</string>
     <string name="TREEHOUSES_SSH_2FA_REMOVE">treehouses ssh 2fa remove \"%1$s\"</string>
+    <string name="TREEHOUSES_SSH_2FA_SHOW">treehouses ssh 2fa show \"%1$s\"</string>
     <string name="TREEHOUSES_SSH_2FA_ENABLE">treehouses ssh 2fa enable"</string>
     <string name="TREEHOUSES_SSH_2FA_DISABLE">treehouses ssh 2fa disable"</string>
 

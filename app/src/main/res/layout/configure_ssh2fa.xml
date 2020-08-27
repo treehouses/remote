@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/userLayout"
-        android:weightSum="2"
+        android:weightSum="3"
         android:orientation="horizontal">
 
     <Button
@@ -89,10 +89,31 @@
         tools:layout_editor_absoluteX="188dp"
         tools:layout_editor_absoluteY="83dp" />
 
+    <Button
+        android:id="@+id/showBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Show"
+        android:textColor="#ffffff"
+        android:theme="@style/PrimaryButton"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="188dp"
+        tools:layout_editor_absoluteY="83dp" />
+
+
+
     </LinearLayout>
 
-
-
+    <TextView
+        android:id="@+id/keysDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        android:textColor="@color/daynight_textColor"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@id/addRemoveBtns"
+        tools:layout_editor_absoluteX="130dp"
+        tools:layout_editor_absoluteY="263dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
