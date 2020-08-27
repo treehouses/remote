@@ -18,13 +18,14 @@ import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
+import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 
 open class RootSSHConsole: AppCompatActivity() {
     //    protected var pager: TerminalViewPager? = null
     protected var tabs: TabLayout? = null
     protected var toolbar: Toolbar? = null
     protected var bound: TerminalManager? = null
-    protected var adapter: DerivedSSHConsole.TerminalPagerAdapter? = null
+    protected var adapter: TerminalPagerAdapter? = null
     protected var prefs: SharedPreferences? = null
 
     // determines whether or not menuitem accelerators are bound
@@ -49,6 +50,13 @@ open class RootSSHConsole: AppCompatActivity() {
     protected var inActionBarMenu = false
     protected var titleBarHide = false
     protected var keyboardAlwaysVisible = false
+    protected lateinit var bind: ActivitySshConsoleBinding
+    protected val currentTerminalView: TerminalView?
+        get() {
+            val currentView = bind.pager.findViewWithTag<View>(adapter?.getBridgeAtPosition(bind.pager.currentItem))
+                    ?: return null
+            return currentView.findViewById<View>(R.id.terminal_view) as TerminalView
+        }
 
     protected fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
         var flag = true
@@ -90,7 +98,7 @@ open class RootSSHConsole: AppCompatActivity() {
     protected fun setDisconnectItemListener() {
         disconnect!!.setOnMenuItemClickListener {
             // disconnect or close the currently visible session
-            val terminalView = adapter!!.currentTerminalView
+            val terminalView = currentTerminalView
             val bridge = terminalView!!.bridge
             bridge.dispatchDisconnect(true)
             true
@@ -104,7 +112,7 @@ open class RootSSHConsole: AppCompatActivity() {
      */
     protected fun updateDefault() {
         // update the current default terminal
-        val view = adapter!!.currentTerminalView
+        val view = currentTerminalView
         if (view == null || bound == null) {
             return
         }
@@ -113,7 +121,7 @@ open class RootSSHConsole: AppCompatActivity() {
 
     private fun pasteIntoTerminal() {
         // force insert of clipboard text into current console
-        val terminalView = adapter!!.currentTerminalView
+        val terminalView = currentTerminalView
         val bridge = terminalView!!.bridge
 
         // pull string from clipboard and generate all events to force down

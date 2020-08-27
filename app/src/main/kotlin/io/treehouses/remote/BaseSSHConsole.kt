@@ -17,8 +17,6 @@ import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 
 open class BaseSSHConsole: RootSSHConsole() {
 
-    protected lateinit var bind: ActivitySshConsoleBinding
-
     @TargetApi(11)
     protected fun requestActionBar() {
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
@@ -34,7 +32,7 @@ open class BaseSSHConsole: RootSSHConsole() {
      */
     protected fun updatePromptVisible() {
         // check if our currently-visible terminalbridge is requesting any prompt services
-        val view = adapter?.currentTerminalView
+        val view = currentTerminalView
 
         // Hide all the prompts in case a prompt request was canceled
         hideAllPrompts()
@@ -108,7 +106,7 @@ open class BaseSSHConsole: RootSSHConsole() {
     }
 
     protected fun onEmulatedKeyClicked(v: View) {
-        val terminal = adapter!!.currentTerminalView ?: return
+        val terminal = currentTerminalView ?: return
         val handler = terminal.bridge.keyHandler
         var hideKeys = sendKeys(v, handler)
         if (hideKeys) hideEmulatedKeys()
