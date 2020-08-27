@@ -241,7 +241,7 @@ class TorTabFragment : BaseFragment() {
                 if(i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
-            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+            try { adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)} catch(e:Exception) {Log.e("error", e.toString())}
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
