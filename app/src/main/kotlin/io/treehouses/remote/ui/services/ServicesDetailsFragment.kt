@@ -207,13 +207,6 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         return count
     }
 
-//    private fun setOnClick(v: View, command: String, alertDialog: AlertDialog) {
-//        v.setOnClickListener {
-//            viewModel.sendMessage(command)
-//            alertDialog.dismiss()
-//            binding.progressBar.visibility = View.VISIBLE
-//        }
-//    }
 
 //    private fun onLink(selected: ServiceInfo?) {
 //        //reqUrls();
@@ -254,6 +247,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                 .setPositiveButton("Edit"
                 ) { _: DialogInterface?, _: Int ->
                     var command = "treehouses services $name config edit send"
+
                     for (i in 0 until size) {
                         command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
                     }
@@ -298,6 +292,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
     override fun onClickEditEnvVar(s: ServiceInfo?) {
         if (s == null) return
         viewModel.editEnvVariableRequest(s)
+
     }
 
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {

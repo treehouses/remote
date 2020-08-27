@@ -54,35 +54,27 @@ class UserCustomizationPreference: BasePreferenceFragment() {
 
     private fun clearSSHKeys() = createAlertDialog("Clear All SSH Keys", "Would you like to delete all SSH Keys?", "Clear", CLEAR_SSH_KEYS)
 
-    private fun clearNetworkProfiles() {
-        clear("profiles", "Network Profiles have been reset")
-    }
-
     private fun clear(subject: String, message: String) {
         when (subject) {
-            "profiles" -> {
-                SaveUtils.clearProfiles(requireContext())
-            }
-            "commandsList" -> {
-                SaveUtils.clearCommandsList(requireContext())
-            }
+            "profiles" -> SaveUtils.clearProfiles(requireContext())
+            "commandsList" -> SaveUtils.clearCommandsList(requireContext())
+            "SSH_hosts" -> SaveUtils.deleteAllHosts(requireContext())
+            "SSH_keys" -> KeyUtils.deleteAllKeys(requireContext())
         }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     override fun onClickDialog(id: Int) {
         when (id) {
-            CLEAR_COMMANDS_ID -> {
-                clear("commandsList", "Commands List has been Cleared")
-            }
+            CLEAR_COMMANDS_ID -> clear("commandsList", "Commands List has been Cleared")
             RESET_COMMANDS_ID -> {
                 SaveUtils.clearCommandsList(requireContext())
                 SaveUtils.initCommandsList(requireContext())
                 Toast.makeText(context, "Commands has been reset to default", Toast.LENGTH_LONG).show()
             }
-            NETWORK_PROFILES_ID -> clearNetworkProfiles()
-            CLEAR_SSH_HOSTS -> SaveUtils.deleteAllHosts(requireContext())
-            CLEAR_SSH_KEYS -> KeyUtils.deleteAllKeys(requireContext())
+            NETWORK_PROFILES_ID -> clear("profiles", "Network Profiles have been reset")
+            CLEAR_SSH_HOSTS -> clear("SSH_hosts", "SSH Hosts have been cleared")
+            CLEAR_SSH_KEYS -> clear("SSH_keys", "SSH Keys have been cleared")
         }
     }
 

@@ -2,37 +2,32 @@ package io.treehouses.remote.Fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
+import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.Message
+import android.text.Editable
+import android.text.Html
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
+import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.match
+import org.json.JSONException
+import org.json.JSONObject
 
 
-class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
-    private var addPortButton: Button? = null
-    private var addHostButton: Button? = null
-    var bind: ActivityTunnelSshFragmentBinding? = null
-    private var dropdown: Spinner? = null
-    private var portList: ListView? = null
-    private var adapter: ArrayAdapter<String>? = null
-    private var portsName: java.util.ArrayList<String>? = null
-    private var hostsName: java.util.ArrayList<String>? = null
-    private var hostsPosition: java.util.ArrayList<Int>? = null
-    private lateinit var dialogHosts:Dialog
-    private lateinit var inputExternalHost: TextInputEditText
-    private lateinit var inputInternalHost: TextInputEditText
-    private lateinit var inputExternal: TextInputEditText
-    private lateinit var inputInternal: TextInputEditText
-    private lateinit var dialog:Dialog
-    private lateinit var addingPortButton: Button
-    private lateinit var addingHostButton: Button
-    private lateinit var adapter2: ArrayAdapter<String>
+class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         bind!!.switchNotification.isEnabled = false
@@ -67,9 +62,11 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         addingPortButton.setOnClickListener(this)
         addingHostButton.setOnClickListener(this)
         bind!!.notifyNow.setOnClickListener(this)
+        bind!!.btnKeys.setOnClickListener(this)
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog1() {
         dialog = Dialog(requireContext())
         dialogHosts = Dialog(requireContext())
@@ -94,6 +91,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
         try{ initializeDialog2()} catch (exception:Exception){Log.e("Error1", exception.toString())}
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog2(){
         portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
@@ -101,7 +99,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 builder.setTitle("Delete Host  " + portsName!![position] + " ?")
                 builder.setPositiveButton("Confirm") { dialog, _ ->
                     val parts = portsName!![position].split(":")[0]
-                    listener.sendMessage("treehouses sshtunnel remove host $parts")
+                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts))
                     addHostButton!!.text = "deleting host ....."
                     portList!!.isEnabled = false
                     addHostButton!!.isEnabled = false
@@ -117,6 +115,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             Log.d("dialoging", "dialog")
             dialog.show()
         }
+        initializeDialog4()
     }
 
     private fun initializeDialog3(builder:AlertDialog.Builder, position:Int){
@@ -133,12 +132,61 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
                 myPos = hostsPosition!!.lastIndex
             }
             Log.d("dasda", myPos.toString())
-            listener.sendMessage("treehouses sshtunnel remove port " + portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0])
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
             addPortButton!!.text = "deleting port ....."
             portList!!.isEnabled = false
             addPortButton!!.isEnabled = false
             dialog.dismiss()
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun initializeDialog4(){
+        dialogKeys = Dialog(requireContext())
+        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key)
+        showKeys = dialogKeys.findViewById(R.id.btn_show_keys)
+        saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
+        val profileText = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text
+
+        publicKey = dialogKeys.findViewById(R.id.public_key)
+        privateKey = dialogKeys.findViewById(R.id.private_key)
+        progressBar = dialogKeys.findViewById(R.id.progress_bar)
+
+        Log.d("profile string", profileText.toString())
+        saveKeys.setOnClickListener {
+            var profile = profileText.toString()
+            listener.sendMessage("treehouses remote key send $profile")
+            jsonSend(true)
+        }
+
+        showKeys.setOnClickListener {
+            handleShowKeys(profileText)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun handleShowKeys(profileText: Editable) {
+        var profile = profileText.toString()
+        if(profile.isBlank())
+            profile = "default"
+
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
+        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
+        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
+
+        if (storedPublicKey != null && storedPrivateKey != null) {
+            if(storedPublicKey.isBlank()){
+                storedPublicKey = "No public key found"
+            }
+            if(storedPrivateKey.isBlank()){
+                storedPrivateKey = "No private key found"
+            }
+        }
+
+        val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
+        val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
+        publicKey.text = strPhonePublicKey
+        privateKey.text = strPhonePrivateKey
     }
 
     private fun switchButton(isChecked:Boolean) {
@@ -159,15 +207,8 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             else{
                 Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
             }
-
-
             dialogHosts.dismiss()
         }
-
-
-
-
-
     }
 
 
@@ -200,6 +241,7 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
 
             R.id.btn_add_port -> showDialog(dialog)
             R.id.btn_add_hosts -> showDialog(dialogHosts)
+            R.id.btn_keys -> showDialog(dialogKeys)
         }
     }
 
@@ -216,117 +258,20 @@ class TunnelSSHFragment : BaseFragment(), View.OnClickListener {
             Log.i("Tag", "Reload fragment")
         }
     }
+
     override fun getMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
-                var Position:Int = 0
                 val readMessage: String = msg.obj as String
                 Log.d("SSHTunnel reply", "" + readMessage)
-
-                if(readMessage.contains("Host / port not found")) {
-                    addHostButton?.isEnabled = true
-                    addHostButton?.text = "Add Host"
-
-                    addPortButton?.text = "Add Port"
-                    portList?.isEnabled = true
-                    addHostButton?.isEnabled = true
-                    Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
-                }
-                else if(readMessage.contains("ssh-rsa") || readMessage.contains("Added") || readMessage.contains("Removed")){
-                    Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
-
-                    addPortButton?.text = "Retrieving"
-                    addHostButton?.text = "Retrieving"
-                    portsName = ArrayList()
-                    hostsName = ArrayList()
-
-                    hostsPosition = ArrayList()
-                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
-                }
-
-                else if (readMessage.contains("@")) {
-                    addPortButton?.isEnabled = true
-                    addPortButton?.text = "Add Port"
-                    addHostButton?.text = "Add Host"
-                    addPortButton!!.isEnabled = true
-                    addHostButton?.isEnabled = true
-                    val hosts = readMessage.split('\n')
-                    for (host in hosts) {
-                        val ports = host.split(' ')
-                        for (port in ports) {
-                            if (port.length >= 3)
-                                portsName!!.add(port)
-                            if (port.contains("@")) {
-                                hostsPosition!!.add(Position)
-                                hostsName!!.add(port)
-                            }
-                            Position += 1
-                        }
-
-                    }
-                   adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-                    dropdown?.adapter = adapter2
-                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-                    bind!!.sshPorts.adapter = adapter
-                    portList!!.isEnabled = true
-                }
-                else if(readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")){
-                    adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-                    dropdown?.adapter = adapter2
-                    adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-                    bind!!.sshPorts.adapter = adapter
-                    portList!!.isEnabled = true
-                    addPortButton!!.text = "Add Port"
-                    addHostButton!!.text = "Add Host"
-                    addPortButton!!.isEnabled = false
-                    addHostButton!!.isEnabled = true
-                    Toast.makeText(requireContext(), "Add a host", Toast.LENGTH_SHORT).show()
-
-                }
-                else if(readMessage.contains("Status: on")){
-                    bind!!.switchNotification.isChecked = true;
-                    bind!!.switchNotification.isEnabled = true;
-                    bind!!.notifyNow.isEnabled = true
-                    portsName = ArrayList()
-                    hostsName = ArrayList()
-                    hostsPosition = ArrayList()
-                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
-
-                }
-                else  getMessage2(readMessage)
-
+                val modifyKeywords = arrayOf("ssh-rsa", "Added", "Removed")
+                if (readMessage.contains("Host / port not found")) handleHostNotFound()
+                else if((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
+                else if (readMessage.contains("@")) handleNewList(readMessage)
+                else if(readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
+                else if(readMessage.contains("Status: on")) handleOnStatus()
+                else getOtherMessages(readMessage)
             }
     }
 
-    private fun getMessage2(readMessage: String) {
-
-         getMessage3(readMessage)
-    }
-
-    private fun getMessage3(readMessage: String) {
-        when {
-            readMessage.contains("Status: on") -> {
-                bind?.apply {
-                    switchNotification.isChecked = true
-                    switchNotification.isEnabled = true
-                    notifyNow.isEnabled = true
-                }
-            }
-            readMessage.contains("Status: off") -> {
-                bind?.apply {
-                    switchNotification.isChecked = false
-                    switchNotification.isEnabled = true
-                    notifyNow.isEnabled = true
-                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
-                }
-            }
-            readMessage.contains("OK.") -> { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
-            readMessage.contains("Thanks for the feedback!") -> {
-                Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
-                bind!!.notifyNow.isEnabled = true }
-            readMessage.contains("Error: only 'list'") -> {
-                listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
-                Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show() }
-        }
-    }
 }
 

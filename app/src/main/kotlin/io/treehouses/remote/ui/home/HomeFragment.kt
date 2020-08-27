@@ -37,14 +37,25 @@ import io.treehouses.remote.utils.Utils.toast
 
 class HomeFragment : BaseHomeFragment() {
     private var notificationListener: NotificationCallback? = null
+
+    /**
+     * Dialog to show that a Network Configuration is being switched
+     */
     private var progressDialog: ProgressDialog? = null
+
+    /**
+     * Test Connection Dialog
+     */
     private var testConnectionDialog: AlertDialog? = null
+
+    /**
+     * Bluetooth connection status dialog
+     */
     private var connectionDialog: ProgressDialog? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
-
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupProfiles()
         showDialogOnce(preferences!!)
@@ -87,7 +98,9 @@ class HomeFragment : BaseHomeFragment() {
             viewModel.errorConnecting.value = null
         })
     }
-
+    /**
+     * Observe different viewModel states to implement changes to the UI
+     */
     private fun observers() {
         viewModel.newCLIUpgradeAvailable.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             notificationListener?.setNotification(it)
@@ -107,6 +120,9 @@ class HomeFragment : BaseHomeFragment() {
         })
     }
 
+    /**
+     * Called when a network configuration status has changed
+     */
     private fun observeNetworkProfileSwitch() {
         viewModel.networkProfileResult.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when(it.status) {
@@ -124,11 +140,17 @@ class HomeFragment : BaseHomeFragment() {
         })
     }
 
+    /**
+     * Switches fragment (To go to Terminal, or about for example)
+     */
     private fun switchFragment(fragment: Fragment, title: String) {
         instance!!.openCallFragment(fragment)
         activity?.let { it.title = title}
     }
 
+    /**
+     * Set up the Network profiles, adapter and data.
+     */
     private fun setupProfiles() {
         val profileAdapter = ProfilesListAdapter(requireContext(), listOf(*group_labels), SaveUtils.getProfiles(requireContext()))
         bind.networkProfiles.setAdapter(profileAdapter)
@@ -146,6 +168,11 @@ class HomeFragment : BaseHomeFragment() {
         }
     }
 
+    /**
+     * Show the Log Dialog, and ask for a rating if necessary
+     * @see rate
+     * @see showLogDialog
+     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (MainApplication.showLogDialog) {
@@ -155,6 +182,9 @@ class HomeFragment : BaseHomeFragment() {
         activity?.invalidateOptionsMenu()
     }
 
+    /**
+     * When the connect to RPI button is clicked, the following is called
+     */
     private fun connectRpiListener() {
         bind.btnConnect.setOnClickListener {
             val vibe = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -177,6 +207,9 @@ class HomeFragment : BaseHomeFragment() {
         }
     }
 
+    /**
+     * Tests the connection to Raspberry PI and shows a dialog to the user
+     */
     private fun testConnectionListener() {
         bind.testConnection.setOnClickListener {
             val preference = PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
@@ -191,6 +224,12 @@ class HomeFragment : BaseHomeFragment() {
         }
     }
 
+    /**
+     * Change the UI depending on the connection status
+     * @see Constants.STATE_CONNECTED
+     * @see Constants.STATE_CONNECTING
+     * @see Constants.STATE_NONE
+     */
     private fun observeConnectionState() {
         viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
             Log.e("CONNECTED", "STATE $connected")
@@ -216,6 +255,9 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.loadBT()
     }
 
+    /**
+     * Show the connecting to Bluetooth dialog
+     */
     private fun showBTConnectionDialog() {
         connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
         connectionDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
@@ -228,6 +270,9 @@ class HomeFragment : BaseHomeFragment() {
         connectionDialog!!.show()
     }
 
+    /**
+     * Transition from connected to disconnected (UI)
+     */
     private fun transition(connected: Boolean) {
         bind.btnConnect.text = if (connected) "Disconnect" else "Connect to RPI"
         bind.btnGetStarted.text = if (connected) "Go to Terminal" else "Get Started"
@@ -241,6 +286,10 @@ class HomeFragment : BaseHomeFragment() {
         activity?.invalidateOptionsMenu()
     }
 
+    /**
+     * Dismiss the Test Connection Dialog created in
+     * @see createTestConnectionDialog
+     */
     private fun dismissTestConnection() {
         if (testConnectionDialog != null) {
             testConnectionDialog!!.cancel()
@@ -248,6 +297,9 @@ class HomeFragment : BaseHomeFragment() {
         }
     }
 
+    /**
+     * Notification listener is used whether there is a new CLI upgrade available, and if so, show the notification in the drawer
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         notificationListener = try { getContext() as NotificationCallback?
@@ -256,7 +308,9 @@ class HomeFragment : BaseHomeFragment() {
         }
     }
 
-
+    /**
+     * Make sure the viewModel is on the correct handler onResume
+     */
     override fun onResume() {
         super.onResume()
         viewModel.refreshHandler()
@@ -268,7 +322,7 @@ class HomeFragment : BaseHomeFragment() {
 
     companion object {
         @JvmField
-        val group_labels = arrayOf("WiFi", "Hotspot", "Bridge", "Default")
+        val group_labels = arrayOf("WiFi", "Hotspot", "Bridge", "Default")      //Labels for Headers of the Network profiles
     }
 
 }
