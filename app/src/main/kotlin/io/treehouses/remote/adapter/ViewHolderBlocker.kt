@@ -6,15 +6,19 @@ import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.View
-import android.widget.RadioGroup
-import android.widget.Toast
+import android.widget.*
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 
 class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
-    private val radioGroup: RadioGroup = v.findViewById(R.id.radioGroup)
+    private val blockerBar: SeekBar = v.findViewById(R.id.blockerBar)
+    private val levelText: TextView = v.findViewById(R.id.levelText)
+    private val blockerDesc: TextView = v.findViewById(R.id.blockerDesc)
+    private val setBlocker: Button = v.findViewById(R.id.setBlocker)
+    private var blockerLevel:Int = 0
+    private var previousLevel:Int = 0
     private var readMessage  = ""
     private val mChatService: BluetoothChatService = listener.getChatService()
 
@@ -34,36 +38,90 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         }
     }
 
+    fun setDisplays(progress:Int) {
+        when (progress) {
+            0 -> levelText.text = "Blocker Disabled"
+            in 1..4 -> levelText.text = "Blocker Level $progress"
+            5 -> levelText.text = "Blocker Level Max"
+        }
+
+        when (progress) {
+            0 -> blockerDesc.text = "Blocking Nothing"
+            1 -> blockerDesc.text = "Blocking Adware + Malware"
+            2 -> blockerDesc.text = "Blocking Ads + Porn"
+            3 -> blockerDesc.text = "Blocking Ads + Gambling + Porn"
+            4 -> blockerDesc.text = "Blocking Ads + Fakenews + Gambling + Porn"
+            5 -> blockerDesc.text = "Blocking Ads + Fakenews + Gambling + Porn + Social"
+        }
+    }
+
+
     init {
         mChatService.updateHandler(mHandler)
         listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER_CHECK))
+        blockerBar.max = 5
+        setBlocker.visibility = View.GONE
+        blockerBar.isEnabled = false
 
-        fun setBlocker(level:String, msg:String) {
-            listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_BLOCKER, level))
-            context.toast(msg)
+        blockerBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                blockerLevel = progress
+                if(blockerLevel == previousLevel) setBlocker.visibility = View.GONE
+                else setBlocker.visibility = View.VISIBLE
+
+                setDisplays(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+
+        })
+
+
+        fun setBlocker(level:Int) {
+            fun sendCommand(level:String) {
+                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_BLOCKER, level))
+            }
+
+            when (level) {
+                in 0..4 -> sendCommand(level.toString())
+                5 -> sendCommand("max")
+            }
         }
 
-        radioGroup.setOnCheckedChangeListener { _: RadioGroup?, i: Int ->
-            when (i) {
-                R.id.radioButton1 -> setBlocker("0","Blocker Disabled")
-                R.id.radioButton2 -> setBlocker("1","Blocker set to level 1")
-                R.id.radioButton3 -> setBlocker("2","Blocker set to level 2")
-                R.id.radioButton4 -> setBlocker("3","Blocker set to level 3")
-                R.id.radioButton5 -> setBlocker("4","Blocker set to level 4")
-                R.id.radioButton6 -> setBlocker("max","Blocker set to maximum level")
+        setBlocker.setOnClickListener {
+            previousLevel = blockerLevel
+            setBlocker.visibility = View.GONE
+            blockerBar.isEnabled = false
+            setBlocker(blockerLevel)
+            when (blockerLevel) {
+                0 -> context.toast("Blocker Disabled")
+                1 -> context.toast("Blocker set to level 1")
+                2 -> context.toast("Blocker set to level 2")
+                3 -> context.toast("Blocker set to level 3")
+                4 -> context.toast("Blocker set to level 4")
+                5 -> context.toast("Blocker set to maximum level")
             }
         }
     }
 
     fun updateSelection(readMessage:String){
-        when {
-            readMessage.contains("blocker 0") -> radioGroup.check(R.id.radioButton1)
-            readMessage.contains("blocker 1") -> radioGroup.check(R.id.radioButton2)
-            readMessage.contains("blocker 2") -> radioGroup.check(R.id.radioButton3)
-            readMessage.contains("blocker 3") -> radioGroup.check(R.id.radioButton4)
-            readMessage.contains("blocker 4") -> radioGroup.check(R.id.radioButton5)
-            readMessage.contains("blocker X") -> radioGroup.check(R.id.radioButton6)
+        fun update(level:Int){
+            blockerLevel = level
+            previousLevel = blockerLevel
+            blockerBar.progress = blockerLevel
+            blockerBar.isEnabled = true
+            setDisplays(level)
         }
+        when {
+            readMessage.contains("blocker 0") -> update(0)
+            readMessage.contains("blocker 1") -> update(1)
+            readMessage.contains("blocker 2") -> update(2)
+            readMessage.contains("blocker 3") -> update(3)
+            readMessage.contains("blocker 4") -> update(4)
+            readMessage.contains("blocker X") -> update(5)
+        }
+
     }
 
     companion object {
