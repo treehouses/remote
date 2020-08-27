@@ -10,8 +10,8 @@ import android.view.View
 import android.view.animation.Animation
 import android.widget.TextView
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModel
 import com.google.android.material.tabs.TabLayout
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalManager
@@ -19,38 +19,38 @@ import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
 
-class SSHConsoleViewModel: ViewModel() {
-    //    var pager: TerminalViewPager? = null
-    var tabs: TabLayout? = null
-    var toolbar: Toolbar? = null
-    var bound: TerminalManager? = null
-    var adapter: DerivedSSHConsole.TerminalPagerAdapter? = null
-    var prefs: SharedPreferences? = null
+open class RootSSHConsole: AppCompatActivity() {
+    //    protected var pager: TerminalViewPager? = null
+    protected var tabs: TabLayout? = null
+    protected var toolbar: Toolbar? = null
+    protected var bound: TerminalManager? = null
+    protected var adapter: DerivedSSHConsole.TerminalPagerAdapter? = null
+    protected var prefs: SharedPreferences? = null
 
     // determines whether or not menuitem accelerators are bound
     // otherwise they collide with an external keyboard's CTRL-char
-    var hardKeyboard = false
-    var requested: Uri? = null
-    var clipboard: ClipboardManager? = null
-    //    var keyboardGroup: LinearLayout? = null
-    var keyboardGroupHider: Runnable? = null
-    var empty: TextView? = null
-    var fadeOutDelayed: Animation? = null
-    var keyboardFadeIn: Animation? = null
-    var keyboardFadeOut: Animation? = null
-    var disconnect: MenuItem? = null
-    var paste: MenuItem? = null
-    var resize: MenuItem? = null
-    var urlScan: MenuItem? = null
-    var forcedOrientation = false
-    var handler = Handler()
-    var mContentView: View? = null
-    var actionBar: ActionBar? = null
-    var inActionBarMenu = false
-    var titleBarHide = false
-    var keyboardAlwaysVisible = false
+    protected var hardKeyboard = false
+    protected var requested: Uri? = null
+    protected var clipboard: ClipboardManager? = null
+    //    protected var keyboardGroup: LinearLayout? = null
+    protected var keyboardGroupHider: Runnable? = null
+    protected var empty: TextView? = null
+    protected var fadeOutDelayed: Animation? = null
+    protected var keyboardFadeIn: Animation? = null
+    protected var keyboardFadeOut: Animation? = null
+    protected var disconnect: MenuItem? = null
+    protected var paste: MenuItem? = null
+    protected var resize: MenuItem? = null
+    protected var urlScan: MenuItem? = null
+    protected var forcedOrientation = false
+    protected var handler = Handler()
+    protected var mContentView: View? = null
+    protected var actionBar: ActionBar? = null
+    protected var inActionBarMenu = false
+    protected var titleBarHide = false
+    protected var keyboardAlwaysVisible = false
 
-    fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
+    protected fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
         var flag = true
         when (v.id) {
             R.id.button_ctrl -> handler.metaPress(BaseTerminalKeyListener.OUR_CTRL_ON, true)
@@ -61,7 +61,7 @@ class SSHConsoleViewModel: ViewModel() {
         return flag
     }
 
-    fun checkButtons(v: View, handler: TerminalKeyListener) {
+    protected fun checkButtons(v: View, handler: TerminalKeyListener) {
         when (v.id) {
             R.id.button_up -> handler.sendPressedKey(vt320.KEY_UP)
             R.id.button_down -> handler.sendPressedKey(vt320.KEY_DOWN)
@@ -87,7 +87,7 @@ class SSHConsoleViewModel: ViewModel() {
         }
     }
 
-    fun setDisconnectItemListener() {
+    protected fun setDisconnectItemListener() {
         disconnect!!.setOnMenuItemClickListener {
             // disconnect or close the currently visible session
             val terminalView = adapter!!.currentTerminalView
@@ -102,7 +102,7 @@ class SSHConsoleViewModel: ViewModel() {
      * saved back down into [TerminalManager] where we can read it again
      * later.
      */
-    fun updateDefault() {
+    protected fun updateDefault() {
         // update the current default terminal
         val view = adapter!!.currentTerminalView
         if (view == null || bound == null) {
@@ -124,11 +124,10 @@ class SSHConsoleViewModel: ViewModel() {
         bridge.injectString(clip)
     }
 
-    fun setPasteItemListener() {
+    protected fun setPasteItemListener() {
         paste!!.setOnMenuItemClickListener {
             pasteIntoTerminal()
             true
         }
     }
-
 }

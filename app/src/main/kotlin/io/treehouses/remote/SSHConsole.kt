@@ -44,27 +44,27 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     private val connection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            viewModel.bound = (service as TerminalBinder).service
+            bound = (service as TerminalBinder).service
 
             // let manager know about our event handling services
-            viewModel.bound!!.disconnectListener = this@SSHConsole
-            viewModel.bound!!.isResizeAllowed = true
-            val requestedNickname = if (viewModel.requested != null) viewModel.requested!!.fragment else null
-            var requestedBridge = viewModel.bound!!.mNicknameBridgeMap[requestedNickname]?.get()
+            bound!!.disconnectListener = this@SSHConsole
+            bound!!.isResizeAllowed = true
+            val requestedNickname = if (requested != null) requested!!.fragment else null
+            var requestedBridge = bound!!.mNicknameBridgeMap[requestedNickname]?.get()
 
             // If we didn't find the requested connection, try opening it
             if (requestedNickname != null && requestedBridge == null) {
                 try {
-                    Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", viewModel.requested.toString(), requestedNickname))
-                    requestedBridge = viewModel.bound!!.openConnection(viewModel.requested)
+                    Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname))
+                    requestedBridge = bound!!.openConnection(requested)
                 } catch (e: Exception) {
                     Log.e(TAG, "Problem while trying to create new requested bridge from URI", e)
                 }
             }
 
             // create views for all bridges on this service
-            viewModel.adapter!!.notifyDataSetChanged()
-            val requestedIndex = viewModel.bound!!.bridges.indexOf(requestedBridge)
+            adapter!!.notifyDataSetChanged()
+            val requestedIndex = bound!!.bridges.indexOf(requestedBridge)
             requestedBridge?.promptHelper?.setHandler(promptHandler)
             if (requestedIndex != -1) {
                 bind.pager.post { setDisplayedTerminal(requestedIndex) }
@@ -72,15 +72,15 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            viewModel.bound = null
-            viewModel.adapter!!.notifyDataSetChanged()
+            bound = null
+            adapter!!.notifyDataSetChanged()
             updateEmptyVisible()
         }
     }
 
     override fun onDisconnected(bridge: TerminalBridge) {
-        synchronized(viewModel.adapter!!) {
-            viewModel.adapter!!.notifyDataSetChanged()
+        synchronized(adapter!!) {
+            adapter!!.notifyDataSetChanged()
             Log.d(TAG, "Someone sending HANDLE_DISCONNECT to parentHandler")
             if (bridge.isAwaitingClose) {
                 closeBridge()
@@ -92,22 +92,22 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX)
-        viewModel.hardKeyboard = resources.configuration.keyboard == Configuration.KEYBOARD_QWERTY
-        viewModel.clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        viewModel.prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        viewModel.titleBarHide = viewModel.prefs!!.getBoolean(PreferenceConstants.TITLEBARHIDE, false)
-        if (viewModel.titleBarHide) requestActionBar()
+        hardKeyboard = resources.configuration.keyboard == Configuration.KEYBOARD_QWERTY
+        clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        titleBarHide = prefs!!.getBoolean(PreferenceConstants.TITLEBARHIDE, false)
+        if (titleBarHide) requestActionBar()
         bind = ActivitySshConsoleBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
         // handle requested console from incoming intent
-        if (icicle == null) { viewModel.requested = intent.data
+        if (icicle == null) { requested = intent.data
         } else {
             val uri = icicle.getString(STATE_SELECTED_URI)
-            if (uri != null) viewModel.requested = Uri.parse(uri)
+            if (uri != null) requested = Uri.parse(uri)
         }
         setUpTerminalPager()
-        viewModel.empty = findViewById(android.R.id.empty)
+        empty = findViewById(android.R.id.empty)
         promptListeners()
         setUpKeyboard()
         addKeyboardListeners()
@@ -121,7 +121,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     @SuppressLint("ClickableViewAccessibility")
     private fun keyboardScroll() {
         val keyboardScroll = findViewById<HorizontalScrollView>(R.id.keyboard_hscroll)
-        if (!viewModel.hardKeyboard) {
+        if (!hardKeyboard) {
             // Show virtual keyboard and scroll back and forth
             showEmulatedKeys(false)
             keyboardScroll.postDelayed({
@@ -146,25 +146,25 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
-        val view = viewModel.adapter!!.currentTerminalView
+        val view = adapter!!.currentTerminalView
         val activeTerminal = view != null
         var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         menu.setQwertyMode(true)
-        viewModel.disconnect = menu.add("Disconnect")
-        if (viewModel.hardKeyboard) viewModel.disconnect!!.alphabeticShortcut = 'w'
-        if (!sessionOpen && disconnected) viewModel.disconnect!!.title = "Close Console"
-        viewModel.disconnect!!.isEnabled = activeTerminal
-        viewModel.disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
-        viewModel.setDisconnectItemListener()
-        viewModel.paste = menu.add("Paste")
-        if (viewModel.hardKeyboard) viewModel.paste!!.alphabeticShortcut = 'v'
-        MenuItemCompat.setShowAsAction(viewModel.paste, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM)
-        viewModel.paste!!.isEnabled = activeTerminal
-        viewModel.setPasteItemListener()
-        viewModel.urlScan = menu.add("Scan for URLs")
-        if (viewModel.hardKeyboard) viewModel.urlScan!!.alphabeticShortcut = 'u'
-        viewModel.urlScan!!.setIcon(android.R.drawable.ic_menu_search)
-        viewModel.urlScan!!.isEnabled = activeTerminal
+        disconnect = menu.add("Disconnect")
+        if (hardKeyboard) disconnect!!.alphabeticShortcut = 'w'
+        if (!sessionOpen && disconnected) disconnect!!.title = "Close Console"
+        disconnect!!.isEnabled = activeTerminal
+        disconnect!!.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
+        setDisconnectItemListener()
+        paste = menu.add("Paste")
+        if (hardKeyboard) paste!!.alphabeticShortcut = 'v'
+        MenuItemCompat.setShowAsAction(paste, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM)
+        paste!!.isEnabled = activeTerminal
+        setPasteItemListener()
+        urlScan = menu.add("Scan for URLs")
+        if (hardKeyboard) urlScan!!.alphabeticShortcut = 'u'
+        urlScan!!.setIcon(android.R.drawable.ic_menu_search)
+        urlScan!!.isEnabled = activeTerminal
         setUrlItemListener()
         return true
     }
@@ -172,15 +172,15 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
         volumeControlStream = AudioManager.STREAM_NOTIFICATION
-        val view = viewModel.adapter?.currentTerminalView
+        val view = adapter?.currentTerminalView
         val activeTerminal = view != null
         var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
-        viewModel.disconnect?.isEnabled = activeTerminal
-        if (sessionOpen || !disconnected) viewModel.disconnect?.title = "Disconnect" else viewModel.disconnect?.title = "Close Console"
-        viewModel.paste?.isEnabled = activeTerminal
+        disconnect?.isEnabled = activeTerminal
+        if (sessionOpen || !disconnected) disconnect?.title = "Disconnect" else disconnect?.title = "Close Console"
+        paste?.isEnabled = activeTerminal
         //		portForward.setEnabled(sessionOpen && canForwardPorts);
-        viewModel.urlScan?.isEnabled = activeTerminal
-        viewModel.resize?.isEnabled = sessionOpen
+        urlScan?.isEnabled = activeTerminal
+        resize?.isEnabled = sessionOpen
         return true
     }
 
@@ -208,8 +208,8 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     public override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause called")
-        if (viewModel.forcedOrientation && viewModel.bound != null) {
-            viewModel.bound!!.isResizeAllowed = false
+        if (forcedOrientation && bound != null) {
+            bound!!.isResizeAllowed = false
         }
     }
 
@@ -219,14 +219,14 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
         // Make sure we don't let the screen fall asleep.
         // This also keeps the Wi-Fi chipset from disconnecting us.
-        if (viewModel.prefs!!.getBoolean(PreferenceConstants.KEEP_ALIVE, true)) {
+        if (prefs!!.getBoolean(PreferenceConstants.KEEP_ALIVE, true)) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
         configureOrientation()
-        if (viewModel.forcedOrientation && viewModel.bound != null) {
-            viewModel.bound!!.isResizeAllowed = true
+        if (forcedOrientation && bound != null) {
+            bound!!.isResizeAllowed = true
         }
     }
 
@@ -235,12 +235,12 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
      */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        viewModel.requested = intent.data
-        if (viewModel.requested == null) {
+        requested = intent.data
+        if (requested == null) {
             Log.e(TAG, "Got null intent data in onNewIntent()")
             return
         }
-        if (viewModel.bound == null) {
+        if (bound == null) {
             Log.e(TAG, "We're not bound in onNewIntent()")
             return
         }
@@ -254,11 +254,11 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         // Maintain selected host if connected.
-        val currentTerminalView = viewModel.adapter!!.currentTerminalView
+        val currentTerminalView = adapter!!.currentTerminalView
         if (currentTerminalView != null
                 && !currentTerminalView.bridge.isDisconnected) {
-            viewModel.requested = currentTerminalView.bridge.host!!.uri
-            savedInstanceState.putString(STATE_SELECTED_URI, viewModel.requested.toString())
+            requested = currentTerminalView.bridge.host!!.uri
+            savedInstanceState.putString(STATE_SELECTED_URI, requested.toString())
         }
         super.onSaveInstanceState(savedInstanceState)
     }
@@ -266,14 +266,14 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Log.d(TAG, String.format("onConfigurationChanged; requestedOrientation=%d, newConfig.orientation=%d", requestedOrientation, newConfig.orientation))
-        if (viewModel.bound != null) {
-            viewModel.bound!!.isResizeAllowed = !(viewModel.forcedOrientation &&
+        if (bound != null) {
+            bound!!.isResizeAllowed = !(forcedOrientation &&
                     (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE &&
                             requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ||
                             newConfig.orientation != Configuration.ORIENTATION_PORTRAIT &&
                             requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT))
-            viewModel.bound!!.hardKeyboardHidden = newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES
-            bind.keyboard.buttonKeyboard.visibility = if (viewModel.bound!!.hardKeyboardHidden) View.VISIBLE else View.GONE
+            bound!!.hardKeyboardHidden = newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES
+            bind.keyboard.buttonKeyboard.visibility = if (bound!!.hardKeyboardHidden) View.VISIBLE else View.GONE
         }
     }
 

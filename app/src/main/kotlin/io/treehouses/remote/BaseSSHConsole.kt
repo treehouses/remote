@@ -3,30 +3,21 @@ package io.treehouses.remote
 import android.annotation.TargetApi
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.animation.Animation
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.ViewModelProvider
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 
-open class BaseSSHConsole: AppCompatActivity() {
+open class BaseSSHConsole: RootSSHConsole() {
 
     protected lateinit var bind: ActivitySshConsoleBinding
-    lateinit var viewModel: SSHConsoleViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this)[SSHConsoleViewModel::class.java]!!
-    }
 
     @TargetApi(11)
     protected fun requestActionBar() {
@@ -43,7 +34,7 @@ open class BaseSSHConsole: AppCompatActivity() {
      */
     protected fun updatePromptVisible() {
         // check if our currently-visible terminalbridge is requesting any prompt services
-        val view = viewModel.adapter?.currentTerminalView
+        val view = adapter?.currentTerminalView
 
         // Hide all the prompts in case a prompt request was canceled
         hideAllPrompts()
@@ -70,15 +61,15 @@ open class BaseSSHConsole: AppCompatActivity() {
     }
 
     protected fun hideEmulatedKeys() {
-        if (!viewModel.keyboardAlwaysVisible) {
-            if (viewModel.keyboardGroupHider != null) viewModel.handler.removeCallbacks(viewModel.keyboardGroupHider!!)
+        if (!keyboardAlwaysVisible) {
+            if (keyboardGroupHider != null) handler.removeCallbacks(keyboardGroupHider!!)
             bind.keyboard.keyboardGroup.visibility = View.GONE
         }
         hideActionBarIfRequested()
     }
 
     private fun hideActionBarIfRequested() {
-        if (viewModel.titleBarHide && viewModel.actionBar != null) viewModel.actionBar!!.hide()
+        if (titleBarHide && actionBar != null) actionBar!!.hide()
     }
 
     private fun setConsolePassword(prompt: PromptHelper) {
@@ -100,7 +91,7 @@ open class BaseSSHConsole: AppCompatActivity() {
 
     protected fun updateEmptyVisible() {
         // update visibility of empty status message
-        viewModel.empty!!.visibility = if (bind.pager.childCount == 0) View.VISIBLE else View.GONE
+        empty!!.visibility = if (bind.pager.childCount == 0) View.VISIBLE else View.GONE
     }
 
     /**
@@ -117,7 +108,7 @@ open class BaseSSHConsole: AppCompatActivity() {
     }
 
     protected fun onEmulatedKeyClicked(v: View) {
-        val terminal = viewModel.adapter!!.currentTerminalView ?: return
+        val terminal = adapter!!.currentTerminalView ?: return
         val handler = terminal.bridge.keyHandler
         var hideKeys = sendKeys(v, handler)
         if (hideKeys) hideEmulatedKeys()
@@ -128,24 +119,24 @@ open class BaseSSHConsole: AppCompatActivity() {
     }
 
     private fun sendKeys(v: View, handler: TerminalKeyListener) : Boolean {
-        return if (viewModel.isSpecialButton(v, handler)) true
+        return if (isSpecialButton(v, handler)) true
         else {
-            viewModel.checkButtons(v, handler)
+            checkButtons(v, handler)
             false
         }
     }
 
     protected fun autoHideEmulatedKeys() {
-        if (viewModel.keyboardGroupHider != null) viewModel.handler.removeCallbacks(viewModel.keyboardGroupHider!!)
-        viewModel.keyboardGroupHider = Runnable {
-            if (bind.keyboard.keyboardGroup.visibility == View.GONE || viewModel.inActionBarMenu) {
+        if (keyboardGroupHider != null) handler.removeCallbacks(keyboardGroupHider!!)
+        keyboardGroupHider = Runnable {
+            if (bind.keyboard.keyboardGroup.visibility == View.GONE || inActionBarMenu) {
                 return@Runnable
             }
-            if (!viewModel.keyboardAlwaysVisible) setAnimation(viewModel.keyboardFadeOut, View.GONE)
+            if (!keyboardAlwaysVisible) setAnimation(keyboardFadeOut, View.GONE)
             hideActionBarIfRequested()
-            viewModel.keyboardGroupHider = null
+            keyboardGroupHider = null
         }
-        viewModel.handler.postDelayed(viewModel.keyboardGroupHider!!, KEYBOARD_DISPLAY_TIME.toLong())
+        handler.postDelayed(keyboardGroupHider!!, KEYBOARD_DISPLAY_TIME.toLong())
     }
 
     protected fun setAnimation(animation: Animation?, visibility: Int) {
@@ -206,44 +197,44 @@ open class BaseSSHConsole: AppCompatActivity() {
      */
     protected fun configureOrientation() {
         val rotateDefault: String = if (resources.configuration.keyboard == Configuration.KEYBOARD_NOKEYS) PreferenceConstants.ROTATION_PORTRAIT else PreferenceConstants.ROTATION_LANDSCAPE
-        var rotate = viewModel.prefs!!.getString(PreferenceConstants.ROTATION, rotateDefault)
+        var rotate = prefs!!.getString(PreferenceConstants.ROTATION, rotateDefault)
         if (PreferenceConstants.ROTATION_DEFAULT == rotate) rotate = rotateDefault
 
         // request a forced orientation if requested by user
         when (rotate) {
             PreferenceConstants.ROTATION_LANDSCAPE -> {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                viewModel.forcedOrientation = true
+                forcedOrientation = true
             }
             PreferenceConstants.ROTATION_PORTRAIT -> {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                viewModel.forcedOrientation = true
+                forcedOrientation = true
             }
             else -> {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                viewModel.forcedOrientation = false
+                forcedOrientation = false
             }
         }
     }
 
     protected fun setIntentRequested() {
-        val requestedBridge = viewModel.bound!!.mNicknameBridgeMap[viewModel.requested!!.fragment]?.get()
+        val requestedBridge = bound!!.mNicknameBridgeMap[requested!!.fragment]?.get()
         var requestedIndex = 0
         synchronized(bind.pager) {
             if (requestedBridge == null) {
                 // If we didn't find the requested connection, try opening it
                 try {
                     Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
-                            "so creating one now", viewModel.requested.toString(), viewModel.requested!!.fragment))
-                    viewModel.bound!!.openConnection(viewModel.requested)
+                            "so creating one now", requested.toString(), requested!!.fragment))
+                    bound!!.openConnection(requested)
                 } catch (e: Exception) {
                     Log.e(TAG, "Problem while trying to create new requested bridge from URI", e)
                     return
                 }
-                viewModel.adapter!!.notifyDataSetChanged()
-                requestedIndex = viewModel.adapter!!.count
+                adapter!!.notifyDataSetChanged()
+                requestedIndex = adapter!!.count
             } else {
-                val flipIndex = viewModel.bound!!.bridges.indexOf(requestedBridge)
+                val flipIndex = bound!!.bridges.indexOf(requestedBridge)
                 if (flipIndex > requestedIndex) {
                     requestedIndex = flipIndex
                 }
@@ -260,12 +251,12 @@ open class BaseSSHConsole: AppCompatActivity() {
     protected fun setDisplayedTerminal(requestedIndex: Int) {
         bind.pager.currentItem = requestedIndex
         // set activity title
-        title = viewModel.adapter!!.getPageTitle(requestedIndex)
+        title = adapter!!.getPageTitle(requestedIndex)
         onTerminalChanged()
     }
 
     private fun findCurrentView(id: Int): View? {
-        val view = bind.pager.findViewWithTag<View>(viewModel.adapter!!.getBridgeAtPosition(bind.pager.currentItem))
+        val view = bind.pager.findViewWithTag<View>(adapter!!.getBridgeAtPosition(bind.pager.currentItem))
                 ?: return null
         return view.findViewById(id)
     }
@@ -275,8 +266,8 @@ open class BaseSSHConsole: AppCompatActivity() {
      */
     protected fun onTerminalChanged() {
         val terminalNameOverlay = findCurrentView(R.id.terminal_name_overlay)
-        terminalNameOverlay?.startAnimation(viewModel.fadeOutDelayed)
-        viewModel.updateDefault()
+        terminalNameOverlay?.startAnimation(fadeOutDelayed)
+        updateDefault()
         updatePromptVisible()
         ActivityCompat.invalidateOptionsMenu(this@BaseSSHConsole)
     }
