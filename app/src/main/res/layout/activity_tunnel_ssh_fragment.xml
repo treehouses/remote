@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windowBackground">
+
+    <Button
+        android:id="@+id/btn_keys"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="45dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textColor="@color/bg_white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:background="@drawable/ic_key"
+        android:layout_weight="1"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="25dp" />
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/windowBackground"
+    android:background="@color/services_tab_background"
     android:orientation="vertical">
 
 
@@ -58,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="25dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="25dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/ic_green"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
@@ -70,15 +94,19 @@
             android:id="@+id/btn_add_port"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginStart="25dp"
+            android:layout_marginStart="15dp"
             android:layout_marginEnd="25dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="20dp"
             android:textColor="@color/bg_white"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:background="@drawable/ic_green"
             android:text="Add Port"
             android:layout_weight="1"/>
+
+
+
     </LinearLayout>
 
     <ListView
@@ -110,3 +138,5 @@
 
 
 </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
