@@ -53,6 +53,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         binding.buttonNetworkMode.setOnClickListener(this)
         binding.rebootRaspberry.setOnClickListener(this)
         binding.resetNetwork.setOnClickListener(this)
+        binding.discoverBtn.setOnClickListener(this)
         Tutorials.networkTutorials(binding, requireActivity())
     }
 
@@ -72,6 +73,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
             binding.buttonNetworkMode == v -> Utils.sendMessage(listener, msg, toastMsg, context)
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
+            binding.discoverBtn == v-> listener.openCallFragment(DiscoverFragment())
         }
     }
 
