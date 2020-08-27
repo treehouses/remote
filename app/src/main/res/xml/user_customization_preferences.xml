@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="User Customization" android:layout="@layout/custom_pref_category">
+        <Preference
+            android:title="Clear Commands List"
+            android:key="clear_commands"
+            android:layout="@layout/custom_pref_top"
+            android:summary="Clear the customizable commands list in terminal">
+        </Preference>
+
+        <Preference
+            android:title="Default Commands List"
+            android:key="reset_commands"
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Reset list to the default commands in terminal">
+        </Preference>
+
+        <Preference
+            android:title="Clear Network Profiles"
+            android:key="network_profiles"
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Clear all Network Profiles (WIFI, Hotspot, Bridge)">
+        </Preference>
+
+        <Preference
+            android:title="Clear SSH Hosts"
+            android:key="ssh_hosts"
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Delete all SSH hosts">
+        </Preference>
+
+        <Preference
+            android:title="Clear SSH Keys"
+            android:key="ssh_keys"
+            android:layout="@layout/custom_pref_middle"
+            android:summary="Delete all SSH keys">
+        </Preference>
+
+<!--        <SwitchPreference-->
+<!--            android:title="Keep Bluetooth Alive"-->
+<!--            android:key="keep_bluetooth_alive"-->
+<!--            android:defaultValue="false"-->
+<!--            android:layout="@layout/custom_pref_bottom"-->
+<!--            android:summary="Keep Bluetooth service alive when Treehouses Remote is closed.">-->
+<!--        </SwitchPreference>-->
+    </PreferenceCategory>
+
+</PreferenceScreen>

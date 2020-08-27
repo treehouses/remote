@@ -1,41 +1,46 @@
 package io.treehouses.remote.Fragments
 
-import android.graphics.*
+import android.content.Context.WIFI_SERVICE
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.Message
+import android.text.format.Formatter.formatIpAddress
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat.getColor
+import com.parse.Parse.getApplicationContext
 import io.treehouses.remote.Constants
+import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
-import java.lang.Exception
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
+
 class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
-    private lateinit var bind : ActivityDiscoverFragmentBinding
+    private lateinit var bind: ActivityDiscoverFragmentBinding
     private var gateway = Gateway()
+    private var pi = Device()
+    private var piIP = ""
     private var deviceList = ArrayList<Device>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityDiscoverFragmentBinding.inflate(inflater, container, false)
-        bind.progressBar.visibility = View.VISIBLE
-        bind.container.visibility = View.INVISIBLE
-        deviceList.clear()
+
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
-        requestNetworkInfo()
+        load()
         return bind.root
     }
 
@@ -44,17 +49,17 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         try {
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY_LIST))
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY))
-        }
-        catch (e : Exception) {
+            listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_SELF))
+        } catch (e: Exception) {
             Log.e(TAG, "Error Requesting Network Information")
         }
     }
 
     private fun setupIcons() {
-        bind.container.removeAllViewsInLayout()
+        bind.deviceContainer.removeAllViewsInLayout()
 
-        val midX = (bind.container.measuredWidth / 2).toFloat()
-        val midY = (bind.container.measuredHeight / 2).toFloat()
+        val midX = (bind.deviceContainer.measuredWidth / 2).toFloat()
+        val midY = (bind.deviceContainer.measuredHeight / 2).toFloat()
 
         val r = this.resources.displayMetrics.widthPixels / 2 * 0.72
         val interval = 2 * PI / (deviceList.size - 1)
@@ -76,8 +81,20 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun addIcon(x: Float, y: Float, size: Int, d: Device) {
+        val wifiMgr = getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiMgr.connectionInfo
+        val ipAddress = formatIpAddress(wifiInfo.ipAddress)
         val imageView = ImageView(context)
-        imageView.setImageResource(R.drawable.circle_yellow)
+
+        if (d.ip == ipAddress) {
+            imageView.setImageResource(R.drawable.android_icon)
+        }else if (d.ip == piIP) {
+            imageView.setImageResource(R.drawable.treehouses_rounded)
+        } else if (RPIDialogFragment.checkPiAddress(d.mac)) {
+            imageView.setImageResource(R.drawable.raspi_logo)
+        } else {
+            imageView.setImageResource(R.drawable.circle_yellow)
+        }
         imageView.layoutParams = LinearLayout.LayoutParams(size, size)
         imageView.x = x
         imageView.y = y
@@ -89,13 +106,13 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             showDialog(context, "Device Information", message)
         }
 
-        bind.container.addView(imageView)
+        bind.deviceContainer.addView(imageView)
     }
 
     private fun drawLine(startX: Float, startY: Float, endX: Float, endY: Float) {
         val bitmap = Bitmap.createBitmap(
-                bind.container.measuredWidth,
-                bind.container.measuredHeight,
+                bind.deviceContainer.measuredWidth,
+                bind.deviceContainer.measuredHeight,
                 Bitmap.Config.ARGB_8888
         )
 
@@ -108,31 +125,29 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
         val line = ImageView(context)
         line.setImageBitmap(bitmap)
-        bind.container.addView(line)
+        bind.deviceContainer.addView(line)
     }
 
     private fun updateGatewayIcon() {
-        val gatewayIcon = bind.iconContainer.icon
-        bind.iconContainer.removeView(gatewayIcon)
-        gatewayIcon.setOnClickListener {
-            val message = ("SSID: " + gateway.ssid + "\n") +
-                    ("IP Address: " + gateway.device.ip + "\n") +
-                    ("MAC Address: " + gateway.device.mac + "\n") +
-                    ("Connected Devices: " + (deviceList.size - 1))
+        val gatewayIcon = bind.gatewayContainer.gateway_icon
+        bind.gatewayContainer.removeView(gatewayIcon)
 
-            message.lines()
-            showDialog(context,"Gateway Information", message)
-        }
-        if(gateway.isComplete()) {
+        if (gateway.isComplete()) {
             gatewayIcon.visibility = View.VISIBLE
-            bind.container.visibility = View.VISIBLE
-            bind.progressBar.visibility = View.GONE
+            gatewayIcon.setOnClickListener {
+                val message = ("SSID: " + gateway.ssid + "\n") +
+                        ("IP Address: " + gateway.device.ip + "\n") +
+                        ("MAC Address: " + gateway.device.mac + "\n") +
+                        ("Connected Devices: " + (deviceList.size - 1))
+                message.lines()
+                showDialog(context, "Gateway Information", message)
+            }
         }
-        bind.iconContainer.addView(gatewayIcon)
+        bind.gatewayContainer.addView(gatewayIcon)
     }
 
-    private fun addDevices(readMessage : String) : Boolean {
-        val regex = "([0-9]+.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
+    private fun addDevices(readMessage: String): Boolean {
+        var regex = "([0-9]+\\.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
         val devices = regex.findAll(readMessage)
 
         devices.forEach {
@@ -141,16 +156,43 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             device.ip = it.value.split("\\s+".toRegex())[0]
             device.mac = it.value.split("\\s+".toRegex())[1]
 
-            if(!deviceList.contains(device))
+            if (!deviceList.contains(device))
                 deviceList.add(device)
         }
 
         return !devices.none()
     }
 
-    private fun updateGatewayInfo(readMessage: String) : Boolean {
-        val ip = extractText("ip address:\\s+([0-9]+.){3}[0-9]", "ip address:\\s+", readMessage)
-        if(ip != null) {
+    private fun updatePiInfo(readMessage: String): Boolean {
+        val ip = extractText("([0-9]+\\.){3}[0-9]+", "", readMessage)
+
+        if (ip != null) {
+            pi.ip = ip
+            piIP = ip
+        }
+
+        val mac1 = extractText("eth0:\\s+([0-9a-z]+:){5}[0-9a-z]+", "eth0:\\s+", readMessage)
+        val mac2 = extractText("wlan0:\\s+([0-9a-z]+:){5}[0-9a-z]+", "wlan0:\\s+", readMessage)
+
+        if (mac1 != null) {
+            pi.mac = "\n$mac1 (ethernet)\n"
+        }
+
+        if (mac2 != null) {
+            pi.mac += "$mac2 (wlan)\n"
+        }
+
+        if (pi.isComplete() && pi.mac.matches("\n(.)+\n(.)+\n".toRegex()))
+            if (!deviceList.contains(pi)) {
+                deviceList.add(pi)
+            }
+
+        return !ip.isNullOrEmpty() || mac1.isNullOrEmpty() || !mac2.isNullOrEmpty()
+    }
+
+    private fun updateGatewayInfo(readMessage: String): Boolean {
+        val ip = extractText("ip address:\\s+([0-9]+\\.){3}[0-9]", "ip address:\\s+", readMessage)
+        if (ip != null) {
             gateway.device.ip = ip
         }
 
@@ -164,7 +206,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
             gateway.device.mac = mac
         }
 
-        return ip.isNullOrEmpty() || ssid.isNullOrEmpty() || mac.isNullOrEmpty()
+        return !ip.isNullOrEmpty() || !ssid.isNullOrEmpty() || !mac.isNullOrEmpty()
     }
 
     private fun extractText(pattern: String, separator: String, msg: String): String? {
@@ -172,8 +214,10 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         val res = regex.find(msg)
         var text: String? = null
 
-        if(res != null)
-            text = res.value.split(separator.toRegex())[1]
+        if (res != null) {
+            if (separator == "") text = res.value
+            else text = res.value.split(separator.toRegex())[1]
+        }
 
         return text
     }
@@ -188,12 +232,44 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
                 val readMessage = msg.obj as String
                 Log.d(TAG, "READ = $readMessage")
 
-                if(addDevices(readMessage))
-                    setupIcons()
-                else if (updateGatewayInfo(readMessage))
-                    updateGatewayIcon()
+                if(!addDevices(readMessage))
+                    if(!updateGatewayInfo(readMessage))
+                        updatePiInfo(readMessage)
+
+                if (readMessage.startsWith("Ports:")) {
+                    transition()
+                }
             }
         }
+    }
+
+    private fun load() {
+        bind.progressBar.visibility = View.VISIBLE
+        bind.deviceContainer.visibility = View.INVISIBLE
+        bind.gatewayIcon.visibility = View.INVISIBLE
+
+        deviceList.clear()
+
+        bind.swiperefresh.isRefreshing = false
+        bind.swiperefresh.isEnabled = false
+        bind.swiperefresh.setOnRefreshListener(null)
+
+        requestNetworkInfo()
+    }
+
+    private fun transition() {
+        bind.swiperefresh.isEnabled = true
+        bind.swiperefresh.setOnRefreshListener {
+            load()
+        }
+
+        setupIcons()
+        if(gateway.isComplete())
+            updateGatewayIcon()
+        else CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
+
+        bind.deviceContainer.visibility = View.VISIBLE
+        bind.progressBar.visibility = View.GONE
     }
 
     private fun getSize(): Int {
@@ -205,10 +281,10 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     inner class Device {
-        lateinit var ip : String
-        lateinit var mac : String
+        lateinit var ip: String
+        lateinit var mac: String
 
-        override fun equals(other : Any?) : Boolean {
+        override fun equals(other: Any?): Boolean {
             return this.ip == (other as Device).ip
         }
 
@@ -219,7 +295,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     inner class Gateway {
         var device = Device()
-        lateinit var ssid : String
+        lateinit var ssid: String
 
         fun isComplete(): Boolean {
             return device.isComplete() && this::ssid.isInitialized

@@ -42,7 +42,7 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
     }
 
     init {
-        listener.sendMessage("treehouses vnc")
+        listener.sendMessage(context.getString(R.string.TREEHOUSES_VNC))
         val btnStartConfig = v.findViewById<Button>(R.id.btn_start_config)
         vnc = v.findViewById<Switch>(R.id.switchVnc)
         editTextIp = v.findViewById(R.id.editTextIp)

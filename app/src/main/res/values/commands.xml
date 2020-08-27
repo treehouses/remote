@@ -2,25 +2,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
 
     <string name="REBOOT">reboot\n</string>
-    <string name="HOSTNAME">hostname</string>
 
     <string name="TREEHOUSES_INTERNET">treehouses internet\n</string>
+
+    <string name="TREEHOUSES_VNC">treehouses vnc</string>
+    <string name="TREEHOUSES_VNC_ON">treehouses vnc on</string>
+    <string name="TREEHOUSES_VNC_OFF">treehouses vnc off</string>
+    <string name="TREEHOUSES_REBOOTS_NOW">treehouses reboots now</string>
+    <string name="TREEHOUSES_SHUTDOWN_NOW">treehouses shutdown now</string>
+
     <string name="TREEHOUSES_REMOTE_CHECK">treehouses remote check\n</string>
     <string name="TREEHOUSES_REMOTE_VERSION">treehouses remote version %1$d\n</string>
-    <string name="TREEHOUSES_REMOTE_STATUS">treehouses remote status\n</string>
     <string name="TREEHOUSES_REMOTE_STATUSPAGE">treehouses remote statuspage</string>
     <string name="TREEHOUSES_REMOTE_COMMANDS">treehouses remote commands</string>
-    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade --check\n</string>
+    <string name="TREEHOUSES_REMOTE_KEY_SEND">treehouses remote key send \"%1$s\"</string>
+    <string name="TREEHOUSES_REMOTE_KEY_RECEIVE">treehouses remote key receive \"%1$s\" \"%2$s\" \"%3$s\"</string>
+
+    <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
+    <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master</string>
+
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
-    <string name="TREEHOUSES_TEMPERATURE_CELSIUS">treehouses temperature celsius\n</string>
-    <string name="TREEHOUSES_MEMORY_FREE">treehouses memory free</string>
-    <string name="TREEHOUSES_MEMORY_USED">treehouses memory used</string>
-    <string name="TREEHOUSES_MEMORY_USED_GB">treehouses memory used gb</string>
-    <string name="TREEHOUSES_MEMORY_TOTAL">treehouses memory total\n</string>
-    <string name="TREEHOUSES_MEMORY_TOTAL_GB">treehouses memory total gb\n</string>
     <string name="TREEHOUSES_RENAME">treehouses rename \"%1$s\"</string>
-    <string name="TREEHOUSES_DETECT_ARM">treehouses detect arm"</string>
 
     <string name="TREEHOUSES_NETWORKMODE">treehouses networkmode\n</string>
     <string name="TREEHOUSES_NETWORKMODE_INFO">treehouses networkmode info\n</string>
@@ -36,6 +39,7 @@
     <string name="TREEHOUSES_PASSWORD">treehouses password %1$s</string>
     <string name="TREEHOUSES_DISCOVER_GATEWAY">treehouses discover gateway\n</string>
     <string name="TREEHOUSES_DISCOVER_GATEWAY_LIST">treehouses discover gateway list\n</string>
+    <string name="TREEHOUSES_DISCOVER_SELF">treehouses discover self\n</string>
 
     <string name="TREEHOUSES_WIFI_ENTERPRISE">treehouses wifi \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_WIFI_HIDDEN_ENTERPRISE">treehouses wifihidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
@@ -61,6 +65,8 @@
     <string name="TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL">treehouses sshtunnel add port actual \"%1$s\" \"%2$s\" \"%3$s\"</string>
     <string name="TREEHOUSES_SSHTUNNEL_NOTICE_NOW">treehouses sshtunnel notice now</string>
     <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host \"%1$s\" </string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port \"%1$s\" </string>
 
     <string name="TREEHOUSES_SERVICES_CLEANUP">treehouses services \"%1$s\" cleanup</string>
     <string name="TREEHOUSES_SERVICES_INSTALL">treehouses services \"%1$s\" install</string>
@@ -69,6 +75,8 @@
     <string name="TREEHOUSES_SERVICES_URL_LOCAL">treehouses services \"%1$s\" url local</string>
     <string name="TREEHOUSES_SERVICES_URL_TOR">treehouses services \"%1$s\" url tor</string>
     <string name="TREEHOUSES_SERVICES_AUTORUN">treehouses services \"%1$s\" autorun \"%2$s\" </string>
+    <string name="TREEHOUSES_SERVICES_CONFIG_SEND">treehouses services \"%1$s\" config edit send</string>
+    <string name="TREEHOUSES_SERVICES_CONFIG_REQUEST">treehouses services \"%1$s\" config edit request</string>
 
     <string name="TREEHOUSES_BLOCKER_CHECK">treehouses blocker</string>
     <string name="TREEHOUSES_BLOCKER">treehouses blocker \"%1$s\"</string>
@@ -76,8 +84,7 @@
     <string name="TREEHOUSES_CAMERA_ON">treehouses camera on</string>
     <string name="TREEHOUSES_CAMERA_OFF">treehouses camera off</string>
     <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add \"%1$s\"</string>
-    <string name="TREEHOUSES_VNC_ON">treehouses vnc on</string>
-    <string name="TREEHOUSES_VNC_OFF">treehouses vnc off</string>
+
 
 
 
