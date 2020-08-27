@@ -146,21 +146,27 @@ class SocksFragment : BaseFragment() {
                 profileName = ArrayList()
                 listener.sendMessage("treehouses shadowsocks list")
             }
-            else if(readMessage.contains("removed")){
-                Toast.makeText(requireContext(), "Removed, retrieving list again", Toast.LENGTH_SHORT).show()
-                profileName = ArrayList()
-                listener.sendMessage("treehouses shadowsocks list")
+            else{
+                getMessage2(readMessage)
             }
-            else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")){
+        }
+    }
 
-                if(readMessage.contains(' '))
-                    profileName!!.add(readMessage.split(' ')[0])
-                else
-                    profileName!!.add(readMessage)
+    private fun getMessage2(readMessage: String) {
+        if(readMessage.contains("removed")){
+            Toast.makeText(requireContext(), "Removed, retrieving list again", Toast.LENGTH_SHORT).show()
+            profileName = ArrayList()
+            listener.sendMessage("treehouses shadowsocks list")
+        }
+        else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")){
 
-                adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, profileName!!)
-                bind!!.profiles.adapter = adapter
-            }
+            if(readMessage.contains(' '))
+                profileName!!.add(readMessage.split(' ')[0])
+            else
+                profileName!!.add(readMessage)
+
+            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, profileName!!)
+            bind!!.profiles.adapter = adapter
         }
     }
 }
