@@ -1,4 +1,4 @@
-package io.treehouses.remote
+package io.treehouses.remote.SSHConsole
 
 import android.content.SharedPreferences
 import android.net.Uri
@@ -13,10 +13,12 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.tabs.TabLayout
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.Views.terminal.vt320
+import io.treehouses.remote.adapter.TerminalPagerAdapter
 import io.treehouses.remote.bases.BaseTerminalKeyListener
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 

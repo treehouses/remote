@@ -1,4 +1,4 @@
-package io.treehouses.remote
+package io.treehouses.remote.SSHConsole
 
 import android.app.Dialog
 import android.content.Context
@@ -18,9 +18,13 @@ import android.widget.RelativeLayout
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import io.treehouses.remote.PreferenceConstants
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalViewPager
+import io.treehouses.remote.adapter.TerminalPagerAdapter
+import io.treehouses.remote.callback.TerminalPager
 
 open class DerivedSSHConsole: BaseSSHConsole() {
     private var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }

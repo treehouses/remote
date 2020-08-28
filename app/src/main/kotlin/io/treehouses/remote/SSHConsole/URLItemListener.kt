@@ -1,4 +1,4 @@
-package io.treehouses.remote
+package io.treehouses.remote.SSHConsole
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
+import io.treehouses.remote.SSHConsole.BaseSSHConsole
 import java.lang.ref.WeakReference
 
 class URLItemListener internal constructor(context: Context) : AdapterView.OnItemClickListener {

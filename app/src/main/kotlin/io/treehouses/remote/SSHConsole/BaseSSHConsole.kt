@@ -1,4 +1,4 @@
-package io.treehouses.remote
+package io.treehouses.remote.SSHConsole
 
 import android.annotation.TargetApi
 import android.content.pm.ActivityInfo
@@ -10,6 +10,8 @@ import android.view.View
 import android.view.Window
 import android.view.animation.Animation
 import androidx.core.app.ActivityCompat
+import io.treehouses.remote.PreferenceConstants
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalView
@@ -31,7 +33,7 @@ open class BaseSSHConsole: RootSSHConsole() {
      */
     protected fun updatePromptVisible() {
         // check if our currently-visible terminalbridge is requesting any prompt services
-        val view = adapter!!.currentTerminalView
+        val view = adapter?.currentTerminalView
 
         // Hide all the prompts in case a prompt request was canceled
         hideAllPrompts()

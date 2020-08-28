@@ -1,4 +1,4 @@
-package io.treehouses.remote
+package io.treehouses.remote.adapter
 
 import android.util.Log
 import android.view.View
@@ -6,8 +6,11 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
+import io.treehouses.remote.SSHConsole.BaseSSHConsole
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.Terminal.TerminalView
+import io.treehouses.remote.callback.TerminalPager
 
 class TerminalPagerAdapter : PagerAdapter() {
     private lateinit var terminalPager: TerminalPager

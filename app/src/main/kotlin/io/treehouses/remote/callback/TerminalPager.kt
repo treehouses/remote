@@ -1,4 +1,4 @@
-package io.treehouses.remote
+package io.treehouses.remote.callback
 
 import android.view.LayoutInflater
 import android.view.animation.Animation

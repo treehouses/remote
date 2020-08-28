@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.treehouses.remote
+package io.treehouses.remote.SSHConsole
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
@@ -34,6 +34,9 @@ import android.view.*
 import android.widget.HorizontalScrollView
 import androidx.core.view.MenuItemCompat
 import androidx.preference.PreferenceManager
+import io.treehouses.remote.InitialActivity
+import io.treehouses.remote.PreferenceConstants
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalManager.TerminalBinder
@@ -172,7 +175,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
         volumeControlStream = AudioManager.STREAM_NOTIFICATION
-        val view = adapter!!.currentTerminalView
+        val view = adapter?.currentTerminalView
         val activeTerminal = view != null
         var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         disconnect?.isEnabled = activeTerminal
