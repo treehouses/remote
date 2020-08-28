@@ -13,7 +13,6 @@ import androidx.core.app.ActivityCompat
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalView
-import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 
 open class BaseSSHConsole: RootSSHConsole() {
 
@@ -32,7 +31,7 @@ open class BaseSSHConsole: RootSSHConsole() {
      */
     protected fun updatePromptVisible() {
         // check if our currently-visible terminalbridge is requesting any prompt services
-        val view = currentTerminalView
+        val view = adapter!!.currentTerminalView
 
         // Hide all the prompts in case a prompt request was canceled
         hideAllPrompts()
@@ -106,7 +105,7 @@ open class BaseSSHConsole: RootSSHConsole() {
     }
 
     protected fun onEmulatedKeyClicked(v: View) {
-        val terminal = currentTerminalView ?: return
+        val terminal = adapter!!.currentTerminalView ?: return
         val handler = terminal.bridge.keyHandler
         var hideKeys = sendKeys(v, handler)
         if (hideKeys) hideEmulatedKeys()

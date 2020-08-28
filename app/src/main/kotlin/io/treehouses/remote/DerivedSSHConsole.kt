@@ -5,22 +5,21 @@ import android.content.Context
 import android.graphics.Rect
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import io.treehouses.remote.SSH.PromptHelper
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalView
+import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalViewPager
 
 open class DerivedSSHConsole: BaseSSHConsole() {
@@ -28,7 +27,7 @@ open class DerivedSSHConsole: BaseSSHConsole() {
     private var keyRepeatHandler = Handler()
     private val currentPromptHelper: PromptHelper?
         get() {
-            val view = currentTerminalView ?: return null
+            val view = adapter!!.currentTerminalView ?: return null
             return view.bridge.promptHelper
         }
 
@@ -41,7 +40,7 @@ open class DerivedSSHConsole: BaseSSHConsole() {
 
     protected fun setUrlItemListener() {
         urlScan!!.setOnMenuItemClickListener {
-            val terminalView = currentTerminalView
+            val terminalView = adapter!!.currentTerminalView
             val urls = terminalView!!.bridge.scanForURLs()
             val urlDialog = Dialog(this@DerivedSSHConsole)
             urlDialog.setTitle("Scan for URLs")
@@ -63,12 +62,29 @@ open class DerivedSSHConsole: BaseSSHConsole() {
                         onTerminalChanged()
                     }
                 })
-        adapter = TerminalPagerAdapter(bound, promptHandler, layoutInflater, bind, fadeOutDelayed)
+        adapter = TerminalPagerAdapter()
         adapter!!.setTerminalPager(object : TerminalPager {
             override fun handleData() {
-                handleData()
+                if (tabs != null) {
+                    toolbar!!.visibility = if (adapter?.count!! > 1) View.VISIBLE else View.GONE
+                    tabs!!.setTabsFromPagerAdapter(adapter)
+                }
             }
-
+            override fun getPager(): TerminalViewPager {
+                return bind.pager
+            }
+            override fun getInflater(): LayoutInflater {
+                return layoutInflater
+            }
+            override fun getManager(): TerminalManager? {
+                return bound
+            }
+            override fun getAnimation(): Animation? {
+                return fadeOutDelayed
+            }
+            override fun getHandler(): Handler {
+                return handler
+            }
         })
         bind.pager.adapter = adapter
         if (tabs != null) setupTabLayoutWithViewPager()
@@ -161,7 +177,7 @@ open class DerivedSSHConsole: BaseSSHConsole() {
 
     protected fun addKeyboardListeners() {
         bind.keyboard.buttonKeyboard.setOnClickListener {
-            val terminal = currentTerminalView ?: return@setOnClickListener
+            val terminal = adapter!!.currentTerminalView ?: return@setOnClickListener
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.toggleSoftInputFromWindow(terminal.applicationWindowToken,
                     InputMethodManager.SHOW_FORCED, 0)
@@ -230,10 +246,4 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         }
     }
 
-    private fun handleData() {
-        if (tabs != null) {
-            toolbar!!.visibility = if (adapter?.count!! > 1) View.VISIBLE else View.GONE
-            tabs!!.setTabsFromPagerAdapter(adapter)
-        }
-    }
 }

@@ -51,12 +51,6 @@ open class RootSSHConsole: AppCompatActivity() {
     protected var titleBarHide = false
     protected var keyboardAlwaysVisible = false
     protected lateinit var bind: ActivitySshConsoleBinding
-    protected val currentTerminalView: TerminalView?
-        get() {
-            val currentView = bind.pager.findViewWithTag<View>(adapter?.getBridgeAtPosition(bind.pager.currentItem))
-                    ?: return null
-            return currentView.findViewById<View>(R.id.terminal_view) as TerminalView
-        }
 
     protected fun isSpecialButton(v: View, handler: TerminalKeyListener) : Boolean {
         var flag = true
@@ -98,7 +92,7 @@ open class RootSSHConsole: AppCompatActivity() {
     protected fun setDisconnectItemListener() {
         disconnect!!.setOnMenuItemClickListener {
             // disconnect or close the currently visible session
-            val terminalView = currentTerminalView
+            val terminalView = adapter!!.currentTerminalView
             val bridge = terminalView!!.bridge
             bridge.dispatchDisconnect(true)
             true
@@ -112,7 +106,7 @@ open class RootSSHConsole: AppCompatActivity() {
      */
     protected fun updateDefault() {
         // update the current default terminal
-        val view = currentTerminalView
+        val view = adapter!!.currentTerminalView
         if (view == null || bound == null) {
             return
         }
@@ -121,7 +115,7 @@ open class RootSSHConsole: AppCompatActivity() {
 
     private fun pasteIntoTerminal() {
         // force insert of clipboard text into current console
-        val terminalView = currentTerminalView
+        val terminalView = adapter!!.currentTerminalView
         val bridge = terminalView!!.bridge
 
         // pull string from clipboard and generate all events to force down

@@ -146,7 +146,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
-        val view = currentTerminalView
+        val view = adapter!!.currentTerminalView
         val activeTerminal = view != null
         var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         menu.setQwertyMode(true)
@@ -172,7 +172,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         super.onPrepareOptionsMenu(menu)
         volumeControlStream = AudioManager.STREAM_NOTIFICATION
-        val view = currentTerminalView
+        val view = adapter!!.currentTerminalView
         val activeTerminal = view != null
         var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         disconnect?.isEnabled = activeTerminal
@@ -254,7 +254,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         // Maintain selected host if connected.
-        val currentTerminalView = currentTerminalView
+        val currentTerminalView = adapter!!.currentTerminalView
         if (currentTerminalView != null
                 && !currentTerminalView.bridge.isDisconnected) {
             requested = currentTerminalView.bridge.host!!.uri
