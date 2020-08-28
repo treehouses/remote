@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/blockerDesc"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textStyle="bold"
         android:layout_height="60dp"
         android:textSize="18sp"
         android:textColor="@color/daynight_textColor"
@@ -25,15 +26,16 @@
         android:orientation="horizontal">
 
         <TextView
-            android:paddingLeft="5dp"
             android:id="@+id/levelText"
             android:layout_width="150dp"
+            android:layout_marginLeft="10dp"
             android:textColor="@color/daynight_textColor"
             android:layout_height="wrap_content"
             android:text="Fetching.." />
 
         <SeekBar
             android:id="@+id/blockerBar"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -41,6 +43,8 @@
     <Button
         android:id="@+id/setBlocker"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/ic_green"
         android:textColor="#ffffff"
         android:layout_height="wrap_content"
