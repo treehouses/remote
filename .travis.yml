@@ -22,7 +22,6 @@ before_install:
   - MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
   - MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
   - rm api_docs
-  - curl --url "http://localhost:8000/api/v1/scans" -H "Authorization:$MOBSF_API_KEY"
 install:
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
@@ -75,6 +74,9 @@ before_deploy:
   - sha256sum remote.apk > remote.apk.sha256
   - rm remote-unaligned.apk
   - ls
+  - HASH=$(md5sum remote.apk)
+  - HASH=${HASH:0:32}
+  - curl -F "file=@remote.apk" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
 deploy:
   provider: releases
   api_key:
