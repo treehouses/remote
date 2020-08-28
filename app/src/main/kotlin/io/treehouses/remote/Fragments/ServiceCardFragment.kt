@@ -118,14 +118,19 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (binding!!.installButton == v) {
-            actionListener!!.onClickInstall(serviceData)
-        } else if (binding!!.startButton == v) {
-            actionListener!!.onClickStart(serviceData)
-        } else if (binding!!.openLink == v) {
-            actionListener!!.onClickLink(serviceData)
-        } else if (binding!!.editEnvButton == v) {
-            actionListener!!.onClickEditEnvVar(serviceData)
+        when {
+            binding!!.installButton == v -> {
+                actionListener!!.onClickInstall(serviceData)
+            }
+            binding!!.startButton == v -> {
+                actionListener!!.onClickStart(serviceData)
+            }
+            binding!!.openLink == v -> {
+                actionListener!!.onClickLink(serviceData)
+            }
+            binding!!.editEnvButton == v -> {
+                actionListener!!.onClickEditEnvVar(serviceData)
+            }
         }
     }
 

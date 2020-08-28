@@ -86,6 +86,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * @param toSend : String = A string to send to the Raspberry Pi
      */
     fun sendMessage(toSend: String) {
+        Log.e("SENDING", toSend)
         if (_connectionStatus.value != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplication(), "Not Connected to Bluetooth", Toast.LENGTH_LONG).show()
         }
@@ -121,12 +122,8 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * @param stringRes : Int = The resource ID to retrieve
      * @return = The resolved string resource
      */
-    protected fun getString(stringRes : Int) : String {
-        return getApplication<MainApplication>().getString(stringRes)
-    }
-
-    protected fun getString(stringRes : Int, param: Int) : String {
-        return getApplication<MainApplication>().getString(stringRes, param)
+    protected fun getString(stringRes: Int, vararg params: Any) : String {
+        return getApplication<MainApplication>().getString(stringRes, *params)
     }
 
     init {
