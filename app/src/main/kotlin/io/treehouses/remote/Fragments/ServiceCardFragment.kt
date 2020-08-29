@@ -107,8 +107,9 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     private fun setServiceInfo(s: String?) {
         val spannableString = SpannableString(s)
+        Log.i("spannableString", " " + spannableString)
         Linkify.addLinks(spannableString, Linkify.ALL)
-        binding!!.serviceInfo.text = s
+        binding!!.serviceInfo.text = spannableString
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
     }
 
