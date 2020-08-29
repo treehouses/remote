@@ -34,6 +34,7 @@ import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
+import io.treehouses.remote.bases.BaseBluetoothChatService
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -50,7 +51,7 @@ import java.util.*
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : Service(), Serializable {
+class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : BaseBluetoothChatService(handler, applicationContext) {
     inner class DisconnectReceiver: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
@@ -61,27 +62,15 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     // Member fields
-    private val mAdapter: BluetoothAdapter
-    private var mDevice: BluetoothDevice? = null
 
-    //    private AcceptThread mSecureAcceptThread;
-    //private AcceptThread mInsecureAcceptThread;
+    private val mBinder = LocalBinder()
     private var mConnectThread: ConnectThread? = null
     private var mConnectedThread: ConnectedThread? = null
 
-    private val mBinder = LocalBinder()
-
     private val receiver = DisconnectReceiver()
 
-    /**
-     * Return the current connection state.
-     */
-    @get:Synchronized
-    var state: Int
-        private set
-    private var mNewState: Int
     private var bNoReconnect = false
-    var context: Context?
+
 
 
     fun updateHandler(handler: Handler) {
@@ -482,28 +471,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 //
 //    }
 
-    companion object {
-        // Debugging
-        private const val TAG = "BluetoothChatService"
-        private const val DISCONNECT_ACTION = "disconnect"
-        //private static final String NAME_INSECURE = "BluetoothChatInsecure";
-        // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
-        private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-        private var mHandler: Handler? = null
-    }
-    //    private BluetoothSocket socket = null;
-    /**
-     * Constructor. Prepares a new BluetoothChat session.
-     *
-     * The UI Activity Context
-     * @param handler A Handler to send messages back to the UI Activity
-     */
-    init {
-        mAdapter = BluetoothAdapter.getDefaultAdapter()
-        state = Constants.STATE_NONE
-        mNewState = state
-        mHandler = handler
-        context = applicationContext
-    }
+
 }
