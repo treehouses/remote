@@ -138,14 +138,14 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
             profile.isWifi -> {
                 //WIFI
                 sendMessage(
-                        getApplication<MainApplication>().getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
+                        getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
                                 profile.ssid, profile.password))
                 networkSsid = profile.ssid
             }
             profile.isHotspot -> {
                 //Hotspot
                 sendMessage(
-                        getApplication<MainApplication>().getString(if (profile.isHidden) R.string.TREEHOUSES_AP_HIDDEN else R.string.TREEHOUSES_AP,
+                        getString(if (profile.isHidden) R.string.TREEHOUSES_AP_HIDDEN else R.string.TREEHOUSES_AP,
                                 profile.option, profile.ssid, profile.password))
                 networkSsid = profile.ssid
             }

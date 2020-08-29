@@ -9,11 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
@@ -22,7 +20,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
-import io.treehouses.remote.SSHConsole
+import io.treehouses.remote.SSHConsole.SSHConsole
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
 import io.treehouses.remote.bases.BaseFragment

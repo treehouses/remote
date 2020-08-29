@@ -15,7 +15,7 @@
         android:textSize="24sp"
         app:fontFamily="@font/roboto_bold"
         android:textStyle="bold"
-        android:text="Keys">
+        android:text="Keys (Beta)">
 
     </TextView>
 
