@@ -67,6 +67,13 @@ open class DerivedSSHConsole: BaseSSHConsole() {
                     }
                 })
         adapter = TerminalPagerAdapter()
+        setUpPager()
+        bind.pager.adapter = adapter
+        if (tabs != null) setupTabLayoutWithViewPager()
+        bind.pager.setOnClickListener { showEmulatedKeys(true) }
+    }
+
+    private fun setUpPager() {
         adapter!!.setTerminalPager(object : TerminalPager {
             override fun handleData() {
                 if (tabs != null) {
@@ -90,9 +97,6 @@ open class DerivedSSHConsole: BaseSSHConsole() {
                 return handler
             }
         })
-        bind.pager.adapter = adapter
-        if (tabs != null) setupTabLayoutWithViewPager()
-        bind.pager.setOnClickListener { showEmulatedKeys(true) }
     }
 
     /**
