@@ -6,10 +6,8 @@ import android.graphics.Rect
 import android.os.Handler
 import android.os.Message
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -21,10 +19,8 @@ import com.google.android.material.tabs.TabLayout
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PromptHelper
-import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalViewPager
 import io.treehouses.remote.adapter.TerminalPagerAdapter
-import io.treehouses.remote.callback.TerminalPager
 
 open class DerivedSSHConsole: BaseSSHConsole() {
     private var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }
@@ -71,32 +67,6 @@ open class DerivedSSHConsole: BaseSSHConsole() {
         bind.pager.adapter = adapter
         if (tabs != null) setupTabLayoutWithViewPager()
         bind.pager.setOnClickListener { showEmulatedKeys(true) }
-    }
-
-    private fun setUpPager() {
-        adapter!!.setTerminalPager(object : TerminalPager {
-            override fun handleData() {
-                if (tabs != null) {
-                    toolbar!!.visibility = if (adapter?.count!! > 1) View.VISIBLE else View.GONE
-                    tabs!!.setTabsFromPagerAdapter(adapter)
-                }
-            }
-            override fun getPager(): TerminalViewPager {
-                return bind.pager
-            }
-            override fun getInflater(): LayoutInflater {
-                return layoutInflater
-            }
-            override fun getManager(): TerminalManager? {
-                return bound
-            }
-            override fun getAnimation(): Animation? {
-                return fadeOutDelayed
-            }
-            override fun getHandler(): Handler {
-                return handler
-            }
-        })
     }
 
     /**
@@ -253,5 +223,4 @@ open class DerivedSSHConsole: BaseSSHConsole() {
             true
         }
     }
-
 }

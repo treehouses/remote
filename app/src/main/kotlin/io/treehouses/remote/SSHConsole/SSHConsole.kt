@@ -279,5 +279,4 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
             bind.keyboard.buttonKeyboard.visibility = if (bound!!.hardKeyboardHidden) View.VISIBLE else View.GONE
         }
     }
-
 }

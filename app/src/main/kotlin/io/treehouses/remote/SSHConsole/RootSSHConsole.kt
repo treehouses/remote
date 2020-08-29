@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.text.ClipboardManager
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
@@ -17,9 +18,11 @@ import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.Terminal.TerminalView
+import io.treehouses.remote.SSH.Terminal.TerminalViewPager
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.adapter.TerminalPagerAdapter
 import io.treehouses.remote.bases.BaseTerminalKeyListener
+import io.treehouses.remote.callback.TerminalPager
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 
 open class RootSSHConsole: AppCompatActivity() {
@@ -133,5 +136,31 @@ open class RootSSHConsole: AppCompatActivity() {
             pasteIntoTerminal()
             true
         }
+    }
+
+    protected fun setUpPager() {
+        adapter!!.setTerminalPager(object : TerminalPager {
+            override fun handleData() {
+                if (tabs != null) {
+                    toolbar!!.visibility = if (adapter?.count!! > 1) View.VISIBLE else View.GONE
+                    tabs!!.setTabsFromPagerAdapter(adapter)
+                }
+            }
+            override fun getPager(): TerminalViewPager {
+                return bind.pager
+            }
+            override fun getInflater(): LayoutInflater {
+                return layoutInflater
+            }
+            override fun getManager(): TerminalManager? {
+                return bound
+            }
+            override fun getAnimation(): Animation? {
+                return fadeOutDelayed
+            }
+            override fun getHandler(): Handler {
+                return handler
+            }
+        })
     }
 }
