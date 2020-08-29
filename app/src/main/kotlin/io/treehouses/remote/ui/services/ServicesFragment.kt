@@ -1,7 +1,6 @@
 package io.treehouses.remote.ui.services
 
 import android.os.Bundle
-import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ class ServicesFragment : BaseFragment() {
     var worked = false
     private var currentTab:Int =  0
 
-//    private lateinit var cachedServices: MutableList<String>
     private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {this})
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

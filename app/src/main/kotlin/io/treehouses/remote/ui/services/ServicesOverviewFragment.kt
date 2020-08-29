@@ -28,14 +28,6 @@ class ServicesOverviewFragment() : BaseFragment(), OnItemClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
         adapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.bg_white))
-        bind.listView.adapter = adapter
-        bind.listView.onItemClickListener = this
-
-        viewModel.servicesData.observe(viewLifecycleOwner, Observer {
-            if (it.status != Status.SUCCESS) return@Observer
-            bind.listView.adapter = adapter
-            adapter?.notifyDataSetChanged()
-        })
 
         bind.searchBar.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -49,6 +41,15 @@ class ServicesOverviewFragment() : BaseFragment(), OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesOverviewTutorials(bind, requireActivity())
+
+        bind.listView.adapter = adapter
+        bind.listView.onItemClickListener = this
+        //Only update the adapter if the result is a success
+        viewModel.servicesData.observe(viewLifecycleOwner, Observer {
+            if (it.status != Status.SUCCESS) return@Observer
+            bind.listView.adapter = adapter
+            adapter?.notifyDataSetChanged()
+        })
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {

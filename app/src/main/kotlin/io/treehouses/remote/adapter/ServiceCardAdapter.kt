@@ -3,8 +3,11 @@ package io.treehouses.remote.adapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.treehouses.remote.Fragments.ServiceCardFragment
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
