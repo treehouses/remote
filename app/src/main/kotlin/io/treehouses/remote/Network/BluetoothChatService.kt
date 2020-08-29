@@ -19,8 +19,6 @@ package io.treehouses.remote.Network
 
 import android.app.Notification
 import android.app.PendingIntent
-import android.app.Service
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
@@ -38,8 +36,6 @@ import io.treehouses.remote.bases.BaseBluetoothChatService
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.io.Serializable
-import java.util.*
 
 
 /**

@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.os.Message
 import android.util.Log
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
 import java.io.Serializable
 import java.util.*
 
