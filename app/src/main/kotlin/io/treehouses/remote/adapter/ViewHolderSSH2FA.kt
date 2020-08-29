@@ -39,8 +39,12 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
                         counter++
                     } else if(counter>0){
                         keysDisplay.text = keysDisplay.text.toString() + "\n" + readMessage
-                        if(counter>=6) counter = 0
-                    } else showResponse(readMessage)
+                        counter += readMessage.length
+                        if(counter>=45) counter = 0
+                    } else {
+                        keysDisplay.text = ""
+                        showResponse(readMessage)
+                    }
                 }
             }
         }
