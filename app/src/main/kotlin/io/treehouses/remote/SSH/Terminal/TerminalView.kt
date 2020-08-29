@@ -16,28 +16,23 @@
  */
 package io.treehouses.remote.SSH.Terminal
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Matrix.ScaleToFit
-import android.preference.PreferenceManager
-import android.text.ClipboardManager
-import android.util.Log
+import android.graphics.Paint
+import android.graphics.Path
 import android.view.*
-import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.accessibility.AccessibilityEvent
 import android.view.inputmethod.BaseInputConnection
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
+import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
-import io.treehouses.remote.PreferenceConstants
-import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
 import io.treehouses.remote.bases.BaseTerminalKeyListener
 import io.treehouses.remote.bases.BaseTerminalView
 import java.io.IOException

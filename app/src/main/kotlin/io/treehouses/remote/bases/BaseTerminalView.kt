@@ -1,27 +1,17 @@
 package io.treehouses.remote.bases
 
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.*
 import android.preference.PreferenceManager
 import android.text.ClipboardManager
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import android.widget.Toast
-import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalTextViewOverlay
-import io.treehouses.remote.SSH.Terminal.TerminalView
 import io.treehouses.remote.SSH.Terminal.TerminalViewPager
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
-import io.treehouses.remote.Views.terminal.vt320
-import java.io.IOException
 
 open class BaseTerminalView (context: Context, bridge: TerminalBridge, pager: TerminalViewPager): FrameLayout(context), FontSizeChangedListener {
 
@@ -29,10 +19,7 @@ open class BaseTerminalView (context: Context, bridge: TerminalBridge, pager: Te
     val viewPager: TerminalViewPager
     val prefs: SharedPreferences
 
-    // These are only used for pre-Honeycomb copying.
-    var lastTouchedRow = 0
-    var lastTouchedCol = 0
-    val clipboard: ClipboardManager
+    private val clipboard: ClipboardManager
     val paint: Paint
     val cursorPaint: Paint
     val cursorStrokePaint: Paint
