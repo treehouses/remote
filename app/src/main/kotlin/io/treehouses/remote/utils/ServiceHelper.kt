@@ -46,7 +46,7 @@ fun formatServices(data: HashMap<String, ServiceInfo>) : MutableList<ServiceInfo
 //}
 
 fun isURL(output: String) : Boolean {
-    return output.contains(".") && output.contains(":") && output.length < 30 || output.contains(".onion")
+    return (output.contains(".") && output.contains(":") && output.length < 30) || output.contains(".onion")
 }
 
 fun containsServiceAction(output: String) : Boolean {
