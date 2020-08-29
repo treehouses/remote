@@ -27,6 +27,10 @@ class ShowBluetoothFile : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bluetoothBind.pbar.visibility = View.VISIBLE
+        showFile()
+    }
+
+    private fun showFile() {
         lifecycleScope.launch(Dispatchers.IO) {
             val code = context?.assets?.open("bluetooth-server.txt")?.bufferedReader().use { it?.readText() }
             Log.e("GOT CODE", code)
