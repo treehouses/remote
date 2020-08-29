@@ -221,9 +221,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         synchronized(bridges) {
 
             // remove this bridge from our list
-            bridges.remove(bridge)
-            mHostBridgeMap.remove(bridge.host)
-            mNicknameBridgeMap.remove(bridge.host!!.nickname)
+            bridges.remove(bridge); mHostBridgeMap.remove(bridge.host); mNicknameBridgeMap.remove(bridge.host!!.nickname)
 //            if (bridge.isUsingNetwork) {
 ////				connectivityManager.decRef();
 //            }
