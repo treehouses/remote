@@ -31,9 +31,10 @@ import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.indexOfService
 
-class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, ServiceAction {
+class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceAction {
     /**
      * Adapter for the spinner to select a service from dropdown
      */
@@ -72,9 +73,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
 
-        viewModel.selectedService.observe(viewLifecycleOwner, Observer {
-            goToSelected()
-        })
+        viewModel.selectedService.observe(viewLifecycleOwner, Observer { goToSelected() })
 
         observeServiceAction()
 
@@ -104,7 +103,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                     spinnerAdapter?.notifyDataSetChanged()
                     goToSelected()
                 }
-                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction")
+                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction: ${it.status}")
             }
             setScreenState(true)
         })
@@ -171,7 +170,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 scrolled = true
-                val pos = position + countHeadersBefore(position + 1)
+                val pos = position + countHeadersBefore(position + 1, viewModel.formattedServices)
                 binding.pickService.setSelection(pos)
                 scrolled = false
             }
@@ -185,8 +184,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
     private fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
         Log.d("OPENING: ", "http://$url||")
-        val title = "Select a browser"
-        val chooser = Intent.createChooser(intent, title)
+        val chooser = Intent.createChooser(intent, "Select a browser")
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)
     }
 
@@ -196,8 +194,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
             if (viewModel.formattedServices[position].isHeader) return
-            val count = countHeadersBefore(position)
-            binding.servicesCards.currentItem = position - count
+            binding.servicesCards.currentItem = position - countHeadersBefore(position, viewModel.formattedServices)
         }
     }
 
@@ -213,7 +210,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         if (binding.pickService.selectedItemPosition != pos) {
             binding.pickService.setSelection(pos)
         }
-        val count = countHeadersBefore(pos)
+        val count = countHeadersBefore(pos, viewModel.formattedServices)
         if (binding.servicesCards.currentItem != pos - count) {
             binding.servicesCards.currentItem = pos - count
         }
@@ -230,20 +227,6 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
             viewModel.selectedService.value = binding.pickService.selectedItem as ServiceInfo
         }
 
-    }
-
-    /**
-     * Helper function to count the number of headers before a specified position.
-     * Mostly used to work with the spinner and the ViewPager, who have the same data, but
-     * spinner has headers while ViewPager does not. Can be optimized (currently O(n), ideally O(1))
-     * @param position = Interested position
-     */
-    private fun countHeadersBefore(position: Int): Int {
-        var count = 0
-        for (i in 0..position) {
-            if (viewModel.formattedServices[i].isHeader) count++
-        }
-        return count
     }
 
     /**
@@ -291,14 +274,12 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                 ) { _: DialogInterface?, _: Int ->
                     var command = "treehouses services $name config edit send"
 
-                    for (i in 0 until size) {
-                        command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
-                    }
+                    for (i in 0 until size) command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
+
                     viewModel.sendMessage(command)
                     Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
                 }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-                .create()
+                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
     }
 
     /**

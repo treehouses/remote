@@ -58,3 +58,15 @@ fun indexOfService(name: String, services: MutableList<ServiceInfo>): Int {
     }
     return -1
 }
+
+/**
+ * Helper function to count the number of headers before a specified position.
+ * Mostly used to work with the spinner and the ViewPager, who have the same data, but
+ * spinner has headers while ViewPager does not. Can be optimized (currently O(n), ideally O(1))
+ * @param position = Interested position
+ */
+fun countHeadersBefore(position: Int, services: MutableList<ServiceInfo>): Int {
+    var count = 0
+    for (i in 0..position) { if (services[i].isHeader) count++ }
+    return count
+}

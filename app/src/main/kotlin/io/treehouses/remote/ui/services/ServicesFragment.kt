@@ -1,6 +1,7 @@
 package io.treehouses.remote.ui.services
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +50,7 @@ class ServicesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.serverServiceData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            Log.e("HERE", "WITH: $it")
             when (it.status) {
                 Status.LOADING -> bind.progressBar2.visibility = View.VISIBLE
                 Status.ERROR -> {
