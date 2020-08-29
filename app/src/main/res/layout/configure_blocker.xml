@@ -9,14 +9,14 @@
     <TextView
         android:id="@+id/blockerDesc"
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:textStyle="bold"
-        android:layout_height="60dp"
-        android:textSize="18sp"
+        android:text="Fetching Description.."
         android:textColor="@color/daynight_textColor"
-        android:text="Fetching Description.." />
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,6 +36,7 @@
         <SeekBar
             android:id="@+id/blockerBar"
             android:layout_marginRight="10dp"
+            android:progressBackgroundTint="@color/expandable_child_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -49,6 +50,16 @@
         android:textColor="#ffffff"
         android:layout_height="wrap_content"
         android:text="Set Blocker Level" />
+
+    <TextView
+        android:id="@+id/moveText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/daynight_textColor"
+        android:text="Move slider to change blocking " />
 
 
 </LinearLayout>

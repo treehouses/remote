@@ -17,6 +17,7 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     private val levelText: TextView = v.findViewById(R.id.levelText)
     private val blockerDesc: TextView = v.findViewById(R.id.blockerDesc)
     private val setBlocker: Button = v.findViewById(R.id.setBlocker)
+    private val moveText: TextView = v.findViewById(R.id.moveText)
     private var blockerLevel:Int = 0
     private var previousLevel:Int = 0
     private var readMessage  = ""
@@ -61,13 +62,20 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER_CHECK))
         blockerBar.max = 5
         setBlocker.visibility = View.GONE
+        moveText.visibility = View.VISIBLE
         blockerBar.isEnabled = false
 
         blockerBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 blockerLevel = progress
-                if(blockerLevel == previousLevel) setBlocker.visibility = View.GONE
-                else setBlocker.visibility = View.VISIBLE
+                if(blockerLevel == previousLevel) {
+                    setBlocker.visibility = View.GONE
+                    moveText.visibility = View.VISIBLE
+                }
+                else {
+                    setBlocker.visibility = View.VISIBLE
+                    moveText.visibility = View.GONE
+                }
 
                 setDisplays(progress)
             }
@@ -92,6 +100,7 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         setBlocker.setOnClickListener {
             previousLevel = blockerLevel
             setBlocker.visibility = View.GONE
+            moveText.visibility = View.VISIBLE
             blockerBar.isEnabled = false
             setBlocker(blockerLevel)
             when (blockerLevel) {
