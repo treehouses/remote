@@ -46,7 +46,9 @@ object Tutorials {
 
         val g = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d,e,f,g)
+        val h = fancyShowCaseView(activity, bind.discoverBtn, "Scan your Network to find other Connected Devices", FocusShape.ROUNDED_RECTANGLE)
+
+        show(a,b,c,d,e,f,g,h)
     }
 
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
