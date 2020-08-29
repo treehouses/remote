@@ -75,13 +75,18 @@ class StatusFragment : BaseFragment() {
             bind.countryDisplay.setText("Changing country")
             dialog.dismiss()
         }
+
+        searchView(dialog)
+        dialog.show()
+    }
+
+    private fun searchView(dialog:Dialog){
         var searchView = dialog.search_bar
         searchView.isIconifiedByDefault = false
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
-
             override fun onQueryTextChange(newText: String): Boolean {
                 if (TextUtils.isEmpty(newText)) {
                     countryList!!.clearTextFilter()
@@ -91,8 +96,6 @@ class StatusFragment : BaseFragment() {
                 return true
             }
         })
-
-        dialog.show()
     }
 
     private fun getCountryName(country: String): String {
@@ -205,7 +208,7 @@ class StatusFragment : BaseFragment() {
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
         checkWifiStatus(statusData.internet)
-        
+
         bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
 
@@ -320,22 +323,26 @@ class StatusFragment : BaseFragment() {
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
                 Log.d(TAG, "readMessage = $readMessage")
-                if (readMessage.contains("country=") || readMessage.contains("set to")) {
-                    val len = readMessage.length - 3
-                    val country = readMessage.substring(len).trim { it <= ' ' }
-                    bind.countryDisplay.setText(getCountryName(country))
-                    bind.countryDisplay.isEnabled = true
-                } else if (readMessage.contains("Error when")) {
-                    bind.countryDisplay.setText("try again")
-                    bind.countryDisplay.isEnabled = true
-                    Toast.makeText(requireContext(), "Error when changing country", Toast.LENGTH_LONG).show()
-                } else {
-                    try {
-                        updateStatus(readMessage)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
+                receiveMessage(readMessage)
+            }
+        }
+    }
+
+    private fun receiveMessage(readMessage: String){
+        if (readMessage.contains("country=") || readMessage.contains("set to")) {
+            val len = readMessage.length - 3
+            val country = readMessage.substring(len).trim { it <= ' ' }
+            bind.countryDisplay.setText(getCountryName(country))
+            bind.countryDisplay.isEnabled = true
+        } else if (readMessage.contains("Error when")) {
+            bind.countryDisplay.setText("try again")
+            bind.countryDisplay.isEnabled = true
+            Toast.makeText(requireContext(), "Error when changing country", Toast.LENGTH_LONG).show()
+        } else {
+            try {
+                updateStatus(readMessage)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
