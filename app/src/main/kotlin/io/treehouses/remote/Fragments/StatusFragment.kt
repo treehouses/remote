@@ -2,17 +2,18 @@ package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Message
+import android.text.TextUtils
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
@@ -26,6 +27,8 @@ import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.pojo.StatusData
 import kotlinx.android.synthetic.main.activity_status_fragment.*
+import kotlinx.android.synthetic.main.dialog_wificountry.*
+import java.util.*
 
 class StatusFragment : BaseFragment() {
 
@@ -34,6 +37,7 @@ class StatusFragment : BaseFragment() {
     private var lastCommand = ""
     private var deviceName = ""
     private var rpiVersion = ""
+    private var countryList: ListView? = null
     private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,13 +48,64 @@ class StatusFragment : BaseFragment() {
         checkStatusNow()
         refresh()
         bind.refreshBtn.setOnClickListener { refresh() }
+        val countriesCode = Locale.getISOCountries()
+        val countriesName = arrayOfNulls<String>(countriesCode.size)
+        for (i in countriesCode.indices) {
+            countriesName[i] = getCountryName(countriesCode[i])
+        }
+        var adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
+        bind.countryDisplay.isEnabled = false
+        bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
         return bind.root
+    }
+
+    private fun wifiCountry(adapter:ArrayAdapter<String?>){
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_wificountry)
+        dialog.countries
+        countryList = dialog.countries
+        adapter.filter.filter("")
+        countryList!!.adapter = adapter
+        countryList!!.isTextFilterEnabled = true
+        countryList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
+            var selectedString = countryList!!.getItemAtPosition(p).toString()
+            selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
+            listener.sendMessage(requireContext().resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY, selectedString))
+            bind.countryDisplay.isEnabled = false
+            bind.countryDisplay.setText("Changing country")
+            dialog.dismiss()
+        }
+        var searchView = dialog.search_bar
+        searchView.isIconifiedByDefault = false
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (TextUtils.isEmpty(newText)) {
+                    countryList!!.clearTextFilter()
+                } else {
+                    countryList!!.setFilterText(newText)
+                }
+                return true
+            }
+        })
+
+        dialog.show()
+    }
+
+    private fun getCountryName(country: String): String {
+        val l = Locale("", country)
+        val countryName = l.displayCountry
+        return "$countryName ( $country )"
     }
 
     private fun refresh() {
         setChecking()
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
         bind.refreshBtn.visibility = View.GONE
+        bind.countryDisplay.visibility = View.GONE
     }
 
     private fun setChecking() {
@@ -150,6 +205,8 @@ class StatusFragment : BaseFragment() {
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
         checkWifiStatus(statusData.internet)
+
+
         
         bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
@@ -162,7 +219,11 @@ class StatusFragment : BaseFragment() {
         var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
         when(networkMode){
             "default" -> networkModeTitle.text = "Default"
-            "wifi" -> networkModeTitle.text = "WiFi"
+            "wifi" -> {
+                networkModeTitle.text = "WiFi"
+                bind.countryDisplay.visibility = View.VISIBLE
+                writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
+            }
             "hotspot" -> networkModeTitle.text = "Hotspot"
             "bridge" -> networkModeTitle.text = "Bridge"
             "ethernet" -> networkModeTitle.text = "Ethernet"
@@ -261,10 +322,21 @@ class StatusFragment : BaseFragment() {
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
                 Log.d(TAG, "readMessage = $readMessage")
-                try {
-                    updateStatus(readMessage)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                if (readMessage.contains("country=") || readMessage.contains("set to")) {
+                    val len = readMessage.length - 3
+                    val country = readMessage.substring(len).trim { it <= ' ' }
+                    bind.countryDisplay.setText(getCountryName(country))
+                    bind.countryDisplay.isEnabled = true
+                } else if (readMessage.contains("Error when")) {
+                    bind.countryDisplay.setText("try again")
+                    bind.countryDisplay.isEnabled = true
+                    Toast.makeText(requireContext(), "Error when changing country", Toast.LENGTH_LONG).show()
+                } else {
+                    try {
+                        updateStatus(readMessage)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
         }
