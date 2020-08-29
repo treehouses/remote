@@ -23,6 +23,7 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     val v = v
     private val mChatService: BluetoothChatService = listener.getChatService()
     private var readMessage  = ""
+    private var counter = 0
 
     /**
      * The Handler that gets information back from the BluetoothChatService
@@ -33,8 +34,13 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     readMessage = msg.obj as String
-                    //Log.d(ViewHolderBlocker.TAG, "readMessage = $readMessage")
-                    showResponse(readMessage)
+                    if (readMessage.contains("Emergency")) {
+                        keysDisplay.text = readMessage
+                        counter++
+                    } else if(counter>0){
+                        keysDisplay.text = keysDisplay.text.toString() + "\n" + readMessage
+                        if(counter>=6) counter = 0
+                    } else showResponse(readMessage)
                 }
             }
         }
