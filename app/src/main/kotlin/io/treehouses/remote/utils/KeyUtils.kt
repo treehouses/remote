@@ -88,7 +88,7 @@ object KeyUtils {
             return try {
                 Gson().fromJson(a, KnownHostBean::class.java)
             } catch (e: Exception) {
-                Log.e("COULD NOT PARSE", "GETTING KNOWN HOST: $a", e)
+                LogUtils.log("COULD NOT PARSE GETTING KNOWN HOST: $a")
                 null
             }
         }

@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -58,7 +57,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         GPSService(this)
         val a = (application as MainApplication).getCurrentBluetoothService()
         if (a != null) {
-            Log.e("NOT", "NULL")
             mChatService = a
             mChatService.updateHandler(mHandler)
             openCallFragment(HomeFragment())
@@ -197,6 +195,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 99) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
@@ -243,7 +242,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 false
             }
         }
-        Log.e("BOOLEAN", "" + validBluetoothConnection)
+        LogUtils.log("BOOLEAN $validBluetoothConnection")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -300,7 +299,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
                     if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        Log.e("DEVICE", "" + mConnectedDeviceName)
+                        LogUtils.log("DEVICE$mConnectedDeviceName")
                         checkStatusNow()
                     }
                 }

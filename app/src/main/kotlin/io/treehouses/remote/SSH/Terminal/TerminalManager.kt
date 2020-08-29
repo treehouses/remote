@@ -119,7 +119,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     }
 
     override fun onDestroy() {
-        Log.i(TAG, "Destroying service")
         disconnectAll(true, false)
 
 //		hostdb = null;
