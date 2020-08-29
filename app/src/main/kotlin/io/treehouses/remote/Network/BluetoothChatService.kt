@@ -69,7 +69,28 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
     private val receiver = DisconnectReceiver()
 
-    private var bNoReconnect = false
+    /**
+     * Start the chat service. Specifically start AcceptThread to begin a
+     * session in listening (server) mode. Called by the Activity onResume()
+     */
+    @Synchronized
+    override fun start() {
+        bNoReconnect = false
+        // Cancel any thread attempting to make a connection
+        if (mConnectThread != null) {
+            mConnectThread!!.cancel()
+            mConnectThread = null
+        }
+
+        // Cancel any thread currently running a connection
+        if (mConnectedThread != null) {
+            mConnectedThread!!.cancel()
+            mConnectedThread = null
+        }
+
+        // Update UI title
+        updateUserInterfaceTitle()
+    }
 
 
 
@@ -126,40 +147,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         startForeground(2, notification)
     }
 
-    /**
-     * Update UI title according to the current state of the chat connection
-     */
-    @Synchronized
-    private fun updateUserInterfaceTitle() {
-        Log.e(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
-        if (mNewState != state) mHandler?.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1))
-        mNewState = state
-    }
+
 
     var connectedDeviceName: String = ""
 
-    /**
-     * Start the chat service. Specifically start AcceptThread to begin a
-     * session in listening (server) mode. Called by the Activity onResume()
-     */
-    @Synchronized
-    fun start() {
-        bNoReconnect = false
-        // Cancel any thread attempting to make a connection
-        if (mConnectThread != null) {
-            mConnectThread!!.cancel()
-            mConnectThread = null
-        }
 
-        // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {
-            mConnectedThread!!.cancel()
-            mConnectedThread = null
-        }
-
-        // Update UI title
-        updateUserInterfaceTitle()
-    }
 
     /**
      * Start the ConnectThread to initiate a connection to a remote device.
@@ -272,21 +264,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         r!!.write(out)
     }
 
-    /**
-     * Indicate that the connection attempt failed and notify the UI Activity.
-     */
-    private fun connectionFailed() {
-        // Send a failure message back to the Activity
-        callHandler("Unable to connect to device")
-        mHandler?.obtainMessage(Constants.MESSAGE_ERROR, "Error while connecting; Unable to connect to device")?.sendToTarget()
 
-        state = Constants.STATE_NONE
-        // Update UI title
-        updateUserInterfaceTitle()
-
-        // Start the service over to restart listening mode
-        start()
-    }
 
     /**
      * Indicate that the connection was lost and notify the UI Activity.
@@ -308,13 +286,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
-    fun callHandler(message: String?) {
-        val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
-        val bundle = Bundle()
-        bundle.putString(Constants.TOAST, message)
-        msg?.data = bundle
-        mHandler?.sendMessage(msg ?: Message())
-    }
+
     /**
      * This thread runs while attempting to make an outgoing connection
      * with a device. It runs straight through; the connection either
