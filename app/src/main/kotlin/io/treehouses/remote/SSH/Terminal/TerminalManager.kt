@@ -87,8 +87,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     var hardKeyboardHidden = false
     override fun onCreate() {
         Log.i(TAG, "Starting service")
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        prefs!!.registerOnSharedPreferenceChangeListener(this)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this); prefs!!.registerOnSharedPreferenceChangeListener(this)
         res = resources
         pubkeyTimer = Timer("pubkeyTimer", true)
 
@@ -242,8 +241,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
         loadedKeypairs.remove(pubkey.nickname)
-        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair)
-        val keyHolder = KeyHolder()
+        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair); val keyHolder = KeyHolder()
         keyHolder.bean = pubkey; keyHolder.pair = pair; keyHolder.openSSHPubkey = sshPubKey
         loadedKeypairs[pubkey.nickname] = keyHolder
         if (pubkey.lifetime > 0) {
