@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:textColor="@color/daynight_textColor"
         android:layout_height="wrap_content"
-        android:text="Connect this device to Pi using a USB Cable and Use the Configure button to Enable USB Tethering in Settings to start the connection." />
+        android:text="Connect this device to Pi using a USB Cable. Use the Configure button to enable USB Tethering in Settings to start the connection." />
 
         <Button
             android:id="@+id/btn_configure"
@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:textColor="@color/daynight_textColor"
         android:layout_height="wrap_content"
-        android:text="Use the Configure button to Enable Mobile Hotspot in Settings and edit the Hotspot Name and Password. Enter those details below to start the connection." />
+        android:text="Use the Configure button to enable Mobile Hotspot in Settings and edit the Hotspot Name and Password. Enter those details below to start the connection." />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
