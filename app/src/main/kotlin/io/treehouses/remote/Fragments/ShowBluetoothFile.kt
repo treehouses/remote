@@ -31,19 +31,22 @@ class ShowBluetoothFile : Fragment() {
             val code = context?.assets?.open("bluetooth-server.txt")?.bufferedReader().use { it?.readText() }
             Log.e("GOT CODE", code)
             withContext(Dispatchers.Main) {
-                if (code == null) {
-                    bluetoothBind.fileNotFound.visibility = View.VISIBLE
-                } else {
+                if (code == null) bluetoothBind.fileNotFound.visibility = View.VISIBLE
+                else {
                     withContext(Dispatchers.Default) {
                         val codeView = createCodeView(code)
                         withContext(Dispatchers.Main) {
-                            bluetoothBind.scriptContainer.addView(codeView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-                            bluetoothBind.pbar.visibility = View.GONE
+                            addView(codeView)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun addView(codeView: CodeView) {
+        bluetoothBind.scriptContainer.addView(codeView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        bluetoothBind.pbar.visibility = View.GONE
     }
 
     fun createCodeView(code : String) : CodeView {
