@@ -32,6 +32,8 @@ import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.indexOfService
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 
 class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, ServiceAction {
     private var spinnerAdapter: ServicesListAdapter? = null
@@ -74,7 +76,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                     spinnerAdapter?.notifyDataSetChanged()
                     goToSelected()
                 }
-                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction")
+                else -> logE("UNKNOWN RECEIVED in ServiceAction")
             }
             setScreenState(true)
         })
@@ -101,7 +103,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                     Toast.makeText(context, "Switched autorun to ${it.data}", Toast.LENGTH_SHORT).show()
                     viewModel.autoRunAction.value = Resource.nothing()
                 }
-                else -> Log.e("UNKNOWN", "RECEIVED in AutoRun boolean")
+                else -> logE("UNKNOWN RECEIVED in AutoRun boolean")
             }
             setScreenState(true)
         })
@@ -137,7 +139,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         binding.servicesCards.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
-                Log.d("SELECTED", "onPageSelected: ")
+                logD("SELECTED onPageSelected: ")
                 scrolled = true
                 val pos = position + countHeadersBefore(position + 1)
                 binding.pickService.setSelection(pos)
@@ -149,7 +151,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
 
     private fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
-        Log.d("OPENING: ", "http://$url||")
+        logD("OPENING: http://$url||")
         val title = "Select a browser"
         val chooser = Intent.createChooser(intent, title)
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)

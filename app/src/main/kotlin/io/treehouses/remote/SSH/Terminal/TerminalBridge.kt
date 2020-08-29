@@ -30,6 +30,7 @@ import io.treehouses.remote.SSH.beans.SelectionArea
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
 import io.treehouses.remote.bases.DerivedTerminalBridge
+import io.treehouses.remote.utils.LogUtils
 import java.io.IOException
 import java.util.*
 
@@ -100,14 +101,14 @@ class TerminalBridge : DerivedTerminalBridge {
         // this is probably status reply information
         vDUBuffer = object : vt320() {
             override fun debug(s: String?) {
-                Log.d(TAG, s)
+                LogUtils.log("$TAG, $s")
             }
 
             override fun write(b: ByteArray?) {
                 try {
                     if (b != null && transport != null) transport!!.write(b)
                 } catch (e: IOException) {
-                    Log.e(TAG, "Problem writing outgoing data in vt320() thread", e)
+                    LogUtils.log("$TAG Problem writing outgoing data in vt320() thread $e")
                 }
             }
 
@@ -115,7 +116,7 @@ class TerminalBridge : DerivedTerminalBridge {
                 try {
                     if (transport != null) transport!!.write(b)
                 } catch (e: IOException) {
-                    Log.e(TAG, "Problem writing outgoing data in vt320() thread", e)
+                    LogUtils.log("$TAG Problem writing outgoing data in vt320() thread $e")
                 }
             }
 
@@ -205,9 +206,9 @@ class TerminalBridge : DerivedTerminalBridge {
 //			((vt320) buffer).setBackspace(vt320.DELETE_IS_BACKSPACE);
 //		else
         (vDUBuffer as vt320?)!!.setBackspace(vt320.DELETE_IS_DEL)
-        Log.e("ENTERED", "HERE3")
+        LogUtils.log("ENTERED HERE3")
         if (isSessionOpen) {
-            Log.e("ENTERED", "HERE")
+            LogUtils.log("ENTERED HERE")
             // create thread to relay incoming connection data to buffer
             relay = Relay(this, transport!!, (vDUBuffer as vt320?)!!, host!!.encoding)
             val relayThread = Thread(relay)

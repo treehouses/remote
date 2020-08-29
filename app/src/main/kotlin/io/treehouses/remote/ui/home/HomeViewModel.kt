@@ -16,6 +16,7 @@ import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
 import java.util.*
 
@@ -185,7 +186,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      * @see FragmentViewModel.onWrite
      */
     override fun onWrite(input: String) {
-        Log.e("ON WRITE", input)
+        logE("ON WRITE $input")
     }
 
     override fun onOtherMessage(msg: Message) {

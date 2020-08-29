@@ -12,6 +12,7 @@ import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
@@ -117,7 +118,7 @@ open class BaseTunnelSSHFragment: BaseFragment() {
 
             val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
 
-            Log.d("profile", profile)
+            logD(profile)
             logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
 
             val inPiAndPhone = piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey
@@ -186,7 +187,11 @@ open class BaseTunnelSSHFragment: BaseFragment() {
     }
 
     private fun logKeys(piPublicKey: String, piPrivateKey: String, storedPublicKey: String?, storedPrivateKey: String?) {
-        Log.d("piPublicKey", piPublicKey); Log.d("piPrivateKey", piPrivateKey); Log.d("storedPublicKey", storedPublicKey); Log.d("storedPrivateKey", storedPrivateKey)
+        logD(piPublicKey); logD(piPrivateKey); if (storedPublicKey != null) {
+            logD(storedPublicKey)
+        }; if (storedPrivateKey != null) {
+            logD(storedPrivateKey)
+        }
     }
 
     private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {

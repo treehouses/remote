@@ -16,6 +16,7 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.R
+import io.treehouses.remote.utils.logE
 import java.util.*
 
 
@@ -43,7 +44,7 @@ class WifiDialogFragment : DialogFragment() {
                 .setIcon(R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
                 .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        Log.e("TAG", "SSID = $wifiList")
+        logE("SSID = $wifiList")
         mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return mDialog!!
     }
@@ -106,7 +107,7 @@ class WifiDialogFragment : DialogFragment() {
 
                 // add to list if SSID is not hidden
                 addToList(ssid)
-                Log.e("TAG", "SSID = $ssid")
+                logE("TAG SSID = $ssid")
             }
         }
     }
@@ -120,7 +121,7 @@ class WifiDialogFragment : DialogFragment() {
 
     private fun scanSuccess() {
         val results = wifiManager!!.scanResults
-        Log.e("TAG", "Scan Success - scan results: $results")
+        logE("Scan Success - scan results: $results")
         getSSIDs(results)
         setAdapter()
     }
@@ -128,7 +129,7 @@ class WifiDialogFragment : DialogFragment() {
     private fun scanFailure() {
         // handle failure: new scan did not succeed
         val results = wifiManager!!.scanResults
-        Log.e("TAG", "Scan Failed - scan results: $results")
+        logE("Scan Failed - scan results: $results")
         getSSIDs(results)
         if (results.size >= 1 && firstScan) {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show()

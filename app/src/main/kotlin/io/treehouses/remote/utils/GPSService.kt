@@ -61,7 +61,7 @@ open class GPSService(mContext: Context) : Service(), LocationListener {
                 if (location != null) {
                     latitude = location!!.latitude
                     longitude = location!!.longitude
-                    Log.d("LOCATION", "getLastKnownLocation: $latitude $longitude")
+                    LogUtils.log("LOCATION, getLastKnownLocation: $latitude $longitude")
                     pref.edit().putString("last_lat", latitude.toString()).apply()
                     pref.edit().putString("last_lng", longitude.toString()).apply()
                 }
@@ -70,7 +70,7 @@ open class GPSService(mContext: Context) : Service(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
         this.location = location
-        Log.d("", "onLocationChanged: " + location.longitude + " " + location.latitude)
+        LogUtils.log("onLocationChanged: ${location.longitude} ${location.latitude}")
         pref.edit().putString("last_lat", location.latitude.toString()).apply()
         pref.edit().putString("last_lng", location.longitude.toString()).apply()
     }

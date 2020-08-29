@@ -26,6 +26,7 @@ import io.treehouses.remote.bases.BaseDialogFragment
 import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
+import io.treehouses.remote.utils.logE
 import java.util.*
 
 class RPIDialogFragment : BaseDialogFragment() {
@@ -127,7 +128,7 @@ class RPIDialogFragment : BaseDialogFragment() {
                 viewModel.connect(deviceList[position])
                 mDialog!!.cancel()
                 finish(mView)
-                Log.e("Connecting Bluetooth", "Position: $position ;; Status: ${viewModel.connectionStatus.value}")
+                logE("Connecting Bluetooth. Position: $position ;; Status: ${viewModel.connectionStatus.value}")
             } else {
                 Toast.makeText(context, "Device Unsupported", Toast.LENGTH_LONG).show()
             }
@@ -205,10 +206,7 @@ class RPIDialogFragment : BaseDialogFragment() {
                     bind!!.progressBar.visibility = View.INVISIBLE
                 }
                 addToDialog(device, allDevicesText, allDevices, true)
-                Log.e("Broadcast BT", """
-     ${device.name}
-     ${device.address}
-     """.trimIndent())
+                logE("Broadcast BT ${device.name}${device.address}".trimIndent())
             }
         }
     }

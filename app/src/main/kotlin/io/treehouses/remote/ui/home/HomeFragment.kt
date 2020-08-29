@@ -233,7 +233,7 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun observeConnectionState() {
         viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
-            Log.e("CONNECTED", "STATE $connected")
+            logE("CONNECTED STATE $connected")
             transition(connected == Constants.STATE_CONNECTED)
             connectionDialog?.dismiss()
             when(connected) {

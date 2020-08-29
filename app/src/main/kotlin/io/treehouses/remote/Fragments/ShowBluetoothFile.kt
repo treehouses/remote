@@ -12,6 +12,7 @@ import io.github.kbiakov.codeview.adapters.Options
 import io.github.kbiakov.codeview.highlight.ColorTheme
 import io.treehouses.remote.databinding.CodeViewBinding
 import io.treehouses.remote.databinding.FragmentShowBluetoothFileBinding
+import io.treehouses.remote.utils.LogUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +30,7 @@ class ShowBluetoothFile : Fragment() {
         bluetoothBind.pbar.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
             val code = context?.assets?.open("bluetooth-server.txt")?.bufferedReader().use { it?.readText() }
-            Log.e("GOT CODE", code)
+            LogUtils.log("GOT CODE " + code)
             withContext(Dispatchers.Main) {
                 if (code == null) {
                     bluetoothBind.fileNotFound.visibility = View.VISIBLE

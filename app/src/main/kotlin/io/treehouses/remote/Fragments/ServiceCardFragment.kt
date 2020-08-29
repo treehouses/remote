@@ -16,6 +16,7 @@ import com.caverock.androidsvg.SVG
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.logD
 
 class ServiceCardFragment : Fragment(), View.OnClickListener {
     private var actionListener: ServiceAction? = null
@@ -96,7 +97,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     private fun showIcon(s: String?) {
         try {
-            Log.d(serviceData.name, "showIcon:" + serviceData.icon)
+            logD("${serviceData.name}, showIcon: ${serviceData.icon}")
             val svg = SVG.getFromString(s)
             val pd = PictureDrawable(svg.renderToPicture())
             binding!!.serviceLogo.setImageDrawable(pd)

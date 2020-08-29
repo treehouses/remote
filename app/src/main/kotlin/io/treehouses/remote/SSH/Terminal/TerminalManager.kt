@@ -35,6 +35,7 @@ import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -86,7 +87,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     protected var mPendingReconnect: MutableList<WeakReference<TerminalBridge>> = ArrayList()
     var hardKeyboardHidden = false
     override fun onCreate() {
-        Log.i(TAG, "Starting service")
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         prefs!!.registerOnSharedPreferenceChangeListener(this)
         res = resources
@@ -223,7 +223,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     override fun onDisconnected(bridge: TerminalBridge) {
         var shouldHideRunningNotification = false
-        Log.d(TAG, "Bridge Disconnected. Removing it.")
+        LogUtils.log("$TAG, Bridge Disconnected. Removing it.")
         synchronized(bridges) {
 
             // remove this bridge from our list
@@ -262,12 +262,12 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             val nickname = pubkey.nickname
             pubkeyTimer!!.schedule(object : TimerTask() {
                 override fun run() {
-                    Log.d(TAG, "Unloading from memory key: $nickname")
+                    LogUtils.log("$TAG, Unloading from memory key: $nickname")
                     loadedKeypairs.remove(pubkey.nickname)
                 }
             }, pubkey.lifetime * 1000.toLong())
         }
-        Log.d(TAG, String.format("Added key '%s' to in-memory cache", pubkey.nickname))
+        LogUtils.log("$TAG, ${String.format("Added key '%s' to in-memory cache", pubkey.nickname)}")
     }
 
     fun removeKey(publicKey: ByteArray?): Boolean {
@@ -279,7 +279,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             }
         }
         return if (nickname != null) {
-            Log.d(TAG, String.format("Removed key '%s' to in-memory cache", nickname))
+            LogUtils.log("$TAG, ${String.format("Removed key '%s' to in-memory cache", nickname)}")
             loadedKeypairs.remove(nickname) != null
         } else false
     }
@@ -304,7 +304,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     }
 
     override fun onBind(intent: Intent): IBinder? {
-        Log.i(TAG, "Someone bound to TerminalManager with " + bridges.size + " bridges active")
         keepServiceAlive()
         isResizeAllowed = true
         return binder
@@ -331,13 +330,11 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 
     override fun onRebind(intent: Intent) {
         super.onRebind(intent)
-        Log.i(TAG, "Someone rebound to TerminalManager with " + bridges.size + " bridges active")
         keepServiceAlive()
         isResizeAllowed = true
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        Log.i(TAG, "Someone unbound from TerminalManager with " + bridges.size + " bridges active")
         isResizeAllowed = true
         if (bridges.size == 0) {
             if (loadedKeypairs.size > 0) {
@@ -346,7 +343,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
                     idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
                 }
             } else {
-                Log.d(TAG, "Stopping service immediately")
+                LogUtils.log("$TAG, Stopping service immediately")
                 stopSelf()
             }
         } else {
@@ -360,7 +357,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 
     private inner class IdleTask : TimerTask() {
         override fun run() {
-            Log.d(TAG, String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000))
+            LogUtils.log("$TAG, ${String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000)}")
             if (bridges.size == 0) {
                 stopSelf()
             }

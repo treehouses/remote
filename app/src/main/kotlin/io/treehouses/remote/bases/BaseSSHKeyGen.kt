@@ -9,6 +9,7 @@ import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
+import io.treehouses.remote.utils.LogUtils
 import kotlinx.coroutines.*
 import java.security.KeyPairGenerator
 import kotlin.coroutines.resume
@@ -113,7 +114,7 @@ open class BaseSSHKeyGen : FullScreenDialogFragment() {
             val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
                 initialize(bitSize)
             }.generateKeyPair()
-            Log.e("GENERATED", "KEY")
+            LogUtils.log("GENERATED KEY")
             val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
             if (password.isNotEmpty()) key.isEncrypted = true
             it.resume(key)

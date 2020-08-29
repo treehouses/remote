@@ -17,6 +17,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
+import io.treehouses.remote.utils.logD
 import java.util.*
 
 class TorTabFragment : BaseFragment() {
@@ -202,7 +203,7 @@ class TorTabFragment : BaseFragment() {
     override fun getMessage(msg: Message) {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage:String = msg.obj as String
-            Log.d("Tor reply", "" + readMessage)
+            logD("Tor reply, $readMessage")
             if (readMessage.contains("inactive")) {
                 bind!!.btnHostName.visibility = View.GONE
                 startButton!!.text = "Start Tor"

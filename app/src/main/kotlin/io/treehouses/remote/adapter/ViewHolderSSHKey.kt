@@ -12,6 +12,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.Utils.toast
 
 class ViewHolderSSHKey internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
@@ -37,7 +38,7 @@ class ViewHolderSSHKey internal constructor(v: View, private val c: Context, lis
         editTextSSHKey = v.findViewById(R.id.editTextSSHKey)
         btnStartConfig.setOnClickListener {
             if (editTextSSHKey.text.toString() != "") {
-                Log.d("1111111", editTextSSHKey.text.toString())
+                LogUtils.log("1111111 ${editTextSSHKey.text}")
                 listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD,  editTextSSHKey.text.toString()))
             } else {
                 Toast.makeText(c, "Incorrect SSH Key Input", Toast.LENGTH_LONG).show()

@@ -10,6 +10,7 @@ import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
+import io.treehouses.remote.utils.LogUtils
 import java.io.IOException
 
 class TerminalKeyListener(tm: TerminalManager?,
@@ -65,7 +66,7 @@ class TerminalKeyListener(tm: TerminalManager?,
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
-            Log.d(TAG, "Input before connection established ignored.")
+            LogUtils.log("$TAG, Input before connection established ignored.")
         }
         return false
     }

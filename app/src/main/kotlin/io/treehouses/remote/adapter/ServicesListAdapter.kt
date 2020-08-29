@@ -12,6 +12,7 @@ import android.widget.TextView
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.LogUtils
 import java.util.*
 
 class ServicesListAdapter //private Button start, install, restart, link, info;
@@ -93,7 +94,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
             name!!.text = data[position].name
             setStatus(data[position].serviceStatus)
         } catch (exception:java.lang.IndexOutOfBoundsException) {
-            Log.e("Error", exception.toString())
+            LogUtils.log("Error $exception")
         }
         return convertView
     }
@@ -102,7 +103,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
         try {
             return data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED
         } catch(exception:IndexOutOfBoundsException) {
-            Log.e("Error", exception.toString())
+            LogUtils.log("Error $exception")
         }
         return false
     }
