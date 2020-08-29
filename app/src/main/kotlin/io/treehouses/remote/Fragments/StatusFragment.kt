@@ -205,8 +205,6 @@ class StatusFragment : BaseFragment() {
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
         checkWifiStatus(statusData.internet)
-
-
         
         bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
@@ -222,7 +220,6 @@ class StatusFragment : BaseFragment() {
             "wifi" -> {
                 networkModeTitle.text = "WiFi"
                 bind.countryDisplay.visibility = View.VISIBLE
-                writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
             }
             "hotspot" -> networkModeTitle.text = "Hotspot"
             "bridge" -> networkModeTitle.text = "Bridge"
@@ -271,6 +268,7 @@ class StatusFragment : BaseFragment() {
             bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
             bind.upgrade.visibility = View.VISIBLE
         }
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
     }
 
     private fun showRenameDialog() {
