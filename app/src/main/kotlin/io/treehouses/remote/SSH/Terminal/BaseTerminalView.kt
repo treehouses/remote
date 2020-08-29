@@ -1,4 +1,4 @@
-package io.treehouses.remote.bases
+package io.treehouses.remote.SSH.Terminal
 
 import android.annotation.TargetApi
 import android.content.Context

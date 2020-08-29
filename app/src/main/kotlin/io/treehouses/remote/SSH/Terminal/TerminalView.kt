@@ -34,7 +34,6 @@ import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
-import io.treehouses.remote.bases.BaseTerminalView
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
