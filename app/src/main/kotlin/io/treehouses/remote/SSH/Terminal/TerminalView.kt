@@ -39,6 +39,7 @@ import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
 import io.treehouses.remote.bases.BaseTerminalKeyListener
+import io.treehouses.remote.bases.BaseTerminalView
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -50,57 +51,29 @@ import java.util.regex.Pattern
  *
  * @author jsharkey
  */
-class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalViewPager) : FrameLayout(context), FontSizeChangedListener {
-    val bridge: TerminalBridge
-    private val terminalTextViewOverlay: TerminalTextViewOverlay?
-    val viewPager: TerminalViewPager
-    private val gestureDetector: GestureDetector?
-    private val prefs: SharedPreferences
+class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalViewPager) : BaseTerminalView(context, bridge, pager) {
 
-    // These are only used for pre-Honeycomb copying.
-    private var lastTouchedRow = 0
-    private var lastTouchedCol = 0
-    private val clipboard: ClipboardManager
-    private val paint: Paint
-    private val cursorPaint: Paint
-    private val cursorStrokePaint: Paint
-    private val cursorInversionPaint: Paint
-    private val cursorMetaInversionPaint: Paint
-
-    // Cursor paints to distinguish modes
-    private val ctrlCursor: Path
-    private val altCursor: Path
-    private val shiftCursor: Path
-    private val tempSrc: RectF
-    private val tempDst: RectF
-    private val scaleMatrix: Matrix
-    private var notification: Toast? = null
-    private var lastNotification: String? = null
 
     @Volatile
     private var notifications = true
 
     // Related to Accessibility Features
-    private var mAccessibilityInitialized = false
-    private var mAccessibilityActive = true
+
     private val mAccessibilityLock = arrayOfNulls<Any>(0)
-    private val mAccessibilityBuffer: StringBuffer
+    private var mEventSender: TerminalView.AccessibilityEventSender? = null
     private var mControlCodes: Pattern? = null
     private var mCodeMatcher: Matcher? = null
-    private var mEventSender: AccessibilityEventSender? = null
     private val singleDeadKey = CharArray(1)
+    private var terminalTextViewOverlay: TerminalTextViewOverlay?
+    private var gestureDetector: GestureDetector?
 
-    @TargetApi(11)
-    private fun setLayerTypeToSoftware() {
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-    }
 
     fun copyCurrentSelectionToClipboard() {
         terminalTextViewOverlay?.copyCurrentSelectionToClipboard()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (gestureDetector != null && gestureDetector.onTouchEvent(event)) return true
+        if (gestureDetector != null && gestureDetector!!.onTouchEvent(event)) return true
         return super.onTouchEvent(event)
     }
 
@@ -110,17 +83,32 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         scaleCursors()
     }
 
+    fun propagateConsoleText(rawText: CharArray?, length: Int) {
+        if (mAccessibilityActive) {
+            synchronized(mAccessibilityLock) { mAccessibilityBuffer.append(rawText, 0, length) }
+            if (mAccessibilityInitialized) {
+                if (mEventSender != null) {
+                    removeCallbacks(mEventSender)
+                } else {
+                    mEventSender = AccessibilityEventSender()
+                }
+                postDelayed(mEventSender, TerminalView.ACCESSIBILITY_EVENT_THRESHOLD.toLong())
+            }
+        }
+        (context as Activity).runOnUiThread { terminalTextViewOverlay?.onBufferChanged() }
+    }
+
     override fun onFontSizeChanged(size: Float) {
         scaleCursors()
         (context as Activity).runOnUiThread {
             if (terminalTextViewOverlay != null) {
-                terminalTextViewOverlay.textSize = size
+                terminalTextViewOverlay!!.textSize = size
 
                 // For the TextView to line up with the bitmap text, lineHeight must be equal to
                 // the bridge's charHeight. See TextView.getLineHeight(), which has been reversed to
                 // derive lineSpacingMultiplier.
-                val lineSpacingMultiplier = bridge.charHeight.toFloat() / terminalTextViewOverlay.paint.getFontMetricsInt(null)
-                terminalTextViewOverlay.setLineSpacing(0.0f, lineSpacingMultiplier)
+                val lineSpacingMultiplier = bridge.charHeight.toFloat() / terminalTextViewOverlay!!.paint.getFontMetricsInt(null)
+                terminalTextViewOverlay!!.setLineSpacing(0.0f, lineSpacingMultiplier)
             }
         }
     }
@@ -263,20 +251,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         }
     }
 
-    fun propagateConsoleText(rawText: CharArray?, length: Int) {
-        if (mAccessibilityActive) {
-            synchronized(mAccessibilityLock) { mAccessibilityBuffer.append(rawText, 0, length) }
-            if (mAccessibilityInitialized) {
-                if (mEventSender != null) {
-                    removeCallbacks(mEventSender)
-                } else {
-                    mEventSender = AccessibilityEventSender()
-                }
-                postDelayed(mEventSender, ACCESSIBILITY_EVENT_THRESHOLD.toLong())
-            }
-        }
-        (context as Activity).runOnUiThread { terminalTextViewOverlay?.onBufferChanged() }
-    }
+
 
     private inner class AccessibilityEventSender : Runnable {
         override fun run() {
@@ -389,76 +364,16 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
     }
 
     init {
-        setWillNotDraw(false)
-        this.bridge = bridge
-        viewPager = pager
-        mAccessibilityBuffer = StringBuffer()
-        layoutParams = LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)
-        isFocusable = true
-        isFocusableInTouchMode = true
-
-        // Some things TerminalView uses is unsupported in hardware acceleration
-        // so this is using software rendering until we can replace all the
-        // instances.
-        // See: https://developer.android.com/guide/topics/graphics/hardware-accel.html#unsupported
-        val colorFilter = ColorMatrixColorFilter(ColorMatrix(floatArrayOf(-1f, 0f, 0f, 0f, 255f, 0f, -1f, 0f, 0f, 255f, 0f, 0f, -1f, 0f, 255f, 0f, 0f, 0f, 1f, 0f)))
-        setLayerTypeToSoftware()
-        paint = Paint()
-        cursorPaint = Paint()
-        cursorPaint.color = bridge.color[bridge.defaultFg]
-        cursorPaint.isAntiAlias = true
-        cursorInversionPaint = Paint()
-        cursorInversionPaint.colorFilter = colorFilter
-        cursorInversionPaint.isAntiAlias = true
-        cursorMetaInversionPaint = Paint()
-        cursorMetaInversionPaint.colorFilter = colorFilter
-        cursorMetaInversionPaint.isAntiAlias = true
-        cursorStrokePaint = Paint(cursorInversionPaint)
-        cursorStrokePaint.strokeWidth = 0.1f
-        cursorStrokePaint.style = Paint.Style.STROKE
-
-        /*
-         * Set up our cursor indicators on a 1x1 Path object which we can later
-         * transform to our character width and height
-         */
-        // TODO make this into a resource somehow
-        shiftCursor = Path()
-        shiftCursor.lineTo(0.5f, 0.33f)
-        shiftCursor.lineTo(1.0f, 0.0f)
-        altCursor = Path()
-        altCursor.moveTo(0.0f, 1.0f)
-        altCursor.lineTo(0.5f, 0.66f)
-        altCursor.lineTo(1.0f, 1.0f)
-        ctrlCursor = Path()
-        ctrlCursor.moveTo(0.0f, 0.25f)
-        ctrlCursor.lineTo(1.0f, 0.5f)
-        ctrlCursor.lineTo(0.0f, 0.75f)
-
-        // For creating the transform when the terminal resizes
-        tempSrc = RectF()
-        tempSrc[0.0f, 0.0f, 1.0f] = 1.0f
-        tempDst = RectF()
-        scaleMatrix = Matrix()
-
-        // connect our view up to the bridge
-        setOnKeyListener(bridge.keyHandler)
-        terminalTextViewOverlay = TerminalTextViewOverlay(context, this)
-        terminalTextViewOverlay.setLayoutParams(
-                RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-        addView(terminalTextViewOverlay, 0)
-
-        // Once terminalTextViewOverlay is active, allow it to handle key events instead.
-        terminalTextViewOverlay.setOnKeyListener(bridge.keyHandler)
-        clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        bridge.addFontSizeChangedListener(this)
         bridge.parentChanged(this)
-        onFontSizeChanged(bridge.fontSize)
-        gestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
+        gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             // Only used for pre-Honeycomb devices.
             private val bridge = this@TerminalView.bridge
             private var totalY = 0f
 
+            /**
+             * This should only handle scrolling when terminalTextViewOverlay is `null`, but
+             * we need to handle the page up/down gesture if it's enabled.
+             */
             /**
              * This should only handle scrolling when terminalTextViewOverlay is `null`, but
              * we need to handle the page up/down gesture if it's enabled.
@@ -509,6 +424,14 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 return super.onDoubleTap(e)
             }
         })
+
+        terminalTextViewOverlay = TerminalTextViewOverlay(context, this)
+        terminalTextViewOverlay!!.setLayoutParams(
+                RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        addView(terminalTextViewOverlay, 0)
+
+        // Once terminalTextViewOverlay is active, allow it to handle key events instead.
+        terminalTextViewOverlay!!.setOnKeyListener(bridge.keyHandler)
 
         // Enable accessibility features if a screen reader is active.
 //        AccessibilityStateTester().execute(null as Void?)
