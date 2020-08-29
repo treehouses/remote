@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import io.treehouses.remote.R
@@ -29,13 +30,9 @@ class ServicesOverviewFragment() : BaseFragment(), OnItemClickListener {
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
         adapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.bg_white))
 
-        bind.searchBar.addTextChangedListener(object : TextWatcher {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                adapter?.filter?.filter(s.toString())
-            }
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable) {}
-        })
+        bind.searchBar.doOnTextChanged { text, _, _, _ ->
+            adapter?.filter?.filter(text.toString())
+        }
         return bind.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -62,7 +62,7 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
             if (it.status == Status.SUCCESS) {
                 spinnerAdapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, resources.getColor(R.color.md_grey_600))
                 serviceCardAdapter = ServiceCardAdapter(childFragmentManager, viewModel.formattedServices)
-                intialize()
+                initialize()
                 goToSelected()
             }
         })
@@ -161,7 +161,7 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
     /**
      * Initializes the adapter and the on change listener for the spinner, and the ViewPager
      */
-    private fun intialize() {
+    private fun initialize() {
         binding.pickService.adapter = spinnerAdapter
         binding.pickService.setSelection(1)
         binding.pickService.onItemSelectedListener = this
@@ -278,8 +278,7 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
 
                     viewModel.sendMessage(command)
                     Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
-                }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+                }.setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
     }
 
     /**
@@ -327,7 +326,6 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
      */
     override fun onClickEditEnvVar(s: ServiceInfo?) {
         viewModel.editEnvVariableRequest(s ?: return)
-
     }
 
     /**
