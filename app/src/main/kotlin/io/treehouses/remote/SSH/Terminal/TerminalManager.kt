@@ -87,8 +87,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     var hardKeyboardHidden = false
     override fun onCreate() {
         Log.i(TAG, "Starting service")
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        prefs!!.registerOnSharedPreferenceChangeListener(this)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this); prefs!!.registerOnSharedPreferenceChangeListener(this)
         res = resources
         pubkeyTimer = Timer("pubkeyTimer", true)
 
@@ -113,7 +112,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 
 //		enableMediaPlayer();
         hardKeyboardHidden = res!!.getConfiguration().hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES
-        val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
+        //val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
 
 //		connectivityManager = new ConnectivityReceiver(this, lockingWifi);
     }
@@ -141,11 +140,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     fun disconnectAll(immediate: Boolean, excludeLocal: Boolean) {
         var tmpBridges: Array<TerminalBridge>? = null
-        synchronized(bridges) {
-            if (bridges.size > 0) {
-                tmpBridges = bridges.toTypedArray()
-            }
-        }
+        synchronized(bridges) { if (bridges.size > 0) tmpBridges = bridges.toTypedArray() }
         if (tmpBridges != null) {
             // disconnect and dispose of any existing bridges
             for (i in tmpBridges!!.indices) {
@@ -163,8 +158,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         // throw exception if terminal already open
         require(mHostBridgeMap[host]?.get() == null) { "Connection already open for that nickname" }
         val bridge = TerminalBridge(this, host)
-        bridge.setOnDisconnectedListener(this)
-        bridge.startConnection()
+        bridge.setOnDisconnectedListener(this); bridge.startConnection()
         synchronized(bridges) {
             bridges.add(bridge)
             val wr = WeakReference(bridge)
@@ -193,10 +187,8 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     val scrollback: Int
         get() {
             var scrollback = 140
-            try {
-                scrollback = prefs!!.getString(PreferenceConstants.SCROLLBACK, "140")!!.toInt()
-            } catch (e: Exception) {
-            }
+            try { scrollback = prefs!!.getString(PreferenceConstants.SCROLLBACK, "140")!!.toInt() }
+            catch (e: Exception) { }
             return scrollback
         }
 
@@ -223,20 +215,16 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      * Called by child bridge when somehow it's been disconnected.
      */
     override fun onDisconnected(bridge: TerminalBridge) {
-        var shouldHideRunningNotification = false
+        //var shouldHideRunningNotification = false
         Log.d(TAG, "Bridge Disconnected. Removing it.")
         synchronized(bridges) {
 
             // remove this bridge from our list
-            bridges.remove(bridge)
-            mHostBridgeMap.remove(bridge.host)
-            mNicknameBridgeMap.remove(bridge.host!!.nickname)
+            bridges.remove(bridge); mHostBridgeMap.remove(bridge.host); mNicknameBridgeMap.remove(bridge.host!!.nickname)
 //            if (bridge.isUsingNetwork) {
 ////				connectivityManager.decRef();
 //            }
-            if (bridges.isEmpty() && mPendingReconnect.isEmpty()) {
-                shouldHideRunningNotification = true
-            }
+            if (bridges.isEmpty() && mPendingReconnect.isEmpty()) //shouldHideRunningNotification = true
 
             // pass notification back up to gui
             if (disconnectListener != null) disconnectListener!!.onDisconnected(bridge)
@@ -253,11 +241,8 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
         loadedKeypairs.remove(pubkey.nickname)
-        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair)
-        val keyHolder = KeyHolder()
-        keyHolder.bean = pubkey
-        keyHolder.pair = pair
-        keyHolder.openSSHPubkey = sshPubKey
+        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair); val keyHolder = KeyHolder()
+        keyHolder.bean = pubkey; keyHolder.pair = pair; keyHolder.openSSHPubkey = sshPubKey
         loadedKeypairs[pubkey.nickname] = keyHolder
         if (pubkey.lifetime > 0) {
             val nickname = pubkey.nickname
@@ -352,9 +337,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             }
         } else {
             // tell each bridge to forget about their previous prompt handler
-            for (bridge in bridges) {
-                bridge.promptHelper?.setHandler(null)
-            }
+            for (bridge in bridges) { bridge.promptHelper?.setHandler(null) }
         }
         return true
     }
@@ -362,9 +345,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     private inner class IdleTask : TimerTask() {
         override fun run() {
             Log.d(TAG, String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000))
-            if (bridges.size == 0) {
-                stopSelf()
-            }
+            if (bridges.size == 0) stopSelf()
         }
     }
 
@@ -378,15 +359,11 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
                                            key: String) {
-        if (PreferenceConstants.BUMPY_ARROWS == key) {
-            wantKeyVibration = sharedPreferences.getBoolean(
-                    PreferenceConstants.BUMPY_ARROWS, true)
-        } else if (PreferenceConstants.WIFI_LOCK == key) {
-            val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
+        if (PreferenceConstants.BUMPY_ARROWS == key) wantKeyVibration = sharedPreferences.getBoolean(PreferenceConstants.BUMPY_ARROWS, true)
+        else if (PreferenceConstants.WIFI_LOCK == key) {
+            //val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
             //			connectivityManager.setWantWifiLock(lockingWifi);
-        } else if (PreferenceConstants.MEMKEYS == key) {
-            savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
-        }
+        } else if (PreferenceConstants.MEMKEYS == key) savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
     }
 
     class KeyHolder {
@@ -427,9 +404,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     }
 
     private fun notifyHostStatusChanged() {
-        for (listener in hostStatusChangedListeners) {
-            listener.onHostStatusChanged()
-        }
+        for (listener in hostStatusChangedListeners) { listener.onHostStatusChanged() }
     }
 
     companion object {
