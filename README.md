@@ -89,7 +89,7 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 3. Click on "Connect to RPI"  
 
-4. Select your Raspberry Pi (`treehouses-<4-digit-number>`)i.e. `treehouses-8930` 
+4. Select your Raspberry Pi (`treehouses-<4-digit-number>`) i.e. `treehouses-8930` 
 
 5. Once you have connected to your Raspberry Pi, tap the menu button on the top left of your screen to view a whole host of options to interact with your Raspberry Pi  
 
