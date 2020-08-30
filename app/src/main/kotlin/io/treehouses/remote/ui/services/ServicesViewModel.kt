@@ -20,7 +20,18 @@ import io.treehouses.remote.utils.*
 
 class ServicesViewModel(application: Application) : FragmentViewModel(application) {
 
+    /**
+     * Private services JSON value that contains the raw string it retrieves from the Raspberry Pi
+     * That upon receiving, should be parsed as ServicesData.
+     * @see ServicesData
+     */
     private var servicesJSON = ""
+
+    /**
+     * A boolean value indicating whether the first '{' has been detected of the JSON file
+     * implying that the consequent outputs are part of the JSON string
+     * @see servicesJSON
+     */
     private var currentlyReceivingJSON = false
 
     /**
@@ -235,7 +246,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
 
     /**
-     * Get the service's local URL link
+     * Get the service's local URL link. Can be opened with any web browser.
      * @param service : ServiceInfo = Service clicked
      */
     fun getLocalLink(service: ServiceInfo) {
@@ -244,7 +255,8 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
 
     /**
-     * Get the service's Tor URL Link
+     * Retrieves the service's Tor link. Upon receiving this value, the observer
+     * should attempt to open the Tor Browser app
      * @param service : ServiceInfo = Service clicked
      */
     fun getTorLink(service: ServiceInfo) {
@@ -264,6 +276,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
 
     /**
      * Add the sources for the raw Services Data
+     * Pull from the server, and the local cache
      */
     init {
         rawServicesData.addSource(serverServiceData) {

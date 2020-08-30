@@ -44,7 +44,9 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             binding!!.startButton.setOnClickListener(this)
             binding!!.openLink.setOnClickListener(this)
             binding!!.editEnvButton.setOnClickListener(this)
-            binding!!.autorunChecked.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean -> actionListener!!.onClickAutorun(serviceData, isChecked) }
+            binding!!.autorunChecked.setOnClickListener {
+                actionListener!!.onClickAutorun(serviceData, binding?.autorunChecked?.isChecked ?: false)
+            }
         }
         return binding!!.root
     }

@@ -31,11 +31,25 @@ import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.indexOfService
 
-class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, ServiceAction {
+class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceAction {
+    /**
+     * Adapter for the spinner to select a service from dropdown
+     */
     private var spinnerAdapter: ServicesListAdapter? = null
+
+    /**
+     * Card adapter for the Service Cards
+     */
     private var serviceCardAdapter: ServiceCardAdapter? = null
+
+    /**
+     * Variable to keep track if the switch of the services was user-initiated, or
+     * if it was done programmatically
+     * scrolled = true implies programmatically
+     */
     private var scrolled = false
 
     private lateinit var binding: ActivityServicesDetailsBinding
@@ -48,7 +62,7 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
             if (it.status == Status.SUCCESS) {
                 spinnerAdapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, resources.getColor(R.color.md_grey_600))
                 serviceCardAdapter = ServiceCardAdapter(childFragmentManager, viewModel.formattedServices)
-                populateServices()
+                initialize()
                 goToSelected()
             }
         })
@@ -59,10 +73,25 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
 
-        viewModel.selectedService.observe(viewLifecycleOwner, Observer {
-            goToSelected()
-        })
+        viewModel.selectedService.observe(viewLifecycleOwner, Observer { goToSelected() })
 
+        observeServiceAction()
+
+        viewModel.error.observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                viewModel.error.value = ""
+            }
+            setScreenState(true)
+        })
+        observeAutoRun()
+        observeMoreActions()
+    }
+
+    /**
+     * Observe Start, Stop, Install, Uninstall actions
+     */
+    private fun observeServiceAction() {
         viewModel.serviceAction.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.LOADING -> {
@@ -74,23 +103,16 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
                     spinnerAdapter?.notifyDataSetChanged()
                     goToSelected()
                 }
-                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction")
+                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction: ${it.status}")
             }
             setScreenState(true)
         })
-
-        viewModel.error.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                viewModel.error.value = ""
-            }
-            setScreenState(true)
-        })
-
-        observeMoreActions()
     }
 
-    private fun observeMoreActions() {
+    /**
+     * When the autorun has changed values
+     */
+    private fun observeAutoRun() {
         viewModel.autoRunAction.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.LOADING -> {
@@ -105,6 +127,13 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
             }
             setScreenState(true)
         })
+    }
+
+    /**
+     * Observe Tor/Local links
+     * Observe the fetching of environment variables as well
+     */
+    private fun observeMoreActions() {
 
         viewModel.getLinkAction.observe(viewLifecycleOwner, Observer {
             when (it.status) {
@@ -129,7 +158,10 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         })
     }
 
-    private fun populateServices() {
+    /**
+     * Initializes the adapter and the on change listener for the spinner, and the ViewPager
+     */
+    private fun initialize() {
         binding.pickService.adapter = spinnerAdapter
         binding.pickService.setSelection(1)
         binding.pickService.onItemSelectedListener = this
@@ -137,9 +169,8 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         binding.servicesCards.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
-                Log.d("SELECTED", "onPageSelected: ")
                 scrolled = true
-                val pos = position + countHeadersBefore(position + 1)
+                val pos = position + countHeadersBefore(position + 1, viewModel.formattedServices)
                 binding.pickService.setSelection(pos)
                 scrolled = false
             }
@@ -147,30 +178,39 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         })
     }
 
+    /**
+     * Opens a URL (Tor, or a local one as well)
+     */
     private fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
         Log.d("OPENING: ", "http://$url||")
-        val title = "Select a browser"
-        val chooser = Intent.createChooser(intent, title)
+        val chooser = Intent.createChooser(intent, "Select a browser")
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)
     }
+
+    /**
+     * When an item is selected, make sure it was not scrolled programmatically
+     */
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (!scrolled) {
             if (viewModel.formattedServices[position].isHeader) return
-            val count = countHeadersBefore(position)
-            binding.servicesCards.currentItem = position - count
+            binding.servicesCards.currentItem = position - countHeadersBefore(position, viewModel.formattedServices)
         }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
 
+    /**
+     * Goes to the selected service
+     * Accounts for spinner/Viewpager discrepancies
+     */
     private fun goToSelected() {
         if (viewModel.selectedService.value == null) return
         val pos = indexOfService(viewModel.selectedService.value!!.name, viewModel.formattedServices)
         if (binding.pickService.selectedItemPosition != pos) {
             binding.pickService.setSelection(pos)
         }
-        val count = countHeadersBefore(pos)
+        val count = countHeadersBefore(pos, viewModel.formattedServices)
         if (binding.servicesCards.currentItem != pos - count) {
             binding.servicesCards.currentItem = pos - count
         }
@@ -189,35 +229,9 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
 
     }
 
-//    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-//    override fun onPageSelected(position: Int) {
-//        Log.d("SELECTED", "onPageSelected: ")
-//        scrolled = true
-//        val pos = position + countHeadersBefore(position + 1)
-//        binding.pickService.setSelection(pos)
-//        scrolled = false
-//    }
-//
-//    override fun onPageScrollStateChanged(state: Int) {}
-    private fun countHeadersBefore(position: Int): Int {
-        var count = 0
-        for (i in 0..position) {
-            if (viewModel.formattedServices[i].isHeader) count++
-        }
-        return count
-    }
-
-
-//    private fun onLink(selected: ServiceInfo?) {
-//        //reqUrls();
-//        val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
-//        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
-//        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-//        setOnClick(chooseBind.localButton, getString(R.string.TREEHOUSES_SERVICES_URL_LOCAL, selected!!.name), alertDialog)
-//        setOnClick(chooseBind.torButton, getString(R.string.TREEHOUSES_SERVICES_URL_TOR, selected.name), alertDialog)
-//        alertDialog.show()
-//    }
-
+    /**
+     * Sets the state of the screen
+     */
     private fun setScreenState(state: Boolean) {
         binding.servicesCards.setPagingEnabled(state)
         binding.pickService.isEnabled = state
@@ -225,6 +239,11 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         else binding.progressBar.visibility = View.VISIBLE
     }
 
+    /**
+     * Show the edit Environment Variable dialog
+     * @param name : String = Name of Service
+     * @param vars : List<String> = The variables that can be configured
+     */
     private fun showEditDialog(name: String, size: Int, vars: List<String>) {
         val inflater = requireActivity().layoutInflater; val dialogBinding = EnvVarBinding.inflate(inflater)
         for (i in 0 until size) {
@@ -237,32 +256,42 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
             envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor)); newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
             dialogBinding.varList.addView(rowBinding.root)
         }
-        val alertDialog = createEditDialog(dialogBinding.root, name, size, vars)
+        val alertDialog = createEditDialog(dialogBinding.root, name, size)
         alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
-    private fun createEditDialog(view: View, name: String, size: Int, vars: List<String>): AlertDialog {
+
+    /**
+     * Creates the Edit Env Config dialog
+     * @param view = View of the AlertDialog
+     * @param name = Name of service
+     * @param size = # of Variables
+     */
+    private fun createEditDialog(view: View, name: String, size: Int): AlertDialog {
         return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
                 .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Edit"
                 ) { _: DialogInterface?, _: Int ->
                     var command = "treehouses services $name config edit send"
 
-                    for (i in 0 until size) {
-                        command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
-                    }
+                    for (i in 0 until size) command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
+
                     viewModel.sendMessage(command)
                     Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
-                }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-                .create()
+                }.setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
     }
 
+    /**
+     * Start/Stop button was clicked in a Service Card
+     */
     override fun onClickStart(s: ServiceInfo?) {
         if (s == null) return
         viewModel.onStartClicked(s)
     }
 
+    /**
+     * Install/Uninstall was clicked in a Service Card
+     */
     override fun onClickInstall(s: ServiceInfo?) {
         when {
             s == null -> return
@@ -280,6 +309,9 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         }
     }
 
+    /**
+     * The open link button was clicked in a Service Card
+     */
     override fun onClickLink(s: ServiceInfo?) {
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
@@ -289,12 +321,18 @@ class ServicesDetailsFragment() : BaseFragment(), OnItemSelectedListener, Servic
         alertDialog.show()
     }
 
+    /**
+     * Edit Environment Variable was clicked in a Service Card
+     */
     override fun onClickEditEnvVar(s: ServiceInfo?) {
-        if (s == null) return
-        viewModel.editEnvVariableRequest(s)
-
+        viewModel.editEnvVariableRequest(s ?: return)
     }
 
+    /**
+     * The autorun value was changed in a Service Card
+     * @param s : ServiceInfo?
+     * @param newAutoRun : Boolean = The new value of the autorun
+     */
     override fun onClickAutorun(s: ServiceInfo?, newAutoRun: Boolean) {
         if (s == null) return
         viewModel.switchAutoRun(s, newAutoRun)
