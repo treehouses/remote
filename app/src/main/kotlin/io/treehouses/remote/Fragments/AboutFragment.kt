@@ -77,7 +77,6 @@ class AboutFragment : Fragment() {
             startActivity(i)
         }
 
-
     }
 
 }
