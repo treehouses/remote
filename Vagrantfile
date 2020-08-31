@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
     remote.vm.provider "virtualbox" do |vb|
       vb.name = "remote"
-      vb.memory="2222"	
+      vb.memory="666"
     end
 
     remote.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "0.0.0.0", id: "ssh", auto_correct: true
