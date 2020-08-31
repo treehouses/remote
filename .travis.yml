@@ -53,10 +53,24 @@ android:
     - android-sdk-license-.+
     - google-gdk-license-.+
 after_success:	
-  - sh set_tags.sh
-before_deploy:
   - docker pull opensecurity/mobile-security-framework-mobsf
   - docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
+  - sleep 5
+  - wget http://localhost:8000/api_docs
+  - MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
+  - MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
+  - rm api_docs
+  - FILE=app/build/outputs/apk/release/remote-$TRAVIS_BUILD_NUMBER.apk
+  - HASH=$(md5sum $FILE)
+  - HASH=${HASH:0:32}
+  - curl -F "file=@$FILE" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
+  - curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=$FILE&hash=$HASH" -H "Authorization:$MOBSF_API_KEY"
+  - curl -X POST --url http://localhost:8000/api/v1/report_pdf --data "hash=$HASH" -H "Authorization:$MOBSF_API_KEY" --output $TRAVIS_BUILD_NUMBER-security-scan.pdf
+  - ls -al
+  - sh set_tags.sh
+before_deploy:
+#  - docker pull opensecurity/mobile-security-framework-mobsf
+#  - docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
   - openssl aes-256-cbc -K $encrypted_e106cbe777cb_key -iv $encrypted_e106cbe777cb_iv -in treehouses-remote.jks.enc -out treehouses-remote.jks -d
   - cp $TRAVIS_BUILD_DIR/treehouses-remote.jks $HOME
   - cp app/build/outputs/mapping/release/mapping.txt app/build/outputs/apk/release/mapping.txt
@@ -69,16 +83,16 @@ before_deploy:
   - sha256sum remote.apk > remote.apk.sha256
   - rm remote-unaligned.apk
   - ls
-  - wget http://localhost:8000/api_docs
-  - MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
-  - MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
-  - rm api_docs
-  - HASH=$(md5sum remote.apk)
-  - HASH=${HASH:0:32}
-  - curl -F "file=@remote.apk" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
-  - curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=remote.apk" -H "Authorization:$MOBSF_API_KEY"
-  - curl -X POST --url http://localhost:8000/api/v1/report_pdf --data "hash=$HASH" -H "Authorization:$MOBSF_API_KEY" --output $TRAVIS_BUILD_NUMBER-security-scan.pdf
-  - ls
+#  - wget http://localhost:8000/api_docs
+#  - MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
+#  - MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
+#  - rm api_docs
+#  - HASH=$(md5sum remote.apk)
+#  - HASH=${HASH:0:32}
+#  - curl -F "file=@remote.apk" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
+#  - curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=remote.apk&hash=$HASH" -H "Authorization:$MOBSF_API_KEY"
+#  - curl -X POST --url http://localhost:8000/api/v1/report_pdf --data "hash=$HASH" -H "Authorization:$MOBSF_API_KEY" --output $TRAVIS_BUILD_NUMBER-security-scan.pdf
+#  - ls -al
 deploy:
   provider: releases
   api_key:
