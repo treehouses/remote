@@ -37,7 +37,6 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityDiscoverFragmentBinding.inflate(inflater, container, false)
-
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         load()
@@ -126,6 +125,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private fun updateGatewayIcon() {
         val gatewayIcon = bind.gatewayContainer.gateway_icon
         bind.gatewayContainer.removeView(gatewayIcon)
+
 
         if (gateway.isComplete()) {
             gatewayIcon.visibility = View.VISIBLE
@@ -224,7 +224,8 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun load() {
-        bind.progressBar.visibility = View.VISIBLE
+        bind.loading1.visibility = View.VISIBLE
+        bind.loading2.visibility = View.VISIBLE
         bind.deviceContainer.visibility = View.INVISIBLE
         bind.gatewayIcon.visibility = View.INVISIBLE
 
@@ -246,9 +247,9 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         setupIcons()
         if(gateway.isComplete()) updateGatewayIcon()
         else CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
-
+        bind.loading1.visibility = View.GONE
+        bind.loading2.visibility = View.GONE
         bind.deviceContainer.visibility = View.VISIBLE
-        bind.progressBar.visibility = View.GONE
     }
 
     private fun getSize(): Int {
