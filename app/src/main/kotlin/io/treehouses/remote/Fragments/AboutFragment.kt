@@ -17,7 +17,6 @@ import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
 import io.treehouses.remote.R
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
 
 class AboutFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
