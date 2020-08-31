@@ -11,7 +11,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import bolts.Task.delay
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
