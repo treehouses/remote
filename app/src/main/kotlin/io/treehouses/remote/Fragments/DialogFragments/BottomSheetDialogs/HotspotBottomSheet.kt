@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import io.treehouses.remote.Fragments.NewNetworkFragment
+import io.treehouses.remote.Fragments.NetworkFragment
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogHotspotBinding
@@ -30,7 +30,7 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
 
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
             val intent = Intent()
-            intent.putExtra(NewNetworkFragment.CLICKED_START_CONFIG, true)
+            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }

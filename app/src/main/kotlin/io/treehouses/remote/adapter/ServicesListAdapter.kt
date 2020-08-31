@@ -15,8 +15,8 @@ import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
 class ServicesListAdapter //private Button start, install, restart, link, info;
-(private val mContext: Context, private val dataIn: ArrayList<ServiceInfo>, private val headerColour: Int) : ArrayAdapter<ServiceInfo>(mContext, 0, dataIn) {
-    var data:ArrayList<ServiceInfo> =  dataIn
+(private val mContext: Context, private val dataIn: MutableList<ServiceInfo>, private val headerColour: Int) : ArrayAdapter<ServiceInfo>(mContext, 0, dataIn) {
+    var data : MutableList<ServiceInfo> =  dataIn
     private var name: TextView? = null
     private var status: ImageView? = null
     override fun getItem(position: Int): ServiceInfo {

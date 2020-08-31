@@ -81,7 +81,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
             R.layout.configure_camera -> ViewHolderCamera(convertView, context, listener!!)
             R.layout.configure_wificountry -> ViewHolderWifiCountry(convertView, context, listener!!)
             R.layout.configure_blocker -> ViewHolderBlocker(convertView, context, listener!!)
-            R.layout.configure_discover -> ViewHolderDiscover(convertView, listener!!)
         }
         views[i] = convertView
         return convertView
@@ -100,6 +99,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     init {
         inflater = LayoutInflater.from(context)
         this.list = list
-        views = arrayOfNulls(8)
+        views = arrayOfNulls(7)
     }
 }

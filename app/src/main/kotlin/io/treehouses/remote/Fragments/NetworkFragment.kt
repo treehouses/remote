@@ -23,18 +23,18 @@ import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.databinding.NewNetworkBinding
+import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.match
 
-class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
-    private lateinit var binding: NewNetworkBinding
+class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
+    private lateinit var binding: ActivityNetworkFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
         val toastMsg = "Network Mode retrieved"
-        binding = NewNetworkBinding.inflate(inflater, container, false)
+        binding = ActivityNetworkFragmentBinding.inflate(inflater, container, false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
 
@@ -53,11 +53,12 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
         binding.buttonNetworkMode.setOnClickListener(this)
         binding.rebootRaspberry.setOnClickListener(this)
         binding.resetNetwork.setOnClickListener(this)
+        binding.discoverBtn.setOnClickListener(this)
         Tutorials.networkTutorials(binding, requireActivity())
     }
 
     private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
-        fragment.setTargetFragment(this@NewNetworkFragment, Constants.NETWORK_BOTTOM_SHEET)
+        fragment.setTargetFragment(this@NetworkFragment, Constants.NETWORK_BOTTOM_SHEET)
         fragment.show(requireActivity().supportFragmentManager, tag)
     }
 
@@ -72,6 +73,7 @@ class NewNetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogI
             binding.buttonNetworkMode == v -> Utils.sendMessage(listener, msg, toastMsg, context)
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
+            binding.discoverBtn == v-> listener.openCallFragment(DiscoverFragment())
         }
     }
 
