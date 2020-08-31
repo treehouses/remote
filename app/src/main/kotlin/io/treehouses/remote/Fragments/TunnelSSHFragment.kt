@@ -3,7 +3,6 @@ package io.treehouses.remote.Fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -14,16 +13,10 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
-import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.match
-import org.json.JSONException
-import org.json.JSONObject
 
 
 class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
@@ -242,6 +235,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.btn_add_port -> showDialog(dialog)
             R.id.btn_add_hosts -> showDialog(dialogHosts)
             R.id.btn_keys -> showDialog(dialogKeys)
+            R.id.closeButton -> dialog.dismiss()
         }
     }
 
