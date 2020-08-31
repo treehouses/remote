@@ -236,8 +236,14 @@ object PubKeyUtils {
     fun convertToOpenSSHFormat(pk: PublicKey, nickName: String) : String {
         Log.e("PUBKEYORIG", String(Base64.encode(pk.encoded)))
         return when (pk) {
-            is RSAPublicKey -> "ssh-rsa ${String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk)))}$nickName"
-            is DSAPublicKey -> "ssh-dss ${String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))}$nickName"
+            is RSAPublicKey -> {
+                val rsaString = String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk)))
+                "ssh-rsa $rsaString$nickName"
+            }
+            is DSAPublicKey -> {
+                val dsaString = String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))
+                "ssh-dss $dsaString$nickName"
+            }
             is ECPublicKey -> {
                 val keyType = ECDSASHA2Verify.getCurveName(pk.params.curve.field.fieldSize)
                 val data = String(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(pk)))
