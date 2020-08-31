@@ -82,19 +82,21 @@ object PubKeyUtils {
     }
 
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
-    fun decodePrivate(encoded: ByteArray?, keyType: String?): PrivateKey {
-        val privKeySpec = PKCS8EncodedKeySpec(encoded)
+    fun decodeKey(encoded: ByteArray?, keyType: String?, type: String): Key {
         val kf = KeyFactory.getInstance(keyType)
-        return kf.generatePrivate(privKeySpec)
+        return when(type) {
+            "private" -> kf.generatePrivate(PKCS8EncodedKeySpec(encoded))
+            else -> kf.generatePublic(X509EncodedKeySpec(encoded))
+        }
     }
 
     @Throws(Exception::class)
     fun decodePrivate(encoded: ByteArray, keyType: String?, secret: String?): PrivateKey {
-        return if (!secret.isNullOrEmpty()) decodePrivate(decrypt(encoded, secret), keyType) else decodePrivate(encoded, keyType)
+        return if (!secret.isNullOrEmpty()) decodeKey(decrypt(encoded, secret), keyType, "private") as PrivateKey else decodeKey(encoded, keyType, "private") as PrivateKey
     }
 
     fun getBitStrength(encoded : ByteArray, keyType: String) : Int {
-        val pubKey = PubKeyUtils.decodePublic(encoded, keyType);
+        val pubKey = decodeKey(encoded, keyType, "public");
         return when (keyType) {
             PubKeyBean.KEY_TYPE_RSA -> (pubKey as RSAPublicKey).modulus.bitLength();
             PubKeyBean.KEY_TYPE_DSA -> 1024;
@@ -103,12 +105,7 @@ object PubKeyUtils {
             else -> { 0; }
         }
     }
-    @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
-    fun decodePublic(encoded: ByteArray?, keyType: String?): PublicKey {
-        val pubKeySpec = X509EncodedKeySpec(encoded)
-        val kf = KeyFactory.getInstance(keyType)
-        return kf.generatePublic(pubKeySpec)
-    }
+
     //    static String getAlgorithmForOid(String oid) throws NoSuchAlgorithmException {
     //        if ("1.2.840.10045.2.1".equals(oid)) {
     //            return "EC";
@@ -239,16 +236,8 @@ object PubKeyUtils {
     fun convertToOpenSSHFormat(pk: PublicKey, nickName: String) : String {
         Log.e("PUBKEYORIG", String(Base64.encode(pk.encoded)))
         return when (pk) {
-            is RSAPublicKey -> {
-                var data = "ssh-rsa "
-                data += String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk)))
-                "$data $nickName"
-            }
-            is DSAPublicKey -> {
-                var data = "ssh-dss "
-                data += String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))
-                "$data $nickName"
-            }
+            is RSAPublicKey -> "ssh-rsa ${String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk)))}$nickName"
+            is DSAPublicKey -> "ssh-dss ${String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))}$nickName"
             is ECPublicKey -> {
                 val keyType = ECDSASHA2Verify.getCurveName(pk.params.curve.field.fieldSize)
                 val data = String(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(pk)))
