@@ -73,16 +73,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     override fun start() {
         bNoReconnect = false
         // Cancel any thread attempting to make a connection
-        if (mConnectThread != null) {
-            mConnectThread!!.cancel()
-            mConnectThread = null
-        }
+        mConnectThread?.cancel()
+        mConnectThread = null
 
         // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {
-            mConnectedThread!!.cancel()
-            mConnectedThread = null
-        }
+        mConnectedThread?.cancel()
+        mConnectedThread = null
 
         // Update UI title
         updateUserInterfaceTitle()
