@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BasePreferenceFragment
+import io.treehouses.remote.ui.services.ServicesViewModel
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SettingsUtils
 
@@ -46,7 +47,7 @@ class GeneralPreference: BasePreferenceFragment() {
     }
 
     private fun clearServices() {
-        SaveUtils.removeStringList(requireContext(),"servicesArray")
+        SaveUtils.removeStringList(requireContext(), ServicesViewModel.SERVICES_CACHE)
         Toast.makeText(context, "Services Cache Cleared", Toast.LENGTH_LONG).show()
     }
 

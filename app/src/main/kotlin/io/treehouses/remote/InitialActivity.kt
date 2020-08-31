@@ -165,7 +165,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private fun onNavigationItemClicked(id: Int) {
         val fragment = when (id) {
             R.id.menu_home -> HomeFragment()
-            R.id.menu_network -> NewNetworkFragment()
+            R.id.menu_network -> NetworkFragment()
             R.id.menu_system -> SystemFragment()
             R.id.menu_terminal -> TerminalFragment()
             R.id.menu_services -> ServicesFragment()

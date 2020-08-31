@@ -45,7 +45,9 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             binding!!.startButton.setOnClickListener(this)
             binding!!.openLink.setOnClickListener(this)
             binding!!.editEnvButton.setOnClickListener(this)
-            binding!!.autorunChecked.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean -> actionListener!!.onClickAutorun(serviceData, isChecked) }
+            binding!!.autorunChecked.setOnClickListener {
+                actionListener!!.onClickAutorun(serviceData, binding?.autorunChecked?.isChecked ?: false)
+            }
         }
         return binding!!.root
     }
@@ -109,7 +111,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
     private fun setServiceInfo(s: String?) {
         val spannableString = SpannableString(s)
         Linkify.addLinks(spannableString, Linkify.ALL)
-        binding!!.serviceInfo.text = s
+        binding!!.serviceInfo.text = spannableString
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
     }
 
