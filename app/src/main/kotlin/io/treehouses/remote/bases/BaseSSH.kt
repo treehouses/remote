@@ -194,7 +194,10 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             } else return false
         }
 
-        private fun continueConnecting() : Boolean = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
+        private fun continueConnecting() : Boolean {
+            val prompt = manager!!.res!!.getString(R.string.prompt_continue_connecting)
+            return bridge!!.promptHelper!!.requestBooleanPrompt(null, prompt)!!
+        }
 
         override fun getKnownKeyAlgorithmsForHost(host: String, port: Int): List<String> {
             val hostBean = KeyUtils.getKnownHost(manager!!.applicationContext, "$host:$port")
