@@ -17,6 +17,12 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
+import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
+import io.treehouses.remote.utils.match
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
@@ -42,10 +48,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3:
             Long) {
-                Log.d("winwin", "YYYYY ")
+                logD("winwin, YYYYY ")
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {Log.d("nothing", "YYYYY ")}
+            override fun onNothingSelected(p0: AdapterView<*>?) {logD("nothing, YYYYY ")}
         }
         addListeners()
         return bind!!.root
@@ -85,7 +91,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        try{ initializeDialog2()} catch (exception:Exception){Log.e("Error1", exception.toString())}
+        try{ initializeDialog2()} catch (exception:Exception){logE("Error1 $exception")}
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -109,7 +115,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             builder.setNegativeButton("Cancel", null)
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            Log.d("dialoging", "dialog")
+            logD("dialoging, dialog")
             dialog.show()
         }
         initializeDialog4()
@@ -128,7 +134,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             if(hostsPosition!!.last() < position){
                 myPos = hostsPosition!!.lastIndex
             }
-            Log.d("dasda", myPos.toString())
+            logD("dasda ${myPos.toString()}")
             listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
             addPortButton!!.text = "deleting port ....."
             portList!!.isEnabled = false
@@ -149,7 +155,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
 
-        Log.d("profile string", profileText.toString())
+        logD("profile string ${profileText.toString()}")
         saveKeys.setOnClickListener {
             var profile = profileText.toString()
             listener.sendMessage("treehouses remote key send $profile")
@@ -253,14 +259,13 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             portsName = ArrayList()
 //            listener.sendMessage("treehouses sshtunnel notice")
             adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-            Log.i("Tag", "Reload fragment")
         }
     }
 
     override fun getMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
                 val readMessage: String = msg.obj as String
-                Log.d("SSHTunnel reply", "" + readMessage)
+                logD("SSHTunnel reply $readMessage")
                 val modifyKeywords = arrayOf("ssh-rsa", "Added", "Removed")
                 if (readMessage.contains("Host / port not found")) handleHostNotFound()
                 else if((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()

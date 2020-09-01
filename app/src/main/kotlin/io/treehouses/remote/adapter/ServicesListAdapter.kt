@@ -1,7 +1,6 @@
 package io.treehouses.remote.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
-import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.logE
 import java.util.*
 
 class ServicesListAdapter //private Button start, install, restart, link, info;
 (private val mContext: Context, private val dataIn: MutableList<ServiceInfo>, private val headerColour: Int) : ArrayAdapter<ServiceInfo>(mContext, 0, dataIn) {
-    var data : MutableList<ServiceInfo> =  dataIn
+    var data: MutableList<ServiceInfo> = dataIn
     private var name: TextView? = null
     private var status: ImageView? = null
     override fun getItem(position: Int): ServiceInfo {
@@ -60,7 +59,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     private fun setStatus(statusCode: Int) {
         var color = 0
         var drawable = 0
-        if(statusCode == ServiceInfo.SERVICE_AVAILABLE || statusCode == ServiceInfo.SERVICE_INSTALLED || statusCode == ServiceInfo.SERVICE_RUNNING){
+        if (statusCode == ServiceInfo.SERVICE_AVAILABLE || statusCode == ServiceInfo.SERVICE_INSTALLED || statusCode == ServiceInfo.SERVICE_RUNNING) {
             when (statusCode) {
                 ServiceInfo.SERVICE_AVAILABLE -> {
                     color = R.color.md_grey_600
@@ -92,17 +91,17 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
         try {
             name!!.text = data[position].name
             setStatus(data[position].serviceStatus)
-        } catch (exception:java.lang.IndexOutOfBoundsException) {
-            Log.e("Error", exception.toString())
+        } catch (exception: java.lang.IndexOutOfBoundsException) {
+            logE("Error $exception")
         }
         return convertView
     }
 
-    private fun flag(position:Int):Boolean {
+    private fun flag(position: Int): Boolean {
         try {
             return data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED
-        } catch(exception:IndexOutOfBoundsException) {
-            Log.e("Error", exception.toString())
+        } catch (exception: IndexOutOfBoundsException) {
+            logE("Error $exception")
         }
         return false
     }
@@ -113,6 +112,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
                 data = results.values as ArrayList<ServiceInfo>
                 notifyDataSetChanged()
             }
+
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val results = FilterResults()
                 if (constraint.isEmpty()) {
@@ -129,7 +129,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     private fun createFilteredList(constraint: CharSequence): List<ServiceInfo> {
         if (constraint.isEmpty()) return dataIn
         return dataIn.filter {
-            return@filter when(constraint.toString().toLowerCase(Locale.ROOT)) {
+            return@filter when (constraint.toString().toLowerCase(Locale.ROOT)) {
                 "installed" -> it.serviceStatus == ServiceInfo.SERVICE_INSTALLED
                 "available" -> it.serviceStatus == ServiceInfo.SERVICE_AVAILABLE
                 else -> it.name.toLowerCase(Locale.ROOT).contains(constraint.toString().toLowerCase(Locale.ROOT)) && !it.isHeader

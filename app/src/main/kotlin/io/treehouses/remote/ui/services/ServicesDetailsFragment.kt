@@ -33,6 +33,8 @@ import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.indexOfService
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 
 class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceAction {
     /**
@@ -103,7 +105,7 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
                     spinnerAdapter?.notifyDataSetChanged()
                     goToSelected()
                 }
-                else -> Log.e("UNKNOWN", "RECEIVED in ServiceAction: ${it.status}")
+                else -> logE("UNKNOWNRECEIVED in ServiceAction: ${it.status}")
             }
             setScreenState(true)
         })
@@ -123,7 +125,7 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
                     Toast.makeText(context, "Switched autorun to ${it.data}", Toast.LENGTH_SHORT).show()
                     viewModel.autoRunAction.value = Resource.nothing()
                 }
-                else -> Log.e("UNKNOWN", "RECEIVED in AutoRun boolean")
+                else -> logE("UNKNOWN RECEIVED in AutoRun boolean")
             }
             setScreenState(true)
         })
@@ -183,7 +185,7 @@ class ServicesDetailsFragment : BaseFragment(), OnItemSelectedListener, ServiceA
      */
     private fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
-        Log.d("OPENING: ", "http://$url||")
+        logD("OPENING: http://$url||")
         val chooser = Intent.createChooser(intent, "Select a browser")
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)
     }

@@ -45,7 +45,7 @@ object KeyUtils {
         return try {
             customGson.fromJson(string, PubKeyBean::class.java)
         } catch (e: Exception) {
-            Log.e("Get Key", e.message, e)
+            logD("Get Key $e")
             null
         }
     }
@@ -72,7 +72,7 @@ object KeyUtils {
     }
 
     fun saveKnownHost(context: Context, hostNamePort: String, algorithm: String, key: ByteArray) {
-        Log.e("SAVING KNOWN HOST", "$hostNamePort with key $key")
+        logD("SAVING KNOWN HOST $hostNamePort with key $key")
         val hostName  = hostNamePort.split(":")[0]
         val port = Integer.parseInt(hostNamePort.split(":")[1])
 
@@ -88,7 +88,7 @@ object KeyUtils {
             return try {
                 Gson().fromJson(a, KnownHostBean::class.java)
             } catch (e: Exception) {
-                Log.e("COULD NOT PARSE", "GETTING KNOWN HOST: $a", e)
+                logE("COULD NOT PARSE GETTING KNOWN HOST: $a")
                 null
             }
         }
@@ -101,13 +101,13 @@ object KeyUtils {
             val host = getKnownHost(context, it)
             try {
                 if (host != null) {
-                    Log.e("ALL HOSTS: ", "${host.hostName} with ${host.algorithm} and key ${host.pubKey}")
+                    logD("ALL HOSTS: ${host.hostName} with ${host.algorithm} and key ${host.pubKey}")
                     val hostKey = String.format(Locale.US, "%s:%s", host.hostName, host.port.toString())
                     knownHosts.addHostkey(arrayOf(hostKey), host.algorithm, host.pubKey)
-                    Log.e("Added Host key", hostKey)
+                    logD("Added Host key $hostKey")
                 }
             } catch (e: Exception) {
-                Log.e("Getting Known Hosts", "Problem when adding host to known hosts", e)
+                logD("Getting Known Hosts Problem when adding host to known hosts $e")
             }
         }
         return knownHosts

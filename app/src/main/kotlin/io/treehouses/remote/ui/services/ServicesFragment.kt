@@ -15,6 +15,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.logE
 import java.util.*
 
 
@@ -50,7 +51,7 @@ class ServicesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.serverServiceData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            Log.e("HERE", "WITH: $it")
+            logE("HERE WITH: $it")
             when (it.status) {
                 Status.LOADING -> bind.progressBar2.visibility = View.VISIBLE
                 Status.ERROR -> {

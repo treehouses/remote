@@ -17,6 +17,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.logD
 
 class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
@@ -44,7 +45,7 @@ class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListen
     }
 
     fun replaceFragment(position: Int) {
-        Log.d("dasd", position.toString())
+        logD("dasd $position")
         tunnelView!!.currentItem = position
     }
 
@@ -58,27 +59,21 @@ class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListen
     }
 
     override fun onClick(s: ServiceInfo?) {
-        Log.d("1", "onClick: " + s!!.name)
-        //servicesDetailsFragment.setSelected(s);
         tabLayout!!.getTabAt(1)!!.select()
         replaceFragment(1)
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-        Log.d("3", "onItemSelected: ")
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        Log.d("3", "onNothing: ")
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        Log.d("3", "onItemscrolled: ")
         tabLayout!!.setScrollPosition(position, 0f, true)
     }
 
     override fun onPageSelected(position: Int) {
-        Log.d("3", "Page selected: ")
     }
 
     override fun onPageScrollStateChanged(state: Int) {}
