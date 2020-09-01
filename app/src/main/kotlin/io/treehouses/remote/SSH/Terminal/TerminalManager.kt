@@ -189,8 +189,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             var scrollback = 140
             try {
                 scrollback = prefs!!.getString(PreferenceConstants.SCROLLBACK, "140")!!.toInt()
-            } catch (e: Exception) {
-            }
+            } catch (e: Exception) { }
             return scrollback
         }
 
@@ -352,8 +351,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     }
 
     fun tryKeyVibrate() {
-        if (wantKeyVibration)
-            if (vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
+            if (wantKeyVibration && vibrator != null) vibrator!!.vibrate(VIBRATE_DURATION)
     }
 
     /* (non-Javadoc)
