@@ -220,14 +220,12 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
         //var shouldHideRunningNotification = false
         logD("Bridge Disconnected. Removing it.")
         synchronized(bridges) {
-
             // remove this bridge from our list
             bridges.remove(bridge); mHostBridgeMap.remove(bridge.host); mNicknameBridgeMap.remove(bridge.host!!.nickname)
 //            if (bridge.isUsingNetwork) {
 ////				connectivityManager.decRef();
 //            }
             if (bridges.isEmpty() && mPendingReconnect.isEmpty()) //shouldHideRunningNotification = true
-
             // pass notification back up to gui
                 if (disconnectListener != null) disconnectListener!!.onDisconnected(bridge)
         }
@@ -364,10 +362,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
                                            key: String) {
         if (PreferenceConstants.BUMPY_ARROWS == key) wantKeyVibration = sharedPreferences.getBoolean(PreferenceConstants.BUMPY_ARROWS, true)
-        else if (PreferenceConstants.WIFI_LOCK == key) {
-            //val lockingWifi = prefs!!.getBoolean(PreferenceConstants.WIFI_LOCK, true)
-            //			connectivityManager.setWantWifiLock(lockingWifi);
-        } else if (PreferenceConstants.MEMKEYS == key) savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
+        else if (PreferenceConstants.WIFI_LOCK == key) { } else if (PreferenceConstants.MEMKEYS == key) savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
     }
 
     class KeyHolder {

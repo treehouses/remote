@@ -36,11 +36,8 @@ class TorTabFragment : BaseFragment() {
     var bind: ActivityTorFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
-
         mChatService!!.updateHandler(mHandler)
-
         listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-
         portsName = ArrayList()
         adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
@@ -55,13 +52,11 @@ class TorTabFragment : BaseFragment() {
         portList!!.adapter = adapter
         addPortListListener()
         initializeProperties()
-
         /* start/stop tor button click */
         addStartButtonListener()
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_tor_ports)
         setWindowProperties(dialog)
-
         addPortButtonListeners(dialog)
         return bind!!.root
     }
@@ -191,9 +186,7 @@ class TorTabFragment : BaseFragment() {
             if(isListenerInitialized()){
                 mChatService = listener.getChatService()
                 mChatService!!.updateHandler(mHandler)
-
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-
                 portsName = ArrayList()
             }
 

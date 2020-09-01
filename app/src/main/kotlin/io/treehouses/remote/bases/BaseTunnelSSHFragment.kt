@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
@@ -17,7 +16,7 @@ import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
 
-open class BaseTunnelSSHFragment: BaseFragment() {
+open class BaseTunnelSSHFragment : BaseFragment() {
     protected var addPortButton: Button? = null
     protected var addHostButton: Button? = null
     var bind: ActivityTunnelSshFragmentBinding? = null
@@ -61,10 +60,13 @@ open class BaseTunnelSSHFragment: BaseFragment() {
                     listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
             }
-            readMessage.contains("OK.") -> { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)) }
+            readMessage.contains("OK.") -> {
+                listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
+            }
             readMessage.contains("Thanks for the feedback!") -> {
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
-                bind!!.notifyNow.isEnabled = true }
+                bind!!.notifyNow.isEnabled = true
+            }
             else -> handleMoreMessages(readMessage)
         }
     }
@@ -75,13 +77,13 @@ open class BaseTunnelSSHFragment: BaseFragment() {
                 listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
                 Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show()
             }
-            readMessage.contains("true") || readMessage.contains("false") ->{
+            readMessage.contains("true") || readMessage.contains("false") -> {
                 listener.sendMessage("treehouses remote key send")
                 Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
             }
             readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
-            readMessage.contains("unknown")-> jsonSend(false)
-            else-> if (jsonSent) handleJson(readMessage)
+            readMessage.contains("unknown") -> jsonSend(false)
+            else -> if (jsonSent) handleJson(readMessage)
         }
     }
 
@@ -111,13 +113,9 @@ open class BaseTunnelSSHFragment: BaseFragment() {
     private fun buildJSON() {
         try {
             val jsonObject = JSONObject(jsonString)
-
             val profile = jsonObject.getString("profile")
-
             val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
-
             val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-
             logD(profile)
             logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
 
@@ -125,15 +123,14 @@ open class BaseTunnelSSHFragment: BaseFragment() {
             val inPiOnly = piPublicKey != "No public key found" && piPrivateKey != "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()
             val inPhoneOnly = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()
             val inNeither = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()
-
             // Pi and phone keys are the same
-            if(inPiAndPhone) Toast.makeText(context, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
+            if (inPiAndPhone) Toast.makeText(context, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
             // Key exists in Pi but not phone
-            else if(inPiOnly) handlePhoneKeySave(profile, piPublicKey, piPrivateKey)
+            else if (inPiOnly) handlePhoneKeySave(profile, piPublicKey, piPrivateKey)
             // Key exists in phone but not Pi
-            else if(inPhoneOnly) handlePiKeySave(profile, storedPublicKey, storedPrivateKey)
+            else if (inPhoneOnly) handlePiKeySave(profile, storedPublicKey, storedPrivateKey)
             // Keys don't exist in phone or Pi
-            else if(inNeither) Toast.makeText(context, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
+            else if (inNeither) Toast.makeText(context, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             // Keys are different, overwrite one or cancel
             else handleDifferentKeys(jsonObject)
         } catch (e: JSONException) {
@@ -161,15 +158,12 @@ open class BaseTunnelSSHFragment: BaseFragment() {
                 strPhonePrivateKey)
 
         builder.setMessage(message)
-
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
-
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
             listener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
             Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
         }
         setNeutralButton(builder, "Cancel")
-
         builder.show()
     }
 
@@ -221,7 +215,7 @@ open class BaseTunnelSSHFragment: BaseFragment() {
         builder.show()
     }
 
-    private fun saveKeyToPhone(builder: AlertDialog.Builder, profile: String, piPublicKey: String, piPrivateKey: String){
+    private fun saveKeyToPhone(builder: AlertDialog.Builder, profile: String, piPublicKey: String, piPrivateKey: String) {
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
@@ -232,8 +226,8 @@ open class BaseTunnelSSHFragment: BaseFragment() {
         }
     }
 
-    private fun setNeutralButton(builder: AlertDialog.Builder, text: String){
-        builder.setNeutralButton(text){ dialog: DialogInterface?, _: Int ->
+    private fun setNeutralButton(builder: AlertDialog.Builder, text: String) {
+        builder.setNeutralButton(text) { dialog: DialogInterface?, _: Int ->
             dialog?.dismiss()
         }
     }
