@@ -13,6 +13,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logD
 
 class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
     private val radioGroup: RadioGroup = v.findViewById(R.id.radioGroup)
@@ -28,7 +29,7 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     readMessage = msg.obj as String
-                    LogUtils.log("$TAG, readMessage = $readMessage")
+                    logD("readMessage = $readMessage")
                     updateSelection(readMessage)
                 }
             }

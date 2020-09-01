@@ -43,6 +43,8 @@ import io.treehouses.remote.SSH.Terminal.TerminalManager.TerminalBinder
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 
 open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
@@ -59,10 +61,10 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
             // If we didn't find the requested connection, try opening it
             if (requestedNickname != null && requestedBridge == null) {
                 try {
-                    LogUtils.log("$TAG, ${String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname)}")
+                    logD("${String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname)}")
                     requestedBridge = bound!!.openConnection(requested)
                 } catch (e: Exception) {
-                    LogUtils.log("$TAG Problem while trying to create new requested bridge from URI $e")
+                    logE("Problem while trying to create new requested bridge from URI $e")
                 }
             }
 
@@ -85,7 +87,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
     override fun onDisconnected(bridge: TerminalBridge) {
         synchronized(adapter!!) {
             adapter!!.notifyDataSetChanged()
-            LogUtils.log("Someone sending HANDLE_DISCONNECT to parentHandler")
+            logD("Someone sending HANDLE_DISCONNECT to parentHandler")
             if (bridge.isAwaitingClose) {
                 closeBridge()
             }
@@ -211,7 +213,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     public override fun onPause() {
         super.onPause()
-        LogUtils.log("$TAG, onPause called")
+        logD("onPause called")
         if (forcedOrientation && bound != null) {
             bound!!.isResizeAllowed = false
         }
@@ -219,7 +221,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     public override fun onResume() {
         super.onResume()
-        LogUtils.log("$TAG, onResume called")
+        logD("onResume called")
 
         // Make sure we don't let the screen fall asleep.
         // This also keeps the Wi-Fi chipset from disconnecting us.
@@ -241,11 +243,11 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         super.onNewIntent(intent)
         requested = intent.data
         if (requested == null) {
-            LogUtils.log("$TAG Got null intent data in onNewIntent()")
+            logD("Got null intent data in onNewIntent()")
             return
         }
         if (bound == null) {
-            LogUtils.log("$TAG We're not bound in onNewIntent()")
+            logD("We're not bound in onNewIntent()")
             return
         }
         setIntentRequested()
@@ -269,7 +271,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        LogUtils.log("$TAG, ${String.format("onConfigurationChanged; requestedOrientation=%d, newConfig.orientation=%d", requestedOrientation, newConfig.orientation)}")
+        logD("${String.format("onConfigurationChanged; requestedOrientation=%d, newConfig.orientation=%d", requestedOrientation, newConfig.orientation)}")
         if (bound != null) {
             bound!!.isResizeAllowed = !(forcedOrientation &&
                     (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE &&

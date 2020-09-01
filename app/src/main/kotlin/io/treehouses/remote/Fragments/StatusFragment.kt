@@ -80,7 +80,7 @@ class StatusFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         addRefreshListener(view)
         bind.tvBluetooth.text = deviceName
-        logE("STATUS device name: $deviceName")
+        logD("STATUS device name: $deviceName")
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())

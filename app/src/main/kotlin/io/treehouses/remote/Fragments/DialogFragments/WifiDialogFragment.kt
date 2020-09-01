@@ -16,6 +16,7 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.R
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import java.util.*
 
@@ -44,7 +45,7 @@ class WifiDialogFragment : DialogFragment() {
                 .setIcon(R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
                 .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        logE("SSID = $wifiList")
+        logD("SSID = $wifiList")
         mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return mDialog!!
     }
@@ -107,7 +108,7 @@ class WifiDialogFragment : DialogFragment() {
 
                 // add to list if SSID is not hidden
                 addToList(ssid)
-                logE("TAG SSID = $ssid")
+                logD("TAG SSID = $ssid")
             }
         }
     }
@@ -121,7 +122,7 @@ class WifiDialogFragment : DialogFragment() {
 
     private fun scanSuccess() {
         val results = wifiManager!!.scanResults
-        logE("Scan Success - scan results: $results")
+        logD("Scan Success - scan results: $results")
         getSSIDs(results)
         setAdapter()
     }

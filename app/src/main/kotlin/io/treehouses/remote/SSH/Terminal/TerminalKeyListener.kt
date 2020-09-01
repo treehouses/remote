@@ -3,22 +3,21 @@ package io.treehouses.remote.SSH.Terminal
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.res.Configuration
-import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
-import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logE
 import java.io.IOException
 
 class TerminalKeyListener(tm: TerminalManager?,
                           tb: TerminalBridge,
                           var b: VDUBuffer,
-                          var e: String?): BaseTerminalKeyListener(tm, tb, b, e), View.OnKeyListener, OnSharedPreferenceChangeListener {
+                          var e: String?) : BaseTerminalKeyListener(tm, tb, b, e), View.OnKeyListener, OnSharedPreferenceChangeListener {
 
-    private fun specialKeys(keyCode: Int, left: Boolean, right: Boolean) : Boolean {
+    private fun specialKeys(keyCode: Int, left: Boolean, right: Boolean): Boolean {
         // Ignore all key-up events except for the special keys
 
         val altRight = keyCode == KeyEvent.KEYCODE_ALT_RIGHT
@@ -26,11 +25,11 @@ class TerminalKeyListener(tm: TerminalManager?,
         val shiftRight = keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT
         val shiftLeft = keyCode == KeyEvent.KEYCODE_SHIFT_LEFT
 
-        return if((right && altRight || left && altLeft) && metaState and OUR_SLASH != 0) {
+        return if ((right && altRight || left && altLeft) && metaState and OUR_SLASH != 0) {
             metaState = metaState and OUR_TRANSIENT.inv()
             bridge.transport!!.write('/'.toInt())
             true
-        }else if((right && shiftRight || left && shiftLeft) && metaState and OUR_TAB != 0){
+        } else if ((right && shiftRight || left && shiftLeft) && metaState and OUR_TAB != 0) {
             metaState = metaState and OUR_TRANSIENT.inv()
             bridge.transport!!.write(0x09)
             true
@@ -66,7 +65,7 @@ class TerminalKeyListener(tm: TerminalManager?,
         } catch (e: IOException) {
             handleProblem(e, "Problem while trying to handle an onKey() event")
         } catch (npe: NullPointerException) {
-            LogUtils.log("$TAG, Input before connection established ignored.")
+            logE("Input before connection established ignored.")
         }
         return false
     }

@@ -30,8 +30,6 @@ class ChPasswordDialogFragment : DialogFragment(), FragmentDialogInterface {
         val mDialog = getAlertDialog(bind!!.root)
         mDialog.setTitle(R.string.change_password)
         mDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-
-
         //initially disable button click
         textBoxValidation.getListener(mDialog)
         setTextChangeListener(mDialog)

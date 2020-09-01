@@ -27,8 +27,8 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
 
@@ -75,7 +75,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             val host = HostBean()
             host.setHostFromUri(Uri.parse(uriString))
             SaveUtils.updateHostList(requireContext(), host)
-            LogUtils.log("HOST URI " + host.uri.toString())
+            logD("HOST URI " + host.uri.toString())
             launchSSH(requireActivity(), host)
         }
 
@@ -151,7 +151,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         val ipAddress = ipString.substring(4)
         val hostAddress = "pi@$ipAddress"
         bind.sshTextInput.setText(hostAddress)
-        LogUtils.log("GOT IP $ipAddress")
+        logD("GOT IP $ipAddress")
     }
 
     override fun onAttach(context: Context) {
@@ -161,7 +161,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
 
     override fun onStop() {
         super.onStop()
-        try {activity?.unbindService(connection)} catch (e: Exception) {LogUtils.log("SSHConfig $e")}
+        try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
     }
 
     override fun getMessage(msg: Message) {

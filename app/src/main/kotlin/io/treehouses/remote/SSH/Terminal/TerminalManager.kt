@@ -28,15 +28,14 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.Vibrator
 import androidx.preference.PreferenceManager
-import android.util.Log
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.security.KeyPair
@@ -57,8 +56,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     var disconnected: MutableList<HostBean> = ArrayList()
     var disconnectListener: BridgeDisconnectedListener? = null
     val hostStatusChangedListeners = ArrayList<OnHostStatusChangedListener>()
+
     @JvmField
     var loadedKeypairs: MutableMap<String, KeyHolder?> = HashMap()
+
     @JvmField
     var res: Resources? = null
 
@@ -186,8 +187,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     val scrollback: Int
         get() {
             var scrollback = 140
-            try { scrollback = prefs!!.getString(PreferenceConstants.SCROLLBACK, "140")!!.toInt() }
-            catch (e: Exception) { }
+            try {
+                scrollback = prefs!!.getString(PreferenceConstants.SCROLLBACK, "140")!!.toInt()
+            } catch (e: Exception) {
+            }
             return scrollback
         }
 
@@ -215,7 +218,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     override fun onDisconnected(bridge: TerminalBridge) {
         //var shouldHideRunningNotification = false
-        LogUtils.log("$TAG, Bridge Disconnected. Removing it.")
+        logD("Bridge Disconnected. Removing it.")
         synchronized(bridges) {
 
             // remove this bridge from our list
@@ -226,7 +229,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             if (bridges.isEmpty() && mPendingReconnect.isEmpty()) //shouldHideRunningNotification = true
 
             // pass notification back up to gui
-            if (disconnectListener != null) disconnectListener!!.onDisconnected(bridge)
+                if (disconnectListener != null) disconnectListener!!.onDisconnected(bridge)
         }
         synchronized(disconnected) { disconnected.add(bridge.host!!) }
         notifyHostStatusChanged()
@@ -240,19 +243,20 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
         loadedKeypairs.remove(pubkey.nickname)
-        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair); val keyHolder = KeyHolder()
+        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair);
+        val keyHolder = KeyHolder()
         keyHolder.bean = pubkey; keyHolder.pair = pair; keyHolder.openSSHPubkey = sshPubKey
         loadedKeypairs[pubkey.nickname] = keyHolder
         if (pubkey.lifetime > 0) {
             val nickname = pubkey.nickname
             pubkeyTimer!!.schedule(object : TimerTask() {
                 override fun run() {
-                    LogUtils.log("$TAG, Unloading from memory key: $nickname")
+                    logD("Unloading from memory key: $nickname")
                     loadedKeypairs.remove(pubkey.nickname)
                 }
             }, pubkey.lifetime * 1000.toLong())
         }
-        LogUtils.log("$TAG, ${String.format("Added key '%s' to in-memory cache", pubkey.nickname)}")
+        logD("${String.format("Added key '%s' to in-memory cache", pubkey.nickname)}")
     }
 
     fun removeKey(publicKey: ByteArray?): Boolean {
@@ -264,7 +268,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             }
         }
         return if (nickname != null) {
-            LogUtils.log("$TAG, ${String.format("Removed key '%s' to in-memory cache", nickname)}")
+            logD("${String.format("Removed key '%s' to in-memory cache", nickname)}")
             loadedKeypairs.remove(nickname) != null
         } else false
     }
@@ -328,19 +332,21 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
                     idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
                 }
             } else {
-                LogUtils.log("$TAG, Stopping service immediately")
+                logD("Stopping service immediately")
                 stopSelf()
             }
         } else {
             // tell each bridge to forget about their previous prompt handler
-            for (bridge in bridges) { bridge.promptHelper?.setHandler(null) }
+            for (bridge in bridges) {
+                bridge.promptHelper?.setHandler(null)
+            }
         }
         return true
     }
 
     private inner class IdleTask : TimerTask() {
         override fun run() {
-            LogUtils.log("$TAG, ${String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000)}")
+            logD("${String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000)}")
             if (bridges.size == 0) {
                 stopSelf()
             }
@@ -367,6 +373,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     class KeyHolder {
         @JvmField
         var bean: PubKeyBean? = null
+
         @JvmField
         var pair: KeyPair? = null
         var openSSHPubkey: ByteArray? = null
@@ -402,7 +409,9 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     }
 
     private fun notifyHostStatusChanged() {
-        for (listener in hostStatusChangedListeners) { listener.onHostStatusChanged() }
+        for (listener in hostStatusChangedListeners) {
+            listener.onHostStatusChanged()
+        }
     }
 
     companion object {

@@ -25,6 +25,7 @@ import io.treehouses.remote.bases.BaseTerminalKeyListener
 import io.treehouses.remote.callback.TerminalPager
 import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logD
 
 open class RootSSHConsole: AppCompatActivity() {
     //    protected var pager: TerminalViewPager? = null
@@ -91,7 +92,7 @@ open class RootSSHConsole: AppCompatActivity() {
             R.id.button_f10 -> handler.sendPressedKey(vt320.KEY_F10)
             R.id.button_f11 -> handler.sendPressedKey(vt320.KEY_F11)
             R.id.button_f12 -> handler.sendPressedKey(vt320.KEY_F12)
-            else -> LogUtils.log("${BaseSSHConsole.TAG} Unknown emulated key clicked: ${v.id}")
+            else -> logD("${BaseSSHConsole.TAG} Unknown emulated key clicked: ${v.id}")
         }
     }
 

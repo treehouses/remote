@@ -238,7 +238,6 @@ object PubKeyUtils {
      * OpenSSH compatibility methods
      */
     fun convertToOpenSSHFormat(pk: PublicKey, nickName: String) : String {
-        LogUtils.log("PUBKEYORIG" + String(Base64.encode(pk.encoded)))
         return when (pk) {
             is RSAPublicKey -> {
                 var data = "ssh-rsa "

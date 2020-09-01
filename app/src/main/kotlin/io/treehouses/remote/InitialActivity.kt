@@ -32,6 +32,7 @@ import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SettingsUtils
+import io.treehouses.remote.utils.logD
 
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
@@ -242,7 +243,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 false
             }
         }
-        LogUtils.log("BOOLEAN $validBluetoothConnection")
+        logD("BOOLEAN $validBluetoothConnection")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -299,7 +300,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
                     if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        LogUtils.log("DEVICE$mConnectedDeviceName")
+                        logD("DEVICE$mConnectedDeviceName")
                         checkStatusNow()
                     }
                 }

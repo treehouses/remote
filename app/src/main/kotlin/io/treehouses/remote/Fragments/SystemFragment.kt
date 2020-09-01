@@ -45,8 +45,6 @@ class SystemFragment : BaseFragment() {
                 listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
                 tether = true
                 return@setOnGroupExpandListener
-            } else if (groupPosition == 2) {
-                logD("3 onCreateView: ")
             }
             listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
         }

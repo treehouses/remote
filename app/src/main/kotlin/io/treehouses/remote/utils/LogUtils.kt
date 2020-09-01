@@ -1,12 +1,8 @@
 package io.treehouses.remote.utils
 
-import android.util.Log
 import android.os.Message
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
+import android.util.Log
 import io.treehouses.remote.BuildConfig
-import io.treehouses.remote.bases.BaseDialogFragment
-import io.treehouses.remote.bases.BaseFragment
 
 object LogUtils {
     fun mOffline() {
@@ -33,17 +29,19 @@ object LogUtils {
     }
 }
 
-fun Fragment.logD(msg: String) { logD(this.javaClass.simpleName, msg) }
+fun Any.logD(msg: String) {
+    logD(this.javaClass.simpleName, msg)
+}
 
-fun Fragment.logE(msg: String, e: Throwable? = null) { logE(this.javaClass.simpleName, msg, e) }
+fun Any.logE(msg: String, e: Throwable? = null) {
+    logE(this.javaClass.simpleName, msg, e)
+}
 
-fun ViewModel.logE(msg: String, e: Throwable? = null) { logE(this.javaClass.simpleName, msg, e) }
 
-
-private fun logD(tag : String, msg: String) {
+private fun logD(tag: String, msg: String) {
     if (BuildConfig.DEBUG) Log.d(tag, msg)
 }
 
-private fun logE(tag : String, msg: String, e: Throwable? = null) {
+private fun logE(tag: String, msg: String, e: Throwable? = null) {
     if (BuildConfig.DEBUG) Log.e(tag, msg)
 }
