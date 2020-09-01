@@ -108,7 +108,7 @@ class SSH: BaseSSH {
             } catch (e: Exception) {
                 return onBadPassword(pubkey, e)
             }
-            val pubKey = PubKeyUtils.decodePublic(pubkey.publicKey!!, pubkey.type)
+            val pubKey = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public") as PublicKey
 
             pair = convertAndSaveKey(pubKey, privKey, pubkey)
         }

@@ -237,8 +237,8 @@ object PubKeyUtils {
         Log.e("PUBKEYORIG", String(Base64.encode(pk.encoded)))
         val rsaKey = if (pk is RSAPublicKey) String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk))) else ""
         return when (pk) {
-            is RSAPublicKey -> "ssh-rsa $rsaKey$nickName"
-            is DSAPublicKey -> "ssh-dss ${String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))}$nickName"
+            is RSAPublicKey -> "ssh-rsa $rsaKey $nickName"
+            is DSAPublicKey -> "ssh-dss ${String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))} $nickName"
             is ECPublicKey -> {
                 val keyType = ECDSASHA2Verify.getCurveName(pk.params.curve.field.fieldSize)
                 val data = String(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(pk)))
