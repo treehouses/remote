@@ -270,7 +270,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
      */
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
-        LogUtils.log(s)
+        logD(s)
         if (mChatService!!.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
             LogUtils.mIdle()
