@@ -259,8 +259,7 @@ class TorTabFragment : BaseFragment() {
                 Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             } else if (readMessage.contains("has been deleted")) {
                 Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-            }
-            else handleFurtherMessages(readMessage)
+            } else handleFurtherMessages(readMessage)
         }
     }
 
@@ -268,8 +267,7 @@ class TorTabFragment : BaseFragment() {
         if( readMessage.contains("Thanks for the feedback!")){
             Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
             nowButton!!.isEnabled = true
-        }
-        else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
+        } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         }
     }
