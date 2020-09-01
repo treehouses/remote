@@ -20,6 +20,8 @@ import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.VDUDisplay
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 import java.io.IOException
 
 open class BaseTerminalBridge : VDUDisplay {
@@ -136,7 +138,7 @@ open class BaseTerminalBridge : VDUDisplay {
      */
     fun outputLine(output: String) {
         if (transport != null && transport!!.isSessionOpen) {
-            LogUtils.log("$TAG Session established, cannot use outputLine! ${IOException("outputLine call traceback")}")
+            logD("Session established, cannot use outputLine! ${IOException("outputLine call traceback")}")
         }
         synchronized(localOutput) {
             for (line in output.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
@@ -321,7 +323,7 @@ open class BaseTerminalBridge : VDUDisplay {
             try {
                 transport!!.write(string.toByteArray(charset(host!!.encoding)))
             } catch (e: Exception) {
-                LogUtils.log("$TAG Couldn't inject string to remote host: $e")
+                logE("Couldn't inject string to remote host: $e")
             }
         })
         injectStringThread.name = "InjectString"
