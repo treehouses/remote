@@ -128,20 +128,24 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
     inner class HostKeyVerifier : ExtendedServerHostKeyVerifier() {
         @Throws(IOException::class)
-        override fun verifyServerHostKey(hostname: String, port: Int,
-                                         serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
+        override fun verifyServerHostKey(hostname: String, port: Int, serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
 
             // read in all known hosts from hostdb
             val hosts = KeyUtils.getAllKnownHosts(manager!!.applicationContext)
             Log.e("ALL HOSTS", hosts.toString())
             val matchName = String.format(Locale.US, "%s:%d", hostname, port)
-            val fingerprint = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
-            val algorithmName: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
+            val print = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
+            val algo: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
             return when (hosts.verifyHostkey(matchName, serverHostKeyAlgorithm, serverHostKey)) {
-                KnownHosts.HOSTKEY_IS_OK -> onKeyOk(algorithmName, fingerprint)
+                KnownHosts.HOSTKEY_IS_OK -> onKeyOk(algo, print)
                 KnownHosts.HOSTKEY_IS_NEW -> {
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.host_authenticity_warning, hostname))
-                    bridge!!.outputLine(manager!!.res!!.getString(R.string.host_fingerprint, algorithmName, fingerprint))
+                    val id = R.string.host_fingerprint
+                    val hostPrint = manager!!.res!!.getString(id, algo, print)
+
+                    val id2 = R.string.host_authenticity_warning
+                    val hostWarn = manager!!.res!!.getString(id2, hostname)
+                    bridge!!.outputLine(hostWarn)
+                    bridge!!.outputLine(hostPrint)
                     Log.e("HOST KEY", Arrays.toString(serverHostKey))
                     //                    if (result) {
 //                        // save this key in known database
@@ -150,15 +154,17 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                     promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
                 }
                 KnownHosts.HOSTKEY_HAS_CHANGED -> {
-                    onHostKeyChanged(algorithmName, fingerprint)
+                    onHostKeyChanged(algo, print)
                     promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
                 }
                 else -> onKeyFailed()
             }
         }
 
-        private fun onKeyOk(algorithmName: String, fingerprint: String): Boolean {
-            bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_sucess, algorithmName, fingerprint))
+        private fun onKeyOk(algo: String, print: String): Boolean {
+            val id = R.string.terminal_sucess
+            val line = manager!!.res!!.getString(id, algo, print)
+            bridge!!.outputLine(line)
             return true
         }
 
@@ -188,7 +194,10 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             } else return false
         }
 
-        private fun continueConnecting() : Boolean = bridge!!.promptHelper!!.requestBooleanPrompt(null, manager!!.res!!.getString(R.string.prompt_continue_connecting))!!
+        private fun continueConnecting() : Boolean {
+            val prompt = manager!!.res!!.getString(R.string.prompt_continue_connecting)
+            return bridge!!.promptHelper!!.requestBooleanPrompt(null, prompt)!!
+        }
 
         override fun getKnownKeyAlgorithmsForHost(host: String, port: Int): List<String> {
             val hostBean = KeyUtils.getKnownHost(manager!!.applicationContext, "$host:$port")
@@ -461,11 +470,12 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         for ((key, value) in manager!!.loadedKeypairs) {
             val pair = value?.pair
             try {
-                when (pair?.private) {
-                    is RSAPrivateKey -> pubKeys[key] = RSASHA1Verify.encodeSSHRSAPublicKey(pair.public as RSAPublicKey)
-                    is DSAPrivateKey -> pubKeys[key] = DSASHA1Verify.encodeSSHDSAPublicKey(pair.public as DSAPublicKey)
-                    is ECPrivateKey -> pubKeys[key] = ECDSASHA2Verify.encodeSSHECDSAPublicKey(pair.public as ECPublicKey)
-                    is EdDSAPrivateKey -> pubKeys[key] = Ed25519Verify.encodeSSHEd25519PublicKey(pair.public as EdDSAPublicKey)
+                pubKeys[key] = when (pair?.private) {
+                    is RSAPrivateKey -> RSASHA1Verify.encodeSSHRSAPublicKey(pair.public as RSAPublicKey)
+                    is DSAPrivateKey -> DSASHA1Verify.encodeSSHDSAPublicKey(pair.public as DSAPublicKey)
+                    is ECPrivateKey -> ECDSASHA2Verify.encodeSSHECDSAPublicKey(pair.public as ECPublicKey)
+                    is EdDSAPrivateKey -> Ed25519Verify.encodeSSHEd25519PublicKey(pair.public as EdDSAPublicKey)
+                    else -> ByteArray(0)
                 }
             } catch (e: IOException) {
                 continue
