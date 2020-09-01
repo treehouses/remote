@@ -25,7 +25,7 @@
         </TextView>
 
         <ImageButton
-            android:id="@+id/closeButton"
+            android:id="@+id/addPortCloseButton"
             android:layout_width="30dp"
             android:layout_height="24dp"
             android:layout_marginStart="304dp"
