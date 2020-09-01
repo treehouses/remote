@@ -215,17 +215,17 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
     }
 
     override fun setChatService(service: BluetoothChatService) {
         mChatService = service
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
         checkStatusNow()
     }
 
     override fun getChatService(): BluetoothChatService {
-        return mChatService!!
+        return mChatService
     }
 
     fun checkStatusNow() {
@@ -271,7 +271,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
         logD(s)
-        if (mChatService!!.state != Constants.STATE_CONNECTED) {
+        if (mChatService.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
             LogUtils.mIdle()
             return
@@ -281,7 +281,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (s.isNotEmpty()) {
             // Get the message bytes and tell the BluetoothChatService to write
             val send = s.toByteArray()
-            mChatService!!.write(send)
+            mChatService.write(send)
 
             // Reset out string buffer to zero and clear the edit text field
 //            mOutStringBuffer.setLength(0);
