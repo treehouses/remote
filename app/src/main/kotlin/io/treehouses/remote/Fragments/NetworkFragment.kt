@@ -25,9 +25,7 @@ import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
 import io.treehouses.remote.ui.home.HomeFragment
-import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.utils.match
+import io.treehouses.remote.utils.*
 
 class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
@@ -105,7 +103,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
                 Utils.sendMessage(listener, msg, toastMsg, context)
                 binding.networkPbar.visibility = View.GONE
             }
-            else -> Log.e("NewNetworkFragment", "Result not Found")
+            else -> logE("NewNetworkFragment: Result not Found")
         }
     }
 
@@ -158,7 +156,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
     override fun getMessage(msg: Message) {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage = msg.obj as String
-            Log.d("TAG", "readMessage = $readMessage")
+            logD("readMessage = $readMessage")
             performAction(readMessage)
         }
     }

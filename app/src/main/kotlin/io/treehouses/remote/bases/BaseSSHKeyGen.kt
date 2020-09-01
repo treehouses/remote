@@ -1,9 +1,8 @@
 package io.treehouses.remote.bases
 
-import android.util.Log
 import android.view.View
-import androidx.core.widget.addTextChangedListener
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
@@ -108,12 +107,11 @@ open class BaseSSHKeyGen : FullScreenDialogFragment() {
         dismiss()
     }
 
-    private suspend fun generateKey(name: String, algorithm: String, password: String, bitSize: Int) : PubKeyBean {
+    private suspend fun generateKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
         return suspendCoroutine {
             val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
                 initialize(bitSize)
             }.generateKeyPair()
-            Log.e("GENERATED", "KEY")
             val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
             if (password.isNotEmpty()) key.isEncrypted = true
             it.resume(key)

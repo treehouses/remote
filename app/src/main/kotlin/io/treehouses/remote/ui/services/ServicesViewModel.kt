@@ -112,7 +112,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
             Gson().fromJson(data, ServicesData::class.java)
         } catch (e: Exception) { null}
         if (rawData?.available != null) {
-            Log.e("SUCCESSFUL R CACHE", "GOT:$rawData")
+            logE("SUCCESSFUL R CACHE GOT:$rawData")
             cacheServiceData.value = rawData!!
         }
     }
@@ -121,7 +121,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * Saves a JSON string to the cache
      */
     fun updateServicesCache(newJSON: String) {
-        Log.e("SAVING", newJSON)
+        logE("SAVING $newJSON")
         PreferenceManager.getDefaultSharedPreferences(getApplication()).edit().putString(SERVICES_CACHE, newJSON).apply()
     }
 
@@ -131,7 +131,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      *  2. A specific service action was triggered
      */
     override fun onRead(output: String) {
-        Log.e("GOT", output)
+        logE("GOT $output")
         when {
             match(output) == RESULTS.ERROR && !output.contains("kill [") && !output.contains("tput: No") -> {       //kill to fix temporary issue
                 error.value = output
@@ -159,7 +159,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         servicesJSON += current
         if (currentlyReceivingJSON && servicesJSON.endsWith("}}")) {
             try {
-                Log.e("GOT", servicesJSON)
+                logE("GOT $servicesJSON")
                 val data = Gson().fromJson(servicesJSON, ServicesData::class.java)
                 serverServiceData.value = if (data != null) {
                     updateServicesCache(servicesJSON)
