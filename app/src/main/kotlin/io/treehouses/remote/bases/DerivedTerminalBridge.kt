@@ -4,14 +4,14 @@ import android.content.Context
 import android.graphics.Color
 import android.provider.Settings
 import android.text.ClipboardManager
-import android.util.Log
 import io.treehouses.remote.SSH.Terminal.PatternHolder
 import io.treehouses.remote.SSH.Terminal.TerminalView
-import io.treehouses.remote.utils.LogUtils
-import java.util.ArrayList
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
+import java.util.*
 import kotlin.math.ceil
 
-open class DerivedTerminalBridge: BaseTerminalBridge() {
+open class DerivedTerminalBridge : BaseTerminalBridge() {
     /**
      * Request a different font size. Will make call to parentChanged() to make
      * sure we resize PTY if needed.
@@ -56,7 +56,7 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
     @Synchronized
     fun parentChanged(parent: TerminalView) {
         if (manager != null && !manager!!.isResizeAllowed) {
-            LogUtils.log("$TAG, Resize is not allowed now")
+            logD("Resize is not allowed now")
             return
         }
         this.parent = parent
@@ -85,7 +85,7 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
         forceRedraw(parent)
     }
 
-    private fun checkDimensions(width: Int, height: Int) : Boolean {
+    private fun checkDimensions(width: Int, height: Int): Boolean {
         // recalculate buffer size
         val newColumns: Int = width / charWidth
         val newRows: Int = height / charHeight
@@ -105,7 +105,7 @@ open class DerivedTerminalBridge: BaseTerminalBridge() {
             synchronized(vDUBuffer!!) { vDUBuffer!!.setScreenSize(columns, rows, true) }
             if (transport != null) transport!!.setDimensions(columns, rows, width, height)
         } catch (e: Exception) {
-            LogUtils.log("$TAG Problem while trying to resize screen or PTY $e")
+            logE("Problem while trying to resize screen or PTY $e")
         }
     }
 
