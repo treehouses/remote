@@ -28,6 +28,9 @@ import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.pojo.StatusData
 import kotlinx.android.synthetic.main.dialog_wificountry.*
 import java.util.*
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
+import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class StatusFragment : BaseStatusFragment() {
 
@@ -79,7 +82,7 @@ class StatusFragment : BaseStatusFragment() {
         super.onViewCreated(view, savedInstanceState)
         addRefreshListener(view)
         bind.tvBluetooth.text = deviceName
-        Log.e("STATUS", "device name: $deviceName")
+        logD("STATUS device name: $deviceName")
         upgradeOnViewClickListener()
         rpiNameOnViewClickListener()
         Tutorials.statusTutorials(bind, requireActivity())
@@ -111,7 +114,7 @@ class StatusFragment : BaseStatusFragment() {
     }
 
     override fun updateStatus(readMessage: String) {
-        Log.d(TAG, "updateStatus: $lastCommand response $readMessage")
+        logD("$TAG updateStatus: $lastCommand response $readMessage")
 
         if(lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)){
             val statusData = Gson().fromJson(readMessage, StatusData::class.java)
@@ -199,11 +202,11 @@ class StatusFragment : BaseStatusFragment() {
             Constants.MESSAGE_WRITE -> {
                 val writeBuf = msg.obj as ByteArray
                 val writeMessage = String(writeBuf)
-                Log.d(TAG, "writeMessage = $writeMessage")
+                logD("$TAG, writeMessage = $writeMessage")
             }
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
-                Log.d(TAG, "readMessage = $readMessage")
+                logD("$TAG, readMessage = $readMessage")
                 receiveMessage(readMessage)
             }
         }

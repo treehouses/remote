@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.WifiDialogFragment
-import io.treehouses.remote.Fragments.NewNetworkFragment
-import io.treehouses.remote.Fragments.NewNetworkFragment.Companion.openWifiDialog
+import io.treehouses.remote.Fragments.NetworkFragment
+import io.treehouses.remote.Fragments.NetworkFragment.Companion.openWifiDialog
 import io.treehouses.remote.Fragments.TextBoxValidation
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseBottomSheetDialog
@@ -44,7 +44,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
                     bind.etPassword.text.toString(), bind.etHotspotPassword.text.toString()))
             Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
             val intent = Intent()
-            intent.putExtra(NewNetworkFragment.CLICKED_START_CONFIG, true)
+            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }

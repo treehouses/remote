@@ -13,6 +13,8 @@ import androidx.lifecycle.Transformations
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logE
 
 open class FragmentViewModel(application: Application) : AndroidViewModel(application) {
     /**
@@ -45,9 +47,9 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
                 Constants.MESSAGE_STATE_CHANGE -> {
                     if (msg.arg1 == Constants.STATE_NONE) {
                         try { Toast.makeText(application, "Bluetooth disconnected", Toast.LENGTH_LONG).show() }
-                        catch (exception: NullPointerException) { Log.e("Error", exception.toString()) }
+                        catch (exception: NullPointerException) { logE("Error $exception") }
                     }
-                    Log.e("RECEIVED", "CONNECTION ${msg.arg1}")
+                    logE("RECEIVED, CONNECTION ${msg.arg1}")
                     _connectionStatus.value= msg.arg1
                 }
                 Constants.MESSAGE_WRITE -> onWrite(String(msg.obj as ByteArray))
@@ -86,7 +88,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * @param toSend : String = A string to send to the Raspberry Pi
      */
     fun sendMessage(toSend: String) {
-        Log.e("SENDING", toSend)
+        logE("SENDING $toSend")
         if (_connectionStatus.value != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplication(), "Not Connected to Bluetooth", Toast.LENGTH_LONG).show()
         }

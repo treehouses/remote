@@ -9,11 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
 import io.treehouses.remote.Fragments.DialogFragments.SSHAllKeys
@@ -22,7 +20,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
-import io.treehouses.remote.SSHConsole
+import io.treehouses.remote.SSHConsole.SSHConsole
 import io.treehouses.remote.Views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
 import io.treehouses.remote.bases.BaseFragment
@@ -30,6 +28,7 @@ import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
 
@@ -76,7 +75,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
             val host = HostBean()
             host.setHostFromUri(Uri.parse(uriString))
             SaveUtils.updateHostList(requireContext(), host)
-            Log.e("HOST URI", host.uri.toString())
+            logD("HOST URI " + host.uri.toString())
             launchSSH(requireActivity(), host)
         }
 
@@ -152,7 +151,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         val ipAddress = ipString.substring(4)
         val hostAddress = "pi@$ipAddress"
         bind.sshTextInput.setText(hostAddress)
-        Log.e("GOT IP", ipAddress)
+        logD("GOT IP $ipAddress")
     }
 
     override fun onAttach(context: Context) {
@@ -162,7 +161,7 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
 
     override fun onStop() {
         super.onStop()
-        try {activity?.unbindService(connection)} catch (e: Exception) {Log.e("SSHConfig", e.message, e)}
+        try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
     }
 
     override fun getMessage(msg: Message) {

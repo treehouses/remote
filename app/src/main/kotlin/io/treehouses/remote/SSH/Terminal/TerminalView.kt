@@ -24,7 +24,6 @@ import android.graphics.*
 import android.graphics.Matrix.ScaleToFit
 import android.preference.PreferenceManager
 import android.text.ClipboardManager
-import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.accessibility.AccessibilityEvent
@@ -34,10 +33,10 @@ import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
-import io.treehouses.remote.Views.terminal.VDUBuffer
-import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import io.treehouses.remote.Views.terminal.VDUBuffer
+import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
 import java.io.IOException
 import java.util.regex.Matcher

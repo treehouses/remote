@@ -3,7 +3,6 @@ package io.treehouses.remote.adapter
 import android.content.Context
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -37,8 +36,7 @@ class ViewHolderSSHKey internal constructor(v: View, private val c: Context, lis
         editTextSSHKey = v.findViewById(R.id.editTextSSHKey)
         btnStartConfig.setOnClickListener {
             if (editTextSSHKey.text.toString() != "") {
-                Log.d("1111111", editTextSSHKey.text.toString())
-                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD,  editTextSSHKey.text.toString()))
+                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD, editTextSSHKey.text.toString()))
             } else {
                 Toast.makeText(c, "Incorrect SSH Key Input", Toast.LENGTH_LONG).show()
             }
