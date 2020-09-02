@@ -20,6 +20,8 @@ import android.text.AndroidCharacter
 import android.util.Log
 import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.SSH.Terminal.TerminalBridge
+import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
@@ -43,7 +45,6 @@ class Relay(bridge: TerminalBridge, transport: SSH, buffer: vt320, encoding: Str
     private var byteArray: ByteArray? = null
     private var charArray: CharArray? = null
     fun setCharset(encoding: String) {
-        Log.d("ConnectBot.Relay", "changing charset to $encoding")
         //		if (encoding.equals("CP437")) {
 //			charset = new IBM437("IBM437",
 //					new String[] {"IBM437", "CP437"});
@@ -72,7 +73,7 @@ class Relay(bridge: TerminalBridge, transport: SSH, buffer: vt320, encoding: Str
         try {
             handleData(wideAttribute)
         } catch (e: IOException) {
-            Log.e(TAG, "Problem while handling incoming data in relay thread", e)
+            logE("Problem while handling incoming data in relay thread $e")
         }
     }
 

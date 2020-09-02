@@ -1,13 +1,17 @@
 package io.treehouses.remote
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,6 +23,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
@@ -33,6 +38,7 @@ import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SettingsUtils
+import io.treehouses.remote.utils.logD
 
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
@@ -40,6 +46,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
     private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
+    protected var preferences: SharedPreferences? = null
     /** Defines callbacks for service binding, passed to bindService()  */
 
     private lateinit var currentTitle: String
@@ -58,7 +65,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         GPSService(this)
         val a = (application as MainApplication).getCurrentBluetoothService()
         if (a != null) {
-            Log.e("NOT", "NULL")
             mChatService = a
             mChatService.updateHandler(mHandler)
             openCallFragment(HomeFragment())
@@ -197,6 +203,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 99) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
@@ -215,17 +222,17 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
     }
 
     override fun setChatService(service: BluetoothChatService) {
         mChatService = service
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
         checkStatusNow()
     }
 
     override fun getChatService(): BluetoothChatService {
-        return mChatService!!
+        return mChatService
     }
 
     fun checkStatusNow() {
@@ -243,7 +250,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 false
             }
         }
-        Log.e("BOOLEAN", "" + validBluetoothConnection)
+        logD("BOOLEAN $validBluetoothConnection")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -256,11 +263,24 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
             }
             R.id.action_community -> {
-                openCallFragment(CommunityFragment())
-                title = getString(R.string.action_community)
+                preferences = PreferenceManager.getDefaultSharedPreferences(this)
+                val v = layoutInflater.inflate(R.layout.alert_log_map, null)
+                if (!preferences?.getBoolean("send_log", false)!!) {
+                    CreateAlertDialog(this@InitialActivity, R.style.CustomAlertDialogStyle, "Sharing is Caring.").setCancelable(false).setMessage("The community map is only available with data sharing. " +
+                            "Please enable data sharing to access this feature.")
+                            .setPositiveButton("Enable Data Sharing") { _: DialogInterface?, _: Int -> preferences!!.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                }
+                else {
+                    openCallFragment(CommunityFragment())
+                    title = getString(R.string.action_community)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun CreateAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
     }
 
     /**
@@ -270,8 +290,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
      */
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
-        LogUtils.log(s)
-        if (mChatService!!.state != Constants.STATE_CONNECTED) {
+        logD(s)
+        if (mChatService.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
             LogUtils.mIdle()
             return
@@ -281,7 +301,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (s.isNotEmpty()) {
             // Get the message bytes and tell the BluetoothChatService to write
             val send = s.toByteArray()
-            mChatService!!.write(send)
+            mChatService.write(send)
 
             // Reset out string buffer to zero and clear the edit text field
 //            mOutStringBuffer.setLength(0);
@@ -300,7 +320,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
                     if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        Log.e("DEVICE", "" + mConnectedDeviceName)
+                        logD("DEVICE$mConnectedDeviceName")
                         checkStatusNow()
                     }
                 }
