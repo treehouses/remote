@@ -154,17 +154,17 @@ class TorTabFragment : BaseFragment() {
         addingPortButton.setOnClickListener {
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
-                val s1 = inputInternal.text.toString()
-                val s2 = inputExternal.text.toString()
+                val s1 = inputInternal.text.toString() ; val s2 = inputExternal.text.toString()
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
                 addPortButton!!.text = "Adding port, please wait for a while ............"
-                portList!!.isEnabled = false
-                addPortButton!!.isEnabled = false
+                portList!!.isEnabled = false; addPortButton!!.isEnabled = false
                 dialog.dismiss()
                 inputInternal.text?.clear(); inputExternal.text?.clear()
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
+        val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
+        closeButton.setOnClickListener { dialog.dismiss() }
     }
 
     private fun addStartButtonListener() {
