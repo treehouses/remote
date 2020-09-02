@@ -3,15 +3,18 @@ package io.treehouses.remote.adapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.treehouses.remote.Fragments.ServiceCardFragment
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
-class ServiceCardAdapter(fm: FragmentManager?, data: ArrayList<ServiceInfo>) : FragmentStatePagerAdapter(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    val data: ArrayList<ServiceInfo>
-    private fun removeHeaders(data: ArrayList<ServiceInfo>): ArrayList<ServiceInfo> {
+class ServiceCardAdapter(fm: FragmentManager?, data: MutableList<ServiceInfo>) : FragmentStatePagerAdapter(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    var data: ArrayList<ServiceInfo>
+    private fun removeHeaders(data: MutableList<ServiceInfo>): ArrayList<ServiceInfo> {
         val tmp = ArrayList(data)
         val iterator = tmp.iterator()
         while (iterator.hasNext()) {
@@ -37,7 +40,8 @@ class ServiceCardAdapter(fm: FragmentManager?, data: ArrayList<ServiceInfo>) : F
     }
 
     override fun notifyDataSetChanged() {
-        Collections.sort(data)
+        this.data = removeHeaders(data)
+        data.sort()
         super.notifyDataSetChanged()
     }
 

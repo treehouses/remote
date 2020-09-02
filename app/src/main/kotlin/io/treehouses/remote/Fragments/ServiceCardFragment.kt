@@ -16,6 +16,7 @@ import com.caverock.androidsvg.SVG
 import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.logD
 
 class ServiceCardFragment : Fragment(), View.OnClickListener {
     private var actionListener: ServiceAction? = null
@@ -44,7 +45,9 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
             binding!!.startButton.setOnClickListener(this)
             binding!!.openLink.setOnClickListener(this)
             binding!!.editEnvButton.setOnClickListener(this)
-            binding!!.autorunChecked.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean -> actionListener!!.onClickAutorun(serviceData, isChecked) }
+            binding!!.autorunChecked.setOnClickListener {
+                actionListener!!.onClickAutorun(serviceData, binding?.autorunChecked?.isChecked ?: false)
+            }
         }
         return binding!!.root
     }
@@ -96,7 +99,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     private fun showIcon(s: String?) {
         try {
-            Log.d(serviceData.name, "showIcon:" + serviceData.icon)
+            logD("${serviceData.name}, showIcon: ${serviceData.icon}")
             val svg = SVG.getFromString(s)
             val pd = PictureDrawable(svg.renderToPicture())
             binding!!.serviceLogo.setImageDrawable(pd)
@@ -108,7 +111,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
     private fun setServiceInfo(s: String?) {
         val spannableString = SpannableString(s)
         Linkify.addLinks(spannableString, Linkify.ALL)
-        binding!!.serviceInfo.text = s
+        binding!!.serviceInfo.text = spannableString
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
     }
 
@@ -118,14 +121,19 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (binding!!.installButton == v) {
-            actionListener!!.onClickInstall(serviceData)
-        } else if (binding!!.startButton == v) {
-            actionListener!!.onClickStart(serviceData)
-        } else if (binding!!.openLink == v) {
-            actionListener!!.onClickLink(serviceData)
-        } else if (binding!!.editEnvButton == v) {
-            actionListener!!.onClickEditEnvVar(serviceData)
+        when {
+            binding!!.installButton == v -> {
+                actionListener!!.onClickInstall(serviceData)
+            }
+            binding!!.startButton == v -> {
+                actionListener!!.onClickStart(serviceData)
+            }
+            binding!!.openLink == v -> {
+                actionListener!!.onClickLink(serviceData)
+            }
+            binding!!.editEnvButton == v -> {
+                actionListener!!.onClickEditEnvVar(serviceData)
+            }
         }
     }
 

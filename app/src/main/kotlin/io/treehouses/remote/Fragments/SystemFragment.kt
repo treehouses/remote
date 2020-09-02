@@ -23,6 +23,7 @@ import io.treehouses.remote.adapter.ViewHolderVnc
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.pojo.NetworkListItem
+import io.treehouses.remote.utils.logD
 import java.util.*
 
 class SystemFragment : BaseFragment() {
@@ -44,8 +45,6 @@ class SystemFragment : BaseFragment() {
                 listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
                 tether = true
                 return@setOnGroupExpandListener
-            } else if (groupPosition == 2) {
-                Log.d("3", "onCreateView: ")
             }
             listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
         }
@@ -183,7 +182,7 @@ class SystemFragment : BaseFragment() {
             val readMessage = msg.obj.toString().trim { it <= ' ' }
             val diff = ArrayList<Long>()
             readMessageConditions(readMessage)
-            Log.d("TAG", "readMessage = $readMessage")
+            logD("readMessage = $readMessage")
             vncToast(readMessage)
             checkAndPrefilIp(readMessage, diff)
         }

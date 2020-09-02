@@ -38,6 +38,7 @@ import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SettingsUtils
+import io.treehouses.remote.utils.logD
 
 
 class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
@@ -64,7 +65,6 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         GPSService(this)
         val a = (application as MainApplication).getCurrentBluetoothService()
         if (a != null) {
-            Log.e("NOT", "NULL")
             mChatService = a
             mChatService.updateHandler(mHandler)
             openCallFragment(HomeFragment())
@@ -173,7 +173,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private fun onNavigationItemClicked(id: Int) {
         val fragment = when (id) {
             R.id.menu_home -> HomeFragment()
-            R.id.menu_network -> NewNetworkFragment()
+            R.id.menu_network -> NetworkFragment()
             R.id.menu_system -> SystemFragment()
             R.id.menu_terminal -> TerminalFragment()
             R.id.menu_services -> ServicesFragment()
@@ -203,6 +203,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 99) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
@@ -221,17 +222,17 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
     }
 
     override fun setChatService(service: BluetoothChatService) {
         mChatService = service
-        mChatService!!.updateHandler(mHandler)
+        mChatService.updateHandler(mHandler)
         checkStatusNow()
     }
 
     override fun getChatService(): BluetoothChatService {
-        return mChatService!!
+        return mChatService
     }
 
     fun checkStatusNow() {
@@ -249,7 +250,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 false
             }
         }
-        Log.e("BOOLEAN", "" + validBluetoothConnection)
+        logD("BOOLEAN $validBluetoothConnection")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -289,8 +290,8 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
      */
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
-        LogUtils.log(s)
-        if (mChatService!!.state != Constants.STATE_CONNECTED) {
+        logD(s)
+        if (mChatService.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@InitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
             LogUtils.mIdle()
             return
@@ -300,7 +301,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
         if (s.isNotEmpty()) {
             // Get the message bytes and tell the BluetoothChatService to write
             val send = s.toByteArray()
-            mChatService!!.write(send)
+            mChatService.write(send)
 
             // Reset out string buffer to zero and clear the edit text field
 //            mOutStringBuffer.setLength(0);
@@ -319,7 +320,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
                     if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        Log.e("DEVICE", "" + mConnectedDeviceName)
+                        logD("DEVICE$mConnectedDeviceName")
                         checkStatusNow()
                     }
                 }
