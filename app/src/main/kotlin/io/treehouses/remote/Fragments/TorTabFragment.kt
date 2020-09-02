@@ -254,7 +254,7 @@ class TorTabFragment : BaseFragment() {
         } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
             portsName = ArrayList()
-            addPortButton!!.text = "Retrieving port.... Please wait"
+            addPortButton!!.text = "Retrieving port. Please wait..."
             if (readMessage.contains("the port has been added")) {
                 Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             } else if (readMessage.contains("has been deleted")) {
