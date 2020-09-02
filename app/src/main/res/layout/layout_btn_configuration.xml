@@ -6,5 +6,6 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_normal"
     android:textColor="#ffffff"
+    android:background="@drawable/ic_blue_600"
     android:text="Start Configuration"
     android:theme="@style/PrimaryButton" />
