@@ -25,6 +25,7 @@ import com.trilead.ssh2.signature.RSASHA1Verify
 import io.treehouses.remote.SSH.Ed25519Provider.Companion.insertIfNeeded
 import io.treehouses.remote.SSH.Encryptor.decrypt
 import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.utils.LogUtils
 import net.i2p.crypto.eddsa.EdDSAPublicKey
 import java.io.IOException
 import java.security.*
@@ -237,7 +238,6 @@ object PubKeyUtils {
      * OpenSSH compatibility methods
      */
     fun convertToOpenSSHFormat(pk: PublicKey, nickName: String) : String {
-        Log.e("PUBKEYORIG", String(Base64.encode(pk.encoded)))
         return when (pk) {
             is RSAPublicKey -> {
                 var data = "ssh-rsa "

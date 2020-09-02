@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -23,6 +22,7 @@ import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils.copyToClipboard
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
@@ -50,7 +50,7 @@ open class BaseTerminalFragment : BaseFragment() {
         // construct a string from the buffer
         val writeMessage = String(writeBuf)
         if (match(writeMessage) != RESULTS.PING_OUTPUT && !jsonSent) {
-            Log.d(TAG, "writeMessage = $writeMessage")
+            logD( "writeMessage = $writeMessage")
             mConversationArrayAdapter?.add("\nCommand:  $writeMessage")
         }
         return writeMessage
@@ -182,7 +182,7 @@ open class BaseTerminalFragment : BaseFragment() {
         }
         for (i in data.commands!!.indices) {
             val s = getRootCommand(data.commands!![i]).trim { it <= ' ' }
-            Log.d("TAG", "updateArrayAdapters: $s")
+            logD( "updateArrayAdapters: $s")
             if (!inSecondLevel!!.contains(s)) {
                 arrayAdapter2?.add(s)
                 inSecondLevel?.add(s)

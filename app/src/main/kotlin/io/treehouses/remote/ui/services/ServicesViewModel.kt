@@ -20,7 +20,18 @@ import io.treehouses.remote.utils.*
 
 class ServicesViewModel(application: Application) : FragmentViewModel(application) {
 
+    /**
+     * Private services JSON value that contains the raw string it retrieves from the Raspberry Pi
+     * That upon receiving, should be parsed as ServicesData.
+     * @see ServicesData
+     */
     private var servicesJSON = ""
+
+    /**
+     * A boolean value indicating whether the first '{' has been detected of the JSON file
+     * implying that the consequent outputs are part of the JSON string
+     * @see servicesJSON
+     */
     private var currentlyReceivingJSON = false
 
     /**
@@ -101,7 +112,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
             Gson().fromJson(data, ServicesData::class.java)
         } catch (e: Exception) { null}
         if (rawData?.available != null) {
-            Log.e("SUCCESSFUL R CACHE", "GOT:$rawData")
+            logE("SUCCESSFUL R CACHE GOT:$rawData")
             cacheServiceData.value = rawData!!
         }
     }
@@ -110,7 +121,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * Saves a JSON string to the cache
      */
     fun updateServicesCache(newJSON: String) {
-        Log.e("SAVING", newJSON)
+        logE("SAVING $newJSON")
         PreferenceManager.getDefaultSharedPreferences(getApplication()).edit().putString(SERVICES_CACHE, newJSON).apply()
     }
 
@@ -120,7 +131,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      *  2. A specific service action was triggered
      */
     override fun onRead(output: String) {
-        Log.e("GOT", output)
+        logE("GOT $output")
         when {
             match(output) == RESULTS.ERROR && !output.contains("kill [") && !output.contains("tput: No") -> {       //kill to fix temporary issue
                 error.value = output
@@ -148,7 +159,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         servicesJSON += current
         if (currentlyReceivingJSON && servicesJSON.endsWith("}}")) {
             try {
-                Log.e("GOT", servicesJSON)
+                logE("GOT $servicesJSON")
                 val data = Gson().fromJson(servicesJSON, ServicesData::class.java)
                 serverServiceData.value = if (data != null) {
                     updateServicesCache(servicesJSON)
@@ -235,7 +246,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
 
     /**
-     * Get the service's local URL link
+     * Get the service's local URL link. Can be opened with any web browser.
      * @param service : ServiceInfo = Service clicked
      */
     fun getLocalLink(service: ServiceInfo) {
@@ -244,7 +255,8 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     }
 
     /**
-     * Get the service's Tor URL Link
+     * Retrieves the service's Tor link. Upon receiving this value, the observer
+     * should attempt to open the Tor Browser app
      * @param service : ServiceInfo = Service clicked
      */
     fun getTorLink(service: ServiceInfo) {
@@ -264,6 +276,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
 
     /**
      * Add the sources for the raw Services Data
+     * Pull from the server, and the local cache
      */
     init {
         rawServicesData.addSource(serverServiceData) {
