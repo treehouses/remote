@@ -1,12 +1,17 @@
 package io.treehouses.remote
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,6 +23,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.Fragments.*
 import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
@@ -40,6 +46,7 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
     private var mConnectedDeviceName: String? = null
     private lateinit var bind: ActivityInitial2Binding
     private lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
+    protected var preferences: SharedPreferences? = null
     /** Defines callbacks for service binding, passed to bindService()  */
 
     private lateinit var currentTitle: String
@@ -256,11 +263,24 @@ class InitialActivity : PermissionActivity(), NavigationView.OnNavigationItemSel
                 FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
             }
             R.id.action_community -> {
-                openCallFragment(CommunityFragment())
-                title = getString(R.string.action_community)
+                preferences = PreferenceManager.getDefaultSharedPreferences(this)
+                val v = layoutInflater.inflate(R.layout.alert_log_map, null)
+                if (!preferences?.getBoolean("send_log", false)!!) {
+                    CreateAlertDialog(this@InitialActivity, R.style.CustomAlertDialogStyle, "Sharing is Caring.").setCancelable(false).setMessage("The community map is only available with data sharing. " +
+                            "Please enable data sharing to access this feature.")
+                            .setPositiveButton("Enable Data Sharing") { _: DialogInterface?, _: Int -> preferences!!.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                }
+                else {
+                    openCallFragment(CommunityFragment())
+                    title = getString(R.string.action_community)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun CreateAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
     }
 
     /**
