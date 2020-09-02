@@ -2,6 +2,7 @@ package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
@@ -11,32 +12,30 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
-import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
-import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.bases.BaseStatusFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.pojo.StatusData
+import kotlinx.android.synthetic.main.dialog_wificountry.*
+import java.util.*
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import kotlinx.android.synthetic.main.activity_status_fragment.*
 
-class StatusFragment : BaseFragment() {
+class StatusFragment : BaseStatusFragment() {
 
-    private var updateRightNow = false
-    private var notificationListener: NotificationCallback? = null
     private var lastCommand = ""
     private var deviceName = ""
-    private var rpiVersion = ""
-    private lateinit var bind: ActivityStatusFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
@@ -46,35 +45,38 @@ class StatusFragment : BaseFragment() {
         checkStatusNow()
         refresh()
         bind.refreshBtn.setOnClickListener { refresh() }
+        val countriesCode = Locale.getISOCountries()
+        val countriesName = arrayOfNulls<String>(countriesCode.size)
+        for (i in countriesCode.indices) {
+            countriesName[i] = getCountryName(countriesCode[i])
+        }
+        val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
+        bind.countryDisplay.isEnabled = false
+        bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
         return bind.root
     }
 
-    private fun refresh() {
-        setChecking()
-        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
-        bind.refreshBtn.visibility = View.GONE
+    private fun wifiCountry(adapter:ArrayAdapter<String?>){
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_wificountry)
+        dialog.countries
+        countryList = dialog.countries
+        adapter.filter.filter("")
+        countryList!!.adapter = adapter
+        countryList!!.isTextFilterEnabled = true
+        countryList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
+            var selectedString = countryList!!.getItemAtPosition(p).toString()
+            selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
+            writeToRPI(requireContext().resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY, selectedString))
+            bind.countryDisplay.isEnabled = false
+            bind.countryDisplay.setText("Changing country")
+            dialog.dismiss()
+        }
+
+        searchView(dialog)
+        dialog.show()
     }
 
-    private fun setChecking() {
-        bind.upgrade.visibility = View.GONE
-        bind.deviceAddress.text = "dc.."
-        bind.networkModeTitle.text = "Checking Network Mode....."
-        bind.ipAdrText.text = "IP Address: Checking....."
-        bind.ssidText.text = "SSID: Checking....."
-        bind.tvRpiName.text = "Hostname: ⏳"
-        bind.tvRpiType.text = "Model: ⏳"
-        bind.cpuModelText.text = "CPU: ⏳"
-        bind.imageText.text = "Image Version: ⏳"
-        bind.remoteVersionText.text = "Remote Version: ⏳"
-        bind.tvUpgradeCheck.text = "Checking Version..."
-        bind.temperature.text = "Checking......"
-        bind.memory.text = "Checking......"
-        bind.storage.text = "Checking......"
-        bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-        ObjectAnimator.ofInt(bind.memoryBar, "progress", 0).setDuration(600).start()
-        ObjectAnimator.ofInt(bind.storageBar, "progress", 0).setDuration(600).start()
-        ObjectAnimator.ofInt(bind.temperatureBar, "progress", 0).setDuration(600).start()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -111,7 +113,7 @@ class StatusFragment : BaseFragment() {
         bind.editName.setOnClickListener {showRenameDialog()}
     }
 
-    private fun updateStatus(readMessage: String) {
+    override fun updateStatus(readMessage: String) {
         logD("$TAG updateStatus: $lastCommand response $readMessage")
 
         if(lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)){
@@ -141,42 +143,7 @@ class StatusFragment : BaseFragment() {
         } else checkUpgradeStatus(readMessage)
     }
 
-    private fun updateStatusPage(statusData:StatusData) {
-        val res = statusData.status.trim().split(" ")
-
-        bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
-        bind.deviceAddress.text = res[1]
-        bind.tvRpiType.text = "Model: " + res[4]
-        rpiVersion = res[3]
-
-        bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
-
-        checkWifiStatus(statusData.internet)
-        
-        bind.refreshBtn.visibility = View.VISIBLE
-        bind.swiperefresh.isRefreshing = false
-
-    }
-
-
-    private fun writeNetworkInfo(networkMode:String, readMessage: String) {
-        val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
-        var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
-        when(networkMode){
-            "default" -> networkModeTitle.text = "Default"
-            "wifi" -> networkModeTitle.text = "WiFi"
-            "hotspot" -> networkModeTitle.text = "Hotspot"
-            "bridge" -> networkModeTitle.text = "Bridge"
-            "ethernet" -> networkModeTitle.text = "Ethernet"
-        }
-        if(ip == "") {
-            ip = "N/A"
-        }
-        ipAdrText.text = "IP Address: " + ip
-        ssidText.text = "SSID: " + ssid
-    }
-
-    private fun checkWifiStatus(readMessage: String) {
+    override fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
             writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE_CHECK))
         } else {
@@ -185,33 +152,10 @@ class StatusFragment : BaseFragment() {
         }
     }
 
-    private fun writeToRPI(ping: String) {
+    override fun writeToRPI(ping: String) {
         lastCommand = ping
         val pSend = ping.toByteArray()
         mChatService.write(pSend)
-    }
-
-    private fun checkUpgradeNow() {
-        if (updateRightNow) {
-            updateRightNow = false
-            bind.progressBar.visibility = View.GONE
-            Toast.makeText(context, "Treehouses Cli has been updated!!!", Toast.LENGTH_LONG).show()
-            notificationListener!!.setNotification(false)
-            refresh()
-        }
-    }
-
-    private fun checkUpgradeStatus(readMessage: String) {
-        checkUpgradeNow()
-        if (readMessage.startsWith("false ") && readMessage.length < 14) {
-            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
-            bind.tvUpgradeCheck.text = String.format("Latest Version: %s", rpiVersion)
-            bind.upgrade.visibility = View.GONE
-        } else if (readMessage.startsWith("true ") && readMessage.length < 14) {
-            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick_png))
-            bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
-            bind.upgrade.visibility = View.VISIBLE
-        }
     }
 
     private fun showRenameDialog() {
@@ -263,11 +207,7 @@ class StatusFragment : BaseFragment() {
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
                 logD("$TAG, readMessage = $readMessage")
-                try {
-                    updateStatus(readMessage)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                receiveMessage(readMessage)
             }
         }
     }
