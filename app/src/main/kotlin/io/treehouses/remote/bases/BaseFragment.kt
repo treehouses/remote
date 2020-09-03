@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.logE
 import java.lang.NullPointerException
 
 open class BaseFragment : Fragment() {
@@ -61,7 +62,7 @@ open class BaseFragment : Fragment() {
                         Toast.makeText(activity, "Bluetooth disconnected", Toast.LENGTH_LONG).show()
                         listener.redirectHome()
                     } catch (exception:NullPointerException){
-                        Log.e("Error", exception.toString())
+                        logE("Error $exception")
                     }
                 }
                 else -> getMessage(msg)

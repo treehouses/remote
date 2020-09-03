@@ -14,7 +14,10 @@ import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
 import com.parse.Parse
 import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 import java.util.*
 
 class MainApplication : Application() {
@@ -39,7 +42,7 @@ class MainApplication : Application() {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            Log.e("Bluetooth Service", "CONNECTED")
+            logD("Bluetooth Service CONNECTED")
             val binder = service as BluetoothChatService.LocalBinder
             mChatService = binder.service
 //            sendBroadcast(Intent().setAction(BLUETOOTH_SERVICE_CONNECTED))
@@ -47,7 +50,7 @@ class MainApplication : Application() {
 
         override fun onServiceDisconnected(arg0: ComponentName) {
             mChatService = null
-            Log.e("Bluetooth Service", "DISCONNECTED")
+            logE("Bluetooth Service DISCONNECTED")
         }
     }
 
@@ -61,7 +64,7 @@ class MainApplication : Application() {
 
     fun stopBluetoothService() {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.KEEP_BLUETOOTH_ALIVE, false)) {
-            Log.e("Unbinding Service", "Bluetooth Service")
+            logE("Unbinding Service Bluetooth Service")
             try {unbindService(connection)} catch (e: Exception) {}
         }
 

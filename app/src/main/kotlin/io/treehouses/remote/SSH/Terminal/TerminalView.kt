@@ -21,19 +21,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix.ScaleToFit
-import android.graphics.Paint
-import android.graphics.Path
-import android.view.*
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
 import android.view.accessibility.AccessibilityEvent
-import android.view.inputmethod.BaseInputConnection
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
 import android.widget.RelativeLayout
 import android.widget.Toast
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.Views.terminal.VDUBuffer
 import io.treehouses.remote.Views.terminal.vt320
-import io.treehouses.remote.bases.BaseTerminalKeyListener
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -107,12 +104,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         }
     }
 
-    private fun scaleCursors() {
-        // Create a scale matrix to scale our 1x1 representation of the cursor
-        tempDst[0.0f, 0.0f, bridge.charWidth.toFloat()] = bridge.charHeight.toFloat()
-        scaleMatrix.setRectToRect(tempSrc, tempDst, scaleType)
-    }
-
     public override fun onDraw(canvas: Canvas) {
         if (bridge.bitmap != null) {
             // draw the bitmap
@@ -135,7 +126,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         }
     }
 
-    fun drawCursor(canvas: Canvas) {
+    private fun drawCursor(canvas: Canvas) {
         var cursorColumn = bridge.vDUBuffer!!.cursorColumn
         val cursorRow = bridge.vDUBuffer!!.cursorRow
         val columns = bridge.vDUBuffer!!.columns
@@ -154,7 +145,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         scaleDecorations(canvas, metaState)
     }
 
-    fun saveCanvasInfo(canvas: Canvas, x: Int, y: Int, onWideCharacter: Boolean) : Int {
+    private fun saveCanvasInfo(canvas: Canvas, x: Int, y: Int, onWideCharacter: Boolean): Int {
         canvas.save()
         canvas.translate(x.toFloat(), y.toFloat())
         canvas.clipRect(0, 0,
@@ -176,38 +167,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
         return metaState
     }
 
-    fun drawHighlightedArea(canvas: Canvas) {
-        val area = bridge.selectionArea
-        canvas.save()
-        canvas.clipRect(
-                area.getLeft() * bridge.charWidth,
-                area.getTop() * bridge.charHeight,
-                (area.getRight() + 1) * bridge.charWidth,
-                (area.getBottom() + 1) * bridge.charHeight
-        )
-        canvas.drawPaint(cursorPaint)
-        canvas.restore()
-    }
-
-    fun scaleDecorations(canvas: Canvas, metaState: Int) {
-        canvas.concat(scaleMatrix)
-        val a = metaState and BaseTerminalKeyListener.OUR_SHIFT_ON != 0
-        val b = metaState and BaseTerminalKeyListener.OUR_SHIFT_LOCK != 0
-        val c = metaState and BaseTerminalKeyListener.OUR_ALT_ON != 0
-        val d = metaState and BaseTerminalKeyListener.OUR_ALT_LOCK != 0
-        val e = metaState and BaseTerminalKeyListener.OUR_CTRL_ON != 0
-        val f = metaState and BaseTerminalKeyListener.OUR_CTRL_LOCK != 0
-        var paint:Paint = cursorInversionPaint
-        var cursor:Path = shiftCursor
-        if(c || d) cursor = altCursor
-        else if(e || f) cursor = ctrlCursor
-        if (a || c || e) {
-            paint = cursorStrokePaint
-            canvas.drawPath(cursor, paint)
-        }
-        else if(b || d || f) canvas.drawPath(cursor, paint)
-    }
-
     fun notifyUser(message: String) {
         if (!notifications) return
         if (notification != null) {
@@ -225,27 +184,6 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
     override fun onCheckIsTextEditor(): Boolean {
         return true
     }
-
-    override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
-        outAttrs.imeOptions = outAttrs.imeOptions or (EditorInfo.IME_FLAG_NO_EXTRACT_UI or
-                EditorInfo.IME_FLAG_NO_ENTER_ACTION or
-                EditorInfo.IME_ACTION_NONE)
-        outAttrs.inputType = EditorInfo.TYPE_NULL
-        return object : BaseInputConnection(this, false) {
-            override fun deleteSurroundingText(leftLength: Int, rightLength: Int): Boolean {
-                if (rightLength == 0 && leftLength == 0) {
-                    return sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
-                }
-                for (i in 0 until leftLength) {
-                    sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
-                }
-                // TODO: forward delete
-                return true
-            }
-        }
-    }
-
-
 
     private inner class AccessibilityEventSender : Runnable {
         override fun run() {
@@ -348,13 +286,16 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
 //        }
 //    }
 
+    private fun scaleCursors() {
+        // Create a scale matrix to scale our 1x1 representation of the cursor
+        tempDst[0.0f, 0.0f, bridge.charWidth.toFloat()] = bridge.charHeight.toFloat()
+        scaleMatrix.setRectToRect(tempSrc, tempDst, TerminalView.scaleType)
+    }
+
     companion object {
         private val scaleType = ScaleToFit.FILL
         private const val BACKSPACE_CODE = "\\x08\\x1b\\[K"
-        private const val CONTROL_CODE_PATTERN = "\\x1b\\[K[^m]+[m|:]"
         private const val ACCESSIBILITY_EVENT_THRESHOLD = 1000
-        private const val SCREENREADER_INTENT_ACTION = "android.accessibilityservice.AccessibilityService"
-        private const val SCREENREADER_INTENT_CATEGORY = "android.accessibilityservice.category.FEEDBACK_SPOKEN"
     }
 
     init {
@@ -409,11 +350,13 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 try {
                     bridge.transport?.write(0x09)
                     bridge.tryKeyVibrate()
-                }
-                catch (e: IOException) {
+                } catch (e: IOException) {
                     e.printStackTrace()
-                    try { bridge.transport?.flush() }
-                    catch (ioe: IOException) { bridge.dispatchDisconnect(false) }
+                    try {
+                        bridge.transport?.flush()
+                    } catch (ioe: IOException) {
+                        bridge.dispatchDisconnect(false)
+                    }
                 }
                 return super.onDoubleTap(e)
             }

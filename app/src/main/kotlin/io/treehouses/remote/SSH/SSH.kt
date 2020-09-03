@@ -12,6 +12,8 @@ import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.bases.BaseSSH
 import io.treehouses.remote.utils.KeyUtils
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.security.KeyPair
 import java.security.NoSuchAlgorithmException
@@ -41,7 +43,7 @@ class SSH: BaseSSH {
         try {
             connection!!.setCompression(compression)
         } catch (e: IOException) {
-            Log.e(TAG, "Could not enable compression!", e)
+            logE("Could not enable compression! $e")
         }
         try {
             /* Uncomment when debugging SSH protocol:
@@ -57,7 +59,7 @@ class SSH: BaseSSH {
 			*/
             displayAlgorithms()
         } catch (e: IOException) {
-            Log.e(TAG, "Problem in SSH connection thread during authentication", e)
+            logE("Problem in SSH connection thread during authentication $e")
 
             // Display the reason in the text.
             var t = e.cause
@@ -86,7 +88,7 @@ class SSH: BaseSSH {
 
         if (manager!!.loadedKeypairs.containsKey(pubkey.nickname)) {
             // load this key from memory if its already there
-            Log.d(TAG, String.format("Found unlocked key '%s' already in-memory", pubkey.nickname))
+            logD("${String.format("Found unlocked key '%s' already in-memory", pubkey.nickname)}")
             if (pubkey.isConfirmUse) {
                 if (!promptForPubkeyUse(pubkey.nickname)) return false
             }
@@ -108,16 +110,16 @@ class SSH: BaseSSH {
             } catch (e: Exception) {
                 return onBadPassword(pubkey, e)
             }
-            val pubKey = PubKeyUtils.decodePublic(pubkey.publicKey!!, pubkey.type)
+            val pubKey = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public")
 
-            pair = convertAndSaveKey(pubKey, privKey, pubkey)
+            pair = convertAndSaveKey(pubKey as PublicKey, privKey, pubkey)
         }
         return tryPublicKey(host!!.username, pubkey.nickname, pair)
     }
 
     private fun onBadPassword(pubkey: PubKeyBean, e: Exception): Boolean {
         val message = String.format("Bad password for key '%s'. Authentication failed.", pubkey.nickname)
-        Log.e(TAG, message, e)
+        logD("message $e")
         bridge!!.outputLine(message)
         return false
     }
@@ -125,8 +127,8 @@ class SSH: BaseSSH {
     private fun convertAndSaveKey(pubKey: PublicKey, privKey: PrivateKey, pubkey: PubKeyBean): KeyPair {
         // convert key to trilead format
         val pair = KeyPair(pubKey, privKey)
-        Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey))
-        Log.d(TAG, String.format("Unlocked key '%s'", pubkey.nickname))
+        logD("Unlocked key ${PubKeyUtils.formatKey(pubKey)}")
+        logD("${String.format("Unlocked key '%s'", pubkey.nickname)}")
 
         // save this key in memory
         manager!!.addKey(pubkey, pair)
@@ -155,10 +157,10 @@ class SSH: BaseSSH {
                 else outputLine(R.string.terminal_auth_pass_fail)
             } else outputLine(R.string.terminal_auth_pass_fail)
         } catch (e: IllegalStateException) {
-            Log.e(TAG, "Connection went away while we were trying to authenticate", e)
+            logE("Connection went away while we were trying to authenticate $e")
             return
         } catch (e: Exception) {
-            Log.e(TAG, "Problem during handleAuthentication()", e)
+            logE("Problem during handleAuthentication() $e")
         }
     }
 
@@ -178,13 +180,13 @@ class SSH: BaseSSH {
                 return
             }
         } catch (e: Exception) {
-            Log.d(TAG, "Host does not support 'none' authentication.")
+            logE("Host does not support 'none' authentication.")
         }
     }
 
     private fun tryInMemKeys(pubkeyId: String) {
         // try each of the in-memory keys
-        Log.e("HERE", "YAY: $pubkeyId")
+        logD("HERE YAY: $pubkeyId")
         outputLine(R.string.terminal_auth_pubkey_any)
         for ((key, value) in manager!!.loadedKeypairs) {
             if (value?.bean!!.isConfirmUse && !promptForPubkeyUse(key)) continue
@@ -206,7 +208,7 @@ class SSH: BaseSSH {
                 Thread.sleep(1000)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Problem in SSH connection thread during authentication", e)
+            logE("Problem in SSH connection thread during authentication $e")
         }
     }
 
@@ -297,7 +299,7 @@ class SSH: BaseSSH {
             try {
                 session!!.resizePTY(columns, rows, width, height)
             } catch (e: IOException) {
-                Log.e(TAG, "Couldn't send resize PTY packet", e)
+                logE("Couldn't send resize PTY packet $e")
             }
         }
     }

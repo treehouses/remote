@@ -91,7 +91,7 @@ object SaveUtils {
             return ArrayList()
         }
         if (titles.size != values.size) {
-            Log.e("COMMANDLIST", "ERROR SIZE: COMMANDS and VALUES")
+            logD("COMMANDLIST ERROR SIZE: COMMANDS and VALUES")
             return ArrayList()
         }
         for (i in titles.indices) {
@@ -129,7 +129,7 @@ object SaveUtils {
                 profile.isWifi -> wifi.add(profile)
                 profile.isHotspot -> hotspot.add(profile)
                 profile.isBridge -> bridge.add(profile)
-                else -> Log.e("SAVE UTILS", "Not a supported type")
+                else -> logD("SAVE UTILS Not a supported type")
             }
         }
         val profiles = HashMap<String, MutableList<NetworkProfile>>()
@@ -163,7 +163,7 @@ object SaveUtils {
     }
 
     private fun addHost(context: Context, hostBean: HostBean) {
-        Log.e("ADDING HOST", "${hostBean.uri}  ${Gson().toJson(hostBean)}")
+        logD("ADDING HOST ${hostBean.uri}  ${Gson().toJson(hostBean)}")
         val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
         editor.apply()
@@ -178,7 +178,7 @@ object SaveUtils {
 
     fun getHost(context: Context, hostUri: String) : HostBean? {
         val hostString = PreferenceManager.getDefaultSharedPreferences(context).getString(hostUri, "")
-        Log.e("GOT HOST STRING", hostString!!)
+        logD("GOT HOST STRING ${hostString!!}")
         return try {
             Gson().fromJson(hostString, HostBean::class.java)
         } catch (e: Exception) {

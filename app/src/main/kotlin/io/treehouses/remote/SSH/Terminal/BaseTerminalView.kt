@@ -6,14 +6,17 @@ import android.content.SharedPreferences
 import android.graphics.*
 import android.preference.PreferenceManager
 import android.text.ClipboardManager
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.BaseInputConnection
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
 import android.widget.Toast
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalViewPager
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import io.treehouses.remote.bases.BaseTerminalKeyListener
 
-open class BaseTerminalView (context: Context, bridge: TerminalBridge, pager: TerminalViewPager): FrameLayout(context), FontSizeChangedListener {
+open class BaseTerminalView(context: Context, bridge: TerminalBridge, pager: TerminalViewPager) : FrameLayout(context), FontSizeChangedListener {
 
     val bridge: TerminalBridge
     val viewPager: TerminalViewPager
@@ -50,8 +53,7 @@ open class BaseTerminalView (context: Context, bridge: TerminalBridge, pager: Te
     override fun onFontSizeChanged(sizeDp: Float) {}
 
 
-
-    init{
+    init {
         setWillNotDraw(false)
         this.bridge = bridge
         viewPager = pager
@@ -112,4 +114,56 @@ open class BaseTerminalView (context: Context, bridge: TerminalBridge, pager: Te
         onFontSizeChanged(bridge.fontSize)
 
     }
+
+    fun scaleDecorations(canvas: Canvas, metaState: Int) {
+        canvas.concat(scaleMatrix)
+        val a = metaState and BaseTerminalKeyListener.OUR_SHIFT_ON != 0
+        val b = metaState and BaseTerminalKeyListener.OUR_SHIFT_LOCK != 0
+        val c = metaState and BaseTerminalKeyListener.OUR_ALT_ON != 0
+        val d = metaState and BaseTerminalKeyListener.OUR_ALT_LOCK != 0
+        val e = metaState and BaseTerminalKeyListener.OUR_CTRL_ON != 0
+        val f = metaState and BaseTerminalKeyListener.OUR_CTRL_LOCK != 0
+        var paint: Paint = cursorInversionPaint
+        var cursor: Path = shiftCursor
+        if (c || d) cursor = altCursor
+        else if (e || f) cursor = ctrlCursor
+        if (a || c || e) {
+            paint = cursorStrokePaint
+            canvas.drawPath(cursor, paint)
+        } else if (b || d || f) canvas.drawPath(cursor, paint)
+    }
+
+
+    fun drawHighlightedArea(canvas: Canvas) {
+        val area = bridge.selectionArea
+        canvas.save()
+        canvas.clipRect(
+                area.getLeft() * bridge.charWidth,
+                area.getTop() * bridge.charHeight,
+                (area.getRight() + 1) * bridge.charWidth,
+                (area.getBottom() + 1) * bridge.charHeight
+        )
+        canvas.drawPaint(cursorPaint)
+        canvas.restore()
+    }
+
+    override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
+        outAttrs.imeOptions = outAttrs.imeOptions or (EditorInfo.IME_FLAG_NO_EXTRACT_UI or
+                EditorInfo.IME_FLAG_NO_ENTER_ACTION or
+                EditorInfo.IME_ACTION_NONE)
+        outAttrs.inputType = EditorInfo.TYPE_NULL
+        return object : BaseInputConnection(this, false) {
+            override fun deleteSurroundingText(leftLength: Int, rightLength: Int): Boolean {
+                if (rightLength == 0 && leftLength == 0) {
+                    return sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+                }
+                for (i in 0 until leftLength) {
+                    sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+                }
+                // TODO: forward delete
+                return true
+            }
+        }
+    }
+
 }
