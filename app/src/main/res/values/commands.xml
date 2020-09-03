@@ -20,7 +20,7 @@
 
     <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
-    <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master</string>
+    <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master\n</string>
 
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
     <string name="TREEHOUSES_RENAME">treehouses rename \"%1$s\"</string>

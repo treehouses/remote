@@ -315,10 +315,6 @@ class HomeFragment : BaseHomeFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshHandler()
-        if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
-            viewModel.checkVersionSent = true
-            viewModel.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-        }
     }
 
     companion object {
