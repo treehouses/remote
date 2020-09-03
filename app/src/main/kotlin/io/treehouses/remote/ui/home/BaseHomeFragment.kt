@@ -186,12 +186,13 @@ open class BaseHomeFragment : BaseFragment() {
      * @param serverHash : String = the hash of the server Bluetooth File
      */
     protected fun syncBluetooth(serverHash: String) {
+        logE("SERVER: $serverHash")
         //Get the local Bluetooth file on the app
         val inputStream = context?.assets?.open("bluetooth-server.txt")
         val localString = inputStream?.bufferedReader().use { it?.readText() }
         inputStream?.close()
         val hashed = Utils.hashString(localString!!)
-        logE("HASHED $serverHash")
+        logE("LOCAL: $serverHash")
         //Bluetooth file is outdated, but RPI is connected to the internet
         if (Matcher.isError(serverHash) && viewModel.internetStatus.value == true) {
             askForBluetoothUpgradeOverInternet()
