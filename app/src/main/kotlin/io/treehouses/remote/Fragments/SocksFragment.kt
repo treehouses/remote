@@ -130,7 +130,6 @@ class SocksFragment : BaseFragment() {
     override fun getMessage(msg: Message) {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
-            Log.d("Socks reply", "" + readMessage)
             if (readMessage.contains("inactive")) {
                 textStatus!!.text = "-"; startButton!!.text = "Start Tor"
                 startButton!!.isEnabled = true

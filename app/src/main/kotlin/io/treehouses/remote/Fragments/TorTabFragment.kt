@@ -199,7 +199,12 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
+    private fun isAttachedToActivity(): Boolean {
+        return isVisible && activity != null
+    }
     override fun getMessage(msg: Message) {
+        if(!isAttachedToActivity())
+            return
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage:String = msg.obj as String
             Log.d("Tor reply", "" + readMessage)
@@ -226,7 +231,8 @@ class TorTabFragment : BaseFragment() {
     }
 
     private fun handleOtherMessages(readMessage: String) {
-        if (readMessage.contains("OK.")) listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+
+        if (readMessage.contains("OK.")) listener.sendMessage(requireActivity().getString(R.string.TREEHOUSES_TOR_NOTICE))
         else if (readMessage.contains("Status: on")) {
             notification!!.isChecked = true; notification!!.isEnabled = true
         } else if (readMessage.contains("Status: off")) {
@@ -241,7 +247,7 @@ class TorTabFragment : BaseFragment() {
                 if(i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
-            try { adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)} catch(e:Exception) {Log.e("error", e.toString())}
+            try { adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)} catch (e: Exception) {Log.e("error", e.toString())}
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
