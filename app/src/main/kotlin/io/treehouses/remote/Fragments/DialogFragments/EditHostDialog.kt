@@ -14,10 +14,13 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.beans.HostBean
+import io.treehouses.remote.bases.BaseTerminalBridge
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.EditHostBinding
 import io.treehouses.remote.utils.KeyUtils
+import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
 
 class EditHostDialog : FullScreenDialogFragment() {
     private lateinit var bind : EditHostBinding
@@ -29,7 +32,7 @@ class EditHostDialog : FullScreenDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = EditHostBinding.inflate(inflater, container, false)
-        Log.e("ARGUMENT: ", arguments?.getString(SELECTED_HOST_URI, "")!!)
+        logD("${BaseTerminalBridge.TAG} ARGUMENT: ${arguments?.getString(SELECTED_HOST_URI, "")!!}")
         host = SaveUtils.getHost(requireContext(), arguments?.getString(SELECTED_HOST_URI, "")!!)!!
         initialHostUri = host.uri.toString()
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)

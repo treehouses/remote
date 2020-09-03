@@ -154,14 +154,36 @@
 
                     <TextView
                         android:id="@+id/networkModeTitle"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:paddingLeft="20dp"
                         android:text="Checking Network Mode....."
                         android:textColor="@color/daynight_textColor"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@id/wifiIcon" />
+                        android:textSize="18sp"/>
+
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/country_display"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_width="match_parent"
+                            android:textSize="14sp"
+                            android:visibility="invisible"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:focusableInTouchMode="false"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:drawableRight="@drawable/keyboard_arrow_down_24px"
+                            android:textColor="@color/daynight_textColor"
+                            android:textColorHint = "@color/daynight_textColor"
+                            android:tint="@color/daynight_textColor"
+                            android:gravity="center"
+                            android:text="Getting WiFi Country"
+                            android:hint="" />
+
                 </LinearLayout>
 
                 <LinearLayout

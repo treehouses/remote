@@ -14,7 +14,7 @@ object SettingsUtils {
         try {
             fragmentTransaction.commit()
         } catch (exception:IllegalStateException ){
-            Log.e("Error", exception.toString())
+            logE("Error $exception")
         }
     }
 
@@ -22,7 +22,7 @@ object SettingsUtils {
         if (preference != null) {
             preference.onPreferenceClickListener = listener
         } else {
-            Log.e("SETTINGS", "Unknown key")
+            logD("SETTINGS Unknown key")
         }
     }
 }

@@ -34,6 +34,7 @@ import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
+import io.treehouses.remote.utils.logE
 
 class HomeFragment : BaseHomeFragment() {
     private var notificationListener: NotificationCallback? = null
@@ -232,7 +233,7 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun observeConnectionState() {
         viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
-            Log.e("CONNECTED", "STATE $connected")
+            logE("CONNECTED STATE $connected")
             transition(connected == Constants.STATE_CONNECTED)
             connectionDialog?.dismiss()
             when(connected) {
@@ -314,10 +315,6 @@ class HomeFragment : BaseHomeFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshHandler()
-        if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
-            viewModel.checkVersionSent = true
-            viewModel.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-        }
     }
 
     companion object {
