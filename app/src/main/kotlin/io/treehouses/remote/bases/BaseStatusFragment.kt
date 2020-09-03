@@ -50,13 +50,13 @@ open class BaseStatusFragment : BaseFragment() {
     }
 
     fun receiveMessage(readMessage: String){
-        if (readMessage.contains("country=") || readMessage.contains("set to")) {
+        if (readMessage.startsWith("country=") || readMessage.contains("set to")) {
             val len = readMessage.length - 3
             val country = readMessage.substring(len).trim { it <= ' ' }
             bind.countryDisplay.setText(getCountryName(country))
             bind.countryDisplay.isEnabled = true
         } else if (readMessage.contains("Error when")) {
-            bind.countryDisplay.setText("try again")
+            bind.countryDisplay.setText("Try again")
             bind.countryDisplay.isEnabled = true
             Toast.makeText(requireContext(), "Error when changing country", Toast.LENGTH_LONG).show()
         } else {
