@@ -15,18 +15,18 @@
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="Camera: "
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="4dp"
-        tools:layout_editor_absoluteY="24dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/cameraIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginLeft="72dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="24dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="87dp"
+        android:layout_marginLeft="87dp"
+        android:layout_marginTop="11dp"
         android:layout_weight="1"
         app:layout_constraintStart_toStartOf="@+id/CameraSwitch"
         app:layout_constraintTop_toTopOf="@+id/CameraSwitch"
