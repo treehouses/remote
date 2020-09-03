@@ -210,7 +210,9 @@ open class BaseHomeFragment : BaseFragment() {
      * https://raw.githubusercontent.com/treehouses/control/master/server.py
      */
     private fun noInternetForBluetoothUpgrade() {
-        val dialog = Utils.createAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "No Internet!").setMessage("There is a new version of bluetooth available, however, your Raspberry Pi is not connected to the Internet. Please connect to a network to upgrade your bluetooth.")
+        val noInternetMsg = "There is a new version of bluetooth available, however, your Raspberry Pi is not connected to the Internet. Please connect to a network to upgrade your bluetooth."
+        val style = R.style.CustomAlertDialogStyle
+        val dialog = Utils.createAlertDialog(requireContext(), style, "No Internet!").setMessage(noInternetMsg)
                 .setPositiveButton("Ok") { d, _ ->
                     d.dismiss()
                 }.create()
