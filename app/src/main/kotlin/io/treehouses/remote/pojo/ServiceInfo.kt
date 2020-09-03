@@ -39,6 +39,14 @@ class ServiceInfo : Comparable<ServiceInfo>, Serializable {
         return serviceStatus - other.serviceStatus
     }
 
+    fun isOneOf(a : Int, b : Int) : Boolean {
+        return serviceStatus == a || serviceStatus == b
+    }
+
+    fun isOneOf(a : Int, vararg b : Int) : Boolean {
+        return serviceStatus == a || isOneOf(b[0], *b)
+    }
+
     val isHeader: Boolean
         get() = serviceStatus == SERVICE_HEADER_AVAILABLE || serviceStatus == SERVICE_HEADER_INSTALLED
 

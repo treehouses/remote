@@ -66,8 +66,8 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
     }
 
     init {
-        val imageViewSettings = v.findViewById<ImageView>(R.id.imageViewSettings)
-        val btnStartConfig = v.findViewById<Button>(R.id.btn_start_config)
+        val imageViewSettings = v.findViewById<Button>(R.id.btn_configure)
+        val btnStartConfig = v.findViewById<Button>(R.id.btn_hotspot_start)
         editTextSSID = v.findViewById(R.id.editTextSSID)
         editTextPassword = v.findViewById(R.id.editTextPassword)
         editTextPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS

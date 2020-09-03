@@ -19,8 +19,6 @@ package io.treehouses.remote.Network
 
 import android.app.Notification
 import android.app.PendingIntent
-import android.app.Service
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
@@ -28,17 +26,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.*
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
+import io.treehouses.remote.bases.BaseBluetoothChatService
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.io.Serializable
-import java.util.*
 
 
 /**
@@ -50,7 +48,7 @@ import java.util.*
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : Service(), Serializable {
+class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : BaseBluetoothChatService(handler, applicationContext) {
     inner class DisconnectReceiver: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
@@ -61,27 +59,32 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     // Member fields
-    private val mAdapter: BluetoothAdapter
-    private var mDevice: BluetoothDevice? = null
-
-    //    private AcceptThread mSecureAcceptThread;
-    //private AcceptThread mInsecureAcceptThread;
-    private var mConnectThread: ConnectThread? = null
-    private var mConnectedThread: ConnectedThread? = null
 
     private val mBinder = LocalBinder()
+    private var mConnectThread: ConnectThread? = null
+    private var mConnectedThread: ConnectedThread? = null
 
     private val receiver = DisconnectReceiver()
 
     /**
-     * Return the current connection state.
+     * Start the chat service. Specifically start AcceptThread to begin a
+     * session in listening (server) mode. Called by the Activity onResume()
      */
-    @get:Synchronized
-    var state: Int
-        private set
-    private var mNewState: Int
-    private var bNoReconnect = false
-    var context: Context?
+    @Synchronized
+    override fun start() {
+        bNoReconnect = false
+        // Cancel any thread attempting to make a connection
+        mConnectThread?.cancel()
+        mConnectThread = null
+
+        // Cancel any thread currently running a connection
+        mConnectedThread?.cancel()
+        mConnectedThread = null
+
+        // Update UI title
+        updateUserInterfaceTitle()
+    }
+
 
 
     fun updateHandler(handler: Handler) {
@@ -99,7 +102,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.e("BLUETOOTH", "START COMMAND")
+        logD("BLUETOOTH START COMMAND")
         return START_NOT_STICKY
     }
 
@@ -111,7 +114,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     override fun onDestroy() {
-        Log.e("BLUETOOTH", "Destroying...")
+        logE("BLUETOOTH, Destroying...")
         stop()
         unregisterReceiver(receiver)
         super.onDestroy()
@@ -137,40 +140,10 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         startForeground(2, notification)
     }
 
-    /**
-     * Update UI title according to the current state of the chat connection
-     */
-    @Synchronized
-    private fun updateUserInterfaceTitle() {
-        Log.e(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
-        if (mNewState != state) mHandler?.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1))
-        mNewState = state
-    }
 
     var connectedDeviceName: String = ""
 
-    /**
-     * Start the chat service. Specifically start AcceptThread to begin a
-     * session in listening (server) mode. Called by the Activity onResume()
-     */
-    @Synchronized
-    fun start() {
-        bNoReconnect = false
-        // Cancel any thread attempting to make a connection
-        if (mConnectThread != null) {
-            mConnectThread!!.cancel()
-            mConnectThread = null
-        }
 
-        // Cancel any thread currently running a connection
-        if (mConnectedThread != null) {
-            mConnectedThread!!.cancel()
-            mConnectedThread = null
-        }
-
-        // Update UI title
-        updateUserInterfaceTitle()
-    }
 
     /**
      * Start the ConnectThread to initiate a connection to a remote device.
@@ -180,7 +153,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     @Synchronized
     fun connect(device: BluetoothDevice, secure: Boolean) {
-        Log.d(TAG, "connect to: $device")
+        logD("connect to: $device")
 
         // Cancel any thread attempting to make a connection
         if (state == Constants.STATE_CONNECTING) {
@@ -211,7 +184,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     @Synchronized
     fun connected(socket: BluetoothSocket?, device: BluetoothDevice, socketType: String) {
-        Log.d(TAG, "connected, Socket Type:$socketType")
+        logD("connected, Socket Type:$socketType")
         connectedDeviceName = device.name
         mDevice = device
         // Cancel the thread that completed the connection
@@ -240,7 +213,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         msg?.data = bundle
         mHandler?.sendMessage(msg ?: Message())
         // Update UI title
-        Log.e(TAG, "Connected")
+        logD("Connected")
     }
 
     /**
@@ -257,7 +230,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mConnectedThread!!.cancel()
             mConnectedThread = null
         }
-        
+
         state = Constants.STATE_NONE
         stopForeground(true)
         // Update UI title
@@ -272,7 +245,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     fun write(out: ByteArray?) {
         // Create temporary object
-        Log.d(TAG, "write: " + String(out!!))
+        logD("write: " + String(out!!))
         var r: ConnectedThread?
         // Synchronize a copy of the ConnectedThread
         synchronized(this) {
@@ -283,21 +256,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         r!!.write(out)
     }
 
-    /**
-     * Indicate that the connection attempt failed and notify the UI Activity.
-     */
-    private fun connectionFailed() {
-        // Send a failure message back to the Activity
-        callHandler("Unable to connect to device")
-        mHandler?.obtainMessage(Constants.MESSAGE_ERROR, "Error while connecting; Unable to connect to device")?.sendToTarget()
 
-        state = Constants.STATE_NONE
-        // Update UI title
-        updateUserInterfaceTitle()
-
-        // Start the service over to restart listening mode
-        start()
-    }
 
     /**
      * Indicate that the connection was lost and notify the UI Activity.
@@ -319,13 +278,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
-    fun callHandler(message: String?) {
-        val msg = mHandler?.obtainMessage(Constants.MESSAGE_TOAST)
-        val bundle = Bundle()
-        bundle.putString(Constants.TOAST, message)
-        msg?.data = bundle
-        mHandler?.sendMessage(msg ?: Message())
-    }
     /**
      * This thread runs while attempting to make an outgoing connection
      * with a device. It runs straight through; the connection either
@@ -335,7 +287,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         private val mmSocket: BluetoothSocket?
         private val mSocketType: String
         override fun run() {
-            Log.i(TAG, "BEGIN mConnectThread SocketType:$mSocketType")
             name = "ConnectThread$mSocketType"
             this@BluetoothChatService.state = Constants.STATE_CONNECTING
             // Always cancel discovery because it will slow down a connection
@@ -348,12 +299,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 mmSocket!!.connect()
             } catch (e: Exception) {
                 // Close the socket
-                Log.e("ERROR WHILE CONNECTING", e.toString(), e)
+                logE("ERROR WHILE CONNECTING $e")
                 try {
                     mmSocket!!.close()
                 } catch (e2: Exception) {
-                    Log.e(TAG, "unable to close() " + mSocketType +
-                            " socket during connection failure", e2)
+                    logE("unable to close() $mSocketType socket during connection failure $e2")
                 }
                 connectionFailed()
                 return
@@ -370,7 +320,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             try {
                 mmSocket!!.close()
             } catch (e: Exception) {
-                Log.e(TAG, "close() of connect $mSocketType socket failed", e)
+                logE("close() of connect $mSocketType socket failed, $e")
             }
         }
 
@@ -386,7 +336,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 //                } else {
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
             } catch (e: Exception) {
-                Log.e(TAG, "Socket Type: " + mSocketType + "create() failed", e)
+                logE("Socket Type: $mSocketType reate() failed, $e")
                 this@BluetoothChatService.state = Constants.STATE_NONE
             }
             this@BluetoothChatService.updateUserInterfaceTitle()
@@ -413,13 +363,13 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                     // Read from the InputStream
                     bytes = mmInStream!!.read(buffer)
                     out = String(buffer, 0, bytes)
-                    Log.d(TAG, "out = " + out + "size of out = " + out.length + ", bytes = " + bytes)
+                    logD("out = $out, size of out = ${out.length}, bytes = $bytes")
                     mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
                     //                    mEmulatorView.write(buffer, bytes);
                     // Send the obtained bytes to the UI Activity
                     //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } catch (e: IOException) {
-                    Log.e(TAG, "disconnected", e)
+                    logE("disconnected $e")
                     connectionLost()
                     break
                 }
@@ -433,13 +383,13 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
          */
         fun write(buffer: ByteArray) {
             try {
-                Log.d(TAG, "write: I am in inside write method")
+                logD("write: I am in inside write method")
                 mmOutStream!!.write(buffer)
 
                 // Share the sent message back to the UI Activity
                 mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)?.sendToTarget()
             } catch (e: IOException) {
-                Log.e(TAG, "Exception during write", e)
+                logE("Exception during write $e")
             }
         }
 
@@ -447,12 +397,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             try {
                 mmSocket!!.close()
             } catch (e: Exception) {
-                Log.e(TAG, "close() of connect socket failed", e)
+                logE("close() of connect socket failed $e")
             }
         }
 
         init {
-            Log.d(TAG, "create ConnectedThread: $socketType")
+            logD("create ConnectedThread: $socketType")
             mmSocket = socket
             var tmpIn: InputStream? = null
             var tmpOut: OutputStream? = null
@@ -460,11 +410,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             // Get the BluetoothSocket input and output streams
             try {
                 tmpIn = socket!!.inputStream
-                Log.d(TAG, " tmpIn = $tmpIn")
+                logD("tmpIn = $tmpIn")
                 tmpOut = socket.outputStream
-                Log.d(TAG, " tmpOut = $tmpOut")
+                logD("tmpOut = $tmpOut")
             } catch (e: IOException) {
-                Log.e(TAG, "temp sockets not created", e)
+                logD("temp sockets not created, $e")
             }
             mmInStream = tmpIn
             mmOutStream = tmpOut
@@ -482,28 +432,4 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 //
 //    }
 
-    companion object {
-        // Debugging
-        private const val TAG = "BluetoothChatService"
-        private const val DISCONNECT_ACTION = "disconnect"
-        //private static final String NAME_INSECURE = "BluetoothChatInsecure";
-        // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
-        private val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-
-        private var mHandler: Handler? = null
-    }
-    //    private BluetoothSocket socket = null;
-    /**
-     * Constructor. Prepares a new BluetoothChat session.
-     *
-     * The UI Activity Context
-     * @param handler A Handler to send messages back to the UI Activity
-     */
-    init {
-        mAdapter = BluetoothAdapter.getDefaultAdapter()
-        state = Constants.STATE_NONE
-        mNewState = state
-        mHandler = handler
-        context = applicationContext
-    }
 }

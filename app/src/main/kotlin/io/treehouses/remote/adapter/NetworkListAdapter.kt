@@ -79,7 +79,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
             R.layout.configure_tethering -> ViewHolderTether(convertView, listener!!, context)
             R.layout.configure_ssh_key -> ViewHolderSSHKey(convertView, context, listener!!)
             R.layout.configure_camera -> ViewHolderCamera(convertView, context, listener!!)
-            R.layout.configure_wificountry -> ViewHolderWifiCountry(convertView, context, listener!!)
             R.layout.configure_blocker -> ViewHolderBlocker(convertView, context, listener!!)
         }
         views[i] = convertView
@@ -99,6 +98,6 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     init {
         inflater = LayoutInflater.from(context)
         this.list = list
-        views = arrayOfNulls(7)
+        views = arrayOfNulls(6)
     }
 }

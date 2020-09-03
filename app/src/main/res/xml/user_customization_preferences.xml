@@ -34,7 +34,7 @@
         <Preference
             android:title="Clear SSH Keys"
             android:key="ssh_keys"
-            android:layout="@layout/custom_pref_middle"
+            android:layout="@layout/custom_pref_bottom"
             android:summary="Delete all SSH keys">
         </Preference>
 

@@ -6,9 +6,64 @@
     android:orientation="vertical"
     android:theme="@style/AppTheme">
 
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/daynight_textColor"
+        android:layout_height="wrap_content"
+        android:text="Share Internet Using a USB Cable" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:textColor="@color/daynight_textColor"
+        android:layout_height="wrap_content"
+        android:text="Connect this device to Pi using a USB Cable. Use the Configure button to enable USB Tethering in Settings to start the connection." />
+
+        <Button
+            android:id="@+id/btn_configure"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_grey_dark"
+            android:textColor="#ffffff"
+            android:layout_height="wrap_content"
+            android:text="Configure" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/daynight_textColor"
+        android:layout_height="wrap_content"
+        android:text="Share Internet Using WiFi" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:textColor="@color/daynight_textColor"
+        android:layout_height="wrap_content"
+        android:text="Use the Configure button to enable Mobile Hotspot in Settings and to edit the Hotspot Name and Password. Enter those details below to start the connection." />
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:padding="@dimen/margin_small">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -16,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/daynight_textColor"
-            android:hint="Hotspot SSID" />
+            android:hint="Hotspot Name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -25,6 +80,8 @@
         app:hintAnimationEnabled="false"
         app:hintEnabled="false"
         android:padding="@dimen/margin_small"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/md_blue_600">
 
@@ -37,30 +94,18 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_hotspot_start"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_weight="1"
+        android:background="@drawable/ic_green2"
+        android:textColor="#ffffff"
+        android:layout_height="wrap_content"
+        android:text="Connect to Mobile Hotspot" />
 
-        <!--Icon made by Egor Rumyantsev from www.flaticon.com-->
 
-        <include
-            layout="@layout/layout_btn_configuration"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <ImageView
-            android:id="@+id/imageViewSettings"
-            android:background="#FFFFFF"
-            android:layout_width="@dimen/icon_size_mid"
-            android:layout_height="@dimen/icon_size_mid"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:elevation="4dp"
-            android:padding="@dimen/margin_small"
-            app:srcCompat="@drawable/settings_icon" />
-
-    </LinearLayout>
 
 </LinearLayout>

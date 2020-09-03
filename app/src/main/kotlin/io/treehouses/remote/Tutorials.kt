@@ -28,7 +28,7 @@ object Tutorials {
         show(a,b,c,d)
     }
 
-    fun networkTutorials(bind: NewNetworkBinding, activity: FragmentActivity) {
+    fun networkTutorials(bind: ActivityNetworkFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.NETWORK)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.NETWORK, false)
         //Put animations here
