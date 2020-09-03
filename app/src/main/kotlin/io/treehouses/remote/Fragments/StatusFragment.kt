@@ -202,11 +202,11 @@ class StatusFragment : BaseStatusFragment() {
             Constants.MESSAGE_WRITE -> {
                 val writeBuf = msg.obj as ByteArray
                 val writeMessage = String(writeBuf)
-                logD("$TAG, writeMessage = $writeMessage")
+                logE("$TAG, writeMessage = $writeMessage")
             }
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
-                logD("$TAG, readMessage = $readMessage")
+                logE("$TAG, readMessage = $readMessage")
                 receiveMessage(readMessage)
             }
         }
