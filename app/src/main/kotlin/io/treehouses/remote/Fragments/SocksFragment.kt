@@ -15,6 +15,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
+import io.treehouses.remote.utils.logD
 
 import kotlin.collections.ArrayList
 
@@ -46,16 +47,13 @@ class SocksFragment : BaseFragment() {
         portList = bind!!.profiles
         initializeDialog()
         addProfileButtonListeners(dialog)
-
         portList = bind!!.profiles
         return bind!!.root
     }
     private fun initializeDialog(){
         dialog = Dialog(requireContext())
         addPortListListener()
-
         dialog.setContentView(bindProfile!!.root)
-
         serverHost = bindProfile!!.ServerHost
         localAddress = bindProfile!!.LocalAddress
         localPort = bindProfile!!.localPort
@@ -128,6 +126,7 @@ class SocksFragment : BaseFragment() {
     }
 
     override fun getMessage(msg: Message) {
+        logD("SOCKS MESSAGE " + msg)
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
             if (readMessage.contains("inactive")) {
