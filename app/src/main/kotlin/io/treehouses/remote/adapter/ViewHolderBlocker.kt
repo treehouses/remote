@@ -51,8 +51,8 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
             1 -> blockerDesc.text = "Blocking Adware + Malware"
             2 -> blockerDesc.text = "Blocking Ads + Porn"
             3 -> blockerDesc.text = "Blocking Ads + Gambling + Porn"
-            4 -> blockerDesc.text = "Blocking Ads + Fakenews + Gambling + Porn"
-            5 -> blockerDesc.text = "Blocking Ads + Fakenews + Gambling + Porn + Social"
+            4 -> blockerDesc.text = "Blocking Ads + Fake News + Gambling + Porn"
+            5 -> blockerDesc.text = "Blocking Ads + Fake News + Gambling + Porn + Social"
         }
     }
 
