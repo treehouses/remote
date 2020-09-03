@@ -1,9 +1,11 @@
 package io.treehouses.remote.utils
 
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.util.Base64
+import android.view.ContextThemeWrapper
 import android.widget.Toast
 import io.treehouses.remote.callback.HomeInteractListener
 import java.io.ByteArrayOutputStream
@@ -83,5 +85,9 @@ object Utils {
     fun sendMessage(listener: HomeInteractListener, msg: String, toastMsg: String, c: Context?) {
         listener.sendMessage(msg)
         Toast.makeText(c, toastMsg, Toast.LENGTH_LONG).show()
+    }
+
+    fun createAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
     }
 }

@@ -1,13 +1,11 @@
 package io.treehouses.remote
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.ContextThemeWrapper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,6 +25,7 @@ import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.GPSService
+import io.treehouses.remote.utils.Utils
 
 
 class InitialActivity : BaseInitialActivity() {
@@ -170,7 +169,7 @@ class InitialActivity : BaseInitialActivity() {
                 preferences = PreferenceManager.getDefaultSharedPreferences(this)
                 val v = layoutInflater.inflate(R.layout.alert_log_map, null)
                 if (!preferences?.getBoolean("send_log", false)!!) {
-                    createAlertDialog(this@InitialActivity, R.style.CustomAlertDialogStyle, "Sharing is Caring.").setCancelable(false).setMessage("The community map is only available with data sharing. " +
+                    Utils.createAlertDialog(this@InitialActivity, R.style.CustomAlertDialogStyle, "Sharing is Caring.").setCancelable(false).setMessage("The community map is only available with data sharing. " +
                             "Please enable data sharing to access this feature.")
                             .setPositiveButton("Enable Data Sharing") { _: DialogInterface?, _: Int -> preferences!!.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
                 }
@@ -181,10 +180,6 @@ class InitialActivity : BaseInitialActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun createAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
     }
 
     fun changeAppBar() {
