@@ -41,8 +41,8 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
     }
 
     companion object {
-        lateinit var editTextSSID: TextInputEditText
-        lateinit var editTextPassword: TextInputEditText
+        var editTextSSID: TextInputEditText? = null
+        var editTextPassword: TextInputEditText? = null
 
         private fun isApOn(context: Context): Boolean {
             val manager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -70,14 +70,14 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
         val btnStartConfig = v.findViewById<Button>(R.id.btn_hotspot_start)
         editTextSSID = v.findViewById(R.id.editTextSSID)
         editTextPassword = v.findViewById(R.id.editTextPassword)
-        editTextPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        editTextPassword?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         imageViewSettings.setOnClickListener { openHotspotSettings(context) }
         if (!isApOn(context)) {
             showAlertDialog(context)
         }
         btnStartConfig.setOnClickListener {
-            val ssid = editTextSSID.text.toString()
-            val password = editTextPassword.text.toString()
+            val ssid = editTextSSID?.text.toString()
+            val password = editTextPassword?.text.toString()
             if (ssid.isNotEmpty()) {
                 listener.sendMessage(context.getString(R.string.TREEHOUSES_WIFI, ssid, if (password.isEmpty()) "" else password))
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()

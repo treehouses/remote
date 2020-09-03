@@ -150,7 +150,7 @@ class SystemFragment : BaseFragment() {
             elementConditions(element)
             if (element.contains("essid") && tether) {
                 tether = false
-                ViewHolderTether.editTextSSID.setText(element.substring(12).trim { it <= ' ' })
+                ViewHolderTether.editTextSSID?.setText(element.substring(12).trim { it <= ' ' })
             }
         }
     }
