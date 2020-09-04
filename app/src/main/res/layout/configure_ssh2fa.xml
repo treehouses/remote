@@ -71,10 +71,12 @@
         android:id="@+id/addBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
         android:text="Add"
         android:textColor="#ffffff"
         android:theme="@style/PrimaryButton"
         android:layout_weight="1"
+        android:background="@drawable/ripple"
         tools:layout_editor_absoluteX="188dp"
         tools:layout_editor_absoluteY="83dp" />
 
@@ -82,24 +84,26 @@
         android:id="@+id/removeBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
         android:text="Remove"
         android:textColor="#ffffff"
         android:theme="@style/PrimaryButton"
         android:layout_weight="1"
+        android:background="@drawable/ripple"
         tools:layout_editor_absoluteX="188dp"
         tools:layout_editor_absoluteY="83dp" />
 
-    <Button
-        android:id="@+id/showBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Show"
-        android:textColor="#ffffff"
-        android:theme="@style/PrimaryButton"
-        android:layout_weight="1"
-        tools:layout_editor_absoluteX="188dp"
-        tools:layout_editor_absoluteY="83dp" />
-
+        <Button
+            android:id="@+id/showBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/ripple"
+            android:text="Show"
+            android:textColor="#ffffff"
+            android:theme="@style/PrimaryButton"
+            tools:layout_editor_absoluteX="188dp"
+            tools:layout_editor_absoluteY="83dp" />
 
 
     </LinearLayout>
