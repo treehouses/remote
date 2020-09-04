@@ -15,6 +15,10 @@ import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Terminal.TerminalKeyListener
 import io.treehouses.remote.SSH.Terminal.TerminalView
+import io.treehouses.remote.bases.BaseSSH
+import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 
 open class BaseSSHConsole: RootSSHConsole() {
 
@@ -40,7 +44,7 @@ open class BaseSSHConsole: RootSSHConsole() {
         // we dont have an active view, so hide any prompts
         if (view == null) return
         val prompt = view.bridge.promptHelper
-        Log.e("GOT", "HERE ")
+        logD("GOT HERE ")
         when {
             String::class.java == prompt!!.promptRequested -> {
                 hideEmulatedKeys()
@@ -101,7 +105,7 @@ open class BaseSSHConsole: RootSSHConsole() {
         updatePromptVisible()
         // If we just closed the last bridge, go back to the previous activity.
         if (bind.pager.childCount == 0) {
-            Log.e("FINISHING SSH", "FINISH")
+            logD("FINISHING SSH FINISH")
             finish()
         }
     }
@@ -223,11 +227,11 @@ open class BaseSSHConsole: RootSSHConsole() {
             if (requestedBridge == null) {
                 // If we didn't find the requested connection, try opening it
                 try {
-                    Log.d(TAG, String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
-                            "so creating one now", requested.toString(), requested!!.fragment))
+                    logD("${String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
+                            "so creating one now", requested.toString(), requested!!.fragment)}")
                     bound!!.openConnection(requested)
                 } catch (e: Exception) {
-                    Log.e(TAG, "Problem while trying to create new requested bridge from URI", e)
+                    logE("Problem while trying to create new requested bridge from URI $e")
                     return
                 }
                 adapter!!.notifyDataSetChanged()

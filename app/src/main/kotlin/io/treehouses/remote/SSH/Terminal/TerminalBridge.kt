@@ -16,11 +16,10 @@
  */
 package io.treehouses.remote.SSH.Terminal
 
-import android.graphics.*
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PromptHelper
 import io.treehouses.remote.SSH.Relay
@@ -29,7 +28,10 @@ import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.SelectionArea
 import io.treehouses.remote.SSH.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.SSH.interfaces.FontSizeChangedListener
+import io.treehouses.remote.Views.terminal.vt320
 import io.treehouses.remote.bases.DerivedTerminalBridge
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.util.*
 
@@ -48,7 +50,7 @@ class TerminalBridge : DerivedTerminalBridge {
     /**
      * Create a new terminal bridge suitable for unit testing.
      */
-    constructor(): super() {
+    constructor() : super() {
         vDUBuffer = object : vt320() {
             override fun write(b: ByteArray?) {}
             override fun write(b: Int) {}
@@ -73,7 +75,7 @@ class TerminalBridge : DerivedTerminalBridge {
      * launch thread to start SSH connection and handle any hostkey verification
      * and password authentication.
      */
-    constructor(manager: TerminalManager, host: HostBean): super() {
+    constructor(manager: TerminalManager, host: HostBean) : super() {
         this.manager = manager
         this.host = host
         emulation = manager.emulation
@@ -100,14 +102,14 @@ class TerminalBridge : DerivedTerminalBridge {
         // this is probably status reply information
         vDUBuffer = object : vt320() {
             override fun debug(s: String?) {
-                Log.d(TAG, s)
+                logD("$s")
             }
 
             override fun write(b: ByteArray?) {
                 try {
                     if (b != null && transport != null) transport!!.write(b)
                 } catch (e: IOException) {
-                    Log.e(TAG, "Problem writing outgoing data in vt320() thread", e)
+                    logE("Problem writing outgoing data in vt320() thread $e")
                 }
             }
 
@@ -115,7 +117,7 @@ class TerminalBridge : DerivedTerminalBridge {
                 try {
                     if (transport != null) transport!!.write(b)
                 } catch (e: IOException) {
-                    Log.e(TAG, "Problem writing outgoing data in vt320() thread", e)
+                    logE("Problem writing outgoing data in vt320() thread $e")
                 }
             }
 
@@ -205,9 +207,9 @@ class TerminalBridge : DerivedTerminalBridge {
 //			((vt320) buffer).setBackspace(vt320.DELETE_IS_BACKSPACE);
 //		else
         (vDUBuffer as vt320?)!!.setBackspace(vt320.DELETE_IS_DEL)
-        Log.e("ENTERED", "HERE3")
+        logD("ENTERED HERE3")
         if (isSessionOpen) {
-            Log.e("ENTERED", "HERE")
+            logD("ENTERED HERE")
             // create thread to relay incoming connection data to buffer
             relay = Relay(this, transport!!, (vDUBuffer as vt320?)!!, host!!.encoding)
             val relayThread = Thread(relay)
@@ -301,7 +303,6 @@ class TerminalBridge : DerivedTerminalBridge {
 
     // refresh any bitmap with new font size
     //		manager.hostdb.saveHost(host);
-
 
 
     /**

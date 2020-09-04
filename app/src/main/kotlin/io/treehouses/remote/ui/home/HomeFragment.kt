@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -21,12 +20,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
+import io.treehouses.remote.BaseInitialActivity.Companion.instance
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.AboutFragment
 import io.treehouses.remote.Fragments.DialogFragments.BluetoothFailedDialog
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Fragments.TerminalFragment
-import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
@@ -34,6 +33,7 @@ import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
+import io.treehouses.remote.utils.logE
 
 class HomeFragment : BaseHomeFragment() {
     private var notificationListener: NotificationCallback? = null
@@ -232,7 +232,7 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun observeConnectionState() {
         viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
-            Log.e("CONNECTED", "STATE $connected")
+            logE("CONNECTED STATE $connected")
             transition(connected == Constants.STATE_CONNECTED)
             connectionDialog?.dismiss()
             when(connected) {
@@ -314,10 +314,6 @@ class HomeFragment : BaseHomeFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshHandler()
-        if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
-            viewModel.checkVersionSent = true
-            viewModel.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-        }
     }
 
     companion object {

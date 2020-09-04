@@ -44,7 +44,7 @@ class ServiceViewPager : ViewPager {
             if (position < -1) { // [-Infinity,-1)
                 // This page is way off-screen to the left.
                 view.alpha = 0f
-            } else if (position <= 1 && position >= 0) { // [0,1]
+            } else if (position in 0.0..1.0) { // [0,1]
                 view.translationX = -horzMargin + vertMargin / 2
                 view.scaleX = scaleFactor
                 view.scaleY = scaleFactor
