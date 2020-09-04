@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/AppTheme"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -23,7 +24,7 @@
             android:layout_margin="10dp"
             android:textSize="18sp"
             android:textColor="@color/daynight_textColor"
-            android:text="2 Factor Authentication" />
+            android:text="2 Factor Authentication:" />
 
 
     </LinearLayout>
@@ -44,7 +45,7 @@
         android:layout_margin="10dp"
         android:textColor="@color/daynight_textColor"
         android:layout_weight="6"
-        android:text="Add or Remove User" />
+        android:text="Add or Remove User:" />
 
     <EditText
         android:id="@+id/user"
