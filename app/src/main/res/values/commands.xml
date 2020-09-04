@@ -83,7 +83,7 @@
     <string name="TREEHOUSES_CAMERA">treehouses camera</string>
     <string name="TREEHOUSES_CAMERA_ON">treehouses camera on</string>
     <string name="TREEHOUSES_CAMERA_OFF">treehouses camera off</string>
-    <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add \"%1$s\"</string>
+    <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add %1$s</string>
 
 
 

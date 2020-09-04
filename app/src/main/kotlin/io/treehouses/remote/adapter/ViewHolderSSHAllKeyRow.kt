@@ -41,6 +41,7 @@ class ViewHolderSSHAllKeyRow(private val binding: RowKeyBinding, private val lis
         when (item?.itemId) {
             R.id.copy_public -> listener.onCopyPub(adapterPosition)
             R.id.delete_key -> listener.onDelete(adapterPosition)
+            R.id.send_key -> listener.onSendToRaspberry(adapterPosition)
         }
         return false
     }

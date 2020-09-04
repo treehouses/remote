@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import io.treehouses.remote.Constants
+import io.treehouses.remote.R
 import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.adapter.ViewHolderSSHAllKeyRow
@@ -69,9 +71,12 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
         }
     }
 
-    private fun copyToClipboard(pubkey: PubKeyBean) {
+    private fun getOpenSSH(pubkey: PubKeyBean) : String {
         val decodedPublic = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public")
-        val openSSH = PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
+        return PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
+    }
+    private fun copyToClipboard(pubkey: PubKeyBean) {
+        val openSSH = getOpenSSH(pubkey)
         val clipboard: ClipboardManager? = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
         val clip = ClipData.newPlainText(pubkey.getDescription(requireContext()), openSSH)
         clipboard?.setPrimaryClip(clip)?.let {
@@ -96,6 +101,16 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
         }
         dialog.setOnDismissListener(DialogInterface.OnDismissListener { setUpKeys() })
         dialog.show(parentFragmentManager, "Delete_key")
+    }
+
+    override fun onSendToRaspberry(position: Int) {
+        val key = allKeys[position]
+        if (listener?.getChatService()?.state == Constants.STATE_CONNECTED) {
+            listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
+            Toast.makeText(requireContext(), "${key.nickname} added to server", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(requireContext(), "No Bluetooth Connection! Please go to the home page to connect.", Toast.LENGTH_LONG).show()
+        }
     }
 
 

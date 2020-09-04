@@ -2,4 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/copy_public" android:title="Copy Public Key"/>
     <item android:id="@+id/delete_key" android:title="Delete"/>
+    <item android:id="@+id/send_key" android:title="Add Key to RPI"/>
+
 </menu>
