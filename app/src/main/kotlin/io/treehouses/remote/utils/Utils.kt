@@ -3,8 +3,12 @@ package io.treehouses.remote.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.util.Base64
+import android.content.Intent
+import android.net.Uri
+import android.view.View
 import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
+import android.util.Base64
 import io.treehouses.remote.callback.HomeInteractListener
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
@@ -58,6 +62,19 @@ object Utils {
         return Toast.makeText(this, s, duration).apply { show() }
     }
 
+
+    fun checkAppIsInstalled(c:Context, v: View, intent:Intent, StringArr:Array<String>):Boolean {
+        val activities = c.packageManager.queryIntentActivities(intent, 0)
+        return if (activities.size == 0) {
+            Snackbar.make(v, StringArr[0], Snackbar.LENGTH_LONG).setAction(StringArr[1]) {
+                val intent1 = Intent(Intent.ACTION_VIEW)
+                intent1.data = Uri.parse(StringArr[2])
+                c.startActivity(intent1)
+            }.show()
+            true
+        } else false
+    }
+
     fun hashString(toHash: String) : String {
         val digest = MessageDigest.getInstance("SHA-256")
         val hash = digest.digest(toHash.toByteArray(Charset.forName("UTF-8")))
@@ -78,6 +95,7 @@ object Utils {
         dos.flush()
         dos.close()
         return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
+
     }
 
     fun sendMessage(listener: HomeInteractListener, msg: String, toastMsg: String, c: Context?) {

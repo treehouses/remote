@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+
+    <LinearLayout
+        android:id="@+id/onOffBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:weightSum="6"
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/switch2FA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/daynight_textColor"
+            android:text="2 Factor Authentication" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/userLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/onOffBtns"
+        android:weightSum="10"
+        android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/userHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
+        android:textColor="@color/daynight_textColor"
+        android:layout_weight="6"
+        android:text="Add or Remove User" />
+
+    <EditText
+        android:id="@+id/user"
+        android:layout_width="0dp"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/daynight_textColor"
+        android:textColorHint="@color/expandable_child_text"
+        android:layout_weight="4"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="pi" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/addRemoveBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/userLayout"
+        android:weightSum="3"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/addBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:textColor="#ffffff"
+        android:theme="@style/PrimaryButton"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="188dp"
+        tools:layout_editor_absoluteY="83dp" />
+
+    <Button
+        android:id="@+id/removeBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Remove"
+        android:textColor="#ffffff"
+        android:theme="@style/PrimaryButton"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="188dp"
+        tools:layout_editor_absoluteY="83dp" />
+
+    <Button
+        android:id="@+id/showBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Show"
+        android:textColor="#ffffff"
+        android:theme="@style/PrimaryButton"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="188dp"
+        tools:layout_editor_absoluteY="83dp" />
+
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/keysDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        android:textColor="@color/daynight_textColor"
+        android:text=""
+        app:layout_constraintTop_toBottomOf="@id/addRemoveBtns"
+        tools:layout_editor_absoluteX="130dp"
+        tools:layout_editor_absoluteY="263dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
