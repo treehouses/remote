@@ -119,7 +119,7 @@ class TorTabFragment : BaseFragment() {
             builder.setPositiveButton("Confirm") { dialog, _ ->
                 val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
                 listener.sendMessage(msg)
-                addPortButton!!.text = "deleting port ....."
+                addPortButton!!.text = "Deleting port. Please wait..."
                 portList!!.isEnabled = false
                 addPortButton!!.isEnabled = false
                 dialog.dismiss()
@@ -156,7 +156,7 @@ class TorTabFragment : BaseFragment() {
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 val s1 = inputInternal.text.toString() ; val s2 = inputExternal.text.toString()
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
-                addPortButton!!.text = "Adding port, please wait for a while ............"
+                addPortButton!!.text = "Adding port. Please wait..."
                 portList!!.isEnabled = false; addPortButton!!.isEnabled = false
                 dialog.dismiss()
                 inputInternal.text?.clear(); inputExternal.text?.clear()
@@ -176,7 +176,7 @@ class TorTabFragment : BaseFragment() {
             } else {
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_START))
                 startButton!!.isEnabled = false
-                startButton!!.text = "Starting tor......"
+                startButton!!.text = "Starting Tor..."
             }
         }
     }
@@ -254,7 +254,7 @@ class TorTabFragment : BaseFragment() {
         } else if (readMessage.contains("the port has been added") || readMessage.contains("has been deleted")) {
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
             portsName = ArrayList()
-            addPortButton!!.text = "Retrieving port.... Please wait"
+            addPortButton!!.text = "Retrieving port. Please wait..."
             if (readMessage.contains("the port has been added")) {
                 Toast.makeText(requireContext(), "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             } else if (readMessage.contains("has been deleted")) {
