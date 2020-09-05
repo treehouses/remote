@@ -7,15 +7,20 @@ import android.view.View
 import io.treehouses.remote.R
 
 object DialogUtils {
+
+    fun createAlert(context: Context?): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+    }
+
     fun createAlertDialog(context: Context?, title: String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle(title)
+        return createAlert(context).setTitle(title)
     }
 
     fun createAlertDialog2(context: Context?, title: String, msg: String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle(title).setMessage(msg)
+        return createAlertDialog(context, title).setMessage(msg)
     }
 
     fun createAlertDialog3(context: Context?, mView: View?, icon: Int): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setView(mView).setIcon(icon)
+        return createAlert(context).setView(mView).setIcon(icon)
     }
 }
