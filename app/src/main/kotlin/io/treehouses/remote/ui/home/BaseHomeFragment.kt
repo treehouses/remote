@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
-import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
