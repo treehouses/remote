@@ -7,7 +7,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -17,6 +16,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import java.util.*
 
@@ -47,7 +47,7 @@ class TorTabFragment : BaseFragment() {
         notification!!.isEnabled = false
         addNotificationListener()
         nowButton = bind!!.notifyNow
-        addNowButonListener()
+        addNowButtonListener()
         portList = bind!!.portList
         portList!!.adapter = adapter
         addPortListListener()
@@ -79,10 +79,9 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
-    private fun addNowButonListener() {
+    private fun addNowButtonListener() {
         nowButton!!.setOnClickListener {
-            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_NOW))
-            Toast.makeText(requireContext(), "The Gitter Channel has been notified.", Toast.LENGTH_SHORT).show();
+            Utils.sendMessageShort(listener, getString(R.string.TREEHOUSES_TOR_NOTICE_NOW), "The Gitter Channel has been notified.", requireContext())
         }
     }
 

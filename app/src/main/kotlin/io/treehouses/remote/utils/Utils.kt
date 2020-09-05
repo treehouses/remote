@@ -102,4 +102,9 @@ object Utils {
         listener.sendMessage(msg)
         Toast.makeText(c, toastMsg, Toast.LENGTH_LONG).show()
     }
+
+    fun sendMessageShort(listener: HomeInteractListener, msg: String, toastMsg: String, c: Context?) {
+        listener.sendMessage(msg)
+        Toast.makeText(c, toastMsg, Toast.LENGTH_SHORT).show()
+    }
 }

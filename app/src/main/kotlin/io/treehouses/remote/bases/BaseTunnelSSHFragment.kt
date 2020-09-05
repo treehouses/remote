@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
 import org.json.JSONException
@@ -74,8 +75,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     private fun handleMoreMessages(readMessage: String) {
         when {
             readMessage.contains("Error: only 'list'") -> {
-                listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
-                Toast.makeText(requireContext(), "Please swipe slower in the future as you have a slow rpi, getting ports again...", Toast.LENGTH_SHORT).show()
+                Utils.sendMessageShort(listener, getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE), "Please swipe slower in the future as you have a slow rpi, getting ports again...", requireContext())
             }
             readMessage.contains("true") || readMessage.contains("false") -> {
                 listener.sendMessage("treehouses remote key send")
