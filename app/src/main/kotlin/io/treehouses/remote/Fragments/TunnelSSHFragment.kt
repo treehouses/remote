@@ -137,9 +137,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     break
                 }
             }
-            if(hostsPosition!!.last() < position){
-                myPos = hostsPosition!!.lastIndex
-            }
+            if(hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
             logD("dasda ${myPos.toString()}")
             listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
             addPortButton!!.text = "deleting port ....."
@@ -166,28 +164,20 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             jsonSend(true)
         }
 
-        showKeys.setOnClickListener {
-            handleShowKeys(profileText)
-        }
+        showKeys.setOnClickListener { handleShowKeys(profileText) }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun handleShowKeys(profileText: Editable) {
         var profile = profileText.toString()
-        if(profile.isBlank())
-            profile = "default"
-
+        if(profile.isBlank()) profile = "default"
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
         var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
         var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
 
         if (storedPublicKey != null && storedPrivateKey != null) {
-            if(storedPublicKey.isBlank()){
-                storedPublicKey = "No public key found"
-            }
-            if(storedPrivateKey.isBlank()){
-                storedPrivateKey = "No private key found"
-            }
+            if(storedPublicKey.isBlank()) storedPublicKey = "No public key found"
+            if(storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
         }
 
         val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
@@ -211,9 +201,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
             }
-            else{
-                Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
-            }
+            else Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
             dialogHosts.dismiss()
         }
     }
