@@ -81,7 +81,8 @@ class TorTabFragment : BaseFragment() {
 
     private fun addNowButtonListener() {
         nowButton!!.setOnClickListener {
-            Utils.sendMessageShort(listener, getString(R.string.TREEHOUSES_TOR_NOTICE_NOW), "The Gitter Channel has been notified.", requireContext())
+            val messages = Pair(getString(R.string.TREEHOUSES_TOR_NOTICE_NOW), "The Gitter Channel has been notified.")
+            Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
         }
     }
 

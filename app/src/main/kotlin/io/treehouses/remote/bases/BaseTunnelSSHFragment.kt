@@ -75,7 +75,8 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     private fun handleMoreMessages(readMessage: String) {
         when {
             readMessage.contains("Error: only 'list'") -> {
-                Utils.sendMessageShort(listener, getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE), "Please swipe slower in the future as you have a slow rpi, getting ports again...", requireContext())
+                val messages = Pair(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE), "Please swipe slower in the future as you have a slow rpi, getting ports again...")
+                Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
             }
             readMessage.contains("true") || readMessage.contains("false") -> {
                 listener.sendMessage("treehouses remote key send")
