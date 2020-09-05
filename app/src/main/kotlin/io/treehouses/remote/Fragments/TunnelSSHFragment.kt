@@ -28,6 +28,7 @@ import org.json.JSONObject
 class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addPortCloseButton: ImageButton
     lateinit var addHostCloseButton: ImageButton
+    lateinit var addKeyCloseButton: ImageButton
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -65,33 +66,38 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         addingHostButton.setOnClickListener(this)
         addPortCloseButton.setOnClickListener(this)
         addHostCloseButton.setOnClickListener(this)
+        addKeyCloseButton.setOnClickListener(this)
         bind!!.notifyNow.setOnClickListener(this)
         bind!!.btnKeys.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog1() {
-        dialog = Dialog(requireContext())
-        dialogHosts = Dialog(requireContext())
+        dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_sshtunnel_ports)
-        dropdown = dialog.findViewById(R.id.hosts)
         dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
+        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key)
+        dropdown = dialog.findViewById(R.id.hosts)
         inputExternal = dialog.findViewById(R.id.ExternalTextInput)
         inputInternal = dialog.findViewById(R.id.InternalTextInput)
         inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput)
         inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput)
         addingPortButton = dialog.findViewById(R.id.btn_adding_port)
         addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
-        addPortCloseButton = dialog.findViewById(R.id.addPortCloseButton)
-        addHostCloseButton = dialogHosts.findViewById(R.id.addHostCloseButton)
+        addCloseButtons()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
-        val window = dialog.window
-        val windowHost = dialogHosts.window
+        val window = dialog.window; val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         try{ initializeDialog2()} catch (exception:Exception){logE("Error1 $exception")}
+    }
+
+    private fun addCloseButtons() {
+        addPortCloseButton = dialog.findViewById(R.id.addPortCloseButton)
+        addHostCloseButton = dialogHosts.findViewById(R.id.addHostCloseButton)
+        addKeyCloseButton = dialogKeys.findViewById(R.id.addKeyCloseButton)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -145,8 +151,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog4(){
-        dialogKeys = Dialog(requireContext())
-        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key)
         showKeys = dialogKeys.findViewById(R.id.btn_show_keys)
         saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
         val profileText = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text
@@ -246,6 +250,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.btn_keys -> showDialog(dialogKeys)
             R.id.addPortCloseButton -> dialog.dismiss()
             R.id.addHostCloseButton -> dialogHosts.dismiss()
+            R.id.addKeyCloseButton -> dialogKeys.dismiss()
         }
     }
 
