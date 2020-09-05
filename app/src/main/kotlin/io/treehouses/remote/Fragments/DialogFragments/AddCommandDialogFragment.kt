@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.DialogAddCommandBinding
 import io.treehouses.remote.pojo.CommandListItem
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.SaveUtils
 
 class AddCommandDialogFragment : DialogFragment() {
@@ -27,10 +28,8 @@ class AddCommandDialogFragment : DialogFragment() {
     }
 
     private fun getAlertDialog(mView: View): AlertDialog {
-        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-                .setView(mView)
+        return DialogUtils.createAlertDialog3(activity, mView, android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.change_password)
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton("Add Command"
                 ) { _: DialogInterface?, _: Int ->
                     if (bind!!.commandName.text.toString().isNotEmpty() && bind!!.commandValue.text.toString().isNotEmpty()) {

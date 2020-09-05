@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.DialogUtils
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -31,9 +32,7 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
     }
 
     private fun showAlertDialog(context: Context) {
-        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("OUTPUT:")
-                .setMessage("Hotspot is disabled, open hotspot settings?")
+        return DialogUtils.createAlertDialog2(context,"OUTPUT:","Hotspot is disabled, open hotspot settings?")
                 .setIcon(R.drawable.wificon)
                 .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int -> openHotspotSettings(context) }
                 .setNegativeButton("NO") { dialog: DialogInterface, _: Int -> dialog.cancel() }

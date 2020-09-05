@@ -168,7 +168,7 @@ class InitialActivity : BaseInitialActivity() {
                 preferences = PreferenceManager.getDefaultSharedPreferences(this)
                 val v = layoutInflater.inflate(R.layout.alert_log_map, null)
                 if (!preferences?.getBoolean("send_log", false)!!) {
-                    DialogUtils.createAlertDialog(this@InitialActivity, R.style.CustomAlertDialogStyle, "Sharing is Caring.").setCancelable(false).setMessage("The community map is only available with data sharing. " +
+                    DialogUtils.createAlertDialog(this@InitialActivity, "Sharing is Caring.").setCancelable(false).setMessage("The community map is only available with data sharing. " +
                             "Please enable data sharing to access this feature.")
                             .setPositiveButton("Enable Data Sharing") { _: DialogInterface?, _: Int -> preferences!!.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
                 }

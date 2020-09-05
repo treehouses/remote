@@ -16,6 +16,7 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.R
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import java.util.*
@@ -40,9 +41,7 @@ class WifiDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mContext = context
         setupWifi()
-        mDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setView(mView)
-                .setIcon(R.drawable.dialog_icon)
+        mDialog = DialogUtils.createAlertDialog3(context, mView, R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
                 .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         logD("SSID = $wifiList")
