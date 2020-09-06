@@ -37,7 +37,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
         mChatService.updateHandler(mHandler)
 
         //update Network mode
-        Utils.sendMessage(listener, msg, toastMsg, context)
+        Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
         return binding.root
     }
 
@@ -68,7 +68,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
             binding.networkHotspot == v -> showBottomSheet(HotspotBottomSheet(), "hotspot")
             binding.networkBridge == v -> showBottomSheet(BridgeBottomSheet(), "bridge")
             binding.networkEthernet == v -> showBottomSheet(EthernetBottomSheet(), "ethernet")
-            binding.buttonNetworkMode == v -> Utils.sendMessage(listener, msg, toastMsg, context)
+            binding.buttonNetworkMode == v -> Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
             binding.discoverBtn == v-> listener.openCallFragment(DiscoverFragment())
@@ -88,7 +88,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
                 val toastMsg = "Network Mode retrieved"
                 Toast.makeText(context, "Network Mode switched to default", Toast.LENGTH_LONG).show()
                 //update network mode
-                Utils.sendMessage(listener, msg, toastMsg, context)
+                Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
             }
             RESULTS.ERROR -> {
                 showDialog(context,"Error", output)
@@ -100,7 +100,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
                 showDialog(context,"Network Switched", output)
                 showDialog(context,"Network Switched", output)
                 //update network mode
-                Utils.sendMessage(listener, msg, toastMsg, context)
+                Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
                 binding.networkPbar.visibility = View.GONE
             }
             else -> logE("NewNetworkFragment: Result not Found")
@@ -140,7 +140,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     val msg = getString(R.string.TREEHOUSES_DEFAULT_NETWORK)
                     val toastMsg = "Switching to default network..."
-                    Utils.sendMessage(listener, msg, toastMsg, context)
+                    Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()

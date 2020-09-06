@@ -98,8 +98,8 @@ object Utils {
 
     }
 
-    fun sendMessage(listener: HomeInteractListener, msg: String, toastMsg: String, c: Context?) {
-        listener.sendMessage(msg)
-        Toast.makeText(c, toastMsg, Toast.LENGTH_LONG).show()
+    fun sendMessage(listener: HomeInteractListener, msg: Pair<String, String>, c: Context?, length: Int) {
+        listener.sendMessage(msg.first)
+        Toast.makeText(c, msg.second, length).show()
     }
 }
