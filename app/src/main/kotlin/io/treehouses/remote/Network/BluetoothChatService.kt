@@ -120,27 +120,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         super.onDestroy()
     }
 
-    private fun startNotification() {
-        val disconnectIntent = Intent(DISCONNECT_ACTION)
-        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
-
-        val onClickIntent = Intent(this, InitialActivity::class.java)
-        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
-        val notification: Notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("Treehouses Remote is currently running")
-                .setContentText("Connected to ${mDevice?.name}")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .setSmallIcon(R.drawable.treehouses2)
-                .setContentIntent(pendingClickIntent)
-                .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
-                .build()
-        startForeground(2, notification)
-    }
-
-
     var connectedDeviceName: String = ""
 
 
@@ -300,11 +279,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             } catch (e: Exception) {
                 // Close the socket
                 logE("ERROR WHILE CONNECTING $e")
-                try {
-                    mmSocket!!.close()
-                } catch (e2: Exception) {
-                    logE("unable to close() $mSocketType socket during connection failure $e2")
-                }
+                closeSocket()
                 connectionFailed()
                 return
             }
@@ -316,12 +291,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             connected(mmSocket, mmDevice, mSocketType)
         }
 
-        fun cancel() {
-            try {
-                mmSocket!!.close()
-            } catch (e: Exception) {
-                logE("close() of connect $mSocketType socket failed, $e")
-            }
+        fun cancel() { closeSocket() }
+
+        fun closeSocket() {
+            try { mmSocket!!.close() }
+            catch (e: Exception) { logE("close() of connect $mSocketType socket failed, $e") }
         }
 
         init {
