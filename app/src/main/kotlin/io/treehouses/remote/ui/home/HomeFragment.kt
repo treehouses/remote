@@ -94,7 +94,7 @@ class HomeFragment : BaseHomeFragment() {
             if (it == null) return@Observer
             connectionDialog?.dismiss()
             val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialog.DONT_SHOW_DIALOG, false)
-            if (!noDialog) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
+            if (!noDialog && viewModel.device != null) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
             viewModel.errorConnecting.value = null
         })
     }
@@ -244,7 +244,7 @@ class HomeFragment : BaseHomeFragment() {
                     Tutorials.homeTutorials(bind, requireActivity())
                 }
                 Constants.STATE_CONNECTING -> {
-                    showBTConnectionDialog()
+                    if (viewModel.device != null) showBTConnectionDialog()
                 }
                 else -> {
                     viewModel.hashSent.value = Resource.nothing()
@@ -260,14 +260,14 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun showBTConnectionDialog() {
         connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-        connectionDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        connectionDialog!!.setTitle("Connecting...")
-        connectionDialog!!.setMessage("""
+        connectionDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        connectionDialog?.setTitle("Connecting...")
+        connectionDialog?.setMessage("""
     Device Name: ${viewModel.device?.name}
     Device Address: ${viewModel.device?.address}
     """.trimIndent())
-        connectionDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        connectionDialog!!.show()
+        connectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        connectionDialog?.show()
     }
 
     /**
