@@ -121,7 +121,7 @@ class EditHostDialog : FullScreenDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        if (dismissListener != null) dismissListener.onDismiss(dialog)
+        dismissListener?.onDismiss(dialog)
     }
 
     companion object {
