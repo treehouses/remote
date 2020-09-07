@@ -1,14 +1,11 @@
 package io.treehouses.remote.Fragments
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.text.format.Formatter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +20,7 @@ import io.treehouses.remote.adapter.ViewHolderVnc
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.pojo.NetworkListItem
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import java.util.*
 
@@ -183,9 +181,15 @@ class SystemFragment : BaseFragment() {
             val diff = ArrayList<Long>()
             readMessageConditions(readMessage)
             logD("readMessage = $readMessage")
+            notifyUser(readMessage)
             vncToast(readMessage)
             checkAndPrefilIp(readMessage, diff)
         }
+    }
+
+    private fun notifyUser(msg: String) {
+        if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog4(context, "Wifi is not connected", "Check SSID and password and try again.")
     }
 
     private fun readMessageConditions(readMessage: String) {
