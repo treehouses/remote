@@ -13,6 +13,7 @@ import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.ui.home.HomeFragment
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils.toast
 
 class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
@@ -45,7 +46,9 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
         }
 
         mChatService.updateHandler(mHandler)
-        rebootBtn.setOnClickListener { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device")}
+        rebootBtn.setOnClickListener {
+            DialogUtils.createAlertDialog4(context, "Reboot?", "Are you sure you want to reboot?") { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
+        }
         shutdownBtn.setOnClickListener { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device")}
     }
 
