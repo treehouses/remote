@@ -32,25 +32,25 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.NETWORK)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.NETWORK, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilderSkippable(activity, bind.networkWifi, "Touch Here to Connect to a WiFi Network", FocusShape.CIRCLE).build()
+        val network_wifi = fancyShowCaseViewBuilderSkippable(activity, bind.networkWifi, "Touch Here to Connect to a WiFi Network", FocusShape.CIRCLE).build()
 
-        val b = fancyShowCaseView(activity, bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", FocusShape.CIRCLE)
+        val network_hotspot = fancyShowCaseView(activity, bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", FocusShape.CIRCLE)
 
-        val c = fancyShowCaseView(activity, bind.networkBridge, "Touch Here to Configure a Bridge Connection", FocusShape.CIRCLE)
+        val network_bridge = fancyShowCaseView(activity, bind.networkBridge, "Touch Here to Configure a Bridge Connection", FocusShape.CIRCLE)
 
-        val d = fancyShowCaseView(activity, bind.networkEthernet, "Touch Here to Configure an Ethernet Connection", FocusShape.CIRCLE)
+        val network_ethernet = fancyShowCaseView(activity, bind.networkEthernet, "Touch Here to Configure an Ethernet Connection", FocusShape.CIRCLE)
 
-        val e = fancyShowCaseView(activity, bind.buttonNetworkMode, "Use this button to Refresh Network Mode Info", FocusShape.ROUNDED_RECTANGLE)
+        val network_mode = fancyShowCaseView(activity, bind.buttonNetworkMode, "Use this button to Refresh Network Mode Info", FocusShape.ROUNDED_RECTANGLE)
 
-        val f = fancyShowCaseView(activity, bind.rebootRaspberry, "Use this to Reboot RPi", FocusShape.ROUNDED_RECTANGLE)
+        val reboot_raspberry = fancyShowCaseView(activity, bind.rebootRaspberry, "Use this to Reboot RPi", FocusShape.ROUNDED_RECTANGLE)
 
-        val g = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
+        val reset_network = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
 
-        val h =  fancyShowCaseViewRoundedRect(activity, bind.discoverBtn, "Scroll down to the bottom of the page")
+        val scroll_down =  fancyShowCaseViewRoundedRect(activity, bind.discoverBtn, "Scroll down to the bottom of the page")
 
-        val i = fancyShowCaseView(activity, bind.rebootRaspberry, "Scan your Network to find other Connected Devices", FocusShape.ROUNDED_RECTANGLE)
+        val scan_button = fancyShowCaseView(activity, bind.rebootRaspberry, "Scan your Network to find other Connected Devices", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d,e,f,g,h, i)
+        show(network_wifi, network_hotspot, network_bridge, network_ethernet, network_mode, reboot_raspberry, reset_network, scroll_down, scan_button)
     }
 
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
