@@ -49,7 +49,9 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
         rebootBtn.setOnClickListener {
             DialogUtils.createAlertDialog4(context, "Reboot?", "Are you sure you want to reboot?") { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
         }
-        shutdownBtn.setOnClickListener { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device")}
+        shutdownBtn.setOnClickListener {
+            DialogUtils.createAlertDialog4(context, "Shutdown?", "Are you sure you want to shutdown?") { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device") }
+        }
     }
 
 
