@@ -17,17 +17,17 @@ object DialogUtils {
         return createAlert(context).setTitle(title)
     }
 
-    fun createAlertDialog2(context: Context?, title: String, msg: String): AlertDialog.Builder {
+    fun createAlertDialog(context: Context?, title: String, msg: String): AlertDialog.Builder {
         return createAlertDialog(context, title).setMessage(msg)
     }
 
-    fun createAlertDialog3(context: Context?, mView: View?, icon: Int): AlertDialog.Builder {
+    fun createAlertDialog(context: Context?, mView: View?, icon: Int): AlertDialog.Builder {
         return createAlert(context).setView(mView).setIcon(icon)
     }
 
-    fun createAlertDialog4(context: Context?, title: String, msg: String, myFunc: () -> Unit) {
-        createAlertDialog2(context, title, msg)
-                .setPositiveButton("YES") { dialog: DialogInterface?, _: Int -> myFunc() }
+    fun createAlertDialog(context: Context?, title: String, msg: String, myFunc: () -> Unit) {
+        createAlertDialog(context, title, msg)
+                .setPositiveButton("YES") { _: DialogInterface?, _: Int -> myFunc() }
                 .setNegativeButton("NO") { dialog: DialogInterface?, _: Int -> dialog?.dismiss()}
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }

@@ -258,7 +258,7 @@ open class BaseHomeFragment : BaseFragment() {
      * to upgrade their version of Treehouses Remote.
      */
     protected fun updateTreehousesRemote() {
-        val alertDialog = DialogUtils.createAlertDialog2(context, "Update Required",
+        val alertDialog = DialogUtils.createAlertDialog(context, "Update Required",
                 "Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
                 .setPositiveButton("Update") { _: DialogInterface?, _: Int ->
                     val appPackageName = requireActivity().packageName // getPackageName() from Context or Activity object

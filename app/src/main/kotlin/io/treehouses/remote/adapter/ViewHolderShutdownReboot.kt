@@ -47,10 +47,10 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
 
         mChatService.updateHandler(mHandler)
         rebootBtn.setOnClickListener {
-            DialogUtils.createAlertDialog4(context, "Reboot?", "Are you sure you want to reboot?") { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
+            DialogUtils.createAlertDialog(context, "Reboot?", "Are you sure you want to reboot?") { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
         }
         shutdownBtn.setOnClickListener {
-            DialogUtils.createAlertDialog4(context, "Shutdown?", "Are you sure you want to shutdown?") { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device") }
+            DialogUtils.createAlertDialog(context, "Shutdown?", "Are you sure you want to shutdown?") { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device") }
         }
     }
 
