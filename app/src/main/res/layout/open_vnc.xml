@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/margin_small"
-        android:hint="Enter your Raspberry Pis IP Address">
+        android:textColorHint="@color/daynight_textColor"
+        android:hint="Enter your Raspberry Pi's IP Address">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextIp"
@@ -25,7 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/margin_medium"
-        android:text="VNC" />
+        android:textStyle="bold"
+        android:text="VNC:" />
 
     <include layout="@layout/layout_btn_configuration" />
 

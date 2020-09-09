@@ -20,7 +20,7 @@
 
     <string name="TREEHOUSES_UPGRADE_CHECK">treehouses upgrade check\n</string>
     <string name="TREEHOUSES_UPGRADE">treehouses upgrade\n</string>
-    <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master</string>
+    <string name="TREEHOUSES_UPGRADE_BLUETOOTH_MASTER">treehouses upgrade bluetooth master\n</string>
 
     <string name="TREEHOUSES_DEFAULT_NETWORK">treehouses default network\n</string>
     <string name="TREEHOUSES_RENAME">treehouses rename \"%1$s\"</string>
@@ -68,6 +68,14 @@
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host \"%1$s\" </string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port \"%1$s\" </string>
 
+
+    <string name="TREEHOUSES_SSH_2FA">treehouses ssh 2fa"</string>
+    <string name="TREEHOUSES_SSH_2FA_ADD">treehouses ssh 2fa add \"%1$s\"</string>
+    <string name="TREEHOUSES_SSH_2FA_REMOVE">treehouses ssh 2fa remove \"%1$s\"</string>
+    <string name="TREEHOUSES_SSH_2FA_SHOW">treehouses ssh 2fa show \"%1$s\"</string>
+    <string name="TREEHOUSES_SSH_2FA_ENABLE">treehouses ssh 2fa enable"</string>
+    <string name="TREEHOUSES_SSH_2FA_DISABLE">treehouses ssh 2fa disable"</string>
+
     <string name="TREEHOUSES_SERVICES_CLEANUP">treehouses services %1$s cleanup</string>
     <string name="TREEHOUSES_SERVICES_INSTALL">treehouses services %1$s install</string>
     <string name="TREEHOUSES_SERVICES_UP">treehouses services %1$s up</string>
@@ -75,6 +83,7 @@
     <string name="TREEHOUSES_SERVICES_URL_LOCAL">treehouses services %1$s url local</string>
     <string name="TREEHOUSES_SERVICES_URL_TOR">treehouses services %1$s url tor</string>
     <string name="TREEHOUSES_SERVICES_AUTORUN">treehouses services %1$s autorun %2$s </string>
+
     <string name="TREEHOUSES_SERVICES_CONFIG_SEND">treehouses services \"%1$s\" config edit send</string>
     <string name="TREEHOUSES_SERVICES_CONFIG_REQUEST">treehouses services \"%1$s\" config edit request</string>
 
@@ -83,7 +92,7 @@
     <string name="TREEHOUSES_CAMERA">treehouses camera</string>
     <string name="TREEHOUSES_CAMERA_ON">treehouses camera on</string>
     <string name="TREEHOUSES_CAMERA_OFF">treehouses camera off</string>
-    <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add \"%1$s\"</string>
+    <string name="TREEHOUSES_SSHKEY_ADD">treehouses sshkey add %1$s</string>
 
 
 

@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -21,12 +20,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
+import io.treehouses.remote.BaseInitialActivity.Companion.instance
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.Fragments.AboutFragment
 import io.treehouses.remote.Fragments.DialogFragments.BluetoothFailedDialog
 import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
 import io.treehouses.remote.Fragments.TerminalFragment
-import io.treehouses.remote.InitialActivity.Companion.instance
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
@@ -95,7 +94,7 @@ class HomeFragment : BaseHomeFragment() {
             if (it == null) return@Observer
             connectionDialog?.dismiss()
             val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialog.DONT_SHOW_DIALOG, false)
-            if (!noDialog) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
+            if (!noDialog && viewModel.device != null) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
             viewModel.errorConnecting.value = null
         })
     }
@@ -245,7 +244,7 @@ class HomeFragment : BaseHomeFragment() {
                     Tutorials.homeTutorials(bind, requireActivity())
                 }
                 Constants.STATE_CONNECTING -> {
-                    showBTConnectionDialog()
+                    if (viewModel.device != null) showBTConnectionDialog()
                 }
                 else -> {
                     viewModel.hashSent.value = Resource.nothing()
@@ -261,14 +260,14 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun showBTConnectionDialog() {
         connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-        connectionDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        connectionDialog!!.setTitle("Connecting...")
-        connectionDialog!!.setMessage("""
+        connectionDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        connectionDialog?.setTitle("Connecting...")
+        connectionDialog?.setMessage("""
     Device Name: ${viewModel.device?.name}
     Device Address: ${viewModel.device?.address}
     """.trimIndent())
-        connectionDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        connectionDialog!!.show()
+        connectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        connectionDialog?.show()
     }
 
     /**
@@ -315,10 +314,6 @@ class HomeFragment : BaseHomeFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refreshHandler()
-        if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
-            viewModel.checkVersionSent = true
-            viewModel.sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
-        }
     }
 
     companion object {

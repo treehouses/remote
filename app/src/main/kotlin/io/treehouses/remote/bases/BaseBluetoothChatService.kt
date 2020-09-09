@@ -1,5 +1,7 @@
 package io.treehouses.remote.bases
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -10,7 +12,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import io.treehouses.remote.Constants
+import io.treehouses.remote.InitialActivity
+import io.treehouses.remote.R
 import java.io.Serializable
 import java.util.*
 
@@ -73,6 +78,26 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
 
     override fun onBind(p0: Intent?): IBinder? {
         TODO("Not yet implemented")
+    }
+
+    protected fun startNotification() {
+        val disconnectIntent = Intent(DISCONNECT_ACTION)
+        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
+
+        val onClickIntent = Intent(this, InitialActivity::class.java)
+        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
+        val notification: Notification = notificationBuilder.setOngoing(true)
+                .setContentTitle("Treehouses Remote is currently running")
+                .setContentText("Connected to ${mDevice?.name}")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setSmallIcon(R.drawable.treehouses2)
+                .setContentIntent(pendingClickIntent)
+                .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
+                .build()
+        startForeground(2, notification)
     }
 
     /**

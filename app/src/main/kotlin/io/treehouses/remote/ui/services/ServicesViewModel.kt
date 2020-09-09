@@ -138,7 +138,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
                 lives.forEach { it.value = Resource.nothing() }
             }
             editEnvAction.value?.status == LOADING && output.startsWith("treehouses services") -> editEnvAction.value = Resource.success(output.split(" ").toMutableList())
-            serverServiceData.value?.status == LOADING -> receiveJSON(output.trim())
+            serverServiceData.value?.status == LOADING -> receiveJSON(output)
             serviceAction.value?.status == LOADING && containsServiceAction(output) -> matchServiceAction(output.trim())
             autoRunAction.value?.status == LOADING && output.contains("service autorun set") -> {
                 autoRunAction.value = Resource.success(output.contains("true"))
@@ -157,7 +157,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      */
     private fun receiveJSON(current: String) {
         servicesJSON += current
-        if (currentlyReceivingJSON && servicesJSON.endsWith("}}")) {
+        if (currentlyReceivingJSON && servicesJSON.trim().endsWith("}}")) {
             try {
                 logE("GOT $servicesJSON")
                 val data = Gson().fromJson(servicesJSON, ServicesData::class.java)

@@ -84,6 +84,7 @@ open class BaseStatusFragment : BaseFragment() {
 
         bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
 
     }
 
@@ -122,7 +123,6 @@ open class BaseStatusFragment : BaseFragment() {
             bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
             bind.upgrade.visibility = View.VISIBLE
         }
-        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
     }
 
     private fun checkUpgradeNow() {

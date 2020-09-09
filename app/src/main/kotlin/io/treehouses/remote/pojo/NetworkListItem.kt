@@ -14,7 +14,8 @@ class NetworkListItem(var title: String, var layout: Int) {
                 systemList.add(NetworkListItem("Share Internet With Pi (beta)", R.layout.configure_tethering))
                 systemList.add(NetworkListItem("Add SSH Key", R.layout.configure_ssh_key))
                 systemList.add(NetworkListItem("Toggle Camera", R.layout.configure_camera))
-                systemList.add(NetworkListItem("Blocker Level", R.layout.configure_blocker))
+                systemList.add(NetworkListItem("Internet Blocking", R.layout.configure_blocker))
+                systemList.add(NetworkListItem("SSH 2 Factor Authentication", R.layout.configure_ssh2fa))
                 return systemList
             }
     }

@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.AdapterView
@@ -26,8 +25,8 @@ import io.treehouses.remote.bases.BaseDialogFragment
 import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import java.util.*
 
 class RPIDialogFragment : BaseDialogFragment() {
@@ -167,7 +166,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     }
 
     private fun getAlertDialog(mView: View): AlertDialog {
-        return AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setView(mView).setIcon(R.drawable.dialog_icon).create()
+        return DialogUtils.createAlertDialog3(context, mView, R.drawable.dialog_icon).create()
     }
 
     fun bluetoothCheck(vararg args: String) {

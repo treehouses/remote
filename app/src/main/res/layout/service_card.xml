@@ -9,26 +9,14 @@
     app:layout_constraintTop_toBottomOf="@id/pickService"
     android:theme="@style/AppTheme">
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/windowBackground">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/cardView8"
-            app:layout_constraintEnd_toEndOf="@+id/cardView8"
-            app:layout_constraintStart_toStartOf="@+id/cardView8"
-            app:layout_constraintTop_toTopOf="@+id/cardView8">
-
-        </ProgressBar>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <ImageView
@@ -172,6 +160,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/margin_large"
                 android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_marginRight="@dimen/margin_large"
                 android:layout_marginEnd="@dimen/margin_large"
@@ -186,15 +175,16 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_medium"
                 android:layout_marginEnd="@dimen/margin_large"
                 android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginBottom="@dimen/margin_medium"
                 android:background="@drawable/service_button"
                 android:text="Edit Environment Variables"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_white" />
 
         </LinearLayout>
-    </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.cardview.widget.CardView>

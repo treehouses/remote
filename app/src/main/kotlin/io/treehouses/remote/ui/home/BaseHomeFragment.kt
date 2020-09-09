@@ -1,11 +1,12 @@
 package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
-import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -15,6 +16,7 @@ import io.treehouses.remote.IntroActivity
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Matcher
 import io.treehouses.remote.utils.SaveUtils.Screens
 import io.treehouses.remote.utils.Utils
@@ -79,7 +81,7 @@ open class BaseHomeFragment : BaseFragment() {
         if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
             if (connectionCount >= 3) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
-                CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
+                DialogUtils.createAlertDialog(activity, "Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
                         "Do you like to share it? It will help us to improve.")
                         .setPositiveButton("Continue") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
             }
@@ -99,7 +101,7 @@ open class BaseHomeFragment : BaseFragment() {
         val date = Calendar.getInstance()
         if (lastDialogShown < date.timeInMillis) {
             if (connectionCount >= 3 && ratingDialog) {
-                val a = CreateAlertDialog(activity, R.style.CustomAlertDialogStyle, "Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
+                val a = DialogUtils.createAlertDialog(activity,"Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
                         "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
                         .setPositiveButton("RATE IT NOW") { _: DialogInterface?, _: Int ->
                             val intent = Intent(Intent.ACTION_VIEW)
@@ -156,7 +158,7 @@ open class BaseHomeFragment : BaseFragment() {
      * Utility function to create the Test Connection Dialog
      */
     private fun createTestConnectionDialog(mView: View, dismissable: Boolean, title: String, messageID: Int): AlertDialog {
-        val d = CreateAlertDialog(context, R.style.CustomAlertDialogStyle,title).setView(mView).setIcon(R.drawable.bluetooth).setMessage(messageID)
+        val d = DialogUtils.createAlertDialog(context,title).setView(mView).setIcon(R.drawable.bluetooth).setMessage(messageID)
         if (dismissable) d.setNegativeButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         return d.create()
     }
@@ -165,7 +167,7 @@ open class BaseHomeFragment : BaseFragment() {
      * Show that the Treehouses CLI may be out of date, and requires and upgrade. This is usally triggered by an unexpected error.
      */
     protected fun showUpgradeCLI() {
-        val alertDialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Update Treehouses CLI")
+        val alertDialog = DialogUtils.createAlertDialog(context, "Update Treehouses CLI")
                 .setMessage("Treehouses CLI needs an upgrade to correctly function with Treehouses Remote. Please upgrade to the latest version!").setPositiveButton("Upgrade") { dialog: DialogInterface, _: Int ->
                     viewModel.sendMessage(getString(R.string.TREEHOUSES_UPGRADE))
                     Toast.makeText(context, "Upgraded", Toast.LENGTH_LONG).show()
@@ -177,21 +179,18 @@ open class BaseHomeFragment : BaseFragment() {
         alertDialog.show()
     }
 
-    private fun CreateAlertDialog(context: Context?, id:Int, title: String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, id)).setTitle(title)
-    }
-
     /**
      * Called to sync Bluetooth file that is on the phone with the version on the Raspberry Pi
      * @param serverHash : String = the hash of the server Bluetooth File
      */
     protected fun syncBluetooth(serverHash: String) {
+        logE("SERVER: $serverHash")
         //Get the local Bluetooth file on the app
         val inputStream = context?.assets?.open("bluetooth-server.txt")
         val localString = inputStream?.bufferedReader().use { it?.readText() }
         inputStream?.close()
         val hashed = Utils.hashString(localString!!)
-        logE("HASHED $serverHash")
+        logE("LOCAL: $serverHash")
         //Bluetooth file is outdated, but RPI is connected to the internet
         if (Matcher.isError(serverHash) && viewModel.internetStatus.value == true) {
             askForBluetoothUpgradeOverInternet()
@@ -212,7 +211,8 @@ open class BaseHomeFragment : BaseFragment() {
      * https://raw.githubusercontent.com/treehouses/control/master/server.py
      */
     private fun noInternetForBluetoothUpgrade() {
-        val dialog = CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "No Internet!").setMessage("There is a new version of bluetooth available, however, your Raspberry Pi is not connected to the Internet. Please connect to a network to upgrade your bluetooth.")
+        val noInternetMsg = "There is a new version of bluetooth available, however, your Raspberry Pi is not connected to the Internet. Please connect to a network to upgrade your bluetooth."
+        val dialog = DialogUtils.createAlertDialog(requireContext(), "No Internet!").setMessage(noInternetMsg)
                 .setPositiveButton("Ok") { d, _ ->
                     d.dismiss()
                 }.create()
@@ -225,7 +225,7 @@ open class BaseHomeFragment : BaseFragment() {
      * allowing for a pull from master https://raw.githubusercontent.com/treehouses/control/master/server.py
      */
     private fun askForBluetoothUpgradeOverInternet() {
-        val dialog = CreateAlertDialog(requireContext(), R.style.CustomAlertDialogStyle, "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
+        val dialog = DialogUtils.createAlertDialog(requireContext(), "Upgrade Bluetooth").setMessage("There is a new version of bluetooth available. Please upgrade to receive the latest changes.")
                 .setPositiveButton("Upgrade") { _, _ ->
                     viewModel.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_BLUETOOTH_MASTER))
                 }
@@ -240,7 +240,7 @@ open class BaseHomeFragment : BaseFragment() {
      */
     private fun askForBluetoothUpgradeStable(localFile : String) {
         val compressedLocalFile = Utils.compressString(localFile).replace("\n","" )
-        val dialog = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Re-sync Bluetooth Server")
+        val dialog = DialogUtils.createAlertDialog(context, "Re-sync Bluetooth Server")
                 .setMessage("The bluetooth server on the Raspberry Pi does not match the one on your device. Would you like to update the CLI bluetooth server?")
                 .setPositiveButton("Upgrade") { _, _ ->
                     logE("ENCODED $compressedLocalFile")
@@ -258,9 +258,8 @@ open class BaseHomeFragment : BaseFragment() {
      * to upgrade their version of Treehouses Remote.
      */
     protected fun updateTreehousesRemote() {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Update Required")
-                .setMessage("Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
+        val alertDialog = DialogUtils.createAlertDialog2(context, "Update Required",
+                "Please update Treehouses Remote, as it does not meet the required version on the Treehouses CLI.")
                 .setPositiveButton("Update") { _: DialogInterface?, _: Int ->
                     val appPackageName = requireActivity().packageName // getPackageName() from Context or Activity object
                     try {
