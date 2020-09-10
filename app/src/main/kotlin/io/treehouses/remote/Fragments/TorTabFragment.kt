@@ -143,14 +143,12 @@ class TorTabFragment : BaseFragment() {
     private fun addPortButtonListeners(dialog: Dialog) {
         val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
-
         addPortButton!!.setOnClickListener {
             inputExternal.clearFocus()
             inputInternal.clearFocus()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
-
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
         addingPortButton.setOnClickListener {
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -203,7 +201,6 @@ class TorTabFragment : BaseFragment() {
         if (!isAttachedToActivity()) return
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
-            logD("Tor reply, $readMessage")
             if (readMessage.contains("inactive")) {
                 bind!!.btnHostName.visibility = View.GONE
                 startButton!!.text = "Start Tor"
