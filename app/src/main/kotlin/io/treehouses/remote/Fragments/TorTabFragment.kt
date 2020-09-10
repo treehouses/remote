@@ -163,8 +163,7 @@ class TorTabFragment : BaseFragment() {
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
-        val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
-        closeButton.setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<ImageButton>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
     }
 
     private fun addStartButtonListener() {
@@ -240,11 +239,7 @@ class TorTabFragment : BaseFragment() {
                 if (i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
-            try {
-                adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-            } catch (e: Exception) {
-                logE(e.toString())
-            }
+            try { adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!) } catch (e: Exception) { logE(e.toString()) }
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
