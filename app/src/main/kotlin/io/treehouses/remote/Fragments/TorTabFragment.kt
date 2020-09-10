@@ -10,6 +10,7 @@ import android.os.Message
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.core.view.size
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
@@ -26,7 +27,6 @@ class TorTabFragment : BaseFragment() {
     private var nowButton: Button? = null
     private var startButton: Button? = null
     private var addPortButton: Button? = null
-    private var deletePortsButton: Button? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
     private var hostName:String = ""
@@ -98,10 +98,8 @@ class TorTabFragment : BaseFragment() {
         bind!!.btnAddPort
         startButton = bind!!.btnTorStart
         addPortButton = bind!!.btnAddPort
-        deletePortsButton = bind!!.btnDeletePorts
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
-
     }
 
     private fun addNotificationListener() {
@@ -117,17 +115,25 @@ class TorTabFragment : BaseFragment() {
     private fun addPortListListener() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            builder.setTitle("Delete Port " + portsName!![position] + " ?")
-            builder.setPositiveButton("Confirm") { dialog, _ ->
-                val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
-                listener.sendMessage(msg)
-                addPortButton!!.text = "Deleting port. Please wait..."
-                portList!!.isEnabled = false
-                addPortButton!!.isEnabled = false
-                dialog.dismiss()
+            if (portList!!.size > 1 && position == portList!!.size-1) {
+                builder.setTitle("Delete All Ports?")
+                builder.setPositiveButton("Yes") { dialog, _ ->
+                    listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
+                    dialog.dismiss()
+                }
+                builder.setNegativeButton("No", null)
+            } else {
+                builder.setTitle("Delete Port " + portsName!![position] + " ?")
+                builder.setPositiveButton("Confirm") { dialog, _ ->
+                    val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+                    listener.sendMessage(msg)
+                    addPortButton!!.text = "Deleting port. Please wait..."
+                    portList!!.isEnabled = false
+                    addPortButton!!.isEnabled = false
+                    dialog.dismiss()
+                }
+                builder.setNegativeButton("Cancel", null)
             }
-            builder.setNegativeButton("Cancel", null)
-
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
@@ -152,9 +158,6 @@ class TorTabFragment : BaseFragment() {
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show() }
 
-        deletePortsButton!!.setOnClickListener {
-            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
-        }
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
         addingPortButton.setOnClickListener {
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -240,6 +243,7 @@ class TorTabFragment : BaseFragment() {
                 if(i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
+            if (portsName!!.size > 1) portsName!!.add("")
             adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
