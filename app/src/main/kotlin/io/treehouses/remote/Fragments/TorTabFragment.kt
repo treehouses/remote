@@ -126,7 +126,6 @@ class TorTabFragment : BaseFragment() {
                 dialog.dismiss()
             }
             builder.setNegativeButton("Cancel", null)
-
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
@@ -188,7 +187,7 @@ class TorTabFragment : BaseFragment() {
         if (visible) {
             if (isListenerInitialized()) {
                 mChatService = listener.getChatService()
-                mChatService!!.updateHandler(mHandler)
+                mChatService?.updateHandler(mHandler)
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
                 portsName = ArrayList()
             }
@@ -201,8 +200,7 @@ class TorTabFragment : BaseFragment() {
     }
 
     override fun getMessage(msg: Message) {
-        if (!isAttachedToActivity())
-            return
+        if (!isAttachedToActivity()) return
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
             logD("Tor reply, $readMessage")
