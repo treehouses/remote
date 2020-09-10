@@ -7,8 +7,6 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -28,7 +26,7 @@ import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.indexOfService
 import io.treehouses.remote.utils.logE
 
-class ServicesDetailsFragment : BaseServicesDetailsFragment(), OnItemSelectedListener {
+class ServicesDetailsFragment : BaseServicesDetailsFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
@@ -152,18 +150,6 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment(), OnItemSelectedLis
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-
-    /**
-     * When an item is selected, make sure it was not scrolled programmatically
-     */
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        if (!scrolled) {
-            if (viewModel.formattedServices[position].isHeader) return
-            binding.servicesCards.currentItem = position - countHeadersBefore(position, viewModel.formattedServices)
-        }
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {}
 
     /**
      * Goes to the selected service

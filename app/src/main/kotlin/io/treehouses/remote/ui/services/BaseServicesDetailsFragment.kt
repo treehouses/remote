@@ -5,6 +5,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.view.ContextThemeWrapper
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import io.treehouses.remote.R
@@ -15,9 +18,10 @@ import io.treehouses.remote.callback.ServiceAction
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
+import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.logD
 
-open class BaseServicesDetailsFragment: BaseFragment(), ServiceAction {
+open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceAction {
 
     /**
      * Adapter for the spinner to select a service from dropdown
@@ -137,4 +141,16 @@ open class BaseServicesDetailsFragment: BaseFragment(), ServiceAction {
         viewModel.switchAutoRun(s, newAutoRun)
         Toast.makeText(context, "Switching autorun status to $newAutoRun", Toast.LENGTH_SHORT).show()
     }
+
+    /**
+     * When an item is selected, make sure it was not scrolled programmatically
+     */
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        if (!scrolled) {
+            if (viewModel.formattedServices[position].isHeader) return
+            binding.servicesCards.currentItem = position - countHeadersBefore(position, viewModel.formattedServices)
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {}
 }
