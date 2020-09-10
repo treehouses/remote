@@ -102,8 +102,8 @@ class SocksFragment : BaseFragment() {
 
                 val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$ServerHost\\\", \\\"local_address\\\": \\\"$LocalAddress\\\", \\\"local_port\\\": $LocalPort, \\\"server_port\\\": $ServerPort, \\\"password\\\": \\\"$Password\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
                 listener.sendMessage(message)
-                addProfileButton!!.text = "Adding......"
-                addProfileButton!!.isEnabled = false
+                addProfileButton?.text = "Adding......"
+                addProfileButton?.isEnabled = false
                 dialog.dismiss()
             }
             else{
