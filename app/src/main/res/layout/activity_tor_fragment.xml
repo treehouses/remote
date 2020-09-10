@@ -90,16 +90,34 @@
 
     </LinearLayout>
 
-    <LinearLayout  android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <Button
-            android:id="@+id/btn_add_port"
-            android:layout_width="0dp"
+            android:id="@+id/btn_delete_ports"
+            android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="30dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="8dp"
+
+            android:layout_weight="1"
+            android:background="@drawable/ic_red"
+            android:text="@string/delete_ports"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/bg_white" />
+
+        <Button
+            android:id="@+id/btn_add_port"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="25dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="20dp"
@@ -109,16 +127,17 @@
             android:text="@string/add_port"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/bg_white" />
+
     </LinearLayout>
 
     <ListView
         android:id="@+id/portList"
-        android:background="#00FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:fadeScrollbars="false"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:background="#00FFFFFF"
+        android:fadeScrollbars="false" />
 
 </LinearLayout>

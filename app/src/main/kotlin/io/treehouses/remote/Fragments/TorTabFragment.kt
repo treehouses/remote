@@ -26,6 +26,7 @@ class TorTabFragment : BaseFragment() {
     private var nowButton: Button? = null
     private var startButton: Button? = null
     private var addPortButton: Button? = null
+    private var deletePortsButton: Button? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
     private var hostName:String = ""
@@ -97,6 +98,7 @@ class TorTabFragment : BaseFragment() {
         bind!!.btnAddPort
         startButton = bind!!.btnTorStart
         addPortButton = bind!!.btnAddPort
+        deletePortsButton = bind!!.btnDeletePorts
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
 
@@ -150,6 +152,9 @@ class TorTabFragment : BaseFragment() {
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show() }
 
+        deletePortsButton!!.setOnClickListener {
+            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
+        }
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
         addingPortButton.setOnClickListener {
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -260,6 +265,9 @@ class TorTabFragment : BaseFragment() {
             } else if (readMessage.contains("has been deleted")) {
                 Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             } else handleFurtherMessages(readMessage)
+        } else if (readMessage.contains("ports have been deleted")) {
+            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
+            portsName = ArrayList()
         }
     }
 

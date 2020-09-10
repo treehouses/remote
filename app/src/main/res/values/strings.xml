@@ -259,6 +259,7 @@
 
     <string name="start_tor">Start Tor</string>
     <string name="add_port">Add Port</string>
+    <string name="delete_ports">Delete All Ports</string>
     <string name="notification">Notification: </string>
 
     <string-array name="dark_mode_options">
