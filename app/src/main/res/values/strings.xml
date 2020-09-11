@@ -259,6 +259,9 @@
 
     <string name="start_tor">Start Tor</string>
     <string name="add_port">Add Port</string>
+    <string name="add_profile">Add Profile</string>
+    <string name="notify_now">Notify Now</string>
+
     <string name="notification">Notification: </string>
 
     <string-array name="dark_mode_options">

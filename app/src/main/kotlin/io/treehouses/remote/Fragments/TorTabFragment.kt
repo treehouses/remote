@@ -18,6 +18,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
 import java.util.*
 
 class TorTabFragment : BaseFragment() {
@@ -28,7 +29,7 @@ class TorTabFragment : BaseFragment() {
     private var addPortButton: Button? = null
     private var portsName: ArrayList<String>? = null
     private var adapter: ArrayAdapter<String>? = null
-    private var hostName:String = ""
+    private var hostName: String = ""
     private var myClipboard: ClipboardManager? = null
     private var myClip: ClipData? = null
     private var portList: ListView? = null
@@ -125,7 +126,6 @@ class TorTabFragment : BaseFragment() {
                 dialog.dismiss()
             }
             builder.setNegativeButton("Cancel", null)
-
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
@@ -143,18 +143,18 @@ class TorTabFragment : BaseFragment() {
     private fun addPortButtonListeners(dialog: Dialog) {
         val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
         val inputInternal: TextInputEditText = dialog.findViewById(R.id.InternalTextInput)
-
         addPortButton!!.setOnClickListener {
             inputExternal.clearFocus()
             inputInternal.clearFocus()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show() }
-
+            dialog.show()
+        }
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
         addingPortButton.setOnClickListener {
             dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
-                val s1 = inputInternal.text.toString() ; val s2 = inputExternal.text.toString()
+                val s1 = inputInternal.text.toString();
+                val s2 = inputExternal.text.toString()
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
                 addPortButton!!.text = "Adding port. Please wait..."
                 portList!!.isEnabled = false; addPortButton!!.isEnabled = false
@@ -163,8 +163,7 @@ class TorTabFragment : BaseFragment() {
                 dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
-        val closeButton = dialog.findViewById<ImageButton>(R.id.closeButton)
-        closeButton.setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<ImageButton>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
     }
 
     private fun addStartButtonListener() {
@@ -182,10 +181,10 @@ class TorTabFragment : BaseFragment() {
     }
 
     override fun setUserVisibleHint(visible: Boolean) {
-        if(visible) {
-            if(isListenerInitialized()){
+        if (visible) {
+            if (isListenerInitialized()) {
                 mChatService = listener.getChatService()
-                mChatService!!.updateHandler(mHandler)
+                mChatService?.updateHandler(mHandler)
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
                 portsName = ArrayList()
             }
@@ -193,16 +192,20 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
+    private fun isAttachedToActivity(): Boolean {
+        return isVisible && activity != null
+    }
+
     override fun getMessage(msg: Message) {
+        if (!isAttachedToActivity()) return
         if (msg.what == Constants.MESSAGE_READ) {
-            val readMessage:String = msg.obj as String
-            logD("Tor reply, $readMessage")
+            val readMessage: String = msg.obj as String
             if (readMessage.contains("inactive")) {
                 bind!!.btnHostName.visibility = View.GONE
                 startButton!!.text = "Start Tor"
                 startButton!!.isEnabled = true
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-            }  else if (readMessage.contains(".onion")) {
+            } else if (readMessage.contains(".onion")) {
                 bind!!.btnHostName.visibility = View.VISIBLE
                 hostName = readMessage
                 listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
@@ -220,7 +223,8 @@ class TorTabFragment : BaseFragment() {
     }
 
     private fun handleOtherMessages(readMessage: String) {
-        if (readMessage.contains("OK.")) listener.sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+
+        if (readMessage.contains("OK.")) listener.sendMessage(requireActivity().getString(R.string.TREEHOUSES_TOR_NOTICE))
         else if (readMessage.contains("Status: on")) {
             notification!!.isChecked = true; notification!!.isEnabled = true
         } else if (readMessage.contains("Status: off")) {
@@ -232,10 +236,10 @@ class TorTabFragment : BaseFragment() {
             addPortButton!!.isEnabled = true
             val ports = readMessage.split(" ".toRegex()).toTypedArray()
             for (i in ports.indices) {
-                if(i == ports.size - 1) break
+                if (i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
-            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+            try { adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!) } catch (e: Exception) { logE(e.toString()) }
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
@@ -264,7 +268,7 @@ class TorTabFragment : BaseFragment() {
     }
 
     private fun handleFurtherMessages(readMessage: String) {
-        if( readMessage.contains("Thanks for the feedback!")){
+        if (readMessage.contains("Thanks for the feedback!")) {
             Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
             nowButton!!.isEnabled = true
         } else if (readMessage.contains("the tor service has been stopped") || readMessage.contains("the tor service has been started")) {
