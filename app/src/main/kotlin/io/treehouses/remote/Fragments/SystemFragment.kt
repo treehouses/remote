@@ -189,7 +189,7 @@ class SystemFragment : BaseFragment() {
 
     private fun notifyUser(msg: String) {
         if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog4(context, "Wifi is not connected", "Check SSID and password and try again.")
+        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog(context, "Wifi is not connected", "Check SSID and password and try again.")
     }
 
     private fun readMessageConditions(readMessage: String) {

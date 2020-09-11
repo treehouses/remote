@@ -28,7 +28,7 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
     }
 
     private fun showAlertDialog(context: Context) {
-        return DialogUtils.createAlertDialog2(context,"OUTPUT:","Hotspot is disabled, open hotspot settings?")
+        return DialogUtils.createAlertDialog(context,"OUTPUT:","Hotspot is disabled, open hotspot settings?")
                 .setIcon(R.drawable.wificon)
                 .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int -> openHotspotSettings(context) }
                 .setNegativeButton("NO") { dialog: DialogInterface, _: Int -> dialog.cancel() }
