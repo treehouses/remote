@@ -10,7 +10,6 @@ import android.os.Message
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import androidx.core.view.size
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
@@ -112,28 +111,34 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
+    private fun promptDeleteAllPorts(builder: AlertDialog.Builder) {
+        builder.setTitle("Delete All Ports?")
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("No", null)
+    }
+
+    private fun promptDeletePort(builder: AlertDialog.Builder, position: Int) {
+        builder.setTitle("Delete Port " + portsName!![position] + " ?")
+        builder.setPositiveButton("Confirm") { dialog, _ ->
+            val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+            listener.sendMessage(msg)
+            addPortButton!!.text = "Deleting port. Please wait..."
+            portList!!.isEnabled = false
+            addPortButton!!.isEnabled = false
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancel", null)
+    }
+
     private fun addPortListListener() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            if (portList!!.size > 1 && position == portList!!.size-1) {
-                builder.setTitle("Delete All Ports?")
-                builder.setPositiveButton("Yes") { dialog, _ ->
-                    listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
-                    dialog.dismiss()
-                }
-                builder.setNegativeButton("No", null)
-            } else {
-                builder.setTitle("Delete Port " + portsName!![position] + " ?")
-                builder.setPositiveButton("Confirm") { dialog, _ ->
-                    val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
-                    listener.sendMessage(msg)
-                    addPortButton!!.text = "Deleting port. Please wait..."
-                    portList!!.isEnabled = false
-                    addPortButton!!.isEnabled = false
-                    dialog.dismiss()
-                }
-                builder.setNegativeButton("Cancel", null)
-            }
+            val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size-1
+            if (deleteAllPortsButtonSelected) promptDeleteAllPorts(builder)
+            else promptDeletePort(builder, position)
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
@@ -144,7 +149,6 @@ class TorTabFragment : BaseFragment() {
         addPortButton = bind!!.btnAddPort
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
-
     }
 
 
