@@ -98,7 +98,7 @@ class SSH: BaseSSH {
             var password: String? = null
 
             if (pubkey.isEncrypted) {
-                password = bridge!!.promptHelper!!.requestStringPrompt(null, manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
+                password = bridge!!.promptHelper!!.requestPrompt(null, manager!!.res!!.getString(R.string.prompt_pubkey_password, pubkey.nickname))
 
                 // Something must have interrupted the prompt.
                 if (password == null) return false
@@ -152,7 +152,7 @@ class SSH: BaseSSH {
                 tryInteractiveAuth()
             } else if (connection!!.isAuthMethodAvailable(host!!.username, AUTH_PASSWORD)) {
                 outputLine(R.string.terminal_auth_pass)
-                val password = bridge!!.promptHelper!!.requestStringPrompt(null, manager!!.res!!.getString(R.string.prompt_password))
+                val password = bridge!!.promptHelper!!.requestPrompt<String>(null, manager!!.res!!.getString(R.string.prompt_password))
                 if (password != null && connection!!.authenticateWithPassword(host!!.username, password)) finishConnection()
                 else outputLine(R.string.terminal_auth_pass_fail)
             } else outputLine(R.string.terminal_auth_pass_fail)

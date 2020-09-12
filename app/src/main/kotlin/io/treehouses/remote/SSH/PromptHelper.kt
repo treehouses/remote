@@ -94,30 +94,11 @@ class PromptHelper(private val tag: Any) {
         return response
     }
 
-
-     // Request a string response from parent. This is a blocking call until user
-     // interface returns a value.
-     // @param hint prompt hint for user to answer
-     // @return string user has entered
-
-    fun requestStringPrompt(instrs: String?, hint: String): String? {
-        return request(instrs, hint)
-    }
-
-    fun <T> request(instructions: String?, hint: String): T? {
+    fun <T> requestPrompt(instructions: String?, hint: String): T? {
         var value: T? = null
         try { value = requestPrompt(instructions, hint, Boolean::class.java) as T }
         catch (e: Exception) { }
         return value
-    }
-
-     // Request a boolean response from parent. This is a blocking call until user
-     // interface returns a value.
-     // @param hint prompt hint for user to answer
-     // @return choice user has made (yes/no)
-
-    fun requestBooleanPrompt(instrs: String?, hint: String): Boolean? {
-        return request(instrs, hint)
     }
 
     /**

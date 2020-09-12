@@ -275,7 +275,7 @@ class TerminalBridge : DerivedTerminalBridge {
             return
         }
         val disconnectPromptThread = Thread(Runnable {
-            val result = promptHelper!!.requestBooleanPrompt(null, "Host has been Disconnected. Close session?")
+            val result = promptHelper!!.requestPrompt<Boolean>(null, "Host has been Disconnected. Close session?")
             if (result == null || result) {
                 isAwaitingClose = true
                 triggerDisconnectListener()

@@ -198,7 +198,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
         private fun continueConnecting(): Boolean {
             val prompt = manager!!.res!!.getString(R.string.prompt_continue_connecting)
-            return bridge!!.promptHelper!!.requestBooleanPrompt(null, prompt)!!
+            return bridge!!.promptHelper!!.requestPrompt<Boolean>(null, prompt)!!
         }
 
         override fun getKnownKeyAlgorithmsForHost(host: String, port: Int): List<String> {
@@ -440,7 +440,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         val responses = arrayOfNulls<String>(numPrompts)
         for (i in 0 until numPrompts) {
             // request response from user for each prompt
-            responses[i] = bridge!!.promptHelper!!.requestStringPrompt(instruction, prompt[i])
+            responses[i] = bridge!!.promptHelper!!.requestPrompt(instruction, prompt[i])
         }
         return responses
     }
@@ -499,7 +499,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     }
 
     protected fun promptForPubkeyUse(nickname: String?): Boolean {
-        val result = bridge!!.promptHelper!!.requestBooleanPrompt(null,
+        val result = bridge!!.promptHelper!!.requestPrompt<Boolean>(null,
                 manager!!.res!!.getString(R.string.prompt_allow_agent_to_use_key, nickname))
         return result!!
     }
