@@ -39,7 +39,7 @@ class WifiDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         mContext = context
         setupWifi()
-        mDialog = DialogUtils.createAlertDialog3(context, mView, R.drawable.dialog_icon)
+        mDialog = DialogUtils.createAlertDialog(context, mView, R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
                 .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         logD("SSID = $wifiList")

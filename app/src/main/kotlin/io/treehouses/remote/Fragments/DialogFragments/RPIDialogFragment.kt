@@ -166,7 +166,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     }
 
     private fun getAlertDialog(mView: View): AlertDialog {
-        return DialogUtils.createAlertDialog3(context, mView, R.drawable.dialog_icon).create()
+        return DialogUtils.createAlertDialog(context, mView, R.drawable.dialog_icon).create()
     }
 
     fun bluetoothCheck(vararg args: String) {

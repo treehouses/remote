@@ -27,7 +27,7 @@ class AddCommandDialogFragment : DialogFragment() {
     }
 
     private fun getAlertDialog(mView: View): AlertDialog {
-        return DialogUtils.createAlertDialog3(activity, mView, android.R.drawable.ic_dialog_alert)
+        return DialogUtils.createAlertDialog(activity, mView, android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.change_password)
                 .setPositiveButton("Add Command"
                 ) { _: DialogInterface?, _: Int ->

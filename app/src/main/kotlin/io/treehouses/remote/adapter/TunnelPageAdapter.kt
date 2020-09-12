@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
+import io.treehouses.remote.Fragments.SocksFragment
 import io.treehouses.remote.Fragments.TorTabFragment
 import io.treehouses.remote.Fragments.TunnelSSHFragment
 import io.treehouses.remote.pojo.ServiceInfo
@@ -18,7 +19,7 @@ class TunnelPageAdapter : FragmentStatePagerAdapter {
 
 
     override fun getCount(): Int {
-        return 2
+        return 3
     }
 
     override fun getItem(position: Int): Fragment {
@@ -28,6 +29,9 @@ class TunnelPageAdapter : FragmentStatePagerAdapter {
         } else if (position == 1) {
             fragment = TunnelSSHFragment()
         }
+     else if (position == 2) {
+        fragment = SocksFragment()
+    }
         return fragment!!
     }
 
