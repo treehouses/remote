@@ -42,9 +42,8 @@ class StatusFragment : BaseStatusFragment() {
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
+
         checkStatusNow()
-        refresh()
-        bind.refreshBtn.setOnClickListener { refresh() }
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
         for (i in countriesCode.indices) {
@@ -53,6 +52,9 @@ class StatusFragment : BaseStatusFragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
         bind.countryDisplay.isEnabled = false
         bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
+        refresh()
+        bind.refreshBtn.setOnClickListener { refresh() }
+
         return bind.root
     }
 
