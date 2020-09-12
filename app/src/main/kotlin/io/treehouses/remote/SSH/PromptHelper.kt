@@ -101,7 +101,7 @@ class PromptHelper(private val tag: Any) {
      // @return string user has entered
 
     fun requestStringPrompt(instructions: String?, hint: String): String? {
-        return request(instructions, hint) as String?
+        return request(instructions, hint)
     }
 
     fun <T> request(instructions: String?, hint: String): T? {
@@ -117,7 +117,7 @@ class PromptHelper(private val tag: Any) {
      // @return choice user has made (yes/no)
 
     fun requestBooleanPrompt(instructions: String?, hint: String): Boolean? {
-        return request(instructions, hint) as Boolean?
+        return request(instructions, hint)
     }
 
     /**
