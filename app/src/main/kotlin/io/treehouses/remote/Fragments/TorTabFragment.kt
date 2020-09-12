@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.Utils
@@ -27,7 +28,7 @@ class TorTabFragment : BaseFragment() {
     private var startButton: Button? = null
     private var addPortButton: Button? = null
     private var portsName: ArrayList<String>? = null
-    private var adapter: ArrayAdapter<String>? = null
+    private var adapter: TunnelPortAdapter? = null
     private var hostName:String = ""
     private var myClipboard: ClipboardManager? = null
     private var myClip: ClipData? = null
@@ -39,7 +40,7 @@ class TorTabFragment : BaseFragment() {
         mChatService!!.updateHandler(mHandler)
         listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
         portsName = ArrayList()
-        adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         bind!!.btnHostName.visibility = View.GONE
         addHostNameButonListener()
@@ -248,7 +249,7 @@ class TorTabFragment : BaseFragment() {
                 portsName!!.add(ports[i])
             }
             if (portsName!!.size > 1) portsName!!.add("")
-            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+            adapter = TunnelPortAdapter(requireContext(), portsName!!)
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
@@ -260,7 +261,7 @@ class TorTabFragment : BaseFragment() {
             addPortButton!!.text = "Add Port"
             portList!!.isEnabled = true; addPortButton!!.isEnabled = true
             portsName = ArrayList()
-            adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+            adapter = TunnelPortAdapter(requireContext(), portsName!!)
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
