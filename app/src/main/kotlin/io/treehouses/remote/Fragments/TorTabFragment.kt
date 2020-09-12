@@ -248,7 +248,7 @@ class TorTabFragment : BaseFragment() {
                 if(i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
-            if (portsName!!.size > 1) portsName!!.add("")
+            if (portsName!!.size > 1) portsName!!.add("Delete All Ports")
             adapter = TunnelPortAdapter(requireContext(), portsName!!)
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter

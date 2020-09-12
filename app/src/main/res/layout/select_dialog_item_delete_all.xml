@@ -7,7 +7,7 @@
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:textColor="@color/daynight_textColor"
     android:gravity="center_vertical"
-    android:drawableRight="@drawable/tick"
+    android:drawableRight="@drawable/delete_all_icon"
     android:paddingRight="0dip"
     android:ellipsize="marquee"
     />
