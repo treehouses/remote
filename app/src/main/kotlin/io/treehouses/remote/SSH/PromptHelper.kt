@@ -100,8 +100,8 @@ class PromptHelper(private val tag: Any) {
      // @param hint prompt hint for user to answer
      // @return string user has entered
 
-    fun requestStringPrompt(instructions: String?, hint: String): String? {
-        return request(instructions, hint)
+    fun requestStringPrompt(instrs: String?, hint: String): String? {
+        return request(instrs, hint)
     }
 
     fun <T> request(instructions: String?, hint: String): T? {
@@ -116,8 +116,8 @@ class PromptHelper(private val tag: Any) {
      // @param hint prompt hint for user to answer
      // @return choice user has made (yes/no)
 
-    fun requestBooleanPrompt(instructions: String?, hint: String): Boolean? {
-        return request(instructions, hint)
+    fun requestBooleanPrompt(instrs: String?, hint: String): Boolean? {
+        return request(instrs, hint)
     }
 
     /**
