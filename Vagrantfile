@@ -38,6 +38,14 @@ Vagrant.configure("2") do |config|
       docker pull codeclimate/codeclimate
       wget https://raw.githubusercontent.com/codeclimate/codeclimate/master/codeclimate-wrapper -O /usr/local/bin/codeclimate
       chmod +x /usr/local/bin/codeclimate
+      #mobsf documentation
+      echo 'MobSF USAGE\n-----------' >> mobsf-README
+      echo 'To start a MobSF server in the background, run the command:  docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest\n' >> mobsf-README
+      echo 'Afterwards, grab the API key by running:  wget http://localhost:8000/api_docs; MOBSF_API_KEY=$\(grep \'REST API Key\' api_docs\); MOBSF_API_KEY=$\{MOBSF_API_KEY:42:64\}; rm api_docs\n' >> mobsf-README
+      echo 'Zip the source code for app/ directory inside remote and compute the hash:  zip -d source_code app/; HASH=$\(md5sum source_code.zip\); HASH=\$\{HASH:0:32\}\n' >> mobsf-README
+      echo 'Upload the file to MobSF:  curl -F \"file=\@source_code.zip\" http://localhost:8000/api/v1/upload -H \"Authorization:$MOBSF_API_KEY\"\n' >> mobsf-README
+      echo 'Perform the security scan:  curl -X POST --url http://localhost:8000/api/v1/scan --data \"scan_type=zip\&file_name=source_code.zip\&hash=$HASH\" -H \"Authorization:\$MOBSF_API_KEY\"\n' >> mobsf-README
+      echo 'Download the results as PDF:  curl -X POST --url http://localhost:8000/api/v1/download_pdf --data \"hash=$HASH\" -H \"Authorization:$MOBSF_API_KEY\" --output mobsf-security-scan.pdf' >> mobsf-README
     SHELL
 
     # Run binding on each startup make sure the mount is available on VM restart
@@ -45,10 +53,22 @@ Vagrant.configure("2") do |config|
       docker pull codeclimate/codeclimate
       echo
       echo
+      docker pull opensecurity/mobile-security-framework-mobsf
+      echo
+      echo
+      echo
+      echo "CODECLIMATE USAGE"
       echo "vagrant ssh"
       echo "cd remote"
       echo "git checkout <branch>"
       echo "codeclimate help"
+      echo
+      echo
+      echo "MOBSF USAGE"
+      echo "vagrant ssh"
+      echo "cat mobsf-README"
+      echo
+      echo
     SHELL
   end
 end
