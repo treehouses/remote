@@ -4,9 +4,7 @@ import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.text.TextUtils
 import android.view.View
-import android.widget.ListView
-import android.widget.SearchView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.R
@@ -16,6 +14,7 @@ import io.treehouses.remote.pojo.StatusData
 import kotlinx.android.synthetic.main.activity_status_fragment.*
 import kotlinx.android.synthetic.main.dialog_wificountry.*
 import java.util.*
+import kotlinx.android.synthetic.main.dialog_wificountry.*
 
 open class BaseStatusFragment : BaseFragment() {
     var countryList: ListView? = null
@@ -87,7 +86,26 @@ open class BaseStatusFragment : BaseFragment() {
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
 
     }
+    open fun wifiCountry(adapter:ArrayAdapter<String?>){
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_wificountry)
+        dialog.countries
+        countryList = dialog.countries
+        adapter.filter.filter("")
+        countryList!!.adapter = adapter
+        countryList!!.isTextFilterEnabled = true
+        countryList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
+            var selectedString = countryList!!.getItemAtPosition(p).toString()
+            selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
+            writeToRPI(requireContext().resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY, selectedString))
+            bind.countryDisplay.isEnabled = false
+            bind.countryDisplay.setText("Changing country")
+            dialog.dismiss()
+        }
 
+        searchView(dialog)
+        dialog.show()
+    }
     open fun checkWifiStatus(readMessage: String) {}
 
     fun writeNetworkInfo(networkMode:String, readMessage: String) {
@@ -113,6 +131,14 @@ open class BaseStatusFragment : BaseFragment() {
     open fun writeToRPI(ping: String) {}
 
     fun checkUpgradeStatus(readMessage: String) {
+        val countriesCode = Locale.getISOCountries()
+        val countriesName = arrayOfNulls<String>(countriesCode.size)
+        for (i in countriesCode.indices) {
+            countriesName[i] = getCountryName(countriesCode[i])
+        }
+        val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
+        bind.countryDisplay.isEnabled = false
+        bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
         checkUpgradeNow()
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))

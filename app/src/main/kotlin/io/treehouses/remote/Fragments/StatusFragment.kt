@@ -39,11 +39,6 @@ class StatusFragment : BaseStatusFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
-        mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
-        deviceName = mChatService.connectedDeviceName
-
-        checkStatusNow()
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
         for (i in countriesCode.indices) {
@@ -52,13 +47,21 @@ class StatusFragment : BaseStatusFragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
         bind.countryDisplay.isEnabled = false
         bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
+        mChatService = listener.getChatService()
+        mChatService.updateHandler(mHandler)
+        deviceName = mChatService.connectedDeviceName
+
+
+
+        checkStatusNow()
+
         refresh()
         bind.refreshBtn.setOnClickListener { refresh() }
 
         return bind.root
     }
 
-    private fun wifiCountry(adapter:ArrayAdapter<String?>){
+    override fun wifiCountry(adapter:ArrayAdapter<String?>){
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_wificountry)
         dialog.countries
@@ -142,7 +145,12 @@ class StatusFragment : BaseStatusFragment() {
 
             updateStatusPage(statusData)
 
-        } else checkUpgradeStatus(readMessage)
+
+
+        } else {
+
+            checkUpgradeStatus(readMessage)
+        }
     }
 
     override fun checkWifiStatus(readMessage: String) {
