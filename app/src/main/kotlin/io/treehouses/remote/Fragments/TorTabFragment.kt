@@ -17,6 +17,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
@@ -113,37 +114,26 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
-    private fun promptDeleteAllPorts(builder: AlertDialog.Builder) {
-        builder.setTitle("Delete All Ports?")
-        builder.setPositiveButton("Yes") { dialog, _ ->
-            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
-            dialog.dismiss()
-        }
-        builder.setNegativeButton("No", null)
+    private fun promptDeleteAllPorts() {
+        DialogUtils.createAlertDialog(context, "Delete All Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL)) }
     }
 
-    private fun promptDeletePort(builder: AlertDialog.Builder, position: Int) {
-        builder.setTitle("Delete Port " + portsName!![position] + " ?")
-        builder.setPositiveButton("Confirm") { dialog, _ ->
+    private fun promptDeletePort(position: Int) {
+        DialogUtils.createAlertDialog(context, "Delete Port " + portsName!![position] + " ?")
+        {
             val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
             listener.sendMessage(msg)
             addPortButton!!.text = "Deleting port. Please wait..."
             portList!!.isEnabled = false
             addPortButton!!.isEnabled = false
-            dialog.dismiss()
         }
-        builder.setNegativeButton("Cancel", null)
     }
 
     private fun addPortListListener() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size-1
-            if (deleteAllPortsButtonSelected) promptDeleteAllPorts(builder)
-            else promptDeletePort(builder, position)
-            val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
+            if (deleteAllPortsButtonSelected) promptDeleteAllPorts()
+            else promptDeletePort(position)
         }
 
         bind!!.btnAddPort
