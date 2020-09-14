@@ -1,14 +1,10 @@
 package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,11 +23,10 @@ import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.pojo.StatusData
 import io.treehouses.remote.utils.DialogUtils
-import kotlinx.android.synthetic.main.dialog_wificountry.*
-import java.util.*
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
-import kotlinx.android.synthetic.main.activity_status_fragment.*
+import kotlinx.android.synthetic.main.dialog_wificountry.*
+import java.util.*
 
 class StatusFragment : BaseStatusFragment() {
 

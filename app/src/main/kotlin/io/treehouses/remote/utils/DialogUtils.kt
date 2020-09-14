@@ -50,21 +50,22 @@ object DialogUtils {
     }
 
     fun createAdvancedDialog(builder: AlertDialog.Builder, posLabel: String, negLabel: String, myFunc: () -> Unit) {
-        builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
-            myFunc()
-            dialog?.dismiss()
-        }
+        addPositiveButton(builder, posLabel, myFunc)
                 .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int -> dialog?.dismiss()}
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    fun addPositiveButton(builder: AlertDialog.Builder, posLabel: String, posFunc: () -> Unit): AlertDialog.Builder {
+        return builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
+            posFunc()
+            dialog?.dismiss()
+        }
     }
 
     fun createAdvancedDialog(builder: AlertDialog.Builder, labels: Pair<String, String>, posFunc: () -> Unit, negFunc: () -> Unit) {
         val posLabel = labels.first
         val negLabel = labels.second
-        builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
-            posFunc()
-            dialog?.dismiss()
-        }
+        addPositiveButton(builder, posLabel, posFunc)
                 .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int ->
                     negFunc()
                     dialog?.dismiss()
