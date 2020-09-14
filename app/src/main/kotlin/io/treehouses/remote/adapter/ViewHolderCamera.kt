@@ -47,13 +47,9 @@ class ViewHolderCamera internal constructor(v: View, private val c: Context, lis
         listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA))
         cameraSwitch.isEnabled = false
         cameraSwitch.setOnClickListener {
-            if (cameraSwitch.isChecked) {
-                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_ON))
-                cameraSwitch.isEnabled = false
-            } else {
-                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_OFF))
-                cameraSwitch.isEnabled = false
-            }
+            if (cameraSwitch.isChecked) listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_ON))
+            else listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_OFF))
+            cameraSwitch.isEnabled = false
         }
     }
 }
