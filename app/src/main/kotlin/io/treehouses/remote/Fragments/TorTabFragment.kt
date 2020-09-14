@@ -14,8 +14,10 @@ import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
@@ -28,7 +30,7 @@ class TorTabFragment : BaseFragment() {
     private var startButton: Button? = null
     private var addPortButton: Button? = null
     private var portsName: ArrayList<String>? = null
-    private var adapter: ArrayAdapter<String>? = null
+    private var adapter: TunnelPortAdapter? = null
     private var hostName: String = ""
     private var myClipboard: ClipboardManager? = null
     private var myClip: ClipData? = null
@@ -40,7 +42,7 @@ class TorTabFragment : BaseFragment() {
         mChatService!!.updateHandler(mHandler)
         listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
         portsName = ArrayList()
-        adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         bind!!.btnHostName.visibility = View.GONE
         addHostNameButonListener()
@@ -100,7 +102,6 @@ class TorTabFragment : BaseFragment() {
         addPortButton = bind!!.btnAddPort
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
-
     }
 
     private fun addNotificationListener() {
@@ -113,22 +114,26 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
+    private fun promptDeleteAllPorts() {
+        DialogUtils.createAlertDialog(context, "Delete All Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL)) }
+    }
+
+    private fun promptDeletePort(position: Int) {
+        DialogUtils.createAlertDialog(context, "Delete Port " + portsName!![position] + " ?")
+        {
+            val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+            listener.sendMessage(msg)
+            addPortButton!!.text = "Deleting port. Please wait..."
+            portList!!.isEnabled = false
+            addPortButton!!.isEnabled = false
+        }
+    }
+
     private fun addPortListListener() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            builder.setTitle("Delete Port " + portsName!![position] + " ?")
-            builder.setPositiveButton("Confirm") { dialog, _ ->
-                val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
-                listener.sendMessage(msg)
-                addPortButton!!.text = "Deleting port. Please wait..."
-                portList!!.isEnabled = false
-                addPortButton!!.isEnabled = false
-                dialog.dismiss()
-            }
-            builder.setNegativeButton("Cancel", null)
-            val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
+            val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size-1
+            if (deleteAllPortsButtonSelected) promptDeleteAllPorts()
+            else promptDeletePort(position)
         }
 
         bind!!.btnAddPort
@@ -136,7 +141,6 @@ class TorTabFragment : BaseFragment() {
         addPortButton = bind!!.btnAddPort
         startButton!!.isEnabled = false
         startButton!!.text = "Getting Tor Status from raspberry pi"
-
     }
 
 
@@ -239,7 +243,8 @@ class TorTabFragment : BaseFragment() {
                 if (i == ports.size - 1) break
                 portsName!!.add(ports[i])
             }
-            try { adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!) } catch (e: Exception) { logE(e.toString()) }
+            if (portsName!!.size > 1) portsName!!.add("All")
+            try { adapter = TunnelPortAdapter(requireContext(), portsName!!) } catch (e: Exception) { logE(e.toString()) }
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
@@ -251,7 +256,7 @@ class TorTabFragment : BaseFragment() {
             addPortButton!!.text = "Add Port"
             portList!!.isEnabled = true; addPortButton!!.isEnabled = true
             portsName = ArrayList()
-            adapter = ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, portsName!!)
+            adapter = TunnelPortAdapter(requireContext(), portsName!!)
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
             listener.sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
@@ -264,6 +269,9 @@ class TorTabFragment : BaseFragment() {
             } else if (readMessage.contains("has been deleted")) {
                 Toast.makeText(requireContext(), "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             } else handleFurtherMessages(readMessage)
+        } else if (readMessage.contains("ports have been deleted")) {
+            listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
+            portsName = ArrayList()
         }
     }
 

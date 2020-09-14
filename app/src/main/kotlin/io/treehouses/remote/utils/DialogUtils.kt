@@ -25,9 +25,19 @@ object DialogUtils {
         return createAlert(context).setView(mView).setIcon(icon)
     }
 
+    fun createAlertDialog(context: Context?, title: String, myFunc: () -> Unit) {
+        createAdvancedDialog(createAlertDialog(context, title), myFunc)
+    }
+
     fun createAlertDialog(context: Context?, title: String, msg: String, myFunc: () -> Unit) {
-        createAlertDialog(context, title, msg)
-                .setPositiveButton("YES") { _: DialogInterface?, _: Int -> myFunc() }
+        createAdvancedDialog(createAlertDialog(context, title, msg), myFunc)
+    }
+
+    private fun createAdvancedDialog(builder: AlertDialog.Builder, myFunc: () -> Unit) {
+        builder.setPositiveButton("YES") { dialog: DialogInterface?, _: Int ->
+            myFunc()
+            dialog?.dismiss()
+        }
                 .setNegativeButton("NO") { dialog: DialogInterface?, _: Int -> dialog?.dismiss()}
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }

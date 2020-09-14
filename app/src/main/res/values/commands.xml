@@ -51,6 +51,7 @@
     <string name="TREEHOUSES_TOR_NOTICE_OFF">treehouses tor notice off</string>
     <string name="TREEHOUSES_TOR_NOTICE_NOW">treehouses tor notice now</string>
     <string name="TREEHOUSES_TOR_DELETE">treehouses tor delete \"%1$s\"</string>
+    <string name="TREEHOUSES_TOR_DELETE_ALL">treehouses tor deleteall</string>
     <string name="TREEHOUSES_TOR_START">treehouses tor start</string>
     <string name="TREEHOUSES_TOR_STOP">treehouses tor stop</string>
     <string name="TREEHOUSES_TOR_ADD">treehouses tor add \"%1$s\" \"%2$s\"</string>
