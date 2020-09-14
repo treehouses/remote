@@ -21,6 +21,10 @@ object DialogUtils {
         return createAlertDialog(context, title).setMessage(msg)
     }
 
+    fun createAlertDialog(context: Context?, title: String, msg: String, mView: View?): AlertDialog.Builder {
+        return createAlertDialog(context, title).setMessage(msg).setView(mView)
+    }
+
     fun createAlertDialog(context: Context?, mView: View?, icon: Int): AlertDialog.Builder {
         return createAlert(context).setView(mView).setIcon(icon)
     }
@@ -51,6 +55,20 @@ object DialogUtils {
             dialog?.dismiss()
         }
                 .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int -> dialog?.dismiss()}
+                .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    fun createAdvancedDialog(builder: AlertDialog.Builder, labels: Pair<String, String>, posFunc: () -> Unit, negFunc: () -> Unit) {
+        val posLabel = labels.first
+        val negLabel = labels.second
+        builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
+            posFunc()
+            dialog?.dismiss()
+        }
+                .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int ->
+                    negFunc()
+                    dialog?.dismiss()
+                }
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }
