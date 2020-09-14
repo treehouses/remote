@@ -81,9 +81,9 @@ open class BaseHomeFragment : BaseFragment() {
         if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
             if (connectionCount >= 3) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
-                DialogUtils.createAlertDialog(activity, "Sharing is Caring  $emoji").setCancelable(false).setMessage("Treehouses wants to collect your activities. " +
-                        "Do you like to share it? It will help us to improve.")
-                        .setPositiveButton("Continue") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("send_log", true).apply() }.setNegativeButton("Cancel") { _: DialogInterface?, _: Int -> MainApplication.showLogDialog = false }.setView(v).show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                val builder = DialogUtils.createAlertDialog(activity, "Sharing is Caring  $emoji", "Treehouses wants to collect your activities. " +
+                        "Do you like to share it? It will help us to improve.", v).setCancelable(false)
+                DialogUtils.createAdvancedDialog(builder, Pair("Continue", "Cancel"), { preferences.edit().putBoolean("send_log", true).apply() }, { MainApplication.showLogDialog = false })
             }
         }
     }
