@@ -49,17 +49,18 @@ object DialogUtils {
         createAdvancedDialog(createAlertDialog(context, title, msg), Pair(posLabel, negLabel), myFunc)
     }
 
+    fun exec(dialog: DialogInterface?, myFunc: () -> Unit) {
+        myFunc()
+        dialog?.dismiss()
+    }
+
     fun createAdvancedDialog(builder: AlertDialog.Builder, labels: Pair<String, String>, posFunc: () -> Unit, negFunc: () -> Unit = {}) {
         val posLabel = labels.first
         val negLabel = labels.second
-        builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
-            posFunc()
-            dialog?.dismiss()
-        }
-                .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int ->
-                    negFunc()
-                    dialog?.dismiss()
-                }
+        val posCallBack = { d: DialogInterface?, _: Int -> exec(d, posFunc) }
+        val negCallback = { d: DialogInterface?, _: Int -> exec(d, negFunc)}
+        builder.setPositiveButton(posLabel, posCallBack)
+                .setNegativeButton(negLabel, negCallback)
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }
