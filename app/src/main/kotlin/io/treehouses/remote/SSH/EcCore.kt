@@ -33,7 +33,7 @@ object EcCore {
                 .shiftLeft(1).modInverse(p))
         val R = arrayOfNulls<BigInteger>(2)
         R[0] = d.pow(2).subtract(P[0]!!.shiftLeft(1)).mod(p)
-        R[1] = d.multiply(P[0]!!.subtract(R[0])).subtract(P[1]).mod(p)
+        multiply(R, d, P, p)
         return R
     }
 
@@ -46,8 +46,12 @@ object EcCore {
                 .modInverse(par))
         val R = arrayOfNulls<BigInteger>(2)
         R[0] = d.pow(2).subtract(a[0]).subtract(b[0]).mod(par)
-        R[1] = d.multiply(a[0]!!.subtract(R[0])).subtract(a[1]).mod(par)
+        multiply(R, d, a, par)
         return R
+    }
+
+    private fun multiply(R: Array<BigInteger?>, d: BigInteger, P: Array<BigInteger?>, p: BigInteger) {
+        R[1] = d.multiply(P[0]!!.subtract(R[0])).subtract(P[1]).mod(p)
     }
 
     fun multiplyPointA(P: Array<BigInteger?>, k: BigInteger,
