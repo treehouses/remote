@@ -163,7 +163,7 @@ class StatusFragment : BaseStatusFragment() {
 
     private fun createRenameDialog(view: View, mEditText: EditText) {
         val builder = DialogUtils.createAlertDialog(context, "Rename " + deviceName.substring(0, deviceName.indexOf("-")), view, R.drawable.dialog_icon)
-        DialogUtils.createAdvancedDialog(builder, "Rename", "Cancel")
+        DialogUtils.createAdvancedDialog(builder, Pair("Rename", "Cancel"),
         { if (mEditText.text.toString() != "") {
             writeToRPI(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
             Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
@@ -171,7 +171,7 @@ class StatusFragment : BaseStatusFragment() {
           } else {
             Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
           }
-        }
+        })
     }
 
     override fun onAttach(context: Context) {

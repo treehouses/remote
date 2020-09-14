@@ -34,11 +34,11 @@ object DialogUtils {
     }
 
     fun createAlertDialog(context: Context?, title: String, myFunc: () -> Unit) {
-        createAdvancedDialog(createAlertDialog(context, title), "YES", "NO", myFunc)
+        createAdvancedDialog(createAlertDialog(context, title), Pair("YES", "NO"), myFunc)
     }
 
     fun createAlertDialog(context: Context?, title: String, msg: String, myFunc: () -> Unit) {
-        createAdvancedDialog(createAlertDialog(context, title, msg), "YES", "NO", myFunc)
+        createAdvancedDialog(createAlertDialog(context, title, msg), Pair("YES", "NO"), myFunc)
     }
 
     fun createAlertDialog(context: Context?, metaData: Pair<String, String>, buttonTitles: Pair<String, String>, myFunc: () -> Unit) {
@@ -46,32 +46,19 @@ object DialogUtils {
         val msg = metaData.second
         val posLabel = buttonTitles.first
         val negLabel = buttonTitles.second
-        createAdvancedDialog(createAlertDialog(context, title, msg), posLabel, negLabel, myFunc)
+        createAdvancedDialog(createAlertDialog(context, title, msg), Pair(posLabel, negLabel), myFunc)
     }
 
-    fun createAdvancedDialog(builder: AlertDialog.Builder, posLabel: String, negLabel: String, myFunc: () -> Unit) {
-        addPositiveButton(builder, posLabel, myFunc)
-                .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int -> dialog?.dismiss()}
-                .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
-    }
-
-    fun addPositiveButton(builder: AlertDialog.Builder, posLabel: String, posFunc: () -> Unit): AlertDialog.Builder {
-        return builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
-            executeFunction(dialog, posFunc)
-        }
-    }
-
-    private fun executeFunction(dialog: DialogInterface?, func: () -> Unit) {
-        func()
-        dialog?.dismiss()
-    }
-
-    fun createAdvancedDialog(builder: AlertDialog.Builder, labels: Pair<String, String>, posFunc: () -> Unit, negFunc: () -> Unit) {
+    fun createAdvancedDialog(builder: AlertDialog.Builder, labels: Pair<String, String>, posFunc: () -> Unit, negFunc: () -> Unit = {}) {
         val posLabel = labels.first
         val negLabel = labels.second
-        addPositiveButton(builder, posLabel, posFunc)
+        builder.setPositiveButton(posLabel) { dialog: DialogInterface?, _: Int ->
+            posFunc()
+            dialog?.dismiss()
+        }
                 .setNegativeButton(negLabel) { dialog: DialogInterface?, _: Int ->
-                    executeFunction(dialog, negFunc)
+                    negFunc()
+                    dialog?.dismiss()
                 }
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }

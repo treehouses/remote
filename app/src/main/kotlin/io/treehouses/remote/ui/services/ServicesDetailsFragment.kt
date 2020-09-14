@@ -216,7 +216,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
      */
     private fun createEditDialog(view: View, name: String, size: Int) {
         val builder = DialogUtils.createAlertDialog(context, "Edit variables", view, R.drawable.dialog_icon)
-        return DialogUtils.createAdvancedDialog(builder, "Edit", "Cancel")
+        return DialogUtils.createAdvancedDialog(builder, Pair("Edit", "Cancel"),
         {
             var command = "treehouses services $name config edit send"
 
@@ -224,7 +224,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
 
             viewModel.sendMessage(command)
             Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
-        }
+        })
     }
 
 }
