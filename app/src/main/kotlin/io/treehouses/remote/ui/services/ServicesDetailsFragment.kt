@@ -1,9 +1,6 @@
 package io.treehouses.remote.ui.services
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +19,7 @@ import io.treehouses.remote.databinding.EnvVarItemBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.indexOfService
 import io.treehouses.remote.utils.logE
@@ -207,9 +205,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
             envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor)); newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
             dialogBinding.varList.addView(rowBinding.root)
         }
-        val alertDialog = createEditDialog(dialogBinding.root, name, size)
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        alertDialog.show()
+        createEditDialog(dialogBinding.root, name, size)
     }
 
     /**
@@ -218,18 +214,17 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
      * @param name = Name of service
      * @param size = # of Variables
      */
-    private fun createEditDialog(view: View, name: String, size: Int): AlertDialog {
-        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-                .setView(view).setTitle("Edit variables").setIcon(R.drawable.dialog_icon)
-                .setPositiveButton("Edit"
-                ) { _: DialogInterface?, _: Int ->
-                    var command = "treehouses services $name config edit send"
+    private fun createEditDialog(view: View, name: String, size: Int) {
+        val builder = DialogUtils.createAlertDialog(context, "Edit variables", view, R.drawable.dialog_icon)
+        return DialogUtils.createAdvancedDialog(builder, Pair("Edit", "Cancel"),
+        {
+            var command = "treehouses services $name config edit send"
 
-                    for (i in 0 until size) command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
+            for (i in 0 until size) command += " \"" + view.findViewById<TextInputEditText>(i).text + "\""
 
-                    viewModel.sendMessage(command)
-                    Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
-                }.setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+            viewModel.sendMessage(command)
+            Toast.makeText(context, "Environment variables changed", Toast.LENGTH_LONG).show()
+        })
     }
 
 }

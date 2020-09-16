@@ -1,14 +1,10 @@
 package io.treehouses.remote.Fragments
 
 import android.animation.ObjectAnimator
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,11 +22,11 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.pojo.StatusData
-import kotlinx.android.synthetic.main.dialog_wificountry.*
-import java.util.*
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
-import kotlinx.android.synthetic.main.activity_status_fragment.*
+import kotlinx.android.synthetic.main.dialog_wificountry.*
+import java.util.*
 
 class StatusFragment : BaseStatusFragment() {
 
@@ -162,26 +158,20 @@ class StatusFragment : BaseStatusFragment() {
         val inflater = requireActivity().layoutInflater
         val dialogBinding = DialogRenameStatusBinding.inflate(inflater)
         dialogBinding.hostname.hint = "New Name"
-        val alertDialog = createRenameDialog(dialogBinding.root, dialogBinding.hostname)
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        alertDialog.show()
+        createRenameDialog(dialogBinding.root, dialogBinding.hostname)
     }
 
-    private fun createRenameDialog(view: View, mEditText: EditText): AlertDialog {
-        return AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle))
-                .setView(view).setTitle("Rename " + deviceName.substring(0, deviceName.indexOf("-"))).setIcon(R.drawable.dialog_icon)
-                .setPositiveButton("Rename"
-                ) { _: DialogInterface?, _: Int ->
-                    if (mEditText.text.toString() != "") {
-                        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
-                        Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
-                        refresh()
-                    } else {
-                        Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
-                    }
-                }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-                .create()
+    private fun createRenameDialog(view: View, mEditText: EditText) {
+        val builder = DialogUtils.createAlertDialog(context, "Rename " + deviceName.substring(0, deviceName.indexOf("-")), view, R.drawable.dialog_icon)
+        DialogUtils.createAdvancedDialog(builder, Pair("Rename", "Cancel"),
+        { if (mEditText.text.toString() != "") {
+            writeToRPI(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
+            Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
+            refresh()
+          } else {
+            Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
+          }
+        })
     }
 
     override fun onAttach(context: Context) {
