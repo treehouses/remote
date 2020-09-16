@@ -76,7 +76,10 @@ class TerminalKeyListener(tm: TerminalManager?,
             KeyEvent.KEYCODE_TAB -> bridge.transport!!.write(0x09)
             KeyEvent.KEYCODE_CAMERA -> handleCamera()
             KeyEvent.KEYCODE_DEL -> sendPressedKey(vt320.KEY_BACK_SPACE)
-            KeyEvent.KEYCODE_ENTER -> (buffer as vt320).keyTyped(vt320.KEY_ENTER, ' ', 0)
+            KeyEvent.KEYCODE_ENTER -> {
+                val vt = (buffer as vt320)
+                vt.keyTyped(vt320.KEY_ENTER, ' ', 0)
+            }
             KeyEvent.KEYCODE_DPAD_LEFT -> handleDpad("left", vt320.KEY_LEFT)
             KeyEvent.KEYCODE_DPAD_UP -> handleDpad("up", vt320.KEY_UP)
             KeyEvent.KEYCODE_DPAD_DOWN -> handleDpad("down", vt320.KEY_DOWN)
