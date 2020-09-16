@@ -12,31 +12,16 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
-import io.treehouses.remote.bases.BaseFragment
+import io.treehouses.remote.bases.BaseTorTabFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
-import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import java.util.*
 
-class TorTabFragment : BaseFragment() {
+class TorTabFragment : BaseTorTabFragment() {
 
-    override lateinit var mChatService: BluetoothChatService
-    private var nowButton: Button? = null
-    private var startButton: Button? = null
-    private var addPortButton: Button? = null
-    private var portsName: ArrayList<String>? = null
-    private var adapter: TunnelPortAdapter? = null
-    private var hostName: String = ""
-    private var myClipboard: ClipboardManager? = null
-    private var myClip: ClipData? = null
-    private var portList: ListView? = null
-    private var notification: Switch? = null
-    var bind: ActivityTorFragmentBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mChatService = listener.getChatService()
         mChatService!!.updateHandler(mHandler)
@@ -89,21 +74,6 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
-    private fun setWindowProperties(dialog: Dialog) {
-        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        val window = dialog.window
-        window!!.setGravity(Gravity.CENTER)
-        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    private fun initializeProperties() {
-        bind!!.btnAddPort
-        startButton = bind!!.btnTorStart
-        addPortButton = bind!!.btnAddPort
-        startButton!!.isEnabled = false
-        startButton!!.text = "Getting Tor Status from raspberry pi"
-    }
-
     private fun addNotificationListener() {
         val noticeOn = getString(R.string.TREEHOUSES_TOR_NOTICE_ON)
         val noticeOff = getString(R.string.TREEHOUSES_TOR_NOTICE_OFF)
@@ -111,21 +81,6 @@ class TorTabFragment : BaseFragment() {
             if (isChecked) listener.sendMessage(noticeOn)
             else listener.sendMessage(noticeOff)
             notification!!.isEnabled = false
-        }
-    }
-
-    private fun promptDeleteAllPorts() {
-        DialogUtils.createAlertDialog(context, "Delete All Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL)) }
-    }
-
-    private fun promptDeletePort(position: Int) {
-        DialogUtils.createAlertDialog(context, "Delete Port " + portsName!![position] + " ?")
-        {
-            val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
-            listener.sendMessage(msg)
-            addPortButton!!.text = "Deleting port. Please wait..."
-            portList!!.isEnabled = false
-            addPortButton!!.isEnabled = false
         }
     }
 
@@ -182,22 +137,6 @@ class TorTabFragment : BaseFragment() {
                 startButton!!.text = "Starting Tor..."
             }
         }
-    }
-
-    override fun setUserVisibleHint(visible: Boolean) {
-        if (visible) {
-            if (isListenerInitialized()) {
-                mChatService = listener.getChatService()
-                mChatService?.updateHandler(mHandler)
-                listener.sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-                portsName = ArrayList()
-            }
-
-        }
-    }
-
-    private fun isAttachedToActivity(): Boolean {
-        return isVisible && activity != null
     }
 
     override fun getMessage(msg: Message) {
