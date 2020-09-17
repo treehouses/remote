@@ -20,6 +20,7 @@ import io.treehouses.remote.callback.KeyMenuListener
 import io.treehouses.remote.databinding.DialogViewKeysBinding
 import io.treehouses.remote.databinding.RowKeyBinding
 import io.treehouses.remote.utils.KeyUtils
+import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 import java.security.PublicKey
 
 
@@ -71,10 +72,6 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
         }
     }
 
-    private fun getOpenSSH(pubkey: PubKeyBean) : String {
-        val decodedPublic = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public")
-        return PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
-    }
     private fun copyToClipboard(pubkey: PubKeyBean) {
         val openSSH = getOpenSSH(pubkey)
         val clipboard: ClipboardManager? = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?

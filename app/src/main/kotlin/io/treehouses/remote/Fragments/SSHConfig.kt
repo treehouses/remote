@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +26,8 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
+import io.treehouses.remote.utils.KeyUtils
+import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.logD
 import java.lang.Exception
@@ -82,7 +83,13 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         setUpAdapter()
 
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
-
+        bind.quickSetup.setOnClickListener {
+            if (!KeyUtils.getAllKeyNames(requireContext()).contains("QuickSetupKey")) {
+                val key = KeyUtils.createQuickSetupKey(requireContext())
+                if (listener?.getChatService()?.state == Constants.STATE_CONNECTED)
+                    listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
+            }
+        }
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
     }
 
