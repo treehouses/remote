@@ -136,6 +136,8 @@ object KeyUtils {
         val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
             initialize(bitSize)
         }.generateKeyPair()
-        return PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
+        val encPrivate = PubKeyUtils.getEncodedPrivate(keyPair.private, password)
+        val pubEncoded = keyPair.public.encoded
+        return PubKeyBean(name, algorithm, encPrivate, pubEncoded)
     }
 }
