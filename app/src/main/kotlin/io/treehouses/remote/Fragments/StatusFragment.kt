@@ -52,7 +52,6 @@ class StatusFragment : BaseStatusFragment() {
         deviceName = mChatService.connectedDeviceName
 
 
-
         checkStatusNow()
 
         refresh()

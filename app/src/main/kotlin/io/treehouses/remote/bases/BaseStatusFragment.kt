@@ -163,6 +163,15 @@ open class BaseStatusFragment : BaseFragment() {
 
     fun refresh() {
         setChecking()
+        val countriesCode = Locale.getISOCountries()
+        val countriesName = arrayOfNulls<String>(countriesCode.size)
+        for (i in countriesCode.indices) {
+            countriesName[i] = getCountryName(countriesCode[i])
+        }
+        val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
+        bind.countryDisplay.isEnabled = false
+        bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
+
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
         bind.refreshBtn.visibility = View.GONE
         bind.countryDisplay.visibility = View.GONE
