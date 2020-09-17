@@ -71,41 +71,25 @@ open class BaseStatusFragment : BaseFragment() {
 
     fun updateStatusPage(statusData: StatusData) {
         val res = statusData.status.trim().split(" ")
-
+        checkWifiStatus(statusData.internet)
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
         bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
         bind.deviceAddress.text = res[1]
         bind.tvRpiType.text = "Model: " + res[4]
         rpiVersion = res[3]
 
+
+
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
-        checkWifiStatus(statusData.internet)
+
 
         bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
-        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
+
 
     }
-    open fun wifiCountry(adapter:ArrayAdapter<String?>){
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_wificountry)
-        dialog.countries
-        countryList = dialog.countries
-        adapter.filter.filter("")
-        countryList!!.adapter = adapter
-        countryList!!.isTextFilterEnabled = true
-        countryList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
-            var selectedString = countryList!!.getItemAtPosition(p).toString()
-            selectedString = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
-            writeToRPI(requireContext().resources.getString(R.string.TREEHOUSES_WIFI_COUNTRY, selectedString))
-            bind.countryDisplay.isEnabled = false
-            bind.countryDisplay.setText("Changing country")
-            dialog.dismiss()
-        }
 
-        searchView(dialog)
-        dialog.show()
-    }
     open fun checkWifiStatus(readMessage: String) {}
 
     fun writeNetworkInfo(networkMode:String, readMessage: String) {
@@ -131,14 +115,6 @@ open class BaseStatusFragment : BaseFragment() {
     open fun writeToRPI(ping: String) {}
 
     fun checkUpgradeStatus(readMessage: String) {
-        val countriesCode = Locale.getISOCountries()
-        val countriesName = arrayOfNulls<String>(countriesCode.size)
-        for (i in countriesCode.indices) {
-            countriesName[i] = getCountryName(countriesCode[i])
-        }
-        val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
-        bind.countryDisplay.isEnabled = false
-        bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
         checkUpgradeNow()
         if (readMessage.startsWith("false ") && readMessage.length < 14) {
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.tick))
@@ -163,15 +139,6 @@ open class BaseStatusFragment : BaseFragment() {
 
     fun refresh() {
         setChecking()
-        val countriesCode = Locale.getISOCountries()
-        val countriesName = arrayOfNulls<String>(countriesCode.size)
-        for (i in countriesCode.indices) {
-            countriesName[i] = getCountryName(countriesCode[i])
-        }
-        val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
-        bind.countryDisplay.isEnabled = false
-        bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
-
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE))
         bind.refreshBtn.visibility = View.GONE
         bind.countryDisplay.visibility = View.GONE

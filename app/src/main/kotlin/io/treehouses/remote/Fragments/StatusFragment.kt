@@ -60,7 +60,7 @@ class StatusFragment : BaseStatusFragment() {
         return bind.root
     }
 
-    override fun wifiCountry(adapter:ArrayAdapter<String?>){
+    fun wifiCountry(adapter:ArrayAdapter<String?>){
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_wificountry)
         dialog.countries
