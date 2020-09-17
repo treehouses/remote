@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.adapter.ViewHolderSSHAllKeyRow
 import io.treehouses.remote.bases.FullScreenDialogFragment
@@ -21,7 +20,6 @@ import io.treehouses.remote.databinding.DialogViewKeysBinding
 import io.treehouses.remote.databinding.RowKeyBinding
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.KeyUtils.getOpenSSH
-import java.security.PublicKey
 
 
 class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {

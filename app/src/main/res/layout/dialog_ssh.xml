@@ -32,7 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight=".05"
-        android:weightSum="2"
+        android:weightSum="3"
+        android:layout_marginBottom="@dimen/margin_large"
         android:orientation="horizontal">
         <Button
             android:id="@+id/connect_ssh"
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/ripple"
             android:text="Connect"
@@ -51,13 +53,23 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
+            android:layout_marginRight="10dp"
             android:background="@drawable/ripple"
             android:text="Quick Setup"
             android:textColor="@color/bg_white" />
 
+        <Button
+            android:id="@+id/quickSetupRoot"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/ripple"
+            android:text="Quick Setup (Root)"
+            android:textColor="@color/bg_white" />
+
     </LinearLayout>
-
-
 
     <TextView
         android:layout_width="match_parent"

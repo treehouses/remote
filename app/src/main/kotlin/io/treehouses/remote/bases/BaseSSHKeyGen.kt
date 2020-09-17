@@ -1,6 +1,5 @@
 package io.treehouses.remote.bases
 
-import android.content.Context
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener

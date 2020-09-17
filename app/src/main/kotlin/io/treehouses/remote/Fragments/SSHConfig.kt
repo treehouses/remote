@@ -72,25 +72,41 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         addTextValidation()
         bind.connectSsh.setOnClickListener {
             var uriString = bind.sshTextInput.text.toString()
-            if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
-            val host = HostBean()
-            host.setHostFromUri(Uri.parse(uriString))
-            SaveUtils.updateHostList(requireContext(), host)
-            logD("HOST URI " + host.uri.toString())
-            launchSSH(requireActivity(), host)
+            connect(uriString)
         }
-
         setUpAdapter()
-
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
         bind.quickSetup.setOnClickListener {
-            if (!KeyUtils.getAllKeyNames(requireContext()).contains("QuickSetupKey")) {
-                val key = KeyUtils.createQuickSetupKey(requireContext())
-                if (listener?.getChatService()?.state == Constants.STATE_CONNECTED)
-                    listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
-            }
+            checkForQuickSetUpKey()
+            var uriString = bind.sshTextInput.text.toString()
+            connect(uriString)
+        }
+        bind.quickSetupRoot.setOnClickListener {
+            checkForQuickSetUpKey()
+            var uriString = bind.sshTextInput.text.toString().replace("pi", "root")
+            connect(uriString)
         }
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
+    }
+
+    private fun checkForQuickSetUpKey() {
+        if (!KeyUtils.getAllKeyNames(requireContext()).contains("QuickSetupKey")) {
+            val key = KeyUtils.createQuickSetupKey(requireContext())
+            if (listener?.getChatService()?.state == Constants.STATE_CONNECTED)
+                listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
+        }
+    }
+
+    private fun connect(uriStr: String) {
+        var uriString = uriStr
+        if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
+        val host = HostBean()
+        host.setHostFromUri(Uri.parse(uriString))
+        host.keyName = "QuickSetupKey"
+        host.fontSize = 7
+        SaveUtils.updateHostList(requireContext(), host)
+        logD("HOST URI " + host.uri.toString())
+        launchSSH(requireActivity(), host)
     }
 
     private fun setUpAdapter() {
@@ -152,13 +168,18 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     }
 
     private fun getIP(s: String) {
-        if (!s.contains("ip") || !s.startsWith("essid")) return
-
-        val ipString = s.split(", ")[1]
-        val ipAddress = ipString.substring(4)
-        val hostAddress = "pi@$ipAddress"
-        bind.sshTextInput.setText(hostAddress)
-        logD("GOT IP $ipAddress")
+        if (s.contains("eth0")) {
+            val ipAddress = s.substringAfterLast("ip: ").trim()
+            val hostAddress = "pi@$ipAddress"
+            bind.sshTextInput.setText(hostAddress)
+            logD("GOT IP $ipAddress")
+        } else if (s.contains("ip") || s.startsWith("essid")) {
+            val ipString = s.split(", ")[1]
+            val ipAddress = ipString.substring(4)
+            val hostAddress = "pi@$ipAddress"
+            bind.sshTextInput.setText(hostAddress)
+            logD("GOT IP $ipAddress")
+        }
     }
 
     override fun onAttach(context: Context) {
