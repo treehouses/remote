@@ -72,19 +72,19 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         addTextValidation()
         bind.connectSsh.setOnClickListener {
             var uriString = bind.sshTextInput.text.toString()
-            connect(uriString)
+            connect(uriString, false)
         }
         setUpAdapter()
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
         bind.quickSetup.setOnClickListener {
             checkForQuickSetUpKey()
             var uriString = bind.sshTextInput.text.toString()
-            connect(uriString)
+            connect(uriString, true)
         }
         bind.quickSetupRoot.setOnClickListener {
             checkForQuickSetUpKey()
             var uriString = bind.sshTextInput.text.toString().replace("pi", "root")
-            connect(uriString)
+            connect(uriString, true)
         }
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
     }
@@ -97,13 +97,15 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         }
     }
 
-    private fun connect(uriStr: String) {
+    private fun connect(uriStr: String, isQuickSetup: Boolean) {
         var uriString = uriStr
         if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
         val host = HostBean()
         host.setHostFromUri(Uri.parse(uriString))
-        host.keyName = "QuickSetupKey"
-        host.fontSize = 7
+        if (isQuickSetup) {
+            host.keyName = "QuickSetupKey"
+            host.fontSize = 7
+        }
         SaveUtils.updateHostList(requireContext(), host)
         logD("HOST URI " + host.uri.toString())
         launchSSH(requireActivity(), host)
