@@ -49,9 +49,8 @@
         android:id="@+id/button_send"
         android:layout_width="40dp"
         android:layout_height="32dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="@dimen/margin_medium"
         android:layout_marginRight="@dimen/margin_medium"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/ic_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnPrevious" />
@@ -60,13 +59,11 @@
         android:id="@+id/btnPrevious"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="@dimen/margin_medium"
         android:layout_marginRight="@dimen/margin_medium"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/treehousesBtn" />
-
 
 
     <ToggleButton
@@ -74,79 +71,79 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="@dimen/margin_medium"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:background="@drawable/ic_treehouses"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnPrevious"
         app:layout_constraintEnd_toEndOf="parent"
-         />
+        app:layout_constraintTop_toBottomOf="@id/btnPrevious" />
 
     <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
         app:layout_constraintEnd_toEndOf="parent"
-        android:weightSum="10"
-        android:orientation="horizontal">
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:weightSum="10"
-        android:layout_weight="6"
-        android:background="@color/windowBackground"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/PING"
-            android:layout_width="@dimen/_16dp"
-            android:layout_height="@dimen/_16dp"
-            android:background="@drawable/circle"
-            android:foregroundGravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:gravity="center" />
-
-
-        <TextView
-            android:id="@+id/pingStatus"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:textColor="@color/daynight_textColor"
-            android:padding="@dimen/margin_small"
-            android:background="@color/windowBackground"
-            android:layout_marginTop="6dp"
-            android:layout_weight="10"
-            android:text="Bluetooth: "
-
-            android:textSize="@dimen/text_size_small" />
-
-        <Button
-            android:id="@+id/infoButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="6dp"
-            android:background="@drawable/ic_info" />
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ExpandableListView
             android:id="@+id/terminalList"
             android:layout_width="0dp"
-            android:layout_weight="4"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginRight="@dimen/margin_medium"
             android:layout_marginBottom="100dp"
+            android:layout_weight="4"
             android:background="@color/windowBackground"
             android:descendantFocusability="beforeDescendants"
             android:divider="@android:color/transparent"
             android:dividerHeight="3dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:background="@color/windowBackground"
+            android:orientation="horizontal"
+            android:weightSum="10">
+
+            <Button
+                android:id="@+id/PING"
+                android:layout_width="@dimen/_16dp"
+                android:layout_height="@dimen/_16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/circle"
+                android:foregroundGravity="center_horizontal"
+                android:gravity="center" />
+
+
+            <Button
+                android:id="@+id/infoButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="6dp"
+                android:background="@drawable/ic_info" />
+
+            <TextView
+                android:id="@+id/pingStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginTop="6dp"
+                android:layout_weight="10"
+                android:background="@color/windowBackground"
+                android:padding="@dimen/margin_small"
+                android:text="Bluetooth: "
+                android:textColor="@color/daynight_textColor"
+
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
 
     </LinearLayout>
 
