@@ -76,7 +76,7 @@ class StatusFragment : BaseStatusFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addRefreshListener(view)
+        addRefreshListener()
         bind.tvBluetooth.text = deviceName
         logD("STATUS device name: $deviceName")
         upgradeOnViewClickListener()
@@ -85,7 +85,7 @@ class StatusFragment : BaseStatusFragment() {
         bind.upgrade.visibility = View.GONE
     }
 
-    private fun addRefreshListener(view: View) {
+    private fun addRefreshListener() {
         bind.swiperefresh.setOnRefreshListener {
             refresh()
         }
