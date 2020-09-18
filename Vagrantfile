@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
       echo 'MobSF USAGE\n-----------' >> mobsf-README
       echo 'During Vagrant setup, a MobSF server was initiated with the command:  docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest\n' >> mobsf-README
       echo 'With MobSF, you are able to run a static analysis on the remote source code with the following steps\n\n' >> mobsf-README
-      echo '0.  Store your API key by running:  wget http://localhost:8000/api_docs; MOBSF_API_KEY=$\(grep "REST API Key" api_docs\); MOBSF_API_KEY=$\{MOBSF_API_KEY:42:64\}; rm api_docs\n' >> mobsf-README
+      echo '0.  Retrieve and store your API key by running:  wget http://localhost:8000/api_docs; MOBSF_API_KEY=$\(grep "REST API Key" api_docs\); MOBSF_API_KEY=$\{MOBSF_API_KEY:42:64\}; rm api_docs\n' >> mobsf-README
       echo '1.  Zip the source code for app/ directory inside remote/ and compute the hash:  zip -d source_code app/; HASH=$\(md5sum source_code.zip\); HASH=\$\{HASH:0:32\}\n' >> mobsf-README
       echo '2.  Upload the file to MobSF:  curl -F \"file=\@source_code.zip\" http://localhost:8000/api/v1/upload -H \"Authorization:$MOBSF_API_KEY\"\n' >> mobsf-README
       echo '3.  Perform the security scan:  curl -X POST --url http://localhost:8000/api/v1/scan --data \"scan_type=zip\&file_name=source_code.zip\&hash=$HASH\" -H \"Authorization:\$MOBSF_API_KEY\"\n' >> mobsf-README
