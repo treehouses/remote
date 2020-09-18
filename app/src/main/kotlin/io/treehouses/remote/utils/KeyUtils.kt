@@ -1,7 +1,6 @@
 package io.treehouses.remote.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.*
 import com.trilead.ssh2.KnownHosts
@@ -113,7 +112,7 @@ object KeyUtils {
         return knownHosts
     }
 
-    fun removeKnownHost(context: Context, hostNamePort: String, algorithm: String, key: ByteArray) {
+    fun removeKnownHost(context: Context, hostNamePort: String) {
         SaveUtils.removeFromArrayList(context, ALL_KNOWN_HOSTS, hostNamePort)
         PreferenceManager.getDefaultSharedPreferences(context).edit().remove(hostNamePort).apply()
     }
