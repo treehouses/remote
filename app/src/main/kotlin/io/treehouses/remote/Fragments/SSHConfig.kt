@@ -79,25 +79,29 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         setUpAdapter()
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
         bind.quickSetup.setOnClickListener {
-            checkForQuickSetUpKey()
+            val shouldConnect = checkForQuickSetUpKey()
             var uriString = bind.sshTextInput.text.toString()
-            connect(uriString, true)
+            if (shouldConnect) connect(uriString, true)
         }
         bind.quickSetupRoot.setOnClickListener {
-            checkForQuickSetUpKey()
+            val shouldConnect = checkForQuickSetUpKey()
             var uriString = bind.sshTextInput.text.toString().replace("pi", "root")
-            connect(uriString, true)
+            if (shouldConnect) connect(uriString, true)
         }
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
     }
 
-    private fun checkForQuickSetUpKey() {
+    private fun checkForQuickSetUpKey(): Boolean {
         if (!KeyUtils.getAllKeyNames(requireContext()).contains("QuickSetupKey")) {
             if (listener?.getChatService()?.state == Constants.STATE_CONNECTED) {
                 val key = KeyUtils.createQuickSetupKey(requireContext())
                 listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
-            } else context.toast("Failed to setup. Bluetooth not connected.")
+            } else {
+                context.toast("Bluetooth not connected. Could not send key to Pi.")
+                return false
+            }
         }
+        return true
     }
 
     private fun connect(uriStr: String, isQuickSetup: Boolean) {
