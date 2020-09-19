@@ -392,8 +392,8 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
                  */
                 synchronized(mPendingReconnect) {
                     for (ref in mPendingReconnect) {
-                        val bridge = ref.get() ?: continue
-                        bridge.startConnection()
+                        val newBridge = ref.get() ?: continue
+                        newBridge.startConnection()
                     }
                     mPendingReconnect.clear()
                 }

@@ -337,7 +337,7 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
      */
     @Synchronized
     fun insertLine(l: Int, n: Int, scrollDown: Boolean) {
-        var n = n
+        var num = n
         var cbuf: Array<CharArray?>? = null
         var abuf: Array<LongArray>? = null
         var offset = 0
@@ -351,40 +351,40 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
 
         // System.out.println("l is "+l+", top is "+top+", bottom is "+bottom+", bottomargin is "+bottomMargin+", topMargin is "+topMargin);
         if (scrollDown) {
-            if (n > bottom - top) n = bottom - top
-            var size = bottom - l - (n - 1)
+            if (num > bottom - top) num = bottom - top
+            var size = bottom - l - (num - 1)
             if (size < 0) size = 0
             cbuf = Array(size) { CharArray(columns) }
             abuf = Array(size) { LongArray(columns) }
-            System.arraycopy(charArray!!, oldBase + l, cbuf, 0, bottom - l - (n - 1))
+            System.arraycopy(charArray!!, oldBase + l, cbuf, 0, bottom - l - (num - 1))
             System.arraycopy(charAttributes!!, oldBase + l,
-                    abuf, 0, bottom - l - (n - 1))
-            System.arraycopy(cbuf, 0, charArray!!, oldBase + l + n,
-                    bottom - l - (n - 1))
-            System.arraycopy(abuf, 0, charAttributes!!, oldBase + l + n,
-                    bottom - l - (n - 1))
+                    abuf, 0, bottom - l - (num - 1))
+            System.arraycopy(cbuf, 0, charArray!!, oldBase + l + num,
+                    bottom - l - (num - 1))
+            System.arraycopy(abuf, 0, charAttributes!!, oldBase + l + num,
+                    bottom - l - (num - 1))
             cbuf = charArray
             abuf = charAttributes
         } else {
             try {
-                if (n > bottom - top + 1) n = bottom - top + 1
+                if (num > bottom - top + 1) num = bottom - top + 1
                 if (bufSize < maxBufferSize) {
-                    if (bufSize + n > maxBufferSize) {
-                        offset = n - (maxBufferSize - bufSize)
+                    if (bufSize + num > maxBufferSize) {
+                        offset = num - (maxBufferSize - bufSize)
                         scrollMarker += offset
                         newBufSize = maxBufferSize
                         newScreenBase = maxBufferSize - rows - 1
                         newWindowBase = screenBase
                     } else {
-                        scrollMarker += n
-                        newScreenBase += n
-                        newWindowBase += n
-                        newBufSize += n
+                        scrollMarker += num
+                        newScreenBase += num
+                        newWindowBase += num
+                        newBufSize += num
                     }
                     cbuf = Array(newBufSize) { CharArray(columns) }
                     abuf = Array(newBufSize) { LongArray(columns) }
                 } else {
-                    offset = n
+                    offset = num
                     cbuf = charArray
                     abuf = charAttributes
                 }
@@ -411,19 +411,19 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 // to the gap left over between scrollback buffer and screenBase
                 if (oldBase >= 0) {
                     System.arraycopy(charArray!!, oldBase + top,
-                            cbuf!!, oldBase - offset, n)
+                            cbuf!!, oldBase - offset, num)
 
                     System.arraycopy(charAttributes!!, oldBase + top,
-                            abuf!!, oldBase - offset, n)
+                            abuf!!, oldBase - offset, num)
                 }
                 // copy anything from topMargin + n up to the line linserted to the
                 // topMargin
-                System.arraycopy(charArray!!, oldBase + top + n,
+                System.arraycopy(charArray!!, oldBase + top + num,
                         cbuf!!, newScreenBase + top,
-                        l - top - (n - 1))
-                System.arraycopy(charAttributes!!, oldBase + top + n,
+                        l - top - (num - 1))
+                System.arraycopy(charAttributes!!, oldBase + top + num,
                         abuf!!, newScreenBase + top,
-                        l - top - (n - 1))
+                        l - top - (num - 1))
                 //
                 // copy the all lines next to the inserted to the new buffer
                 if (l < rows - 1) {
@@ -445,7 +445,7 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 System.err.println("--- END STACK TRACE ---")
                 System.err.println("bufSize=$bufSize, maxBufSize=$maxBufferSize")
                 System.err.println("top=$top, bottom=$bottom")
-                System.err.println("n=$n, l=$l")
+                System.err.println("n=$num, l=$l")
                 System.err.println("screenBase=$screenBase, windowBase=$windowBase")
                 System.err.println("newScreenBase=$newScreenBase, newWindowBase=$newWindowBase")
                 System.err.println("oldBase=$oldBase")
@@ -456,8 +456,8 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
         }
 
         // this is a little helper to mark the scrolling
-        scrollMarker -= n
-        for (i in 0 until n) {
+        scrollMarker -= num
+        for (i in 0 until num) {
             cbuf!![newScreenBase + l + (if (scrollDown) i else -i)] = CharArray(columns)
             Arrays.fill(cbuf[newScreenBase + l + (if (scrollDown) i else -i)]!!, ' ')
             abuf!![newScreenBase + l + (if (scrollDown) i else -i)] = LongArray(columns)
@@ -569,9 +569,9 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
      * @see .getBufferSize
      */
     fun setBaseWindow(line: Int) {
-        var line = line
-        if (line > screenBase) line = screenBase else if (line < 0) line = 0
-        windowBase = line
+        var newLine = line
+        if (newLine > screenBase) newLine = screenBase else if (newLine < 0) newLine = 0
+        windowBase = newLine
         update[0] = true
         redraw()
     }
@@ -592,13 +592,13 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
      * @param l2 line that is the bottom
      */
     fun setMargins(l1: Int, l2: Int) {
-        var l1 = l1
-        var l2 = l2
-        if (l1 > l2) return
-        if (l1 < 0) l1 = 0
-        if (l2 >= rows) l2 = rows - 1
-        topMargin = l1
-        bottomMargin = l2
+        var newL1 = l1
+        var newL2 = l2
+        if (newL1 > newL2) return
+        if (newL1 < 0) newL1 = 0
+        if (newL2 >= rows) newL2 = rows - 1
+        topMargin = newL1
+        bottomMargin = newL2
     }
 
     /**
@@ -660,13 +660,13 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
     var bufferSize: Int
         get() = bufSize
         set(amount) {
-            var amount = amount
-            if (amount < rows) amount = rows
-            if (amount < maxBufferSize) {
-                val cbuf = Array<CharArray?>(amount) { CharArray(columns) }
-                val abuf = Array(amount) { LongArray(columns) }
-                val copyStart = if (bufSize - amount < 0) 0 else bufSize - amount
-                val copyCount = if (bufSize - amount < 0) bufSize else amount
+            var newAmount = amount
+            if (newAmount < rows) newAmount = rows
+            if (newAmount < maxBufferSize) {
+                val cbuf = Array<CharArray?>(newAmount) { CharArray(columns) }
+                val abuf = Array(newAmount) { LongArray(columns) }
+                val copyStart = if (bufSize - newAmount < 0) 0 else bufSize - newAmount
+                val copyCount = if (bufSize - newAmount < 0) bufSize else newAmount
                 if (charArray != null) System.arraycopy(charArray!!, copyStart, cbuf, 0, copyCount)
                 if (charAttributes != null) System.arraycopy(charAttributes!!, copyStart, abuf, 0, copyCount)
                 charArray = cbuf
@@ -675,7 +675,7 @@ open class VDUBuffer @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 screenBase = bufSize - rows
                 windowBase = screenBase
             }
-            maxBufferSize = amount
+            maxBufferSize = newAmount
             update[0] = true
             redraw()
         }

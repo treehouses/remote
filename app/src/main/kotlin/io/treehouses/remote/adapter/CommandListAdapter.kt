@@ -23,16 +23,16 @@ class CommandListAdapter(private val context: Context, private val expandableLis
     }
 
     override fun getChildView(listPosition: Int, expandedListPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
-        val convertView: View?
+        val newView: View?
         val expandedListText = getChild(listPosition, expandedListPosition) as String
         if (expandedListPosition == expandableListDetail[expandableListTitle[listPosition]]!!.size) {
-            convertView = getConvertView(R.layout.list_add)
+            newView = getConvertView(R.layout.list_add)
         } else {
-            convertView = getConvertView(R.layout.list_item)
-            val expandedListTextView = convertView.findViewById<TextView>(R.id.expandedListItem)
+            newView = getConvertView(R.layout.list_item)
+            val expandedListTextView = newView.findViewById<TextView>(R.id.expandedListItem)
             expandedListTextView.text = expandedListText
         }
-        return convertView
+        return newView
     }
 
     override fun getChildrenCount(listPosition: Int): Int {
@@ -55,15 +55,15 @@ class CommandListAdapter(private val context: Context, private val expandableLis
 
     override fun getGroupView(listPosition: Int, isExpanded: Boolean,
                               convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        var newView = convertView
         val listTitle = getGroup(listPosition) as String
-        if (convertView == null) {
-            convertView = getConvertView(R.layout.list_group)
+        if (newView == null) {
+            newView = getConvertView(R.layout.list_group)
         }
-        val listTitleTextView = convertView
+        val listTitleTextView = newView
                 .findViewById<View>(R.id.lblListHeader) as TextView
         listTitleTextView.text = listTitle
-        return convertView
+        return newView
     }
 
     fun getConvertView(layout_id: Int): View {

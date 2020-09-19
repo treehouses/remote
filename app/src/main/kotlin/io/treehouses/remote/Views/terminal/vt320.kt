@@ -564,26 +564,26 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
      * @param s the string to be sent
      */
     private fun writeSpecial(s: String?): Boolean {
-        var s = s ?: return true
-        if (s.length >= 3 && s[0].toInt() == 27 && s[1] == 'O') {
+        var newS = s ?: return true
+        if (newS.length >= 3 && newS[0].toInt() == 27 && newS[1] == 'O') {
             if (vt52mode) {
-                s = if (s[2] >= 'P' && s[2] <= 'S') {
-                    "\u001b" + s.substring(2) /* ESC x */
+                newS = if (newS[2] >= 'P' && newS[2] <= 'S') {
+                    "\u001b" + newS.substring(2) /* ESC x */
                 } else {
-                    "\u001b?" + s.substring(2) /* ESC ? x */
+                    "\u001b?" + newS.substring(2) /* ESC ? x */
                 }
             } else {
                 if (output8bit) {
-                    s = "\u008f" + s.substring(2) /* SS3 x */
+                    newS = "\u008f" + newS.substring(2) /* SS3 x */
                 } /* else keep string as it is */
             }
         }
-        if (s.length >= 3 && s[0].toInt() == 27 && s[1] == '[') {
+        if (newS.length >= 3 && newS[0].toInt() == 27 && newS[1] == '[') {
             if (output8bit) {
-                s = "\u009b" + s.substring(2) /* CSI ... */
+                newS = "\u009b" + newS.substring(2) /* CSI ... */
             } /* else keep */
         }
-        return write(s, false)
+        return write(newS, false)
     }
 
     /**
