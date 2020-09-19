@@ -8,6 +8,7 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,7 @@ import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.Utils.toast
 import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
@@ -91,9 +93,10 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
 
     private fun checkForQuickSetUpKey() {
         if (!KeyUtils.getAllKeyNames(requireContext()).contains("QuickSetupKey")) {
-            val key = KeyUtils.createQuickSetupKey(requireContext())
-            if (listener?.getChatService()?.state == Constants.STATE_CONNECTED)
+            if (listener?.getChatService()?.state == Constants.STATE_CONNECTED) {
+                val key = KeyUtils.createQuickSetupKey(requireContext())
                 listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
+            } else context.toast("Failed to setup. Bluetooth not connected.")
         }
     }
 
@@ -160,6 +163,10 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     fun setEnabled(bool: Boolean) {
         bind.connectSsh.isEnabled = bool
         bind.connectSsh.isClickable = bool
+        bind.quickSetup.isEnabled = bool
+        bind.quickSetup.isClickable = bool
+        bind.quickSetupRoot.isEnabled = bool
+        bind.quickSetupRoot.isClickable = bool
     }
 
     private fun launchSSH(activity: FragmentActivity, host: HostBean) {
