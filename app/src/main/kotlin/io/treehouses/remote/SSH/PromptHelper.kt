@@ -74,7 +74,7 @@ class PromptHelper(private val tag: Any) {
      * immediately return.
      */
     @Throws(InterruptedException::class)
-    private fun requestPrompt(instructions: String?, hint: String, type: Any): Any? {
+    fun requestPrompt(instructions: String?, hint: String, type: Any): Any? {
         var response: Any? = null
         promptToken.acquire()
         try {
@@ -94,9 +94,9 @@ class PromptHelper(private val tag: Any) {
         return response
     }
 
-    fun <T> requestPrompt(instructions: String?, hint: String): T? {
+    inline fun <reified T> requestPrompt(instructions: String?, hint: String): T? {
         var value: T? = null
-        try { value = requestPrompt(instructions, hint, Boolean::class.java) as T }
+        try { value = requestPrompt(instructions, hint, T::class.java) as T }
         catch (e: Exception) { }
         return value
     }
