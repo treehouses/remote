@@ -18,6 +18,8 @@ package io.treehouses.remote.SSH
 
 import android.os.Handler
 import android.os.Message
+import android.util.Log
+import io.treehouses.remote.utils.logE
 import java.util.concurrent.Semaphore
 
 /**
@@ -74,7 +76,7 @@ class PromptHelper(private val tag: Any) {
      * immediately return.
      */
     @Throws(InterruptedException::class)
-    fun requestPrompt(instructions: String?, hint: String, type: Any): Any? {
+    private fun requestPrompt(instructions: String?, hint: String, type: Any): Any? {
         var response: Any? = null
         promptToken.acquire()
         try {
@@ -84,7 +86,6 @@ class PromptHelper(private val tag: Any) {
 
             // notify any parent watching for live events
             if (handler != null) Message.obtain(handler, -1, tag).sendToTarget()
-
             // acquire lock until user passes back value
             promptResponse.acquire()
             response = popResponse()
@@ -94,10 +95,10 @@ class PromptHelper(private val tag: Any) {
         return response
     }
 
-    inline fun <reified T> requestPrompt(instructions: String?, hint: String): T? {
+    fun <T> requestPrompt(instructions: String?, hint: String, isBool: Boolean): T? {
         var value: T? = null
-        try { value = requestPrompt(instructions, hint, T::class.java) as T }
-        catch (e: Exception) { }
+        try { value = requestPrompt(instructions, hint, if (isBool) Boolean::class.java else String::class.java) as T }
+        catch (e: Exception) { Log.e("ERROR in SSH", e.toString())}
         return value
     }
 
