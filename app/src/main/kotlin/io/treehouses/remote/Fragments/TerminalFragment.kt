@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.Fragments.DialogFragments.AddCommandDialogFragment
 import io.treehouses.remote.Fragments.DialogFragments.ChPasswordDialogFragment
@@ -47,8 +48,11 @@ class TerminalFragment : BaseTerminalFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false)
         onLoad(mHandler)
-        jsonSend(true)
-        listener.sendMessage(getString(R.string.TREEHOUSES_COMMANDS_JSON))
+        val autocomplete = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autocomplete", true)
+        if (autocomplete) {
+            jsonSend(true)
+            listener.sendMessage(getString(R.string.TREEHOUSES_COMMANDS_JSON))
+        }
         instance = this
         expandableListDetail = HashMap()
         expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
