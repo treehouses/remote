@@ -46,12 +46,12 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
     }
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup): View {
-        var convertView: View
+        var newView: View
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        convertView = layoutInflater.inflate(R.layout.list_group, null)
-        val label = convertView.findViewById<TextView>(R.id.lblListHeader)
+        newView = layoutInflater.inflate(R.layout.list_group, null)
+        val label = newView.findViewById<TextView>(R.id.lblListHeader)
         label.text = titles[groupPosition]
-        return convertView
+        return newView
     }
 
     private fun isChildEmpty(groupPosition: Int): Boolean {
@@ -65,22 +65,22 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
     }
 
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        var newView: View?
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        convertView = layoutInflater.inflate(R.layout.row_profile, null)
-        val label = convertView.findViewById<TextView>(R.id.label)
-        val deleteProfile = convertView.findViewById<Button>(R.id.delete_profile)
+        newView = layoutInflater.inflate(R.layout.row_profile, null)
+        val label = newView.findViewById<TextView>(R.id.label)
+        val deleteProfile = newView.findViewById<Button>(R.id.delete_profile)
         if (groupPosition == 3) {
             setLabelText(label, "Switch to Default Network", deleteProfile)
-            return convertView
+            return newView
         }
         if (isChildEmpty(groupPosition)) {
             setLabelText(label, "Please configure in the Network screen", deleteProfile)
-            return convertView
+            return newView
         }
         label.text = data[titles[groupPosition]]!![childPosition].ssid
         deleteProfile.setOnClickListener { showConfirmation(data[titles[groupPosition]]!![childPosition].ssid, groupPosition, childPosition) }
-        return convertView
+        return newView
     }
 
     private fun showConfirmation(name: String, groupPosition: Int, childPosition: Int) {
