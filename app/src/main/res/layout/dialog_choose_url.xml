@@ -1,39 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_medium"
+    android:background="@drawable/alertdialog_background">
 
-    <!--    <TextView-->
-    <!--        android:id="@+id/choose_url_text"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="@dimen/margin_medium"-->
-    <!--        android:layout_marginStart="@dimen/margin_medium"-->
-    <!--        android:layout_marginTop="@dimen/margin_medium"-->
-    <!--        android:layout_marginBottom="@dimen/margin_medium"-->
-    <!--        android:text="Please choose the url you would like to open:" />-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Select URL Type"
+            android:textColor="@color/daynight_textColor"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:fontFamily="@font/roboto_bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </TextView>
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="30dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="288dp"
+            android:layout_marginLeft="288dp"
+            android:background="@null"
+            android:scaleType="fitEnd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textView2"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/tick_png" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <Button
+        android:id="@+id/local_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="24dp">
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginRight="@dimen/margin_large"
+        android:text="Local"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/ic_green"/>
 
-        <Button
-            android:id="@+id/local_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_large"
-            android:layout_marginRight="@dimen/margin_large"
-            android:text="Local" />
-
-        <Button
-            android:id="@+id/tor_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tor"
-            android:layout_marginStart="@dimen/margin_large"
-            android:layout_marginLeft="@dimen/margin_large"/>
+    <Button
+        android:id="@+id/tor_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tor"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/ic_purple"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginLeft="@dimen/margin_large"/>
     </LinearLayout>
+
 </LinearLayout>
