@@ -90,18 +90,18 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 c = s[start + i]
                 // Shortcut for my favorite ASCII
                 if (c.toInt() <= 0x7F) {
-                    if (lastChar != -1) putChar(lastChar.toChar(), isWide, false)
+                    if (lastChar != -1) putChar(lastChar.toChar(), isWide)
                     lastChar = c.toInt()
                     isWide = false
                 } else if (!Character.isLowSurrogate(c) && !Character.isHighSurrogate(c)) {
                     if (Character.getType(c) == Character.NON_SPACING_MARK.toInt()) {
                         if (lastChar != -1) {
                             val nc = precompose(lastChar.toChar(), c)
-                            putChar(nc, isWide, false)
+                            putChar(nc, isWide)
                             lastChar = -1
                         }
                     } else {
-                        if (lastChar != -1) putChar(lastChar.toChar(), isWide, false)
+                        if (lastChar != -1) putChar(lastChar.toChar(), isWide)
                         lastChar = c.toInt()
                         if (fullwidths != null) {
                             val width = fullwidths[i]
@@ -111,7 +111,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                 }
             }
-            if (lastChar != -1) putChar(lastChar.toChar(), isWide, false)
+            if (lastChar != -1) putChar(lastChar.toChar(), isWide)
             setCursorPosition(C, R)
             redraw()
         }
@@ -127,7 +127,6 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     }
 
     override fun setScreenSize(c: Int, r: Int, broadcast: Boolean) {
-        val oldrows = rows
         super.setScreenSize(c, r, false)
 
         // Don't let the cursor go off the screen. Scroll down if needed.
@@ -840,8 +839,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         if (R > maxr) R = maxr
     }
 
-    private fun putChar(c: Char, isWide: Boolean, doshowcursor: Boolean) {
-        var c = c
+    private fun putChar(c: Char, isWide: Boolean) {
+        var char = c
         val rows = rows //statusline
         val columns = columns
         when (term_state) {
@@ -850,7 +849,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                  * probably... but some BBS do anyway...
                  */if (!useibmcharset) {
                     var doneflag = true
-                    when (c) {
+                    when (char) {
                         OSC -> {
                             osc = ""
                             term_state = TSTATE_OSC
@@ -870,7 +869,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     if (doneflag) return@run
                 }
-                when (c) {
+                when (char) {
                     SS3 -> onegl = 3
                     SS2 -> onegl = 2
                     CSI -> {
@@ -908,8 +907,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     '\r' -> C = 0
                     '\n' -> {
                         if (!vms) {
-                            if (lastwaslf == 0 || lastwaslf == c.toInt()) {
-                                lastwaslf = c.toInt()
+                            if (lastwaslf == 0 || lastwaslf == char.toInt()) {
+                                lastwaslf = char.toInt()
                                 if (R == bottomMargin || R >= rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                             }
                         }
@@ -931,8 +930,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             onegl = -1
                         }
                         lastwaslf = 0
-                        if (c.toInt() < 32) {
-                            if (c.toInt() == 0) return@run
+                        if (char.toInt() < 32) {
+                            if (char.toInt() == 0) return@run
                         }
                         if (C >= columns) {
                             if (wraparound) {
@@ -953,7 +952,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
 
                         // Mapping if DEC Special is chosen charset
                         if (usedcharsets) {
-                            if (c in '\u0020'..'\u007f') {
+                            if (char in '\u0020'..'\u007f') {
                                 when (gx[thisgl]) {
                                     '0' -> {
                                         // Remap SCOANSI line drawing to VT100 line drawing chars
@@ -961,30 +960,30 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                         if (terminalID == "scoansi" || terminalID == "ansi") {
                                             var i = 0
                                             while (i < scoansi_acs.length) {
-                                                if (c == scoansi_acs[i]) {
-                                                    c = scoansi_acs[i + 1]
+                                                if (char == scoansi_acs[i]) {
+                                                    char = scoansi_acs[i + 1]
                                                     break
                                                 }
                                                 i += 2
                                             }
                                         }
-                                        if (c in '\u005f'..'\u007e') {
-                                            c = DECSPECIAL[c.toShort() - 0x5f]
+                                        if (char in '\u005f'..'\u007e') {
+                                            char = DECSPECIAL[char.toShort() - 0x5f]
                                             mapped = true
                                         }
                                     }
                                     '<' -> {
-                                        c = (c.toInt() and 0x7f or 0x80).toChar()
+                                        char = (char.toInt() and 0x7f or 0x80).toChar()
                                         mapped = true
                                     }
                                     'A', 'B' -> mapped = true
                                     else -> debug("Unsupported GL mapping: " + gx[thisgl])
                                 }
                             }
-                            if (!mapped && c >= '\u0080' && c <= '\u00ff') {
+                            if (!mapped && char >= '\u0080' && char <= '\u00ff') {
                                 when (gx[gr.toInt()]) {
-                                    '0' -> if (c in '\u00df'..'\u00fe') {
-                                        c = DECSPECIAL[c - '\u00df']
+                                    '0' -> if (char in '\u00df'..'\u00fe') {
+                                        char = DECSPECIAL[char - '\u00df']
                                         mapped = true
                                     }
                                     '<', 'A', 'B' -> mapped = true
@@ -992,7 +991,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                 }
                             }
                         }
-                        if (!mapped && useibmcharset) c = map_cp850_unicode(c)
+                        if (!mapped && useibmcharset) char = map_cp850_unicode(char)
 
                         /*if(true || (statusmode == 0)) { */if (isWide) {
                             if (C >= columns - 1) {
@@ -1013,14 +1012,14 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                         if (insertmode == 1) {
                             if (isWide) {
-                                insertChar(C++, R, c, attributes or FULLWIDTH)
+                                insertChar(C++, R, char, attributes or FULLWIDTH)
                                 insertChar(C, R, ' ', attributes or FULLWIDTH)
-                            } else insertChar(C, R, c, attributes)
+                            } else insertChar(C, R, char, attributes)
                         } else {
                             if (isWide) {
-                                putChar(C++, R, c, attributes or FULLWIDTH)
+                                putChar(C++, R, char, attributes or FULLWIDTH)
                                 putChar(C, R, ' ', attributes or FULLWIDTH)
-                            } else putChar(C, R, c, attributes)
+                            } else putChar(C, R, char, attributes)
                         }
 
                         /*
@@ -1036,28 +1035,28 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 }
             }
             TSTATE_OSC -> {
-                if (c.toInt() < 0x20 && c != ESC) { // NP - No printing character
+                if (char.toInt() < 0x20 && char != ESC) { // NP - No printing character
                     handle_osc(osc)
                     term_state = TSTATE_DATA
                 }
                 //but check for vt102 ESC \
-                else if (c == '\\' && osc!![osc!!.length - 1] == ESC) {
+                else if (char == '\\' && osc!![osc!!.length - 1] == ESC) {
                     handle_osc(osc)
                     term_state = TSTATE_DATA
                 }
-                else osc += c
+                else osc += char
             }
             TSTATE_ESCSPACE -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     'F' -> output8bit = false
                     'G' -> output8bit = true
-                    else -> debug("ESC <space> $c unhandled.")
+                    else -> debug("ESC <space> $char unhandled.")
                 }
             }
             TSTATE_ESC -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     ' ' -> term_state = TSTATE_ESCSPACE
                     '#' -> term_state = TSTATE_ESCSQUARE
                     'c' ->                         /* Hard terminal reset */reset()
@@ -1188,47 +1187,47 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     '_' -> term_state = TSTATE_TITLE
                     '\\' ->                         // TODO save title
                         term_state = TSTATE_DATA
-                    else -> debug("ESC unknown letter: " + c + " (" + c.toInt() + ")")
+                    else -> debug("ESC unknown letter: " + char + " (" + char.toInt() + ")")
                 }
             }
             TSTATE_VT52X -> {
-                C = c.toInt() - 37
+                C = char.toInt() - 37
                 if (C < 0) C = 0 else if (C >= columns) C = columns - 1
                 term_state = TSTATE_VT52Y
             }
             TSTATE_VT52Y -> {
-                R = c.toInt() - 37
+                R = char.toInt() - 37
                 if (R < 0) R = 0 else if (R >= rows) R = rows - 1
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG0 -> {
-                if (c != '0' && c != 'A' && c != 'B' && c != '<') debug("ESC ( " + c + ": G0 char set?  (" + c.toInt() + ")") else {
-                    gx[0] = c
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC ( " + char + ": G0 char set?  (" + char.toInt() + ")") else {
+                    gx[0] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG1 -> {
-                if (c != '0' && c != 'A' && c != 'B' && c != '<') {
-                    debug("ESC ) " + c + " (" + c.toInt() + ") :G1 char set?")
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') {
+                    debug("ESC ) " + char + " (" + char.toInt() + ") :G1 char set?")
                 } else {
-                    gx[1] = c
+                    gx[1] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG2 -> {
-                if (c != '0' && c != 'A' && c != 'B' && c != '<') debug("ESC*:G2 char set?  (" + c.toInt() + ")") else {
-                    gx[2] = c
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC*:G2 char set?  (" + char.toInt() + ")") else {
+                    gx[2] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG3 -> {
-                if (c != '0' && c != 'A' && c != 'B' && c != '<') debug("ESC+:G3 char set?  (" + c.toInt() + ")") else {
-                    gx[3] = c
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC+:G3 char set?  (" + char.toInt() + ")") else {
+                    gx[3] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_ESCSQUARE -> {
-                when (c) {
+                when (char) {
                     '8' -> {
                         var i = 0
                         while (i < columns) {
@@ -1240,22 +1239,22 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             i++
                         }
                     }
-                    else -> debug("ESC # $c not supported.")
+                    else -> debug("ESC # $char not supported.")
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_DCS -> {
-                if (c == '\\' && dcs!![dcs!!.length - 1] == ESC) {
+                if (char == '\\' && dcs!![dcs!!.length - 1] == ESC) {
                     handle_dcs(dcs)
                     term_state = TSTATE_DATA
                 }
-                else dcs += c
+                else dcs += char
             }
             TSTATE_DCEQ -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
-                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + c.toInt() - 48
+                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.toInt() - 48
                         term_state = TSTATE_DCEQ
                     }
                     ';' -> {
@@ -1348,32 +1347,32 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             else -> debug("ESC [ ? " + DCEvars[0] + " n, unsupported.")
                         }
                     }
-                    else -> debug("ESC [ ? " + DCEvars[0] + " " + c + ", unsupported.")
+                    else -> debug("ESC [ ? " + DCEvars[0] + " " + char + ", unsupported.")
                 }
             }
             TSTATE_CSI_EX -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     ESC -> term_state = TSTATE_ESC
-                    else -> debug("Unknown character ESC[! character is " + c.toInt())
+                    else -> debug("Unknown character ESC[! character is " + char.toInt())
                 }
             }
             TSTATE_CSI_TICKS -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     'p' -> {
                         debug("Conformance level: " + DCEvars[0] + " (unsupported)," + DCEvars[1])
                         output8bit = if (DCEvars[0] == 61) false
                         else DCEvars[1] != 1
                     }
-                    else -> debug("Unknown ESC [...  \"$c")
+                    else -> debug("Unknown ESC [...  \"$char")
                 }
             }
             TSTATE_CSI_EQUAL -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
-                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + c.toInt() - 48
+                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.toInt() - 48
                         term_state = TSTATE_CSI_EQUAL
                     }
                     ';' -> {
@@ -1405,7 +1404,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                     .append(',')
                             i++
                         }
-                        debugStr!!.append(c)
+                        debugStr!!.append(char)
                         debug(debugStr.toString())
                         debugStr!!.setLength(0)
                     }
@@ -1413,18 +1412,18 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             }
             TSTATE_CSI_DOLLAR -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     '}' -> {
                         debug("Active Status Display now " + DCEvars[0])
                         statusmode = DCEvars[0]
                     }
                     '~' -> debug("Status Line mode now " + DCEvars[0])
-                    else -> debug("UNKNOWN Status Display code " + c + ", with Pn=" + DCEvars[0])
+                    else -> debug("UNKNOWN Status Display code " + char + ", with Pn=" + DCEvars[0])
                 }
             }
             TSTATE_CSI -> {
                 term_state = TSTATE_DATA
-                when (c) {
+                when (char) {
                     '"' -> term_state = TSTATE_CSI_TICKS
                     '$' -> term_state = TSTATE_CSI_DOLLAR
                     '=' -> term_state = TSTATE_CSI_EQUAL
@@ -1435,7 +1434,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         term_state = TSTATE_DCEQ
                     }
                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
-                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + c.toInt() - 48
+                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.toInt() - 48
                         term_state = TSTATE_CSI
                     }
                     ';' -> {
@@ -1708,16 +1707,16 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     }
                     else -> {
                         debugStr!!.append("ESC [ unknown letter: ")
-                                .append(c)
+                                .append(char)
                                 .append(" (")
-                                .append(c.toInt())
+                                .append(char.toInt())
                                 .append(')')
                         debug(debugStr.toString())
                         debugStr!!.setLength(0)
                     }
                 }
             }
-            TSTATE_TITLE -> when (c) {
+            TSTATE_TITLE -> when (char) {
                 ESC -> term_state = TSTATE_ESC
             }
             else -> term_state = TSTATE_DATA

@@ -45,7 +45,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     protected lateinit var bind: ActivityTerminalFragmentBinding
 
-    fun handlerCaseWrite(TAG: String?, mConversationArrayAdapter: ArrayAdapter<String>?, msg: Message): String {
+    fun handlerCaseWrite(mConversationArrayAdapter: ArrayAdapter<String>?, msg: Message): String {
         val writeBuf = msg.obj as ByteArray
         // construct a string from the buffer
         val writeMessage = String(writeBuf)

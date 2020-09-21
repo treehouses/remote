@@ -32,25 +32,25 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.NETWORK)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.NETWORK, false)
         //Put animations here
-        val network_wifi = fancyShowCaseViewBuilderSkippable(activity, bind.networkWifi, "Touch Here to Connect to a WiFi Network", FocusShape.CIRCLE).build()
+        val networkWifi = fancyShowCaseViewBuilderSkippable(activity, bind.networkWifi, "Touch Here to Connect to a WiFi Network", FocusShape.CIRCLE).build()
 
-        val network_hotspot = fancyShowCaseView(activity, bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", FocusShape.CIRCLE)
+        val networkHotspot = fancyShowCaseView(activity, bind.networkHotspot, "Touch Here to Connect to Start a Hotspot", FocusShape.CIRCLE)
 
-        val network_bridge = fancyShowCaseView(activity, bind.networkBridge, "Touch Here to Configure a Bridge Connection", FocusShape.CIRCLE)
+        val networkBridge = fancyShowCaseView(activity, bind.networkBridge, "Touch Here to Configure a Bridge Connection", FocusShape.CIRCLE)
 
-        val network_ethernet = fancyShowCaseView(activity, bind.networkEthernet, "Touch Here to Configure an Ethernet Connection", FocusShape.CIRCLE)
+        val networkEthernet = fancyShowCaseView(activity, bind.networkEthernet, "Touch Here to Configure an Ethernet Connection", FocusShape.CIRCLE)
 
-        val network_mode = fancyShowCaseView(activity, bind.buttonNetworkMode, "Use this button to Refresh Network Mode Info", FocusShape.ROUNDED_RECTANGLE)
+        val networkMode = fancyShowCaseView(activity, bind.buttonNetworkMode, "Use this button to Refresh Network Mode Info", FocusShape.ROUNDED_RECTANGLE)
 
-        val reboot_raspberry = fancyShowCaseView(activity, bind.rebootRaspberry, "Use this to Reboot RPi", FocusShape.ROUNDED_RECTANGLE)
+        val rebootRaspberry = fancyShowCaseView(activity, bind.rebootRaspberry, "Use this to Reboot RPi", FocusShape.ROUNDED_RECTANGLE)
 
-        val reset_network = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
+        val resetNetwork = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
 
-        val scroll_down =  fancyShowCaseViewRoundedRect(activity, bind.discoverBtn, "Scroll down to the bottom of the page")
+        val scrollDown =  fancyShowCaseViewRoundedRect(activity, bind.discoverBtn, "Scroll down to the bottom of the page")
 
-        val scan_button = fancyShowCaseView(activity, bind.rebootRaspberry, "Scan your Network to find other Connected Devices", FocusShape.ROUNDED_RECTANGLE)
+        val scanButton = fancyShowCaseView(activity, bind.rebootRaspberry, "Scan your Network to find other Connected Devices", FocusShape.ROUNDED_RECTANGLE)
 
-        show(network_wifi, network_hotspot, network_bridge, network_ethernet, network_mode, reboot_raspberry, reset_network, scroll_down, scan_button)
+        show(networkWifi, networkHotspot, networkBridge, networkEthernet, networkMode, rebootRaspberry, resetNetwork, scrollDown, scanButton)
     }
 
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
@@ -98,11 +98,11 @@ object Tutorials {
         show(a)
     }
 
-    fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
-        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
-        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
-        //Put animations here
-    }
+//    fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
+//        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+//        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+//        //Put animations here
+//    }
 
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return

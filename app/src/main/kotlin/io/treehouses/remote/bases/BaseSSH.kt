@@ -28,7 +28,6 @@ import io.treehouses.remote.SSH.Terminal.TerminalManager
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.utils.KeyUtils
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
@@ -207,7 +206,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
 
         override fun removeServerHostKey(host: String, port: Int, algorithm: String, hostKey: ByteArray) {
-            KeyUtils.removeKnownHost(manager!!.applicationContext, "$host:$port", algorithm, hostKey)
+            KeyUtils.removeKnownHost(manager!!.applicationContext, "$host:$port")
             logD("REMOVING HOST KEY For: $host:$port with algorithm: $algorithm")
         }
 

@@ -63,7 +63,7 @@ class TerminalKeyListener(tm: TerminalManager?,
             handleInput = handleInput || hasShift(keyCode) || hasNonCtrlChar() || hasKeyCode(keyCode)
             if (handleInput) return true
         } catch (e: IOException) {
-            handleProblem(e, "Problem while trying to handle an onKey() event")
+            handleProblem(e)
         } catch (npe: NullPointerException) {
             logE("Input before connection established ignored.")
         }
