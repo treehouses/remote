@@ -9,10 +9,13 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
+import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.callback.NotificationCallback
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
 import java.nio.charset.Charset
+import java.security.AccessController.getContext
 import java.security.MessageDigest
 import java.util.*
 import java.util.zip.DeflaterOutputStream
@@ -101,5 +104,12 @@ object Utils {
     fun sendMessage(listener: HomeInteractListener, msg: Pair<String, String>, c: Context?, length: Int) {
         listener.sendMessage(msg.first)
         Toast.makeText(c, msg.second, length).show()
+    }
+
+    fun attach(context: Context?): NotificationCallback? {
+        return try { context as NotificationCallback?
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Activity must implement NotificationListener")
+        }
     }
 }
