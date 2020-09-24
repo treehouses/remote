@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import io.treehouses.remote.R
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
@@ -74,10 +75,8 @@ object SaveUtils {
     @JvmStatic
     fun initCommandsList(context: Context) {
         if (getStringList(context, COMMANDS_TITLES_KEY).isEmpty() || getStringList(context, COMMANDS_VALUES_KEY).isEmpty()) {
-            val titles = arrayOf("CHANGE PASSWORD", "HELP", "DOCKER PS", "DETECT RPI", "EXPAND FS",
-                    "VNC ON", "VNC OFF", "VNC STATUS", "TOR", "NETWORK MODE INFO", "CLEAR")
-            val commands = arrayOf("ACTION", "treehouses help", "docker ps", "treehouses detectrpi", "treehouses expandfs",
-                    "treehouses vnc on", "treehouses vnc off", "treehouses vnc", "treehouses tor", "treehouses networkmode info", "ACTION")
+            val titles = context.resources.getStringArray(R.array.command_titles)
+            val commands = context.resources.getStringArray(R.array.commands)
             saveStringList(context, ArrayList(Arrays.asList(*titles)), COMMANDS_TITLES_KEY)
             saveStringList(context, ArrayList(Arrays.asList(*commands)), COMMANDS_VALUES_KEY)
         }

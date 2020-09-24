@@ -108,6 +108,34 @@
         <item>LED Lantern</item>
     </string-array>
 
+    <string-array name="command_titles">
+        <item>CHANGE PASSWORD</item>
+        <item>HELP</item>
+        <item>DOCKER PS</item>
+        <item>DETECT RPI</item>
+        <item>EXPAND FS</item>
+        <item>VNC ON</item>
+        <item>VNC OFF</item>
+        <item>VNC STATUS</item>
+        <item>TOR</item>
+        <item>NETWORK MODE INFO</item>
+        <item>CLEAR</item>
+    </string-array>
+
+    <string-array name="commands">
+        <item>ACTION</item>
+        <item>treehouses help</item>
+        <item>docker ps</item>
+        <item>treehouses detectrpi</item>
+        <item>treehouses expandfs</item>
+        <item>treehouses vnc on</item>
+        <item>treehouses vnc off</item>
+        <item>treehouses vnc</item>
+        <item>treehouses tor</item>
+        <item>treehouses networkmode info</item>
+        <item>ACTION</item>
+    </string-array>
+
     <string-array name="key_types">
         <item>RSA</item>
         <item>EC</item>
