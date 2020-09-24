@@ -139,7 +139,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             }
             if(hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
             logD("dasda ${myPos.toString()}")
-            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
+            val formatArgs = portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
             addPortButton!!.text = "deleting port ....."
             portList!!.isEnabled = false
             addPortButton!!.isEnabled = false
