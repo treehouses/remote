@@ -50,7 +50,7 @@
         android:layout_width="40dp"
         android:layout_height="32dp"
         android:layout_marginRight="@dimen/margin_medium"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/ic_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnPrevious" />
@@ -60,7 +60,7 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginRight="@dimen/margin_medium"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/treehousesBtn" />
