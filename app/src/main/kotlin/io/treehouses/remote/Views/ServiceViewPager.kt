@@ -15,7 +15,8 @@ class ServiceViewPager : ViewPager {
     }
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {
-        setPageTransformer(true, ZoomOutPageTransformer())
+        val zopTransformer = ZoomOutPageTransformer()
+        setPageTransformer(true, zopTransformer)
     }
 
     @SuppressLint("ClickableViewAccessibility")
