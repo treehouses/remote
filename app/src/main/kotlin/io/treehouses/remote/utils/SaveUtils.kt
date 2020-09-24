@@ -9,6 +9,7 @@ import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
+import io.treehouses.remote.utils.Utils.convertToObject
 import java.util.*
 
 object SaveUtils {
@@ -178,11 +179,7 @@ object SaveUtils {
     fun getHost(context: Context, hostUri: String) : HostBean? {
         val hostString = PreferenceManager.getDefaultSharedPreferences(context).getString(hostUri, "")
         logD("GOT HOST STRING ${hostString!!}")
-        return try {
-            Gson().fromJson(hostString, HostBean::class.java)
-        } catch (e: Exception) {
-            null
-        }
+        return hostString.convertToObject(HostBean::class.java)
     }
     //Adds host to host list
     fun updateHostList (context: Context, hostBean: HostBean) {

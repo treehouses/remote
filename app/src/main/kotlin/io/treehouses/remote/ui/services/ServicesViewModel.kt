@@ -17,6 +17,7 @@ import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status.LOADING
 import io.treehouses.remote.pojo.enum.Status.SUCCESS
 import io.treehouses.remote.utils.*
+import io.treehouses.remote.utils.Utils.convertToObject
 
 class ServicesViewModel(application: Application) : FragmentViewModel(application) {
 
@@ -108,9 +109,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      */
     fun fetchServicesFromCache() {
         val data = PreferenceManager.getDefaultSharedPreferences(getApplication()).getString(SERVICES_CACHE, "")
-        val rawData = try {
-            Gson().fromJson(data, ServicesData::class.java)
-        } catch (e: Exception) { null}
+        val rawData = data?.convertToObject(ServicesData::class.java)
         if (rawData?.available != null) {
             logE("SUCCESSFUL R CACHE GOT:$rawData")
             cacheServiceData.value = rawData!!
@@ -249,6 +248,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * Get the service's local URL link. Can be opened with any web browser.
      * @param service : ServiceInfo = Service clicked
      */
+
     fun getLocalLink(service: ServiceInfo) {
         sendMessage(getString(R.string.TREEHOUSES_SERVICES_URL_LOCAL, service.name))
         getLinkAction.value = Resource.loading()
@@ -259,6 +259,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * should attempt to open the Tor Browser app
      * @param service : ServiceInfo = Service clicked
      */
+
     fun getTorLink(service: ServiceInfo) {
         sendMessage(getString(R.string.TREEHOUSES_SERVICES_URL_TOR, service.name))
         getLinkAction.value = Resource.loading()
