@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.fragment.app.DialogFragment
@@ -38,7 +37,7 @@ class ChPasswordDialogFragment : DialogFragment(), FragmentDialogInterface {
 
     //creates the dialog for the change password dialog
     protected fun getAlertDialog(mView: View?): AlertDialog {
-        return CreateAlertDialog(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle), mView, R.string.change_password, android.R.drawable.ic_dialog_alert)
+        return createAlertDialog(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle), mView, R.string.change_password, android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.change_password
                 ) { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()

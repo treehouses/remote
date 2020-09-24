@@ -8,7 +8,6 @@ import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.Message
 import android.text.format.Formatter.formatIpAddress
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
@@ -249,7 +247,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
         setupIcons()
         if(gateway.isComplete()) updateGatewayIcon()
-        else CreateAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
+        else createAlertDialog(requireContext(), 1, "Error", "Unable to fetch gateway info.").setPositiveButton("Dismiss", null).show()
         bind.loading1.visibility = View.GONE
         bind.loading2.visibility = View.GONE
         bind.deviceContainer.visibility = View.VISIBLE
