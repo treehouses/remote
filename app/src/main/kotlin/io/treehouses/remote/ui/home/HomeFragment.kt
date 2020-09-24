@@ -303,7 +303,7 @@ class HomeFragment : BaseHomeFragment() {
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val notificationCallback = Utils.attach(getContext())
+        val notificationCallback = Utils.attach(context)
         notificationListener = notificationCallback
     }
 

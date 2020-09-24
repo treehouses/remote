@@ -177,7 +177,7 @@ class StatusFragment : BaseStatusFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        notificationListener = Utils.attach(getContext())
+        notificationListener = Utils.attach(context)
     }
 
     /**
