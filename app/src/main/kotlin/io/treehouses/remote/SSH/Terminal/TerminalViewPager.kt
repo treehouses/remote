@@ -31,7 +31,8 @@ import androidx.viewpager.widget.ViewPager
 class TerminalViewPager(context: Context?, attrs: AttributeSet?) : ViewPager(context!!, attrs) {
     private var mEnabled = true
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return handle { super.onTouchEvent(event) }
+        val func = { super.onTouchEvent(event) }
+        return handle(func)
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
