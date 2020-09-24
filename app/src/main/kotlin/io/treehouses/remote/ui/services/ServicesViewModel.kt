@@ -250,8 +250,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      */
 
     fun getLocalLink(service: ServiceInfo) {
-        sendMessage(getString(R.string.TREEHOUSES_SERVICES_URL_LOCAL, service.name))
-        getLinkAction.value = Resource.loading()
+        getLink(service, R.string.TREEHOUSES_SERVICES_URL_LOCAL)
     }
 
     /**
@@ -261,7 +260,16 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      */
 
     fun getTorLink(service: ServiceInfo) {
-        sendMessage(getString(R.string.TREEHOUSES_SERVICES_URL_TOR, service.name))
+        getLink(service, R.string.TREEHOUSES_SERVICES_URL_TOR)
+    }
+
+    /**
+     * Retrieves the service's link
+     * @param service : ServiceInfo = Service clicked
+     * @param id : Int = Identifier for command string
+     */
+    private fun getLink(service: ServiceInfo, id: Int) {
+        sendMessage(getString(id, service.name))
         getLinkAction.value = Resource.loading()
     }
 
