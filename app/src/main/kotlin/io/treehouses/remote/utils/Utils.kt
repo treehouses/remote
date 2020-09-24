@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
+import com.google.gson.Gson
+import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.callback.HomeInteractListener
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
@@ -101,5 +103,10 @@ object Utils {
     fun sendMessage(listener: HomeInteractListener, msg: Pair<String, String>, c: Context?, length: Int) {
         listener.sendMessage(msg.first)
         Toast.makeText(c, msg.second, length).show()
+    }
+
+    fun <T> String.convertToObject(thisClass: Class<T>): T? {
+        return try { Gson().fromJson(this, thisClass) }
+        catch (e: Exception) { null }
     }
 }
