@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -124,7 +123,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
     }
 
     private fun reboot() {
-        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
+        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reboot",
                 "Are you sure you want to reboot your device?")
                 .setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
                     rebootHelper()
@@ -135,7 +134,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
     }
 
     private fun resetNetwork() {
-        val a = CreateAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
+        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reset Network",
                 "Are you sure you want to reset the network to default?")
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     val msg = getString(R.string.TREEHOUSES_DEFAULT_NETWORK)

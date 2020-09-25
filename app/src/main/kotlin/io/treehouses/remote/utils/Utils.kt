@@ -10,6 +10,8 @@ import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
 import io.treehouses.remote.bases.BaseFragment
+import com.google.gson.Gson
+import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import java.io.ByteArrayOutputStream
@@ -111,5 +113,10 @@ object Utils {
         } catch (e: ClassCastException) {
             throw ClassCastException("Activity must implement NotificationListener")
         }
+    }
+  
+    fun <T> String.convertToObject(thisClass: Class<T>): T? {
+        return try { Gson().fromJson(this, thisClass) }
+        catch (e: Exception) { null }
     }
 }
