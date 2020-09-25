@@ -27,6 +27,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 import io.treehouses.remote.utils.SaveUtils
@@ -78,23 +79,18 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         }
         setUpAdapter()
         bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
-        bind.quickSetup.setOnClickListener {
-            val shouldConnect = checkForQuickSetUpKey()
+        bind.smartConnect.setOnClickListener {
+            val shouldConnect = checkForSmartConnectKey()
             var uriString = bind.sshTextInput.text.toString()
-            if (shouldConnect) connect(uriString, true)
-        }
-        bind.quickSetupRoot.setOnClickListener {
-            val shouldConnect = checkForQuickSetUpKey()
-            var uriString = bind.sshTextInput.text.toString().replace("pi", "root")
             if (shouldConnect) connect(uriString, true)
         }
         bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
     }
 
-    private fun checkForQuickSetUpKey(): Boolean {
-        if (!KeyUtils.getAllKeyNames(requireContext()).contains("QuickSetupKey")) {
+    private fun checkForSmartConnectKey(): Boolean {
+        if (!KeyUtils.getAllKeyNames(requireContext()).contains("SmartConnectKey")) {
             if (listener?.getChatService()?.state == Constants.STATE_CONNECTED) {
-                val key = KeyUtils.createQuickSetupKey(requireContext())
+                val key = KeyUtils.createSmartConnectKey(requireContext())
                 listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
             } else {
                 context.toast("Bluetooth not connected. Could not send key to Pi.")
@@ -104,13 +100,13 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
         return true
     }
 
-    private fun connect(uriStr: String, isQuickSetup: Boolean) {
+    private fun connect(uriStr: String, isSmartConnect: Boolean) {
         var uriString = uriStr
         if (!uriString.startsWith("ssh://")) uriString = "ssh://$uriString"
         val host = HostBean()
         host.setHostFromUri(Uri.parse(uriString))
-        if (isQuickSetup) {
-            host.keyName = "QuickSetupKey"
+        if (isSmartConnect) {
+            host.keyName = "SmartConnectKey"
             host.fontSize = 7
         }
         SaveUtils.updateHostList(requireContext(), host)
@@ -167,10 +163,8 @@ class SSHConfig : BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
     fun setEnabled(bool: Boolean) {
         bind.connectSsh.isEnabled = bool
         bind.connectSsh.isClickable = bool
-        bind.quickSetup.isEnabled = bool
-        bind.quickSetup.isClickable = bool
-        bind.quickSetupRoot.isEnabled = bool
-        bind.quickSetupRoot.isClickable = bool
+        bind.smartConnect.isEnabled = bool
+        bind.smartConnect.isClickable = bool
     }
 
     private fun launchSSH(activity: FragmentActivity, host: HostBean) {

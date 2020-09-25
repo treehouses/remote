@@ -31,7 +31,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="3"
+        android:weightSum="2"
         android:layout_marginBottom="@dimen/margin_large"
         android:orientation="horizontal">
         <Button
@@ -47,25 +47,14 @@
             android:textColor="@color/bg_white" />
 
         <Button
-            android:id="@+id/quickSetup"
+            android:id="@+id/smartConnect"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_marginRight="10dp"
             android:background="@drawable/ripple"
-            android:text="Quick Setup"
-            android:textColor="@color/bg_white" />
-
-        <Button
-            android:id="@+id/quickSetupRoot"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/ripple"
-            android:text="Quick Setup (Root)"
+            android:text="Smart Connect"
             android:textColor="@color/bg_white" />
 
     </LinearLayout>

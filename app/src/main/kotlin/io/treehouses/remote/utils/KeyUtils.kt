@@ -126,13 +126,13 @@ object KeyUtils {
         return PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
     }
 
-    fun createQuickSetupKey(context: Context): PubKeyBean {
-        val key = generateQuickSetupKey("QuickSetupKey", "RSA", "", 2048)
+    fun createSmartConnectKey(context: Context): PubKeyBean {
+        val key = generateSmartConnectKey("SmartConnectKey", "RSA", "", 2048)
         saveKey(context, key)
         return key
     }
 
-    private fun generateQuickSetupKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
+    private fun generateSmartConnectKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
         val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
             initialize(bitSize)
         }.generateKeyPair()
