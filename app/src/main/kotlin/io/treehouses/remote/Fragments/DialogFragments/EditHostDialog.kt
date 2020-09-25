@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import io.treehouses.remote.Interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.bases.BaseTerminalBridge
@@ -22,7 +23,7 @@ import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.logD
 
-class EditHostDialog : FullScreenDialogFragment() {
+class EditHostDialog : FullScreenDialogFragment(), FragmentDialogInterface {
     private lateinit var bind : EditHostBinding
     private lateinit var host: HostBean
     private lateinit var initialHostUri: String
@@ -56,12 +57,6 @@ class EditHostDialog : FullScreenDialogFragment() {
         bind.deleteButton.setOnClickListener {
             deleteHost()
         }
-    }
-
-    private fun createAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
-        return AlertDialog.Builder(ContextThemeWrapper(context, id))
-                .setTitle(title)
-                .setMessage(message)
     }
 
     private fun deleteHost() {
