@@ -15,12 +15,10 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
-import io.treehouses.remote.utils.match
+import io.treehouses.remote.utils.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -116,7 +114,12 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 }
             }
             else{
-                initializeDialog3(builder, position)
+                val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size-1
+                if (deleteAllPortsButtonSelected) {
+                    promptDeleteAll()
+                    return@OnItemClickListener
+                }
+                else initializeDialog3(builder, position)
             }
             builder.setNegativeButton("Cancel", null)
             val dialog = builder.create()
@@ -242,6 +245,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         }
     }
 
+    private fun promptDeleteAll() {
+        DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
+    }
+
     override fun setUserVisibleHint(visible: Boolean) {
         if(visible) {
             mChatService = listener.getChatService()
@@ -251,7 +258,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             bind!!.sshPorts
             portsName = ArrayList()
 //            listener.sendMessage("treehouses sshtunnel notice")
-            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+            adapter = TunnelPortAdapter(requireContext(), portsName!!)
         }
     }
 

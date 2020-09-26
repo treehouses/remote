@@ -68,7 +68,7 @@
     <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host \"%1$s\" </string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port \"%1$s\" </string>
-
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_ALL">treehouses sshtunnel remove all</string>
 
     <string name="TREEHOUSES_SSH_2FA">treehouses ssh 2fa"</string>
     <string name="TREEHOUSES_SSH_2FA_ADD">treehouses ssh 2fa add \"%1$s\"</string>
