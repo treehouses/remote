@@ -9,12 +9,15 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
+import io.treehouses.remote.bases.BaseFragment
 import com.google.gson.Gson
 import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.callback.NotificationCallback
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
 import java.nio.charset.Charset
+import java.security.AccessController.getContext
 import java.security.MessageDigest
 import java.util.*
 import java.util.zip.DeflaterOutputStream
@@ -105,6 +108,13 @@ object Utils {
         Toast.makeText(c, msg.second, length).show()
     }
 
+    fun attach(context: Context?): NotificationCallback? {
+        return try { context as NotificationCallback?
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Activity must implement NotificationListener")
+        }
+    }
+  
     fun <T> String.convertToObject(thisClass: Class<T>): T? {
         return try { Gson().fromJson(this, thisClass) }
         catch (e: Exception) { null }

@@ -32,6 +32,7 @@ import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
 import io.treehouses.remote.utils.logE
 
@@ -302,10 +303,8 @@ class HomeFragment : BaseHomeFragment() {
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        notificationListener = try { getContext() as NotificationCallback?
-        } catch (e: ClassCastException) {
-            throw ClassCastException("Activity must implement NotificationListener")
-        }
+        val notificationCallback = Utils.attach(context)
+        notificationListener = notificationCallback
     }
 
     /**

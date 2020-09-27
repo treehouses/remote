@@ -23,6 +23,7 @@ import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.pojo.StatusData
 import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import kotlinx.android.synthetic.main.dialog_wificountry.*
@@ -176,11 +177,7 @@ class StatusFragment : BaseStatusFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        notificationListener = try {
-            getContext() as NotificationCallback?
-        } catch (e: ClassCastException) {
-            throw ClassCastException("Activity must implement NotificationListener")
-        }
+        notificationListener = Utils.attach(context)
     }
 
     /**
