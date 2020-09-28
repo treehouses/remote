@@ -42,14 +42,14 @@ class SelectionArea {
         isSelectingOrigin = true
     }
 
-    /**
-     * @param columns
-     * @param rows
-     */
-    fun setBounds(columns: Int, rows: Int) {
-        maxColumns = columns - 1
-        maxRows = rows - 1
-    }
+//    /**
+//     * @param columns
+//     * @param rows
+//     */
+//    fun setBounds(columns: Int, rows: Int) {
+//        maxColumns = columns - 1
+//        maxRows = rows - 1
+//    }
 
     private fun checkBounds(value: Int, max: Int): Int {
         return if (value < 0) 0 else if (value > max) max else value
@@ -60,15 +60,11 @@ class SelectionArea {
     }
 
     fun decrementRow() {
-        changeRow(-1)
+        changeAttr("row", -1)
     }
 
     fun incrementRow() {
-        changeRow(1)
-    }
-
-    private fun changeRow(change: Int) {
-        if (isSelectingOrigin) setTop(top + change) else setBottom(bottom + change)
+        changeAttr("row", 1)
     }
 
     private fun setTop(top: Int) {
@@ -99,15 +95,21 @@ class SelectionArea {
     }
 
     fun decrementColumn() {
-        changeColumn(-1)
+        changeAttr("col", -1)
     }
 
     fun incrementColumn() {
-        changeColumn(1)
+        changeAttr("col", 1)
     }
 
-    private fun changeColumn(change: Int) {
-        if (isSelectingOrigin) setLeft(left + change) else setRight(right + change)
+    private fun changeAttr(type: String, change: Int) {
+        if (isSelectingOrigin) {
+            if (type == "row") setTop(top + change)
+            else setLeft(left + change)
+        } else {
+            if (type == "row") setBottom(bottom + change)
+            else setRight(right + change)
+        }
     }
 
     private fun setLeft(left: Int) {
