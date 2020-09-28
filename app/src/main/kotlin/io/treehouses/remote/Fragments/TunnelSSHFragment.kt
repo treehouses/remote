@@ -17,10 +17,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
-import io.treehouses.remote.utils.match
+import io.treehouses.remote.utils.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -139,7 +136,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             }
             if(hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
             logD("dasda ${myPos.toString()}")
-            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0] + " " + hostsName!![myPos].split(":")[0]))
+            val portName = TunnelUtils.getPortName(portsName, position)
+            val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
+            listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
             addPortButton!!.text = "deleting port ....."
             portList!!.isEnabled = false
             addPortButton!!.isEnabled = false
