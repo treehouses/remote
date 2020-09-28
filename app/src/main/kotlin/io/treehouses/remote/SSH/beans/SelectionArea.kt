@@ -103,13 +103,10 @@ class SelectionArea {
     }
 
     private fun changeAttr(type: String, change: Int) {
-        if (isSelectingOrigin) {
-            if (type == "row") setTop(top + change)
-            else setLeft(left + change)
-        } else {
-            if (type == "row") setBottom(bottom + change)
-            else setRight(right + change)
-        }
+        if (isSelectingOrigin && type == "row") setTop(top + change)
+        else if (isSelectingOrigin && type == "col") setLeft(left + change)
+        else if (type == "row") setBottom(bottom + change)
+        else setRight(right + change)
     }
 
     private fun setLeft(left: Int) {
