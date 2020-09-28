@@ -39,9 +39,14 @@ fun Any.logE(msg: String, e: Throwable? = null) {
 
 
 private fun logD(tag: String, msg: String) {
-    if (BuildConfig.DEBUG) Log.d(tag, msg)
+    log("d", tag, msg)
 }
 
 private fun logE(tag: String, msg: String) {
-    if (BuildConfig.DEBUG) Log.e(tag, msg)
+    log("e", tag, msg)
+}
+
+private fun log(type: String, tag: String, msg: String) {
+    if (BuildConfig.DEBUG && type == "e") Log.e(tag, msg)
+    else if (BuildConfig.DEBUG && type == "d") Log.d(tag, msg)
 }
