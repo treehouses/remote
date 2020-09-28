@@ -60,20 +60,30 @@ class SelectionArea {
     }
 
     fun decrementRow() {
-        if (isSelectingOrigin) setTop(top - 1) else setBottom(bottom - 1)
+        changeRow(-1)
     }
 
     fun incrementRow() {
-        if (isSelectingOrigin) setTop(top + 1) else setBottom(bottom + 1)
+        changeRow(1)
     }
 
-    fun setRow(row: Int) {
-        if (isSelectingOrigin) setTop(row) else setBottom(row)
+    private fun changeRow(change: Int) {
+        if (isSelectingOrigin) setTop(top + change) else setBottom(bottom + change)
     }
 
     private fun setTop(top: Int) {
-        bottom = checkBounds(top, maxRows)
-        this.top = bottom
+        setInverses("top", top, maxRows)
+    }
+
+    private fun setInverses(kind: String, value: Int, max: Int) {
+        val result = checkBounds(value, max)
+        if (kind == "top") {
+            bottom = result
+            this.top = bottom
+        } else {
+            right = result
+            this.left = right
+        }
     }
 
     fun getTop(): Int {
@@ -89,20 +99,19 @@ class SelectionArea {
     }
 
     fun decrementColumn() {
-        if (isSelectingOrigin) setLeft(left - 1) else setRight(right - 1)
+        changeColumn(-1)
     }
 
     fun incrementColumn() {
-        if (isSelectingOrigin) setLeft(left + 1) else setRight(right + 1)
+        changeColumn(1)
     }
 
-    fun setColumn(column: Int) {
-        if (isSelectingOrigin) setLeft(column) else setRight(column)
+    private fun changeColumn(change: Int) {
+        if (isSelectingOrigin) setLeft(left + change) else setRight(right + change)
     }
 
     private fun setLeft(left: Int) {
-        right = checkBounds(left, maxColumns)
-        this.left = right
+        setInverses("left", left, maxColumns)
     }
 
     fun getLeft(): Int {
