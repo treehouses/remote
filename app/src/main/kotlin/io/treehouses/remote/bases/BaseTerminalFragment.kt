@@ -92,13 +92,13 @@ open class BaseTerminalFragment : BaseFragment() {
     }
 
     protected fun checkStatus(mChatService: BluetoothChatService, mPingStatus: TextView, pingStatusButton: Button) {
-        val str1 = getString(R.string.bStatusConnected)
-        val str2 = getString(R.string.bStatusOffline)
+        val connectedStr = getString(R.string.bStatusConnected)
+        val offlineStr = getString(R.string.bStatusOffline)
         val connected = Constants.STATE_CONNECTED
         val none = Constants.STATE_NONE
         when (mChatService.state) {
-            connected -> updatePingStatus(mPingStatus, pingStatusButton, str1, Color.GREEN)
-            none -> updatePingStatus(mPingStatus, pingStatusButton, str2, Color.RED)
+            connected -> updatePingStatus(mPingStatus, pingStatusButton, connectedStr, Color.GREEN)
+            none -> updatePingStatus(mPingStatus, pingStatusButton, offlineStr, Color.RED)
             else -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusIdle), Color.YELLOW)
         }
     }
