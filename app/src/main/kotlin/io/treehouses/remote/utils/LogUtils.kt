@@ -47,6 +47,5 @@ private fun logE(tag: String, msg: String) {
 }
 
 private fun log(type: String, tag: String, msg: String) {
-    if (BuildConfig.DEBUG && type == "e") Log.e(tag, msg)
-    else if (BuildConfig.DEBUG && type == "d") Log.d(tag, msg)
+    Log::class.java.getMethod(type).invoke(null, tag, msg)
 }
