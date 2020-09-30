@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import io.treehouses.remote.adapter.ViewHolderSSHAllKeyRow
 import io.treehouses.remote.bases.FullScreenDialogFragment
@@ -20,7 +19,7 @@ import io.treehouses.remote.callback.KeyMenuListener
 import io.treehouses.remote.databinding.DialogViewKeysBinding
 import io.treehouses.remote.databinding.RowKeyBinding
 import io.treehouses.remote.utils.KeyUtils
-import java.security.PublicKey
+import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 
 
 class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
@@ -71,10 +70,6 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
         }
     }
 
-    private fun getOpenSSH(pubkey: PubKeyBean) : String {
-        val decodedPublic = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public")
-        return PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
-    }
     private fun copyToClipboard(pubkey: PubKeyBean) {
         val openSSH = getOpenSSH(pubkey)
         val clipboard: ClipboardManager? = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
