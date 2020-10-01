@@ -25,7 +25,7 @@
         android:textColor="@color/daynight_textColor"
         android:textColorHint="@color/grey_to_light_grey"
         android:background="@drawable/rectangle_border"
-        android:hint="Server hostname"
+        android:hint="Server Hostname"
         android:padding="@dimen/padding_normal" />
 
     <EditText
@@ -36,7 +36,7 @@
         android:textColor="@color/daynight_textColor"
         android:textColorHint="@color/grey_to_light_grey"
         android:background="@drawable/rectangle_border"
-        android:hint="local address"
+        android:hint="Local Address"
         android:padding="@dimen/padding_normal" />
 
     <EditText
@@ -69,7 +69,7 @@
         android:textColor="@color/daynight_textColor"
         android:textColorHint="@color/grey_to_light_grey"
         android:background="@drawable/rectangle_border"
-        android:hint="password"
+        android:hint="Password"
         android:padding="@dimen/padding_normal" />
 
     <LinearLayout
