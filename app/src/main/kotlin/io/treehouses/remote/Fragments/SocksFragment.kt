@@ -64,7 +64,7 @@ class SocksFragment : BaseFragment() {
         val window = dialog.window
         window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-
+        window.setBackgroundDrawableResource(android.R.color.transparent)
     }
     private fun addPortListListener() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
