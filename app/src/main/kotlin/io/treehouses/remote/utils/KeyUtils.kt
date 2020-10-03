@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.google.gson.*
 import com.trilead.ssh2.KnownHosts
+import io.treehouses.remote.SSH.PubKeyUtils
 import io.treehouses.remote.SSH.beans.KnownHostBean
 import io.treehouses.remote.SSH.beans.PubKeyBean
 import java.lang.reflect.Type
+import java.security.KeyPairGenerator
+import java.security.PublicKey
 import java.util.*
 
 
@@ -117,4 +120,23 @@ object KeyUtils {
         PreferenceManager.getDefaultSharedPreferences(context).edit().remove(hostNamePort).apply()
     }
 
+    fun getOpenSSH(pubkey: PubKeyBean) : String {
+        val decodedPublic = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public")
+        return PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
+    }
+
+    fun createSmartConnectKey(context: Context): PubKeyBean {
+        val key = generateSmartConnectKey("SmartConnectKey", "RSA", "", 2048)
+        saveKey(context, key)
+        return key
+    }
+
+    private fun generateSmartConnectKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
+        val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
+            initialize(bitSize)
+        }.generateKeyPair()
+        val encPrivate = PubKeyUtils.getEncodedPrivate(keyPair.private, password)
+        val pubEncoded = keyPair.public.encoded
+        return PubKeyBean(name, algorithm, encPrivate, pubEncoded)
+    }
 }

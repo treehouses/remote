@@ -50,7 +50,7 @@ open class BaseTerminalView(context: Context, bridge: TerminalBridge, pager: Ter
     }
 
 
-    override fun onFontSizeChanged(sizeDp: Float) {}
+    override fun onFontSizeChanged(size: Float) {}
 
 
     init {
