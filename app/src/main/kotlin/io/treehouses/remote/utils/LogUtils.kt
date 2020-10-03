@@ -6,7 +6,7 @@ import io.treehouses.remote.BuildConfig
 
 object LogUtils {
     fun mOffline() {
-        if (BuildConfig.DEBUG) Log.e("STATUS", "OFFLINE")
+        logE("STATUS", "OFFLINE")
     }
 
     fun mIdle() {
@@ -47,5 +47,6 @@ private fun logE(tag: String, msg: String) {
 }
 
 private fun log(type: String, tag: String, msg: String) {
-    Log::class.java.getMethod(type).invoke(null, tag, msg)
+    if (BuildConfig.DEBUG)
+        Log::class.java.getMethod(type, String::class.java, String::class.java).invoke(null, tag, msg)
 }
