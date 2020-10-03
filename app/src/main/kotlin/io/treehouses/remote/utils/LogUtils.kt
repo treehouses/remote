@@ -10,17 +10,15 @@ object LogUtils {
     }
 
     fun mIdle() {
-        if (BuildConfig.DEBUG) Log.e("STATUS", "IDLE")
+        logE("STATUS", "IDLE")
     }
 
     fun mConnect() {
-        if (BuildConfig.DEBUG) Log.e("STATUS", "CONNECTED")
+        logE("STATUS", "CONNECTED")
     }
 
     fun log(message: String?) {
-        if (BuildConfig.DEBUG) {
-            Log.d("TREEHOUSES ", message!!)
-        }
+        logD("TREEHOUSES", message!!)
     }
 
     fun writeMsg(msg: Message) {
