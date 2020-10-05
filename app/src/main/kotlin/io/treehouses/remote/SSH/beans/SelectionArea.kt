@@ -42,14 +42,14 @@ class SelectionArea {
         isSelectingOrigin = true
     }
 
-    /**
-     * @param columns
-     * @param rows
-     */
-    fun setBounds(columns: Int, rows: Int) {
-        maxColumns = columns - 1
-        maxRows = rows - 1
-    }
+//    /**
+//     * @param columns
+//     * @param rows
+//     */
+//    fun setBounds(columns: Int, rows: Int) {
+//        maxColumns = columns - 1
+//        maxRows = rows - 1
+//    }
 
     private fun checkBounds(value: Int, max: Int): Int {
         return if (value < 0) 0 else if (value > max) max else value
@@ -60,20 +60,26 @@ class SelectionArea {
     }
 
     fun decrementRow() {
-        if (isSelectingOrigin) setTop(top - 1) else setBottom(bottom - 1)
+        changeAttr("row", -1)
     }
 
     fun incrementRow() {
-        if (isSelectingOrigin) setTop(top + 1) else setBottom(bottom + 1)
-    }
-
-    fun setRow(row: Int) {
-        if (isSelectingOrigin) setTop(row) else setBottom(row)
+        changeAttr("row", 1)
     }
 
     private fun setTop(top: Int) {
-        bottom = checkBounds(top, maxRows)
-        this.top = bottom
+        setInverses("top", top, maxRows)
+    }
+
+    private fun setInverses(kind: String, value: Int, max: Int) {
+        val result = checkBounds(value, max)
+        if (kind == "top") {
+            bottom = result
+            this.top = bottom
+        } else {
+            right = result
+            this.left = right
+        }
     }
 
     fun getTop(): Int {
@@ -89,20 +95,22 @@ class SelectionArea {
     }
 
     fun decrementColumn() {
-        if (isSelectingOrigin) setLeft(left - 1) else setRight(right - 1)
+        changeAttr("col", -1)
     }
 
     fun incrementColumn() {
-        if (isSelectingOrigin) setLeft(left + 1) else setRight(right + 1)
+        changeAttr("col", 1)
     }
 
-    fun setColumn(column: Int) {
-        if (isSelectingOrigin) setLeft(column) else setRight(column)
+    private fun changeAttr(type: String, change: Int) {
+        if (isSelectingOrigin && type == "row") setTop(top + change)
+        else if (isSelectingOrigin && type == "col") setLeft(left + change)
+        else if (type == "row") setBottom(bottom + change)
+        else setRight(right + change)
     }
 
     private fun setLeft(left: Int) {
-        right = checkBounds(left, maxColumns)
-        this.left = right
+        setInverses("left", left, maxColumns)
     }
 
     fun getLeft(): Int {
