@@ -60,7 +60,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     }
 
     private fun openBluetoothFile() {
-        listener.openCallFragment(ShowBluetoothFile())
+        listener.openCallFragment(ShowBluetoothFileFragment())
     }
 
     override fun onAttach(context: Context) {

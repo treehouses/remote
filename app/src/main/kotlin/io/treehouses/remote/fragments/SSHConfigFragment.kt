@@ -24,7 +24,7 @@ import io.treehouses.remote.utils.Utils.toast
 import io.treehouses.remote.utils.logD
 
 
-class SSHConfig : BaseSSHConfig() {
+class SSHConfigFragment : BaseSSHConfig() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogSshBinding.inflate(inflater, container, false)

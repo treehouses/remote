@@ -121,7 +121,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
             when (id) {
                 R.id.menu_about -> openCallFragment(AboutFragment())
                 R.id.menu_home -> openCallFragment(HomeFragment())
-                R.id.menu_ssh -> openCallFragment(SSHConfig())
+                R.id.menu_ssh -> openCallFragment(SSHConfigFragment())
             }
         }
         title = item.title; currentTitle = item.title.toString()
@@ -139,7 +139,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
             R.id.menu_about -> AboutFragment()
             R.id.menu_status -> StatusFragment()
             R.id.menu_tunnel2 -> SSHTunnelFragment()
-            R.id.menu_ssh -> SSHConfig()
+            R.id.menu_ssh -> SSHConfigFragment()
             else -> HomeFragment()
         }
 

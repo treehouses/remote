@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ShowBluetoothFile : Fragment() {
+class ShowBluetoothFileFragment : Fragment() {
     private lateinit var bluetoothBind : FragmentShowBluetoothFileBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
