@@ -13,7 +13,7 @@ import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.ssh.interfaces.OnHostStatusChangedListener
 import io.treehouses.remote.views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
-import io.treehouses.remote.callback.RVButtonClick
+import io.treehouses.remote.callback.RVButtonClickListener
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
@@ -21,7 +21,7 @@ import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
 
-open class BaseSSHConfig: BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
+open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusChangedListener {
     protected val sshPattern = Pattern.compile("^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
     protected lateinit var bind: DialogSshBinding
     protected lateinit var pastHosts: List<HostBean>

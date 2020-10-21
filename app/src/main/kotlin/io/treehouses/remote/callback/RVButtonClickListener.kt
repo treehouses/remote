@@ -1,5 +1,5 @@
 package io.treehouses.remote.callback
 
-interface RVButtonClick {
+interface RVButtonClickListener {
     fun onButtonClick(position: Int)
 }

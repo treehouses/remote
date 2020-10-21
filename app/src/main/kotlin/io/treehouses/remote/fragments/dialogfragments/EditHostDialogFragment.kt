@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import io.treehouses.remote.callback.FragmentDialogInterface
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.bases.BaseTerminalBridge

@@ -2,7 +2,7 @@ package io.treehouses.remote.callback
 
 import io.treehouses.remote.pojo.ServiceInfo
 
-interface ServiceAction {
+interface ServiceActionListener {
     fun onClickInstall(s: ServiceInfo?)
     fun onClickStart(s: ServiceInfo?)
     fun onClickLink(s: ServiceInfo?)

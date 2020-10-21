@@ -1,4 +1,4 @@
-package io.treehouses.remote.callback
+package io.treehouses.remote.interfaces
 
 import android.app.AlertDialog
 import android.content.Context

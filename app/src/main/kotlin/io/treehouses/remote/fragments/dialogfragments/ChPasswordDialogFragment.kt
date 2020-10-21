@@ -10,7 +10,7 @@ import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import io.treehouses.remote.fragments.TextBoxValidation
-import io.treehouses.remote.callback.FragmentDialogInterface
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ChpassDialogBinding
 import io.treehouses.remote.utils.logD

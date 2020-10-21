@@ -11,13 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.caverock.androidsvg.SVG
-import io.treehouses.remote.callback.ServiceAction
+import io.treehouses.remote.callback.ServiceActionListener
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.logD
 
 class ServiceCardFragment : Fragment(), View.OnClickListener {
-    private var actionListener: ServiceAction? = null
+    private var actionListener: ServiceActionListener? = null
     private var binding: ServiceCardBinding? = null
     private lateinit var serviceData: ServiceInfo
 
@@ -137,7 +137,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        actionListener = parentFragment as ServiceAction?
+        actionListener = parentFragment as ServiceActionListener?
     }
 
 }
