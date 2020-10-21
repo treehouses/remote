@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments.dialogfragments.BottomSheetDialogs
+package io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs
 
 import android.app.Activity
 import android.content.Intent
