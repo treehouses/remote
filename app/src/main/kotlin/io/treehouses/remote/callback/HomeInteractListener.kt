@@ -1,7 +1,7 @@
 package io.treehouses.remote.callback
 
 import androidx.fragment.app.Fragment
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 
 interface HomeInteractListener {
     fun sendMessage(s: String)

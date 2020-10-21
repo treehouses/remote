@@ -36,7 +36,7 @@
             android:text="Socks"/>
     </com.google.android.material.tabs.TabLayout>
 
-    <io.treehouses.remote.Views.TunnelViewPager
+    <io.treehouses.remote.views.TunnelViewPager
         android:id="@+id/tab_viewpager"
     android:layout_width="0dp"
     android:layout_height="0dp"
@@ -45,7 +45,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/tab_layout" >
 
-    </io.treehouses.remote.Views.TunnelViewPager>
+    </io.treehouses.remote.views.TunnelViewPager>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

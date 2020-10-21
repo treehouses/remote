@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.provider.Settings
 import android.text.ClipboardManager
-import io.treehouses.remote.SSH.Terminal.PatternHolder
-import io.treehouses.remote.SSH.Terminal.TerminalView
+import io.treehouses.remote.ssh.terminal.PatternHolder
+import io.treehouses.remote.ssh.terminal.TerminalView
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import java.util.*

@@ -11,8 +11,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
-import io.treehouses.remote.Fragments.*
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.fragments.*
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback

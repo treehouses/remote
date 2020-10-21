@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
-import io.treehouses.remote.SSH.Terminal.TerminalManager
-import io.treehouses.remote.SSH.beans.HostBean
-import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
-import io.treehouses.remote.Views.RecyclerViewClickListener
+import io.treehouses.remote.fragments.dialogFragments.EditHostDialog
+import io.treehouses.remote.ssh.terminal.TerminalManager
+import io.treehouses.remote.ssh.beans.HostBean
+import io.treehouses.remote.ssh.interfaces.OnHostStatusChangedListener
+import io.treehouses.remote.views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
 import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.DialogSshBinding

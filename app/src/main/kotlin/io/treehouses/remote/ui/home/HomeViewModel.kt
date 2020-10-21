@@ -3,13 +3,12 @@ package io.treehouses.remote.ui.home
 import android.app.Application
 import android.bluetooth.BluetoothDevice
 import android.os.Message
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
-import io.treehouses.remote.Network.ParseDbService
+import io.treehouses.remote.network.ParseDbService
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.NetworkProfile
@@ -63,7 +62,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
 
     /**
      * Bluetooth device to connect to. Selected from the RPIDialogFragment
-     * @see io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
+     * @see io.treehouses.remote.fragments.dialogFragments.RPIDialogFragment
      */
     var device: BluetoothDevice? = null
 

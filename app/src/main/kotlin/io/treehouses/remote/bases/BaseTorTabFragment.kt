@@ -9,7 +9,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.ListView
 import android.widget.Switch
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding

@@ -16,10 +16,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
-import io.treehouses.remote.Fragments.CommunityFragment
-import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
-import io.treehouses.remote.Fragments.DiscoverFragment
-import io.treehouses.remote.Fragments.SettingsFragment
+import io.treehouses.remote.fragments.CommunityFragment
+import io.treehouses.remote.fragments.dialogFragments.FeedbackDialogFragment
+import io.treehouses.remote.fragments.DiscoverFragment
+import io.treehouses.remote.fragments.SettingsFragment
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.ui.home.HomeFragment

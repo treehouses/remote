@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:textColor="@color/daynight_textColor"
 
-        tools:context=".Fragments.AboutFragment">
+        tools:context=".fragments.AboutFragment">
 
         <Button
             android:id="@+id/give_feedback"

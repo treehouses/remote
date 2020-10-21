@@ -2,7 +2,7 @@ package io.treehouses.remote.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import io.treehouses.remote.SSH.beans.HostBean
+import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.callback.RVButtonClick
 import io.treehouses.remote.databinding.RowSshBinding
 
