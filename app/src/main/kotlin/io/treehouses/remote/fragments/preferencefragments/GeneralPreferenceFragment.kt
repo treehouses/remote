@@ -11,7 +11,7 @@ import io.treehouses.remote.ui.services.ServicesViewModel
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SettingsUtils
 
-class GeneralPreference: BasePreferenceFragment() {
+class GeneralPreferenceFragment: BasePreferenceFragment() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.general_preferences, rootKey)

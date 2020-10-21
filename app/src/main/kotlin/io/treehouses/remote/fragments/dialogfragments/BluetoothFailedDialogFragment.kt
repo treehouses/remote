@@ -13,7 +13,7 @@ import io.treehouses.remote.adapter.BluetoothTroubleshootAdapter
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogBluetoothTroubleshootingBinding
 
-class BluetoothFailedDialog : FullScreenDialogFragment() {
+class BluetoothFailedDialogFragment : FullScreenDialogFragment() {
     lateinit var bind : DialogBluetoothTroubleshootingBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogBluetoothTroubleshootingBinding.inflate(inflater, container, false)

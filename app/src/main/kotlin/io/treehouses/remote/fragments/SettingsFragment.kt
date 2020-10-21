@@ -8,8 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import io.treehouses.remote.fragments.preferencefragments.GeneralPreference
-import io.treehouses.remote.fragments.preferencefragments.UserCustomizationPreference
+import io.treehouses.remote.fragments.preferencefragments.GeneralPreferenceFragment
+import io.treehouses.remote.fragments.preferencefragments.UserCustomizationPreferenceFragment
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.SettingsUtils
@@ -46,8 +46,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
     override fun onPreferenceClick(preference: Preference): Boolean {
         when (preference.key) {
             "bluetooth_file" -> openBluetoothFile()
-            "general" -> openFragment(GeneralPreference())
-            "user_customization" -> openFragment(UserCustomizationPreference())
+            "general" -> openFragment(GeneralPreferenceFragment())
+            "user_customization" -> openFragment(UserCustomizationPreferenceFragment())
         }
         return false
     }

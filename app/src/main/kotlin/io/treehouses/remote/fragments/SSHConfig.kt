@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogfragments.SSHAllKeys
-import io.treehouses.remote.fragments.dialogfragments.SSHKeyGen
+import io.treehouses.remote.fragments.dialogfragments.SSHAllKeyFragment
+import io.treehouses.remote.fragments.dialogfragments.SSHKeyGenFragment
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.sshconsole.SSHConsole
@@ -44,13 +44,13 @@ class SSHConfig : BaseSSHConfig() {
             connect(uriString, false)
         }
         setUpAdapter()
-        bind.generateKeys.setOnClickListener { SSHKeyGen().show(childFragmentManager, "GenerateKey") }
+        bind.generateKeys.setOnClickListener { SSHKeyGenFragment().show(childFragmentManager, "GenerateKey") }
         bind.smartConnect.setOnClickListener {
             val shouldConnect = checkForSmartConnectKey()
             var uriString = bind.sshTextInput.text.toString()
             if (shouldConnect) connect(uriString, true)
         }
-        bind.showKeys.setOnClickListener { SSHAllKeys().show(childFragmentManager, "AllKeys") }
+        bind.showKeys.setOnClickListener { SSHAllKeyFragment().show(childFragmentManager, "AllKeys") }
     }
 
     private fun checkForSmartConnectKey(): Boolean {

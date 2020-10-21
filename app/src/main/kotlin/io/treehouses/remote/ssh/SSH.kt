@@ -3,7 +3,7 @@ package io.treehouses.remote.ssh
 import com.trilead.ssh2.ChannelCondition
 import com.trilead.ssh2.Connection
 import com.trilead.ssh2.ConnectionInfo
-import io.treehouses.remote.fragments.dialogfragments.EditHostDialog
+import io.treehouses.remote.fragments.dialogfragments.EditHostDialogFragment
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.terminal.TerminalBridge
 import io.treehouses.remote.ssh.terminal.TerminalManager
@@ -144,7 +144,7 @@ class SSH: BaseSSH {
 
                 // if explicit pubkey defined for this host, then prompt for password as needed
                 // otherwise just try all in-memory keys held in terminalmanager
-                if (pubkeyId.isEmpty() || pubkeyId == EditHostDialog.NO_KEY) tryInMemKeys(pubkeyId)
+                if (pubkeyId.isEmpty() || pubkeyId == EditHostDialogFragment.NO_KEY) tryInMemKeys(pubkeyId)
                 else promptForPw(pubkeyId)
                 pubkeysExhausted = true
             } else if (interactiveCanContinue && connection!!.isAuthMethodAvailable(host!!.username, AUTH_KEYBOARDINTERACTIVE)) {

@@ -21,7 +21,7 @@ import io.treehouses.remote.pojo.HelpCommand
 import org.json.JSONObject
 
 
-class HelpDialog : FullScreenDialogFragment(), android.widget.SearchView.OnQueryTextListener {
+class HelpDialogFragment : FullScreenDialogFragment(), android.widget.SearchView.OnQueryTextListener {
     private lateinit var bind: DialogHelpBinding
     private var jsonString = ""
     private val items = mutableListOf<HelpCommand>()

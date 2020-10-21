@@ -22,7 +22,7 @@ import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 
 
-class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
+class SSHAllKeyFragment : FullScreenDialogFragment(), KeyMenuListener {
     private lateinit var bind : DialogViewKeysBinding
 
     private lateinit var allKeys: List<PubKeyBean>
@@ -57,7 +57,7 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHAllKeyRow {
                 return ViewHolderSSHAllKeyRow(
                         RowKeyBinding.inflate(LayoutInflater.from(parent.context),
-                                parent, false), this@SSHAllKeys)
+                                parent, false), this@SSHAllKeyFragment)
             }
 
             override fun getItemCount(): Int {
@@ -89,9 +89,9 @@ class SSHAllKeys : FullScreenDialogFragment(), KeyMenuListener {
     }
 
     override fun onDelete(position: Int) {
-        val dialog = DeleteSSHKey().apply {
+        val dialog = DeleteSSHKeyFragment().apply {
             arguments = Bundle().apply {
-                putString(DeleteSSHKey.KEY_TO_DELETE, allKeys[position].nickname)
+                putString(DeleteSSHKeyFragment.KEY_TO_DELETE, allKeys[position].nickname)
             }
         }
         dialog.setOnDismissListener(DialogInterface.OnDismissListener { setUpKeys() })

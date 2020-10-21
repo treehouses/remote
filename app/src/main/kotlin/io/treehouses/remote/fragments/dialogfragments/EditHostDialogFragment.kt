@@ -18,7 +18,7 @@ import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.logD
 
-class EditHostDialog : FullScreenDialogFragment(), FragmentDialogInterface {
+class EditHostDialogFragment : FullScreenDialogFragment(), FragmentDialogInterface {
     private lateinit var bind : EditHostBinding
     private lateinit var host: HostBean
     private lateinit var initialHostUri: String

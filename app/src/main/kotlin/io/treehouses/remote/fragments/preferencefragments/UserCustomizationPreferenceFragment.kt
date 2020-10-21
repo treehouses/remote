@@ -9,7 +9,7 @@ import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.SettingsUtils
 
-class UserCustomizationPreference: BasePreferenceFragment() {
+class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.user_customization_preferences, rootKey)

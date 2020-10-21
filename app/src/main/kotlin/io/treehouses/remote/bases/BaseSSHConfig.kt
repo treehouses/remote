@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.treehouses.remote.fragments.dialogfragments.EditHostDialog
+import io.treehouses.remote.fragments.dialogfragments.EditHostDialogFragment
 import io.treehouses.remote.ssh.terminal.TerminalManager
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.ssh.interfaces.OnHostStatusChangedListener
@@ -90,9 +90,9 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClick, OnHostStatusChangedList
     }
 
     override fun onButtonClick(position: Int) {
-        val edit = EditHostDialog()
+        val edit = EditHostDialogFragment()
         edit.setOnDismissListener(DialogInterface.OnDismissListener { setUpAdapter() })
-        edit.arguments = Bundle().apply { putString(EditHostDialog.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
+        edit.arguments = Bundle().apply { putString(EditHostDialogFragment.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
         edit.show(childFragmentManager, "EditHost")
     }
 

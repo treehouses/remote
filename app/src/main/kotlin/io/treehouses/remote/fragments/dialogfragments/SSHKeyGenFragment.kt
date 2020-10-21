@@ -14,7 +14,7 @@ import io.treehouses.remote.bases.BaseSSHKeyGen
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
 
-class SSHKeyGen: BaseSSHKeyGen() {
+class SSHKeyGenFragment: BaseSSHKeyGen() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = KeysDialogBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)

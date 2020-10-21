@@ -11,7 +11,7 @@ import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.databinding.DialogDeleteSshKeyBinding
 import io.treehouses.remote.utils.KeyUtils
 
-class DeleteSSHKey : FullScreenDialogFragment() {
+class DeleteSSHKeyFragment : FullScreenDialogFragment() {
     companion object {
         const val KEY_TO_DELETE = "KEY_TO_DELETE"
     }

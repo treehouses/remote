@@ -23,7 +23,7 @@ import io.treehouses.remote.*
 import io.treehouses.remote.BaseInitialActivity.Companion.instance
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.fragments.AboutFragment
-import io.treehouses.remote.fragments.dialogfragments.BluetoothFailedDialog
+import io.treehouses.remote.fragments.dialogfragments.BluetoothFailedDialogFragment
 import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
 import io.treehouses.remote.fragments.TerminalFragment
 import io.treehouses.remote.adapter.ProfilesListAdapter
@@ -94,8 +94,8 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.errorConnecting.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             connectionDialog?.dismiss()
-            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialog.DONT_SHOW_DIALOG, false)
-            if (!noDialog && viewModel.device != null) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
+            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialogFragment.DONT_SHOW_DIALOG, false)
+            if (!noDialog && viewModel.device != null) BluetoothFailedDialogFragment().show(childFragmentManager, "ERROR")
             viewModel.errorConnecting.value = null
         })
     }
