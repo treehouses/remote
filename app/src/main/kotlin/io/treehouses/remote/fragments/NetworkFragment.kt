@@ -18,7 +18,7 @@ import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.Etherne
 import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.WifiBottomSheet
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
-import io.treehouses.remote.interfaces.FragmentDialogInterface
+import io.treehouses.remote.callback.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment

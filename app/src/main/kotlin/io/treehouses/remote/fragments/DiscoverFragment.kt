@@ -16,7 +16,7 @@ import android.widget.LinearLayout
 import com.parse.Parse.getApplicationContext
 import io.treehouses.remote.Constants
 import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
-import io.treehouses.remote.interfaces.FragmentDialogInterface
+import io.treehouses.remote.callback.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
