@@ -8,8 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import io.treehouses.remote.fragments.preferenceFragments.GeneralPreference
-import io.treehouses.remote.fragments.preferenceFragments.UserCustomizationPreference
+import io.treehouses.remote.fragments.preferencefragments.GeneralPreference
+import io.treehouses.remote.fragments.preferencefragments.UserCustomizationPreference
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.SettingsUtils

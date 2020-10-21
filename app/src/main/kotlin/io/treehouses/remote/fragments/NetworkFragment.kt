@@ -13,11 +13,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogFragments.BottomSheetDialogs.BridgeBottomSheet
-import io.treehouses.remote.fragments.dialogFragments.BottomSheetDialogs.EthernetBottomSheet
-import io.treehouses.remote.fragments.dialogFragments.BottomSheetDialogs.HotspotBottomSheet
-import io.treehouses.remote.fragments.dialogFragments.BottomSheetDialogs.WifiBottomSheet
-import io.treehouses.remote.fragments.dialogFragments.WifiDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.BottomSheetDialogs.BridgeBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.BottomSheetDialogs.EthernetBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.BottomSheetDialogs.HotspotBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.BottomSheetDialogs.WifiBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
 import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials

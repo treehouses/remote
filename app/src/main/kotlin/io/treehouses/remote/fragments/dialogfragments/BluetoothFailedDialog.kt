@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments.dialogFragments
+package io.treehouses.remote.fragments.dialogfragments
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

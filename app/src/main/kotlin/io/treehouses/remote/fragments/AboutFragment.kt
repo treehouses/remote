@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogFragments.FeedbackDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.FeedbackDialogFragment
 import io.treehouses.remote.R
 import java.text.SimpleDateFormat
 import java.util.*

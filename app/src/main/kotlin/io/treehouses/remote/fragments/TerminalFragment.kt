@@ -14,8 +14,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogFragments.AddCommandDialogFragment
-import io.treehouses.remote.fragments.dialogFragments.ChPasswordDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.AddCommandDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.ChPasswordDialogFragment
 import io.treehouses.remote.MainApplication.Companion.commandList
 import io.treehouses.remote.MainApplication.Companion.terminalList
 import io.treehouses.remote.network.BluetoothChatService

@@ -1,4 +1,4 @@
-package io.treehouses.remote.sshConsole
+package io.treehouses.remote.sshconsole
 
 import android.content.Context
 import android.content.Intent

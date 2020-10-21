@@ -23,8 +23,8 @@ import io.treehouses.remote.*
 import io.treehouses.remote.BaseInitialActivity.Companion.instance
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
 import io.treehouses.remote.fragments.AboutFragment
-import io.treehouses.remote.fragments.dialogFragments.BluetoothFailedDialog
-import io.treehouses.remote.fragments.dialogFragments.RPIDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.BluetoothFailedDialog
+import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
 import io.treehouses.remote.fragments.TerminalFragment
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.callback.NotificationCallback

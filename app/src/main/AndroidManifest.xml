@@ -48,7 +48,7 @@
             />
 
         <activity
-            android:name=".sshConsole.SSHConsole"
+            android:name=".sshconsole.SSHConsole"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat"

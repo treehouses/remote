@@ -10,11 +10,11 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogFragments.SSHAllKeys
-import io.treehouses.remote.fragments.dialogFragments.SSHKeyGen
+import io.treehouses.remote.fragments.dialogfragments.SSHAllKeys
+import io.treehouses.remote.fragments.dialogfragments.SSHKeyGen
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.beans.HostBean
-import io.treehouses.remote.sshConsole.SSHConsole
+import io.treehouses.remote.sshconsole.SSHConsole
 import io.treehouses.remote.bases.BaseSSHConfig
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.utils.KeyUtils

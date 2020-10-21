@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments.dialogFragments
+package io.treehouses.remote.fragments.dialogfragments
 
 import android.os.Bundle
 import android.text.Editable

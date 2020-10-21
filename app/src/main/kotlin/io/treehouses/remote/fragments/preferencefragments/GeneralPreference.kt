@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments.preferenceFragments
+package io.treehouses.remote.fragments.preferencefragments
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle

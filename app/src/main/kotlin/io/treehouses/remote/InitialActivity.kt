@@ -17,7 +17,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.fragments.CommunityFragment
-import io.treehouses.remote.fragments.dialogFragments.FeedbackDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.FeedbackDialogFragment
 import io.treehouses.remote.fragments.DiscoverFragment
 import io.treehouses.remote.fragments.SettingsFragment
 import io.treehouses.remote.callback.BackPressReceiver

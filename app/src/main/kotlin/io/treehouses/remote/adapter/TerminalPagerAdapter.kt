@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
-import io.treehouses.remote.sshConsole.BaseSSHConsole
+import io.treehouses.remote.sshconsole.BaseSSHConsole
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.terminal.TerminalBridge
 import io.treehouses.remote.ssh.terminal.TerminalView

@@ -62,7 +62,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
 
     /**
      * Bluetooth device to connect to. Selected from the RPIDialogFragment
-     * @see io.treehouses.remote.fragments.dialogFragments.RPIDialogFragment
+     * @see io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
      */
     var device: BluetoothDevice? = null
 

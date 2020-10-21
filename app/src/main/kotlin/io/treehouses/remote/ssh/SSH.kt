@@ -3,7 +3,7 @@ package io.treehouses.remote.ssh
 import com.trilead.ssh2.ChannelCondition
 import com.trilead.ssh2.Connection
 import com.trilead.ssh2.ConnectionInfo
-import io.treehouses.remote.fragments.dialogFragments.EditHostDialog
+import io.treehouses.remote.fragments.dialogfragments.EditHostDialog
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.terminal.TerminalBridge
 import io.treehouses.remote.ssh.terminal.TerminalManager

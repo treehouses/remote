@@ -14,7 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogFragments.HelpDialog
+import io.treehouses.remote.fragments.dialogfragments.HelpDialog
 import io.treehouses.remote.fragments.TerminalFragment
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R

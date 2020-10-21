@@ -1,4 +1,4 @@
-package io.treehouses.remote.sshConsole
+package io.treehouses.remote.sshconsole
 
 import android.annotation.TargetApi
 import android.content.pm.ActivityInfo
