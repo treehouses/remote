@@ -9,15 +9,12 @@ import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
-import io.treehouses.remote.bases.BaseFragment
 import com.google.gson.Gson
-import io.treehouses.remote.SSH.beans.HostBean
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
 import java.nio.charset.Charset
-import java.security.AccessController.getContext
 import java.security.MessageDigest
 import java.util.*
 import java.util.zip.DeflaterOutputStream

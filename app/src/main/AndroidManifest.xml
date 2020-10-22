@@ -43,12 +43,12 @@
         </activity>
 
         <service
-            android:name="io.treehouses.remote.SSH.Terminal.TerminalManager"
+            android:name="io.treehouses.remote.ssh.terminal.TerminalManager"
             android:configChanges="keyboardHidden|orientation"
             />
 
         <activity
-            android:name=".SSHConsole.SSHConsole"
+            android:name=".sshconsole.SSHConsole"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat"
@@ -66,7 +66,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <service
-            android:name=".Network.BluetoothChatService"
+            android:name=".network.BluetoothChatService"
             android:label="Bluetooth Connection"
             android:enabled="true">
         </service>

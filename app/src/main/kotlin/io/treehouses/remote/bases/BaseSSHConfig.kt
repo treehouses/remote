@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.treehouses.remote.Fragments.DialogFragments.EditHostDialog
-import io.treehouses.remote.SSH.Terminal.TerminalManager
-import io.treehouses.remote.SSH.beans.HostBean
-import io.treehouses.remote.SSH.interfaces.OnHostStatusChangedListener
-import io.treehouses.remote.Views.RecyclerViewClickListener
+import io.treehouses.remote.fragments.dialogfragments.EditHostDialogFragment
+import io.treehouses.remote.ssh.terminal.TerminalManager
+import io.treehouses.remote.ssh.beans.HostBean
+import io.treehouses.remote.ssh.interfaces.OnHostStatusChangedListener
+import io.treehouses.remote.views.RecyclerViewClickListener
 import io.treehouses.remote.adapter.ViewHolderSSHRow
-import io.treehouses.remote.callback.RVButtonClick
+import io.treehouses.remote.callback.RVButtonClickListener
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
@@ -21,7 +21,7 @@ import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
 
-open class BaseSSHConfig: BaseFragment(), RVButtonClick, OnHostStatusChangedListener {
+open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusChangedListener {
     protected val sshPattern = Pattern.compile("^(.+)@(([0-9a-z.-]+)|(\\[[a-f:0-9]+\\]))(:(\\d+))?$", Pattern.CASE_INSENSITIVE)
     protected lateinit var bind: DialogSshBinding
     protected lateinit var pastHosts: List<HostBean>
@@ -90,9 +90,9 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClick, OnHostStatusChangedList
     }
 
     override fun onButtonClick(position: Int) {
-        val edit = EditHostDialog()
+        val edit = EditHostDialogFragment()
         edit.setOnDismissListener(DialogInterface.OnDismissListener { setUpAdapter() })
-        edit.arguments = Bundle().apply { putString(EditHostDialog.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
+        edit.arguments = Bundle().apply { putString(EditHostDialogFragment.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
         edit.show(childFragmentManager, "EditHost")
     }
 

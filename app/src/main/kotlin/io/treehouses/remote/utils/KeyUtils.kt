@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.google.gson.*
 import com.trilead.ssh2.KnownHosts
-import io.treehouses.remote.SSH.PubKeyUtils
-import io.treehouses.remote.SSH.beans.KnownHostBean
-import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.ssh.PubKeyUtils
+import io.treehouses.remote.ssh.beans.KnownHostBean
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import java.lang.reflect.Type
 import java.security.KeyPairGenerator
 import java.security.PublicKey

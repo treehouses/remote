@@ -8,7 +8,7 @@ import android.widget.PopupMenu
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.callback.KeyMenuListener
 import io.treehouses.remote.databinding.RowKeyBinding
 

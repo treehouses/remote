@@ -9,12 +9,10 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
 import com.parse.Parse
-import io.treehouses.remote.Network.BluetoothChatService
-import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
