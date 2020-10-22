@@ -48,12 +48,13 @@ open class BaseStatusFragment : BaseFragment() {
         })
     }
 
-    fun receiveMessage(readMessage: String){
+    fun receiveMessage(readMessage: String, statInt : String){
         if (readMessage.startsWith("country=") || readMessage.contains("set to")) {
             val len = readMessage.length - 3
             val country = readMessage.substring(len).trim { it <= ' ' }
             bind.countryDisplay.setText(getCountryName(country))
             bind.countryDisplay.isEnabled = true
+            checkWifiStatus(statInt)
         } else if (readMessage.contains("Error when")) {
             bind.countryDisplay.setText("Try again")
             bind.countryDisplay.isEnabled = true
@@ -71,7 +72,7 @@ open class BaseStatusFragment : BaseFragment() {
 
     fun updateStatusPage(statusData: StatusData) {
         val res = statusData.status.trim().split(" ")
-        checkWifiStatus(statusData.internet)
+       // checkWifiStatus(statusData.internet)
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
         bind.imageText.text = String.format("Image Version: %s", res[2].substring(8))
         bind.deviceAddress.text = res[1]
