@@ -49,12 +49,13 @@ open class BaseStatusFragment : BaseFragment() {
         })
     }
 
-    fun receiveMessage(readMessage: String){
+    fun receiveMessage(readMessage: String, statInt : String){
         if (readMessage.startsWith("country=") || readMessage.contains("set to")) {
             val len = readMessage.length - 3
             val country = readMessage.substring(len).trim { it <= ' ' }
             bind.countryDisplay.setText(getCountryName(country))
             bind.countryDisplay.isEnabled = true
+            checkWifiStatus(statInt)
         } else if (readMessage.contains("Error when")) {
             bind.countryDisplay.setText("Try again")
             bind.countryDisplay.isEnabled = true
@@ -80,7 +81,7 @@ open class BaseStatusFragment : BaseFragment() {
 
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
-        checkWifiStatus(statusData.internet)
+   //     checkWifiStatus(statusData.internet)
 
         bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
