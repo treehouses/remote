@@ -4,9 +4,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
-import io.treehouses.remote.Fragments.SocksFragment
-import io.treehouses.remote.Fragments.TorTabFragment
-import io.treehouses.remote.Fragments.TunnelSSHFragment
+import io.treehouses.remote.fragments.SocksFragment
+import io.treehouses.remote.fragments.TorTabFragment
+import io.treehouses.remote.fragments.TunnelSSHFragment
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 

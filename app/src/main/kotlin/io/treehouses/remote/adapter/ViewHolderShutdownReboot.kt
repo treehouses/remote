@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.RadioGroup
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.ui.home.HomeFragment
@@ -46,11 +44,13 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
         }
 
         mChatService.updateHandler(mHandler)
+        val rebootCallback = { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
+        val shutdownCallback = { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device") }
         rebootBtn.setOnClickListener {
-            DialogUtils.createAlertDialog(context, "Reboot?", "Are you sure you want to reboot?") { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
+            DialogUtils.createAlertDialog(context, "Reboot?", "Are you sure you want to reboot?", rebootCallback)
         }
         shutdownBtn.setOnClickListener {
-            DialogUtils.createAlertDialog(context, "Shutdown?", "Are you sure you want to shutdown?") { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device") }
+            DialogUtils.createAlertDialog(context, "Shutdown?", "Are you sure you want to shutdown?", shutdownCallback)
         }
     }
 

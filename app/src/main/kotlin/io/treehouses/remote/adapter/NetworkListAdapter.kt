@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.pojo.NetworkListItem
@@ -54,11 +54,11 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
     }
 
     override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View {
-        val convertView: View?
-        convertView = inflater.inflate(R.layout.list_group, parent, false)
-        val listHeader = convertView.findViewById<TextView>(R.id.lblListHeader)
+        val newView: View?
+        newView = inflater.inflate(R.layout.list_group, parent, false)
+        val listHeader = newView.findViewById<TextView>(R.id.lblListHeader)
         listHeader.text = getGroup(i).toString()
-        return convertView
+        return newView
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -66,25 +66,25 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
 
         // Needs to recycle views instead of creating new ones each time.
         // if (convertView == null) creating bugs
-        val convertView: View?
+        val newView: View?
         if (views[i] != null) {
             return views[i]!!
         }
-        convertView = inflater.inflate(list[i].layout, parent, false)
+        newView = inflater.inflate(list[i].layout, parent, false)
         layout = list[i].layout
         position = i
         when (layout) {
-            R.layout.configure_shutdown_reboot -> ViewHolderShutdownReboot(convertView, context, listener!!)
-            R.layout.open_vnc -> ViewHolderVnc(convertView, context, listener!!)
-            R.layout.configure_tethering -> ViewHolderTether(convertView, listener!!, context)
-            R.layout.configure_ssh_key -> ViewHolderSSHKey(convertView, context, listener!!)
-            R.layout.configure_camera -> ViewHolderCamera(convertView, context, listener!!)
-            R.layout.configure_blocker -> ViewHolderBlocker(convertView, context, listener!!)
-            R.layout.configure_ssh2fa -> ViewHolderSSH2FA(convertView, context, listener!!)
+            R.layout.configure_shutdown_reboot -> ViewHolderShutdownReboot(newView, context, listener!!)
+            R.layout.open_vnc -> ViewHolderVnc(newView, context, listener!!)
+            R.layout.configure_tethering -> ViewHolderTether(newView, listener!!, context)
+            R.layout.configure_ssh_key -> ViewHolderSSHKey(newView, context, listener!!)
+            R.layout.configure_camera -> ViewHolderCamera(newView, context, listener!!)
+            R.layout.configure_blocker -> ViewHolderBlocker(newView, context, listener!!)
+            R.layout.configure_ssh2fa -> ViewHolderSSH2FA(newView, context, listener!!)
 
         }
-        views[i] = convertView
-        return convertView
+        views[i] = newView
+        return newView
     }
 
     override fun isChildSelectable(i: Int, i1: Int): Boolean {

@@ -22,13 +22,12 @@ import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.Ed25519Provider.Companion.insertIfNeeded
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalManager
-import io.treehouses.remote.SSH.beans.HostBean
-import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.ssh.Ed25519Provider.Companion.insertIfNeeded
+import io.treehouses.remote.ssh.terminal.TerminalBridge
+import io.treehouses.remote.ssh.terminal.TerminalManager
+import io.treehouses.remote.ssh.beans.HostBean
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.utils.KeyUtils
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
@@ -198,7 +197,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
         private fun continueConnecting(): Boolean {
             val prompt = manager!!.res!!.getString(R.string.prompt_continue_connecting)
-            return bridge!!.promptHelper!!.requestPrompt<Boolean>(null, prompt)!!
+            return bridge!!.promptHelper!!.requestPrompt<Boolean>(null, prompt, isBool = true)!!
         }
 
         override fun getKnownKeyAlgorithmsForHost(host: String, port: Int): List<String> {
@@ -207,7 +206,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
 
         override fun removeServerHostKey(host: String, port: Int, algorithm: String, hostKey: ByteArray) {
-            KeyUtils.removeKnownHost(manager!!.applicationContext, "$host:$port", algorithm, hostKey)
+            KeyUtils.removeKnownHost(manager!!.applicationContext, "$host:$port")
             logD("REMOVING HOST KEY For: $host:$port with algorithm: $algorithm")
         }
 
@@ -440,7 +439,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         val responses = arrayOfNulls<String>(numPrompts)
         for (i in 0 until numPrompts) {
             // request response from user for each prompt
-            responses[i] = bridge!!.promptHelper!!.requestPrompt(instruction, prompt[i])
+            responses[i] = bridge!!.promptHelper!!.requestPrompt<String>(instruction, prompt[i], isBool = false)
         }
         return responses
     }
@@ -500,7 +499,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
     protected fun promptForPubkeyUse(nickname: String?): Boolean {
         val result = bridge!!.promptHelper!!.requestPrompt<Boolean>(null,
-                manager!!.res!!.getString(R.string.prompt_allow_agent_to_use_key, nickname))
+                manager!!.res!!.getString(R.string.prompt_allow_agent_to_use_key, nickname), isBool = true)
         return result!!
     }
 

@@ -2,8 +2,8 @@ package io.treehouses.remote.callback
 
 import android.view.LayoutInflater
 import android.view.animation.Animation
-import io.treehouses.remote.SSH.Terminal.TerminalViewPager
-import io.treehouses.remote.SSH.Terminal.TerminalManager
+import io.treehouses.remote.ssh.terminal.TerminalViewPager
+import io.treehouses.remote.ssh.terminal.TerminalManager
 import android.os.Handler
 
 interface TerminalPager {

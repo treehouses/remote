@@ -27,14 +27,25 @@
         android:hint="user@hostname:port"
         android:padding="@dimen/padding_normal"
         android:textColorHint="@color/md_grey_500" />
+
     <Button
         android:id="@+id/connect_ssh"
-        android:layout_width="150dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/margin_large"
         android:background="@drawable/ripple"
         android:text="Connect"
+        android:textColor="@color/bg_white" />
+
+    <Button
+        android:id="@+id/smartConnect"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:background="@drawable/green_ripple"
+        android:text="Smart Connect"
         android:textColor="@color/bg_white" />
 
     <TextView

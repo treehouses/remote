@@ -16,10 +16,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
-import io.treehouses.remote.Fragments.CommunityFragment
-import io.treehouses.remote.Fragments.DialogFragments.FeedbackDialogFragment
-import io.treehouses.remote.Fragments.DiscoverFragment
-import io.treehouses.remote.Fragments.SettingsFragment
+import io.treehouses.remote.fragments.CommunityFragment
+import io.treehouses.remote.fragments.dialogfragments.FeedbackDialogFragment
+import io.treehouses.remote.fragments.DiscoverFragment
+import io.treehouses.remote.fragments.SettingsFragment
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.ui.home.HomeFragment
@@ -169,15 +169,20 @@ class InitialActivity : BaseInitialActivity() {
                 if (!preferences?.getBoolean("send_log", false)!!) {
                     val builder = DialogUtils.createAlertDialog(this@InitialActivity, "Sharing is Caring.", "The community map is only available with data sharing. " +
                             "Please enable data sharing to access this feature.", v).setCancelable(false)
-                    DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), { preferences!!.edit().putBoolean("send_log", true).apply() }, {MainApplication.showLogDialog = false })
+                    DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
+                        preferences!!.edit().putBoolean("send_log", true).apply()
+                        goToCommunity()
+                    }, {MainApplication.showLogDialog = false })
                 }
-                else {
-                    openCallFragment(CommunityFragment())
-                    title = getString(R.string.action_community)
-                }
+                else { goToCommunity() }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun goToCommunity() {
+        openCallFragment(CommunityFragment())
+        title = getString(R.string.action_community)
     }
 
     fun changeAppBar() {

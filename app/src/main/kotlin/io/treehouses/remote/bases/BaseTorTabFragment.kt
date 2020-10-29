@@ -9,11 +9,12 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.ListView
 import android.widget.Switch
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.TunnelUtils
 import java.util.ArrayList
 
 open class BaseTorTabFragment: BaseFragment() {
@@ -68,7 +69,7 @@ open class BaseTorTabFragment: BaseFragment() {
     protected fun promptDeletePort(position: Int) {
         DialogUtils.createAlertDialog(context, "Delete Port " + portsName!![position] + " ?")
         {
-            val msg = getString(R.string.TREEHOUSES_TOR_DELETE, portsName!![position].split(":".toRegex(), 2).toTypedArray()[0])
+            val msg = getString(R.string.TREEHOUSES_TOR_DELETE, TunnelUtils.getPortName(portsName, position))
             listener.sendMessage(msg)
             addPortButton!!.text = "Deleting port. Please wait..."
             portList!!.isEnabled = false

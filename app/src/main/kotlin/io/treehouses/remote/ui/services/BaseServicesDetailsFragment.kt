@@ -14,14 +14,14 @@ import io.treehouses.remote.R
 import io.treehouses.remote.adapter.ServiceCardAdapter
 import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.callback.ServiceAction
+import io.treehouses.remote.callback.ServiceActionListener
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.logD
 
-open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceAction {
+open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceActionListener {
 
     /**
      * Adapter for the spinner to select a service from dropdown
@@ -109,8 +109,9 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
      */
     override fun onClickLink(s: ServiceInfo?) {
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).setTitle("Select URL type").create()
+        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).create()
         alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        chooseBind.closeButton.setOnClickListener { alertDialog.dismiss() }
         chooseBind.localButton.setOnClickListener { viewModel.getLocalLink(s!!); alertDialog.dismiss() }
         chooseBind.torButton.setOnClickListener { viewModel.getTorLink(s!!); alertDialog.dismiss() }
         alertDialog.show()

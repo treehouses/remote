@@ -4,16 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
-import io.treehouses.remote.Network.BluetoothChatService
-import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.logE
 
 open class FragmentViewModel(application: Application) : AndroidViewModel(application) {

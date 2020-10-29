@@ -6,21 +6,19 @@ import io.treehouses.remote.BuildConfig
 
 object LogUtils {
     fun mOffline() {
-        if (BuildConfig.DEBUG) Log.e("STATUS", "OFFLINE")
+        logE("STATUS", "OFFLINE")
     }
 
     fun mIdle() {
-        if (BuildConfig.DEBUG) Log.e("STATUS", "IDLE")
+        logE("STATUS", "IDLE")
     }
 
     fun mConnect() {
-        if (BuildConfig.DEBUG) Log.e("STATUS", "CONNECTED")
+        logE("STATUS", "CONNECTED")
     }
 
     fun log(message: String?) {
-        if (BuildConfig.DEBUG) {
-            Log.d("TREEHOUSES ", message!!)
-        }
+        logD("TREEHOUSES", message!!)
     }
 
     fun writeMsg(msg: Message) {
@@ -34,14 +32,19 @@ fun Any.logD(msg: String) {
 }
 
 fun Any.logE(msg: String, e: Throwable? = null) {
-    logE(this.javaClass.simpleName, msg, e)
+    logE(this.javaClass.simpleName, msg)
 }
 
 
 private fun logD(tag: String, msg: String) {
-    if (BuildConfig.DEBUG) Log.d(tag, msg)
+    log("d", tag, msg)
 }
 
-private fun logE(tag: String, msg: String, e: Throwable? = null) {
-    if (BuildConfig.DEBUG) Log.e(tag, msg)
+private fun logE(tag: String, msg: String) {
+    log("e", tag, msg)
+}
+
+private fun log(type: String, tag: String, msg: String) {
+    if (BuildConfig.DEBUG)
+        Log::class.java.getMethod(type, String::class.java, String::class.java).invoke(null, tag, msg)
 }

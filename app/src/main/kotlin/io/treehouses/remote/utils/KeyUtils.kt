@@ -1,13 +1,15 @@
 package io.treehouses.remote.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.*
 import com.trilead.ssh2.KnownHosts
-import io.treehouses.remote.SSH.beans.KnownHostBean
-import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.ssh.PubKeyUtils
+import io.treehouses.remote.ssh.beans.KnownHostBean
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import java.lang.reflect.Type
+import java.security.KeyPairGenerator
+import java.security.PublicKey
 import java.util.*
 
 
@@ -113,9 +115,28 @@ object KeyUtils {
         return knownHosts
     }
 
-    fun removeKnownHost(context: Context, hostNamePort: String, algorithm: String, key: ByteArray) {
+    fun removeKnownHost(context: Context, hostNamePort: String) {
         SaveUtils.removeFromArrayList(context, ALL_KNOWN_HOSTS, hostNamePort)
         PreferenceManager.getDefaultSharedPreferences(context).edit().remove(hostNamePort).apply()
     }
 
+    fun getOpenSSH(pubkey: PubKeyBean) : String {
+        val decodedPublic = PubKeyUtils.decodeKey(pubkey.publicKey!!, pubkey.type, "public")
+        return PubKeyUtils.convertToOpenSSHFormat(decodedPublic as PublicKey, pubkey.nickname)
+    }
+
+    fun createSmartConnectKey(context: Context): PubKeyBean {
+        val key = generateSmartConnectKey("SmartConnectKey", "RSA", "", 2048)
+        saveKey(context, key)
+        return key
+    }
+
+    private fun generateSmartConnectKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
+        val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
+            initialize(bitSize)
+        }.generateKeyPair()
+        val encPrivate = PubKeyUtils.getEncodedPrivate(keyPair.private, password)
+        val pubEncoded = keyPair.public.encoded
+        return PubKeyBean(name, algorithm, encPrivate, pubEncoded)
+    }
 }

@@ -14,9 +14,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
-import io.treehouses.remote.Fragments.TerminalFragment
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.fragments.dialogfragments.HelpDialogFragment
+import io.treehouses.remote.fragments.TerminalFragment
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandsList
@@ -45,7 +45,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     protected lateinit var bind: ActivityTerminalFragmentBinding
 
-    fun handlerCaseWrite(TAG: String?, mConversationArrayAdapter: ArrayAdapter<String>?, msg: Message): String {
+    fun handlerCaseWrite(mConversationArrayAdapter: ArrayAdapter<String>?, msg: Message): String {
         val writeBuf = msg.obj as ByteArray
         // construct a string from the buffer
         val writeMessage = String(writeBuf)
@@ -92,10 +92,13 @@ open class BaseTerminalFragment : BaseFragment() {
     }
 
     protected fun checkStatus(mChatService: BluetoothChatService, mPingStatus: TextView, pingStatusButton: Button) {
+        val connectedStr = getString(R.string.bStatusConnected)
+        val offlineStr = getString(R.string.bStatusOffline)
+        val connected = Constants.STATE_CONNECTED
+        val none = Constants.STATE_NONE
         when (mChatService.state) {
-            Constants.STATE_CONNECTED -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusConnected), Color.GREEN)
-
-            Constants.STATE_NONE -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusOffline), Color.RED)
+            connected -> updatePingStatus(mPingStatus, pingStatusButton, connectedStr, Color.GREEN)
+            none -> updatePingStatus(mPingStatus, pingStatusButton, offlineStr, Color.RED)
             else -> updatePingStatus(mPingStatus, pingStatusButton, getString(R.string.bStatusIdle), Color.YELLOW)
         }
     }
@@ -231,7 +234,7 @@ open class BaseTerminalFragment : BaseFragment() {
     protected fun showHelpDialog(jsonString: String) {
         val b = Bundle()
         b.putString(Constants.JSON_STRING, jsonString)
-        val dialogFrag: DialogFragment = HelpDialog()
+        val dialogFrag: DialogFragment = HelpDialogFragment()
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
         dialogFrag.arguments = b
         dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "helpDialog")

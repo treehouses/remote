@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
-import io.treehouses.remote.Views.HelpViewHolder
+import io.treehouses.remote.views.HelpViewHolder
 import io.treehouses.remote.databinding.RowHelpBinding
 import io.treehouses.remote.pojo.HelpCommand
 

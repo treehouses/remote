@@ -19,16 +19,14 @@ package io.treehouses.remote.bases
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import android.text.ClipboardManager
-import android.util.Log
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
-import io.treehouses.remote.Views.terminal.VDUBuffer
-import io.treehouses.remote.Views.terminal.vt320
+import io.treehouses.remote.views.terminal.VDUBuffer
+import io.treehouses.remote.views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalManager
-import io.treehouses.remote.SSH.beans.SelectionArea
-import io.treehouses.remote.utils.LogUtils
+import io.treehouses.remote.ssh.terminal.TerminalBridge
+import io.treehouses.remote.ssh.terminal.TerminalManager
+import io.treehouses.remote.ssh.beans.SelectionArea
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import java.io.IOException
@@ -207,11 +205,11 @@ open class BaseTerminalKeyListener(var manager: TerminalManager?,
         try {
             bridge.transport!!.write(0x09)
         } catch (e: IOException) {
-            handleProblem(e, "Problem while trying to send TAB press.")
+            handleProblem(e)
         }
     }
 
-    fun handleProblem(e: IOException, message: String) {
+    fun handleProblem(e: IOException) {
         logD("message $e")
         try {
             bridge.transport!!.flush()

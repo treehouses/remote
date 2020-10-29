@@ -22,16 +22,17 @@ import androidx.preference.PreferenceManager
 import io.treehouses.remote.*
 import io.treehouses.remote.BaseInitialActivity.Companion.instance
 import io.treehouses.remote.Constants.REQUEST_ENABLE_BT
-import io.treehouses.remote.Fragments.AboutFragment
-import io.treehouses.remote.Fragments.DialogFragments.BluetoothFailedDialog
-import io.treehouses.remote.Fragments.DialogFragments.RPIDialogFragment
-import io.treehouses.remote.Fragments.TerminalFragment
+import io.treehouses.remote.fragments.AboutFragment
+import io.treehouses.remote.fragments.dialogfragments.BluetoothFailedDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
+import io.treehouses.remote.fragments.TerminalFragment
 import io.treehouses.remote.adapter.ProfilesListAdapter
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
 import io.treehouses.remote.utils.logE
 
@@ -93,8 +94,8 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.errorConnecting.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             connectionDialog?.dismiss()
-            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialog.DONT_SHOW_DIALOG, false)
-            if (!noDialog && viewModel.device != null) BluetoothFailedDialog().show(childFragmentManager, "ERROR")
+            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialogFragment.DONT_SHOW_DIALOG, false)
+            if (!noDialog && viewModel.device != null) BluetoothFailedDialogFragment().show(childFragmentManager, "ERROR")
             viewModel.errorConnecting.value = null
         })
     }
@@ -302,10 +303,8 @@ class HomeFragment : BaseHomeFragment() {
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        notificationListener = try { getContext() as NotificationCallback?
-        } catch (e: ClassCastException) {
-            throw ClassCastException("Activity must implement NotificationListener")
-        }
+        val notificationCallback = Utils.attach(context)
+        notificationListener = notificationCallback
     }
 
     /**
