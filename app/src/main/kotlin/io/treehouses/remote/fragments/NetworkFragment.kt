@@ -25,9 +25,12 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.*
+import kotlinx.android.synthetic.main.activity_network_fragment.*
+import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
+    var lastCommand = ""
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
         val toastMsg = "Network Mode retrieved"
@@ -42,6 +45,18 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        val msg = getString(R.string.TREEHOUSES_NETWORKMODE_INFO);
+//        val toastMsg = "Network IP retrieved"
+//        Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG);
+
+        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+        var ip = msg.substringAfter("ip: ").substringBefore(", has")
+
+        if(ip == "") {
+            ip = "N/A"
+        }
+        networkIP.text = "IP Address: " + ip
         //Listeners
         binding.networkWifi.setOnClickListener(this)
         binding.networkHotspot.setOnClickListener(this)
@@ -76,6 +91,12 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
 
     private fun updateNetworkText(mode: String) {
         binding.currentNetworkMode.text = "Current Network Mode: $mode"
+    }
+
+    fun writeToRPI(ping: String) {
+        lastCommand = ping
+        val pSend = ping.toByteArray()
+        mChatService.write(pSend)
     }
 
     private fun performAction(output: String) {
