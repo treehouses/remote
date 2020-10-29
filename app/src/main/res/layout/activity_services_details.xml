@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <io.treehouses.remote.Views.ServiceViewPager
+    <io.treehouses.remote.views.ServiceViewPager
         android:id="@+id/services_cards"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pickService">
 
-    </io.treehouses.remote.Views.ServiceViewPager>
+    </io.treehouses.remote.views.ServiceViewPager>
 
     <ProgressBar
         android:id="@+id/progressBar"

@@ -1,12 +1,11 @@
 package io.treehouses.remote.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.R
 import io.treehouses.remote.ui.home.HomeFragment
-import io.treehouses.remote.SSH.beans.HostBean
+import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.pojo.CommandListItem
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.Utils.convertToObject

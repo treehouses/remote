@@ -22,11 +22,11 @@ import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.Ed25519Provider.Companion.insertIfNeeded
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalManager
-import io.treehouses.remote.SSH.beans.HostBean
-import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.ssh.Ed25519Provider.Companion.insertIfNeeded
+import io.treehouses.remote.ssh.terminal.TerminalBridge
+import io.treehouses.remote.ssh.terminal.TerminalManager
+import io.treehouses.remote.ssh.beans.HostBean
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE

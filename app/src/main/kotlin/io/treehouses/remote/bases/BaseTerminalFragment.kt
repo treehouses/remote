@@ -14,9 +14,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Fragments.DialogFragments.HelpDialog
-import io.treehouses.remote.Fragments.TerminalFragment
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.fragments.dialogfragments.HelpDialogFragment
+import io.treehouses.remote.fragments.TerminalFragment
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandsList
@@ -234,7 +234,7 @@ open class BaseTerminalFragment : BaseFragment() {
     protected fun showHelpDialog(jsonString: String) {
         val b = Bundle()
         b.putString(Constants.JSON_STRING, jsonString)
-        val dialogFrag: DialogFragment = HelpDialog()
+        val dialogFrag: DialogFragment = HelpDialogFragment()
         dialogFrag.setTargetFragment(this, Constants.REQUEST_DIALOG_FRAGMENT)
         dialogFrag.arguments = b
         dialogFrag.show(requireActivity().supportFragmentManager.beginTransaction(), "helpDialog")

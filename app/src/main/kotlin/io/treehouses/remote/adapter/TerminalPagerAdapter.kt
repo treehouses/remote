@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
-import io.treehouses.remote.SSHConsole.BaseSSHConsole
+import io.treehouses.remote.sshconsole.BaseSSHConsole
 import io.treehouses.remote.R
-import io.treehouses.remote.SSH.Terminal.TerminalBridge
-import io.treehouses.remote.SSH.Terminal.TerminalView
+import io.treehouses.remote.ssh.terminal.TerminalBridge
+import io.treehouses.remote.ssh.terminal.TerminalView
 import io.treehouses.remote.callback.TerminalPager
 
 class TerminalPagerAdapter : PagerAdapter() {

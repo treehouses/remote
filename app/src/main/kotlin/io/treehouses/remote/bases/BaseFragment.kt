@@ -6,11 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.logE
 import java.lang.NullPointerException

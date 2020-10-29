@@ -7,10 +7,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
-import io.treehouses.remote.Network.BluetoothChatService
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 

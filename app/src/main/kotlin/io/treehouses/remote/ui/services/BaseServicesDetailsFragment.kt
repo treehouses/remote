@@ -14,14 +14,14 @@ import io.treehouses.remote.R
 import io.treehouses.remote.adapter.ServiceCardAdapter
 import io.treehouses.remote.adapter.ServicesListAdapter
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.callback.ServiceAction
+import io.treehouses.remote.callback.ServiceActionListener
 import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.logD
 
-open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceAction {
+open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceActionListener {
 
     /**
      * Adapter for the spinner to select a service from dropdown

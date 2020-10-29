@@ -4,8 +4,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
-import io.treehouses.remote.SSH.PubKeyUtils
-import io.treehouses.remote.SSH.beans.PubKeyBean
+import io.treehouses.remote.ssh.PubKeyUtils
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
 import kotlinx.coroutines.*
