@@ -142,8 +142,6 @@ class StatusFragment : BaseStatusFragment() {
     override fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
             writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE_CHECK))
-
-
         } else {
             bind.tvUpgradeCheck.text = "      NO INTERNET"
             bind.upgrade.visibility = View.GONE
