@@ -105,7 +105,7 @@
             android:layout_height="@dimen/_16dp"
             android:background="@drawable/circle"
             android:foregroundGravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:layout_marginLeft="10dp"
             android:gravity="center" />
 
@@ -119,7 +119,7 @@
             android:textColor="@color/daynight_textColor"
             android:padding="@dimen/margin_small"
             android:background="@color/windowBackground"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:layout_weight="10"
             android:text="Bluetooth: "
 
@@ -129,7 +129,7 @@
             android:id="@+id/infoButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:layout_marginRight="6dp"
             android:background="@drawable/ic_info" />
     </LinearLayout>
