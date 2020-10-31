@@ -83,11 +83,8 @@ open class BaseStatusFragment : BaseFragment() {
 
         checkWifiStatus(statusData.internet)
 
-
         bind.swiperefresh.isRefreshing = false
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
-
-
 
     }
 
