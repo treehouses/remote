@@ -82,8 +82,6 @@ open class BaseStatusFragment : BaseFragment() {
 
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
 
-        checkWifiStatus(statusData.internet)
-
         bind.swiperefresh.isRefreshing = false
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
 
