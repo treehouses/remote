@@ -46,9 +46,9 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val msg = getString(R.string.TREEHOUSES_NETWORKMODE_INFO);
-//        val toastMsg = "Network IP retrieved"
-//        Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG);
+        val msg = getString(R.string.TREEHOUSES_NETWORKMODE_INFO);
+        val toastMsg = "Network IP retrieved"
+        Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG);
 
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
         var ip = msg.substringAfter("ip: ").substringBefore(", has")
