@@ -55,6 +55,7 @@ open class BaseStatusFragment : BaseFragment() {
             val country = readMessage.substring(len).trim { it <= ' ' }
             bind.countryDisplay.setText(getCountryName(country))
             bind.countryDisplay.isEnabled = true
+            bind.refreshBtn.visibility = View.VISIBLE
         } else if (readMessage.contains("Error when")) {
             bind.countryDisplay.setText("Try again")
             bind.countryDisplay.isEnabled = true
@@ -82,7 +83,6 @@ open class BaseStatusFragment : BaseFragment() {
 
         checkWifiStatus(statusData.internet)
 
-        bind.refreshBtn.visibility = View.VISIBLE
         bind.swiperefresh.isRefreshing = false
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
 
