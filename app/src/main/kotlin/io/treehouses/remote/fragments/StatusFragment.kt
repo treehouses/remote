@@ -39,7 +39,7 @@ class StatusFragment : BaseStatusFragment() {
         mChatService.updateHandler(mHandler)
         deviceName = mChatService.connectedDeviceName
         checkStatusNow()
-        refresh()
+        refresh ()
         bind.refreshBtn.setOnClickListener { refresh() }
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
@@ -49,6 +49,7 @@ class StatusFragment : BaseStatusFragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, countriesName)
         bind.countryDisplay.isEnabled = false
         bind.countryDisplay.setOnClickListener{ wifiCountry(adapter) }
+
         return bind.root
     }
 
@@ -136,12 +137,16 @@ class StatusFragment : BaseStatusFragment() {
 
             updateStatusPage(statusData)
 
+
+
         } else checkUpgradeStatus(readMessage)
     }
 
     override fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
             writeToRPI(requireActivity().getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+
+
         } else {
             bind.tvUpgradeCheck.text = "      NO INTERNET"
             bind.upgrade.visibility = View.GONE
