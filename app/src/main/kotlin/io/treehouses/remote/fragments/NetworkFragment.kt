@@ -40,23 +40,17 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
 
         //update Network mode
         Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val msg = getString(R.string.TREEHOUSES_NETWORKMODE_INFO);
-        val toastMsg = "Network IP retrieved"
-        Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG);
+        val msgN = getString(R.string.TREEHOUSES_NETWORKMODE_INFO)
+        val toastMsgN = "Network IP retrieved"
+        Utils.sendMessage(listener, Pair(msgN, toastMsgN), context, Toast.LENGTH_LONG);
 
-        writeToRPI(requireActivity().getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
-        var ip = msg.substringAfter("ip: ").substringBefore(", has")
-
-        if(ip == "") {
-            ip = "N/A"
-        }
-        networkIP.text = "IP Address: " + ip
         //Listeners
         binding.networkWifi.setOnClickListener(this)
         binding.networkHotspot.setOnClickListener(this)
@@ -93,16 +87,20 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
         binding.currentNetworkMode.text = "Current Network Mode: $mode"
     }
 
-    fun writeToRPI(ping: String) {
-        lastCommand = ping
-        val pSend = ping.toByteArray()
-        mChatService.write(pSend)
-    }
+
 
     private fun performAction(output: String) {
         //Return from treehouses networkmode
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
+            RESULTS.NETWORKMODE_INFO -> {
+                var ip = output.substringAfter("ip: ").substringBefore(", has")
+
+                if (ip == "") {
+                    ip = "N/A"
+                }
+                networkIP.text = "IP Address: " + ip
+            }
             RESULTS.DEFAULT_CONNECTED -> {
                 val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
                 val toastMsg = "Network Mode retrieved"

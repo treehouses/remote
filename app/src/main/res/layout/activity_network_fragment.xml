@@ -245,9 +245,10 @@
             android:id="@+id/networkIP"
             android:layout_width="216dp"
             android:layout_height="24dp"
+            android:layout_marginTop="2dp"
             android:text="IP Address: "
             app:layout_constraintStart_toStartOf="@id/current_network_mode"
-            tools:layout_editor_absoluteY="41dp" />
+            app:layout_constraintTop_toBottomOf="@+id/current_network_mode" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
