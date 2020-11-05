@@ -32,6 +32,7 @@ class StatusFragment : BaseStatusFragment() {
 
     private var lastCommand = ""
     private var deviceName = ""
+    private var statInt = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
@@ -114,6 +115,7 @@ class StatusFragment : BaseStatusFragment() {
 
         if(lastCommand == requireActivity().getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)){
             val statusData = Gson().fromJson(readMessage, StatusData::class.java)
+            statInt = statusData.internet
 
             bind.temperature.text = statusData.temperature + "°C"
             ObjectAnimator.ofInt(bind.temperatureBar, "progress", (statusData.temperature.toFloat() / 80 * 100).toInt()).setDuration(600).start()
@@ -193,7 +195,7 @@ class StatusFragment : BaseStatusFragment() {
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
                 logE("$TAG, readMessage = $readMessage")
-                receiveMessage(readMessage)
+                receiveMessage(readMessage, statInt)
             }
         }
     }
