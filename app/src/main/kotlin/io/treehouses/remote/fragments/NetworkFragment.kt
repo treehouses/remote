@@ -40,7 +40,6 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
 
         //update Network mode
         Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
-
         return binding.root
     }
 
@@ -87,15 +86,12 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
         binding.currentNetworkMode.text = "Current Network Mode: $mode"
     }
 
-
-
     private fun performAction(output: String) {
         //Return from treehouses networkmode
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
             RESULTS.NETWORKMODE_INFO -> {
                 var ip = output.substringAfter("ip: ").substringBefore(", has")
-
                 if (ip == "") {
                     ip = "N/A"
                 }
