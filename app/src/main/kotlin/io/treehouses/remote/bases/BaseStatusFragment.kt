@@ -56,7 +56,7 @@ open class BaseStatusFragment : BaseFragment() {
             bind.countryDisplay.setText(getCountryName(country))
             bind.countryDisplay.isEnabled = true
             checkWifiStatus(statInt)
-            bind.refreshBtn.visibility = View.VISIBLE
+
         } else if (readMessage.contains("Error when")) {
             bind.countryDisplay.setText("Try again")
             bind.countryDisplay.isEnabled = true
@@ -122,6 +122,7 @@ open class BaseStatusFragment : BaseFragment() {
             bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
             bind.upgrade.visibility = View.VISIBLE
         }
+        bind.refreshBtn.visibility = View.VISIBLE
     }
 
     private fun checkUpgradeNow() {
