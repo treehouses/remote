@@ -82,7 +82,9 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
         //Return from treehouses networkmode
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
+
             RESULTS.DEFAULT_CONNECTED -> {
+
                 val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
                 val toastMsg = "Network Mode retrieved"
                 Toast.makeText(context, "Network Mode switched to default", Toast.LENGTH_LONG).show()
