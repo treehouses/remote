@@ -241,7 +241,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
     protected fun handleHostNotFound() {
         addHostButton?.isEnabled = true; portList?.isEnabled = true; addHostButton?.isEnabled = true
-        addHostButton?.text = "Add Host"; addPortButton?.text = "Add Port"
+        addHostButton?.text = "Add Host"; addPortButton?.text = "Add Port"; addPortButton?.isEnabled = true
         Toast.makeText(requireContext(), "incorrect deleting host/port, try again", Toast.LENGTH_SHORT).show()
     }
 
