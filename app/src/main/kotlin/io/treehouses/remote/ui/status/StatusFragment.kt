@@ -63,6 +63,9 @@ class StatusFragment : BaseFragment() {
         viewModel.temperature.observe(viewLifecycleOwner, Observer {
             bind.temperature.text = it
         })
+        viewModel.deviceName.observe(viewLifecycleOwner, Observer {
+            bind.tvBluetooth.text = it
+        })
         viewModel.memory.observe(viewLifecycleOwner, Observer {
             bind.memory.text = it
         })
