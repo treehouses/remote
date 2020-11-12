@@ -84,8 +84,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     }
 
     private fun updateViews(output: String) {
-        try {
-            if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
+        try { if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
                 val statusData = Gson().fromJson(output, StatusData::class.java)
                 temperature.value = statusData.temperature
                 var usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
@@ -106,9 +105,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
                 sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
-            } else checkUpgradeStatus(output)
-        } catch (e: Exception) {
-        }
+            } else checkUpgradeStatus(output) } catch (e: Exception) { }
     }
 
     private fun checkUpgradeStatus(readMessage: String) {

@@ -112,16 +112,12 @@ class StatusFragment : BaseFragment() {
         viewModel.remoteVersion.observe(viewLifecycleOwner, Observer {
             bind.remoteVersionText.text = it
         })
+        viewModel.cpuModelText.observe(viewLifecycleOwner, Observer {
+            bind.cpuModelText.text = it
+        })
     }
 
-    private fun observers() {
-        upgradeBoxObservers()
-        barItemsObservers()
-        rpiDetailObservers()
-        upgradeBoxObservers()
-        viewModel.showNotification.observe(viewLifecycleOwner, Observer {
-            notificationListener!!.setNotification(false)
-        })
+    private fun networkBoxObservers() {
         viewModel.ssidText.observe(viewLifecycleOwner, Observer {
             bind.ssidText.text = it
         })
@@ -132,14 +128,23 @@ class StatusFragment : BaseFragment() {
         viewModel.deviceAddress.observe(viewLifecycleOwner, Observer {
             bind.deviceAddress.text = it
         })
-        viewModel.countryDisplayText.observe(viewLifecycleOwner, Observer {
-            bind.countryDisplay.setText(it)
-        })
         viewModel.networkModeText.observe(viewLifecycleOwner, Observer {
             bind.networkModeTitle.text = it
         })
-        viewModel.cpuModelText.observe(viewLifecycleOwner, Observer {
-            bind.cpuModelText.text = it
+
+        viewModel.countryDisplayText.observe(viewLifecycleOwner, Observer {
+            bind.countryDisplay.setText(it)
+        })
+    }
+
+    private fun observers() {
+        upgradeBoxObservers()
+        barItemsObservers()
+        rpiDetailObservers()
+        upgradeBoxObservers()
+        networkBoxObservers()
+        viewModel.showNotification.observe(viewLifecycleOwner, Observer {
+            notificationListener!!.setNotification(false)
         })
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
             bind.progressBar.visibility = if (it) View.VISIBLE else View.GONE
