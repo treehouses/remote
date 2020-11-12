@@ -49,13 +49,14 @@ open class BaseStatusFragment : BaseFragment() {
         })
     }
 
-    fun receiveMessage(readMessage: String){
+    fun receiveMessage(readMessage: String, statInt : String){
         if (readMessage.startsWith("country=") || readMessage.contains("set to")) {
             val len = readMessage.length - 3
             val country = readMessage.substring(len).trim { it <= ' ' }
             bind.countryDisplay.setText(getCountryName(country))
             bind.countryDisplay.isEnabled = true
-            bind.refreshBtn.visibility = View.VISIBLE
+            checkWifiStatus(statInt)
+
         } else if (readMessage.contains("Error when")) {
             bind.countryDisplay.setText("Try again")
             bind.countryDisplay.isEnabled = true
@@ -80,8 +81,6 @@ open class BaseStatusFragment : BaseFragment() {
         rpiVersion = res[3]
 
         bind.remoteVersionText.text = "Remote Version: " + BuildConfig.VERSION_NAME
-
-        checkWifiStatus(statusData.internet)
 
         bind.swiperefresh.isRefreshing = false
         writeToRPI(requireActivity().getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
@@ -123,6 +122,7 @@ open class BaseStatusFragment : BaseFragment() {
             bind.tvUpgradeCheck.text = String.format("Upgrade available from %s to %s", rpiVersion, readMessage.substring(4))
             bind.upgrade.visibility = View.VISIBLE
         }
+        bind.refreshBtn.visibility = View.VISIBLE
     }
 
     private fun checkUpgradeNow() {
