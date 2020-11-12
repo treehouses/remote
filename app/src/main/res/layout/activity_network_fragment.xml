@@ -24,6 +24,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/networkIP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/home_welcome"
+            android:text="IP Address: "
+            app:layout_constraintBottom_toBottomOf="@+id/current_network_mode"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/back_layout" />
+
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="0dp"
@@ -241,14 +254,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/networkIP"
-            android:layout_width="216dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="2dp"
-            android:text="IP Address: "
-            app:layout_constraintStart_toStartOf="@id/current_network_mode"
-            app:layout_constraintTop_toBottomOf="@+id/current_network_mode" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
