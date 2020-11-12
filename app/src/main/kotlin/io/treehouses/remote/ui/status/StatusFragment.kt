@@ -28,7 +28,7 @@ class StatusFragment : BaseFragment() {
     protected val viewModel: StatusViewModel by viewModels(ownerProducer = { this })
     var countryList: ListView? = null
     private lateinit var bind: ActivityStatusFragmentBinding
-    var notificationListener: NotificationCallback? = null
+    private var notificationListener: NotificationCallback? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
