@@ -100,7 +100,6 @@ class StatusFragment : BaseFragment() {
         viewModel.deviceName.observe(viewLifecycleOwner, Observer {
             bind.tvBluetooth.text = it
         })
-
         viewModel.rpiType.observe(viewLifecycleOwner, Observer {
             bind.tvRpiType.text = it
         })
@@ -125,14 +124,12 @@ class StatusFragment : BaseFragment() {
         viewModel.ipAddressText.observe(viewLifecycleOwner, Observer {
             bind.ipAdrText.text = it
         })
-
         viewModel.deviceAddress.observe(viewLifecycleOwner, Observer {
             bind.deviceAddress.text = it
         })
         viewModel.networkModeText.observe(viewLifecycleOwner, Observer {
             bind.networkModeTitle.text = it
         })
-
         viewModel.countryDisplayText.observe(viewLifecycleOwner, Observer {
             bind.countryDisplay.setText(it)
         })
@@ -216,7 +213,6 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun createRenameDialog(view: View, mEditText: EditText) {
-
         val builder = DialogUtils.createAlertDialog(context, "Rename " + viewModel.hostName, view, R.drawable.dialog_icon)
         DialogUtils.createAdvancedDialog(builder, Pair("Rename", "Cancel"), {
             if (mEditText.text.toString() != "") {
