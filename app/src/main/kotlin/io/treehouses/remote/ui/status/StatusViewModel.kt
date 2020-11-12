@@ -187,13 +187,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         countryDisplayTextEnabled.value = false
     }
 
-
-    override fun onAnyMessage(msg: Message) {
-        if (msg.what == Constants.MESSAGE_STATE_CHANGE) {
-//            checkStatusNow()
-        }
-    }
-
     fun onSelectCountry(selectedString: String) {
         var selected = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
         getString(R.string.TREEHOUSES_UPGRADE_CHECK)

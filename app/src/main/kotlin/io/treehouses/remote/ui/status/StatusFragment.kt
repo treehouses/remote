@@ -57,12 +57,9 @@ class StatusFragment : BaseFragment() {
         dialog.show()
     }
 
-    fun observers() {
+    private fun barItemsObservers() {
         viewModel.temperature.observe(viewLifecycleOwner, Observer {
             bind.temperature.text = it
-        })
-        viewModel.deviceName.observe(viewLifecycleOwner, Observer {
-            bind.tvBluetooth.text = it
         })
         viewModel.memory.observe(viewLifecycleOwner, Observer {
             bind.memory.text = it
@@ -70,6 +67,7 @@ class StatusFragment : BaseFragment() {
         viewModel.memoryBarValue.observe(viewLifecycleOwner, Observer {
             ObjectAnimator.ofInt(bind.memoryBar, "progress", it).setDuration(600).start()
         })
+
         viewModel.storageBarValue.observe(viewLifecycleOwner, Observer {
             ObjectAnimator.ofInt(bind.storageBar, "progress", it).setDuration(600).start()
         })
@@ -82,10 +80,9 @@ class StatusFragment : BaseFragment() {
                 ObjectAnimator.ofInt(bind.temperatureBar, "progress", (it.toFloat() / 80 * 100).toInt()).setDuration(600).start()
             bind.temperature.text = "$it°C"
         })
+    }
 
-        viewModel.showNotification.observe(viewLifecycleOwner, Observer {
-            notificationListener!!.setNotification(false)
-        })
+    private fun upgradeBoxObservers() {
         viewModel.showUpgrade.observe(viewLifecycleOwner, Observer {
             bind.upgrade.visibility = if (it) View.VISIBLE else View.GONE
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), if (it) R.drawable.tick_png else R.drawable.tick))
@@ -93,11 +90,37 @@ class StatusFragment : BaseFragment() {
         viewModel.upgradeCheckText.observe(viewLifecycleOwner, Observer {
             bind.upgrade.text = it
         })
+        viewModel.upgradeCheckText.observe(viewLifecycleOwner, Observer {
+            bind.tvUpgradeCheck.text = it
+        })
+    }
+
+    private fun rpiDetailObservers() {
+        viewModel.deviceName.observe(viewLifecycleOwner, Observer {
+            bind.tvBluetooth.text = it
+        })
+
         viewModel.rpiType.observe(viewLifecycleOwner, Observer {
             bind.tvRpiType.text = it
         })
         viewModel.hostName.observe(viewLifecycleOwner, Observer {
             bind.tvRpiName.text = it
+        })
+        viewModel.imageText.observe(viewLifecycleOwner, Observer {
+            bind.imageText.text = it
+        })
+        viewModel.remoteVersion.observe(viewLifecycleOwner, Observer {
+            bind.remoteVersionText.text = it
+        })
+    }
+
+    private fun observers() {
+        upgradeBoxObservers()
+        barItemsObservers()
+        rpiDetailObservers()
+        upgradeBoxObservers()
+        viewModel.showNotification.observe(viewLifecycleOwner, Observer {
+            notificationListener!!.setNotification(false)
         })
         viewModel.ssidText.observe(viewLifecycleOwner, Observer {
             bind.ssidText.text = it
@@ -105,17 +128,9 @@ class StatusFragment : BaseFragment() {
         viewModel.ipAddressText.observe(viewLifecycleOwner, Observer {
             bind.ipAdrText.text = it
         })
-        viewModel.upgradeCheckText.observe(viewLifecycleOwner, Observer {
-            bind.tvUpgradeCheck.text = it
-        })
-        viewModel.imageText.observe(viewLifecycleOwner, Observer {
-            bind.imageText.text = it
-        })
+
         viewModel.deviceAddress.observe(viewLifecycleOwner, Observer {
             bind.deviceAddress.text = it
-        })
-        viewModel.remoteVersion.observe(viewLifecycleOwner, Observer {
-            bind.remoteVersionText.text = it
         })
         viewModel.countryDisplayText.observe(viewLifecycleOwner, Observer {
             bind.countryDisplay.setText(it)
@@ -132,13 +147,13 @@ class StatusFragment : BaseFragment() {
         })
         viewModel.countryDisplayTextEnabled.observe(viewLifecycleOwner, Observer {
             bind.countryDisplay.isEnabled = it
-            if(it)
-            bind.countryDisplay.visibility = View.VISIBLE;
+            if (it)
+                bind.countryDisplay.visibility = View.VISIBLE;
         })
     }
 
 
-    fun searchView(dialog: Dialog) {
+    private fun searchView(dialog: Dialog) {
         val searchView = dialog.search_bar
         searchView.isIconifiedByDefault = false
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
