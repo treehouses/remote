@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -57,6 +58,12 @@ class StatusFragment : BaseFragment() {
         dialog.show()
     }
 
+    private fun showBar(mutableData: MutableLiveData<Int>, barView: ProgressBar) {
+        mutableData.observe(viewLifecycleOwner, Observer {
+            ObjectAnimator.ofInt(barView, "progress", it).setDuration(600).start()
+        })
+    }
+
     private fun barItemsObservers() {
         viewModel.temperature.observe(viewLifecycleOwner, Observer {
             bind.temperature.text = it
@@ -64,17 +71,11 @@ class StatusFragment : BaseFragment() {
         viewModel.memory.observe(viewLifecycleOwner, Observer {
             bind.memory.text = it
         })
-        viewModel.memoryBarValue.observe(viewLifecycleOwner, Observer {
-            ObjectAnimator.ofInt(bind.memoryBar, "progress", it).setDuration(600).start()
-        })
-
-        viewModel.storageBarValue.observe(viewLifecycleOwner, Observer {
-            ObjectAnimator.ofInt(bind.storageBar, "progress", it).setDuration(600).start()
-        })
+        showBar(viewModel.storageBarValue, bind.storageBar)
+        showBar(viewModel.memoryBarValue, bind.memoryBar)
         viewModel.storage.observe(viewLifecycleOwner, Observer {
-            bind.storage.text = it;
+            bind.storage.text = it
         })
-
         viewModel.temperature.observe(viewLifecycleOwner, Observer {
             if (it.toFloatOrNull() != null)
                 ObjectAnimator.ofInt(bind.temperatureBar, "progress", (it.toFloat() / 80 * 100).toInt()).setDuration(600).start()
