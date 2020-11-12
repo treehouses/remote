@@ -74,7 +74,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayText.value = getCountryName(country)
             countryDisplayTextEnabled.value = true
             showRefresh.value = true
-        } else if (output.contains("Error when")) {
+        } else if (output.contains("invalid country code")) {
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
