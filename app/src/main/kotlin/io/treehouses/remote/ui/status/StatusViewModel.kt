@@ -14,7 +14,7 @@ import io.treehouses.remote.pojo.StatusData
 import java.util.*
 
 class StatusViewModel(application: Application) : FragmentViewModel(application) {
-    private var lastCommand = ""
+
     var updateRightNow = false
     val deviceName: MutableLiveData<String> = MutableLiveData()
     val error: MutableLiveData<String> = MutableLiveData()
@@ -54,10 +54,11 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         deviceName.value = mChatService.connectedDeviceName
         countryDisplayTextEnabled.value = false
         showUpgrade.value = false
+        refresh()
     }
 
 
-    fun fetchWifiCountry() {
+    private fun fetchWifiCountry() {
         val countriesCode = Locale.getISOCountries()
         val countriesName = arrayOfNulls<String>(countriesCode.size)
         for (i in countriesCode.indices) {
@@ -66,21 +67,21 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         countryList.value = countriesName;
     }
 
-    override fun onRead(readMessage: String) {
-        if (readMessage.startsWith("country=") || readMessage.contains("set to")) {
-            val len = readMessage.length - 3
-            val country = readMessage.substring(len).trim { it <= ' ' }
+    override fun onRead(output: String) {
+        if (output.startsWith("country=") || output.contains("set to")) {
+            val len = output.length - 3
+            val country = output.substring(len).trim { it <= ' ' }
             countryDisplayText.value = getCountryName(country)
             countryDisplayTextEnabled.value = true
             showRefresh.value = true
-        } else if (readMessage.contains("Error when")) {
+        } else if (output.contains("Error when")) {
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
         } else {
             try {
                 if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
-                    val statusData = Gson().fromJson(readMessage, StatusData::class.java)
+                    val statusData = Gson().fromJson(output, StatusData::class.java)
                     temperature.value = statusData.temperature
                     var usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
                     var totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
@@ -101,7 +102,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                     isLoading.value = false
                     sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
                 } else
-                    checkUpgradeStatus(readMessage)
+                    checkUpgradeStatus(output)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -139,7 +140,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         }
     }
 
-    fun writeNetworkInfo(networkMode: String, readMessage: String) {
+    private fun writeNetworkInfo(networkMode: String, readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
         var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
         when (networkMode) {
@@ -194,6 +195,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
 
     fun onSelectCountry(selectedString: String) {
         var selected = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
+        getString(R.string.TREEHOUSES_UPGRADE_CHECK)
         sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY, selected))
         countryDisplayTextEnabled.value = false
         countryDisplayText.value = "Changing country"

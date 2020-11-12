@@ -18,7 +18,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * To access bluetooth service for derived View Models
      */
     protected lateinit var mChatService : BluetoothChatService
-
+    var lastCommand = ""
     /**
      * Monitors connection Status (has the specific connection state)
      */
@@ -86,6 +86,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      */
     fun sendMessage(toSend: String) {
         logE("SENDING $toSend")
+        lastCommand = toSend
         if (_connectionStatus.value != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplication(), "Not Connected to Bluetooth", Toast.LENGTH_LONG).show()
         }

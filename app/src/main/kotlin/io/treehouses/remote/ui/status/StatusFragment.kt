@@ -31,14 +31,12 @@ class StatusFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
-
         viewModel.onLoad()
         bind.refreshBtn.setOnClickListener { viewModel.refresh() }
         viewModel.countryList.observe(viewLifecycleOwner, Observer {
             val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, it)
             bind.countryDisplay.setOnClickListener { wifiCountry(adapter) }
         })
-
         return bind.root
     }
 
@@ -130,6 +128,7 @@ class StatusFragment : BaseFragment() {
         })
         viewModel.isLoading.observe(viewLifecycleOwner, Observer {
             bind.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+            bind.swiperefresh.isRefreshing = it
         })
         viewModel.countryDisplayTextEnabled.observe(viewLifecycleOwner, Observer {
             bind.countryDisplay.isEnabled = it
@@ -194,7 +193,8 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun createRenameDialog(view: View, mEditText: EditText) {
-        val builder = DialogUtils.createAlertDialog(context, "Rename " + viewModel.hostName.value?.substring(0, viewModel.hostName.value!!.indexOf("-")), view, R.drawable.dialog_icon)
+
+        val builder = DialogUtils.createAlertDialog(context, "Rename " + bind.tvRpiName.text.substring(0, bind.tvRpiName.text.indexOf("-")), view, R.drawable.dialog_icon)
         DialogUtils.createAdvancedDialog(builder, Pair("Rename", "Cancel"), {
             if (mEditText.text.toString() != "") {
                 viewModel.sendMessage(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
