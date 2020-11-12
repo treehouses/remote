@@ -79,34 +79,35 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
         } else {
-            try {
-                if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
-                    val statusData = Gson().fromJson(output, StatusData::class.java)
-                    temperature.value = statusData.temperature
-                    var usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
-                    var totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
-                    storageBarValue.value = statusData.storage.split(" ")[3].dropLast(1).toInt()
-                    storage.value = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
-                    cpuModelText.value = "CPU: ARM " + statusData.arm
-                    writeNetworkInfo(statusData.networkmode, statusData.info)
-                    hostName.value = "Hostname: " + statusData.hostname
-                    memoryBarValue.value = (usedMemory / totalMemory * 100).toInt()
-                    memory.value = usedMemory.toString() + "GB" + "/" + totalMemory.toString() + "GB"
-                    val res = statusData.status.trim().split(" ")
-                    imageText.value = String.format("Image Version: %s", res[2].substring(8))
-                    deviceAddress.value = res[1]
-                    rpiType.value = "Model: " + res[4]
-                    rpiVersion = res[3]
-                    remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
-                    checkWifiStatus(statusData.internet)
-                    isLoading.value = false
-                    sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
-                } else
-                    checkUpgradeStatus(output)
+            updateViews(output)
+        }
+    }
 
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    private fun updateViews(output: String) {
+        try {
+            if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
+                val statusData = Gson().fromJson(output, StatusData::class.java)
+                temperature.value = statusData.temperature
+                var usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
+                var totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
+                storageBarValue.value = statusData.storage.split(" ")[3].dropLast(1).toInt()
+                storage.value = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
+                cpuModelText.value = "CPU: ARM " + statusData.arm
+                writeNetworkInfo(statusData.networkmode, statusData.info)
+                hostName.value = "Hostname: " + statusData.hostname
+                memoryBarValue.value = (usedMemory / totalMemory * 100).toInt()
+                memory.value = usedMemory.toString() + "GB" + "/" + totalMemory.toString() + "GB"
+                val res = statusData.status.trim().split(" ")
+                imageText.value = String.format("Image Version: %s", res[2].substring(8))
+                deviceAddress.value = res[1]
+                rpiType.value = "Model: " + res[4]
+                rpiVersion = res[3]
+                remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
+                checkWifiStatus(statusData.internet)
+                isLoading.value = false
+                sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
+            } else checkUpgradeStatus(output)
+        } catch (e: Exception) {
         }
     }
 
