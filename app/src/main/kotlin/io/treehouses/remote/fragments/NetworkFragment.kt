@@ -13,24 +13,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.BridgeBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.EthernetBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.HotspotBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.WifiBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
-import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
+import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
+import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.BridgeBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.EthernetBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.HotspotBottomSheet
+import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.WifiBottomSheet
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.*
 import kotlinx.android.synthetic.main.activity_network_fragment.*
-import kotlinx.android.synthetic.main.activity_status_fragment.*
 
 class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
-    var lastCommand = ""
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
         val toastMsg = "Network Mode retrieved"
@@ -78,7 +76,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
             binding.buttonNetworkMode == v -> Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
-            binding.discoverBtn == v-> listener.openCallFragment(DiscoverFragment())
+            binding.discoverBtn == v -> listener.openCallFragment(DiscoverFragment())
         }
     }
 
@@ -90,35 +88,32 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
         //Return from treehouses networkmode
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
-            RESULTS.NETWORKMODE_INFO -> {
-                var ip = output.substringAfter("ip: ").substringBefore(", has")
-                if (ip == "") {
-                    ip = "N/A"
-                }
-                networkIP.text = "IP Address: " + ip
-            }
+            RESULTS.NETWORKMODE_INFO ->  showIpAddress(output)
             RESULTS.DEFAULT_CONNECTED -> {
                 val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
-                val toastMsg = "Network Mode retrieved"
                 Toast.makeText(context, "Network Mode switched to default", Toast.LENGTH_LONG).show()
                 //update network mode
-                Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
+                Utils.sendMessage(listener, Pair(msg, "Network Mode retrieved"), context, Toast.LENGTH_LONG)
             }
             RESULTS.ERROR -> {
-                showDialog(context,"Error", output)
+                showDialog(context, "Error", output)
                 binding.networkPbar.visibility = View.GONE
             }
             RESULTS.HOTSPOT_CONNECTED, RESULTS.WIFI_CONNECTED, RESULTS.BRIDGE_CONNECTED -> {
                 val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
-                val toastMsg = "Network Mode retrieved"
-                showDialog(context,"Network Switched", output)
-                showDialog(context,"Network Switched", output)
+                showDialog(context, "Network Switched", output)
                 //update network mode
-                Utils.sendMessage(listener, Pair(msg, toastMsg), context, Toast.LENGTH_LONG)
+                Utils.sendMessage(listener, Pair(msg, "Network Mode retrieved"), context, Toast.LENGTH_LONG)
                 binding.networkPbar.visibility = View.GONE
             }
             else -> logE("NewNetworkFragment: Result not Found")
         }
+    }
+
+    private fun showIpAddress(output: String) {
+        var ip = output.substringAfter("ip: ").substringBefore(", has")
+        if (ip == "") ip = "N/A"
+        networkIP.text = "IP Address: " + ip
     }
 
     private fun rebootHelper() {
@@ -178,6 +173,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
     companion object {
         @JvmField
         var CLICKED_START_CONFIG = "clicked_config"
+
         @JvmStatic
         fun openWifiDialog(bottomSheetDialogFragment: BottomSheetDialogFragment, context: Context?) {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
