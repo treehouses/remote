@@ -1,5 +1,5 @@
-os: linux
-dist : trusty
+sudo: false
+dist: trusty
 language: android
 jdk: oraclejdk8
 env:
@@ -85,6 +85,7 @@ deploy:
     secure: F9Rs4BPHf1+O0paanM+I6+3b8NIwUZXvKiT8+SmLAHHXpxkIBYJwKlPROrLyYWKgl2LLpEgU4kZrDo8SORLucwN4kfF5RpyQahcd8eh9db9jdY+Rxad3vbwk3g2X+RNtlb7Y3b0ttaxzWHbCBH+B4stEQzv1rY5X5uS1HeOUW3ekEsqcIhQ3P14MIaNI99P12ycdePx6LAUQnqfEqvIrKgth4maYUGBtKyx9eAlxbMr3qBsXaCpDgqnRImwr+4EYnto+4U9iFc0z+cFa4y4axpi9tl21p4ufaEzy32a7AD3BGlhXaT4sznrjvoxIV9DGKuTczNEqECPNspC8rfJbGbvpHB44CA0jCZxlGo3y5bBFf4PdsxihG1d7SdD9JErWfx0qierj4ueXkdiGZxPO6fMX9o+1TETrR0QnvrD5JIDJggKWVuAr2E2ZybJdO+pFQKA++mxgYjyRaS4otQgc3a/q5ulfwVvEBys7MyIa310vK8X+sbSSp4kcjZTflSaohgczOMc3WAxJRykf0i/S1x8t5SoIrUQ560fj3KF40SPRIzHMQizTFVmA/9W7qEoTPGVkIKlJmmK7D1WEMn0WNHDW9HVeIqRNcEhuOJ0bYST+FYUVPgqvtcDDR8lNMZZMG+gm8nXUfX0E/sfSqP7qrqVhXc5ty5iQfQPSliBL/lE=
   file_glob: true
   file: ./*
+  skip-cleanup: true
   on:
     repo: treehouses/remote
     branch: master
