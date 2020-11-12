@@ -186,7 +186,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
 
     fun onSelectCountry(selectedString: String) {
         var selected = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
-        getString(R.string.TREEHOUSES_UPGRADE_CHECK)
         sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY, selected))
         countryDisplayTextEnabled.value = false
         countryDisplayText.value = "Changing country"
