@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.*
@@ -24,6 +25,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addHostCloseButton: ImageButton
     lateinit var addKeyCloseButton: ImageButton
 
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
@@ -32,6 +34,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         portList = bind!!.sshPorts
         initializeDialog1()
         addPortButton = bind!!.btnAddPort
+        deleteAllPortsButton = bind!!.deleteAllSSH
+        deleteAllPortsButton!!.isEnabled = true
 
         addHostButton = bind!!.btnAddHosts
         arrayOf("1", "2", "three")
@@ -63,6 +67,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         addKeyCloseButton.setOnClickListener(this)
         bind!!.notifyNow.setOnClickListener(this)
         bind!!.btnKeys.setOnClickListener(this)
+        deleteAllPortsButton!!.setOnClickListener(this)
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -109,9 +115,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     dialog.dismiss()
                 }
             }
-            else{
-                initializeDialog3(builder, position)
-            }
+
+              initializeDialog3(builder, position)
+
+
             builder.setNegativeButton("Cancel", null)
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
@@ -120,6 +127,11 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         }
         initializeDialog4()
     }
+
+    private fun promptDeleteAll() {
+        DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
+    }
+
 
     private fun initializeDialog3(builder:AlertDialog.Builder, position:Int){
         builder.setTitle("Delete Port " + portsName!![position] + " ?")
@@ -141,6 +153,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             addPortButton!!.isEnabled = false
             dialog.dismiss()
         }
+
+
+
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -235,6 +251,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.addPortCloseButton -> dialog.dismiss()
             R.id.addHostCloseButton -> dialogHosts.dismiss()
             R.id.addKeyCloseButton -> dialogKeys.dismiss()
+            R.id.deleteAllSSH -> promptDeleteAll()
         }
     }
 
@@ -247,7 +264,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             bind!!.sshPorts
             portsName = ArrayList()
 //            listener.sendMessage("treehouses sshtunnel notice")
-            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+            adapter = TunnelPortAdapter(requireContext(), portsName!!)
         }
     }
 

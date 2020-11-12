@@ -9,21 +9,24 @@ import android.view.View
 import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
+import kotlinx.android.synthetic.main.activity_tunnel_ssh_fragment.*
 import org.json.JSONException
 import org.json.JSONObject
 
 open class BaseTunnelSSHFragment : BaseFragment() {
     protected var addPortButton: Button? = null
+    protected var deleteAllPortsButton: Button? = null
     protected var addHostButton: Button? = null
     var bind: ActivityTunnelSshFragmentBinding? = null
     protected var dropdown: Spinner? = null
     protected var portList: ListView? = null
-    protected var adapter: ArrayAdapter<String>? = null
+    protected var adapter: TunnelPortAdapter? = null
     protected var portsName: java.util.ArrayList<String>? = null
     protected var hostsName: java.util.ArrayList<String>? = null
     protected var hostsPosition: java.util.ArrayList<Int>? = null
@@ -231,7 +234,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected fun handleNoPorts() {
         adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter2
-        adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
         bind!!.sshPorts.adapter = adapter
         portList!!.isEnabled = true
         addPortButton!!.text = "Add Port"; addHostButton!!.text = "Add Host"
@@ -258,6 +261,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         addPortButton?.isEnabled = true
         addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
         addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
+        deleteAllPortsButton!!.isEnabled = true;
         val hosts = readMessage.split('\n')
         for (host in hosts) {
             val ports = host.split(' ')
@@ -273,8 +277,8 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         }
         adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter2
-        adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-        bind!!.sshPorts.adapter = adapter
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
+          bind!!.sshPorts.adapter = adapter
         portList!!.isEnabled = true
     }
 
