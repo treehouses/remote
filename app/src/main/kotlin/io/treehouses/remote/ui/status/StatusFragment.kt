@@ -213,7 +213,7 @@ class StatusFragment : BaseFragment() {
     }
 
     private fun createRenameDialog(view: View, mEditText: EditText) {
-        val builder = DialogUtils.createAlertDialog(context, "Rename " + viewModel.hostName, view, R.drawable.dialog_icon)
+        val builder = DialogUtils.createAlertDialog(context, "Rename " + viewModel.hostName.value, view, R.drawable.dialog_icon)
         DialogUtils.createAdvancedDialog(builder, Pair("Rename", "Cancel"), {
             if (mEditText.text.toString() != "") {
                 viewModel.sendMessage(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
