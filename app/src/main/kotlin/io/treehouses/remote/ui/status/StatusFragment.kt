@@ -88,9 +88,7 @@ class StatusFragment : BaseFragment() {
             bind.upgrade.visibility = if (it) View.VISIBLE else View.GONE
             bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), if (it) R.drawable.tick_png else R.drawable.tick))
         })
-        viewModel.upgradeCheckText.observe(viewLifecycleOwner, Observer {
-            bind.upgrade.text = it
-        })
+
         viewModel.upgradeCheckText.observe(viewLifecycleOwner, Observer {
             bind.tvUpgradeCheck.text = it
         })
