@@ -240,8 +240,7 @@ class HomeFragment : BaseHomeFragment() {
                 Constants.STATE_CONNECTED -> {
                     showLogDialog(preferences!!)
                     viewModel.internetSent = true
-                    viewModel.sendMessage("if nc -w 10 -z 8.8.8.8 53; then echo \"true\"; else echo \"false\"; fi\n")
-//                    viewModel.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
+                    viewModel.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                     Tutorials.homeTutorials(bind, requireActivity())
                 }
                 Constants.STATE_CONNECTING -> {
