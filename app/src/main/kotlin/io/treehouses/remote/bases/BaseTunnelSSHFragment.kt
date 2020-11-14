@@ -250,7 +250,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
     protected fun handleModifiedList() {
         Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
-
         addPortButton?.text = "Retrieving"; addHostButton?.text = "Retrieving"
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
