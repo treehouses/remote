@@ -94,7 +94,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
-        portsName!!.add("All")
+
         val window = dialog.window; val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)

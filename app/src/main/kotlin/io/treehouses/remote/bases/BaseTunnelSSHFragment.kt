@@ -272,6 +272,8 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 position += 1
             }
         }
+
+        if(portsName!!.size > 1) portsName!!.add("All")
         adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter2
         adapter = TunnelPortAdapter(requireContext(), portsName!!)
