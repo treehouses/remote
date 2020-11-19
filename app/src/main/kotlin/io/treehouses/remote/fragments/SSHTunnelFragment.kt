@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.views.TunnelViewPager
 import io.treehouses.remote.adapter.TunnelPageAdapter
 import io.treehouses.remote.bases.BaseFragment
