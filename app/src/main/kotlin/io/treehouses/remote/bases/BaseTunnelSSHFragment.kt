@@ -21,7 +21,6 @@ import org.json.JSONObject
 
 open class BaseTunnelSSHFragment : BaseFragment() {
     protected var addPortButton: Button? = null
-    protected var deleteAllPortsButton: Button? = null
     protected var addHostButton: Button? = null
     var bind: ActivityTunnelSshFragmentBinding? = null
     protected var dropdown: Spinner? = null
@@ -260,7 +259,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         addPortButton?.isEnabled = true
         addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
         addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
-        deleteAllPortsButton!!.isEnabled = true;
         val hosts = readMessage.split('\n')
         for (host in hosts) {
             val ports = host.split(' ')

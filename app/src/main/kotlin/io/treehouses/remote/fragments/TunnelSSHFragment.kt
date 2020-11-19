@@ -34,9 +34,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         portList = bind!!.sshPorts
         initializeDialog1()
         addPortButton = bind!!.btnAddPort
-        deleteAllPortsButton = bind!!.deleteAllSSH
-        deleteAllPortsButton!!.isEnabled = true
-
         addHostButton = bind!!.btnAddHosts
         arrayOf("1", "2", "three")
         hostsName = ArrayList()
@@ -52,8 +49,20 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {logD("nothing, YYYYY ")}
         }
+
         addListeners()
+        addPortListListener()
+
         return bind!!.root
+    }
+
+    private fun addPortListListener() {
+        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size - 1
+            if (deleteAllPortsButtonSelected) promptDeleteAll()
+        }
+
+        bind!!.btnAddPort
     }
 
     private fun addListeners() {
@@ -67,7 +76,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         addKeyCloseButton.setOnClickListener(this)
         bind!!.notifyNow.setOnClickListener(this)
         bind!!.btnKeys.setOnClickListener(this)
-        deleteAllPortsButton!!.setOnClickListener(this)
 
     }
 
@@ -86,6 +94,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
+        portsName!!.add("All")
         val window = dialog.window; val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -115,6 +124,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     dialog.dismiss()
                 }
             }
+
+
 
               initializeDialog3(builder, position)
 
@@ -251,7 +262,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.addPortCloseButton -> dialog.dismiss()
             R.id.addHostCloseButton -> dialogHosts.dismiss()
             R.id.addKeyCloseButton -> dialogKeys.dismiss()
-            R.id.deleteAllSSH -> promptDeleteAll()
         }
     }
 
@@ -265,6 +275,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             portsName = ArrayList()
 //            listener.sendMessage("treehouses sshtunnel notice")
             adapter = TunnelPortAdapter(requireContext(), portsName!!)
+
         }
     }
 
