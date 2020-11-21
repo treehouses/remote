@@ -19,7 +19,7 @@ object SaveUtils {
     private const val SSH_HOSTS = "ssh_hosts_values"
 
     enum class Screens {
-        FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS, SSHCONFIG
+        FIRST_TIME, HOME, NETWORK, SYSTEM, TERMINAL, SERVICES_OVERVIEW, SERVICES_DETAILS, TUNNEL, STATUS, SSH
     }
 
     fun saveStringList(context: Context, list: MutableList<String>, arrayName: String) {

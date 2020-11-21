@@ -40,7 +40,7 @@ class SSHConfigFragment : BaseSSHConfig() {
         super.onViewCreated(view, savedInstanceState)
         setEnabled(false)
         addTextValidation()
-        Tutorials.sshConfigTutorial(bind, requireActivity())
+        Tutorials.sshTutorial(bind, requireActivity())
         bind.connectSsh.setOnClickListener {
             var uriString = bind.sshTextInput.text.toString()
             connect(uriString, false)
