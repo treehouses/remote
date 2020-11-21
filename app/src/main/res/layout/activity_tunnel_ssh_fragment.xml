@@ -22,7 +22,6 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="25dp" />
 
-
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -69,9 +68,8 @@
         android:textColor="@color/daynight_textColor"
         android:textSize="@dimen/text_size_large" />
 
-
-
     </LinearLayout>
+
     <LinearLayout  android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -103,8 +101,6 @@
             android:text="Add Port"
             android:layout_weight="1"/>
 
-
-
     </LinearLayout>
 
     <ListView
@@ -116,23 +112,13 @@
         android:fadeScrollbars="false"
         android:layout_weight="1"/>
 
-
-
     <LinearLayout  android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
-
-
-
-
     </LinearLayout>
-
-
 
 </LinearLayout>
 
