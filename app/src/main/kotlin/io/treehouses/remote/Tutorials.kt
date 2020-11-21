@@ -125,10 +125,10 @@ object Tutorials {
         show(a,b,c,d,e,f,g)
     }
 
-    fun sshBetaTutorial(bind: DialogSshBinding, activity: FragmentActivity)
+    fun sshConfigTutorial(bind: DialogSshBinding, activity: FragmentActivity)
     {
-        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSHBETA)) return
-        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSHBETA, false)
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSHCONFIG)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSHCONFIG, false)
 
         val a = fancyShowCaseViewRoundedRect(activity, bind.sshTextInput, "Enter In The SSH Host")
 
