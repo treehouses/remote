@@ -8,4 +8,5 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 
     protected val viewModel: DiscoverViewModel by viewModels(ownerProducer = {this})
 
+
 }
