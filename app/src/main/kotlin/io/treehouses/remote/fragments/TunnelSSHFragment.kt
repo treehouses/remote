@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
+import io.treehouses.remote.bases.BaseTorTabFragment
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.*
@@ -56,7 +57,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     private fun addPortListListener() {
         portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            if (portsName!!.size > 1 && position == portsName!!.size - 1) DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
+            if (portsName!!.size > 1 && position == portsName!!.size - 1) promptDeleteAllPorts("Delete All Hosts and Ports?", getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL))
         }
         bind!!.btnAddPort
     }

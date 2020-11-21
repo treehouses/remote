@@ -9,8 +9,10 @@ import android.os.Message
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
+import io.treehouses.remote.R
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logE
 import java.lang.NullPointerException
 
@@ -50,6 +52,10 @@ open class BaseFragment : Fragment() {
         } else {
             setupChat()
         }
+    }
+
+    protected fun promptDeleteAllPorts(dialog: String, message: String) {
+        DialogUtils.createAlertDialog(context, dialog) { listener.sendMessage(message) }
     }
 
     protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
