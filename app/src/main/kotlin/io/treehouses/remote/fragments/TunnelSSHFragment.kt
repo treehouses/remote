@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.*
@@ -50,6 +51,11 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         }
         addListeners()
         return bind!!.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind?.let { Tutorials.tunnelSSHTutorials(it, requireActivity()) }
     }
 
     private fun addListeners() {

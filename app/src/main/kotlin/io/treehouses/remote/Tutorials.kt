@@ -115,6 +115,19 @@ object Tutorials {
 //        //Put animations here
 //    }
 
+    fun tunnelSSHTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity)
+    {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.notifyNow, "Notify the Gitter Channel")
+        val b = fancyShowCaseViewRoundedRect(activity, bind.btnAddHosts, "Add SSH Hosts")
+        val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add SSH Ports")
+        val d = fancyShowCaseViewRoundedRect(activity, bind.btnKeys, "View SSH Keys")
+
+        show(a, b, c, d)
+    }
+
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.STATUS, false)
