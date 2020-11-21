@@ -90,6 +90,7 @@ class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInte
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
             RESULTS.NETWORKMODE_INFO ->  showIpAddress(output)
             RESULTS.DEFAULT_CONNECTED -> {
+
                 val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
                 Toast.makeText(context, "Network Mode switched to default", Toast.LENGTH_LONG).show()
                 //update network mode
