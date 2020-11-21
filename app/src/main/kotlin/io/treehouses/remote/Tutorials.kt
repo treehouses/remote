@@ -136,6 +136,26 @@ object Tutorials {
         show(a,b,c,d,e,f,g)
     }
 
+    fun sshTutorial(bind: DialogSshBinding, activity: FragmentActivity)
+    {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSH)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSH, false)
+
+        val a = fancyShowCaseViewRoundedRect(activity, bind.sshTextInput, "Enter In The SSH Host")
+
+        val b = fancyShowCaseViewRoundedRect(activity, bind.connectSsh, "Connect Manually to The SSH Host")
+
+        val c = fancyShowCaseViewRoundedRect(activity, bind.smartConnect, "Connect Automatically to The SSH Host")
+
+        val d = fancyShowCaseViewRoundedRect(activity, bind.pastHosts, "View Your Previously Connected SSH Hosts")
+
+        val e = fancyShowCaseViewRoundedRect(activity, bind.generateKeys, "Generate New SSH Keys")
+        
+        val f = fancyShowCaseViewRoundedRect(activity, bind.showKeys, "View Your SSH Keys")
+
+        show(a, b, c, d, e, f)
+    }
+
     private fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape)
                 .customView(R.layout.tutorial, object : OnViewInflateListener {
