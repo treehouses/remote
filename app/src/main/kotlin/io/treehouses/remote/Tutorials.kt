@@ -98,6 +98,17 @@ object Tutorials {
         show(a)
     }
 
+    fun tunnelTorTutorials(bind: ActivityTorFragmentBinding, activity: FragmentActivity)
+    {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+
+        val a = fancyShowCaseViewRoundedRect(activity, bind.btnTorStart, "Stop or Start Tor")
+        val b = fancyShowCaseViewRoundedRect(activity, bind.notifyNow, "Notify the Gitter Channel")
+        val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add Tor Ports")
+        show(a, b, c)
+    }
+
 //    fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
 //        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
 //        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
