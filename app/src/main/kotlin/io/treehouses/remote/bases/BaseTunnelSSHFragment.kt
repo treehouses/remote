@@ -60,10 +60,10 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 bind?.apply {
                     switchNotification.isChecked = false; switchNotification.isEnabled = true
                     notifyNow.isEnabled = true
-                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+                    writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
             }
-            readMessage.contains("OK.") -> listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
+            readMessage.contains("OK.") -> writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             readMessage.contains("Thanks for the feedback!") -> {
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                 bind!!.notifyNow.isEnabled = true
@@ -79,7 +79,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
             }
             readMessage.contains("true") || readMessage.contains("false") -> {
-                listener.sendMessage("treehouses remote key send")
+                writeMessage("treehouses remote key send")
                 Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
             }
             readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
@@ -159,7 +159,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         builder.setMessage(message)
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            listener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
+            writeMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
             Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
         }
         setNeutralButton(builder, "Cancel")
@@ -191,7 +191,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
                         "Phone Private Key for ${profile}: \n$storedPrivateKey")
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            listener.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
+            writeMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
             Toast.makeText(context, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
         }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
         builder.show()
@@ -227,7 +227,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected fun handleOnStatus() {
         bind!!.switchNotification.isChecked = true; bind!!.switchNotification.isEnabled = true; bind!!.notifyNow.isEnabled = true
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
-        listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+        writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
     protected fun handleNoPorts() {
@@ -251,7 +251,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
         addPortButton?.text = "Retrieving"; addHostButton?.text = "Retrieving"
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
-        listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+        writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
     protected fun handleNewList(readMessage: String) {

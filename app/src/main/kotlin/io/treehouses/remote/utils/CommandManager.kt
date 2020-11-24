@@ -102,7 +102,6 @@ object Matcher {
             else -> false
         }
     }
-
     fun isStartJSON(output: String): Boolean { return toLC(output).startsWith("{") }
 
     fun isEndJSON(output: String): Boolean { return toLC(output).trim().endsWith("}")}
