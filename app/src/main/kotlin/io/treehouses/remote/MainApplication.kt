@@ -22,6 +22,8 @@ class MainApplication : Application() {
     var logSent = false
     override fun onCreate() {
         super.onCreate()
+
+        context = this
         createNotificationChannel()
         startBluetoothService()
         terminalList = ArrayList()
@@ -99,6 +101,7 @@ class MainApplication : Application() {
         var showLogDialog = true
         @JvmField
         var ratingDialog = true
+        lateinit var context:Context
 
         var mChatService : BluetoothChatService? = null
     }

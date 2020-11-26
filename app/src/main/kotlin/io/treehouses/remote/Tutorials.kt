@@ -98,11 +98,35 @@ object Tutorials {
         show(a)
     }
 
+    fun tunnelTorTutorials(bind: ActivityTorFragmentBinding, activity: FragmentActivity)
+    {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+
+        val a = fancyShowCaseViewRoundedRect(activity, bind.btnTorStart, "Stop or Start Tor")
+        val b = fancyShowCaseViewRoundedRect(activity, bind.notifyNow, "Notify the Gitter Channel")
+        val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add Tor Ports")
+        show(a, b, c)
+    }
+
 //    fun tunnelTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
 //        //if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
 //        //SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
 //        //Put animations here
 //    }
+
+    fun tunnelSSHTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity)
+    {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
+
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.notifyNow, "Notify the Gitter Channel")
+        val b = fancyShowCaseViewRoundedRect(activity, bind.btnAddHosts, "Add SSH Hosts")
+        val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add SSH Ports")
+        val d = fancyShowCaseViewRoundedRect(activity, bind.btnKeys, "View SSH Keys")
+
+        show(a, b, c, d)
+    }
 
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.STATUS)) return
@@ -123,6 +147,26 @@ object Tutorials {
         val g = fancyShowCaseViewRoundedRect(activity, bind.refreshBtn, "Refresh Anytime to Check Everything Again")
 
         show(a,b,c,d,e,f,g)
+    }
+
+    fun sshTutorial(bind: DialogSshBinding, activity: FragmentActivity)
+    {
+        if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSH)) return
+        SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSH, false)
+
+        val a = fancyShowCaseViewRoundedRect(activity, bind.sshTextInput, "Enter In The SSH Host")
+
+        val b = fancyShowCaseViewRoundedRect(activity, bind.connectSsh, "Connect Manually to The SSH Host")
+
+        val c = fancyShowCaseViewRoundedRect(activity, bind.smartConnect, "Connect Automatically to The SSH Host")
+
+        val d = fancyShowCaseViewRoundedRect(activity, bind.pastHosts, "View Your Previously Connected SSH Hosts")
+
+        val e = fancyShowCaseViewRoundedRect(activity, bind.generateKeys, "Generate New SSH Keys")
+        
+        val f = fancyShowCaseViewRoundedRect(activity, bind.showKeys, "View Your SSH Keys")
+
+        show(a, b, c, d, e, f)
     }
 
     private fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
