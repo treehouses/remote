@@ -13,6 +13,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.fragments.dialogfragments.SSHAllKeyFragment
 import io.treehouses.remote.fragments.dialogfragments.SSHKeyGenFragment
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.sshconsole.SSHConsole
 import io.treehouses.remote.bases.BaseSSHConfig
@@ -39,6 +40,7 @@ class SSHConfigFragment : BaseSSHConfig() {
         super.onViewCreated(view, savedInstanceState)
         setEnabled(false)
         addTextValidation()
+        Tutorials.sshTutorial(bind, requireActivity())
         bind.connectSsh.setOnClickListener {
             var uriString = bind.sshTextInput.text.toString()
             connect(uriString, false)

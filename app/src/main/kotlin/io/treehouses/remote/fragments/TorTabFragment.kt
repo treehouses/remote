@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemClickListener
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTorTabFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
@@ -49,6 +50,10 @@ class TorTabFragment : BaseTorTabFragment() {
         return bind!!.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind?.let { Tutorials.tunnelTorTutorials(it, requireActivity()) }
+    }
     private fun addHostNameButonListener() {
         bind!!.btnHostName.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))

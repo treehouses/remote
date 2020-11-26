@@ -22,6 +22,7 @@ import io.treehouses.remote.fragments.DiscoverFragment
 import io.treehouses.remote.fragments.SettingsFragment
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityInitial2Binding
+import io.treehouses.remote.fragments.ShowBluetoothFileFragment
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.GPSService
@@ -118,7 +119,7 @@ class InitialActivity : BaseInitialActivity() {
         else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (f is HomeFragment) finishAffinity()
-            else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment) {
+            else if (f is SettingsFragment || f is CommunityFragment || f is DiscoverFragment || f is ShowBluetoothFileFragment) {
                 (supportFragmentManager).popBackStack()
                 title = currentTitle
             }

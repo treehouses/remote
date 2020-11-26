@@ -17,6 +17,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTorTabFragment
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.*
@@ -64,6 +65,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             }
         }
         bind!!.btnAddPort
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind?.let { Tutorials.tunnelSSHTutorials(it, requireActivity()) }
     }
 
     private fun addListeners() {

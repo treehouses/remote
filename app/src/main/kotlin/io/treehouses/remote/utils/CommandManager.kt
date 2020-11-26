@@ -18,6 +18,7 @@ enum class RESULTS {
     DEFAULT_CONNECTED,
     DEFAULT_NETWORK,
     NETWORKMODE,
+    NETWORKMODE_INFO,
     START_JSON,
     END_JSON,
     END_JSON_SERVICES,
@@ -45,6 +46,7 @@ fun match (output: String) : RESULTS {
         Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
         Matcher.isEndJSON(output) -> return RESULTS.END_JSON
+        Matcher.isNetworkModeInfoReturned(output) -> return RESULTS.NETWORKMODE_INFO
     }
     return RESULTS.RESULT_NOT_FOUND
 }
@@ -102,6 +104,11 @@ object Matcher {
             else -> false
         }
     }
+
+    fun isNetworkModeInfoReturned(output: String): Boolean {
+        return output.startsWith("essid:")
+    }
+
     fun isStartJSON(output: String): Boolean { return toLC(output).startsWith("{") }
 
     fun isEndJSON(output: String): Boolean { return toLC(output).trim().endsWith("}")}
