@@ -1,12 +1,14 @@
 package io.treehouses.remote.ui.discover
 
 import android.app.Application
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.fragments.DiscoverFragment
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
+import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -16,16 +18,24 @@ class DiscoverViewModel(application: Application) : FragmentViewModel(applicatio
     val isLoading1: MutableLiveData<Boolean> = MutableLiveData()
     val isLoading2: MutableLiveData<Boolean> = MutableLiveData()
     val deviceContainer: MutableLiveData<Boolean> = MutableLiveData()
-    val gatewayIcon: MutableLiveData<Boolean> = MutableLiveData()
-    val swiperefresh: MutableLiveData<Boolean> = MutableLiveData()
-    val deviceList: MutableLiveData<DiscoverFragment.Device> = MutableLiveData()
+    val swiperefreshEnabled: MutableLiveData<Boolean> = MutableLiveData()
+    val isRefreshing: MutableLiveData<Boolean> = MutableLiveData()
+    val gatewayIconVisible: MutableLiveData<Boolean> = MutableLiveData()
+    val deviceContainerVisible: MutableLiveData<Boolean> = MutableLiveData()
+    val deviceContainerWidth: MutableLiveData<Float> = MutableLiveData()
+    val deviceContainerHeight: MutableLiveData<Float> = MutableLiveData()
+
+
 
     fun onLoad()
     {
         loadBT()
+        isLoading1.value = true
+        isLoading2.value = true
+        gatewayIconVisible.value = false
+        isRefreshing.value = false
+        swiperefreshEnabled.value = false
         requestNetworkInfo()
-
-
     }
 
     private fun requestNetworkInfo() {
@@ -39,31 +49,34 @@ class DiscoverViewModel(application: Application) : FragmentViewModel(applicatio
         }
     }
 
-    override fun onRead(output: String) {
+    fun onRead(output: String, addDevices: Boolean, updateGatewayInfo: Boolean, updatePiInfo: Boolean) {
         super.onRead(output)
         logD("READ = $output")
+        if(!addDevices)
+            if(!updateGatewayInfo)
+                updatePiInfo
 
-        if(!addDevices(output))
-            if(!updateGatewayInfo(output))
-                updatePiInfo(output)
 
-        if (output.startsWith("Ports:")) transition()
+
+
     }
 
-    private fun addDevices(readMessage: String): Boolean {
-        var regex = "([0-9]+\\.){3}[0-9]+\\s+([0-9A-Z]+:){5}[0-9A-Z]+".toRegex()
-        val devices = regex.findAll(readMessage)
 
-        devices.forEach {
-            val device = Device()
 
-            device.ip = it.value.split("\\s+".toRegex())[0]
-            device.mac = it.value.split("\\s+".toRegex())[1]
-
-            if (!deviceList.contains(device)) deviceList.add(device)
-        }
-
-        return !devices.none()
+    override fun onWrite(input: String) {
+        super.onWrite(input)
+        logD("WRITE $input")
     }
+
+    fun onTransition()
+    {
+        swiperefreshEnabled.value = true
+        isLoading1.value = false
+        isLoading1.value = false
+        deviceContainerVisible.value = true
+    }
+
+
+
 
 }
