@@ -135,8 +135,12 @@
         android:layout_marginBottom="100dp"
         android:background="@color/windowBackground"
         android:descendantFocusability="beforeDescendants"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="3dp" />
+        android:dividerHeight="3dp"
+        android:divider="@drawable/ic_white"
+        android:childDivider="@drawable/ic_white"
+            />
+<!--        android:divider="@color/windowBackground"-->
+
 
     <ProgressBar
         android:id="@+id/progressBar"
