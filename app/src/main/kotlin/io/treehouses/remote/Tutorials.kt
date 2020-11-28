@@ -66,15 +66,17 @@ object Tutorials {
         //Put animations here
         val a = fancyShowCaseViewBuilderSkippable(activity, bind.editTextOut, "Enter Commands here to run on Pi Remotely", FocusShape.ROUNDED_RECTANGLE).build()
 
-        val b = fancyShowCaseView(activity, bind.infoButton, "Get Information on what Treehouses Commands are Available and how to use them", FocusShape.CIRCLE)
+        //val b = fancyShowCaseView(activity, bind.infoButton, "Get Information on what Treehouses Commands are Available and how to use them", FocusShape.CIRCLE)
 
-        val c = fancyShowCaseView(activity, bind.terminalList, "You can Save your Commands here to use them without typing again", FocusShape.ROUNDED_RECTANGLE)
+        val b = fancyShowCaseView(activity, bind.terminalList, "You can Save your Commands Here to use Them Without Typing Again and See Available Commands", FocusShape.ROUNDED_RECTANGLE)
 
-        val d = fancyShowCaseView(activity, bind.btnPrevious, "Access Recently used Commands on Successive taps of this button", FocusShape.CIRCLE)
+        val c = fancyShowCaseView(activity, bind.btnPrevious, "Access Recently used Commands on Successive taps of this button", FocusShape.CIRCLE)
 
-        val e = fancyShowCaseView(activity, bind.treehousesBtn, "Use this button for quick treehouses commands", FocusShape.ROUNDED_RECTANGLE)
+        val d = fancyShowCaseView(activity, bind.treehousesBtn, "Use this button for quick treehouses commands", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d,e)
+        val e = fancyShowCaseView(activity, bind.buttonSend, "Use this button to Send Your Command to the Pi", FocusShape.CIRCLE)
+
+        show(a,b,c, d, e)
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
