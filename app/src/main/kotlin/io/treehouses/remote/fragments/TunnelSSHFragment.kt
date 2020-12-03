@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.Message
 import android.text.Editable
 import android.text.Html
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -22,7 +21,6 @@ import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
 import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 
 class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addPortCloseButton: ImageButton
@@ -51,11 +49,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     private fun addPortListListener() {
         portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             if (portsName!!.size > 1 && position == portsName!!.size - 1) {
-                lastMessage = getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)
-                DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
+                DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
             }
         }
-        bind!!.btnAddPort
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,7 +96,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         try {
             initializeDialog2()
         } catch (exception: Exception) {
-            logE("Error1 $exception")
         }
     }
 
@@ -165,8 +160,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         publicKey = dialogKeys.findViewById(R.id.public_key)
         privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
-
-        logD("profile string ${profileText.toString()}")
         saveKeys.setOnClickListener {
             var profile = profileText.toString()
             writeMessage("treehouses remote key send $profile")
@@ -222,7 +215,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             addPortButton!!.text = "Adding......"
             addPortButton!!.isEnabled = false
             dialog.dismiss()
-
         }
     }
 
@@ -232,12 +224,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             dialog.show()
         }
         when (v?.id) {
-            R.id.btn_adding_host -> {
-                addingHostButton()
-            }
-            R.id.btn_adding_port -> {
-                addingPortButton()
-            }
+            R.id.btn_adding_host -> addingHostButton()
+            R.id.btn_adding_port -> addingPortButton()
             R.id.notify_now -> {
                 bind!!.notifyNow.isEnabled = false
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
@@ -259,7 +247,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             bind!!.sshPorts
             portsName = ArrayList()
             adapter = TunnelPortAdapter(requireContext(), portsName!!)
-
         }
     }
 
@@ -274,9 +261,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 adapter?.notifyDataSetChanged()
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             } else if ((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
-            else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) {
-                Log.i("SSH TUNNEL", readMessage + " " + lastMessage); handleNewList(readMessage);
-            } else if (readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
+            else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);
+            else if (readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
             else if (readMessage.contains("Status: on")) handleOnStatus()
             else getOtherMessages(readMessage)
         }
