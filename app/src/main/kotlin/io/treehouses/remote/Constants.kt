@@ -65,4 +65,9 @@ object Constants {
 
     //JSON String bundle
     const val JSON_STRING = "jsonString"
+
+    const val TAG = "Discover Fragment"
+    const val ICON_MEDIUM_SIZE = 200
+    const val ICON_SMALL_SIZE = 120
+    const val ICON_XSMALL_SIZE = 80
 }
