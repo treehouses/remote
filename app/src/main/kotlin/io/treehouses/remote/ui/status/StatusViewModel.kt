@@ -68,6 +68,9 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     }
 
     override fun onRead(output: String) {
+        if(output.startsWith("country")) {
+            sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+        }
         if (output.startsWith("country=") || output.contains("set to")) {
             val len = output.length - 3
             val country = output.substring(len).trim { it <= ' ' }
@@ -104,7 +107,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                 remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
-                sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
+
             } else checkUpgradeStatus(output) } catch (e: Exception) { }
     }
 
@@ -131,11 +134,12 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
 
     private fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
-            sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+            sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
         } else {
             upgradeCheckText.value = "      NO INTERNET"
             showUpgrade.value = false
         }
+
     }
 
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
