@@ -43,18 +43,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         hostsName = ArrayList()
         val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter
-        dropdown?.onItemSelectedListener = object :
-                AdapterView.OnItemSelectedListener {
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3:
-            Long) {
-                logD("winwin, YYYYY ")
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                logD("nothing, YYYYY ")
-            }
-        }
         addListeners()
         addPortListListener()
         return bind!!.root
@@ -141,7 +129,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             builder.setNegativeButton("Cancel", null)
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            logD("dialoging, dialog")
             dialog.show()
         }
         initializeDialog4()

@@ -17,6 +17,7 @@ import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTorTabFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logE
 import java.util.*
