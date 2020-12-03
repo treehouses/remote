@@ -15,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import com.parse.Parse
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -56,23 +58,36 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
 //
 //    }
 
+    fun gatewayIconObservers()
+    {
+
+    }
+
+
     private fun updateGatewayIcon() {
-        val gatewayIcon = bind.gatewayContainer.gateway_icon
-        bind.gatewayContainer.removeView(gatewayIcon)
 
+        viewModel.gatewayInformation.observe(viewLifecycleOwner, Observer
+        {
+            var gateway = it
+            val gatewayIcon = bind.gatewayContainer.gateway_icon
+            bind.gatewayContainer.removeView(gatewayIcon)
+            if (it.isComplete()) {
+                gatewayIcon.visibility = View.VISIBLE
+                gatewayIcon.setOnClickListener {
 
-        if (viewModel.gateway.isComplete()) {
-            gatewayIcon.visibility = View.VISIBLE
-            gatewayIcon.setOnClickListener {
-                val message = ("SSID: " + viewModel.gateway.ssid + "\n") +
-                        ("IP Address: " + viewModel.gateway.device.ip + "\n") +
-                        ("MAC Address: " + viewModel.gateway.device.mac + "\n") +
-                        ("Connected Devices: " + (viewModel.deviceList.size - 1))
-                message.lines()
-                showDialog(context, "Gateway Information", message)
+                    message.lines()
+                    showDialog(context, "Gateway Information", message)
+                }
             }
-        }
-        bind.gatewayContainer.addView(gatewayIcon)
+
+            bind.gatewayContainer.addView(gatewayIcon)
+
+        })
+
+
+
+
+
     }
 
 

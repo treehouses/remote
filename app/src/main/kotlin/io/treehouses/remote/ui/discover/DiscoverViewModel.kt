@@ -22,8 +22,12 @@ class DiscoverViewModel(application: Application) : FragmentViewModel(applicatio
     val isRefreshing: MutableLiveData<Boolean> = MutableLiveData()
     val gatewayIconVisible: MutableLiveData<Boolean> = MutableLiveData()
     val deviceContainerVisible: MutableLiveData<Boolean> = MutableLiveData()
+    val ssidText: MutableLiveData<String> = MutableLiveData()
+    val ipAddressText: MutableLiveData<String> = MutableLiveData()
+    val macAddressText: MutableLiveData<String> = MutableLiveData()
     val deviceList = ArrayList<Device>()
     var gateway = Gateway()
+    val gatewayInformation: MutableLiveData<String> = MutableLiveData()
     var pi = Device()
     var piIP = ""
 
@@ -103,6 +107,11 @@ class DiscoverViewModel(application: Application) : FragmentViewModel(applicatio
 
         val mac = extractText("MAC Address:\\s+([0-9A-Z]+:){5}[0-9A-Z]+", "MAC Address:\\s+", readMessage)
         if (mac != null) gateway.device.mac = mac
+
+        gatewayInformation.value = ("SSID: " + gateway.ssid + "\n") +
+                ("IP Address: " + ip + "\n") +
+                ("MAC Address: " + gateway.device.mac + "\n") +
+                ("Connected Devices: " + (deviceList.size - 1))
 
         return !ip.isNullOrEmpty() || !ssid.isNullOrEmpty() || !mac.isNullOrEmpty()
     }
