@@ -9,11 +9,13 @@ import android.view.View
 import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
+import kotlinx.android.synthetic.main.activity_tunnel_ssh_fragment.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -23,7 +25,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     var bind: ActivityTunnelSshFragmentBinding? = null
     protected var dropdown: Spinner? = null
     protected var portList: ListView? = null
-    protected var adapter: ArrayAdapter<String>? = null
+    protected var adapter: TunnelPortAdapter? = null
     protected var portsName: java.util.ArrayList<String>? = null
     protected var hostsName: java.util.ArrayList<String>? = null
     protected var hostsPosition: java.util.ArrayList<Int>? = null
@@ -58,10 +60,10 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 bind?.apply {
                     switchNotification.isChecked = false; switchNotification.isEnabled = true
                     notifyNow.isEnabled = true
-                    listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+                    writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
                 }
             }
-            readMessage.contains("OK.") -> listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
+            readMessage.contains("OK.") -> writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             readMessage.contains("Thanks for the feedback!") -> {
                 Toast.makeText(requireContext(), "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                 bind!!.notifyNow.isEnabled = true
@@ -77,7 +79,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
             }
             readMessage.contains("true") || readMessage.contains("false") -> {
-                listener.sendMessage("treehouses remote key send")
+                writeMessage("treehouses remote key send")
                 Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
             }
             readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
@@ -157,7 +159,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         builder.setMessage(message)
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            listener.sendMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
+            writeMessage("treehouses remote key receive \"$storedPublicKey\" \"$storedPrivateKey\" $profile")
             Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
         }
         setNeutralButton(builder, "Cancel")
@@ -189,7 +191,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
                         "Phone Private Key for ${profile}: \n$storedPrivateKey")
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            listener.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
+            writeMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
             Toast.makeText(context, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
         }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
         builder.show()
@@ -225,13 +227,13 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected fun handleOnStatus() {
         bind!!.switchNotification.isChecked = true; bind!!.switchNotification.isEnabled = true; bind!!.notifyNow.isEnabled = true
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
-        listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+        writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
     protected fun handleNoPorts() {
         adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter2
-        adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
         bind!!.sshPorts.adapter = adapter
         portList!!.isEnabled = true
         addPortButton!!.text = "Add Port"; addHostButton!!.text = "Add Host"
@@ -247,10 +249,9 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
     protected fun handleModifiedList() {
         Toast.makeText(requireContext(), "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
-
         addPortButton?.text = "Retrieving"; addHostButton?.text = "Retrieving"
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
-        listener.sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+        writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
     protected fun handleNewList(readMessage: String) {
@@ -271,10 +272,12 @@ open class BaseTunnelSSHFragment : BaseFragment() {
                 position += 1
             }
         }
+
+        if(portsName!!.size > 1) portsName!!.add("All")
         adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter2
-        adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, portsName!!)
-        bind!!.sshPorts.adapter = adapter
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
+          bind!!.sshPorts.adapter = adapter
         portList!!.isEnabled = true
     }
 

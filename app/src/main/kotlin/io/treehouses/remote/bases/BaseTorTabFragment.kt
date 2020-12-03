@@ -62,9 +62,6 @@ open class BaseTorTabFragment: BaseFragment() {
         startButton!!.text = "Getting Tor Status from raspberry pi"
     }
 
-    protected fun promptDeleteAllPorts() {
-        DialogUtils.createAlertDialog(context, "Delete All Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL)) }
-    }
 
     protected fun promptDeletePort(position: Int) {
         DialogUtils.createAlertDialog(context, "Delete Port " + portsName!![position] + " ?")
