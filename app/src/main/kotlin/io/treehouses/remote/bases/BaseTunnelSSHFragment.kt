@@ -210,7 +210,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     }
 
     private fun saveKeyToPhone(builder: AlertDialog.Builder, profile: String, piPublicKey: String, piPrivateKey: String) {
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("output", Context.MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
             myEdit.putString("${profile}_public_key", piPublicKey)

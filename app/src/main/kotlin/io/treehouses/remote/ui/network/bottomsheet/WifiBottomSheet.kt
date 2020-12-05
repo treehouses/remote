@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs
+package io.treehouses.remote.ui.network.bottomsheet
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import io.treehouses.remote.Constants
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
 import io.treehouses.remote.fragments.NetworkFragment
@@ -16,9 +18,12 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogWifiBinding
 import io.treehouses.remote.pojo.NetworkProfile
+import io.treehouses.remote.ui.network.NetworkViewModel
+import io.treehouses.remote.ui.status.StatusViewModel
 import io.treehouses.remote.utils.SaveUtils
 
 class WifiBottomSheet : BaseBottomSheetDialog() {
+    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     private lateinit var bind: DialogWifiBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
