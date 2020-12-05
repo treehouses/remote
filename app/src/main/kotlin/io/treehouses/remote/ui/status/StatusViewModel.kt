@@ -105,7 +105,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                 remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
-
             } else checkUpgradeStatus(output) } catch (e: Exception) { }
     }
 
@@ -137,7 +136,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             upgradeCheckText.value = "      NO INTERNET"
             showUpgrade.value = false
         }
-
     }
 
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
