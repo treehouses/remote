@@ -68,15 +68,13 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     }
 
     override fun onRead(output: String) {
-        if(output.startsWith("country")) {
-            sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
-        }
         if (output.startsWith("country=") || output.contains("set to")) {
             val len = output.length - 3
             val country = output.substring(len).trim { it <= ' ' }
             countryDisplayText.value = getCountryName(country)
             countryDisplayTextEnabled.value = true
             showRefresh.value = true
+            sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
         } else if (output.contains("invalid country code")) {
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
