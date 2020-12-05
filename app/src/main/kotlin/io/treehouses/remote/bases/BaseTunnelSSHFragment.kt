@@ -104,6 +104,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
                 buildJSON()
                 jsonSend(false)
+                logD("JSON STRING: " + jsonString)
             }
         } else if (s == RESULTS.START_JSON) {
             jsonReceiving = true
@@ -134,14 +135,17 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             else if (inNeither) Toast.makeText(context, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             // Keys are different, overwrite one or cancel
             else handleDifferentKeys(jsonObject)
+            logD("Keys: " + jsonObject)
+            logD("Public and private" + storedPublicKey  + " " + storedPrivateKey)
         } catch (e: JSONException) { e.printStackTrace() }
     }
 
     private fun handleDifferentKeys(jsonObject: JSONObject) {
         val profile = jsonObject.getString("profile")
+        logD(jsonObject.toString())
         val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
         val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-
+        logD("in the handleDifferentKeys method")
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Overwrite On Pi or Phone")
 
@@ -211,6 +215,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
     private fun saveKeyToPhone(builder: AlertDialog.Builder, profile: String, piPublicKey: String, piPrivateKey: String) {
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
+        logD("in the saveKeyToPhone method")
         val myEdit = sharedPreferences.edit()
         builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
             myEdit.putString("${profile}_public_key", piPublicKey)

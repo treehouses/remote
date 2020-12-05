@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.os.Message
 import android.text.Editable
 import android.text.Html
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -26,6 +29,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addPortCloseButton: ImageButton
     lateinit var addHostCloseButton: ImageButton
     lateinit var addKeyCloseButton: ImageButton
+
 
     @RequiresApi(Build.VERSION_CODES.N)
 
@@ -165,7 +169,12 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             writeMessage("treehouses remote key send $profile")
             jsonSend(true)
         }
-        showKeys.setOnClickListener { handleShowKeys(profileText) }
+        showKeys.setOnClickListener {
+            var profile = profileText.toString()
+            writeMessage("treehouses remote key send $profile")
+            jsonSend(true)
+            handleShowKeys(profileText)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -173,18 +182,29 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         var profile = profileText.toString()
         if (profile.isBlank()) profile = "default"
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
-        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
 
+        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "key")
+
+        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "key")
+        Log.i("Public Key", "key" + storedPublicKey);
         if (storedPublicKey != null && storedPrivateKey != null) {
             if (storedPublicKey.isBlank()) storedPublicKey = "No public key found"
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
         }
 
-        val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
-        val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
-        publicKey.text = strPhonePublicKey
-        privateKey.text = strPhonePrivateKey
+        if ((Build.VERSION.SDK_INT) >= 24)
+        {
+            val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
+            val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
+            publicKey.text = strPhonePublicKey
+            privateKey.text = strPhonePrivateKey
+        } else {
+            val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n")
+            val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
+            publicKey.text = strPhonePublicKey
+            privateKey.text = strPhonePrivateKey
+        }
+
     }
 
     private fun switchButton(isChecked: Boolean) {
@@ -250,10 +270,15 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun getMessage(msg: Message) {
+        Log.i("last Message", "last message" + lastMessage)
         if (msg.what == Constants.MESSAGE_READ) {
+
             val readMessage: String = msg.obj as String
             logD("SSHTunnel reply $readMessage")
+
+            if (lastMessage == getString(R.string.TREEHOUSES_REMOTE_KEY_SEND)) logD("Key send: $readMessage")
             val modifyKeywords = arrayOf("ssh-rsa", "Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
@@ -261,6 +286,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 adapter?.notifyDataSetChanged()
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             } else if ((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
+
             else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);
             else if (readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
             else if (readMessage.contains("Status: on")) handleOnStatus()
