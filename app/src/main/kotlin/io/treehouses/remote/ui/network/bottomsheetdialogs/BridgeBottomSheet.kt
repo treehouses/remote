@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs
+package io.treehouses.remote.ui.network.bottomsheetdialogs
 
 import android.app.Activity
 import android.content.Intent
@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import io.treehouses.remote.Constants
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
-import io.treehouses.remote.fragments.NetworkFragment
-import io.treehouses.remote.fragments.NetworkFragment.Companion.openWifiDialog
+import io.treehouses.remote.ui.network.NetworkFragment
+import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
 import io.treehouses.remote.fragments.TextBoxValidation
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseBottomSheetDialog
