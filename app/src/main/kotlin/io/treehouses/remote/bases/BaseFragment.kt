@@ -17,6 +17,7 @@ import io.treehouses.remote.utils.logE
 import java.lang.NullPointerException
 
 open class BaseFragment : Fragment() {
+    var lastMessage = " ";
     open lateinit var mChatService: BluetoothChatService
     var mBluetoothAdapter: BluetoothAdapter? = null
     lateinit var listener: HomeInteractListener
@@ -77,4 +78,10 @@ open class BaseFragment : Fragment() {
     fun checkStatusNow() {}
     open fun setupChat() {}
     open fun getMessage(msg: Message) {}
+
+    public fun writeMessage(msg: String)
+    {
+        lastMessage = msg
+        listener.sendMessage(msg)
+    }
 }

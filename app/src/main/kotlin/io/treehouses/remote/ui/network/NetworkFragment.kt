@@ -20,12 +20,12 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
 import io.treehouses.remote.fragments.DiscoverFragment
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.BridgeBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.EthernetBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.HotspotBottomSheet
-import io.treehouses.remote.fragments.dialogfragments.bottomsheetdialogs.WifiBottomSheet
 import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.ui.home.HomeFragment
+import io.treehouses.remote.ui.network.bottomsheetdialogs.BridgeBottomSheet
+import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
+import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
+import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
 import io.treehouses.remote.utils.*
 import kotlinx.android.synthetic.main.activity_network_fragment.*
 
@@ -33,12 +33,13 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     private lateinit var binding: ActivityNetworkFragmentBinding
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { this })
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = ActivityNetworkFragmentBinding.inflate(inflater, container, false)
+        loadObservers()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.onLoad()
         //Listeners
         binding.networkWifi.setOnClickListener(this)
         binding.networkHotspot.setOnClickListener(this)
@@ -49,7 +50,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         binding.resetNetwork.setOnClickListener(this)
         binding.discoverBtn.setOnClickListener(this)
         Tutorials.networkTutorials(binding, requireActivity())
-        loadObservers()
+        viewModel.onLoad()
     }
 
     fun loadObservers() {

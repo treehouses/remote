@@ -17,6 +17,7 @@ import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTorTabFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
+import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logE
 import java.util.*
@@ -92,7 +93,7 @@ class TorTabFragment : BaseTorTabFragment() {
     private fun addPortListListener() {
         portList!!.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size-1
-            if (deleteAllPortsButtonSelected) promptDeleteAllPorts("Delete All Ports?", getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
+            if (deleteAllPortsButtonSelected) DialogUtils.createAlertDialog(context, "Delete All Ports?") { listener.sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL)) }
             else promptDeletePort(position)
         }
 

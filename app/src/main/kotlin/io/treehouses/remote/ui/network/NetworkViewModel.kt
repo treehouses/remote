@@ -8,6 +8,7 @@ import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
 
@@ -18,6 +19,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     var showNetworkProgress: MutableLiveData<Boolean> = MutableLiveData()
     private fun updateNetworkText(mode: String) {
+        logD( "Current Network Mode: $mode" )
         networkMode.value = "Current Network Mode: $mode"
     }
 
@@ -28,6 +30,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
 
     private fun showIpAddress(output: String) {
         var ip = output.substringAfter("ip: ").substringBefore(", has")
+        logD( "Current ip: $ip" )
         if (ip == "") ip = "N/A"
         ipAddress.value = "IP Address: " + ip
     }
