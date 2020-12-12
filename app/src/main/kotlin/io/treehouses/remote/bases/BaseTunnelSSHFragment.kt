@@ -84,7 +84,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             }
             readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
             readMessage.contains("unknown") -> jsonSend(false)
-            readMessage.contains("public_key") -> handleJson(readMessage)
+//            readMessage.contains("public_key") -> handleJson(readMessage)
             else -> if (jsonSent) handleJson(readMessage)
         }
     }

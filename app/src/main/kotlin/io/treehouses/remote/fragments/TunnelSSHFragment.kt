@@ -46,16 +46,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter
         addListeners()
-        addPortListListener()
         return bind!!.root
-    }
-
-    private fun addPortListListener() {
-        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            if (portsName!!.size > 1 && position == portsName!!.size - 1) {
-                DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -143,14 +134,18 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     break
                 }
             }
-            if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
-            logD("dasda ${myPos.toString()}")
-            val portName = TunnelUtils.getPortName(portsName, position)
-            val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
-            writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
-            addPortButton!!.text = "deleting port ....."
-            portList!!.isEnabled = false
-            addPortButton!!.isEnabled = false
+            if (portsName!!.size > 1 && position == portsName!!.size - 1) {
+                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL))
+            } else {
+                if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
+                logD("dasda ${myPos.toString()}")
+                val portName = TunnelUtils.getPortName(portsName, position)
+                val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
+                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
+                addPortButton!!.text = "deleting port ....."
+                portList!!.isEnabled = false
+                addPortButton!!.isEnabled = false
+            }
             dialog.dismiss()
         }
     }
@@ -278,14 +273,13 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             logD("SSHTunnel reply $readMessage")
 
             if (lastMessage == getString(R.string.TREEHOUSES_REMOTE_KEY_SEND)) logD("Key send: $readMessage")
-            val modifyKeywords = arrayOf("ssh-rsa", "Added", "Removed")
+            val modifyKeywords = arrayOf("Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
                 adapter?.notifyDataSetChanged()
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             } else if ((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
-
             else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);
             else if (readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
             else if (readMessage.contains("Status: on")) handleOnStatus()
