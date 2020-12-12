@@ -27,7 +27,7 @@ class SocksFragment : BaseFragment() {
     private var adapter: ArrayAdapter<String>? = null
     private var profileName: java.util.ArrayList<String>? = null
     private var portList: ListView? = null
-    private lateinit var dialog:Dialog
+    private lateinit var dialog: Dialog
     private lateinit var password: EditText
     private lateinit var serverPort: EditText
     private lateinit var localPort: EditText
