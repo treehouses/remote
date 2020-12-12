@@ -84,6 +84,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             }
             readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
             readMessage.contains("unknown") -> jsonSend(false)
+            readMessage.contains("public_key") -> handleJson(readMessage)
             else -> if (jsonSent) handleJson(readMessage)
         }
     }
@@ -99,8 +100,10 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
     private fun handleJson(readMessage: String) {
         val s = match(readMessage)
+        logD("JSON READ MESSAGE: " + readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
+            buildJSON()
             if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
                 buildJSON()
                 jsonSend(false)
