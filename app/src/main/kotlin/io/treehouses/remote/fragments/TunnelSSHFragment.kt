@@ -186,7 +186,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "key")
 
         var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "key")
-        Log.i("Public Key", "key" + storedPublicKey);
         if (storedPublicKey != null && storedPrivateKey != null) {
             if (storedPublicKey.isBlank()) storedPublicKey = "No public key found"
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
@@ -272,7 +271,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getMessage(msg: Message) {
-        Log.i("last Message", "last message" + lastMessage)
         if (msg.what == Constants.MESSAGE_READ) {
 
             val readMessage: String = msg.obj as String

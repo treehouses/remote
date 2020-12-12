@@ -118,7 +118,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             val profile = jsonObject.getString("profile")
             val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
             val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-            logD(profile)
             logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
 
             val inPiAndPhone = piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey
