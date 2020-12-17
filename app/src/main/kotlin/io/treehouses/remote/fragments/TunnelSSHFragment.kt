@@ -176,8 +176,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
         }
 
-        val strPhonePublicKey : Spanned
-        val strPhonePrivateKey : Spanned
+        val strPhonePublicKey : Spanned; val strPhonePrivateKey : Spanned
         if ((Build.VERSION.SDK_INT) >= 24) {
             strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
             strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
@@ -185,8 +184,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n")
             strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
         }
-        publicKey.text = strPhonePublicKey
-        privateKey.text = strPhonePrivateKey
+        publicKey.text = strPhonePublicKey; privateKey.text = strPhonePrivateKey
     }
 
     private fun switchButton(isChecked: Boolean) {
@@ -247,8 +245,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             mChatService.updateHandler(mHandler)
             writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             bind!!.sshPorts
-            portsName = ArrayList()
-            adapter = TunnelPortAdapter(requireContext(), portsName!!)
+            portsName = ArrayList(); adapter = TunnelPortAdapter(requireContext(), portsName!!)
         }
     }
 
