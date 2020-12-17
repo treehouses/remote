@@ -204,7 +204,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
         setNeutralButton(builder, "Cancel")
-
         builder.show()
     }
 
@@ -263,8 +262,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         for (host in hosts) {
             val ports = host.split(' ')
             for (port in ports) {
-                if (port.length >= 3)
-                    portsName!!.add(port)
+                if (port.length >= 3) portsName!!.add(port)
                 if (port.contains("@")) {
                     hostsPosition!!.add(position)
                     hostsName!!.add(port)

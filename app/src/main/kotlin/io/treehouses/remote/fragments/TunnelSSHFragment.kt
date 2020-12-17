@@ -29,7 +29,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addKeyCloseButton: ImageButton
 
     @RequiresApi(Build.VERSION_CODES.N)
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         bind!!.switchNotification.isEnabled = false
@@ -150,7 +149,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         showKeys = dialogKeys.findViewById(R.id.btn_show_keys)
         saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
         val profileText = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text
-
         publicKey = dialogKeys.findViewById(R.id.public_key)
         privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
@@ -169,31 +167,29 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         jsonSend(true)
     }
 
-
     @RequiresApi(Build.VERSION_CODES.N)
     private fun handleShowKeys(profileText: Editable) {
         var profile = profileText.toString()
         if (profile.isBlank()) profile = "default"
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
         var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "key")
-
         var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "key")
         if (storedPublicKey != null && storedPrivateKey != null) {
             if (storedPublicKey.isBlank()) storedPublicKey = "No public key found"
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
         }
 
+        val strPhonePublicKey : Spanned
+        val strPhonePrivateKey : Spanned
         if ((Build.VERSION.SDK_INT) >= 24) {
-            val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
-            val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
-            publicKey.text = strPhonePublicKey
-            privateKey.text = strPhonePrivateKey
+            strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
+            strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
         } else {
-            val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n")
-            val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
-            publicKey.text = strPhonePublicKey
-            privateKey.text = strPhonePrivateKey
+            strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n")
+            strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
         }
+        publicKey.text = strPhonePublicKey
+        privateKey.text = strPhonePrivateKey
     }
 
     private fun switchButton(isChecked: Boolean) {
@@ -264,7 +260,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
             logD("SSHTunnel reply $readMessage")
-
             if (lastMessage == getString(R.string.TREEHOUSES_REMOTE_KEY_SEND)) logD("Key send: $readMessage")
             val modifyKeywords = arrayOf("Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
