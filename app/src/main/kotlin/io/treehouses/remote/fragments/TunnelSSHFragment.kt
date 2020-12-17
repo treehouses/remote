@@ -128,9 +128,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     break
                 }
             }
-            if (portsName!!.size > 1 && position == portsName!!.size - 1) {
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL))
-            } else {
+            if (portsName!!.size > 1 && position == portsName!!.size - 1) { writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
+            else {
                 if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
                 logD("dasda ${myPos.toString()}")
                 val portName = TunnelUtils.getPortName(portsName, position)
@@ -152,9 +151,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         publicKey = dialogKeys.findViewById(R.id.public_key)
         privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
-        saveKeys.setOnClickListener {
-            keyClickListener(profileText);
-        }
+        saveKeys.setOnClickListener { keyClickListener(profileText); }
         showKeys.setOnClickListener {
             keyClickListener(profileText);
             handleShowKeys(profileText)
@@ -255,7 +252,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun getMessage(msg: Message) {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
