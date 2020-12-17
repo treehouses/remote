@@ -11,7 +11,6 @@ import android.text.Editable
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -21,7 +20,6 @@ import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
 import io.treehouses.remote.utils.logD
 
@@ -29,7 +27,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addPortCloseButton: ImageButton
     lateinit var addHostCloseButton: ImageButton
     lateinit var addKeyCloseButton: ImageButton
-
 
     @RequiresApi(Build.VERSION_CODES.N)
 
@@ -88,10 +85,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        try {
-            initializeDialog2()
-        } catch (exception: Exception) {
-        }
+        try { initializeDialog2() }
+        catch (exception: Exception) { }
     }
 
     private fun addCloseButtons() {
@@ -160,25 +155,26 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
         saveKeys.setOnClickListener {
-            var profile = profileText.toString()
-            writeMessage("treehouses remote key send $profile")
-            jsonSend(true)
+            keyClickListener(profileText);
         }
         showKeys.setOnClickListener {
-            var profile = profileText.toString()
-            writeMessage("treehouses remote key send $profile")
-            jsonSend(true)
+            keyClickListener(profileText);
             handleShowKeys(profileText)
-
         }
     }
+
+    private fun keyClickListener(profileText: Editable) {
+        var profile = profileText.toString()
+        writeMessage("treehouses remote key send $profile")
+        jsonSend(true)
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun handleShowKeys(profileText: Editable) {
         var profile = profileText.toString()
         if (profile.isBlank()) profile = "default"
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-
         var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "key")
 
         var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "key")
@@ -187,8 +183,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
         }
 
-        if ((Build.VERSION.SDK_INT) >= 24)
-        {
+        if ((Build.VERSION.SDK_INT) >= 24) {
             val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
             val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
             publicKey.text = strPhonePublicKey
@@ -199,7 +194,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             publicKey.text = strPhonePublicKey
             privateKey.text = strPhonePrivateKey
         }
-
     }
 
     private fun switchButton(isChecked: Boolean) {
@@ -268,7 +262,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getMessage(msg: Message) {
         if (msg.what == Constants.MESSAGE_READ) {
-
             val readMessage: String = msg.obj as String
             logD("SSHTunnel reply $readMessage")
 

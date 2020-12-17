@@ -84,7 +84,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             }
             readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
             readMessage.contains("unknown") -> jsonSend(false)
-//            readMessage.contains("public_key") -> handleJson(readMessage)
             else -> if (jsonSent) handleJson(readMessage)
         }
     }
@@ -100,14 +99,12 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
     private fun handleJson(readMessage: String) {
         val s = match(readMessage)
-        logD("JSON READ MESSAGE: " + readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
             buildJSON()
             if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
                 buildJSON()
                 jsonSend(false)
-                logD("JSON STRING: " + jsonString)
             }
         } else if (s == RESULTS.START_JSON) {
             jsonReceiving = true
@@ -137,17 +134,13 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             else if (inNeither) Toast.makeText(context, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             // Keys are different, overwrite one or cancel
             else handleDifferentKeys(jsonObject)
-            logD("Keys: " + jsonObject)
-            logD("Public and private" + storedPublicKey  + " " + storedPrivateKey)
         } catch (e: JSONException) { e.printStackTrace() }
     }
 
     private fun handleDifferentKeys(jsonObject: JSONObject) {
         val profile = jsonObject.getString("profile")
-        logD(jsonObject.toString())
         val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
         val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-        logD("in the handleDifferentKeys method")
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Overwrite On Pi or Phone")
 
