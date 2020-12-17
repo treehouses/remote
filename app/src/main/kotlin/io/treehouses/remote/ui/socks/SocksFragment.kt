@@ -3,11 +3,13 @@ package io.treehouses.remote.ui.socks
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Message
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
@@ -22,10 +24,15 @@ class SocksFragment : BaseFragment(){
     private var cancelProfileButton: Button? = null
     private var textStatus: TextView? = null
     private var adapter: ArrayAdapter<String>? = null
+    private lateinit var dialog: Dialog
+    private lateinit var password: EditText
+    private lateinit var serverPort: EditText
+    private lateinit var localPort: EditText
+    private lateinit var localAddress: EditText
+    private lateinit var serverHost: EditText
     private var profileName: java.util.ArrayList<String>? = null
     private var portList: ListView? = null
     var bind: ActivitySocksFragmentBinding? = null
-    private lateinit var dialog: Dialog
     var bindProfile: DialogAddProfileBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -35,7 +42,7 @@ class SocksFragment : BaseFragment(){
         profileName = ArrayList()
         addProfileButton = bind!!.btnAddProfile
         portList = bind!!.profiles
-        initializeObservers()
+        initializeDialog()
         addProfileButtonListeners(dialog)
         portList = bind!!.profiles
         return bind!!.root
@@ -59,16 +66,14 @@ class SocksFragment : BaseFragment(){
         }
     }
 
-    private fun initializeObservers(){
+    private fun initializeDialog(){
         dialog = Dialog(requireContext())
         addPortListListener()
 
         dialog.setContentView(bindProfile!!.root)
 
-        //serverHost = bindProfile!!.ServerHost
-        viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
-            bindProfile.ServerHost.text = it
-        });
+        serverHost = bindProfile!!.ServerHost
+
         localAddress = bindProfile!!.LocalAddress
         localPort = bindProfile!!.localPort
         serverPort = bindProfile!!.serverPort
@@ -79,7 +84,33 @@ class SocksFragment : BaseFragment(){
         window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         window.setBackgroundDrawableResource(android.R.color.transparent)
+
+        initializeObservers()
     }
+
+    private fun initializeObservers()
+    {
+        viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
+            serverHost.setText(it)
+        });
+
+        viewModel.localPortText.observe(viewLifecycleOwner, Observer {
+            localPort.setText(it)
+        });
+
+        viewModel.localAddressText.observe(viewLifecycleOwner, Observer {
+            localAddress.setText(it)
+        });
+
+        viewModel.passwordText.observe(viewLifecycleOwner, Observer{
+            password.setText(it)
+        })
+
+        viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
+            addingProfileButton?.setText(it)
+        })
+    }
+
 
     private fun addProfileButtonListeners(dialog: Dialog) {
 
@@ -107,6 +138,17 @@ class SocksFragment : BaseFragment(){
                 Toast.makeText(requireContext(), "Missing Information", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun getMessage(msg: Message) {
+
+        if (msg.what == Constants.MESSAGE_READ) {
+            val readMessage: String = msg.obj as String
+            viewModel.onRead(readMessage)
+
+        }
+
+
     }
 
 }
