@@ -104,8 +104,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     val parts = portsName!![position].split(":")[0]
                     writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts))
                     addHostButton!!.text = "deleting host ....."
-                    portList!!.isEnabled = false
-                    addHostButton!!.isEnabled = false
+                    portList!!.isEnabled = false; addHostButton!!.isEnabled = false
                     dialog.dismiss()
                 }
             }
@@ -136,8 +135,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
                 addPortButton!!.text = "deleting port ....."
-                portList!!.isEnabled = false
-                addPortButton!!.isEnabled = false
+                portList!!.isEnabled = false; addPortButton!!.isEnabled = false
             }
             dialog.dismiss()
         }
