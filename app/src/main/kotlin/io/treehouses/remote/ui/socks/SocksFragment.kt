@@ -1,18 +1,14 @@
 package io.treehouses.remote.ui.socks
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ListView
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
@@ -35,6 +31,7 @@ class SocksFragment : BaseFragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySocksFragmentBinding.inflate(inflater, container, false)
         bindProfile = DialogAddProfileBinding.inflate(inflater, container, false)
+        viewModel.onLoad()
         profileName = ArrayList()
         addProfileButton = bind!!.btnAddProfile
         portList = bind!!.profiles
@@ -42,6 +39,24 @@ class SocksFragment : BaseFragment(){
         addProfileButtonListeners(dialog)
         portList = bind!!.profiles
         return bind!!.root
+    }
+
+    private fun addPortListListener() {
+        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            val selectedString = profileName!![position]
+            builder.setTitle("Delete Profile $selectedString ?")
+            builder.setPositiveButton("Confirm") { dialog, _ ->
+                listener.sendMessage("treehouses shadowsocks remove $selectedString ")
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("Cancel", null)
+
+            // create and show the alert dialog
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
     }
 
     private fun initializeObservers(){
@@ -52,9 +67,8 @@ class SocksFragment : BaseFragment(){
 
         //serverHost = bindProfile!!.ServerHost
         viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
-            viewModel.serverHostText.value = bindProfile!!.ServerHost
-            }
-        )
+            bindProfile.ServerHost.text = it
+        });
         localAddress = bindProfile!!.LocalAddress
         localPort = bindProfile!!.localPort
         serverPort = bindProfile!!.serverPort
@@ -66,4 +80,33 @@ class SocksFragment : BaseFragment(){
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         window.setBackgroundDrawableResource(android.R.color.transparent)
     }
+
+    private fun addProfileButtonListeners(dialog: Dialog) {
+
+        addProfileButton!!.setOnClickListener {
+            dialog.show()
+        }
+        cancelProfileButton!!.setOnClickListener {
+            dialog.dismiss()
+        }
+        addingProfileButton!!.setOnClickListener {
+            if (serverHost.text.toString().isNotEmpty() && localAddress.text.toString().isNotEmpty() && localPort.text.toString().isNotEmpty() && serverPort.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
+                val ServerHost = serverHost.text.toString()
+                val LocalAddress = localAddress.text.toString()
+                val LocalPort = localPort.text.toString()
+                val ServerPort = serverPort.text.toString()
+                val Password = password.text.toString()
+
+                val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$ServerHost\\\", \\\"local_address\\\": \\\"$LocalAddress\\\", \\\"local_port\\\": $LocalPort, \\\"server_port\\\": $ServerPort, \\\"password\\\": \\\"$Password\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
+                listener.sendMessage(message)
+                addProfileButton?.text = "Adding......"
+                addProfileButton?.isEnabled = false
+                dialog.dismiss()
+            }
+            else{
+                Toast.makeText(requireContext(), "Missing Information", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }
