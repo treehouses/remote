@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-def appVersionCode = (System.env.GITHUB_RUN_NUMBER_WITH_OFFSET ? System.env.GITHUB_RUN_NUMBER_WITH_OFFSET : 2)
-def appVersionName = (System.env.GITHUB_RUN_NUMBER_WITH_OFFSET ? System.env.GITHUB_RUN_NUMBER_WITH_OFFSET : "1.0.0") + ""
+def appVersionCode = (System.env.GITHUB_RUN_NUMBER ? System.env.GITHUB_RUN_NUMBER : 2) + 6050
+def appVersionName = (System.env.GITHUB_RUN_NUMBER ? System.env.GITHUB_RUN_NUMBER + 6050: "1.0.0") + ""
 
 android {
     compileSdkVersion 29
