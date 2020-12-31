@@ -140,14 +140,23 @@ class SocksFragment : BaseFragment(){
         }
     }
 
-    override fun getMessage(msg: Message) {
+    override fun setUserVisibleHint(visible: Boolean) {
+        if (visible) {
+            if (isListenerInitialized()) {
+                mChatService = listener.getChatService()
+                mChatService!!.updateHandler(mHandler)
+                profileName = ArrayList()
+                listener.sendMessage("treehouses shadowsocks list")
+            }
 
+        }
+    }
+
+    override fun getMessage(msg: Message) {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
             viewModel.onRead(readMessage)
-
         }
-
 
     }
 

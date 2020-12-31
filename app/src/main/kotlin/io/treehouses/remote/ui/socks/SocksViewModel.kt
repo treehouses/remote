@@ -29,6 +29,7 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
     val profileNameText: MutableLiveData<ArrayList<String>> = MutableLiveData()
     val profilesAdapter: MutableLiveData<ArrayAdapter<String>> = MutableLiveData()
     private var adapter: ArrayAdapter<String>? = null
+
     fun onLoad()
     {
         loadBT()
