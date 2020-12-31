@@ -76,7 +76,6 @@ class SocksFragment : BaseFragment(){
 
         localAddress = bindProfile!!.LocalAddress
         localPort = bindProfile!!.localPort
-        serverPort = bindProfile!!.serverPort
         password = bindProfile!!.password
         addingProfileButton = bindProfile!!.addingProfileButton
         cancelProfileButton = bindProfile!!.cancel
@@ -110,6 +109,30 @@ class SocksFragment : BaseFragment(){
             addingProfileButton?.setText(it)
         })
     }
+
+    private fun messageObservers() {
+        viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
+            textStatus?.text ?: it
+        })
+
+        viewModel.startButtonEnabled.observe(viewLifecycleOwner, Observer {
+            startButton?.isEnabled ?: it
+        })
+
+        viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
+            profileName = it
+        })
+
+        viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
+            addProfileButton?.text ?: it
+        })
+
+        viewModel.addProfileButtonEnbaled.observe(viewLifecycleOwner, Observer {
+            addProfileButton?.isEnabled ?: it
+        })
+
+    }
+
 
 
     private fun addProfileButtonListeners(dialog: Dialog) {
@@ -153,11 +176,13 @@ class SocksFragment : BaseFragment(){
     }
 
     override fun getMessage(msg: Message) {
+        messageObservers()
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
             viewModel.onRead(readMessage)
+            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, profileName!!)
+            bind!!.profiles.adapter = adapter
         }
-
     }
 
 }

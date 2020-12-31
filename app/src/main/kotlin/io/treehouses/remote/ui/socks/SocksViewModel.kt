@@ -42,7 +42,7 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
 
 
             if (output.contains("inactive")) {
-                serverHostText.value = "-"; startButtonText.value = "Start Tor"
+                textStatusText.value = "-"; startButtonText.value = "Start Tor"
                 startButtonEnabled.value = true
                 sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
             }
