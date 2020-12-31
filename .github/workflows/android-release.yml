@@ -47,6 +47,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/release/signed/*
-          tag: $GITHUB_RUN_NUMBER_WITH_OFFSET
+          tag: ${{ github.action }}
           overwrite: true
           file_glob: true
