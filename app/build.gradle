@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
-def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0") + ""
+def appVersionCode = Integer.valueOf(System.env.GITHUB_RUN_ID ?: 2)
+def appVersionName = (System.env.GITHUB_RUN_ID ?: "1.0.0") + ""
+
 
 android {
     compileSdkVersion 29
@@ -10,6 +11,7 @@ android {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 29
+        ndkVersion '21.3.6528147'
         multiDexEnabled true
         versionCode appVersionCode
         versionName appVersionName
