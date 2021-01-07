@@ -12,6 +12,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.logD
 
 class SocksViewModel (application: Application) : FragmentViewModel(application){

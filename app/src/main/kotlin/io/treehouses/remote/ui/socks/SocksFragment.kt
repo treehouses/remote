@@ -18,7 +18,7 @@ import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.ui.status.StatusViewModel
 
 class SocksFragment : BaseFragment(){
-    override lateinit var mChatService: BluetoothChatService
+
     protected val viewModel: SocksViewModel by viewModels(ownerProducer = { this })
     private var startButton: Button? = null
     private var addProfileButton: Button? = null
@@ -56,6 +56,7 @@ class SocksFragment : BaseFragment(){
         dialog.setContentView(bindProfile!!.root)
 
         serverHost = bindProfile!!.ServerHost
+        serverPort = bindProfile!!.serverPort
 
         localAddress = bindProfile!!.LocalAddress
         localPort = bindProfile!!.localPort
