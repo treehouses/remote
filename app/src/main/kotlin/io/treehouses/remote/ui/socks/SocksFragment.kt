@@ -14,9 +14,11 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.ui.status.StatusViewModel
 
 class SocksFragment : BaseFragment(){
+    override lateinit var mChatService: BluetoothChatService
     protected val viewModel: SocksViewModel by viewModels(ownerProducer = { this })
     private var startButton: Button? = null
     private var addProfileButton: Button? = null
@@ -47,25 +49,6 @@ class SocksFragment : BaseFragment(){
         portList = bind!!.profiles
         return bind!!.root
     }
-
-    private fun addPortListListener() {
-        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            val selectedString = profileName!![position]
-            builder.setTitle("Delete Profile $selectedString ?")
-            builder.setPositiveButton("Confirm") { dialog, _ ->
-                listener.sendMessage("treehouses shadowsocks remove $selectedString ")
-                dialog.dismiss()
-            }
-            builder.setNegativeButton("Cancel", null)
-
-            // create and show the alert dialog
-            val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
-        }
-    }
-
     private fun initializeDialog(){
         dialog = Dialog(requireContext())
         addPortListListener()
@@ -86,7 +69,23 @@ class SocksFragment : BaseFragment(){
 
         initializeObservers()
     }
+    private fun addPortListListener() {
+        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            val selectedString = profileName!![position]
+            builder.setTitle("Delete Profile $selectedString ?")
+            builder.setPositiveButton("Confirm") { dialog, _ ->
+                listener.sendMessage("treehouses shadowsocks remove $selectedString ")
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("Cancel", null)
 
+            // create and show the alert dialog
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
+    }
     private fun initializeObservers()
     {
         viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
