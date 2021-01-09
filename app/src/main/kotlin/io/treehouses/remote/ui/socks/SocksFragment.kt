@@ -17,7 +17,7 @@ import io.treehouses.remote.databinding.DialogAddProfileBinding
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.ui.status.StatusViewModel
 
-class SocksFragment : BaseFragment(){
+class SocksFragment : BaseFragment() {
 
     protected val viewModel: SocksViewModel by viewModels(ownerProducer = { this })
     private var startButton: Button? = null
@@ -45,11 +45,13 @@ class SocksFragment : BaseFragment(){
         addProfileButton = bind!!.btnAddProfile
         portList = bind!!.profiles
         initializeDialog()
+        messageObservers()
         addProfileButtonListeners(dialog)
         portList = bind!!.profiles
         return bind!!.root
     }
-    private fun initializeDialog(){
+
+    private fun initializeDialog() {
         dialog = Dialog(requireContext())
         addPortListListener()
 
@@ -70,6 +72,7 @@ class SocksFragment : BaseFragment(){
 
         initializeObservers()
     }
+
     private fun addPortListListener() {
         portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
@@ -87,8 +90,8 @@ class SocksFragment : BaseFragment(){
             dialog.show()
         }
     }
-    private fun initializeObservers()
-    {
+
+    private fun initializeObservers() {
         viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
             serverHost.setText(it)
         });
@@ -101,7 +104,7 @@ class SocksFragment : BaseFragment(){
             localAddress.setText(it)
         });
 
-        viewModel.passwordText.observe(viewLifecycleOwner, Observer{
+        viewModel.passwordText.observe(viewLifecycleOwner, Observer {
             password.setText(it)
         })
 
@@ -131,8 +134,12 @@ class SocksFragment : BaseFragment(){
             addProfileButton?.isEnabled ?: it
         })
 
-    }
+        viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
+            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, it)
+            bind!!.profiles.adapter = adapter
+        })
 
+    }
 
 
     private fun addProfileButtonListeners(dialog: Dialog) {
@@ -156,8 +163,7 @@ class SocksFragment : BaseFragment(){
                 addProfileButton?.text = "Adding......"
                 addProfileButton?.isEnabled = false
                 dialog.dismiss()
-            }
-            else{
+            } else {
                 Toast.makeText(requireContext(), "Missing Information", Toast.LENGTH_SHORT).show()
             }
         }
@@ -174,15 +180,6 @@ class SocksFragment : BaseFragment(){
 
         }
     }
-
-    override fun getMessage(msg: Message) {
-        messageObservers()
-        if (msg.what == Constants.MESSAGE_READ) {
-            val readMessage: String = msg.obj as String
-            viewModel.onRead(readMessage)
-            adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, profileName!!)
-            bind!!.profiles.adapter = adapter
-        }
-    }
-
 }
+
+
