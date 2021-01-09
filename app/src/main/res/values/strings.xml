@@ -303,4 +303,14 @@
     <string name="delete_key_message"><b>Warning</b>: This action is cannot be undone. To confirm, please type the name of the key in the space below:</string>
     <string name="discover_text_underlined"><u>Discover</u></string>
 
+    <string name="ssh_info">
+        <b>Adding SSH Hosts</b>
+        "\n"To add an SSH host, one must click on the Add Hosts button.
+        "\n"For the name, it will follow the format of ole@tunnel.ole.org.
+        "\n"The port number is typically five digits."\n"
+        <b>Adding SSH Ports</b>
+        "\n"To add an SSH port, one must click on the Add Ports button.
+        "\n"
+    </string>
+
 </resources>
