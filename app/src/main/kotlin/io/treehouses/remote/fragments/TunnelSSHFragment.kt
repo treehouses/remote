@@ -133,7 +133,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 logD("dasda ${myPos.toString()}")
                 val portName = TunnelUtils.getPortName(portsName, position)
                 val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
+                val message = "treehouses sshtunnel remove port "
+                val command = buildString { append(message); append(formatArgs) }
+                writeMessage(command)
                 addPortButton!!.text = "deleting port ....."
                 portList!!.isEnabled = false; addPortButton!!.isEnabled = false
             }
