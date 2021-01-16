@@ -10,6 +10,7 @@ android {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 29
+        ndkVersion '21.3.6528147'
         multiDexEnabled true
         versionCode appVersionCode
         versionName appVersionName
