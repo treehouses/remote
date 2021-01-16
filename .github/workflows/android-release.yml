@@ -1,7 +1,13 @@
 name: Release And Update
+
 on:
-  workflow_dispatch:
-    inputs:
+  push:
+    branches:
+      - 'master'
+
+#on:
+#  workflow_dispatch:
+#    inputs:
 
 jobs:
   apk:
@@ -21,6 +27,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+
+      - name: Install NDK
+        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -41,6 +51,13 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "30.0.2"
+
+      - name: Move Files to release
+        run: |
+          cp app/build/outputs/mapping/release/mapping.txt build/release/signed/mapping.txt
+          cp app/build/outputs/apk/debug/* build/release/signed/
+          mv build/release/signed/remote-${{ steps.build_id.outputs.id }}-signed.apk build/release/signed/remote.apk
+          sha256sum build/release/signed/remote.apk > build/release/signed/remote.apk.sha256
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
