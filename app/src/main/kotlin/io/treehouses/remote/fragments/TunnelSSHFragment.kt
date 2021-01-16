@@ -132,8 +132,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
                 logD("dasda ${myPos.toString()}")
                 val portName = TunnelUtils.getPortName(portsName, position)
-                val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
-                val command = buildString { append(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT_SPECIFIC); append(formatArgs) }
+                val formatArgs = " " + portName + " " + hostsName!![myPos].split(":")[0]
+                val command = buildString { append(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT_SPECIFIC)); append(formatArgs) }
+                logD(command)
                 writeMessage(command)
                 addPortButton!!.text = "deleting port ....."
                 portList!!.isEnabled = false; addPortButton!!.isEnabled = false
