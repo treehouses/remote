@@ -1,8 +1,8 @@
 name: Android Check CI
-#on: [push]
-on:
-  workflow_dispatch:
-    inputs:
+on: [push]
+#on:
+#  workflow_dispatch:
+#    inputs:
 
 jobs:
   build:
