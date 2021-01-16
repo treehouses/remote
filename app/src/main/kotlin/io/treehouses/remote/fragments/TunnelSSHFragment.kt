@@ -42,6 +42,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter
         addListeners()
+        addInfoListener()
         addPortListListener()
         return bind!!.root
     }
@@ -53,6 +54,20 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             }
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun addInfoListener()
+    {
+        bind!!.info.setOnClickListener{
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            builder.setTitle("SSH Help")
+            builder.setView(R.layout.ssh_info_page)
+            val dialog = builder.create();
+            dialog.show();
+        }
+
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

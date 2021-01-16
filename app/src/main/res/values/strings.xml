@@ -310,7 +310,10 @@
         "\n"The port number is typically five digits."\n"
         <b>Adding SSH Ports</b>
         "\n"To add an SSH port, one must click on the Add Ports button.
-        "\n"
+        "\n"Add the external and internal number of the port"\n"
+        <b>SSH Keys</b>
+        "\n"To view SSH keys, one must click on the green SSH key button
+        "\n"To save a new key, one must copy and paste their SSH key and click save.
     </string>
 
 </resources>
