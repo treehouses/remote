@@ -56,16 +56,11 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun addInfoListener()
-    {
+    private fun addInfoListener() {
         bind!!.info.setOnClickListener{
-            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            builder.setTitle("SSH Help")
-            builder.setMessage(R.string.ssh_info)
-            val dialog = builder.create();
-            dialog.show();
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
+            builder.setMessage(R.string.ssh_info); val dialog = builder.create(); dialog.show();
         }
-
     }
 
 
@@ -76,14 +71,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
-        addPortButton!!.setOnClickListener(this)
-        addHostButton!!.setOnClickListener(this)
-        addingPortButton.setOnClickListener(this)
-        addingHostButton.setOnClickListener(this)
-        addPortCloseButton.setOnClickListener(this)
-        addHostCloseButton.setOnClickListener(this)
-        addKeyCloseButton.setOnClickListener(this)
-        bind!!.notifyNow.setOnClickListener(this)
+        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this)
+        addingPortButton.setOnClickListener(this); addingHostButton.setOnClickListener(this)
+        addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
+        addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this)
         bind!!.btnKeys.setOnClickListener(this)
     }
 
@@ -128,10 +119,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 builder.setTitle("Delete Host  " + portsName!![position] + " ?")
                 builder.setPositiveButton("Confirm") { dialog, _ ->
                     val parts = portsName!![position].split(":")[0]
-                    writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts))
-                    addHostButton!!.text = "deleting host ....."
-                    portList!!.isEnabled = false
-                    addHostButton!!.isEnabled = false
+                    writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts)); addHostButton!!.text = "deleting host ....."
+                    portList!!.isEnabled = false; addHostButton!!.isEnabled = false
                     dialog.dismiss()
                 }
             }
@@ -156,12 +145,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             }
             if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
             logD("dasda ${myPos.toString()}")
-            val portName = TunnelUtils.getPortName(portsName, position)
-            val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
-            writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs))
-            addPortButton!!.text = "deleting port ....."
-            portList!!.isEnabled = false
-            addPortButton!!.isEnabled = false
+            val portName = TunnelUtils.getPortName(portsName, position); val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
+            writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs)); addPortButton!!.text = "deleting port ....."
+            portList!!.isEnabled = false; addPortButton!!.isEnabled = false
             dialog.dismiss()
         }
     }
@@ -234,10 +220,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        fun showDialog(dialog: Dialog) {
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
-        }
+        fun showDialog(dialog: Dialog) { dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show() }
         when (v?.id) {
             R.id.btn_adding_host -> addingHostButton()
             R.id.btn_adding_port -> addingPortButton()
