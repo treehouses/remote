@@ -61,7 +61,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         bind!!.info.setOnClickListener{
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             builder.setTitle("SSH Help")
-            builder.setView(R.layout.ssh_info_page)
+            builder.setMessage(R.string.ssh_info)
             val dialog = builder.create();
             dialog.show();
         }
