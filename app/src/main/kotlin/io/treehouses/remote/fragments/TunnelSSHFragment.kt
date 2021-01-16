@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.os.Message
 import android.text.Editable
 import android.text.Html
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -28,7 +30,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     lateinit var addKeyCloseButton: ImageButton
 
     @RequiresApi(Build.VERSION_CODES.N)
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         bind!!.switchNotification.isEnabled = false
@@ -62,8 +63,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             builder.setMessage(R.string.ssh_info); val dialog = builder.create(); dialog.show();
         }
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind?.let { Tutorials.tunnelSSHTutorials(it, requireActivity()) }
@@ -99,10 +98,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        try {
-            initializeDialog2()
-        } catch (exception: Exception) {
-        }
+        try { initializeDialog2() }
+        catch (exception: Exception) { }
     }
 
     private fun addCloseButtons() {
@@ -143,11 +140,14 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                     break
                 }
             }
-            if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
-            logD("dasda ${myPos.toString()}")
-            val portName = TunnelUtils.getPortName(portsName, position); val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
-            writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs)); addPortButton!!.text = "deleting port ....."
-            portList!!.isEnabled = false; addPortButton!!.isEnabled = false
+            if (portsName!!.size > 1 && position == portsName!!.size - 1) { writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
+            else {
+                if (hostsPosition!!.last() < position) myPos = hostsPosition!!.lastIndex
+                logD("dasda ${myPos.toString()}")
+                val portName = TunnelUtils.getPortName(portsName, position); val formatArgs = portName + " " + hostsName!![myPos].split(":")[0]
+                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs)); addPortButton!!.text = "deleting port ....."
+                portList!!.isEnabled = false; addPortButton!!.isEnabled = false
+            }
             dialog.dismiss()
         }
     }
@@ -157,16 +157,20 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         showKeys = dialogKeys.findViewById(R.id.btn_show_keys)
         saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
         val profileText = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text
-
         publicKey = dialogKeys.findViewById(R.id.public_key)
         privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
-        saveKeys.setOnClickListener {
-            var profile = profileText.toString()
-            writeMessage("treehouses remote key send $profile")
-            jsonSend(true)
+        saveKeys.setOnClickListener { keyClickListener(profileText); }
+        showKeys.setOnClickListener {
+            keyClickListener(profileText);
+            handleShowKeys(profileText)
         }
-        showKeys.setOnClickListener { handleShowKeys(profileText) }
+    }
+
+    private fun keyClickListener(profileText: Editable) {
+        var profile = profileText.toString()
+        writeMessage("treehouses remote key send $profile")
+        jsonSend(true)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -174,18 +178,22 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         var profile = profileText.toString()
         if (profile.isBlank()) profile = "default"
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
-        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
-
+        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "key")
+        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "key")
         if (storedPublicKey != null && storedPrivateKey != null) {
             if (storedPublicKey.isBlank()) storedPublicKey = "No public key found"
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"
         }
 
-        val strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
-        val strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
-        publicKey.text = strPhonePublicKey
-        privateKey.text = strPhonePrivateKey
+        val strPhonePublicKey : Spanned; val strPhonePrivateKey : Spanned
+        if ((Build.VERSION.SDK_INT) >= 24) {
+            strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
+            strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n")
+            strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
+        }
+        publicKey.text = strPhonePublicKey; privateKey.text = strPhonePrivateKey
     }
 
     private fun switchButton(isChecked: Boolean) {
@@ -243,8 +251,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             mChatService.updateHandler(mHandler)
             writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             bind!!.sshPorts
-            portsName = ArrayList()
-            adapter = TunnelPortAdapter(requireContext(), portsName!!)
+            portsName = ArrayList(); adapter = TunnelPortAdapter(requireContext(), portsName!!)
         }
     }
 
@@ -252,7 +259,8 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         if (msg.what == Constants.MESSAGE_READ) {
             val readMessage: String = msg.obj as String
             logD("SSHTunnel reply $readMessage")
-            val modifyKeywords = arrayOf("ssh-rsa", "Added", "Removed")
+            if (lastMessage == getString(R.string.TREEHOUSES_REMOTE_KEY_SEND)) logD("Key send: $readMessage")
+            val modifyKeywords = arrayOf("Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
