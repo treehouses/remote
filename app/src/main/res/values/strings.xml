@@ -306,8 +306,8 @@
     <string name="ssh_info">
         <b>Adding SSH Hosts</b>
         "\n"To add an SSH host, one must click on the Add Hosts button.
+        "\n"This is a reverse SSH tunnel in which another port is being opened to this. 
         "\n"For the name, it will follow the format of ole@tunnel.ole.org.
-        "\n"The port number is typically five digits."\n"
         <b>Adding SSH Ports</b>
         "\n"To add an SSH port, one must click on the Add Ports button.
         "\n"Add the external and internal number of the port"\n"
