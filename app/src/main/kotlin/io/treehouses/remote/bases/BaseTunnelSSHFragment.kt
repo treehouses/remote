@@ -101,6 +101,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         val s = match(readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
+            buildJSON()
             if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
                 buildJSON()
                 jsonSend(false)
@@ -117,7 +118,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             val profile = jsonObject.getString("profile")
             val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
             val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-            logD(profile)
             logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
 
             val inPiAndPhone = piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey
@@ -141,7 +141,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         val profile = jsonObject.getString("profile")
         val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
         val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Overwrite On Pi or Phone")
 
@@ -205,12 +204,11 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
         setNeutralButton(builder, "Cancel")
-
         builder.show()
     }
 
     private fun saveKeyToPhone(builder: AlertDialog.Builder, profile: String, piPublicKey: String, piPrivateKey: String) {
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("output", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
             myEdit.putString("${profile}_public_key", piPublicKey)
@@ -263,8 +261,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         for (host in hosts) {
             val ports = host.split(' ')
             for (port in ports) {
-                if (port.length >= 3)
-                    portsName!!.add(port)
+                if (port.length >= 3) portsName!!.add(port)
                 if (port.contains("@")) {
                     hostsPosition!!.add(position)
                     hostsName!!.add(port)

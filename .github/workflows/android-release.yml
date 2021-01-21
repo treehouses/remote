@@ -1,0 +1,69 @@
+name: Release And Update
+
+on:
+  push:
+    branches:
+      - 'master'
+
+#on:
+#  workflow_dispatch:
+#    inputs:
+
+jobs:
+  apk:
+    name: Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: run number with offset
+        id: build_id
+        env:
+          NUM: ${{ github.run_number }}
+        run: echo "::set-output name=id::$(($NUM+6050))"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Java8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Install NDK
+        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Generate APK
+        run: ./gradlew build
+
+      - name: List APK
+        run: ls app/build/outputs/apk
+
+      - name: Android Sign
+        uses: Tlaster/android-sign@v1.2.2
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          output: build/release/signed
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "30.0.2"
+
+      - name: Move Files to release
+        run: |
+          cp app/build/outputs/mapping/release/mapping.txt build/release/signed/mapping.txt
+          cp app/build/outputs/apk/debug/* build/release/signed/
+          mv build/release/signed/remote-${{ steps.build_id.outputs.id }}-signed.apk build/release/signed/remote.apk
+          sha256sum build/release/signed/remote.apk > build/release/signed/remote.apk.sha256
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/release/signed/*
+          tag: v${{ steps.build_id.outputs.id }}
+          overwrite: true
+          file_glob: true
