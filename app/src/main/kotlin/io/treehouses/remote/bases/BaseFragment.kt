@@ -55,6 +55,10 @@ open class BaseFragment : Fragment() {
         }
     }
 
+    protected fun promptDeleteAllPorts(dialog: String, message: String) {
+        DialogUtils.createAlertDialog(context, dialog) { listener.sendMessage(message) }
+    }
+
     protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
     object : Handler() {
         override fun handleMessage(msg: Message) {
