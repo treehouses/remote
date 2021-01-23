@@ -1,5 +1,11 @@
 name: Android Check CI
-on: [push]
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!master'
+
 #on:
 #  workflow_dispatch:
 #    inputs:
