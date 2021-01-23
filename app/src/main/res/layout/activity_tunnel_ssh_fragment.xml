@@ -7,6 +7,20 @@
     android:background="@color/windowBackground">
 
     <Button
+        android:id="@+id/info"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="45dp"
+        android:layout_weight="1"
+        android:background="@drawable/ic_info"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@color/bg_white"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <Button
         android:id="@+id/btn_keys"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -119,6 +133,8 @@
         android:layout_height="wrap_content">
 
     </LinearLayout>
+
+
 
 </LinearLayout>
 
