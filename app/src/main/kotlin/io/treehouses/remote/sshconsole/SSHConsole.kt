@@ -192,10 +192,8 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         if (item == null) return false
         return when (item.itemId) {
             android.R.id.home -> {
-                val intent = Intent(this, InitialActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(intent)
-                true
+                finish()
+                return true
             }
             else -> super.onOptionsItemSelected(item)
         }

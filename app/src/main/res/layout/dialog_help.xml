@@ -11,17 +11,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="@dimen/padding_normal">
+
         <SearchView
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:queryHint="Search Commands"
-            android:textColor = "@color/daynight_textColor"
-            android:textColorHint = "@color/daynight_textColor"
+            android:textColor="@color/daynight_textColor"
+            android:textColorHint="@color/daynight_textColor"
             android:tint="@color/daynight_textColor"
             app:defaultQueryHint="Search Commands"
-            app:theme="@style/AppSearchView"
-            />
+            app:queryHint="Search Commands"
+            app:theme="@style/AppSearchView" />
+
         <Button
             android:id="@+id/back_button"
             android:background="@drawable/back_button"
