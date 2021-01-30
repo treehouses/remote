@@ -1,7 +1,11 @@
 package io.treehouses.remote.ui.socks
 
+import android.app.AlertDialog
 import android.app.Application
 import android.app.Dialog
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
@@ -10,6 +14,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
+import io.treehouses.remote.MainApplication.Companion.context
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.network.BluetoothChatService
@@ -61,6 +66,23 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
                 getMessage2(output)
             }
 
+    }
+
+    fun portListListener()
+    {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        val selectedString = profileNameText.value
+        builder.setTitle("Delete Profile $selectedString ?")
+        builder.setPositiveButton("Confirm") { dialog, _ ->
+            sendMessage("treehouses shadowsocks remove $selectedString ")
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancel", null)
+
+        // create and show the alert dialog
+        val dialog = builder.create()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun getMessage2(readMessage: String) {

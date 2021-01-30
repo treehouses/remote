@@ -73,21 +73,10 @@ class SocksFragment : BaseFragment() {
         initializeObservers()
     }
 
+
     private fun addPortListListener() {
         portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-            val selectedString = profileName!![position]
-            builder.setTitle("Delete Profile $selectedString ?")
-            builder.setPositiveButton("Confirm") { dialog, _ ->
-                listener.sendMessage("treehouses shadowsocks remove $selectedString ")
-                dialog.dismiss()
-            }
-            builder.setNegativeButton("Cancel", null)
-
-            // create and show the alert dialog
-            val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            dialog.show()
+            viewModel.portListListener()
         }
     }
 
