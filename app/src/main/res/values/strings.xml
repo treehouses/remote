@@ -50,7 +50,7 @@
     <string name="menu_system">System</string>
     <string name="menu_terminal">Terminal</string>
     <string name="menu_services">Services</string>
-    <string name="menu_ssh">SSH (Beta)</string>
+    <string name="menu_ssh">SSH</string>
     <string name="menu_ssh_tunnel">Tunnel</string>
     <string name="menu_about">About</string>
     <string name="menu_status">Status</string>
