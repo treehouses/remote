@@ -3,8 +3,10 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -50,6 +52,7 @@ class InitialActivity : BaseInitialActivity() {
         checkStatusNow()
         openCallFragment(HomeFragment())
     }
+
 
 
 //    override fun onStart() {
