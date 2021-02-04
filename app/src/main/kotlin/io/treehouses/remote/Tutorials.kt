@@ -105,7 +105,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
 
-        val a = fancyShowCaseViewRoundedRect(activity, bind.btnTorStart, "Stop or Start Tor")
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.btnTorStart, "Stop or Start Tor")
         val b = fancyShowCaseViewRoundedRect(activity, bind.notifyNow, "Notify the Gitter Channel")
         val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add Tor Ports")
         show(a, b, c)
@@ -156,7 +156,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSH)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSH, false)
 
-        val a = fancyShowCaseViewRoundedRect(activity, bind.sshTextInput, "Enter In The SSH Host")
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.sshTextInput, "Enter In The SSH Host")
 
         val b = fancyShowCaseViewRoundedRect(activity, bind.connectSsh, "Connect Manually to The SSH Host")
 
