@@ -83,7 +83,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilder(activity, bind.linearLayout, "Search, Install and Use a Variety of Services", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.linearLayout, "Search, Install and Use a Variety of Services", FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .disableFocusAnimation()
                 .build()
@@ -94,7 +94,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilder(activity, bind.pickService, "Pick any service from this list")
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.pickService, "Pick any service from this list")
                 .focusBorderSize(80)
                 .build()
         show(a)
