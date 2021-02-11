@@ -220,10 +220,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.btn_adding_host -> addingHostButton()
             R.id.btn_adding_port -> addingPortButton()
             R.id.notify_now -> {
-                val messages = Pair(getString(R.string.TREEHOUSES_TOR_NOTICE_NOW), "The Gitter Channel has been notified.")
+                val messages = Pair(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW), "The Gitter Channel has been notified.")
                 Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
-            }
+        }
             R.id.btn_add_port -> showDialog(dialog)
             R.id.btn_add_hosts -> showDialog(dialogHosts)
             R.id.btn_keys -> showDialog(dialogKeys)
