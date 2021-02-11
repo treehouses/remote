@@ -197,7 +197,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
-                bind!!.notifyNow.isEnabled = true
             } else Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
             dialogHosts.dismiss()
         }
