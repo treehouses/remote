@@ -32,19 +32,15 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
-        bind!!.switchNotification.isEnabled = false
-        bind!!.notifyNow.isEnabled = false
+        bind!!.switchNotification.isEnabled = false; bind!!.notifyNow.isEnabled = false
         portList = bind!!.sshPorts
         initializeDialog1()
-        addPortButton = bind!!.btnAddPort
-        addHostButton = bind!!.btnAddHosts
+        addPortButton = bind!!.btnAddPort; addHostButton = bind!!.btnAddHosts
         arrayOf("1", "2", "three")
         hostsName = ArrayList()
         val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter
-        addListeners()
-        addInfoListener()
-        addPortListListener()
+        addListeners(); addInfoListener(); addPortListListener()
         return bind!!.root
     }
 
@@ -70,11 +66,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
-        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this)
-        addingPortButton.setOnClickListener(this); addingHostButton.setOnClickListener(this)
-        addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
-        addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this)
-        bind!!.btnKeys.setOnClickListener(this)
+        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this); addingPortButton.setOnClickListener(this)
+        addingHostButton.setOnClickListener(this); addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
+        addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this); bind!!.btnKeys.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
