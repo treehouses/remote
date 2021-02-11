@@ -2,11 +2,16 @@ package io.treehouses.remote
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.util.DisplayMetrics
 import android.view.MenuItem
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -49,6 +54,8 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
      *
      * @param s A string of text to send.
      */
+
+
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
         logD(s)
@@ -66,6 +73,21 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
 
             // Reset out string buffer to zero and clear the edit text field
 //            mOutStringBuffer.setLength(0);
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    fun adjustFontScale(configuration: Configuration?) {
+        configuration?.let {
+            it.fontScale = 5000.0F
+            val metrics: DisplayMetrics = resources.displayMetrics
+            val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.defaultDisplay.getMetrics(metrics)
+            metrics.scaledDensity = configuration.fontScale * metrics.density
+
+            baseContext.applicationContext.createConfigurationContext(it)
+            baseContext.resources.displayMetrics.setTo(metrics)
+
         }
     }
 

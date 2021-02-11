@@ -28,7 +28,7 @@ class MainApplication : Application() {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate() {
         super.onCreate()
-        adjustFontScale(resources.configuration)
+
         context = this
         createNotificationChannel()
         startBluetoothService()
@@ -77,20 +77,6 @@ class MainApplication : Application() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private fun adjustFontScale(configuration: Configuration?) {
-        configuration?.let {
-            it.fontScale = 5000.0F
-            val metrics: DisplayMetrics = resources.displayMetrics
-            val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            wm.defaultDisplay.getMetrics(metrics)
-            metrics.scaledDensity = configuration.fontScale * metrics.density
-
-            baseContext.applicationContext.createConfigurationContext(it)
-            baseContext.resources.displayMetrics.setTo(metrics)
-
-        }
-    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
