@@ -68,7 +68,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
         addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this); addingPortButton.setOnClickListener(this)
-        addingHostButton.setOnClickListener(this);addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
+        addingHostButton.setOnClickListener(this); addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
         addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this); bind!!.btnKeys.setOnClickListener(this)
     }
 
@@ -190,14 +190,17 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     private fun addingHostButton() {
-        if (inputExternalHost.text.toString().isNotEmpty() && inputInternalHost.text.toString().isNotEmpty()) {
-            if (inputExternalHost.text.toString().contains("@")) {
-                val s1 = inputInternalHost.text.toString()
-                val s2 = inputExternalHost.text.toString()
+        val s1 = inputInternalHost.text.toString(); val s2 = inputExternalHost.text.toString()
+        if (s1.isNotEmpty() && s2.isNotEmpty()) {
+            if (!s2.contains("@")) {
+                Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
+            } else if(try {s1.toInt() > 65535 } catch(e: NumberFormatException){ true }){
+                Toast.makeText(requireContext(), "Invalid port number", Toast.LENGTH_SHORT).show()
+            } else {
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
-            } else Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
+            }
             dialogHosts.dismiss()
         }
     }
