@@ -18,6 +18,7 @@ import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.ui.home.HomeFragment
+import io.treehouses.remote.ui.network.NetworkFragment
 import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.ui.status.StatusFragment
 import io.treehouses.remote.utils.LogUtils
