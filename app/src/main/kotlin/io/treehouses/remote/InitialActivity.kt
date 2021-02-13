@@ -38,7 +38,7 @@ class InitialActivity : BaseInitialActivity() {
         instance = this
         setContentView(bind.root)
         requestPermission()
-        adjustFontScale(resources.configuration, 1)
+//        g
         //PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

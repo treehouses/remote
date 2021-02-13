@@ -78,21 +78,21 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
-
-        configuration?.let {
-            it.fontScale = fontSize.toFloat()
-            val metrics: DisplayMetrics = resources.displayMetrics
-            val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            wm.defaultDisplay.getMetrics(metrics)
-            metrics.scaledDensity = configuration.fontScale * metrics.density
-
-            baseContext.applicationContext.createConfigurationContext(it)
-            baseContext.resources.displayMetrics.setTo(metrics)
-
-        }
-    }
+//    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+//    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
+//
+//        configuration?.let {
+//            it.fontScale = fontSize.toFloat()
+//            val metrics: DisplayMetrics = resources.displayMetrics
+//            val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+//            wm.defaultDisplay.getMetrics(metrics)
+//            metrics.scaledDensity = configuration.fontScale * metrics.density
+//
+//            baseContext.applicationContext.createConfigurationContext(it)
+//            baseContext.resources.displayMetrics.setTo(metrics)
+//
+//        }
+//    }
 
     override fun redirectHome() {
         val menu = bind.navView.menu.findItem(R.id.menu_home)

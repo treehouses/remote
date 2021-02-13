@@ -1,12 +1,18 @@
 package io.treehouses.remote
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
@@ -18,10 +24,12 @@ class SplashScreenActivity : AppCompatActivity() {
     private var logo: ImageView? = null
     private var logoText: TextView? = null
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this@SplashScreenActivity)
         nightMode()
+        adjustFontScale(resources.configuration, fontSize())
         if (preferences.getBoolean("splashScreen", true)) {
             setContentView(R.layout.activity_splash_screen)
             logo = findViewById(R.id.splash_logo)
@@ -34,6 +42,22 @@ class SplashScreenActivity : AppCompatActivity() {
                 goToNextActivity()
             }, SPLASH_TIME_OUT.toLong())
         } else { goToNextActivity() }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
+
+        configuration?.let {
+            it.fontScale = 0.01F*fontSize.toFloat()
+            val metrics: DisplayMetrics = resources.displayMetrics
+            val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.defaultDisplay.getMetrics(metrics)
+            metrics.scaledDensity = configuration.fontScale * metrics.density
+
+            baseContext.applicationContext.createConfigurationContext(it)
+            baseContext.resources.displayMetrics.setTo(metrics)
+
+        }
     }
 
     private fun goToNextActivity() {
@@ -65,8 +89,8 @@ class SplashScreenActivity : AppCompatActivity() {
         }
     }
 
-    private fun fontSize()
+    private fun fontSize(): Int
     {
-        val fontSize = PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
+        return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
     }
 }
