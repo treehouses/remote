@@ -46,7 +46,8 @@
 
 
         <SeekBarPreference
-            android:defaultValue="8"
+            android:defaultValue="1"
+            android:value="1"
             android:key="font_size"
             android:title="Font Size"
             android:layout_width="wrap_content"

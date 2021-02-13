@@ -64,4 +64,9 @@ class SplashScreenActivity : AppCompatActivity() {
             2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
+
+    private fun fontSize()
+    {
+        val fontSize = PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
+    }
 }

@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.fragments.*
 import io.treehouses.remote.network.BluetoothChatService
@@ -35,6 +36,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     protected lateinit var bind: ActivityInitial2Binding
     protected lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
     protected var preferences: SharedPreferences? = null
+
     /** Defines callbacks for service binding, passed to bindService()  */
 
     protected lateinit var currentTitle: String
@@ -77,9 +79,10 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    fun adjustFontScale(configuration: Configuration?) {
+    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
+
         configuration?.let {
-            it.fontScale = 5000.0F
+            it.fontScale = fontSize.toFloat()
             val metrics: DisplayMetrics = resources.displayMetrics
             val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             wm.defaultDisplay.getMetrics(metrics)

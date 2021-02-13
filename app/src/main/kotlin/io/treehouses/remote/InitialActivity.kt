@@ -31,13 +31,15 @@ import io.treehouses.remote.utils.GPSService
 
 class InitialActivity : BaseInitialActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
         instance = this
         setContentView(bind.root)
         requestPermission()
-        adjustFontScale(resources.configuration)
+        adjustFontScale(resources.configuration, 1)
+        //PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         currentTitle = "Home"
