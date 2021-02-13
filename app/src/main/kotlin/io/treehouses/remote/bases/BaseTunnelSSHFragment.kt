@@ -257,6 +257,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         addPortButton?.isEnabled = true
         addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
         addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
+        bind!!.notifyNow.isEnabled = true
         val hosts = readMessage.split('\n')
         for (host in hosts) {
             val ports = host.split(' ')

@@ -22,6 +22,7 @@ import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 
 class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
@@ -222,9 +223,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.btn_adding_host -> addingHostButton()
             R.id.btn_adding_port -> addingPortButton()
             R.id.notify_now -> {
-                bind!!.notifyNow.isEnabled = false
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
-            }
+                val toast = "The Gitter Channel has been notified."
+                val messages = Pair(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW), toast)
+                Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
+        }
             R.id.btn_add_port -> showDialog(dialog)
             R.id.btn_add_hosts -> showDialog(dialogHosts)
             R.id.btn_keys -> showDialog(dialogKeys)
@@ -254,6 +256,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
                 adapter?.notifyDataSetChanged()
+                bind!!.notifyNow.isEnabled = false
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             } else if ((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
             else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);
