@@ -40,6 +40,7 @@ class InitialActivity : BaseInitialActivity() {
         requestPermission()
 //        g
         //PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
+       // adjustFontScale(resources.configuration, PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1))
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         currentTitle = "Home"

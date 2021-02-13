@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -17,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
+
 
 class SplashScreenActivity : AppCompatActivity() {
     private var logoAnimation: Animation? = null
@@ -27,6 +30,7 @@ class SplashScreenActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //val pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this@SplashScreenActivity)
         nightMode()
         adjustFontScale(resources.configuration, fontSize())
@@ -48,7 +52,7 @@ class SplashScreenActivity : AppCompatActivity() {
     fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
 
         configuration?.let {
-            it.fontScale = 0.01F*fontSize.toFloat()
+            it.fontScale = 0.05F*fontSize.toFloat()
             val metrics: DisplayMetrics = resources.displayMetrics
             val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             wm.defaultDisplay.getMetrics(metrics)
@@ -91,6 +95,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun fontSize(): Int
     {
-        return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
+        logD("FONT SIZE " + PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 2).toString())
+        return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 14)
     }
 }
