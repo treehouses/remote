@@ -22,6 +22,7 @@ import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 
 class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
@@ -32,19 +33,15 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
-        bind!!.switchNotification.isEnabled = false
-        bind!!.notifyNow.isEnabled = false
+        bind!!.switchNotification.isEnabled = false; bind!!.notifyNow.isEnabled = false
         portList = bind!!.sshPorts
         initializeDialog1()
-        addPortButton = bind!!.btnAddPort
-        addHostButton = bind!!.btnAddHosts
+        addPortButton = bind!!.btnAddPort; addHostButton = bind!!.btnAddHosts
         arrayOf("1", "2", "three")
         hostsName = ArrayList()
         val adapter: ArrayAdapter<String> = ArrayAdapter(this.requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
         dropdown?.adapter = adapter
-        addListeners()
-        addInfoListener()
-        addPortListListener()
+        addListeners(); addInfoListener(); addPortListListener()
         return bind!!.root
     }
 
@@ -70,11 +67,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
-        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this)
-        addingPortButton.setOnClickListener(this); addingHostButton.setOnClickListener(this)
-        addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
-        addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this)
-        bind!!.btnKeys.setOnClickListener(this)
+        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this); addingPortButton.setOnClickListener(this)
+        addingHostButton.setOnClickListener(this); addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
+        addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this); bind!!.btnKeys.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -195,14 +190,17 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     private fun addingHostButton() {
-        if (inputExternalHost.text.toString().isNotEmpty() && inputInternalHost.text.toString().isNotEmpty()) {
-            if (inputExternalHost.text.toString().contains("@")) {
-                val s1 = inputInternalHost.text.toString()
-                val s2 = inputExternalHost.text.toString()
+        val s1 = inputInternalHost.text.toString(); val s2 = inputExternalHost.text.toString()
+        if (s1.isNotEmpty() && s2.isNotEmpty()) {
+            if (!s2.contains("@")) {
+                Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
+            } else if(try {s1.toInt() > 65535 } catch(e: NumberFormatException){ true }){
+                Toast.makeText(requireContext(), "Invalid port number", Toast.LENGTH_SHORT).show()
+            } else {
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
-            } else Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
+            }
             dialogHosts.dismiss()
         }
     }
@@ -225,9 +223,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             R.id.btn_adding_host -> addingHostButton()
             R.id.btn_adding_port -> addingPortButton()
             R.id.notify_now -> {
-                bind!!.notifyNow.isEnabled = false
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
-            }
+                val toast = "The Gitter Channel has been notified."
+                val messages = Pair(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW), toast)
+                Utils.sendMessage(listener, messages, requireContext(), Toast.LENGTH_SHORT)
+        }
             R.id.btn_add_port -> showDialog(dialog)
             R.id.btn_add_hosts -> showDialog(dialogHosts)
             R.id.btn_keys -> showDialog(dialogKeys)
@@ -257,6 +256,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
                 adapter?.notifyDataSetChanged()
+                bind!!.notifyNow.isEnabled = false
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             } else if ((modifyKeywords.filter { it in readMessage }).isNotEmpty()) handleModifiedList()
             else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);

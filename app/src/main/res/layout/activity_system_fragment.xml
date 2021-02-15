@@ -8,9 +8,10 @@
     <ExpandableListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:textColor="@color/daynight_textColor"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="@dimen/margin_medium" />
+        android:groupIndicator="@drawable/custom_expandable"
+        android:padding="@dimen/margin_medium"
+        android:textColor="@color/daynight_textColor" />
 
 </LinearLayout>
