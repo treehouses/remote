@@ -78,7 +78,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
         inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
-        inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput); inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput)
+        inputUserName = dialogHosts.findViewById(R.id.UserNameInput); inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput); inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput)
         addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
@@ -190,14 +190,17 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     private fun addingHostButton() {
-        val s1 = inputInternalHost.text.toString(); val s2 = inputExternalHost.text.toString()
-        if (s1.isNotEmpty() && s2.isNotEmpty()) {
-            if (!s2.contains("@")) {
+        val s1 = inputPortNumber; val s2 = inputUserName; val s3 = inputDomainIP
+        if (s1.text.toString().isNotEmpty() && s2.text.toString().isNotEmpty() && s3.text.toString().isNotEmpty()) {
+            if (!s2.text.toString().matches("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\\\$)\$".toRegex())) {
                 Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
-            } else if(try {s1.toInt() > 65535 } catch(e: NumberFormatException){ true }){
+                s2.setError("Invalid User Name")
+            } else if(try {s1.text.toString().toInt() > 65535 } catch(e: NumberFormatException){ true }){
                 Toast.makeText(requireContext(), "Invalid port number", Toast.LENGTH_SHORT).show()
             } else {
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
+                val m1 = s1.text.toString()
+                val m2 = s2.text.toString() + "@" + s3.text.toString()
+                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, m1, m2))
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
             }
