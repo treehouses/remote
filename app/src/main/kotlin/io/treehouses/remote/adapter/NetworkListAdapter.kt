@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
+import io.treehouses.remote.Tutorials
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.pojo.NetworkListItem
 
@@ -58,6 +60,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
         newView = inflater.inflate(R.layout.list_group, parent, false)
         val listHeader = newView.findViewById<TextView>(R.id.lblListHeader)
         listHeader.text = getGroup(i).toString()
+        //Tutorials.fancyShowCaseViewBuilderSkippable(context as FragmentActivity, newView, "title")
         return newView
     }
 

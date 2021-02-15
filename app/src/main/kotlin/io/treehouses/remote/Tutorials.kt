@@ -3,6 +3,7 @@ package io.treehouses.remote
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.view.get
 import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
@@ -57,6 +58,15 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM, false)
         //Put animations here
+//        val a = fancyShowCaseViewBuilderSkippable(activity, bind.listView, "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
+//        val b = fancyShowCaseViewBuilder(activity, bind.listView, "Open VNC", FocusShape.ROUNDED_RECTANGLE)
+//        val c = fancyShowCaseViewBuilder(activity, bind.listView, "Share Internet with Pi", FocusShape.ROUNDED_RECTANGLE)
+//        val d = fancyShowCaseViewBuilder(activity, bind.listView, "Add SSH Key", FocusShape.ROUNDED_RECTANGLE)
+//        val e = fancyShowCaseViewBuilder(activity, bind.listView, "Toggle Camera", FocusShape.ROUNDED_RECTANGLE)
+//        val f = fancyShowCaseViewBuilder(activity, bind.listView, "Internet Blocking", FocusShape.ROUNDED_RECTANGLE)
+//        val g = fancyShowCaseViewBuilder(activity, bind.listView, "SSH 2 Factor Authentication", FocusShape.ROUNDED_RECTANGLE)
+//
+//        show(a)
 
     }
 
@@ -171,7 +181,7 @@ object Tutorials {
         show(a, b, c, d, e, f)
     }
 
-    private fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
+    public fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape)
                 .customView(R.layout.tutorial, object : OnViewInflateListener {
                     override fun onViewInflated(view: View) {
@@ -183,7 +193,7 @@ object Tutorials {
                 })
     }
 
-    private fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
+    public fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return FancyShowCaseView.Builder(activity)
                 .focusOn(view)
                 .title(title)
