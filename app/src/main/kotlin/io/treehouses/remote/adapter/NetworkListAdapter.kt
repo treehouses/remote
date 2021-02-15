@@ -60,7 +60,7 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, priv
         newView = inflater.inflate(R.layout.list_group, parent, false)
         val listHeader = newView.findViewById<TextView>(R.id.lblListHeader)
         listHeader.text = getGroup(i).toString()
-        //Tutorials.fancyShowCaseViewBuilderSkippable(context as FragmentActivity, newView, "title")
+        Tutorials.fancyShowCaseViewBuilderSkippable(context as FragmentActivity, newView, "title")
         return newView
     }
 

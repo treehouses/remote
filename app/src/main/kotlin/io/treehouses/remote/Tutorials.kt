@@ -58,15 +58,15 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM, false)
         //Put animations here
-//        val a = fancyShowCaseViewBuilderSkippable(activity, bind.listView, "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
-//        val b = fancyShowCaseViewBuilder(activity, bind.listView, "Open VNC", FocusShape.ROUNDED_RECTANGLE)
-//        val c = fancyShowCaseViewBuilder(activity, bind.listView, "Share Internet with Pi", FocusShape.ROUNDED_RECTANGLE)
-//        val d = fancyShowCaseViewBuilder(activity, bind.listView, "Add SSH Key", FocusShape.ROUNDED_RECTANGLE)
-//        val e = fancyShowCaseViewBuilder(activity, bind.listView, "Toggle Camera", FocusShape.ROUNDED_RECTANGLE)
-//        val f = fancyShowCaseViewBuilder(activity, bind.listView, "Internet Blocking", FocusShape.ROUNDED_RECTANGLE)
-//        val g = fancyShowCaseViewBuilder(activity, bind.listView, "SSH 2 Factor Authentication", FocusShape.ROUNDED_RECTANGLE)
-//
-//        show(a)
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.listView, "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
+        val b = fancyShowCaseViewBuilder(activity, bind.listView, "Open VNC", FocusShape.ROUNDED_RECTANGLE)
+        val c = fancyShowCaseViewBuilder(activity, bind.listView, "Share Internet with Pi", FocusShape.ROUNDED_RECTANGLE)
+        val d = fancyShowCaseViewBuilder(activity, bind.listView, "Add SSH Key", FocusShape.ROUNDED_RECTANGLE)
+        val e = fancyShowCaseViewBuilder(activity, bind.listView, "Toggle Camera", FocusShape.ROUNDED_RECTANGLE)
+        val f = fancyShowCaseViewBuilder(activity, bind.listView, "Internet Blocking", FocusShape.ROUNDED_RECTANGLE)
+        val g = fancyShowCaseViewBuilder(activity, bind.listView, "SSH 2 Factor Authentication", FocusShape.ROUNDED_RECTANGLE)
+
+        show(a)
 
     }
 
