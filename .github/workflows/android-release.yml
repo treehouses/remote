@@ -74,6 +74,7 @@ jobs:
           cp app/build/outputs/apk/debug/* build/release/signed/
           mv build/release/signed/remote-${{ steps.build_id.outputs.id }}-signed.apk build/release/signed/remote.apk
           sha256sum build/release/signed/remote.apk > build/release/signed/remote.apk.sha256
+          mv *.pdf build/release/signed/.
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
