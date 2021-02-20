@@ -95,7 +95,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun fontSize(): Int
     {
-        logD("FONT SIZE " + PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 2).toString())
-        return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 36)
+        logD("FONT SIZE " + PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18).toString())
+        return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18)
     }
 }
