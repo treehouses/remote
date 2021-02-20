@@ -56,7 +56,7 @@
     </PreferenceCategory>
     <SeekBarPreference
         android:textAppearance="?android:attr/textAppearanceListItem"
-       
+
         android:layout_width="wrap_content"
         android:defaultValue="16"
         android:key="font_size"
