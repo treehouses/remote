@@ -3,9 +3,11 @@ package io.treehouses.remote.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.Html
@@ -14,6 +16,7 @@ import android.text.Spanned
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentTransaction
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -200,8 +203,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
+
             }
             dialogHosts.dismiss()
+
         }
     }
 
@@ -253,6 +258,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             if (lastMessage == getString(R.string.TREEHOUSES_REMOTE_KEY_SEND)) logD("Key send: $readMessage")
             val modifyKeywords = arrayOf("Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
+            else if (readMessage.trim().contains("added")) writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
                 adapter?.notifyDataSetChanged()
@@ -262,6 +268,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);
             else if (readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
             else if (readMessage.contains("Status: on")) handleOnStatus()
+            else if (readMessage.trim().contains("exists")) {
+                addPortButton!!.text = "Add Port"
+                Toast.makeText(requireContext(), "Port already exists", Toast.LENGTH_SHORT).show()
+            }
             else getOtherMessages(readMessage)
         }
     }
