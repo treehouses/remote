@@ -77,12 +77,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog1() {
-        dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
-        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
-        inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
-        inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput); inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput)
-        addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
+        dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext()); dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
+        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts); inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
+        inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput); inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput); addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         val window = dialog.window; val windowHost = dialogHosts.window
@@ -93,9 +90,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     private fun addCloseButtons() {
-        addPortCloseButton = dialog.findViewById(R.id.addPortCloseButton)
-        addHostCloseButton = dialogHosts.findViewById(R.id.addHostCloseButton)
-        addKeyCloseButton = dialogKeys.findViewById(R.id.addKeyCloseButton)
+        addPortCloseButton = dialog.findViewById(R.id.addPortCloseButton); addHostCloseButton = dialogHosts.findViewById(R.id.addHostCloseButton); addKeyCloseButton = dialogKeys.findViewById(R.id.addKeyCloseButton)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -144,11 +139,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog4() {
-        showKeys = dialogKeys.findViewById(R.id.btn_show_keys)
-        saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
+        showKeys = dialogKeys.findViewById(R.id.btn_show_keys); saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
         val profileText = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text
-        publicKey = dialogKeys.findViewById(R.id.public_key)
-        privateKey = dialogKeys.findViewById(R.id.private_key)
+        publicKey = dialogKeys.findViewById(R.id.public_key); privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
         saveKeys.setOnClickListener { keyClickListener(profileText); }
         showKeys.setOnClickListener {
