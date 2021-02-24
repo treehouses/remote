@@ -126,8 +126,9 @@ object Tutorials {
         val b = fancyShowCaseViewRoundedRect(activity, bind.btnAddHosts, "Add SSH Hosts")
         val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add SSH Ports")
         val d = fancyShowCaseViewRoundedRect(activity, bind.btnKeys, "View SSH Keys")
+        val e = fancyShowCaseViewRoundedRect(activity, bind.info, "Click here for more info about features")
 
-        show(a, b, c, d)
+        show(a, b, c, d, e)
     }
 
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
