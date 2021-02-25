@@ -25,7 +25,7 @@ import java.util.*
 
 class MainApplication : Application() {
     var logSent = false
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+
     override fun onCreate() {
         super.onCreate()
 

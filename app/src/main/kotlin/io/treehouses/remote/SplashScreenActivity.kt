@@ -27,10 +27,8 @@ class SplashScreenActivity : AppCompatActivity() {
     private var logo: ImageView? = null
     private var logoText: TextView? = null
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //val pixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this@SplashScreenActivity)
         nightMode()
         adjustFontScale(resources.configuration, fontSize())
@@ -48,9 +46,7 @@ class SplashScreenActivity : AppCompatActivity() {
         } else { goToNextActivity() }
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
-
         configuration?.let {
             it.fontScale = 0.05F*fontSize.toFloat()
             val metrics: DisplayMetrics = resources.displayMetrics
@@ -58,7 +54,9 @@ class SplashScreenActivity : AppCompatActivity() {
             wm.defaultDisplay.getMetrics(metrics)
             metrics.scaledDensity = configuration.fontScale * metrics.density
 
-            baseContext.applicationContext.createConfigurationContext(it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                baseContext.applicationContext.createConfigurationContext(it)
+            }
             baseContext.resources.displayMetrics.setTo(metrics)
 
         }
