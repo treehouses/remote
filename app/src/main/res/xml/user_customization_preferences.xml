@@ -45,13 +45,6 @@
 
 
 
-        <SeekBarPreference
-            android:defaultValue="2"
-            android:value="2"
-            android:key="font_size"
-            android:title="Font Size"
-            android:layout_width="wrap_content"
-            />
 
         <!--        <SwitchPreference-->
         <!--            android:title="Keep Bluetooth Alive"-->
@@ -61,5 +54,15 @@
         <!--            android:summary="Keep Bluetooth service alive when Treehouses Remote is closed.">-->
         <!--        </SwitchPreference>-->
     </PreferenceCategory>
+    <SeekBarPreference
+        android:textAppearance="?android:attr/textAppearanceListItem"
+
+        android:layout_width="wrap_content"
+        android:defaultValue="16"
+        android:key="font_size"
+        android:textColor="@color/md_grey_600"
+        android:max="30"
+        android:title="Font Size"
+        app:min="14"/>
 
 </PreferenceScreen>
