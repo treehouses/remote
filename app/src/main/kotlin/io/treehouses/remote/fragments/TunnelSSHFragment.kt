@@ -9,8 +9,8 @@ import android.os.Bundle
 import android.os.Message
 import android.text.Editable
 import android.text.Html
-import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -18,22 +18,20 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
-import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 
-class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
+class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
     lateinit var addPortCloseButton: ImageButton
     lateinit var addHostCloseButton: ImageButton
     lateinit var addKeyCloseButton: ImageButton
-
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
-        bind!!.switchNotification.isEnabled = false; bind!!.notifyNow.isEnabled = false
+        bind!!.switchNotification.isEnabled = false
+        bind!!.notifyNow.isEnabled = false
         portList = bind!!.sshPorts
         initializeDialog1()
         addPortButton = bind!!.btnAddPort; addHostButton = bind!!.btnAddHosts
@@ -43,14 +41,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         dropdown?.adapter = adapter
         addListeners(); addInfoListener(); addPortListListener()
         return bind!!.root
-    }
-
-    private fun addPortListListener() {
-        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            if (portsName!!.size > 1 && position == portsName!!.size - 1) {
-                DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) }
-            }
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -67,9 +57,13 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     private fun addListeners() {
         bind!!.switchNotification.setOnCheckedChangeListener { _, isChecked -> switchButton(isChecked) }
-        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this); addingPortButton.setOnClickListener(this)
-        addingHostButton.setOnClickListener(this); addPortCloseButton.setOnClickListener(this); addHostCloseButton.setOnClickListener(this)
-        addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this); bind!!.btnKeys.setOnClickListener(this)
+        addPortButton!!.setOnClickListener(this); addHostButton!!.setOnClickListener(this)
+        addingPortButton.setOnClickListener(this); addingHostButton.setOnClickListener(this)
+        addPortCloseButton.setOnClickListener(this)
+        addHostCloseButton.setOnClickListener(this)
+        addKeyCloseButton.setOnClickListener(this)
+        bind!!.notifyNow.setOnClickListener(this)
+        bind!!.btnKeys.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -78,9 +72,40 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
         inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
+        textLayoutUserName = dialogHosts.findViewById(R.id.TLusername); textLayoutPortName = dialogHosts.findViewById(R.id.TLportname)
         inputUserName = dialogHosts.findViewById(R.id.UserNameInput); inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput); inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput)
         addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
+        inputUserName.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if(s!!.isEmpty()){
+                    addingHostButton.isEnabled = false
+                } else {
+                    if (!s.toString().matches("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\\\$)\$".toRegex())) {
+                        addingHostButton.isEnabled = false
+                        Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
+                        textLayoutUserName.setError("Invalid User Name")
+                    } else addingHostButton.isEnabled = true
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        inputPortNumber.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if(s!!.isEmpty()){
+                    addingHostButton.isEnabled = false
+                } else {
+                    if(try {s!!.toString().toInt() > 65535 } catch(e: NumberFormatException){ true }){
+                        addingHostButton.isEnabled = false
+                        Toast.makeText(requireContext(), "Invalid port number", Toast.LENGTH_SHORT).show()
+                        textLayoutPortName.setError("Invalid port number")
+                    } else addingHostButton.isEnabled = true
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         val window = dialog.window; val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT); windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -181,43 +206,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
         }
         publicKey.text = strPhonePublicKey; privateKey.text = strPhonePrivateKey
-    }
-
-    private fun switchButton(isChecked: Boolean) {
-        bind!!.switchNotification.isEnabled = false
-        if (isChecked) writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_ON))
-        else writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_OFF))
-    }
-
-    private fun addingHostButton() {
-        val s1 = inputPortNumber; val s2 = inputUserName; val s3 = inputDomainIP
-        if (s1.text.toString().isNotEmpty() && s2.text.toString().isNotEmpty() && s3.text.toString().isNotEmpty()) {
-            if (!s2.text.toString().matches("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\\\$)\$".toRegex())) {
-                Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
-                s2.setError("Invalid User Name")
-            } else if(try {s1.text.toString().toInt() > 65535 } catch(e: NumberFormatException){ true }){
-                Toast.makeText(requireContext(), "Invalid port number", Toast.LENGTH_SHORT).show()
-            } else {
-                val m1 = s1.text.toString()
-                val m2 = s2.text.toString() + "@" + s3.text.toString()
-                writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, m1, m2))
-                addHostButton!!.text = "Adding......"
-                addHostButton!!.isEnabled = false
-            }
-            dialogHosts.dismiss()
-        }
-    }
-
-    private fun addingPortButton() {
-        if (inputExternal.text!!.isNotEmpty() && inputInternal.text!!.isNotEmpty()) {
-            val s1 = inputInternal.text.toString()
-            val s2 = inputExternal.text.toString()
-            val parts = dropdown?.selectedItem.toString().split(":")[0]
-            writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL, s2, s1, parts))
-            addPortButton!!.text = "Adding......"
-            addPortButton!!.isEnabled = false
-            dialog.dismiss()
-        }
     }
 
     override fun onClick(v: View?) {

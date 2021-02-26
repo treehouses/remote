@@ -307,7 +307,8 @@
         <b>Adding SSH Hosts</b>
         "\n"To add an SSH host, one must click on the Add Hosts button.
         "\n"This is a reverse SSH tunnel in which another port is being opened to this.
-        "\n"For the name, it will follow the format of ole@tunnel.ole.org.
+        "\n"For the user name, it will be a regular Linux username.
+        "\n"For the domain name, it needs to be a valid domain or IP address.
         <b>Adding SSH Ports</b>
         "\n"To add an SSH port, one must click on the Add Ports button.
         "\n"Add the external and internal number of the port"\n"

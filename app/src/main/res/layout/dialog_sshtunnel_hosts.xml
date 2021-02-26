@@ -44,29 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-
-
-            android:spinnerMode="dropdown"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/UserNameInput"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:textColorHint="@color/expandable_child_text"
-            android:textColor="@color/daynight_textColor"
-            android:hint="User Name"
-            />
-
     </LinearLayout>
 
     <LinearLayout
@@ -75,34 +52,70 @@
         android:orientation="horizontal">
 
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/DomainIPInput"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif"
-            android:hint="Domain Name or IP"
-            android:textColor="@color/daynight_textColor"
-            android:textColorHint="@color/expandable_child_text" />
-
-    </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@color/expandable_child_text"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/PortNumberInput"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:hint="Port Number"
-            android:inputType="number"
-            android:textColor="@color/daynight_textColor" />
+            android:id="@+id/TLusername"
+            >
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/UserNameInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColorHint="@color/expandable_child_text"
+                android:textColor="@color/daynight_textColor"
+                android:hint="User Name" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/TLdomain"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/DomainIPInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:hint="Domain Name or IP"
+                android:textColor="@color/daynight_textColor"
+                android:textColorHint="@color/expandable_child_text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/TLportname"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/PortNumberInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:hint="Port Number"
+                android:inputType="number"
+                android:textColor="@color/daynight_textColor"
+                android:textColorHint="@color/expandable_child_text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_adding_host"
@@ -110,7 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add host"
-        android:background="@drawable/ic_green"
+        android:background="@drawable/addhost_button"
         android:textColor="#FFFFFF"/>
 
 </LinearLayout>
