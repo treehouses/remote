@@ -10,7 +10,6 @@ import android.os.Message
 import android.text.Editable
 import android.text.Html
 import android.text.Spanned
-import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -27,6 +26,7 @@ class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
     lateinit var addPortCloseButton: ImageButton
     lateinit var addHostCloseButton: ImageButton
     lateinit var addKeyCloseButton: ImageButton
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
@@ -73,43 +73,19 @@ class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
         inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
         textLayoutUserName = dialogHosts.findViewById(R.id.TLusername); textLayoutPortName = dialogHosts.findViewById(R.id.TLportname)
-        inputUserName = dialogHosts.findViewById(R.id.UserNameInput); inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput); inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput)
+        textLayoutDomainName = dialogHosts.findViewById(R.id.TLdomain); inputUserName = dialogHosts.findViewById(R.id.UserNameInput)
+        inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput); inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput)
         addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
-        inputUserName.addTextChangedListener(object :TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if(s!!.isEmpty()){
-                    addingHostButton.isEnabled = false
-                } else {
-                    if (!s.toString().matches("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\\\$)\$".toRegex())) {
-                        addingHostButton.isEnabled = false
-                        Toast.makeText(requireContext(), "Invalid host name", Toast.LENGTH_SHORT).show()
-                        textLayoutUserName.setError("Invalid User Name")
-                    } else addingHostButton.isEnabled = true
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-        inputPortNumber.addTextChangedListener(object :TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                if(s!!.isEmpty()){
-                    addingHostButton.isEnabled = false
-                } else {
-                    if(try {s!!.toString().toInt() > 65535 } catch(e: NumberFormatException){ true }){
-                        addingHostButton.isEnabled = false
-                        Toast.makeText(requireContext(), "Invalid port number", Toast.LENGTH_SHORT).show()
-                        textLayoutPortName.setError("Invalid port number")
-                    } else addingHostButton.isEnabled = true
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        addSyntaxCheck(inputUserName, textLayoutUserName, Constants.userRegex, Constants.hostError)
+        addSyntaxCheck(inputDomainIP, textLayoutDomainName, Constants.domainRegex + "|" + Constants.ipRegex , Constants.domainIPError)
+        addSyntaxCheck(inputPortNumber, textLayoutPortName, Constants.portRegex, Constants.portError)
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         val window = dialog.window; val windowHost = dialogHosts.window
-        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT); windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE); windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         try { initializeDialog2() }
         catch (exception: Exception) { }
     }

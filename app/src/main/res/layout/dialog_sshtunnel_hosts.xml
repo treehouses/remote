@@ -112,7 +112,8 @@
                 android:hint="Port Number"
                 android:inputType="number"
                 android:textColor="@color/daynight_textColor"
-                android:textColorHint="@color/expandable_child_text" />
+                android:textColorHint="@color/expandable_child_text"
+                android:maxLength="5"/>
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
@@ -124,6 +125,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add host"
         android:background="@drawable/addhost_button"
+        android:enabled="false"
         android:textColor="#FFFFFF"/>
 
 </LinearLayout>
