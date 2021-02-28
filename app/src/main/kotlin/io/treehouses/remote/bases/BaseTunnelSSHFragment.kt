@@ -16,7 +16,6 @@ import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
-import kotlinx.android.synthetic.main.activity_tunnel_ssh_fragment.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -257,31 +256,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
-    protected fun handleNewList(readMessage: String) {
-        var position = 0
-        addPortButton?.isEnabled = true
-        addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
-        addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
-        bind!!.notifyNow.isEnabled = true
-        val hosts = readMessage.split('\n')
-        for (host in hosts) {
-            val ports = host.split(' ')
-            for (port in ports) {
-                if (port.length >= 3) portsName!!.add(port)
-                if (port.contains("@")) {
-                    hostsPosition!!.add(position)
-                    hostsName!!.add(port)
-                }
-                position += 1
-            }
-        }
 
-        if(portsName!!.size > 1) portsName!!.add("All")
-        adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-        dropdown?.adapter = adapter2
-        adapter = TunnelPortAdapter(requireContext(), portsName!!)
-          bind!!.sshPorts.adapter = adapter
-        portList!!.isEnabled = true
-    }
 
 }

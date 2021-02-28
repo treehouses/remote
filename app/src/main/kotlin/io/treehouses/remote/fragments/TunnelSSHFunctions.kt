@@ -4,9 +4,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.R
+import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
 import io.treehouses.remote.utils.DialogUtils
 
@@ -81,6 +83,33 @@ open class TunnelSSHFunctions: BaseTunnelSSHFragment() {
             addPortButton!!.isEnabled = false
             dialog.dismiss()
         }
+    }
+
+    protected fun handleNewList(readMessage: String) {
+        var position = 0
+        addPortButton?.isEnabled = true
+        addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
+        addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
+        bind!!.notifyNow.isEnabled = true
+        val hosts = readMessage.split('\n')
+        for (host in hosts) {
+            val ports = host.split(' ')
+            for (port in ports) {
+                if (port.length >= 3) portsName!!.add(port)
+                if (port.contains("@")) {
+                    hostsPosition!!.add(position)
+                    hostsName!!.add(port)
+                }
+                position += 1
+            }
+        }
+
+        if(portsName!!.size > 1) portsName!!.add("All")
+        adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+        dropdown?.adapter = adapter2
+        adapter = TunnelPortAdapter(requireContext(), portsName!!)
+        bind!!.sshPorts.adapter = adapter
+        portList!!.isEnabled = true
     }
 
 
