@@ -253,6 +253,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             if (lastMessage == getString(R.string.TREEHOUSES_REMOTE_KEY_SEND)) logD("Key send: $readMessage")
             val modifyKeywords = arrayOf("Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
+            else if (readMessage.trim().contains("no tunnel has been set up")) addPortButton?.isEnabled = false
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
                 adapter?.notifyDataSetChanged()
