@@ -3,9 +3,11 @@ package io.treehouses.remote.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.Html
@@ -14,6 +16,7 @@ import android.text.Spanned
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.FragmentTransaction
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -74,12 +77,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog1() {
-        dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
-        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
-        inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
-        inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput); inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput)
-        addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
+        dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext()); dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
+        dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts); inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
+        inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput); inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput); addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         val window = dialog.window; val windowHost = dialogHosts.window
@@ -90,9 +90,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
     }
 
     private fun addCloseButtons() {
-        addPortCloseButton = dialog.findViewById(R.id.addPortCloseButton)
-        addHostCloseButton = dialogHosts.findViewById(R.id.addHostCloseButton)
-        addKeyCloseButton = dialogKeys.findViewById(R.id.addKeyCloseButton)
+        addPortCloseButton = dialog.findViewById(R.id.addPortCloseButton); addHostCloseButton = dialogHosts.findViewById(R.id.addHostCloseButton); addKeyCloseButton = dialogKeys.findViewById(R.id.addKeyCloseButton)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -141,11 +139,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog4() {
-        showKeys = dialogKeys.findViewById(R.id.btn_show_keys)
-        saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
+        showKeys = dialogKeys.findViewById(R.id.btn_show_keys); saveKeys = dialogKeys.findViewById(R.id.btn_save_keys)
         val profileText = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text
-        publicKey = dialogKeys.findViewById(R.id.public_key)
-        privateKey = dialogKeys.findViewById(R.id.private_key)
+        publicKey = dialogKeys.findViewById(R.id.public_key); privateKey = dialogKeys.findViewById(R.id.private_key)
         progressBar = dialogKeys.findViewById(R.id.progress_bar)
         saveKeys.setOnClickListener { keyClickListener(profileText); }
         showKeys.setOnClickListener {
@@ -200,8 +196,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, s1, s2))
                 addHostButton!!.text = "Adding......"
                 addHostButton!!.isEnabled = false
+
             }
             dialogHosts.dismiss()
+
         }
     }
 
@@ -254,6 +252,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             val modifyKeywords = arrayOf("Added", "Removed")
             if (readMessage.contains("Host / port not found")) handleHostNotFound()
             else if (readMessage.trim().contains("no tunnel has been set up")) addPortButton?.isEnabled = false
+            else if (readMessage.trim().contains("added")) writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
             else if (readMessage.trim().contains("Removed") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL)) {
                 portsName!!.clear()
                 adapter?.notifyDataSetChanged()
@@ -263,6 +262,10 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
             else if (readMessage.contains("@") && lastMessage == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS)) handleNewList(readMessage);
             else if (readMessage.contains("the command 'treehouses sshtunnel ports' returns nothing")) handleNoPorts()
             else if (readMessage.contains("Status: on")) handleOnStatus()
+            else if (readMessage.trim().contains("exists")) {
+                addPortButton!!.text = "Add Port"
+                Toast.makeText(requireContext(), "Port already exists", Toast.LENGTH_SHORT).show()
+            }
             else getOtherMessages(readMessage)
         }
     }
