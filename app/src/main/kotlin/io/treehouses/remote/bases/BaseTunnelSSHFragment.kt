@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.view.View
 import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
@@ -33,6 +34,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected lateinit var dialogKeys: Dialog
     protected lateinit var inputExternalHost: TextInputEditText
     protected lateinit var inputInternalHost: TextInputEditText
+    protected lateinit var textLayoutExternal: TextInputLayout
     protected lateinit var inputExternal: TextInputEditText
     protected lateinit var inputInternal: TextInputEditText
     protected lateinit var dialog: Dialog
