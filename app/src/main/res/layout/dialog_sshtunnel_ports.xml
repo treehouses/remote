@@ -72,7 +72,9 @@
                 android:textColorHint="@color/expandable_child_text"
                 android:textColor="@color/daynight_textColor"
                 android:hint="External"
-                android:inputType="number"/>
+                android:inputType="number"
+                android:maxLength="5"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
@@ -97,6 +99,7 @@
                 android:fontFamily="sans-serif"
                 android:hint="Internal"
                 android:inputType="number"
+                android:maxLength="5"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -108,7 +111,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Add Port"
-        android:background="@drawable/ic_green"
+        android:background="@drawable/addport_button"
+        android:enabled="false"
         android:textColor="#FFFFFF"/>
 
 </LinearLayout>

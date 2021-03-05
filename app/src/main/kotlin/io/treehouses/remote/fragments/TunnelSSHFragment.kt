@@ -3,20 +3,16 @@ package io.treehouses.remote.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.Html
-import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentTransaction
 import android.text.TextWatcher
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -76,12 +72,26 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
         addKeyCloseButton.setOnClickListener(this); bind!!.notifyNow.setOnClickListener(this); bind!!.btnKeys.setOnClickListener(this)
     }
 
+    private fun searchArray (array: java.util.ArrayList<String>?, portnum: String): Boolean {
+        for(name in array!!){
+            var check = name.substringAfter(":")
+            if (check.equals(portnum)) return true
+        }
+        return false
+    }
+
+    private fun checkAddingPortButtonEnable(){
+        if(inputExternal.editableText.isNotEmpty() && inputInternal.editableText.isNotEmpty())
+            if(!textLayoutExternal.isErrorEnabled && !textLayoutInternal.isErrorEnabled)
+                addingPortButton.isEnabled = true
+    }
+    
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog1() {
         dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext()); dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts); inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
         inputExternalHost = dialogHosts.findViewById(R.id.ExternalTextInput); inputInternalHost = dialogHosts.findViewById(R.id.InternalTextInput); addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
-        textLayoutExternal = dialog.findViewById(R.id.TLexternal)
+        textLayoutExternal = dialog.findViewById(R.id.TLexternal); textLayoutInternal = dialog.findViewById(R.id.TLinternal)
         addCloseButtons()
         inputExternal.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -89,12 +99,33 @@ class TunnelSSHFragment : BaseTunnelSSHFragment(), View.OnClickListener {
                 if(s!!.isEmpty()){
                     addingPortButton.isEnabled = false
                 } else {
-                    if(portsName!!.contains(s!!.toString())){
+                    if(!s!!.toString().matches("(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])".toRegex())) {
                         addingPortButton.isEnabled = false
-                        textLayoutExternal.setError("Port already exists")
+                        textLayoutExternal.setError("Invalid port number")
+                    }else if(searchArray(portsName, s!!.toString())){
+                        addingPortButton.isEnabled = false
+                        textLayoutExternal.setError("Port number already exists")
                     } else {
                         textLayoutExternal.setErrorEnabled(false)
-                        addingPortButton.isEnabled = true
+                        checkAddingPortButtonEnable()
+                    }
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        inputInternal.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                textLayoutInternal.setErrorEnabled(true)
+                if(s!!.isEmpty()){
+                    addingPortButton.isEnabled = false
+                } else {
+                    if(!s!!.toString().matches("(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])".toRegex())) {
+                        addingPortButton.isEnabled = false
+                        textLayoutInternal.setError("Invalid port number")
+                    } else {
+                        textLayoutInternal.setErrorEnabled(false)
+                        checkAddingPortButtonEnable()
                     }
                 }
             }

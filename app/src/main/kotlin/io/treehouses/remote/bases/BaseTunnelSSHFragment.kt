@@ -35,6 +35,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected lateinit var inputExternalHost: TextInputEditText
     protected lateinit var inputInternalHost: TextInputEditText
     protected lateinit var textLayoutExternal: TextInputLayout
+    protected lateinit var textLayoutInternal: TextInputLayout
     protected lateinit var inputExternal: TextInputEditText
     protected lateinit var inputInternal: TextInputEditText
     protected lateinit var dialog: Dialog
