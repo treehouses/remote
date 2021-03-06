@@ -24,6 +24,20 @@ open class TunnelSSHFunctions: BaseTunnelSSHFragment() {
                 addingHostButton.isEnabled = true
     }
 
+    protected fun searchArray (array: java.util.ArrayList<String>?, portnum: String): Boolean {
+        for(name in array!!){
+            var check = name.substringAfter(":")
+            if (check.equals(portnum)) return true
+        }
+        return false
+    }
+
+    protected fun checkAddingPortButtonEnable(){
+        if(inputExternal.editableText.isNotEmpty() && inputInternal.editableText.isNotEmpty())
+            if(!textLayoutExternal.isErrorEnabled && !textLayoutInternal.isErrorEnabled)
+                addingPortButton.isEnabled = true
+    }
+
     /*
        adds a syntax check to textInputEditText. If input in textInputEditText does not match regex, outputs error message in textInputLayout
        and disables addingHostButton
