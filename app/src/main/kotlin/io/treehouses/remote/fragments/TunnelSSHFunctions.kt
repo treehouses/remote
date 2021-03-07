@@ -44,20 +44,40 @@ open class TunnelSSHFunctions: BaseTunnelSSHFragment() {
        adds a syntax check to textInputEditText. If input in textInputEditText does not match regex, outputs error message in textInputLayout
        and disables addingHostButton
          */
-    protected fun addSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout, regex: String, error: String, addingButton: Button){
+    protected fun addHostSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout, regex: String, error: String){
         textInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 textInputLayout.setErrorEnabled(true)
                 if(s!!.isEmpty()){
-                    addingButton.isEnabled = false
+                    addingHostButton.isEnabled = false
                 } else {
                     if(!s!!.toString().matches(regex.toRegex()) ){
-                        addingButton.isEnabled = false
+                        addingHostButton.isEnabled = false
                         textInputLayout.setError(error)
                     } else {
                         textInputLayout.setErrorEnabled(false)
-                        if(addingButton.equals(addingHostButton)) checkAddingHostButtonEnable()
-                        else if (addingButton.equals(addingPortButton)) checkAddingPortButtonEnable()
+                        checkAddingHostButtonEnable()
+                    }
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    protected fun addInternalSyntaxCheck(){
+        inputInternal.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                textLayoutInternal.setErrorEnabled(true)
+                if (s!!.isEmpty()) {
+                    addingPortButton.isEnabled = false
+                } else {
+                    if (!s!!.toString().matches(Constants.portRegex.toRegex())) {
+                        addingPortButton.isEnabled = false
+                        textLayoutInternal.setError(Constants.portError)
+                    } else {
+                        textLayoutInternal.setErrorEnabled(false)
+                        checkAddingPortButtonEnable()
                     }
                 }
             }
