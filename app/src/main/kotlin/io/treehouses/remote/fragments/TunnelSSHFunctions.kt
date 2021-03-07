@@ -5,8 +5,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseTunnelSSHFragment
@@ -42,22 +44,48 @@ open class TunnelSSHFunctions: BaseTunnelSSHFragment() {
        adds a syntax check to textInputEditText. If input in textInputEditText does not match regex, outputs error message in textInputLayout
        and disables addingHostButton
          */
-    protected fun addSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout, regex: String, error: String){
+    protected fun addSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout, regex: String, error: String, addingButton: Button){
         textInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 textInputLayout.setErrorEnabled(true)
                 if(s!!.isEmpty()){
-                    addingHostButton.isEnabled = false
+                    addingButton.isEnabled = false
                 } else {
                     if(!s!!.toString().matches(regex.toRegex()) ){
-                        addingHostButton.isEnabled = false
+                        addingButton.isEnabled = false
                         textInputLayout.setError(error)
                     } else {
                         textInputLayout.setErrorEnabled(false)
-                        checkAddingHostButtonEnable()
+                        if(addingButton.equals(addingHostButton)) checkAddingHostButtonEnable()
+                        else if (addingButton.equals(addingPortButton)) checkAddingPortButtonEnable()
                     }
                 }
             }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    protected fun addExternalSyntaxCheck() {
+        inputExternal.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                textLayoutExternal.setErrorEnabled(true)
+                if (s!!.isEmpty()) {
+                    addingPortButton.isEnabled = false
+                } else {
+                    if (!s!!.toString().matches(Constants.portRegex.toRegex())) {
+                        addingPortButton.isEnabled = false
+                        textLayoutExternal.setError(Constants.portError)
+                    } else if (searchArray(portsName, s!!.toString())) {
+                        addingPortButton.isEnabled = false
+                        textLayoutExternal.setError("Port number already exists")
+                    } else {
+                        textLayoutExternal.setErrorEnabled(false)
+                        checkAddingPortButtonEnable()
+                    }
+                }
+            }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })

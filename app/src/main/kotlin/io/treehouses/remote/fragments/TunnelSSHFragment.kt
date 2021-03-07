@@ -73,36 +73,17 @@ class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
         dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
         inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
+        textLayoutExternal = dialog.findViewById(R.id.TLexternal); textLayoutInternal = dialog.findViewById(R.id.TLinternal)
         textLayoutUserName = dialogHosts.findViewById(R.id.TLusername); textLayoutPortName = dialogHosts.findViewById(R.id.TLportname)
         textLayoutDomainName = dialogHosts.findViewById(R.id.TLdomain); inputUserName = dialogHosts.findViewById(R.id.UserNameInput)
         inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput); inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput)
         addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
-        addSyntaxCheck(inputUserName, textLayoutUserName, Constants.userRegex, Constants.hostError)
-        addSyntaxCheck(inputDomainIP, textLayoutDomainName, Constants.domainRegex + "|" + Constants.ipRegex , Constants.domainIPError)
-        addSyntaxCheck(inputPortNumber, textLayoutPortName, Constants.portRegex, Constants.portError)
-        inputExternal.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                textLayoutExternal.setErrorEnabled(true)
-                if(s!!.isEmpty()){
-                    addingPortButton.isEnabled = false
-                } else {
-                    if(!s!!.toString().matches(Constants.portRegex.toRegex())) {
-                        addingPortButton.isEnabled = false
-                        textLayoutExternal.setError("Invalid port number")
-                    }else if(searchArray(portsName, s!!.toString())){
-                        addingPortButton.isEnabled = false
-                        textLayoutExternal.setError("Port number already exists")
-                    } else {
-                        textLayoutExternal.setErrorEnabled(false)
-                        checkAddingPortButtonEnable()
-                    }
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-        addSyntaxCheck(inputInternal, textLayoutInternal, Constants.portRegex, Constants.portError)
+        addSyntaxCheck(inputUserName, textLayoutUserName, Constants.userRegex, Constants.hostError, addingHostButton)
+        addSyntaxCheck(inputDomainIP, textLayoutDomainName, Constants.domainRegex + "|" + Constants.ipRegex, Constants.domainIPError, addingHostButton)
+        addSyntaxCheck(inputPortNumber, textLayoutPortName, Constants.portRegex, Constants.portError, addingHostButton)
+        addSyntaxCheck(inputInternal, textLayoutInternal, Constants.portRegex, Constants.portError, addingPortButton)
+        addExternalSyntaxCheck()
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         val window = dialog.window; val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
