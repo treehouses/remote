@@ -65,47 +65,25 @@ open class TunnelSSHFunctions: BaseTunnelSSHFragment() {
         })
     }
 
-    protected fun addInternalSyntaxCheck(){
-        inputInternal.addTextChangedListener(object : TextWatcher {
+    protected fun addPortSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout){
+        textInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                textLayoutInternal.setErrorEnabled(true)
+                textInputLayout.setErrorEnabled(true)
                 if (s!!.isEmpty()) {
                     addingPortButton.isEnabled = false
                 } else {
                     if (!s!!.toString().matches(Constants.portRegex.toRegex())) {
                         addingPortButton.isEnabled = false
-                        textLayoutInternal.setError(Constants.portError)
-                    } else {
-                        textLayoutInternal.setErrorEnabled(false)
-                        checkAddingPortButtonEnable()
-                    }
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-    }
-
-    protected fun addExternalSyntaxCheck() {
-        inputExternal.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                textLayoutExternal.setErrorEnabled(true)
-                if (s!!.isEmpty()) {
-                    addingPortButton.isEnabled = false
-                } else {
-                    if (!s!!.toString().matches(Constants.portRegex.toRegex())) {
-                        addingPortButton.isEnabled = false
-                        textLayoutExternal.setError(Constants.portError)
-                    } else if (searchArray(portsName, s!!.toString())) {
+                        textInputLayout.setError(Constants.portError)
+                    } else if (textInputEditText.equals(inputExternal) && searchArray(portsName, s!!.toString())) {
                         addingPortButton.isEnabled = false
                         textLayoutExternal.setError("Port number already exists")
                     } else {
-                        textLayoutExternal.setErrorEnabled(false)
+                        textInputLayout.setErrorEnabled(false)
                         checkAddingPortButtonEnable()
                     }
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
