@@ -1,4 +1,4 @@
-package io.treehouses.remote.fragments
+package io.treehouses.remote.ui.system
 
 import android.content.Context
 import android.net.wifi.WifiManager
@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.viewModels
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -25,6 +26,8 @@ import io.treehouses.remote.utils.logD
 import java.util.*
 
 class SystemFragment : BaseFragment() {
+
+    protected val viewModel: SystemViewModel by viewModels(ownerProducer = { this })
     private var network = true
     private var hostname = false
     private var tether = false
