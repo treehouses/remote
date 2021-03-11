@@ -27,6 +27,7 @@
 
     <string name="TREEHOUSES_NETWORKMODE">treehouses networkmode\n</string>
     <string name="TREEHOUSES_NETWORKMODE_INFO">treehouses networkmode info\n</string>
+    <string name="TREEHOUSES_HOSTNAME">hostname -I\n</string>
     <string name="TREEHOUSES_WIFI">treehouses wifi \"%1$s\" \"%2$s\"\n</string>
     <string name="TREEHOUSES_WIFI_COUNTRY">treehouses wificountry \"%1$s\"</string>
     <string name="TREEHOUSES_WIFI_COUNTRY_CHECK">treehouses wificountry</string>

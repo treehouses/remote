@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
@@ -19,48 +18,58 @@ import java.util.*
 class SystemViewModel (application: Application) : FragmentViewModel(application){
 
     private val context = getApplication<MainApplication>().applicationContext
-    private var network: MutableLiveData<Boolean> = MutableLiveData()
-    private var hostname: MutableLiveData<Boolean> = MutableLiveData()
-    private var tether: MutableLiveData<Boolean> = MutableLiveData()
-    private var retry: MutableLiveData<Boolean> = MutableLiveData()
+    private var network = true
+    private var hostname = false
+    private var tether = false
+    private var retry = false
 
-//    private fun checkAndPrefilIp(readMessage: String, diff: ArrayList<Long>) {
-//        if (readMessage.contains(".") && hostname && !readMessage.contains("essid")) {
-//            checkSubnet(readMessage, diff)
-//        }
-//        ipPrefil(readMessage)
-//    }
-//
-//    private fun ipPrefil(readMessage: String) {
-//        if (network) {
-//            checkIfHotspot(readMessage)
-//        } else if (!retry) {
-//            Toast.makeText(context, "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show()
-//            prefillIp(readMessage)
-//        }
-//    }
+    fun sendMessageAndHostname(){
+        sendMessage(getString(R.string.TREEHOUSES_HOSTNAME))
+        hostname = true
+    }
 
-//    private fun checkIfHotspot(readMessage: String) {
-//        if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
-//            prefillIp(readMessage)
-//        } else if (readMessage.contains("ap0")) {
-//            prefillHotspot(readMessage)
-//        }
-//    }
+    fun sendMessageAndTether(){
+        sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+        tether = true
+    }
 
-//    private fun checkSubnet(readMessage: String, diff: ArrayList<Long>) {
-//        hostname.value = false
-//        val wm = requireContext().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-//        val deviceIp = Formatter.formatIpAddress(wm.connectionInfo.ipAddress)
-//        val deviceIpAddress = ipToLong(deviceIp)
-//        if (!convertIp(readMessage, deviceIpAddress, diff)) {
-//            sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
-//            retry.value = true
-//        } else {
-//            retry.value = false
-//            network.value = isInNetwork(diff)
-//        }
-//    }
+    fun checkAndPrefilIp(readMessage: String, diff: ArrayList<Long>) {
+        if (readMessage.contains(".") && hostname && !readMessage.contains("essid")) {
+            checkSubnet(readMessage, diff)
+        }
+        ipPrefil(readMessage)
+    }
+
+    fun ipPrefil(readMessage: String) {
+        if (network) {
+            checkIfHotspot(readMessage)
+        } else if (!retry) {
+            Toast.makeText(context, "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show()
+            prefillIp(readMessage)
+        }
+    }
+
+    fun checkIfHotspot(readMessage: String) {
+        if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
+            prefillIp(readMessage)
+        } else if (readMessage.contains("ap0")) {
+            prefillHotspot(readMessage)
+        }
+    }
+
+    fun checkSubnet(readMessage: String, diff: ArrayList<Long>) {
+        hostname= false
+        val wm = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val deviceIp = Formatter.formatIpAddress(wm.connectionInfo.ipAddress)
+        val deviceIpAddress = ipToLong(deviceIp)
+        if (!convertIp(readMessage, deviceIpAddress, diff)) {
+            sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+            retry = true
+        } else {
+            retry = false
+            network = isInNetwork(diff)
+        }
+    }
 
     fun checkElement(s: String): Boolean {
         return s.length <= 15 && !s.contains(":")
@@ -109,16 +118,16 @@ class SystemViewModel (application: Application) : FragmentViewModel(application
         }
     }
 
-//    private fun prefillHotspot(readMessage: String) {
-//        val array = readMessage.split(",".toRegex()).toTypedArray()
-//        for (element in array) {
-//            elementConditions(element)
-//            if (element.contains("essid") && tether) {
-//                tether.value = false
-//                ViewHolderTether.editTextSSID?.setText(element.substring(12).trim { it <= ' ' })
-//            }
-//        }
-//    }
+    fun prefillHotspot(readMessage: String) {
+        val array = readMessage.split(",".toRegex()).toTypedArray()
+        for (element in array) {
+            elementConditions(element)
+            if (element.contains("essid") && tether) {
+                tether = false
+                ViewHolderTether.editTextSSID?.setText(element.substring(12).trim { it <= ' ' })
+            }
+        }
+    }
 
     fun elementConditions(element: String) {
         if (element.contains("ip")) {
@@ -142,17 +151,17 @@ class SystemViewModel (application: Application) : FragmentViewModel(application
         }
     }
 
-//    override fun onRead(output: String) {
-//        super.onRead(output)
-//            val readMessage = output.toString().trim { it <= ' ' }
-//            val diff = ArrayList<Long>()
-//            readMessageConditions(readMessage)
-//            logD("readMessage = $readMessage")
-//            notifyUser(readMessage)
-//            vncToast(readMessage)
-//            checkAndPrefilIp(readMessage, diff)
-//
-//    }
+    override fun onRead(output: String) {
+        super.onRead(output)
+            val readMessage = output.toString().trim { it <= ' ' }
+            val diff = ArrayList<Long>()
+            readMessageConditions(readMessage)
+            logD("readMessage = $readMessage")
+            notifyUser(readMessage)
+            vncToast(readMessage)
+            checkAndPrefilIp(readMessage, diff)
+    }
+
 
     fun notifyUser(msg: String) {
         if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
