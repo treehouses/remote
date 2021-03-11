@@ -2,14 +2,20 @@ package io.treehouses.remote
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.util.DisplayMetrics
 import android.view.MenuItem
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.fragments.*
 import io.treehouses.remote.network.BluetoothChatService
@@ -31,6 +37,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     protected lateinit var bind: ActivityInitial2Binding
     protected lateinit var mActionBarDrawerToggle: ActionBarDrawerToggle
     protected var preferences: SharedPreferences? = null
+
     /** Defines callbacks for service binding, passed to bindService()  */
 
     protected lateinit var currentTitle: String
@@ -50,6 +57,8 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
      *
      * @param s A string of text to send.
      */
+
+
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
         logD(s)
