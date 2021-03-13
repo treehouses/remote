@@ -31,14 +31,16 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected var hostsPosition: java.util.ArrayList<Int>? = null
     protected lateinit var dialogHosts: Dialog
     protected lateinit var dialogKeys: Dialog
-    protected lateinit var textLayoutUserName: TextInputLayout
-    protected lateinit var textLayoutDomainName: TextInputLayout
-    protected lateinit var textLayoutPortName: TextInputLayout
     protected lateinit var inputUserName: TextInputEditText
     protected lateinit var inputDomainIP: TextInputEditText
     protected lateinit var inputPortNumber: TextInputEditText
+    protected lateinit var textLayoutUserName: TextInputLayout
+    protected lateinit var textLayoutDomainName: TextInputLayout
+    protected lateinit var textLayoutPortName: TextInputLayout
     protected lateinit var inputExternal: TextInputEditText
     protected lateinit var inputInternal: TextInputEditText
+    protected lateinit var textLayoutExternal: TextInputLayout
+    protected lateinit var textLayoutInternal: TextInputLayout
     protected lateinit var dialog: Dialog
     protected lateinit var addingPortButton: Button
     protected lateinit var addingHostButton: Button
