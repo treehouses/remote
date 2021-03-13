@@ -89,7 +89,7 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         return true
     }
 
-    fun ipToLong(ipAddress: String): Long {
+    private fun ipToLong(ipAddress: String): Long {
         val ipAddressInArray = ipAddress.split("[.]".toRegex()).toTypedArray()
         var result: Long = 0
         for (i in ipAddressInArray.indices) {
