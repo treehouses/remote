@@ -3,11 +3,9 @@ package io.treehouses.remote.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.Message
 import android.text.Editable
 import android.text.Html
@@ -15,7 +13,7 @@ import android.text.Spanned
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentTransaction
+import android.text.TextWatcher
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -74,15 +72,18 @@ class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
         dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key); dropdown = dialog.findViewById(R.id.hosts)
+        inputUserName = dialogHosts.findViewById(R.id.UserNameInput); inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput)
+        inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput); textLayoutUserName = dialogHosts.findViewById(R.id.TLusername)
+        textLayoutDomainName = dialogHosts.findViewById(R.id.TLdomain); textLayoutPortName = dialogHosts.findViewById(R.id.TLportname)
         inputExternal = dialog.findViewById(R.id.ExternalTextInput); inputInternal = dialog.findViewById(R.id.InternalTextInput)
-        textLayoutUserName = dialogHosts.findViewById(R.id.TLusername); textLayoutPortName = dialogHosts.findViewById(R.id.TLportname)
-        textLayoutDomainName = dialogHosts.findViewById(R.id.TLdomain); inputUserName = dialogHosts.findViewById(R.id.UserNameInput)
-        inputDomainIP = dialogHosts.findViewById(R.id.DomainIPInput); inputPortNumber = dialogHosts.findViewById(R.id.PortNumberInput)
+        textLayoutExternal = dialog.findViewById(R.id.TLexternal); textLayoutInternal = dialog.findViewById(R.id.TLinternal)
         addingPortButton = dialog.findViewById(R.id.btn_adding_port); addingHostButton = dialogHosts.findViewById(R.id.btn_adding_host)
         addCloseButtons()
-        addSyntaxCheck(inputUserName, textLayoutUserName, Constants.userRegex, Constants.hostError)
-        addSyntaxCheck(inputDomainIP, textLayoutDomainName, Constants.domainRegex + "|" + Constants.ipRegex , Constants.domainIPError)
-        addSyntaxCheck(inputPortNumber, textLayoutPortName, Constants.portRegex, Constants.portError)
+        addHostSyntaxCheck(inputUserName, textLayoutUserName, Constants.userRegex, Constants.hostError)
+        addHostSyntaxCheck(inputDomainIP, textLayoutDomainName, Constants.domainRegex + "|" + Constants.ipRegex, Constants.domainIPError)
+        addHostSyntaxCheck(inputPortNumber, textLayoutPortName, Constants.portRegex, Constants.portError)
+        addPortSyntaxCheck(inputExternal, textLayoutExternal)
+        addPortSyntaxCheck(inputInternal, textLayoutInternal)
         portsName = ArrayList(); hostsName = ArrayList(); hostsPosition = ArrayList()
         val window = dialog.window; val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)

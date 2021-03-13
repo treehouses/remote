@@ -75,5 +75,5 @@ object Constants {
     //Error messages
     const val hostError = "Invalid host name"
     const val domainIPError = "Invalid Domain or IP"
-    const val portError = "Invalid port name"
+    const val portError = "Invalid port number"
 }
