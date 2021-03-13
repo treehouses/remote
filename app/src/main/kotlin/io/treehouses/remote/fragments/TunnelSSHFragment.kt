@@ -66,7 +66,7 @@ class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
         bind!!.notifyNow.setOnClickListener(this)
         bind!!.btnKeys.setOnClickListener(this)
     }
-    
+
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog1() {
         dialog = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext())
