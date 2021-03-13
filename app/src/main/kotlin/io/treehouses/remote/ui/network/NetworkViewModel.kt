@@ -106,9 +106,10 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
     }
 
-    fun ethernetStartConfigListener(bind: DialogEthernetBinding){
-        sendMessage(getString(R.string.TREEHOUSES_ETHERNET, bind.ip.text.toString(),
-                bind.mask.text.toString(), bind.gateway.text.toString(), bind.dns.text.toString()))
+    fun ethernetStartConfigListener(ip: TextInputEditText, mask: TextInputEditText,
+                                    gateway: TextInputEditText, dns: TextInputEditText){
+        sendMessage(getString(R.string.TREEHOUSES_ETHERNET, ip.text.toString(),
+                mask.text.toString(), gateway.text.toString(), dns.text.toString()))
     }
 
     fun hotspotStartConfigListener(bind: DialogHotspotBinding) {
