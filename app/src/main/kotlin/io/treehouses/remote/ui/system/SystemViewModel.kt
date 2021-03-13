@@ -138,10 +138,11 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
     }
 
     private fun vncToast(readMessage: String) {
+        if (readMessage.contains("Success: the vnc service has been started")) {
+            Toast.makeText(MainApplication.context, "VNC enabled", Toast.LENGTH_LONG).show()
+        }
         when {
-            readMessage.contains("Success: the vnc service has been started") -> {
-                Toast.makeText(MainApplication.context, "VNC enabled", Toast.LENGTH_LONG).show()
-            }
+
             readMessage.contains("Success: the vnc service has been stopped") -> {
                 Toast.makeText(MainApplication.context, "VNC disabled", Toast.LENGTH_LONG).show()
             }
