@@ -16,7 +16,6 @@ import java.util.*
 
 class SystemViewModel(application: Application) : FragmentViewModel(application) {
 
-    private val context = getApplication<MainApplication>().applicationContext
     private var network = true
     private var hostname = false
     private var tether = false
@@ -27,28 +26,28 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         hostname = true
     }
 
-    fun sendMessageAndTether() {
+    private fun sendMessageAndTether() {
         sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
         tether = true
     }
 
-    fun checkAndPrefilIp(readMessage: String, diff: ArrayList<Long>) {
+    private fun checkAndPrefilIp(readMessage: String, diff: ArrayList<Long>) {
         if (readMessage.contains(".") && hostname && !readMessage.contains("essid")) {
             checkSubnet(readMessage, diff)
         }
         ipPrefil(readMessage)
     }
 
-    fun ipPrefil(readMessage: String) {
+    private fun ipPrefil(readMessage: String) {
         if (network) {
             checkIfHotspot(readMessage)
         } else if (!retry) {
-            Toast.makeText(context, "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show()
+            Toast.makeText(MainApplication.context, "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show()
             prefillIp(readMessage)
         }
     }
 
-    fun checkIfHotspot(readMessage: String) {
+    private fun checkIfHotspot(readMessage: String) {
         if (readMessage.contains("ip") && !readMessage.contains("ap0")) {
             prefillIp(readMessage)
         } else if (readMessage.contains("ap0")) {
@@ -56,9 +55,9 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         }
     }
 
-    fun checkSubnet(readMessage: String, diff: ArrayList<Long>) {
+    private fun checkSubnet(readMessage: String, diff: ArrayList<Long>) {
         hostname = false
-        val wm = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wm = getApplication<MainApplication>().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val deviceIp = Formatter.formatIpAddress(wm.connectionInfo.ipAddress)
         val deviceIpAddress = ipToLong(deviceIp)
         if (!convertIp(readMessage, deviceIpAddress, diff)) {
@@ -70,11 +69,11 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         }
     }
 
-    fun checkElement(s: String): Boolean {
+    private fun checkElement(s: String): Boolean {
         return s.length <= 15 && !s.contains(":")
     }
 
-    fun convertIp(readMessage: String, deviceIpAddress: Long, diff: ArrayList<Long>): Boolean {
+    private fun convertIp(readMessage: String, deviceIpAddress: Long, diff: ArrayList<Long>): Boolean {
         val array = readMessage.split(" ".toRegex()).toTypedArray()
         for (element in array) {
             //TODO: Need to convert IPv6 addresses to long; currently it is being skipped
@@ -105,19 +104,19 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         return result
     }
 
-    fun isInNetwork(diff: ArrayList<Long>): Boolean {
-        Collections.sort(diff)
+    private fun isInNetwork(diff: ArrayList<Long>): Boolean {
+        diff.sort()
         return diff[0] <= 256
     }
 
-    fun prefillIp(readMessage: String) {
+    private fun prefillIp(readMessage: String) {
         val array = readMessage.split(",".toRegex()).toTypedArray()
         for (element in array) {
             elementConditions(element)
         }
     }
 
-    fun prefillHotspot(readMessage: String) {
+    private fun prefillHotspot(readMessage: String) {
         val array = readMessage.split(",".toRegex()).toTypedArray()
         for (element in array) {
             elementConditions(element)
@@ -128,7 +127,7 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         }
     }
 
-    fun elementConditions(element: String) {
+    private fun elementConditions(element: String) {
         if (element.contains("ip")) {
             try {
                 ViewHolderVnc.editTextIp.setText(element.substring(4).trim { it <= ' ' })
@@ -138,21 +137,26 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         }
     }
 
-    fun vncToast(readMessage: String) {
-        if (readMessage.contains("Success: the vnc service has been started")) {
-            Toast.makeText(context, "VNC enabled", Toast.LENGTH_LONG).show()
-        } else if (readMessage.contains("Success: the vnc service has been stopped")) {
-            Toast.makeText(context, "VNC disabled", Toast.LENGTH_LONG).show()
-        } else if (readMessage.contains("system.")) {
-            ViewHolderVnc.vnc.isChecked = false
-        } else if (readMessage.contains("You can now")) {
-            ViewHolderVnc.vnc.isChecked = true
+    private fun vncToast(readMessage: String) {
+        when {
+            readMessage.contains("Success: the vnc service has been started") -> {
+                Toast.makeText(MainApplication.context, "VNC enabled", Toast.LENGTH_LONG).show()
+            }
+            readMessage.contains("Success: the vnc service has been stopped") -> {
+                Toast.makeText(MainApplication.context, "VNC disabled", Toast.LENGTH_LONG).show()
+            }
+            readMessage.contains("system.") -> {
+                ViewHolderVnc.vnc.isChecked = false
+            }
+            readMessage.contains("You can now") -> {
+                ViewHolderVnc.vnc.isChecked = true
+            }
         }
     }
 
     override fun onRead(output: String) {
         super.onRead(output)
-        val readMessage = output.toString().trim { it <= ' ' }
+        val readMessage = output.trim { it <= ' ' }
         val diff = ArrayList<Long>()
         readMessageConditions(readMessage)
         logD("readMessage = $readMessage")
@@ -162,17 +166,17 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
     }
 
 
-    fun notifyUser(msg: String) {
-        if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog(context, "Wifi is not connected", "Check SSID and password and try again.")
+    private fun notifyUser(msg: String) {
+        if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(MainApplication.context, msg, Toast.LENGTH_LONG).show()
+        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog(MainApplication.context, "Wifi is not connected", "Check SSID and password and try again.")
     }
 
-    fun readMessageConditions(readMessage: String) {
+    private fun readMessageConditions(readMessage: String) {
         if (readMessage.contains("true") || readMessage.contains("false")) {
             return
         }
         if (readMessage == "password network" || readMessage == "open wifi network") {
-            Toast.makeText(context, "Connected", Toast.LENGTH_LONG).show()
+            Toast.makeText(MainApplication.context, "Connected", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -183,5 +187,4 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         }
         sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
     }
-
 }
