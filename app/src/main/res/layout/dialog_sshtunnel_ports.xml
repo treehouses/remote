@@ -61,8 +61,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/TLexternal"
-            >
+            android:id="@+id/TLexternal">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ExternalTextInput"
@@ -87,8 +86,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/TLinternal"
-            >
+            android:id="@+id/TLinternal">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/InternalTextInput"
