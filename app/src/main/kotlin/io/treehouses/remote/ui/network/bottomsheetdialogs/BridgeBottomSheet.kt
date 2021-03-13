@@ -29,8 +29,8 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
             e.printStackTrace()
         }
         bind.btnStartConfig.setOnClickListener {
-            viewModel.bridgeStartConfigListener(bind)
             val intent = Intent()
+            viewModel.bridgeStartConfigListener(bind)
             intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()

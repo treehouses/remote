@@ -18,9 +18,9 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogHotspotBinding.inflate(inflater, container, false)
         bind.btnStartConfig.setOnClickListener {
-            viewModel.hotspotStartConfigListener(bind)
             val intent = Intent()
             intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
+            viewModel.hotspotStartConfigListener(bind)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }
