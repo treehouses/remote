@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.ViewHolderTether
@@ -15,7 +14,7 @@ import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import java.util.*
 
-class SystemViewModel (application: Application) : FragmentViewModel(application){
+class SystemViewModel(application: Application) : FragmentViewModel(application) {
 
     private val context = getApplication<MainApplication>().applicationContext
     private var network = true
@@ -23,12 +22,12 @@ class SystemViewModel (application: Application) : FragmentViewModel(application
     private var tether = false
     private var retry = false
 
-    fun sendMessageAndHostname(){
+    fun sendMessageAndHostname() {
         sendMessage(getString(R.string.TREEHOUSES_HOSTNAME))
         hostname = true
     }
 
-    fun sendMessageAndTether(){
+    fun sendMessageAndTether() {
         sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
         tether = true
     }
@@ -58,7 +57,7 @@ class SystemViewModel (application: Application) : FragmentViewModel(application
     }
 
     fun checkSubnet(readMessage: String, diff: ArrayList<Long>) {
-        hostname= false
+        hostname = false
         val wm = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val deviceIp = Formatter.formatIpAddress(wm.connectionInfo.ipAddress)
         val deviceIpAddress = ipToLong(deviceIp)
@@ -153,13 +152,13 @@ class SystemViewModel (application: Application) : FragmentViewModel(application
 
     override fun onRead(output: String) {
         super.onRead(output)
-            val readMessage = output.toString().trim { it <= ' ' }
-            val diff = ArrayList<Long>()
-            readMessageConditions(readMessage)
-            logD("readMessage = $readMessage")
-            notifyUser(readMessage)
-            vncToast(readMessage)
-            checkAndPrefilIp(readMessage, diff)
+        val readMessage = output.toString().trim { it <= ' ' }
+        val diff = ArrayList<Long>()
+        readMessageConditions(readMessage)
+        logD("readMessage = $readMessage")
+        notifyUser(readMessage)
+        vncToast(readMessage)
+        checkAndPrefilIp(readMessage, diff)
     }
 
 
@@ -175,6 +174,14 @@ class SystemViewModel (application: Application) : FragmentViewModel(application
         if (readMessage == "password network" || readMessage == "open wifi network") {
             Toast.makeText(context, "Connected", Toast.LENGTH_LONG).show()
         }
+    }
+
+    fun onClickListItem(groupPosition: Int) {
+        if (groupPosition == 1) {
+            sendMessageAndTether()
+            return
+        }
+        sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
     }
 
 }

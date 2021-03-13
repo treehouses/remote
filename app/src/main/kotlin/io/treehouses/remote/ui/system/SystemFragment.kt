@@ -30,19 +30,12 @@ class SystemFragment : BaseFragment() {
     protected val viewModel: SystemViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivitySystemFragmentBinding
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySystemFragmentBinding.inflate(inflater, container, false)
-        val mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
-        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.systemList, mChatService)
+        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.systemList)
         adapter.setListener(listener)
         bind.listView.setOnGroupExpandListener { groupPosition: Int ->
-            if (groupPosition == 1) {
-                viewModel.sendMessageAndTether()
-                return@setOnGroupExpandListener
-            }
-            listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+            viewModel.onClickListItem(groupPosition)
         }
         bind.listView.setAdapter(adapter)
         Tutorials.systemTutorials(bind, requireActivity())
