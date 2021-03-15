@@ -1,16 +1,25 @@
 package io.treehouses.remote
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
+import android.util.TypedValue
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.utils.logD
+
 
 class SplashScreenActivity : AppCompatActivity() {
     private var logoAnimation: Animation? = null
@@ -22,6 +31,7 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this@SplashScreenActivity)
         nightMode()
+        adjustFontScale(resources.configuration, fontSize())
         if (preferences.getBoolean("splashScreen", true)) {
             setContentView(R.layout.activity_splash_screen)
             logo = findViewById(R.id.splash_logo)
@@ -34,6 +44,22 @@ class SplashScreenActivity : AppCompatActivity() {
                 goToNextActivity()
             }, SPLASH_TIME_OUT.toLong())
         } else { goToNextActivity() }
+    }
+
+    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
+        configuration?.let {
+            it.fontScale = 0.05F*fontSize.toFloat()
+            val metrics: DisplayMetrics = resources.displayMetrics
+            val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.defaultDisplay.getMetrics(metrics)
+            metrics.scaledDensity = configuration.fontScale * metrics.density
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                baseContext.applicationContext.createConfigurationContext(it)
+            }
+            baseContext.resources.displayMetrics.setTo(metrics)
+
+        }
     }
 
     private fun goToNextActivity() {
@@ -63,5 +89,11 @@ class SplashScreenActivity : AppCompatActivity() {
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
+    }
+
+    private fun fontSize(): Int
+    {
+        logD("FONT SIZE " + PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18).toString())
+        return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18)
     }
 }

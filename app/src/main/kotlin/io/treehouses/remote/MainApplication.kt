@@ -7,10 +7,15 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration
 import android.os.Build
 import android.os.IBinder
+import android.util.DisplayMetrics
+import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SeekBarPreference
 import com.parse.Parse
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.SaveUtils
@@ -20,6 +25,7 @@ import java.util.*
 
 class MainApplication : Application() {
     var logSent = false
+
     override fun onCreate() {
         super.onCreate()
 
@@ -69,6 +75,8 @@ class MainApplication : Application() {
         }
 
     }
+
+
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
