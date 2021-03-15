@@ -96,8 +96,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     fun bridgeStartConfigListener(etEssid: TextInputEditText, etHotspotEssid: TextInputEditText,
                                   etPassword: TextInputEditText, etHotspotPassword: TextInputEditText) {
         sendMessage(getString(R.string.TREEHOUSES_BRIDGE, etEssid.text.toString(),
-                etHotspotEssid.text.toString(), etPassword.text.toString(),
-                etHotspotPassword.text.toString()))
+                etHotspotEssid.text.toString(), etPassword.text.toString(), etHotspotPassword.text.toString()))
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
