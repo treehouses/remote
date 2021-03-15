@@ -22,16 +22,17 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogWifiBinding.inflate(inflater, container, false)
         bind.btnStartConfig.setOnClickListener {
-            viewModel.wifiStartConfigListener(bind)
+            viewModel.wifiStartConfigListener(bind.checkBoxHiddenWifi, bind.checkBoxEnterprise,
+                    bind.editTextSSID, bind.wifipassword, bind.wifiUsername)
             val intent = Intent()
             intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }
         bind.setWifiProfile.setOnClickListener {
-            viewModel.wifiSetAddProfileListener(bind)
+            viewModel.wifiSetAddProfileListener(bind.editTextSSID, bind.wifipassword, bind.checkBoxHiddenWifi)
         }
-        viewModel.hiddenOrEnterprise(bind)
+        viewModel.hiddenOrEnterprise(bind.checkBoxEnterprise, bind.enterpriseLayout)
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@WifiBottomSheet, context) }
         val validation = TextBoxValidation(requireContext(), bind.editTextSSID, bind.wifipassword, "wifi")
         validation.setStart(bind.btnStartConfig)

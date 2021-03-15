@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
@@ -92,16 +93,18 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendMessage(msg)
     }
 
-    fun bridgeStartConfigListener(bind: DialogBridgeBinding) {
-        sendMessage(getString(R.string.TREEHOUSES_BRIDGE, bind.etEssid.text.toString(),
-                bind.etHotspotEssid.text.toString(), bind.etPassword.text.toString(),
-                bind.etHotspotPassword.text.toString()))
+    fun bridgeStartConfigListener(etEssid: TextInputEditText, etHotspotEssid: TextInputEditText,
+                                  etPassword: TextInputEditText, etHotspotPassword: TextInputEditText) {
+        sendMessage(getString(R.string.TREEHOUSES_BRIDGE, etEssid.text.toString(),
+                etHotspotEssid.text.toString(), etPassword.text.toString(),
+                etHotspotPassword.text.toString()))
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
-    fun bridgeSetAddProfileListener(bind: DialogBridgeBinding) {
-        val networkProfile = NetworkProfile(bind.etEssid.text.toString(), bind.etPassword.text.toString(),
-                bind.etHotspotEssid.text.toString(), bind.etHotspotPassword.text.toString())
+    fun bridgeSetAddProfileListener(etEssid: TextInputEditText, etHotspotEssid: TextInputEditText,
+                                    etPassword: TextInputEditText, etHotspotPassword: TextInputEditText) {
+        val networkProfile = NetworkProfile(etEssid.text.toString(), etPassword.text.toString(),
+                etHotspotEssid.text.toString(), etHotspotPassword.text.toString())
         SaveUtils.addProfile(context, networkProfile)
         Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
     }
@@ -112,38 +115,43 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
                 mask.text.toString(), gateway.text.toString(), dns.text.toString()))
     }
 
-    fun hotspotStartConfigListener(bind: DialogHotspotBinding) {
-        if (bind.checkBoxHiddenHotspot.isChecked) sendHotspotMessage(R.string.TREEHOUSES_AP_HIDDEN, bind)
-        else sendHotspotMessage(R.string.TREEHOUSES_AP, bind)
+    fun hotspotStartConfigListener(checkBoxHiddenHotspot: AppCompatCheckBox, spnHotspotType: Spinner,
+                                   etHotspotSsid: TextInputEditText, etHotspotPassword: TextInputEditText) {
+        if (checkBoxHiddenHotspot.isChecked) sendHotspotMessage(R.string.TREEHOUSES_AP_HIDDEN, spnHotspotType,
+                etHotspotSsid, etHotspotPassword)
+        else sendHotspotMessage(R.string.TREEHOUSES_AP, spnHotspotType, etHotspotSsid, etHotspotPassword)
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
-    fun sendHotspotMessage(command : Int, bind: DialogHotspotBinding) {
-        sendMessage(getString(command, bind.spnHotspotType.selectedItem.toString(),
-                bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
+    fun sendHotspotMessage(command : Int, spnHotspotType: Spinner, etHotspotSsid: TextInputEditText,
+                           etHotspotPassword: TextInputEditText) {
+        sendMessage(getString(command, spnHotspotType.selectedItem.toString(),
+                etHotspotSsid.text.toString(), etHotspotPassword.text.toString()))
     }
 
-    fun hotspotSetAddProfileListener(bind: DialogHotspotBinding) {
+    fun hotspotSetAddProfileListener(checkBoxHiddenHotspot: AppCompatCheckBox, spnHotspotType: Spinner,
+                                     etHotspotSsid: TextInputEditText, etHotspotPassword: TextInputEditText) {
         SaveUtils.addProfile(context,
-                NetworkProfile(bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString(),
-                        bind.spnHotspotType.selectedItem.toString(), bind.checkBoxHiddenHotspot.isChecked))
+                NetworkProfile(etHotspotSsid.text.toString(), etHotspotPassword.text.toString(),
+                        spnHotspotType.selectedItem.toString(), checkBoxHiddenHotspot.isChecked))
         Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show()
     }
 
-    fun wifiStartConfigListener(bind: DialogWifiBinding) {
-        val ssid = bind.editTextSSID.text.toString()
-        val password = bind.wifipassword.text.toString()
-        val username = bind.wifiUsername.text.toString()
-        if (bind.checkBoxEnterprise.isChecked && bind.wifiUsername.text.isNullOrEmpty()) {
-            bind.wifiUsername.error = "Please enter a username"
+    fun wifiStartConfigListener(checkBoxHiddenWifi: AppCompatCheckBox, checkBoxEnterprise: AppCompatCheckBox,
+                                editTextSSID:TextInputEditText, wifipassword: TextInputEditText, wifiUsername: TextInputEditText) {
+        val ssid = editTextSSID.text.toString()
+        val password = wifipassword.text.toString()
+        val username = wifiUsername.text.toString()
+        if (checkBoxEnterprise.isChecked && wifiUsername.text.isNullOrEmpty()) {
+            wifiUsername.error = "Please enter a username"
             return
         }
-        sendWifiMessage(bind, ssid, password, username)
+        sendWifiMessage(checkBoxHiddenWifi, checkBoxEnterprise, ssid, password, username)
     }
 
-    fun sendWifiMessage(bind: DialogWifiBinding, ssid:String, password: String, username: String) {
-        val hidden = bind.checkBoxHiddenWifi.isChecked
-        val enterprise = bind.checkBoxEnterprise.isChecked
+    fun sendWifiMessage(checkBoxHiddenWifi: AppCompatCheckBox, checkBoxEnterprise: AppCompatCheckBox, ssid:String, password: String, username: String) {
+        val hidden = checkBoxHiddenWifi.isChecked
+        val enterprise = checkBoxEnterprise.isChecked
         when {
             !enterprise -> sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI, ssid, password))
             enterprise -> sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN_ENTERPRISE else R.string.TREEHOUSES_WIFI_ENTERPRISE, ssid, password, username))
@@ -151,15 +159,15 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
-    fun hiddenOrEnterprise(bind: DialogWifiBinding) {
-        bind.checkBoxEnterprise.setOnCheckedChangeListener {_, isChecked ->
-            bind.enterpriseLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
+    fun hiddenOrEnterprise(checkBoxEnterprise: AppCompatCheckBox, enterpriseLayout: TextInputLayout) {
+        checkBoxEnterprise.setOnCheckedChangeListener {_, isChecked ->
+            enterpriseLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
     }
 
-    fun wifiSetAddProfileListener(bind: DialogWifiBinding) {
-        SaveUtils.addProfile(context, NetworkProfile(bind.editTextSSID.text.toString(),
-                bind.wifipassword.text.toString(), bind.checkBoxHiddenWifi.isChecked))
+    fun wifiSetAddProfileListener(editTextSSID: TextInputEditText, wifipassword: TextInputEditText, checkBoxHiddenWifi: AppCompatCheckBox) {
+        SaveUtils.addProfile(context, NetworkProfile(editTextSSID.text.toString(),
+                wifipassword.text.toString(), checkBoxHiddenWifi.isChecked))
         Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show()
     }
 
