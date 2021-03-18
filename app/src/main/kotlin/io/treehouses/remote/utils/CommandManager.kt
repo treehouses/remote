@@ -123,6 +123,6 @@ object Matcher {
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
 
-    fun isReverseLookup(output: String): Boolean { return toLC(output).trim().startsWith("[")  }
+    fun isReverseLookup(output: String): Boolean { return toLC(output).trim().startsWith("[") && toLC(output).trim().endsWith("]")}
 
 }
