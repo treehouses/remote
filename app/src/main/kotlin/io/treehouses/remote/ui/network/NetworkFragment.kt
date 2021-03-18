@@ -1,7 +1,6 @@
 package io.treehouses.remote.ui.network
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -27,9 +26,6 @@ import io.treehouses.remote.ui.network.bottomsheetdialogs.BridgeBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
-import io.treehouses.remote.utils.*
-import kotlinx.android.synthetic.main.activity_network_fragment.*
-import kotlinx.android.synthetic.main.dialog_reverse_lookup.*
 
 open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
@@ -115,17 +111,14 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     }
 
     private fun reverseLookup(){
-        viewModel.treehousesInternetReverse()
-//        val dialogReverse = Dialog(requireContext())
-//        dialogReverse.setContentView(R.layout.dialog_reverse_lookup)
-//        dialogReverse.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-//        dialogReverse.show()
+        viewModel.treehousesRemoteReverse()
+        val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
+                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         viewModel.reverseText.observe(viewLifecycleOwner, Observer {
-            val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", it).setNegativeButton("Dismiss",null)
-                    .create()
-            a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-            a.show()
+            a.setMessage(it)
         })
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

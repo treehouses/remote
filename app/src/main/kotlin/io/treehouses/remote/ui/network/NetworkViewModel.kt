@@ -58,7 +58,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendMessage(msg)
     }
 
-    fun treehousesInternetReverse(){
+    fun treehousesRemoteReverse(){
         sendMessage("treehouses remote reverse")
     }
 

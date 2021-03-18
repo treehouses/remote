@@ -34,6 +34,7 @@ fun match (output: String) : RESULTS {
         Matcher.isError(output) ->  return RESULTS.ERROR
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
         Matcher.isVersion(output) -> return RESULTS.VERSION
+        Matcher.isReverseLookup(output) -> return RESULTS.REVERSE_LOOKUP
         Matcher.isRemoteCheck(output) -> return RESULTS.REMOTE_CHECK
         Matcher.isBridgeConnected(output) -> return RESULTS.BRIDGE_CONNECTED
         Matcher.isHotspotConnected(output) -> return RESULTS.HOTSPOT_CONNECTED
@@ -48,7 +49,6 @@ fun match (output: String) : RESULTS {
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
         Matcher.isEndJSON(output) -> return RESULTS.END_JSON
         Matcher.isNetworkModeInfoReturned(output) -> return RESULTS.NETWORKMODE_INFO
-        Matcher.isReverseLookup(output) -> return RESULTS.REVERSE_LOOKUP
     }
     return RESULTS.RESULT_NOT_FOUND
 }
@@ -123,9 +123,6 @@ object Matcher {
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
 
-    fun isReverseLookup(output: String): Boolean {
-        logE("reverse lookup matcher")
-        logE(toLC(output).trim().startsWith("[").toString())
-        return toLC(output).trim().startsWith("[")  }
+    fun isReverseLookup(output: String): Boolean { return toLC(output).trim().startsWith("[")  }
 
 }
