@@ -24,7 +24,8 @@ enum class RESULTS {
     END_JSON_SERVICES,
     END_JSON_COMMANDS,
     PING_OUTPUT,
-    END_HELP
+    END_HELP,
+    REVERSE_LOOKUP
 }
 
 fun match (output: String) : RESULTS {
@@ -47,6 +48,7 @@ fun match (output: String) : RESULTS {
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
         Matcher.isEndJSON(output) -> return RESULTS.END_JSON
         Matcher.isNetworkModeInfoReturned(output) -> return RESULTS.NETWORKMODE_INFO
+        Matcher.isReverseLookup(output) -> return RESULTS.REVERSE_LOOKUP
     }
     return RESULTS.RESULT_NOT_FOUND
 }
@@ -120,5 +122,10 @@ object Matcher {
     fun isPingOutput(output: String): Boolean {return toLC(output).contains("google.com") || toLC(output).contains("remote")}
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
+
+    fun isReverseLookup(output: String): Boolean {
+        logE("reverse lookup matcher")
+        logE(toLC(output).trim().startsWith("[").toString())
+        return toLC(output).trim().startsWith("[")  }
 
 }

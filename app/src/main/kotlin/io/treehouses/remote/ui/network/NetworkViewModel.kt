@@ -1,6 +1,7 @@
 package io.treehouses.remote.ui.network
 
 import android.app.Application
+import android.app.Dialog
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.Constants
@@ -16,6 +17,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     private val context = getApplication<MainApplication>().applicationContext
     var networkMode: MutableLiveData<String> = MutableLiveData()
     var ipAddress: MutableLiveData<String> = MutableLiveData()
+    val reverseText: MutableLiveData<String> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     var showNetworkProgress: MutableLiveData<Boolean> = MutableLiveData()
     private fun updateNetworkText(mode: String) {
@@ -56,6 +58,10 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendMessage(msg)
     }
 
+    fun treehousesInternetReverse(){
+        sendMessage("treehouses remote reverse")
+    }
+
     override fun onRead(output: String) {
         super.onRead(output)
         when (match(output)) {
@@ -77,8 +83,12 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
                 // Utils.sendMessage(listener, Pair(msg, "Network Mode retrieved"), context, Toast.LENGTH_LONG)
                 showNetworkProgress.value = false
             }
+            RESULTS.REVERSE_LOOKUP ->{
+                reverseText.value = output
+            }
             else -> logE("NewNetworkFragment: Result not Found")
         }
+
     }
 
      fun getNetworkMode() {
