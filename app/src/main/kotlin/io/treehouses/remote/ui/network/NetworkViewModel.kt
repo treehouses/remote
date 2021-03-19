@@ -93,15 +93,15 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendMessage(msg)
     }
 
-    fun bridgeStartConfigListener(etEssid: String, etHotspotEssid: String,
-                                  etPassword: String, etHotspotPassword: String) {
-        sendMessage(getString(R.string.TREEHOUSES_BRIDGE, etEssid, etHotspotEssid, etPassword, etHotspotPassword))
+    fun bridgeStartConfigListener(stringMap: Map<String, String>) {
+        sendMessage(getString(R.string.TREEHOUSES_BRIDGE, stringMap.getValue("etEssid"), stringMap.getValue("etHotspotEssid"),
+                stringMap.getValue("etPassword"), stringMap.getValue("etHotspotPassword")))
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
-    fun bridgeSetAddProfileListener(etEssid: String, etHotspotEssid: String,
-                                    etPassword: String, etHotspotPassword: String) {
-        val networkProfile = NetworkProfile(etEssid, etPassword, etHotspotEssid, etHotspotPassword)
+    fun bridgeSetAddProfileListener(stringMap: Map<String, String>) {
+        val networkProfile = NetworkProfile(stringMap.getValue("etEssid"), stringMap.getValue("etHotspotEssid"),
+                stringMap.getValue("etPassword"), stringMap.getValue("etHotspotPassword"))
         SaveUtils.addProfile(context, networkProfile)
         Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
     }
@@ -110,8 +110,8 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendMessage(getString(R.string.TREEHOUSES_ETHERNET, ip, mask, gateway, dns))
     }
 
-    fun hotspotStartConfigListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: String,
-                                   etHotspotSsid: String, etHotspotPassword: String) {
+    fun hotspotStartConfigListener(etHotspotSsid: String, etHotspotPassword: String,
+                                   checkBoxHiddenHotspot: Boolean, spnHotspotType: String) {
         if (checkBoxHiddenHotspot) sendHotspotMessage(R.string.TREEHOUSES_AP_HIDDEN, spnHotspotType,
                 etHotspotSsid, etHotspotPassword)
         else sendHotspotMessage(R.string.TREEHOUSES_AP, spnHotspotType, etHotspotSsid, etHotspotPassword)
