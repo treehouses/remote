@@ -20,14 +20,14 @@ class HotspotBottomSheet : BaseBottomSheetDialog() {
         bind.btnStartConfig.setOnClickListener {
             val intent = Intent()
             intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
-            viewModel.hotspotStartConfigListener(bind.checkBoxHiddenHotspot, bind.spnHotspotType,
-                    bind.etHotspotSsid, bind.etHotspotPassword)
+            viewModel.hotspotStartConfigListener(bind.checkBoxHiddenHotspot.isChecked, bind.spnHotspotType,
+                    bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString())
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }
         bind.setHotspotProfile.setOnClickListener {
-            viewModel.hotspotSetAddProfileListener(bind.checkBoxHiddenHotspot, bind.spnHotspotType,
-                    bind.etHotspotSsid, bind.etHotspotPassword)
+            viewModel.hotspotSetAddProfileListener(bind.checkBoxHiddenHotspot.isChecked, bind.spnHotspotType,
+                    bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString())
         }
         return bind.root
     }
