@@ -110,7 +110,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendMessage(getString(R.string.TREEHOUSES_ETHERNET, ip, mask, gateway, dns))
     }
 
-    fun hotspotStartConfigListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: Spinner,
+    fun hotspotStartConfigListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: String,
                                    etHotspotSsid: String, etHotspotPassword: String) {
         if (checkBoxHiddenHotspot) sendHotspotMessage(R.string.TREEHOUSES_AP_HIDDEN, spnHotspotType,
                 etHotspotSsid, etHotspotPassword)
@@ -118,35 +118,34 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
-    fun sendHotspotMessage(command : Int, spnHotspotType: Spinner, etHotspotSsid: String,
+    fun sendHotspotMessage(command : Int, spnHotspotType: String, etHotspotSsid: String,
                            etHotspotPassword: String) {
-        sendMessage(getString(command, spnHotspotType.selectedItem.toString(),
+        sendMessage(getString(command, spnHotspotType,
                 etHotspotSsid, etHotspotPassword))
     }
 
-    fun hotspotSetAddProfileListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: Spinner,
+    fun hotspotSetAddProfileListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: String,
                                      etHotspotSsid: String, etHotspotPassword: String) {
         SaveUtils.addProfile(context,
                 NetworkProfile(etHotspotSsid, etHotspotPassword,
-                        spnHotspotType.selectedItem.toString(), checkBoxHiddenHotspot))
+                        spnHotspotType, checkBoxHiddenHotspot))
         Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show()
     }
 
-    fun wifiStartConfigListener(checkBoxHiddenWifi: Boolean, checkBoxEnterprise: Boolean,
-                                editTextSSID:TextInputEditText, wifipassword: TextInputEditText, wifiUsername: TextInputEditText) {
-        val ssid = editTextSSID.text.toString()
-        val password = wifipassword.text.toString()
-        val username = wifiUsername.text.toString()
-        if (checkBoxEnterprise && wifiUsername.text.isNullOrEmpty()) {
-            wifiUsername.error = "Please enter a username"
-            return
-        }
-        sendWifiMessage(checkBoxHiddenWifi, checkBoxEnterprise, ssid, password, username)
-    }
+//    fun wifiStartConfigListener(booleanMap: Map<String, Boolean>, stringMap: Map<String, String>) {
+//        val ssid = stringMap.getValue("editTextSSID")
+//        val password = stringMap.getValue("wifipassword")
+//        val username = stringMap.getValue("wifiUsername")
+//        if (booleanMap.getValue("checkBoxEnterprise") && stringMap.getValue("wifiUsername").isNullOrEmpty()) {
+//            wifiUsername.error = "Please enter a username"
+//            return
+//        }
+//        sendWifiMessage(booleanMap, ssid, password, username)
+//    }
 
-    fun sendWifiMessage(checkBoxHiddenWifi: Boolean, checkBoxEnterprise: Boolean, ssid:String, password: String, username: String) {
-        val hidden = checkBoxHiddenWifi
-        val enterprise = checkBoxEnterprise
+    fun sendWifiMessage(booleanMap: Map<String, Boolean>, ssid:String, password: String, username: String) {
+        val hidden = booleanMap.getValue("checkBoxHiddenWifi")
+        val enterprise = booleanMap.getValue("checkBoxEnterprise")
         when {
             !enterprise -> sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI, ssid, password))
             enterprise -> sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN_ENTERPRISE else R.string.TREEHOUSES_WIFI_ENTERPRISE, ssid, password, username))

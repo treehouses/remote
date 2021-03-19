@@ -24,9 +24,10 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
     private lateinit var array: MutableList<Any>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogWifiBinding.inflate(inflater, container, false)
+        val booleanMap = mapOf<String, Boolean>("checkBoxHiddenWifi" to bind.checkBoxHiddenWifi.isChecked,
+                "checkBoxEnterprise" to bind.checkBoxEnterprise.isChecked)
         bind.btnStartConfig.setOnClickListener {
-            viewModel.wifiStartConfigListener(bind.checkBoxHiddenWifi.isChecked, bind.checkBoxEnterprise.isChecked,
-                    bind.editTextSSID, bind.wifipassword, bind.wifiUsername)
+            wifiStartConfigListener(booleanMap)
             val intent = Intent()
             intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
             targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
@@ -51,6 +52,16 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
         }
     }
 
+    fun wifiStartConfigListener(booleanMap: Map<String, Boolean>) {
+        val ssid = bind.editTextSSID.text.toString()
+        val password = bind.wifipassword.text.toString()
+        val username = bind.wifiUsername.text.toString()
+        if (booleanMap.getValue("checkBoxEnterprise") && bind.wifiUsername.text.isNullOrEmpty()) {
+            bind.wifiUsername.error = "Please enter a username"
+            return
+        }
+        viewModel.sendWifiMessage(booleanMap, ssid, password, username)
+    }
 
     fun hiddenOrEnterprise() {
         bind.checkBoxEnterprise.setOnCheckedChangeListener {_, isChecked ->

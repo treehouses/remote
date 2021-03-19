@@ -28,6 +28,14 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        setClickListeners()
+        val validation = TextBoxValidation(requireContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
+        validation.setStart(bind.btnStartConfig)
+        validation.setAddprofile(bind.addBridgeProfile)
+        return bind.root
+    }
+
+    private fun setClickListeners(){
         bind.btnStartConfig.setOnClickListener {
             val intent = Intent()
             viewModel.bridgeStartConfigListener(bind.etEssid.text.toString(), bind.etHotspotEssid.text.toString(),
@@ -41,10 +49,6 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
                     bind.etPassword.text.toString(), bind.etHotspotPassword.text.toString())
         }
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
-        val validation = TextBoxValidation(requireContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
-        validation.setStart(bind.btnStartConfig)
-        validation.setAddprofile(bind.addBridgeProfile)
-        return bind.root
     }
 
 
