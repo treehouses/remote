@@ -45,7 +45,6 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
     }
 
-
     private fun getValuesMap(): Map<String, String> {
         return mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
                 "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString());
