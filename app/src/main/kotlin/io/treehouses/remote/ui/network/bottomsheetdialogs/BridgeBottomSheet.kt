@@ -36,20 +36,20 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
 
     private fun setClickListeners() {
         bind.btnStartConfig.setOnClickListener {
-            val stringMap = mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
-                    "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString())
-            viewModel.bridgeStartConfigListener(stringMap)
+            viewModel.bridgeStartConfigListener(getValuesMap())
             dismiss()
         }
         bind.addBridgeProfile.setOnClickListener {
-            val stringMap = mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
-                    "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString())
-            viewModel.bridgeSetAddProfileListener(stringMap)
+            viewModel.bridgeSetAddProfileListener(getValuesMap())
         }
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
     }
 
 
+    private fun getValuesMap(): Map<String, String> {
+        return mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
+                "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString());
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) {
             return
