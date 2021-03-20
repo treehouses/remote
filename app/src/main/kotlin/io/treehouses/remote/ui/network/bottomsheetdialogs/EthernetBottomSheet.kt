@@ -18,10 +18,8 @@ class EthernetBottomSheet : BaseBottomSheetDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogEthernetBinding.inflate(inflater, container, false)
         bind.btnStartConfig.setOnClickListener {
-            viewModel.ethernetStartConfigListener(bind.ip, bind.mask, bind.gateway, bind.dns)
-           // val intent = Intent()
-          //  intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
-          //  targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+            viewModel.ethernetStartConfigListener(bind.ip.text.toString(), bind.mask.text.toString(),
+                    bind.gateway.text.toString(), bind.dns.text.toString())
             dismiss()
         }
         return bind.root
