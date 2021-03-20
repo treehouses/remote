@@ -71,8 +71,8 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     }
 
     private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
-        fragment.setTargetFragment(this@NetworkFragment, Constants.NETWORK_BOTTOM_SHEET)
-        fragment.show(requireActivity().supportFragmentManager, tag)
+//        fragment.setTargetFragment(this@NetworkFragment, Constants.NETWORK_BOTTOM_SHEET)
+        fragment.show(childFragmentManager, tag)
     }
 
     override fun onClick(v: View) {
@@ -110,12 +110,12 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         a.show()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK) return
-        if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {
-            binding.networkPbar.visibility = View.VISIBLE
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if (resultCode != Activity.RESULT_OK) return
+//        if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {
+//            binding.networkPbar.visibility = View.VISIBLE
+//        }
+//    }
 
     companion object {
         @JvmField

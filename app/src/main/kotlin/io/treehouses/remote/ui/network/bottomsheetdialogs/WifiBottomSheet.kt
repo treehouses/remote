@@ -17,16 +17,16 @@ import io.treehouses.remote.databinding.DialogWifiBinding
 import io.treehouses.remote.ui.network.NetworkViewModel
 
 class WifiBottomSheet : BaseBottomSheetDialog() {
-    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { this })
+    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogWifiBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogWifiBinding.inflate(inflater, container, false)
         bind.btnStartConfig.setOnClickListener {
             viewModel.wifiStartConfigListener(bind.checkBoxHiddenWifi, bind.checkBoxEnterprise,
                     bind.editTextSSID, bind.wifipassword, bind.wifiUsername)
-            val intent = Intent()
-            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+//            val intent = Intent()
+//            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
+//            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }
         bind.setWifiProfile.setOnClickListener {

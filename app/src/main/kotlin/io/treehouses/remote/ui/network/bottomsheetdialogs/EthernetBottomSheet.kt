@@ -13,15 +13,15 @@ import io.treehouses.remote.databinding.DialogEthernetBinding
 import io.treehouses.remote.ui.network.NetworkViewModel
 
 class EthernetBottomSheet : BaseBottomSheetDialog() {
-    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { this })
+    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogEthernetBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogEthernetBinding.inflate(inflater, container, false)
         bind.btnStartConfig.setOnClickListener {
             viewModel.ethernetStartConfigListener(bind.ip, bind.mask, bind.gateway, bind.dns)
-            val intent = Intent()
-            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+           // val intent = Intent()
+          //  intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
+          //  targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
             dismiss()
         }
         return bind.root

@@ -18,7 +18,7 @@ import io.treehouses.remote.databinding.DialogBridgeBinding
 import io.treehouses.remote.ui.network.NetworkViewModel
 
 class BridgeBottomSheet : BaseBottomSheetDialog() {
-    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { this })
+    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogBridgeBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogBridgeBinding.inflate(inflater, container, false)

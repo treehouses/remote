@@ -25,9 +25,11 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     var ipAddress: MutableLiveData<String> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     var showNetworkProgress: MutableLiveData<Boolean> = MutableLiveData()
+
     private fun updateNetworkText(mode: String) {
         logD( "Current Network Mode: $mode" )
         networkMode.value = "Current Network Mode: $mode"
+        showNetworkProgress.value = false
     }
 
     fun onLoad() {
@@ -81,6 +83,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
                 // showDialog(context, "Network Switched", output)
                 //update network mode
                 getNetworkMode()
+                logD("HOTSPOT CONNECTED")
                 // Utils.sendMessage(listener, Pair(msg, "Network Mode retrieved"), context, Toast.LENGTH_LONG)
                 showNetworkProgress.value = false
             }
@@ -95,6 +98,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
 
     fun bridgeStartConfigListener(etEssid: TextInputEditText, etHotspotEssid: TextInputEditText,
                                   etPassword: TextInputEditText, etHotspotPassword: TextInputEditText) {
+        showNetworkProgress.value = true
         sendMessage(getString(R.string.TREEHOUSES_BRIDGE, etEssid.text.toString(),
                 etHotspotEssid.text.toString(), etPassword.text.toString(), etHotspotPassword.text.toString()))
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
@@ -122,8 +126,9 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
-    fun sendHotspotMessage(command : Int, spnHotspotType: Spinner, etHotspotSsid: TextInputEditText,
-                           etHotspotPassword: TextInputEditText) {
+    private fun sendHotspotMessage(command : Int, spnHotspotType: Spinner, etHotspotSsid: TextInputEditText,
+                                   etHotspotPassword: TextInputEditText) {
+        showNetworkProgress.value = true
         sendMessage(getString(command, spnHotspotType.selectedItem.toString(),
                 etHotspotSsid.text.toString(), etHotspotPassword.text.toString()))
     }
@@ -148,13 +153,14 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         sendWifiMessage(checkBoxHiddenWifi, checkBoxEnterprise, ssid, password, username)
     }
 
-    fun sendWifiMessage(checkBoxHiddenWifi: AppCompatCheckBox, checkBoxEnterprise: AppCompatCheckBox, ssid:String, password: String, username: String) {
+    private fun sendWifiMessage(checkBoxHiddenWifi: AppCompatCheckBox, checkBoxEnterprise: AppCompatCheckBox, ssid:String, password: String, username: String) {
         val hidden = checkBoxHiddenWifi.isChecked
         val enterprise = checkBoxEnterprise.isChecked
         when {
             !enterprise -> sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI, ssid, password))
             enterprise -> sendMessage(getString(if (hidden) R.string.TREEHOUSES_WIFI_HIDDEN_ENTERPRISE else R.string.TREEHOUSES_WIFI_ENTERPRISE, ssid, password, username))
         }
+        showNetworkProgress.value = true
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
