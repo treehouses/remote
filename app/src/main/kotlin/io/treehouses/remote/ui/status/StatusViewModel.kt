@@ -36,6 +36,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     val deviceAddress: MutableLiveData<String> = MutableLiveData()
     val rpiType: MutableLiveData<String> = MutableLiveData()
     var rpiVersion: String = ""
+    val reverseText: MutableLiveData<String> = MutableLiveData()
     val ipAddressText: MutableLiveData<String> = MutableLiveData()
     val ssidText: MutableLiveData<String> = MutableLiveData()
     val upgradeCheckText: MutableLiveData<String> = MutableLiveData()
@@ -79,6 +80,8 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
+        } else if(output.trim().startsWith("[")){
+            reverseText.value = output
         } else {
             updateViews(output)
         }
@@ -105,6 +108,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                 remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
+                treehousesRemoteReverse()
             } else checkUpgradeStatus(output) } catch (e: Exception) { }
     }
 
@@ -136,6 +140,10 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             upgradeCheckText.value = "      NO INTERNET"
             showUpgrade.value = false
         }
+    }
+
+    fun treehousesRemoteReverse(){
+        sendMessage("treehouses remote reverse")
     }
 
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
@@ -173,6 +181,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         temperature.value = "Checking......"
         memory.value = "Checking......"
         storage.value = "Checking......"
+        reverseText.value = "Checking......"
         storageBarValue.value = 0
         memoryBarValue.value = 0
     }

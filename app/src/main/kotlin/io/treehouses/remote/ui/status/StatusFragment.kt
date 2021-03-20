@@ -151,6 +151,9 @@ class StatusFragment : BaseFragment() {
             if (it)
                 bind.countryDisplay.visibility = View.VISIBLE;
         })
+        viewModel.reverseText.observe(viewLifecycleOwner, Observer {
+            bind.remoReverText.text = it
+        })
     }
 
 

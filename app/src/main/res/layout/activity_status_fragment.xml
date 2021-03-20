@@ -2,20 +2,20 @@
 
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/windowBackground"
     android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="@color/windowBackground">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +25,55 @@
             android:paddingBottom = "20dp"
             android:textColor="@color/daynight_textColor"
             android:background="@color/windowBackground">
+
+            <LinearLayout
+                android:id="@+id/remoReverBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/lightrounded"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/measurablesBox">
+
+                <TextView
+                    android:id="@+id/remoReverText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Checking....."
+                    android:textColor="@color/daynight_textColor" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/networkTitle5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="16dp"
+                android:text="Network"
+                android:textColor="@color/daynight_textColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bluetoothBox" />
+
+            <TextView
+                android:id="@+id/networkTitle4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="16dp"
+                android:text="Network"
+                android:textColor="@color/daynight_textColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bluetoothBox" />
 
             <TextView
                 android:id="@+id/bluetoothTitle"
