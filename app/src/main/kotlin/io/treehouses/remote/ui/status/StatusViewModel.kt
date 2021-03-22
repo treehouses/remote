@@ -108,7 +108,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                 remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
-                treehousesRemoteReverse()
             } else checkUpgradeStatus(output) } catch (e: Exception) { }
     }
 

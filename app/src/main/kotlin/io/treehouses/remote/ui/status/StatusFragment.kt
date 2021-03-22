@@ -3,6 +3,7 @@ package io.treehouses.remote.ui.status
 import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -21,9 +22,10 @@ import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import kotlinx.android.synthetic.main.dialog_wificountry.*
 
-class StatusFragment : BaseFragment() {
+class StatusFragment : BaseFragment(), FragmentDialogInterface {
 
     protected val viewModel: StatusViewModel by viewModels(ownerProducer = { this })
     var countryList: ListView? = null
@@ -34,6 +36,7 @@ class StatusFragment : BaseFragment() {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
         viewModel.onLoad()
         bind.refreshBtn.setOnClickListener { viewModel.refresh() }
+        bind.remoteReverseBtn.setOnClickListener{ reverseLookup() }
         viewModel.countryList.observe(viewLifecycleOwner, Observer {
             val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, it)
             bind.countryDisplay.setOnClickListener { wifiCountry(adapter) }
@@ -151,9 +154,6 @@ class StatusFragment : BaseFragment() {
             if (it)
                 bind.countryDisplay.visibility = View.VISIBLE;
         })
-        viewModel.reverseText.observe(viewLifecycleOwner, Observer {
-            bind.remoReverText.text = it
-        })
     }
 
 
@@ -224,6 +224,17 @@ class StatusFragment : BaseFragment() {
                 Toast.makeText(context, "Please enter a new name", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun reverseLookup(){
+        viewModel.treehousesRemoteReverse()
+        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
+                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        viewModel.reverseText.observe(viewLifecycleOwner, Observer {
+            a.setMessage(it)
+        })
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.show()
     }
 
     override fun onAttach(context: Context) {
