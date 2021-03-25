@@ -46,6 +46,7 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
 
     protected fun setUpAdapter() {
         pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
+        if (!isVisible) return
         if (pastHosts.isEmpty()) {
             bind.noHosts.visibility = View.VISIBLE
             bind.pastHosts.visibility = View.GONE
@@ -82,6 +83,11 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.bindService(Intent(context, TerminalManager::class.java), connection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
     }
 
     override fun onStop() {
