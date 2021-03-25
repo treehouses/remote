@@ -85,11 +85,6 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
         activity?.bindService(Intent(context, TerminalManager::class.java), connection, Context.BIND_AUTO_CREATE)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
-    }
-
     override fun onStop() {
         super.onStop()
         try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
