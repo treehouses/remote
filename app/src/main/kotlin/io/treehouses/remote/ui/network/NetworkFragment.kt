@@ -70,8 +70,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     }
 
     private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
-        fragment.setTargetFragment(this@NetworkFragment, Constants.NETWORK_BOTTOM_SHEET)
-        fragment.show(requireActivity().supportFragmentManager, tag)
+        fragment.show(childFragmentManager, tag)
     }
 
     override fun onClick(v: View) {

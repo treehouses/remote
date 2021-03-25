@@ -309,10 +309,11 @@
         "\n"This is a reverse SSH tunnel in which another port is being opened to this.
         "\n"For the user name, it will be a regular Linux username.
         "\n"For the domain name, it needs to be a valid domain or IP address.
+        "\n"For the port number, it has to be within the range of 0 - 65535.
         <b>Adding SSH Ports</b>
         "\n"To add an SSH port, one must click on the Add Ports button.
         "\n"Add the external and internal number of the port"\n"
-        <b>SSH Keys</b>
+        <b>Viewing SSH Keys</b>
         "\n"To view SSH keys, one must click on the green SSH key button
         "\n"To save a new key, one must copy and paste their SSH key and click save.
     </string>
