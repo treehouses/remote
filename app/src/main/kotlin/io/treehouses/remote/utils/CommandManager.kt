@@ -30,11 +30,11 @@ enum class RESULTS {
 
 fun match (output: String) : RESULTS {
     when {
-        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isError(output) ->  return RESULTS.ERROR
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
         Matcher.isVersion(output) -> return RESULTS.VERSION
         Matcher.isReverseLookup(output) -> return RESULTS.REVERSE_LOOKUP
+        Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isRemoteCheck(output) -> return RESULTS.REMOTE_CHECK
         Matcher.isBridgeConnected(output) -> return RESULTS.BRIDGE_CONNECTED
         Matcher.isHotspotConnected(output) -> return RESULTS.HOTSPOT_CONNECTED
@@ -123,6 +123,6 @@ object Matcher {
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
 
-    fun isReverseLookup(output: String): Boolean { return toLC(output).trim().startsWith("[") && toLC(output).trim().endsWith("]")}
+    fun isReverseLookup(output: String): Boolean { return toLC(output).trim().startsWith("{\"ip") && toLC(output).trim().endsWith("}")}
 
 }

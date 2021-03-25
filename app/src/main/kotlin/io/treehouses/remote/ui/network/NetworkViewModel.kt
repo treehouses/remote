@@ -4,14 +4,17 @@ import android.app.Application
 import android.app.Dialog
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
+import io.treehouses.remote.pojo.ReverseData
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
+import java.util.ArrayList
 
 class NetworkViewModel(application: Application) : FragmentViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext
@@ -84,11 +87,24 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
                 showNetworkProgress.value = false
             }
             RESULTS.REVERSE_LOOKUP ->{
-                reverseText.value = output
+                showRemoteReverse(output)
             }
             else -> logE("NewNetworkFragment: Result not Found")
         }
 
+    }
+
+    fun showRemoteReverse(output: String){
+        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+        val ip = "ip: " + reverseData.ip
+        val postal = "postal: " + reverseData.postal
+        val city = "city: " + reverseData.city
+        val country = "country: " + reverseData.country
+        val org = "org: " + reverseData.org
+        val timezone = "timezone: " + reverseData.timezone
+        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+
+//        reverseText.value = output
     }
 
      fun getNetworkMode() {
