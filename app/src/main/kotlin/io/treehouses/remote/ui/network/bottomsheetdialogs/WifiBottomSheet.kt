@@ -36,33 +36,22 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
         }
     }
 
-//    private fun wifiStartConfigListener(booleanMap: Map<String, Boolean>) {
-//        val ssid = bind.editTextSSID.text.toString()
-//        val password = bind.wifipassword.text.toString()
-//        val username = bind.wifiUsername.text.toString()
-//        if (booleanMap.getValue("checkBoxEnterprise") && bind.wifiUsername.text.isNullOrEmpty()) {
-//            bind.wifiUsername.error = "Please enter a username"
-//            return
-//        }
-//        viewModel.sendWifiMessage(booleanMap, ssid, password, username)
-//    }
-
-    private fun setObservers(){
+    private fun setObservers() {
         viewModel.wifiUserError.observe(viewLifecycleOwner, Observer {
-            if(it)
+            if (it)
                 bind.wifiUsername.error = "Please enter a username"
+            else
+                bind.wifiUsername.setError(null)
         })
         viewModel.checkBoxChecked.observe(viewLifecycleOwner, Observer {
-            if(it) bind.enterpriseLayout.visibility = View.VISIBLE
-            else bind.enterpriseLayout.visibility = View.GONE
+            bind.enterpriseLayout.visibility = if (it) View.VISIBLE else View.GONE
         })
     }
 
-    private fun setClickListeners(){
+    private fun setClickListeners() {
         bind.btnStartConfig.setOnClickListener {
             val booleanMap = mapOf("checkBoxHiddenWifi" to bind.checkBoxHiddenWifi.isChecked,
                     "checkBoxEnterprise" to bind.checkBoxEnterprise.isChecked)
-//            wifiStartConfigListener(booleanMap)
             viewModel.sendWifiMessage(booleanMap, bind.editTextSSID.text.toString(),
                     bind.wifipassword.text.toString(), bind.wifiUsername.text.toString())
             dismiss()
@@ -76,10 +65,4 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
         }
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@WifiBottomSheet, context) }
     }
-
-//    private fun hiddenOrEnterprise() {
-//        bind.checkBoxEnterprise.setOnCheckedChangeListener { _, isChecked ->
-//            bind.enterpriseLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
-//        }
-//    }
 }
