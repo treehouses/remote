@@ -44,8 +44,12 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
                 bind.wifiUsername.setError(null)
         })
         viewModel.checkBoxChecked.observe(viewLifecycleOwner, Observer {
-            bind.enterpriseLayout.visibility = if (it) View.VISIBLE else View.GONE
+            if (it) setView(View.VISIBLE) else setView(View.GONE)
         })
+    }
+
+    private fun setView(view: Int){
+        bind.enterpriseLayout.visibility = view
     }
 
     private fun setClickListeners() {
