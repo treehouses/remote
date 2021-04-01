@@ -91,13 +91,13 @@ class TerminalFragment : BaseTerminalFragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         if(chatOpen()) {
             if (mChatService.state == Constants.STATE_NONE) {
                 mChatService.start()
                 updatePingStatus(bind.pingStatus, bind.PING, getString(R.string.bStatusIdle), Color.YELLOW)
             }
         }
+        super.onDestroy()
     }
 
     override fun onResume() {
