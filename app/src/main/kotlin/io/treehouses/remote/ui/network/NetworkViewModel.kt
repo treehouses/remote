@@ -144,7 +144,7 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
 
 
     fun sendWifiMessage(booleanMap: Map<String, Boolean>, ssid:String, password: String, username: String) {
-        if (booleanMap.getValue("checkBoxEnterprise") && username.isNullOrEmpty()) {
+        if (booleanMap.getValue("checkBoxEnterprise") && username.isEmpty()) {
             wifiUserError.value = true
             return
         }
