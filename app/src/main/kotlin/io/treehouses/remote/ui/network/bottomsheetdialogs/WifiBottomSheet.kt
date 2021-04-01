@@ -38,10 +38,10 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
 
     private fun setObservers() {
         viewModel.wifiUserError.observe(viewLifecycleOwner, Observer {
-            bind.wifiUsername.error = if(it) "Please enter a username" else null
+            bind.wifiUsername.error = if (it) "Please enter a username" else null
         })
-        viewModel.checkBoxChecked.observe(viewLifecycleOwner, Observer {
-            bind.enterpriseLayout.visibility = if(it) View.VISIBLE else View.GONE
+        viewModel.checkBoxChecked.observe(viewLifecycleOwner, Observer { visible ->
+            bind.enterpriseLayout.visibility = if (visible) View.VISIBLE else View.GONE
         })
     }
 
