@@ -1,21 +1,12 @@
 package io.treehouses.remote.ui.network
 
 import android.app.Application
-import android.view.View
-import android.widget.Spinner
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.lifecycle.MutableLiveData
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.databinding.DialogBridgeBinding
-import io.treehouses.remote.databinding.DialogEthernetBinding
-import io.treehouses.remote.databinding.DialogHotspotBinding
-import io.treehouses.remote.databinding.DialogWifiBinding
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.*
 
@@ -24,6 +15,8 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     var networkMode: MutableLiveData<String> = MutableLiveData()
     var ipAddress: MutableLiveData<String> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
+    val downloadUpload: MutableLiveData<String> = MutableLiveData()
+    var dialogCheck: MutableLiveData<Boolean> = MutableLiveData()
     var showNetworkProgress: MutableLiveData<Boolean> = MutableLiveData()
 
     private fun updateNetworkText(mode: String) {
@@ -86,6 +79,12 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
                 logD("HOTSPOT CONNECTED")
                 // Utils.sendMessage(listener, Pair(msg, "Network Mode retrieved"), context, Toast.LENGTH_LONG)
                 showNetworkProgress.value = false
+            }
+            RESULTS.BOOLEAN -> {
+                updateInternet(output)
+            }
+            RESULTS.SPEED_TEST -> {
+                updateSpeed(output)
             }
             else -> logE("NewNetworkFragment: Result not Found")
         }
@@ -156,6 +155,47 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         SaveUtils.addProfile(context, NetworkProfile(editTextSSID,
                 wifipassword, checkBoxHiddenWifi))
         Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show()
+    }
+
+    fun treehousesInternet(){
+        dialogCheck.value = true
+        sendMessage("treehouses internet")
+    }
+
+    fun updateInternet(output: String){
+        if (output.contains("true")) {
+            downloadUpload.value = "Internet check passed. Performing speed test......"
+            treehousesSpeedTest()
+        } else{
+            downloadUpload.value = "Internet check failed. Connect to network"
+        }
+    }
+
+    fun treehousesSpeedTest(){
+        sendMessage("treehouses speedtest")
+    }
+
+    fun updateSpeed(output: String){
+        if (output.contains("Download:") && output.contains("Upload:")){
+            downloadUpload.value = getDownloadString(output)
+            downloadUpload.value += "\n" + getUploadString(output)
+        } else if (output.contains("Download:")){
+            downloadUpload.value = getDownloadString(output)
+        } else {
+            downloadUpload.value += "\n" + getUploadString(output)
+        }
+    }
+
+    fun getDownloadString(output: String) : String {
+        var startIndex = output.indexOf("Download:")
+        var endIndex = output.indexOf("/s", startIndex)
+        return output.substring(startIndex, endIndex + 2)
+    }
+
+    fun getUploadString(output: String) : String {
+        var startIndex = output.indexOf("Upload:")
+        var endIndex = output.indexOf("/s", startIndex)
+        return output.substring(startIndex, endIndex + 2)
     }
 
 }

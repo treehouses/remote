@@ -20,6 +20,7 @@ enum class RESULTS {
     NETWORKMODE,
     NETWORKMODE_INFO,
     START_JSON,
+    SPEED_TEST,
     END_JSON,
     END_JSON_SERVICES,
     END_JSON_COMMANDS,
@@ -29,6 +30,7 @@ enum class RESULTS {
 
 fun match (output: String) : RESULTS {
     when {
+        Matcher.isSpeedTest(output) -> return RESULTS.SPEED_TEST
         Matcher.isEndHelpJson(output) -> return RESULTS.END_HELP
         Matcher.isError(output) ->  return RESULTS.ERROR
         Matcher.isBoolean(output) -> return RESULTS.BOOLEAN
@@ -120,5 +122,7 @@ object Matcher {
     fun isPingOutput(output: String): Boolean {return toLC(output).contains("google.com") || toLC(output).contains("remote")}
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
+
+    fun isSpeedTest(output: String): Boolean {return toLC(output).contains("download:") || toLC(output).contains("upload:") }
 
 }
