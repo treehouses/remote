@@ -14,10 +14,12 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     private val context = getApplication<MainApplication>().applicationContext
     var networkMode: MutableLiveData<String> = MutableLiveData()
     var ipAddress: MutableLiveData<String> = MutableLiveData()
+    var wifiUserError: MutableLiveData<Boolean> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     val downloadUpload: MutableLiveData<String> = MutableLiveData()
     var dialogCheck: MutableLiveData<Boolean> = MutableLiveData()
     var showNetworkProgress: MutableLiveData<Boolean> = MutableLiveData()
+    var checkBoxChecked: MutableLiveData<Boolean> = MutableLiveData()
 
     private fun updateNetworkText(mode: String) {
         logD( "Current Network Mode: $mode" )
@@ -141,6 +143,11 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
 
 
     fun sendWifiMessage(booleanMap: Map<String, Boolean>, ssid:String, password: String, username: String) {
+        if (booleanMap.getValue("checkBoxEnterprise") && username.isEmpty()) {
+            wifiUserError.value = true
+            return
+        }
+        wifiUserError.value = false
         val hidden = booleanMap.getValue("checkBoxHiddenWifi")
         val enterprise = booleanMap.getValue("checkBoxEnterprise")
         when {
@@ -155,6 +162,10 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         SaveUtils.addProfile(context, NetworkProfile(editTextSSID,
                 wifipassword, checkBoxHiddenWifi))
         Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show()
+    }
+
+    fun hiddenOrEnterprise(isChecked: Boolean) {
+        checkBoxChecked.value = isChecked
     }
 
     fun treehousesInternet(){
