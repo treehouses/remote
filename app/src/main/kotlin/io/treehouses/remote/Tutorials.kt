@@ -83,7 +83,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_OVERVIEW, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilder(activity, bind.linearLayout, "Search, Install and Use a Variety of Services", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.linearLayout, "Search, Install and Use a Variety of Services", FocusShape.ROUNDED_RECTANGLE)
                 .roundRectRadius(80)
                 .disableFocusAnimation()
                 .build()
@@ -94,7 +94,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SERVICES_DETAILS, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilder(activity, bind.pickService, "Pick any service from this list")
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.pickService, "Pick any service from this list")
                 .focusBorderSize(80)
                 .build()
         show(a)
@@ -105,7 +105,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
 
-        val a = fancyShowCaseViewRoundedRect(activity, bind.btnTorStart, "Stop or Start Tor")
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.btnTorStart, "Stop or Start Tor")
         val b = fancyShowCaseViewRoundedRect(activity, bind.notifyNow, "Notify the Gitter Channel")
         val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add Tor Ports")
         show(a, b, c)
@@ -126,8 +126,9 @@ object Tutorials {
         val b = fancyShowCaseViewRoundedRect(activity, bind.btnAddHosts, "Add SSH Hosts")
         val c = fancyShowCaseViewRoundedRect(activity, bind.btnAddPort, "Add SSH Ports")
         val d = fancyShowCaseViewRoundedRect(activity, bind.btnKeys, "View SSH Keys")
+        val e = fancyShowCaseViewRoundedRect(activity, bind.info, "Click here for more info about features")
 
-        show(a, b, c, d)
+        show(a, b, c, d, e)
     }
 
     fun statusTutorials(bind: ActivityStatusFragmentBinding, activity: FragmentActivity) {
@@ -156,7 +157,7 @@ object Tutorials {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSH)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSH, false)
 
-        val a = fancyShowCaseViewRoundedRect(activity, bind.sshTextInput, "Enter In The SSH Host")
+        val a = fancyShowCaseViewRoundedRectSkippable(activity, bind.sshTextInput, "Enter In The SSH Host")
 
         val b = fancyShowCaseViewRoundedRect(activity, bind.connectSsh, "Connect Manually to The SSH Host")
 

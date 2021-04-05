@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-def appVersionCode = Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 2)
-def appVersionName = (System.env.TRAVIS_BUILD_NUMBER ?: "1.0.0") + ""
+def appVersionCode = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.GITHUB_RUN_NUMBER) : 2) + 6050
+def appVersionName = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.GITHUB_RUN_NUMBER) + 6050: "1.0.0") + ""
 
 android {
     compileSdkVersion 29
@@ -10,6 +10,7 @@ android {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
         targetSdkVersion 29
+        ndkVersion '21.3.6528147'
         multiDexEnabled true
         versionCode appVersionCode
         versionName appVersionName
@@ -20,7 +21,7 @@ android {
             }
         }
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
     buildTypes {
@@ -63,7 +64,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
-
+    implementation 'com.google.android.material:material:<version>'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'com.mikepenz:materialdrawer:6.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'

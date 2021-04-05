@@ -65,4 +65,15 @@ object Constants {
 
     //JSON String bundle
     const val JSON_STRING = "jsonString"
+
+    //Regular Expressions
+    const val userRegex = "^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\\\$)\$"
+    const val domainRegex = "^(?!-)[A-Za-z0-9-]+([\\-\\.]{1}[a-z0-9]+)*\\.[A-Za-z]{2,}\$"
+    const val ipRegex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\$"
+    const val portRegex = "(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])"
+
+    //Error messages
+    const val hostError = "Invalid host name"
+    const val domainIPError = "Invalid Domain or IP"
+    const val portError = "Invalid port number"
 }

@@ -74,6 +74,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayText.value = getCountryName(country)
             countryDisplayTextEnabled.value = true
             showRefresh.value = true
+            sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
         } else if (output.contains("invalid country code")) {
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
@@ -104,7 +105,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
                 remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
-                sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
             } else checkUpgradeStatus(output) } catch (e: Exception) { }
     }
 
@@ -131,7 +131,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
 
     private fun checkWifiStatus(readMessage: String) {
         if (readMessage.startsWith("true")) {
-            sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
+            sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY_CHECK))
         } else {
             upgradeCheckText.value = "      NO INTERNET"
             showUpgrade.value = false

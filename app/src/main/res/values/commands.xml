@@ -27,6 +27,7 @@
 
     <string name="TREEHOUSES_NETWORKMODE">treehouses networkmode\n</string>
     <string name="TREEHOUSES_NETWORKMODE_INFO">treehouses networkmode info\n</string>
+    <string name="TREEHOUSES_HOSTNAME">hostname -I\n</string>
     <string name="TREEHOUSES_WIFI">treehouses wifi \"%1$s\" \"%2$s\"\n</string>
     <string name="TREEHOUSES_WIFI_COUNTRY">treehouses wificountry \"%1$s\"</string>
     <string name="TREEHOUSES_WIFI_COUNTRY_CHECK">treehouses wificountry</string>
@@ -40,6 +41,7 @@
     <string name="TREEHOUSES_DISCOVER_GATEWAY">treehouses discover gateway\n</string>
     <string name="TREEHOUSES_DISCOVER_GATEWAY_LIST">treehouses discover gateway list\n</string>
     <string name="TREEHOUSES_DISCOVER_SELF">treehouses discover self\n</string>
+
 
     <string name="TREEHOUSES_WIFI_ENTERPRISE">treehouses wifi \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
     <string name="TREEHOUSES_WIFI_HIDDEN_ENTERPRISE">treehouses wifihidden \"%1$s\" \"%2$s\" \"%3$s\"\n</string>
@@ -69,6 +71,7 @@
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host \"%1$s\" </string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port \"%1$s\" </string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_ALL">treehouses sshtunnel remove all</string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT_SPECIFIC">treehouses sshtunnel remove port </string>
 
     <string name="TREEHOUSES_SSH_2FA">treehouses ssh 2fa"</string>
     <string name="TREEHOUSES_SSH_2FA_ADD">treehouses ssh 2fa add \"%1$s\"</string>

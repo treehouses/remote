@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.view.View
 import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
@@ -15,7 +16,6 @@ import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
-import kotlinx.android.synthetic.main.activity_tunnel_ssh_fragment.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -31,10 +31,16 @@ open class BaseTunnelSSHFragment : BaseFragment() {
     protected var hostsPosition: java.util.ArrayList<Int>? = null
     protected lateinit var dialogHosts: Dialog
     protected lateinit var dialogKeys: Dialog
-    protected lateinit var inputExternalHost: TextInputEditText
-    protected lateinit var inputInternalHost: TextInputEditText
+    protected lateinit var inputUserName: TextInputEditText
+    protected lateinit var inputDomainIP: TextInputEditText
+    protected lateinit var inputPortNumber: TextInputEditText
+    protected lateinit var textLayoutUserName: TextInputLayout
+    protected lateinit var textLayoutDomainName: TextInputLayout
+    protected lateinit var textLayoutPortName: TextInputLayout
     protected lateinit var inputExternal: TextInputEditText
     protected lateinit var inputInternal: TextInputEditText
+    protected lateinit var textLayoutExternal: TextInputLayout
+    protected lateinit var textLayoutInternal: TextInputLayout
     protected lateinit var dialog: Dialog
     protected lateinit var addingPortButton: Button
     protected lateinit var addingHostButton: Button
@@ -101,6 +107,7 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         val s = match(readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
+            buildJSON()
             if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
                 buildJSON()
                 jsonSend(false)
@@ -117,7 +124,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
             val profile = jsonObject.getString("profile")
             val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
             val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-            logD(profile)
             logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
 
             val inPiAndPhone = piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey
@@ -141,7 +147,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         val profile = jsonObject.getString("profile")
         val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
         val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
-
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Overwrite On Pi or Phone")
 
@@ -205,7 +210,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
 
         saveKeyToPhone(builder, profile, piPublicKey, piPrivateKey)
         setNeutralButton(builder, "Cancel")
-
         builder.show()
     }
 
@@ -254,31 +258,6 @@ open class BaseTunnelSSHFragment : BaseFragment() {
         writeMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
-    protected fun handleNewList(readMessage: String) {
-        var position = 0
-        addPortButton?.isEnabled = true
-        addPortButton?.text = "Add Port"; addHostButton?.text = "Add Host"
-        addPortButton!!.isEnabled = true; addHostButton?.isEnabled = true
-        val hosts = readMessage.split('\n')
-        for (host in hosts) {
-            val ports = host.split(' ')
-            for (port in ports) {
-                if (port.length >= 3)
-                    portsName!!.add(port)
-                if (port.contains("@")) {
-                    hostsPosition!!.add(position)
-                    hostsName!!.add(port)
-                }
-                position += 1
-            }
-        }
 
-        if(portsName!!.size > 1) portsName!!.add("All")
-        adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-        dropdown?.adapter = adapter2
-        adapter = TunnelPortAdapter(requireContext(), portsName!!)
-          bind!!.sshPorts.adapter = adapter
-        portList!!.isEnabled = true
-    }
 
 }
