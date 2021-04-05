@@ -43,9 +43,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initializeSpeedDialog()
-
         //Listeners
         binding.networkWifi.setOnClickListener(this)
         binding.networkHotspot.setOnClickListener(this)
@@ -64,7 +62,6 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         viewModel.networkMode.observe(viewLifecycleOwner, Observer {
             binding.currentNetworkMode.text = it
         })
-
         viewModel.ipAddress.observe(viewLifecycleOwner, Observer {
             binding.networkIP.text = it
         })
@@ -132,15 +129,12 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         speedDialog.setContentView(R.layout.dialog_speedtest)
         speedDialogDismiss = speedDialog.findViewById(R.id.speedBtnDismiss); speedDialogTest = speedDialog.findViewById(R.id.speedBtnTest)
         speedDialogDismiss.setOnClickListener(this); speedDialogTest.setOnClickListener(this)
-
         viewModel.downloadUpload.observe(viewLifecycleOwner, Observer {
             speedDialog.speed_text.text = it
         })
-
         viewModel.dialogCheck.observe(viewLifecycleOwner, Observer {
             speedDialogCheck = it
         })
-
     }
 
     companion object {
