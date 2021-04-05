@@ -35,7 +35,7 @@
         <item
             android:id="@+id/menu_ssh"
             android:title="@string/menu_ssh"
-            android:icon="@drawable/ic_menu_share" />
+            android:icon="@drawable/ic_ssh" />
         <item
             android:id="@+id/menu_about"
             android:icon="@drawable/about"

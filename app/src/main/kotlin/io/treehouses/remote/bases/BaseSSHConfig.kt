@@ -46,6 +46,7 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
 
     protected fun setUpAdapter() {
         pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
+        if (!isVisible) return
         if (pastHosts.isEmpty()) {
             bind.noHosts.visibility = View.VISIBLE
             bind.pastHosts.visibility = View.GONE

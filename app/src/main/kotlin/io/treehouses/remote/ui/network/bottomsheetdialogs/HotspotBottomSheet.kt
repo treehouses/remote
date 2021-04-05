@@ -1,55 +1,29 @@
 package io.treehouses.remote.ui.network.bottomsheetdialogs
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import io.treehouses.remote.ui.network.NetworkFragment
-import io.treehouses.remote.R
+import androidx.fragment.app.viewModels
 import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogHotspotBinding
-import io.treehouses.remote.pojo.NetworkProfile
-import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.ui.network.NetworkViewModel
 
 class HotspotBottomSheet : BaseBottomSheetDialog() {
+    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogHotspotBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogHotspotBinding.inflate(inflater, container, false)
-        startConfigListener()
-        setAddProfileListener()
+        bind.btnStartConfig.setOnClickListener {
+            viewModel.hotspotStartConfigListener(bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString(),
+                    bind.checkBoxHiddenHotspot.isChecked, bind.spnHotspotType.selectedItem.toString())
+            dismiss()
+        }
+        bind.setHotspotProfile.setOnClickListener {
+            viewModel.hotspotSetAddProfileListener(bind.checkBoxHiddenHotspot.isChecked, bind.spnHotspotType.selectedItem.toString(),
+                    bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString())
+        }
         return bind.root
     }
 
-    private fun startConfigListener() {
-        bind.btnStartConfig.setOnClickListener {
-            if (bind.checkBoxHiddenHotspot.isChecked) sendMessage(R.string.TREEHOUSES_AP_HIDDEN)
-            else sendMessage(R.string.TREEHOUSES_AP)
-
-            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
-            val intent = Intent()
-            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-            dismiss()
-        }
-    }
-
-    private fun sendMessage(command : Int) {
-        listener.sendMessage(getString(command, bind.spnHotspotType.selectedItem.toString(),
-                bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString()))
-    }
-
-    private fun setAddProfileListener() {
-        bind.setHotspotProfile.setOnClickListener {
-            SaveUtils.addProfile(requireContext(),
-                    NetworkProfile(
-                            bind.etHotspotSsid.text.toString(),
-                            bind.etHotspotPassword.text.toString(),
-                            bind.spnHotspotType.selectedItem.toString(),
-                            bind.checkBoxHiddenHotspot.isChecked))
-            Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show()
-        }
-    }
 }

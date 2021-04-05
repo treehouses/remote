@@ -48,7 +48,8 @@ class TunnelSSHFragment : TunnelSSHFunctions(), View.OnClickListener {
     private fun addInfoListener() {
         bind!!.info.setOnClickListener{
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
-            builder.setMessage(R.string.ssh_info); val dialog = builder.create(); dialog.show();
+            builder.setMessage(R.string.ssh_info); val dialog = builder.create();
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show();
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

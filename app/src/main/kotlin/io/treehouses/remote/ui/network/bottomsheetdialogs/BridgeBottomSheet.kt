@@ -7,19 +7,17 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.fragment.app.viewModels
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
-import io.treehouses.remote.ui.network.NetworkFragment
-import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
-import io.treehouses.remote.fragments.TextBoxValidation
-import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogBridgeBinding
-import io.treehouses.remote.pojo.NetworkProfile
-import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.fragments.TextBoxValidation
+import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
+import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
+import io.treehouses.remote.ui.network.NetworkViewModel
 
 class BridgeBottomSheet : BaseBottomSheetDialog() {
+    protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogBridgeBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogBridgeBinding.inflate(inflater, container, false)
@@ -29,34 +27,27 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        startConfigListener()
-        setAddProfileListener()
-        bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
+        setClickListeners()
         val validation = TextBoxValidation(requireContext(), bind.etEssid, bind.etHotspotEssid, "bridge")
         validation.setStart(bind.btnStartConfig)
         validation.setAddprofile(bind.addBridgeProfile)
         return bind.root
     }
 
-    private fun startConfigListener() {
+    private fun setClickListeners() {
         bind.btnStartConfig.setOnClickListener {
-            listener.sendMessage(getString(R.string.TREEHOUSES_BRIDGE, bind.etEssid.text.toString(), bind.etHotspotEssid.text.toString(),
-                    bind.etPassword.text.toString(), bind.etHotspotPassword.text.toString()))
-            Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
-            val intent = Intent()
-            intent.putExtra(NetworkFragment.CLICKED_START_CONFIG, true)
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+            viewModel.bridgeStartConfigListener(getValuesMap())
             dismiss()
         }
+        bind.addBridgeProfile.setOnClickListener {
+            viewModel.bridgeSetAddProfileListener(getValuesMap())
+        }
+        bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
     }
 
-    private fun setAddProfileListener() {
-        bind.addBridgeProfile.setOnClickListener {
-            val networkProfile = NetworkProfile(bind.etEssid.text.toString(), bind.etPassword.text.toString(),
-                    bind.etHotspotEssid.text.toString(), bind.etHotspotPassword.text.toString())
-            SaveUtils.addProfile(requireContext(), networkProfile)
-            Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
-        }
+    private fun getValuesMap(): Map<String, String> {
+        return mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
+                "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString());
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
