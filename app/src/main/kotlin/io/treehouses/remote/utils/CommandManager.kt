@@ -123,6 +123,6 @@ object Matcher {
 
     fun isEndAllServicesJson(output: String): Boolean { return toLC(output).endsWith("}}") }
 
-    fun isSpeedTest(output: String): Boolean {return toLC(output).contains("download:") || toLC(output).contains("upload:") }
+    fun isSpeedTest(output: String): Boolean {return toLC(output).contains("mbit/s")  }
 
 }

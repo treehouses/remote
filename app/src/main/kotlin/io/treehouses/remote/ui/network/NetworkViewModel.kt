@@ -176,35 +176,25 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
     fun updateInternet(output: String){
         if (output.contains("true")) {
             downloadUpload.value = "Internet check passed. Performing speed test......"
-            treehousesSpeedTest()
+            sendMessage("treehouses speedtest")
         } else{
             downloadUpload.value = "Internet check failed. Connect to network"
         }
     }
 
-    fun treehousesSpeedTest(){
-        sendMessage("treehouses speedtest")
-    }
-
     fun updateSpeed(output: String){
         if (output.contains("Download:") && output.contains("Upload:")){
-            downloadUpload.value = getDownloadString(output)
-            downloadUpload.value += "\n" + getUploadString(output)
+            downloadUpload.value = getSubString("Download:", output)
+            downloadUpload.value += "\n" + getSubString("Upload", output)
         } else if (output.contains("Download:")){
-            downloadUpload.value = getDownloadString(output)
+            downloadUpload.value = getSubString("Download:", output)
         } else {
-            downloadUpload.value += "\n" + getUploadString(output)
+            downloadUpload.value += "\n" + getSubString("Upload", output)
         }
     }
 
-    fun getDownloadString(output: String) : String {
-        var startIndex = output.indexOf("Download:")
-        var endIndex = output.indexOf("/s", startIndex)
-        return output.substring(startIndex, endIndex + 2)
-    }
-
-    fun getUploadString(output: String) : String {
-        var startIndex = output.indexOf("Upload:")
+    fun getSubString(stringStart: String, output: String) : String {
+        var startIndex = output.indexOf(stringStart)
         var endIndex = output.indexOf("/s", startIndex)
         return output.substring(startIndex, endIndex + 2)
     }
