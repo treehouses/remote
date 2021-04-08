@@ -144,21 +144,6 @@ class SocksFragment : BaseFragment() {
                     "localAddress" to localAddress.text.toString(), "localPort" to localPort.text.toString(),
                     "serverPort" to serverPort.text.toString(), "password" to password.text.toString())
             viewModel.addProfile(stringMap)
-//            if (serverHost.text.toString().isNotEmpty() && localAddress.text.toString().isNotEmpty() && localPort.text.toString().isNotEmpty() && serverPort.text.toString().isNotEmpty() && password.text.toString().isNotEmpty()) {
-//                val ServerHost = serverHost.text.toString()
-//                val LocalAddress = localAddress.text.toString()
-//                val LocalPort = localPort.text.toString()
-//                val ServerPort = serverPort.text.toString()
-//                val Password = password.text.toString()
-//
-//                val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$ServerHost\\\", \\\"local_address\\\": \\\"$LocalAddress\\\", \\\"local_port\\\": $LocalPort, \\\"server_port\\\": $ServerPort, \\\"password\\\": \\\"$Password\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
-//                listener.sendMessage(message)
-//                addProfileButton?.text = "Adding......"
-//                addProfileButton?.isEnabled = false
-//                dialog.dismiss()
-//            } else {
-//                Toast.makeText(requireContext(), "Missing Information", Toast.LENGTH_SHORT).show()
-//            }
             viewModel.profileDialogDismiss.observe(viewLifecycleOwner, Observer {
                 if (it) dialog.dismiss()
             })
@@ -168,10 +153,7 @@ class SocksFragment : BaseFragment() {
     override fun setUserVisibleHint(visible: Boolean) {
         if (visible) {
             if (isListenerInitialized()) {
-                mChatService = listener.getChatService()
-                mChatService!!.updateHandler(mHandler)
-                profileName = ArrayList()
-                listener.sendMessage("treehouses shadowsocks list")
+                viewModel.listenerInitialized()
             }
 
         }

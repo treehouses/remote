@@ -123,4 +123,9 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
             Toast.makeText(context, "Missing Information", Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun listenerInitialized(){
+        profileNameText.value = ArrayList()
+        sendMessage("treehouses shadowsocks list")
+    }
 }
