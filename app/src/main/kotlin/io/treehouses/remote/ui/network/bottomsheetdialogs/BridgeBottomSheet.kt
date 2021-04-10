@@ -9,12 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import io.treehouses.remote.Constants
-import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogBridgeBinding
 import io.treehouses.remote.fragments.TextBoxValidation
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
-import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
 import io.treehouses.remote.ui.network.NetworkViewModel
 
@@ -38,15 +36,11 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
 
     private fun setClickListeners() {
         bind.btnStartConfig.setOnClickListener {
-            viewModel.bridgeEthernetHotspotStartConfigListener(R.string.TREEHOUSES_BRIDGE, getValuesMap())
-//            viewModel.bridgeStartConfigListener(getValuesMap())
+            viewModel.bridgeStartConfigListener(getValuesMap())
             dismiss()
         }
         bind.addBridgeProfile.setOnClickListener {
-            val networkProfile = NetworkProfile(bind.etEssid.text.toString(), bind.etHotspotEssid.text.toString(),
-                    bind.etPassword.text.toString(), bind.etHotspotPassword.text.toString())
-            viewModel.bridgeHotspotWifiSetAddProfileListener("Bridge Profile Added", networkProfile)
-//            viewModel.bridgeSetAddProfileListener(getValuesMap())
+            viewModel.bridgeSetAddProfileListener(getValuesMap())
         }
         bind.btnWifiSearch.setOnClickListener { openWifiDialog(this@BridgeBottomSheet, context) }
     }
