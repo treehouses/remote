@@ -13,6 +13,7 @@ import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogWifiBinding
 import io.treehouses.remote.fragments.TextBoxValidation
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
+import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
 import io.treehouses.remote.ui.network.NetworkViewModel
 
@@ -54,8 +55,11 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
             dismiss()
         }
         bind.setWifiProfile.setOnClickListener {
-            viewModel.wifiSetAddProfileListener(bind.editTextSSID.text.toString(), bind.wifipassword.text.toString(),
+            val networkProfile = NetworkProfile(bind.editTextSSID.text.toString(), bind.wifipassword.text.toString(),
                     bind.checkBoxHiddenWifi.isChecked)
+            viewModel.bridgeHotspotWifiSetAddProfileListener("Wifi Profile Added", networkProfile)
+//            viewModel.wifiSetAddProfileListener(bind.editTextSSID.text.toString(), bind.wifipassword.text.toString(),
+//                    bind.checkBoxHiddenWifi.isChecked)
         }
         bind.checkBoxEnterprise.setOnCheckedChangeListener { _, isChecked ->
             viewModel.hiddenOrEnterprise(isChecked)
