@@ -92,7 +92,14 @@ class NetworkViewModel(application: Application) : FragmentViewModel(application
         }
     }
 
-     fun getNetworkMode() {
+    override fun onError(output: String) {
+        super.onError(output)
+        downloadUpload.value = "Speed Test Failed"
+        Toast.makeText(context, "Python Error", Toast.LENGTH_LONG).show()
+    }
+
+
+    fun getNetworkMode() {
         val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
         sendMessage(msg)
     }

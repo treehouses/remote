@@ -50,11 +50,18 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
                     _connectionStatus.value= msg.arg1
                 }
                 Constants.MESSAGE_WRITE -> onWrite(String(msg.obj as ByteArray))
-                Constants.MESSAGE_READ -> onRead(msg.obj as String)
+                Constants.MESSAGE_READ -> {
+                    if (checkPythonError(msg.obj as String)) onError(msg.obj as String)
+                    else onRead(msg.obj as String)
+                }
                 else -> onOtherMessage(msg)
             }
             onAnyMessage(msg)
         }
+    }
+
+    fun checkPythonError(output: String): Boolean {
+        return output.contains("Traceback (most recent call last): ")
     }
 
     /**
@@ -68,6 +75,12 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * @param output : String = The value that was read from the Raspberry Pi
      */
     open fun onRead(output: String) {}
+
+    /**
+     * Called when an error is received from the Raspberry Pi
+     * @param output : String = The value that was read from the Raspberry Pi
+     */
+    open fun onError(output: String) {}
 
     /**
      * Called when the handler message received is not a read, or a write message
