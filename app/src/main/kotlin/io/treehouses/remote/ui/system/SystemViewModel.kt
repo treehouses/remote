@@ -1,60 +1,34 @@
-package io.treehouses.remote.fragments
+package io.treehouses.remote.ui.system
 
+import android.app.Application
 import android.content.Context
 import android.net.wifi.WifiManager
-import android.os.Build
-import android.os.Bundle
-import android.os.Message
 import android.text.format.Formatter
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import io.treehouses.remote.Constants
+import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
-import io.treehouses.remote.Tutorials
-import io.treehouses.remote.adapter.NetworkListAdapter
 import io.treehouses.remote.adapter.ViewHolderTether
 import io.treehouses.remote.adapter.ViewHolderVnc
-import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
-import io.treehouses.remote.pojo.NetworkListItem
+import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import java.util.*
 
-class SystemFragment : BaseFragment() {
+class SystemViewModel(application: Application) : FragmentViewModel(application) {
+
     private var network = true
     private var hostname = false
     private var tether = false
     private var retry = false
-    private lateinit var bind: ActivitySystemFragmentBinding
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        bind = ActivitySystemFragmentBinding.inflate(inflater, container, false)
-        val mChatService = listener.getChatService()
-        mChatService.updateHandler(mHandler)
-        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.systemList, mChatService)
-        adapter.setListener(listener)
-        bind.listView.setOnGroupExpandListener { groupPosition: Int ->
-            if (groupPosition == 1) {
-                listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
-                tether = true
-                return@setOnGroupExpandListener
-            }
-            listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
-        }
-        bind.listView.setAdapter(adapter)
-        Tutorials.systemTutorials(bind, requireActivity())
-        return bind.root
+    fun sendMessageAndHostname() {
+        sendMessage(getString(R.string.TREEHOUSES_HOSTNAME))
+        hostname = true
     }
 
-    override fun onResume() {
-        super.onResume()
-        listener.sendMessage("hostname -I\n")
-        hostname = true
+    private fun sendMessageAndTether() {
+        sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+        tether = true
     }
 
     private fun checkAndPrefilIp(readMessage: String, diff: ArrayList<Long>) {
@@ -68,7 +42,7 @@ class SystemFragment : BaseFragment() {
         if (network) {
             checkIfHotspot(readMessage)
         } else if (!retry) {
-            Toast.makeText(context, "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show()
+            Toast.makeText(MainApplication.context, "Warning: Your RPI may be in the wrong subnet", Toast.LENGTH_LONG).show()
             prefillIp(readMessage)
         }
     }
@@ -83,11 +57,11 @@ class SystemFragment : BaseFragment() {
 
     private fun checkSubnet(readMessage: String, diff: ArrayList<Long>) {
         hostname = false
-        val wm = requireContext().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wm = getApplication<MainApplication>().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val deviceIp = Formatter.formatIpAddress(wm.connectionInfo.ipAddress)
         val deviceIpAddress = ipToLong(deviceIp)
         if (!convertIp(readMessage, deviceIpAddress, diff)) {
-            listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
+            sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
             retry = true
         } else {
             retry = false
@@ -131,7 +105,7 @@ class SystemFragment : BaseFragment() {
     }
 
     private fun isInNetwork(diff: ArrayList<Long>): Boolean {
-        Collections.sort(diff)
+        diff.sort()
         return diff[0] <= 256
     }
 
@@ -165,31 +139,37 @@ class SystemFragment : BaseFragment() {
 
     private fun vncToast(readMessage: String) {
         if (readMessage.contains("Success: the vnc service has been started")) {
-            Toast.makeText(context, "VNC enabled", Toast.LENGTH_LONG).show()
-        } else if (readMessage.contains("Success: the vnc service has been stopped")) {
-            Toast.makeText(context, "VNC disabled", Toast.LENGTH_LONG).show()
-        } else if (readMessage.contains("system.")) {
-            ViewHolderVnc.vnc.isChecked = false
-        } else if (readMessage.contains("You can now")) {
-            ViewHolderVnc.vnc.isChecked = true
+            Toast.makeText(MainApplication.context, "VNC enabled", Toast.LENGTH_LONG).show()
+        }
+        when {
+
+            readMessage.contains("Success: the vnc service has been stopped") -> {
+                Toast.makeText(MainApplication.context, "VNC disabled", Toast.LENGTH_LONG).show()
+            }
+            readMessage.contains("system.") -> {
+                ViewHolderVnc.vnc.isChecked = false
+            }
+            readMessage.contains("You can now") -> {
+                ViewHolderVnc.vnc.isChecked = true
+            }
         }
     }
 
-    override fun getMessage(msg: Message) {
-        if (msg.what == Constants.MESSAGE_READ) {
-            val readMessage = msg.obj.toString().trim { it <= ' ' }
-            val diff = ArrayList<Long>()
-            readMessageConditions(readMessage)
-            logD("readMessage = $readMessage")
-            notifyUser(readMessage)
-            vncToast(readMessage)
-            checkAndPrefilIp(readMessage, diff)
-        }
+    override fun onRead(output: String) {
+        super.onRead(output)
+        val readMessage = output.trim { it <= ' ' }
+        val diff = ArrayList<Long>()
+        readMessageConditions(readMessage)
+        logD("readMessage = $readMessage")
+        notifyUser(readMessage)
+        vncToast(readMessage)
+        checkAndPrefilIp(readMessage, diff)
     }
+
 
     private fun notifyUser(msg: String) {
-        if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog(context, "Wifi is not connected", "Check SSID and password and try again.")
+        if (msg.contains("Error: password must have at least 8 characters")) Toast.makeText(MainApplication.context, msg, Toast.LENGTH_LONG).show()
+        else if (msg.contains("wifi is not connected")) DialogUtils.createAlertDialog(MainApplication.context, "Wifi is not connected", "Check SSID and password and try again.")
     }
 
     private fun readMessageConditions(readMessage: String) {
@@ -197,7 +177,15 @@ class SystemFragment : BaseFragment() {
             return
         }
         if (readMessage == "password network" || readMessage == "open wifi network") {
-            Toast.makeText(context, "Connected", Toast.LENGTH_LONG).show()
+            Toast.makeText(MainApplication.context, "Connected", Toast.LENGTH_LONG).show()
         }
+    }
+
+    fun onClickListItem(groupPosition: Int) {
+        if (groupPosition == 1) {
+            sendMessageAndTether()
+            return
+        }
+        sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
     }
 }

@@ -3,8 +3,10 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,12 +31,16 @@ import io.treehouses.remote.utils.GPSService
 
 class InitialActivity : BaseInitialActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
         instance = this
         setContentView(bind.root)
         requestPermission()
+//        g
+        //PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
+       // adjustFontScale(resources.configuration, PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1))
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         currentTitle = "Home"
@@ -50,6 +56,7 @@ class InitialActivity : BaseInitialActivity() {
         checkStatusNow()
         openCallFragment(HomeFragment())
     }
+
 
 
 //    override fun onStart() {

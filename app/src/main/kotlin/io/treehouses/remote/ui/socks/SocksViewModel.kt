@@ -33,6 +33,9 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
     val localAddressText: MutableLiveData<String> = MutableLiveData()
     val serverHostText: MutableLiveData<String> = MutableLiveData()
     val profileNameText: MutableLiveData<ArrayList<String>> = MutableLiveData()
+    val profileButtonText: MutableLiveData<String> = MutableLiveData()
+    val profileButtonEnable: MutableLiveData<Boolean> = MutableLiveData()
+    val profileDialogDismiss: MutableLiveData<Boolean> = MutableLiveData()
     val profilesAdapter: MutableLiveData<ArrayAdapter<String>> = MutableLiveData()
     private var adapter: ArrayAdapter<String>? = null
 
@@ -98,5 +101,31 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
             else
                 profileNameText.value?.add(readMessage)
         }
+    }
+
+    fun addProfile(stringMap: Map<String, String>){
+        profileDialogDismiss.value = false
+
+        val ServerHost = stringMap.getValue("serverHost")
+        val LocalAddress = stringMap.getValue("localAddress")
+        val LocalPort = stringMap.getValue("localPort")
+        val ServerPort = stringMap.getValue("serverPort")
+        val Password = stringMap.getValue("password")
+        if (ServerHost.isNotEmpty() && LocalAddress.isNotEmpty() && LocalPort.isNotEmpty() && ServerPort.isNotEmpty() && Password.isNotEmpty()) {
+
+            val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$ServerHost\\\", \\\"local_address\\\": \\\"$LocalAddress\\\", \\\"local_port\\\": $LocalPort, \\\"server_port\\\": $ServerPort, \\\"password\\\": \\\"$Password\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
+            sendMessage(message)
+            profileButtonText.value = "Adding......"
+            profileButtonEnable.value = false
+
+            profileDialogDismiss.value = true
+        } else {
+            Toast.makeText(context, "Missing Information", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun listenerInitialized(){
+        profileNameText.value = ArrayList()
+        sendMessage("treehouses shadowsocks list")
     }
 }
