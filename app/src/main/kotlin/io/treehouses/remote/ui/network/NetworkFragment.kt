@@ -26,8 +26,6 @@ import io.treehouses.remote.ui.network.bottomsheetdialogs.BridgeBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
-import io.treehouses.remote.utils.*
-import kotlinx.android.synthetic.main.activity_network_fragment.*
 
 open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
@@ -48,6 +46,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         binding.buttonNetworkMode.setOnClickListener(this)
         binding.rebootRaspberry.setOnClickListener(this)
         binding.resetNetwork.setOnClickListener(this)
+        binding.reverseLookup.setOnClickListener(this)
         binding.discoverBtn.setOnClickListener(this)
         Tutorials.networkTutorials(binding, requireActivity())
         viewModel.onLoad()
@@ -84,6 +83,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
             binding.buttonNetworkMode == v -> viewModel.getNetworkMode()
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
+            binding.reverseLookup == v -> reverseLookup()
             binding.discoverBtn == v -> listener.openCallFragment(DiscoverFragment())
         }
     }
@@ -107,6 +107,24 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
+    }
+
+    private fun reverseLookup(){
+        viewModel.treehousesRemoteReverse()
+        val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
+                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        viewModel.reverseText.observe(viewLifecycleOwner, Observer {
+            a.setMessage(it)
+        })
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) return
+        if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {
+            binding.networkPbar.visibility = View.VISIBLE
+        }
     }
 
     companion object {
