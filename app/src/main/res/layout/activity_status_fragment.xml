@@ -26,47 +26,6 @@
             android:textColor="@color/daynight_textColor"
             android:background="@color/windowBackground">
 
-            <Button
-                android:id="@+id/remoteReverseBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bluetooth_btn"
-                android:text="Remote Reverse"
-                android:textColor="@color/bg_white"
-                app:layout_constraintStart_toEndOf="@+id/networkTitle5"
-                app:layout_constraintTop_toBottomOf="@+id/bluetoothBox" />
-
-            <TextView
-                android:id="@+id/networkTitle5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:text="Network"
-                android:textColor="@color/daynight_textColor"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bluetoothBox" />
-
-            <TextView
-                android:id="@+id/networkTitle4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:text="Network"
-                android:textColor="@color/daynight_textColor"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bluetoothBox" />
-
             <TextView
                 android:id="@+id/bluetoothTitle"
                 android:layout_width="wrap_content"
@@ -151,6 +110,17 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/remoteReverseBtn"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toEndOf="@+id/networkTitle"
+                app:layout_constraintTop_toBottomOf="@+id/bluetoothBox"
+                app:srcCompat="@drawable/ic_internet" />
 
             <TextView
                 android:id="@+id/networkTitle"

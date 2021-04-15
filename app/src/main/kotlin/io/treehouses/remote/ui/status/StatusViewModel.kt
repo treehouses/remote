@@ -10,6 +10,7 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
+import io.treehouses.remote.pojo.ReverseData
 import io.treehouses.remote.pojo.StatusData
 import java.util.*
 
@@ -80,8 +81,8 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
-        } else if(output.trim().startsWith("[")){
-            reverseText.value = output
+        } else if(output.trim().startsWith("{\"ip")){
+            showRemoteReverse(output)
         } else {
             updateViews(output)
         }
@@ -143,6 +144,18 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
 
     fun treehousesRemoteReverse(){
         sendMessage("treehouses remote reverse")
+    }
+
+    fun showRemoteReverse(output: String){
+        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+        val ip = "ip: " + reverseData.ip
+        val postal = "postal: " + reverseData.postal
+        val city = "city: " + reverseData.city
+        val country = "country: " + reverseData.country
+        val org = "org: " + reverseData.org
+        val timezone = "timezone: " + reverseData.timezone
+        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+
     }
 
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
