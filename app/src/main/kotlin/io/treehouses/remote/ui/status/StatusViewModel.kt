@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.ReverseData
@@ -82,7 +83,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
         } else if(output.trim().startsWith("{\"ip")){
-            showRemoteReverse(output)
+            Utils.showRemoteReverse(output, reverseText)
         } else {
             updateViews(output)
         }
@@ -146,17 +147,16 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         sendMessage("treehouses remote reverse")
     }
 
-    fun showRemoteReverse(output: String){
-        val reverseData = Gson().fromJson(output, ReverseData::class.java)
-        val ip = "ip: " + reverseData.ip
-        val postal = "postal: " + reverseData.postal
-        val city = "city: " + reverseData.city
-        val country = "country: " + reverseData.country
-        val org = "org: " + reverseData.org
-        val timezone = "timezone: " + reverseData.timezone
-        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
-
-    }
+//    fun showRemoteReverse(output: String){
+//        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+//        val ip = "ip: " + reverseData.ip
+//        val postal = "postal: " + reverseData.postal
+//        val city = "city: " + reverseData.city
+//        val country = "country: " + reverseData.country
+//        val org = "org: " + reverseData.org
+//        val timezone = "timezone: " + reverseData.timezone
+//        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+//    }
 
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")

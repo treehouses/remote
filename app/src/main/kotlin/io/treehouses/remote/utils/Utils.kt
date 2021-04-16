@@ -1,14 +1,12 @@
 package io.treehouses.remote.utils
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
@@ -16,6 +14,7 @@ import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
 import java.nio.charset.Charset
 import java.security.MessageDigest
+import io.treehouses.remote.pojo.ReverseData
 import java.util.*
 import java.util.zip.DeflaterOutputStream
 
@@ -115,5 +114,16 @@ object Utils {
     fun <T> String.convertToObject(thisClass: Class<T>): T? {
         return try { Gson().fromJson(this, thisClass) }
         catch (e: Exception) { null }
+    }
+
+    fun showRemoteReverse(output: String, reverseText: MutableLiveData<String>){
+        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+        val ip = "ip: " + reverseData.ip
+        val postal = "postal: " + reverseData.postal
+        val city = "city: " + reverseData.city
+        val country = "country: " + reverseData.country
+        val org = "org: " + reverseData.org
+        val timezone = "timezone: " + reverseData.timezone
+        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
     }
 }
