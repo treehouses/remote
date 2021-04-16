@@ -3,10 +3,16 @@ package io.treehouses.remote.ui.network
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
+import io.treehouses.remote.pojo.ReverseData
+import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.logD
+import io.treehouses.remote.utils.logE
+import io.treehouses.remote.utils.match
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.*
 
@@ -14,6 +20,7 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
     private val context = getApplication<MainApplication>().applicationContext
     var networkMode: MutableLiveData<String> = MutableLiveData()
     var ipAddress: MutableLiveData<String> = MutableLiveData()
+    val reverseText: MutableLiveData<String> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     val downloadUpload: MutableLiveData<String> = MutableLiveData()
     var dialogCheck: MutableLiveData<Boolean> = MutableLiveData()
@@ -57,6 +64,10 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
         sendMessage(msg)
     }
 
+    fun treehousesRemoteReverse(){
+        sendMessage("treehouses remote reverse")
+    }
+
     override fun onRead(output: String) {
         super.onRead(output)
         when (match(output)) {
@@ -85,8 +96,25 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
             RESULTS.SPEED_TEST -> {
                 updateSpeed(output)
             }
+            RESULTS.REVERSE_LOOKUP -> {
+                showRemoteReverse(output)
+            }
             else -> logE("NewNetworkFragment: Result not Found")
         }
+
+    }
+
+    fun showRemoteReverse(output: String){
+        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+        val ip = "ip: " + reverseData.ip
+        val postal = "postal: " + reverseData.postal
+        val city = "city: " + reverseData.city
+        val country = "country: " + reverseData.country
+        val org = "org: " + reverseData.org
+        val timezone = "timezone: " + reverseData.timezone
+        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+
+//        reverseText.value = output
     }
 
     override fun onError(output: String) {

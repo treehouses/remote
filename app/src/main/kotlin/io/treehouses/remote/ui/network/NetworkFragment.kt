@@ -27,7 +27,6 @@ import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
 import kotlinx.android.synthetic.main.dialog_speedtest.*
-
 open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
     private lateinit var speedDialog: Dialog
@@ -52,6 +51,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         binding.buttonNetworkMode.setOnClickListener(this)
         binding.rebootRaspberry.setOnClickListener(this)
         binding.resetNetwork.setOnClickListener(this)
+        binding.reverseLookup.setOnClickListener(this)
         binding.discoverBtn.setOnClickListener(this)
         binding.speedTest.setOnClickListener(this)
         Tutorials.networkTutorials(binding, requireActivity())
@@ -89,6 +89,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
             binding.rebootRaspberry == v -> reboot()
             binding.resetNetwork == v -> resetNetwork()
             binding.speedTest == v -> speedTest()
+            binding.reverseLookup == v -> reverseLookup()
             binding.discoverBtn == v -> listener.openCallFragment(DiscoverFragment())
             speedDialog.speedBtnTest == v -> viewModel.treehousesInternet()
             speedDialog.speedBtnDismiss == v -> speedDialog.dismiss()
@@ -124,7 +125,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         }
     }
 
-    private fun initializeSpeedDialog(){
+    private fun initializeSpeedDialog() {
         speedDialog = Dialog(requireContext())
         speedDialog.setContentView(R.layout.dialog_speedtest)
         speedDialogDismiss = speedDialog.findViewById(R.id.speedBtnDismiss); speedDialogTest = speedDialog.findViewById(R.id.speedBtnTest)
@@ -135,6 +136,24 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         viewModel.dialogCheck.observe(viewLifecycleOwner, Observer {
             speedDialogCheck = it
         })
+    }
+
+    private fun reverseLookup(){
+        viewModel.treehousesRemoteReverse()
+        val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
+                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        viewModel.reverseText.observe(viewLifecycleOwner, Observer {
+            a.setMessage(it)
+        })
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) return
+        if (requestCode == Constants.NETWORK_BOTTOM_SHEET && data!!.getBooleanExtra(CLICKED_START_CONFIG, false)) {
+            binding.networkPbar.visibility = View.VISIBLE
+        }
     }
 
     companion object {
