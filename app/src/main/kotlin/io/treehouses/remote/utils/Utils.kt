@@ -1,5 +1,6 @@
 package io.treehouses.remote.utils
 
+import android.app.AlertDialog
 import android.content.*
 import android.net.Uri
 import android.view.View
@@ -8,8 +9,10 @@ import com.google.android.material.snackbar.Snackbar
 import android.util.Base64
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import java.io.ByteArrayOutputStream
 import java.net.NetworkInterface
 import java.nio.charset.Charset
@@ -19,7 +22,7 @@ import java.util.*
 import java.util.zip.DeflaterOutputStream
 
 
-object Utils {
+object Utils: FragmentDialogInterface {
     fun Context.copyToClipboard(clickedData: String) {
         var clickedData = clickedData
         if (clickedData.contains("Command: ") || clickedData.contains(" Command:") || clickedData.contains("Command:")) {
@@ -125,5 +128,13 @@ object Utils {
         val org = "org: " + reverseData.org
         val timezone = "timezone: " + reverseData.timezone
         reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+    }
+
+    fun createRemoteReverseDialog(context: Context?): AlertDialog? {
+        val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
+                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.show()
+        return a
     }
 }

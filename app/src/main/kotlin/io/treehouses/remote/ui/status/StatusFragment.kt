@@ -227,14 +227,11 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun reverseLookup(){
+        val a  = Utils.createRemoteReverseDialog(context)
         viewModel.treehousesRemoteReverse()
-        val a = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
-                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         viewModel.reverseText.observe(viewLifecycleOwner, Observer {
-            a.setMessage(it)
+            a!!.setMessage(it)
         })
-        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        a.show()
     }
 
     override fun onAttach(context: Context) {
