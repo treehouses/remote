@@ -51,8 +51,7 @@ fun match (output: String) : RESULTS {
         Matcher.isEndCommandsJson(output) -> return RESULTS.END_JSON_COMMANDS
         Matcher.isPingOutput(output) -> return RESULTS.PING_OUTPUT
         Matcher.isEndJSON(output) -> return RESULTS.END_JSON
-        Matcher.isNetworkModeInfoReturned(output) -> return RESULTS.NETWORKMODE_INFO
-    }
+        Matcher.isNetworkModeInfoReturned(output) -> return RESULTS.NETWORKMODE_INFO }
     return RESULTS.RESULT_NOT_FOUND
 }
 
