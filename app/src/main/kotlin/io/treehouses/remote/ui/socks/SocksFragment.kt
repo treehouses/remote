@@ -1,21 +1,15 @@
 package io.treehouses.remote.ui.socks
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.os.Message
 import android.view.*
 import android.widget.*
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
-import io.treehouses.remote.network.BluetoothChatService
-import io.treehouses.remote.ui.status.StatusViewModel
 
 class SocksFragment : BaseFragment() {
 
@@ -103,12 +97,16 @@ class SocksFragment : BaseFragment() {
     }
 
     private fun messageObservers() {
-        viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
+        viewModel.textStatusText.observe(viewLifecycleOwner, Observer {
             textStatus?.text ?: it
         })
 
         viewModel.startButtonEnabled.observe(viewLifecycleOwner, Observer {
             startButton?.isEnabled ?: it
+        })
+
+        viewModel.startButtonText.observe(viewLifecycleOwner, Observer {
+            startButton?.text ?: it
         })
 
         viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
@@ -119,7 +117,7 @@ class SocksFragment : BaseFragment() {
             addProfileButton?.text ?: it
         })
 
-        viewModel.addProfileButtonEnbaled.observe(viewLifecycleOwner, Observer {
+        viewModel.addProfileButtonEnabled.observe(viewLifecycleOwner, Observer {
             addProfileButton?.isEnabled ?: it
         })
 

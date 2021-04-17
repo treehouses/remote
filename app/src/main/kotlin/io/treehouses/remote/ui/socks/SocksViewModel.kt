@@ -2,42 +2,29 @@ package io.treehouses.remote.ui.socks
 
 import android.app.AlertDialog
 import android.app.Application
-import android.app.Dialog
 import android.view.ContextThemeWrapper
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Toast
 import android.widget.Toast.*
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
-import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.MainApplication.Companion.context
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.logD
 
 class SocksViewModel (application: Application) : FragmentViewModel(application){
     val addProfileButtonText: MutableLiveData<String> = MutableLiveData()
-    val addProfileButtonEnbaled: MutableLiveData<Boolean> = MutableLiveData()
+    val addProfileButtonEnabled: MutableLiveData<Boolean> = MutableLiveData()
     val textStatusText: MutableLiveData<String> = MutableLiveData()
     val startButtonText: MutableLiveData<String> = MutableLiveData()
     val startButtonEnabled: MutableLiveData<Boolean> = MutableLiveData()
-    val dialogText: MutableLiveData<String> = MutableLiveData()
     val passwordText: MutableLiveData<String> = MutableLiveData()
-    val serverPortText: MutableLiveData<String> = MutableLiveData()
     val localPortText: MutableLiveData<String> = MutableLiveData()
     val localAddressText: MutableLiveData<String> = MutableLiveData()
     val serverHostText: MutableLiveData<String> = MutableLiveData()
     val profileNameText: MutableLiveData<ArrayList<String>> = MutableLiveData()
-    val profileButtonText: MutableLiveData<String> = MutableLiveData()
-    val profileButtonEnable: MutableLiveData<Boolean> = MutableLiveData()
     val profileDialogDismiss: MutableLiveData<Boolean> = MutableLiveData()
-    val profilesAdapter: MutableLiveData<ArrayAdapter<String>> = MutableLiveData()
-    private var adapter: ArrayAdapter<String>? = null
 
     fun onLoad()
     {
@@ -61,7 +48,7 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
             }
             else if(output.contains("Use `treehouses shadowsock")){
                 addProfileButtonText.value = "Add Profile"
-                addProfileButtonEnbaled.value = true
+                addProfileButtonEnabled.value = true
                 profileNameText.value = ArrayList()
                 sendMessage("treehouses shadowsocks list")
             }
@@ -106,21 +93,21 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
     fun addProfile(stringMap: Map<String, String>){
         profileDialogDismiss.value = false
 
-        val ServerHost = stringMap.getValue("serverHost")
-        val LocalAddress = stringMap.getValue("localAddress")
-        val LocalPort = stringMap.getValue("localPort")
-        val ServerPort = stringMap.getValue("serverPort")
-        val Password = stringMap.getValue("password")
-        if (ServerHost.isNotEmpty() && LocalAddress.isNotEmpty() && LocalPort.isNotEmpty() && ServerPort.isNotEmpty() && Password.isNotEmpty()) {
+        val serverHost = stringMap.getValue("serverHost")
+        val localAddress = stringMap.getValue("localAddress")
+        val localPort = stringMap.getValue("localPort")
+        val serverPort = stringMap.getValue("serverPort")
+        val password = stringMap.getValue("password")
+        if (serverHost.isNotEmpty() && localAddress.isNotEmpty() && localPort.isNotEmpty() && serverPort.isNotEmpty() && password.isNotEmpty()) {
 
-            val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$ServerHost\\\", \\\"local_address\\\": \\\"$LocalAddress\\\", \\\"local_port\\\": $LocalPort, \\\"server_port\\\": $ServerPort, \\\"password\\\": \\\"$Password\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
+            val message = "treehouses shadowsocks add { \\\"server\\\": \\\"$serverHost\\\", \\\"local_address\\\": \\\"$localAddress\\\", \\\"local_port\\\": $localPort, \\\"server_port\\\": $serverPort, \\\"password\\\": \\\"$password\\\", \\\"method\\\": \\\"rc4-md5\\\" }"
             sendMessage(message)
-            profileButtonText.value = "Adding......"
-            profileButtonEnable.value = false
+            addProfileButtonText.value = "Adding......"
+            addProfileButtonEnabled.value = false
 
             profileDialogDismiss.value = true
         } else {
-            Toast.makeText(context, "Missing Information", Toast.LENGTH_SHORT).show()
+            makeText(context, "Missing Information", LENGTH_SHORT).show()
         }
     }
 
