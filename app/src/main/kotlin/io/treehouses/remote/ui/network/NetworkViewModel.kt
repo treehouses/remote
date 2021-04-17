@@ -73,32 +73,19 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
         when (match(output)) {
             RESULTS.NETWORKMODE, RESULTS.DEFAULT_NETWORK -> updateNetworkText(output)
             RESULTS.NETWORKMODE_INFO -> showIpAddress(output)
-            RESULTS.DEFAULT_CONNECTED -> {
-                //update network mode
-                getNetworkMode()
-            }
+            RESULTS.DEFAULT_CONNECTED ->  getNetworkMode()
             RESULTS.ERROR -> {
-                // showDialog(context, "Error", output)
                 showNetworkProgress.value = false
             }
             RESULTS.HOTSPOT_CONNECTED, RESULTS.WIFI_CONNECTED, RESULTS.BRIDGE_CONNECTED -> {
-
-                // showDialog(context, "Network Switched", output)
-                //update network mode
                 getNetworkMode()
-                logD("HOTSPOT CONNECTED")
-                // Utils.sendMessage(listener, Pair(msg, "Network Mode retrieved"), context, Toast.LENGTH_LONG)
                 showNetworkProgress.value = false
             }
-            RESULTS.BOOLEAN -> {
-                updateInternet(output)
-            }
+            RESULTS.BOOLEAN -> updateInternet(output)
             RESULTS.SPEED_TEST -> {
                 updateSpeed(output)
             }
-            RESULTS.REVERSE_LOOKUP -> {
-                showRemoteReverse(output)
-            }
+            RESULTS.REVERSE_LOOKUP -> showRemoteReverse(output)
             else -> logE("NewNetworkFragment: Result not Found")
         }
 
