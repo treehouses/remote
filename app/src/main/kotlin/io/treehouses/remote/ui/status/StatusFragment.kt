@@ -232,6 +232,7 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         viewModel.reverseText.observe(viewLifecycleOwner, Observer {
             a!!.setMessage(it)
         })
+        a!!.show()
     }
 
     override fun onAttach(context: Context) {

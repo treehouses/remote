@@ -116,6 +116,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         viewModel.reverseText.observe(viewLifecycleOwner, Observer {
             a!!.setMessage(it)
         })
+        a!!.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

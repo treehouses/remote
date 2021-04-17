@@ -134,7 +134,6 @@ object Utils: FragmentDialogInterface {
         val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
                 .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
         a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        a.show()
         return a
     }
 }
