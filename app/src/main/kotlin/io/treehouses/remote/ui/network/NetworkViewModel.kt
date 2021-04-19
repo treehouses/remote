@@ -20,7 +20,7 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
     private val context = getApplication<MainApplication>().applicationContext
     var networkMode: MutableLiveData<String> = MutableLiveData()
     var ipAddress: MutableLiveData<String> = MutableLiveData()
-    val reverseText: MutableLiveData<String> = MutableLiveData()
+    val reverseTextNetwork: MutableLiveData<String> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     val downloadUpload: MutableLiveData<String> = MutableLiveData()
     var dialogCheck: MutableLiveData<Boolean> = MutableLiveData()
@@ -82,13 +82,12 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
                 showNetworkProgress.value = false
             }
             RESULTS.REVERSE_LOOKUP -> {
-                Utils.showRemoteReverse(output, reverseText)
+                Utils.showRemoteReverse(output, reverseTextNetwork)
             }
             RESULTS.BOOLEAN -> updateInternet(output)
             RESULTS.SPEED_TEST -> {
                 updateSpeed(output)
             }
-            RESULTS.REVERSE_LOOKUP -> Utils.showRemoteReverse(output, reverseText)
             else -> logE("NewNetworkFragment: Result not Found")
         }
 

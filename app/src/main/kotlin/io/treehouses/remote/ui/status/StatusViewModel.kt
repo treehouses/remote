@@ -38,7 +38,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     val deviceAddress: MutableLiveData<String> = MutableLiveData()
     val rpiType: MutableLiveData<String> = MutableLiveData()
     var rpiVersion: String = ""
-    val reverseText: MutableLiveData<String> = MutableLiveData()
+    val reverseTextStatus: MutableLiveData<String> = MutableLiveData()
     val ipAddressText: MutableLiveData<String> = MutableLiveData()
     val ssidText: MutableLiveData<String> = MutableLiveData()
     val upgradeCheckText: MutableLiveData<String> = MutableLiveData()
@@ -83,7 +83,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
         } else if(output.trim().startsWith("{\"ip")){
-            Utils.showRemoteReverse(output, reverseText)
+            Utils.showRemoteReverse(output, reverseTextStatus)
         } else {
             updateViews(output)
         }
@@ -193,7 +193,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         temperature.value = "Checking......"
         memory.value = "Checking......"
         storage.value = "Checking......"
-        reverseText.value = "Checking......"
+        reverseTextStatus.value = "Checking......"
         storageBarValue.value = 0
         memoryBarValue.value = 0
     }
