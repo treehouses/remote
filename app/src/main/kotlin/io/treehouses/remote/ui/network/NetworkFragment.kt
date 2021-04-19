@@ -142,10 +142,10 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     }
 
     private fun reverseLookup(){
-        val b  = Utils.createRemoteReverseDialog(context)
-        b!!.show()
+        val dialog  = Utils.createRemoteReverseDialog(context)
+        dialog!!.show()
         viewModel.reverseTextNetwork.observe(viewLifecycleOwner, Observer {
-            b!!.setMessage(it)
+            dialog!!.setMessage(it)
         })
         viewModel.treehousesRemoteReverse()
     }
