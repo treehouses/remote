@@ -37,7 +37,8 @@ class TorTabFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         viewModel.createView()
-        loadObservers()
+        loadObservers1()
+        loadObservers2()
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_tor_ports)
         setWindowProperties(dialog)
@@ -80,11 +81,35 @@ class TorTabFragment : BaseFragment() {
         }
     }
 
-    private fun loadObservers() {
-        hostNameObservers()
-        switchNotificationObservers()
-        torStartObservers()
-        addPortObservers()
+    private fun loadObservers1(){
+        viewModel.hostNameText.observe(viewLifecycleOwner, Observer {
+            hostName = it
+        })
+        viewModel.hostNameVisible.observe(viewLifecycleOwner, Observer {visible ->
+            if (!visible) bind.btnHostName.visibility = View.GONE
+            else bind.btnHostName.visibility = View.VISIBLE
+        })
+        viewModel.switchNotificationEnabled.observe(viewLifecycleOwner, Observer {
+            bind.switchNotification.isEnabled = it
+        })
+        viewModel.switchNotificationCheck.observe(viewLifecycleOwner, Observer {
+            bind.switchNotification.isChecked = it
+        })
+        viewModel.torStartEnabled.observe(viewLifecycleOwner, Observer {
+            bind.btnTorStart.isEnabled = it
+        })
+        viewModel.torStartText.observe(viewLifecycleOwner, Observer {
+            bind.btnTorStart.text = it
+        })
+    }
+
+    private fun loadObservers2() {
+        viewModel.addPortText.observe(viewLifecycleOwner, Observer {
+            bind.btnAddPort.text = it
+        })
+        viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer {
+            bind.btnAddPort.isEnabled = it
+        })
         viewModel.portListEnabled.observe(viewLifecycleOwner, Observer {
             bind.portList.isEnabled = it
         })
@@ -104,42 +129,6 @@ class TorTabFragment : BaseFragment() {
         })
     }
 
-    private fun hostNameObservers(){
-        viewModel.hostNameText.observe(viewLifecycleOwner, Observer {
-            hostName = it
-        })
-        viewModel.hostNameVisible.observe(viewLifecycleOwner, Observer {visible ->
-            if (visible) bind.btnHostName.visibility = View.VISIBLE
-            else bind.btnHostName.visibility = View.GONE
-        })
-    }
-
-    private fun switchNotificationObservers(){
-        viewModel.switchNotificationEnabled.observe(viewLifecycleOwner, Observer {
-            bind.switchNotification.isEnabled = it
-        })
-        viewModel.switchNotificationCheck.observe(viewLifecycleOwner, Observer {
-            bind.switchNotification.isChecked = it
-        })
-    }
-
-    private fun torStartObservers(){
-        viewModel.torStartEnabled.observe(viewLifecycleOwner, Observer {
-            bind.btnTorStart.isEnabled = it
-        })
-        viewModel.torStartText.observe(viewLifecycleOwner, Observer {
-            bind.btnTorStart.text = it
-        })
-    }
-
-    private fun addPortObservers(){
-        viewModel.addPortText.observe(viewLifecycleOwner, Observer {
-            bind.btnAddPort.text = it
-        })
-        viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer {
-            bind.btnAddPort.isEnabled = it
-        })
-    }
 
     private fun addPortButtonListeners(dialog: Dialog) {
         val inputExternal: TextInputEditText = dialog.findViewById(R.id.ExternalTextInput)
