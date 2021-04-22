@@ -230,7 +230,7 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         val a  = Utils.createRemoteReverseDialog(context)
         viewModel.treehousesRemoteReverse()
         viewModel.reverseTextStatus.observe(viewLifecycleOwner, Observer {
-            a!!.setMessage(it)
+            Utils.setObserverMessage(a, it)
         })
         a!!.show()
     }

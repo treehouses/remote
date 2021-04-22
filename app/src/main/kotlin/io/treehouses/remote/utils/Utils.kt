@@ -136,4 +136,8 @@ object Utils: FragmentDialogInterface {
         a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         return a
     }
+
+    fun setObserverMessage(dialog: AlertDialog?, it:String){
+        dialog!!.setMessage(it)
+    }
 }
