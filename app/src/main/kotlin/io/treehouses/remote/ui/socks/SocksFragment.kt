@@ -98,15 +98,15 @@ class SocksFragment : BaseFragment() {
 
     private fun messageObservers() {
         viewModel.textStatusText.observe(viewLifecycleOwner, Observer {
-            textStatus?.text ?: it
+            textStatus?.text = it
         })
 
         viewModel.startButtonEnabled.observe(viewLifecycleOwner, Observer {
-            startButton?.isEnabled ?: it
+            startButton?.isEnabled = it
         })
 
         viewModel.startButtonText.observe(viewLifecycleOwner, Observer {
-            startButton?.text ?: it
+            startButton?.text = it
         })
 
         viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
@@ -114,11 +114,11 @@ class SocksFragment : BaseFragment() {
         })
 
         viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
-            addProfileButton?.text ?: it
+            addProfileButton?.text = it
         })
 
         viewModel.addProfileButtonEnabled.observe(viewLifecycleOwner, Observer {
-            addProfileButton?.isEnabled ?: it
+            addProfileButton?.isEnabled = it
         })
 
         viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
