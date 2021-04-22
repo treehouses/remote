@@ -37,6 +37,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
     fun createView(){
         loadBT()
         sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
+        portsNameList.value = ArrayList()
     }
 
     fun setUserVisibleHint() {
@@ -131,9 +132,9 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
             val ports = output.split(" ".toRegex()).toTypedArray()
             for (i in ports.indices) {
                 if (i == ports.size - 1) break
-                portsNameList.value?.add(ports[i])
+                portsNameList.value!!.add(ports[i])
             }
-            if (portsNameList.value!!.size > 1) portsNameList.value?.add("All")
+            if (portsNameList.value!!.size > 1) portsNameList.value!!.add("All")
             sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         } else handleMoreMessages(output)
     }

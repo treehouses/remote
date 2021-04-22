@@ -44,12 +44,12 @@ class TorTabFragment : BaseFragment() {
         bind.portList.adapter = adapter
         bind.btnTorStart.isEnabled = false
         bind.btnTorStart.text = "Getting Tor Status from raspberry pi"
-        loadObservers()
-        setListeners()
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_tor_ports)
         setWindowProperties(dialog)
         addPortButtonListeners(dialog)
+        loadObservers()
+        setListeners()
         return bind.root
     }
 
@@ -99,6 +99,7 @@ class TorTabFragment : BaseFragment() {
             portsName = it
             try {
                 adapter = TunnelPortAdapter(requireContext(), portsName!!)
+                logE("adapter successful")
             } catch (e: Exception) {
                 logE(e.toString())
             }
