@@ -66,8 +66,10 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
     }
 
     fun addNotification(isChecked: Boolean){
-        if (isChecked) sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_ON))
-        else sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_OFF))
+        val noticeOn = R.string.TREEHOUSES_TOR_NOTICE_ON
+        val noticeOff = R.string.TREEHOUSES_TOR_NOTICE_OFF
+        if (isChecked) sendMessage(getString(noticeOn))
+        else sendMessage(getString(noticeOff))
         switchNotificationEnabled.value = false
     }
 
@@ -173,8 +175,8 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
 
     fun handleFurtherMessages(output: String) {
         if (output.contains("Thanks for the feedback!")) {
-            Toast.makeText(context, "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
             notifyNowEnabled.value = true
+            Toast.makeText(context, "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
         } else if (output.contains("the tor service has been stopped") || output.contains("the tor service has been started")) {
             sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         }

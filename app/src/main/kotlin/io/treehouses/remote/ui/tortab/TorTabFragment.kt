@@ -109,7 +109,8 @@ class TorTabFragment : BaseFragment() {
             hostName = it
         })
         viewModel.hostNameVisible.observe(viewLifecycleOwner, Observer {visible ->
-            bind.btnHostName.visibility = if (visible) View.VISIBLE else View.GONE
+            if (visible) bind.btnHostName.visibility = View.VISIBLE
+            else bind.btnHostName.visibility = View.GONE
         })
     }
 
@@ -123,11 +124,11 @@ class TorTabFragment : BaseFragment() {
     }
 
     private fun torStartObservers(){
-        viewModel.torStartText.observe(viewLifecycleOwner, Observer {
-            bind.btnTorStart.text = it
-        })
         viewModel.torStartEnabled.observe(viewLifecycleOwner, Observer {
             bind.btnTorStart.isEnabled = it
+        })
+        viewModel.torStartText.observe(viewLifecycleOwner, Observer {
+            bind.btnTorStart.text = it
         })
     }
 
