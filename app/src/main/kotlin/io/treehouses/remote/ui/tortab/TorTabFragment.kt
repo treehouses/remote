@@ -37,18 +37,11 @@ class TorTabFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         viewModel.createView()
-        portsName = ArrayList()
-        adapter = TunnelPortAdapter(requireContext(), portsName!!)
-        bind.btnHostName.visibility = View.GONE
-        bind.switchNotification.isEnabled = false
-        bind.portList.adapter = adapter
-        bind.btnTorStart.isEnabled = false
-        bind.btnTorStart.text = "Getting Tor Status from raspberry pi"
+        loadObservers()
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_tor_ports)
         setWindowProperties(dialog)
         addPortButtonListeners(dialog)
-        loadObservers()
         setListeners()
         return bind.root
     }

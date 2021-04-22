@@ -32,18 +32,25 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
     var addPortEnabled: MutableLiveData<Boolean> = MutableLiveData()
     var portListEnabled: MutableLiveData<Boolean> = MutableLiveData()
     var portsNameList: MutableLiveData<ArrayList<String>?> = MutableLiveData()
+    var portNameArray: ArrayList<String>? = null
     var notifyNowEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
     fun createView(){
         loadBT()
         sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-        portsNameList.value = ArrayList()
+        portNameArray = ArrayList()
+        portsNameList.value = portNameArray
+        hostNameVisible.value = false
+        switchNotificationEnabled.value = false
+        torStartEnabled.value = false
+        torStartText.value = "Getting Tor Status from raspberry pi"
     }
 
     fun setUserVisibleHint() {
         loadBT()
         sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-        portsNameList.value = ArrayList()
+        portNameArray = ArrayList()
+        portsNameList.value = portNameArray
     }
 
     fun addHostName(hostName:String){
@@ -132,9 +139,10 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
             val ports = output.split(" ".toRegex()).toTypedArray()
             for (i in ports.indices) {
                 if (i == ports.size - 1) break
-                portsNameList.value!!.add(ports[i])
+                portNameArray!!.add(ports[i])
             }
-            if (portsNameList.value!!.size > 1) portsNameList.value!!.add("All")
+            if (portNameArray!!!!.size > 1) portNameArray!!!!.add("All")
+            portsNameList.value = portNameArray
             sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         } else handleMoreMessages(output)
     }
@@ -143,11 +151,13 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         if (output.contains("No ports found")) {
             addPortText.value = "Add Port"
             portListEnabled.value = true; addPortEnabled.value = true
-            portsNameList.value = ArrayList()
+            portNameArray = ArrayList()
+            portsNameList.value = portNameArray
             sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         } else if (output.contains("the port has been added") || output.contains("has been deleted")) {
             sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-            portsNameList.value = ArrayList()
+            portNameArray = ArrayList()
+            portsNameList.value = portNameArray
             addPortText.value = "Retrieving port. Please wait..."
             if (output.contains("the port has been added")) {
                 Toast.makeText(context, "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
@@ -156,8 +166,8 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
             } else handleFurtherMessages(output)
         } else if (output.contains("ports have been deleted")) {
             sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-            portsNameList.value = ArrayList()
-            portsNameList.value = ArrayList()
+            portNameArray = ArrayList()
+            portsNameList.value = portNameArray
         }
     }
 
