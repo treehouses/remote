@@ -28,6 +28,7 @@ import io.treehouses.remote.ui.network.bottomsheetdialogs.BridgeBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
+import io.treehouses.remote.utils.Utils
 import kotlinx.android.synthetic.main.dialog_speedtest.*
 open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
@@ -141,14 +142,12 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     }
 
     private fun reverseLookup(){
-        viewModel.treehousesRemoteReverse()
-        val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
-                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        viewModel.reverseText.observe(viewLifecycleOwner, Observer {
-            a.setMessage(it)
+        val dialog  = createRemoteReverseDialog(context)
+        dialog!!.show()
+        viewModel.remoteNetworkText.observe(viewLifecycleOwner, Observer {
+            Utils.setObserverMessage(dialog, it)
         })
-        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        a.show()
+        viewModel.treehousesRemoteReverse()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

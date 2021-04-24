@@ -20,7 +20,7 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
     private val context = getApplication<MainApplication>().applicationContext
     var networkMode: MutableLiveData<String> = MutableLiveData()
     var ipAddress: MutableLiveData<String> = MutableLiveData()
-    val reverseText: MutableLiveData<String> = MutableLiveData()
+    val remoteNetworkText: MutableLiveData<String> = MutableLiveData()
     var showHome: MutableLiveData<Boolean> = MutableLiveData()
     val downloadUpload: MutableLiveData<String> = MutableLiveData()
     var dialogCheck: MutableLiveData<Boolean> = MutableLiveData()
@@ -81,38 +81,40 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
                 getNetworkMode()
                 showNetworkProgress.value = false
             }
+            RESULTS.REVERSE_LOOKUP -> {
+                Utils.showRemoteReverse(output, remoteNetworkText)
+            }
             RESULTS.BOOLEAN -> updateInternet(output)
             RESULTS.SPEED_TEST -> {
                 updateSpeed(output)
             }
-            RESULTS.REVERSE_LOOKUP -> showRemoteReverse(output)
             else -> logE("NewNetworkFragment: Result not Found")
         }
 
     }
 
-    fun showRemoteReverse(output: String){
-        val reverseData = Gson().fromJson(output, ReverseData::class.java)
-        val ip = "ip: " + reverseData.ip
-        val postal = "postal: " + reverseData.postal
-        val city = "city: " + reverseData.city
-        val country = "country: " + reverseData.country
-        val org = "org: " + reverseData.org
-        val timezone = "timezone: " + reverseData.timezone
-        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+     fun getNetworkMode() {
+         val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
+         sendMessage(msg)
+     }
 
-//        reverseText.value = output
-    }
+//    fun showRemoteReverse(output: String){
+//        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+//        val ip = "ip: " + reverseData.ip
+//        val postal = "postal: " + reverseData.postal
+//        val city = "city: " + reverseData.city
+//        val country = "country: " + reverseData.country
+//        val org = "org: " + reverseData.org
+//        val timezone = "timezone: " + reverseData.timezone
+//        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+//
+////        reverseText.value = output
+//    }
 
     override fun onError(output: String) {
         super.onError(output)
         downloadUpload.value = "Speed Test Failed"
         Toast.makeText(context, "Python Error", Toast.LENGTH_LONG).show()
-    }
-
-    fun getNetworkMode() {
-        val msg = getString(R.string.TREEHOUSES_NETWORKMODE)
-        sendMessage(msg)
     }
 
     fun treehousesInternet(){
