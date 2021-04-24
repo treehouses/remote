@@ -227,7 +227,7 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun reverseLookup(){
-        val a  = Utils.createRemoteReverseDialog(context)
+        val a  = createRemoteReverseDialog(context)
         viewModel.treehousesRemoteReverse()
         viewModel.reverseTextStatus.observe(viewLifecycleOwner, Observer {
             a!!.setMessage(it)
