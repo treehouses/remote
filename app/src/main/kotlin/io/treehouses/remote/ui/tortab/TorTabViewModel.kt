@@ -142,7 +142,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
                 if (i == ports.size - 1) break
                 portNameArray!!.add(ports[i])
             }
-            if (portNameArray!!!!.size > 1) portNameArray!!!!.add("All")
+            if (portNameArray!!.size > 1) portNameArray!!.add("All")
             portsNameList.value = portNameArray
             sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         } else handleMoreMessages(output)
@@ -157,8 +157,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
     private fun handleMoreMessages(output: String) {
         if (output.contains("No ports found")) {
             addPortText.value = "Add Port"
-            portListEnabled.value = true;
-            addPortEnabled.value = true
+            portListEnabled.value = true; addPortEnabled.value = true
             clearListAndNotice()
         } else if (output.contains("the port has been added") || output.contains("has been deleted")) {
             clearListAndNotice()
