@@ -104,31 +104,25 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
 
     override fun onRead(output: String) {
         super.onRead(output)
-        when {
-            output.contains("inactive") -> {
-                hostNameVisible.value = false
-                torStartText.value = "Start Tor"
-                torStartEnabled.value = true
-                sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-            }
-            output.contains(".onion") -> {
-                hostNameVisible.value = true
-                hostNameText.value = output
-                sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-            }
-            output.contains("Error") -> {
-                Toast.makeText(context, "Error, add a port if its your first time", Toast.LENGTH_SHORT).show()
-                addPortText.value = "add ports"
-                addPortEnabled.value = true
-                portListEnabled.value = true
-            }
-            output.contains("active") -> {
-                torStartText.value = "Stop Tor"
-                sendMessage(getString(R.string.TREEHOUSES_TOR))
-                torStartEnabled.value = true
-            }
-            else -> handleOtherMessages(output)
-        }
+        if (output.contains("inactive")) {
+            hostNameVisible.value = false
+            torStartText.value = "Start Tor"
+            torStartEnabled.value = true
+            sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+        } else if (output.contains(".onion")) {
+            hostNameVisible.value = true
+            hostNameText.value = output
+            sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+        } else if (output.contains("Error")) {
+            Toast.makeText(context, "Error, add a port if its your first time", Toast.LENGTH_SHORT).show()
+            addPortText.value = "add ports"
+            addPortEnabled.value = true
+            portListEnabled.value = true
+        } else if (output.contains("active")) {
+            torStartText.value = "Stop Tor"
+            sendMessage(getString(R.string.TREEHOUSES_TOR))
+            torStartEnabled.value = true
+        } else handleOtherMessages(output)
     }
 
     private fun handleOtherMessages(output: String) {
