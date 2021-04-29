@@ -104,7 +104,6 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
 
     override fun onRead(output: String) {
         super.onRead(output)
-        logD("OUTPUT " + output)
         if (output.contains("inactive")) {
             hostNameVisible.value = false
             torStartText.value = "Start Tor"
