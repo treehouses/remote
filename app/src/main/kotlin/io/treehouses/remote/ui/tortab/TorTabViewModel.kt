@@ -14,6 +14,7 @@ import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
+import io.treehouses.remote.utils.logD
 import java.util.ArrayList
 
 open class TorTabViewModel(application: Application) : FragmentViewModel(application) {
@@ -106,6 +107,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
 
     override fun onRead(output: String) {
         super.onRead(output)
+        logD("OUTPUT " + output)
         if (output.contains("inactive")) {
             hostNameVisible.value = false
             torStartText.value = "Start Tor"
@@ -127,7 +129,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         } else handleOtherMessages(output)
     }
 
-    fun handleOtherMessages(output: String) {
+    private fun handleOtherMessages(output: String) {
         if (output.contains("OK.")) sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
         else if (output.contains("Status: on")) {
             switchNotificationCheck.value = true; switchNotificationEnabled.value = true
@@ -149,7 +151,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         } else handleMoreMessages(output)
     }
 
-    fun handleMoreMessages(output: String) {
+    private fun handleMoreMessages(output: String) {
         if (output.contains("No ports found")) {
             addPortText.value = "Add Port"
             portListEnabled.value = true; addPortEnabled.value = true
@@ -165,15 +167,15 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
                 Toast.makeText(context, "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             } else if (output.contains("has been deleted")) {
                 Toast.makeText(context, "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
-            } else handleFurtherMessages(output)
+            }
         } else if (output.contains("ports have been deleted")) {
             sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
             portNameArray = ArrayList()
             portsNameList.value = portNameArray
-        }
+        }else handleFurtherMessages(output)
     }
 
-    fun handleFurtherMessages(output: String) {
+    private fun handleFurtherMessages(output: String) {
         if (output.contains("Thanks for the feedback!")) {
             notifyNowEnabled.value = true
             Toast.makeText(context, "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
