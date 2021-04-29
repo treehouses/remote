@@ -4,18 +4,15 @@ import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.view.View
-import android.widget.Switch
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
-import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
 import io.treehouses.remote.utils.logD
-import java.util.ArrayList
+import java.util.*
 
 open class TorTabViewModel(application: Application) : FragmentViewModel(application) {
 
@@ -36,7 +33,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
     var portNameArray: ArrayList<String>? = null
     var notifyNowEnabled: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun createView(){
+    fun createView() {
         loadBT()
         sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
         portNameArray = ArrayList()
@@ -54,19 +51,19 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         portsNameList.value = portNameArray
     }
 
-    fun addHostName(hostName:String){
+    fun addHostName(hostName: String) {
         myClipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         myClip = ClipData.newPlainText("text", hostName)
         myClipboard!!.setPrimaryClip(myClip!!)
         Toast.makeText(context, "$hostName copied!", Toast.LENGTH_SHORT).show()
     }
 
-    fun addNow(){
+    fun addNow() {
         sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_NOW))
         Toast.makeText(context, "The Gitter Channel has been notified.", Toast.LENGTH_SHORT).show()
     }
 
-    fun addNotification(isChecked: Boolean){
+    fun addNotification(isChecked: Boolean) {
         val noticeOn = R.string.TREEHOUSES_TOR_NOTICE_ON
         val noticeOff = R.string.TREEHOUSES_TOR_NOTICE_OFF
         if (isChecked) sendMessage(getString(noticeOn))
@@ -74,7 +71,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         switchNotificationEnabled.value = false
     }
 
-    fun addPortList(){
+    fun addPortList() {
         sendMessage(getString(R.string.TREEHOUSES_TOR_DELETE_ALL))
     }
 
@@ -87,7 +84,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
 
     }
 
-    fun addStart(textTorStart: String){
+    fun addStart(textTorStart: String) {
         if (textTorStart === "Stop Tor") {
             torStartText.value = "Stopping Tor"
             torStartEnabled.value = false
@@ -99,7 +96,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         }
     }
 
-    fun addingPort(s1: String, s2: String){
+    fun addingPort(s1: String, s2: String) {
         sendMessage(getString(R.string.TREEHOUSES_TOR_ADD, s2, s1))
         addPortText.value = "Adding port. Please wait..."
         portListEnabled.value = false; addPortEnabled.value = false
@@ -134,7 +131,7 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         else if (output.contains("Status: on")) {
             switchNotificationCheck.value = true; switchNotificationEnabled.value = true
         } else if (output.contains("Status: off")) {
-            switchNotificationCheck.value = false; switchNotificationEnabled.value= true
+            switchNotificationCheck.value = false; switchNotificationEnabled.value = true
         } //regex to match ports text
         else if (output.matches("(([0-9]+:[0-9]+)\\s?)+".toRegex())) {
             addPortText.value = "Add Port"
@@ -151,17 +148,20 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         } else handleMoreMessages(output)
     }
 
+    private fun clearListAndNotice() {
+        portNameArray = ArrayList()
+        portsNameList.value = portNameArray
+        sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
+    }
+
     private fun handleMoreMessages(output: String) {
         if (output.contains("No ports found")) {
             addPortText.value = "Add Port"
-            portListEnabled.value = true; addPortEnabled.value = true
-            portNameArray = ArrayList()
-            portsNameList.value = portNameArray
-            sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
+            portListEnabled.value = true;
+            addPortEnabled.value = true
+            clearListAndNotice()
         } else if (output.contains("the port has been added") || output.contains("has been deleted")) {
-            sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-            portNameArray = ArrayList()
-            portsNameList.value = portNameArray
+            clearListAndNotice()
             addPortText.value = "Retrieving port. Please wait..."
             if (output.contains("the port has been added")) {
                 Toast.makeText(context, "Port added. Retrieving ports list again", Toast.LENGTH_SHORT).show()
@@ -169,10 +169,8 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
                 Toast.makeText(context, "Port deleted. Retrieving ports list again", Toast.LENGTH_SHORT).show()
             }
         } else if (output.contains("ports have been deleted")) {
-            sendMessage(getString(R.string.TREEHOUSES_TOR_PORTS))
-            portNameArray = ArrayList()
-            portsNameList.value = portNameArray
-        }else handleFurtherMessages(output)
+            clearListAndNotice()
+        } else handleFurtherMessages(output)
     }
 
     private fun handleFurtherMessages(output: String) {
