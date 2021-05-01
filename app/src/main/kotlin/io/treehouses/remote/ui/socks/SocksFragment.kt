@@ -1,17 +1,21 @@
 package io.treehouses.remote.ui.socks
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
-import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
+import io.treehouses.remote.utils.DialogUtils
+import kotlinx.android.synthetic.main.message.*
 
-class SocksFragment : BaseFragment() {
+class SocksFragment : Fragment() {
 
     protected val viewModel: SocksViewModel by viewModels(ownerProducer = { this })
     private var startButton: Button? = null
@@ -26,7 +30,6 @@ class SocksFragment : BaseFragment() {
     private lateinit var localPort: EditText
     private lateinit var localAddress: EditText
     private lateinit var serverHost: EditText
-    private var profileName: java.util.ArrayList<String>? = null
     private var portList: ListView? = null
     var bind: ActivitySocksFragmentBinding? = null
     var bindProfile: DialogAddProfileBinding? = null
@@ -35,13 +38,13 @@ class SocksFragment : BaseFragment() {
         bind = ActivitySocksFragmentBinding.inflate(inflater, container, false)
         bindProfile = DialogAddProfileBinding.inflate(inflater, container, false)
         viewModel.onLoad()
-        profileName = ArrayList()
         addProfileButton = bind!!.btnAddProfile
         portList = bind!!.profiles
         initializeDialog()
         messageObservers()
         addProfileButtonListeners(dialog)
         portList = bind!!.profiles
+        viewModel.listenerInitialized()
         return bind!!.root
     }
 
@@ -69,8 +72,16 @@ class SocksFragment : BaseFragment() {
 
 
     private fun addPortListListener() {
-        portList!!.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            viewModel.portListListener()
+        portList!!.onItemClickListener = AdapterView.OnItemClickListener { av: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            val builder = AlertDialog.Builder(activity, R.style.CustomAlertDialogStyle)
+            val selectedString = av?.getItemAtPosition(position)
+            builder.setTitle("Delete Profile $selectedString ?")
+            DialogUtils.createAlertDialog(context, "Delete Profile $selectedString ?") {
+                viewModel.sendMessage("treehouses shadowsocks remove $selectedString ")
+                Toast.makeText(activity, "Removing profile...", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+             }
+
         }
     }
 
@@ -109,9 +120,7 @@ class SocksFragment : BaseFragment() {
             startButton?.text = it
         })
 
-        viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
-            profileName = it
-        })
+
 
         viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
             addProfileButton?.text = it
@@ -121,11 +130,10 @@ class SocksFragment : BaseFragment() {
             addProfileButton?.isEnabled = it
         })
 
-        viewModel.profileNameText.observe(viewLifecycleOwner, Observer {
+        viewModel.refreshList.observe(viewLifecycleOwner, Observer {
             adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, it)
             bind!!.profiles.adapter = adapter
         })
-
     }
 
 
@@ -148,14 +156,6 @@ class SocksFragment : BaseFragment() {
         }
     }
 
-    override fun setUserVisibleHint(visible: Boolean) {
-        if (visible) {
-            if (isListenerInitialized()) {
-                viewModel.listenerInitialized()
-            }
-
-        }
-    }
 }
 
 

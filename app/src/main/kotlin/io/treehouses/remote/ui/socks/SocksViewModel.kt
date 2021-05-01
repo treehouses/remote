@@ -3,9 +3,8 @@ package io.treehouses.remote.ui.socks
 import android.app.AlertDialog
 import android.app.Application
 import android.view.ContextThemeWrapper
-import android.widget.ArrayAdapter
-import android.widget.Toast
-import android.widget.Toast.*
+import android.widget.Toast.LENGTH_SHORT
+import android.widget.Toast.makeText
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.MainApplication.Companion.context
@@ -13,7 +12,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.utils.logD
 
-class SocksViewModel (application: Application) : FragmentViewModel(application){
+class SocksViewModel(application: Application) : FragmentViewModel(application) {
     val addProfileButtonText: MutableLiveData<String> = MutableLiveData()
     val addProfileButtonEnabled: MutableLiveData<Boolean> = MutableLiveData()
     val textStatusText: MutableLiveData<String> = MutableLiveData()
@@ -23,74 +22,56 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
     val localPortText: MutableLiveData<String> = MutableLiveData()
     val localAddressText: MutableLiveData<String> = MutableLiveData()
     val serverHostText: MutableLiveData<String> = MutableLiveData()
-    val profileNameText: MutableLiveData<ArrayList<String>> = MutableLiveData()
+    val refreshList: MutableLiveData<List<String>> = MutableLiveData()
+    var profileNameText = mutableListOf<String>()
     val profileDialogDismiss: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun onLoad()
-    {
+    fun onLoad() {
         loadBT()
-
     }
 
     override fun onRead(output: String) {
         super.onRead(output)
         logD("SOCKS MESSAGE " + output)
 
-
-            if (output.contains("inactive")) {
-                textStatusText.value = "-"; startButtonText.value = "Start Tor"
-                startButtonEnabled.value = true
-                sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-            }
-            else if(output.contains("Error when")){
-                profileNameText.value = ArrayList()
-                sendMessage("treehouses shadowsocks list")
-            }
-            else if(output.contains("Use `treehouses shadowsock")){
-                addProfileButtonText.value = "Add Profile"
-                addProfileButtonEnabled.value = true
-                profileNameText.value = ArrayList()
-                sendMessage("treehouses shadowsocks list")
-            }
-            else{
-                getMessage2(output)
-            }
-
+        if (output.contains("inactive")) {
+            textStatusText.value = "-"; startButtonText.value = "Start Tor"
+            startButtonEnabled.value = true
+            sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
+        } else if (output.contains("Error when")) {
+            profileNameText = ArrayList()
+            sendMessage("treehouses shadowsocks list")
+        } else if (output.contains("Use `treehouses shadowsock")) {
+            addProfileButtonText.value = "Add Profile"
+            addProfileButtonEnabled.value = true
+            profileNameText = ArrayList()
+            sendMessage("treehouses shadowsocks list")
+        } else {
+            getMessage2(output)
+        }
+        refreshList.value = profileNameText
     }
 
-    fun portListListener()
-    {
-        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-        val selectedString = profileNameText.value
-        builder.setTitle("Delete Profile $selectedString ?")
-        builder.setPositiveButton("Confirm") { dialog, _ ->
-            sendMessage("treehouses shadowsocks remove $selectedString ")
-            dialog.dismiss()
-        }
-        builder.setNegativeButton("Cancel", null)
+    fun portListListener() {
 
-        // create and show the alert dialog
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        dialog.show()
     }
 
     private fun getMessage2(readMessage: String) {
-        if(readMessage.contains("removed")){
+        if (readMessage.contains("removed")) {
             makeText(MainApplication.context, "Removed, retrieving list again", LENGTH_SHORT).show()
-            profileNameText.value = ArrayList()
+            profileNameText = ArrayList()
             sendMessage("treehouses shadowsocks list")
-        }
-        else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")){
-
-            if(readMessage.contains(' '))
-                profileNameText.value?.add(readMessage.split(' ')[0])
+        } else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")) {
+            if (readMessage.contains(' '))
+                profileNameText.add(readMessage.split(' ')[0])
             else
-                profileNameText.value?.add(readMessage)
+                profileNameText.add(readMessage)
+
         }
+        refreshList.value = profileNameText
     }
 
-    fun addProfile(stringMap: Map<String, String>){
+    fun addProfile(stringMap: Map<String, String>) {
         profileDialogDismiss.value = false
 
         val serverHost = stringMap.getValue("serverHost")
@@ -111,8 +92,8 @@ class SocksViewModel (application: Application) : FragmentViewModel(application)
         }
     }
 
-    fun listenerInitialized(){
-        profileNameText.value = ArrayList()
+    fun listenerInitialized() {
+        profileNameText = ArrayList()
         sendMessage("treehouses shadowsocks list")
     }
 }
