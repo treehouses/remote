@@ -8,8 +8,10 @@ import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
+import io.treehouses.remote.pojo.ReverseData
 import io.treehouses.remote.pojo.StatusData
 import java.util.*
 
@@ -36,6 +38,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     val deviceAddress: MutableLiveData<String> = MutableLiveData()
     val rpiType: MutableLiveData<String> = MutableLiveData()
     var rpiVersion: String = ""
+    val reverseTextStatus: MutableLiveData<String> = MutableLiveData()
     val ipAddressText: MutableLiveData<String> = MutableLiveData()
     val ssidText: MutableLiveData<String> = MutableLiveData()
     val upgradeCheckText: MutableLiveData<String> = MutableLiveData()
@@ -79,6 +82,8 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
             countryDisplayText.value = "Try again"
             countryDisplayTextEnabled.value = true
             Toast.makeText(MainApplication.context, "Error when changing country", Toast.LENGTH_LONG).show()
+        } else if(output.trim().startsWith("{\"ip")){
+            Utils.showRemoteReverse(output, reverseTextStatus)
         } else {
             updateViews(output)
         }
@@ -138,6 +143,21 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         }
     }
 
+    fun treehousesRemoteReverse(){
+        sendMessage("treehouses remote reverse")
+    }
+
+//    fun showRemoteReverse(output: String){
+//        val reverseData = Gson().fromJson(output, ReverseData::class.java)
+//        val ip = "ip: " + reverseData.ip
+//        val postal = "postal: " + reverseData.postal
+//        val city = "city: " + reverseData.city
+//        val country = "country: " + reverseData.country
+//        val org = "org: " + reverseData.org
+//        val timezone = "timezone: " + reverseData.timezone
+//        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
+//    }
+
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
         var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
@@ -173,6 +193,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         temperature.value = "Checking......"
         memory.value = "Checking......"
         storage.value = "Checking......"
+        reverseTextStatus.value = "Checking......"
         storageBarValue.value = 0
         memoryBarValue.value = 0
     }
