@@ -52,7 +52,6 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
                 }
             } else
                 profileNameText.add(readMessage)
-
         }
         refreshList.value = profileNameText
     }

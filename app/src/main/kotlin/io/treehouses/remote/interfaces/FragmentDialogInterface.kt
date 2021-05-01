@@ -31,5 +31,12 @@ interface FragmentDialogInterface {
                 .setIcon(icon)
     }
 
+    fun createRemoteReverseDialog(context: Context?): AlertDialog? {
+        val a  = createAlertDialog(context, R.style.CustomAlertDialogStyle, "Reverse Lookup", "Calling...")
+                .setNegativeButton("Dismiss") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        return a
+    }
+
 
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/alertdialog_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/padding_normal"
+        android:text="Speed Test"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/daynight_textColor" />
+
+    <TextView
+        android:id="@+id/speed_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey_to_light_grey"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginLeft="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginRight="@dimen/margin_large"
+        android:padding="@dimen/padding_normal"
+        android:text="Checking if there's internet" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/speedBtnDismiss"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/daynight_textColor"
+            android:layout_marginEnd="@dimen/margin_huge"
+            android:layout_marginRight="@dimen/margin_huge"
+            android:text="Dismiss" />
+
+        <Button
+            android:id="@+id/speedBtnTest"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_huge"
+            android:layout_marginLeft="@dimen/margin_huge"
+            android:text="Start Test" />
+    </LinearLayout>
+
+</LinearLayout>
