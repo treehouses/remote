@@ -1,14 +1,10 @@
 package io.treehouses.remote.ui.socks
 
-import android.app.AlertDialog
 import android.app.Application
-import android.view.ContextThemeWrapper
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
 import androidx.lifecycle.MutableLiveData
-import io.treehouses.remote.MainApplication
 import io.treehouses.remote.MainApplication.Companion.context
-import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.utils.logD
 
@@ -16,12 +12,6 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
     val addProfileButtonText: MutableLiveData<String> = MutableLiveData()
     val addProfileButtonEnabled: MutableLiveData<Boolean> = MutableLiveData()
     val textStatusText: MutableLiveData<String> = MutableLiveData()
-    val startButtonText: MutableLiveData<String> = MutableLiveData()
-    val startButtonEnabled: MutableLiveData<Boolean> = MutableLiveData()
-    val passwordText: MutableLiveData<String> = MutableLiveData()
-    val localPortText: MutableLiveData<String> = MutableLiveData()
-    val localAddressText: MutableLiveData<String> = MutableLiveData()
-    val serverHostText: MutableLiveData<String> = MutableLiveData()
     val refreshList: MutableLiveData<List<String>> = MutableLiveData()
     var profileNameText = mutableListOf<String>()
     val profileDialogDismiss: MutableLiveData<Boolean> = MutableLiveData()
@@ -33,12 +23,7 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
     override fun onRead(output: String) {
         super.onRead(output)
         logD("SOCKS MESSAGE " + output)
-
-        if (output.contains("inactive")) {
-            textStatusText.value = "-"; startButtonText.value = "Start Tor"
-            startButtonEnabled.value = true
-            sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE))
-        } else if (output.contains("Error when")) {
+        if (output.contains("Error when")) {
             profileNameText = ArrayList()
             sendMessage("treehouses shadowsocks list")
         } else if (output.contains("Use `treehouses shadowsock")) {
@@ -52,19 +37,20 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
         refreshList.value = profileNameText
     }
 
-    fun portListListener() {
-
-    }
 
     private fun getMessage2(readMessage: String) {
         if (readMessage.contains("removed")) {
-            makeText(MainApplication.context, "Removed, retrieving list again", LENGTH_SHORT).show()
+            makeText(context, "Removed, retrieving list again", LENGTH_SHORT).show()
             profileNameText = ArrayList()
             sendMessage("treehouses shadowsocks list")
         } else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")) {
-            if (readMessage.contains(' '))
-                profileNameText.add(readMessage.split(' ')[0])
-            else
+            if (readMessage.contains(' ')) {
+                var msgList = readMessage.split(' ')
+                msgList.forEach {
+                    if (it.trim().startsWith("tmptmp"))
+                        profileNameText.add(readMessage)
+                }
+            } else
                 profileNameText.add(readMessage)
 
         }

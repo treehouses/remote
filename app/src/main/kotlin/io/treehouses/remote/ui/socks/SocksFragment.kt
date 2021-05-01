@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.message.*
 class SocksFragment : Fragment() {
 
     protected val viewModel: SocksViewModel by viewModels(ownerProducer = { this })
-    private var startButton: Button? = null
     private var addProfileButton: Button? = null
     private var addingProfileButton: Button? = null
     private var cancelProfileButton: Button? = null
@@ -56,7 +55,6 @@ class SocksFragment : Fragment() {
 
         serverHost = bindProfile!!.ServerHost
         serverPort = bindProfile!!.serverPort
-
         localAddress = bindProfile!!.LocalAddress
         localPort = bindProfile!!.localPort
         password = bindProfile!!.password
@@ -81,27 +79,10 @@ class SocksFragment : Fragment() {
                 Toast.makeText(activity, "Removing profile...", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
              }
-
         }
     }
 
     private fun initializeObservers() {
-        viewModel.serverHostText.observe(viewLifecycleOwner, Observer {
-            serverHost.setText(it)
-        });
-
-        viewModel.localPortText.observe(viewLifecycleOwner, Observer {
-            localPort.setText(it)
-        });
-
-        viewModel.localAddressText.observe(viewLifecycleOwner, Observer {
-            localAddress.setText(it)
-        });
-
-        viewModel.passwordText.observe(viewLifecycleOwner, Observer {
-            password.setText(it)
-        })
-
         viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
             addingProfileButton?.setText(it)
         })
@@ -110,14 +91,6 @@ class SocksFragment : Fragment() {
     private fun messageObservers() {
         viewModel.textStatusText.observe(viewLifecycleOwner, Observer {
             textStatus?.text = it
-        })
-
-        viewModel.startButtonEnabled.observe(viewLifecycleOwner, Observer {
-            startButton?.isEnabled = it
-        })
-
-        viewModel.startButtonText.observe(viewLifecycleOwner, Observer {
-            startButton?.text = it
         })
 
 
