@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import io.treehouses.remote.fragments.SocksFragment
 import io.treehouses.remote.fragments.TorTabFragment
-import io.treehouses.remote.fragments.TunnelSSHFragment
+import io.treehouses.remote.ui.tunnelssh.TunnelSSHFragment
 import io.treehouses.remote.pojo.ServiceInfo
 import java.util.*
 
