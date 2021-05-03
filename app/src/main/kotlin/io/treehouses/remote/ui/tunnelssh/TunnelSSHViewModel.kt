@@ -52,8 +52,8 @@ open class TunnelSSHViewModel(application: Application): BaseTunnelSSHViewModel(
             }
             readMessage.contains("OK.") -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             readMessage.contains("Thanks for the feedback!") -> {
-                notifyNowEnabled.value = true
                 Toast.makeText(context, "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
+                notifyNowEnabled.value = true
             }
             else -> handleMoreMessages(readMessage)
         }
