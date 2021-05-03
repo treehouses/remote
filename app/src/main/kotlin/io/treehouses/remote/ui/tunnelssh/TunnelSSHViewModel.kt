@@ -52,8 +52,8 @@ open class TunnelSSHViewModel(application: Application): BaseTunnelSSHViewModel(
             }
             readMessage.contains("OK.") -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
             readMessage.contains("Thanks for the feedback!") -> {
-                Toast.makeText(context, "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
                 notifyNowEnabled.value = true
+                Toast.makeText(context, "Notified Gitter. Thank you!", Toast.LENGTH_SHORT).show()
             }
             else -> handleMoreMessages(readMessage)
         }
@@ -68,9 +68,9 @@ open class TunnelSSHViewModel(application: Application): BaseTunnelSSHViewModel(
 
     fun setUserVisibleHint(){
         loadBT()
-        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
         portsNameArray = ArrayList()
         portsNameAdapter.value = portsNameArray
+        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
     }
 
     fun searchArray (array: java.util.ArrayList<String>?, portnum: String): Boolean {

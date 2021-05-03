@@ -223,22 +223,18 @@ class TunnelSSHFragment :  BaseFragment() {
         }
     }
 
-    /*
-       enables Add Host button or Add Port Button if the following parameters are checked, the text inputs are not empty
-       and the textLayouts don't have errors. uses @check todecide if it's Add Host or Add Port
-         */
-    fun checkAddingHostPortButtonEnable(check: Boolean){
-        if(check) {
-            if (dialogHosts.UserNameInput.editableText.isNotEmpty() && dialogHosts.DomainIPInput.editableText.isNotEmpty()
-                    && dialogHosts.PortNumberInput.editableText.isNotEmpty())
-                if (!dialogHosts.TLusername.isErrorEnabled && !dialogHosts.TLdomain.isErrorEnabled && !dialogHosts.TLportname.isErrorEnabled)
-                    dialogHosts.btn_adding_host.isEnabled = true
-        }else{
-            if(dialogPort.ExternalTextInput.editableText.isNotEmpty() && dialogPort.InternalTextInput.editableText.isNotEmpty())
-                if(!dialogPort.TLexternal.isErrorEnabled && !dialogPort.TLinternal.isErrorEnabled)
-                    dialogPort.btn_adding_port.isEnabled = true
-        }
+    fun checkAddingHostButtonEnable(){
+        if (dialogHosts.UserNameInput.editableText.isNotEmpty() && dialogHosts.DomainIPInput.editableText.isNotEmpty()
+                && dialogHosts.PortNumberInput.editableText.isNotEmpty())
+            if (!dialogHosts.TLusername.isErrorEnabled && !dialogHosts.TLdomain.isErrorEnabled && !dialogHosts.TLportname.isErrorEnabled)
+                dialogHosts.btn_adding_host.isEnabled = true
 
+    }
+
+    fun checkAddingPortButtonEnable(){
+        if(dialogPort.ExternalTextInput.editableText.isNotEmpty() && dialogPort.InternalTextInput.editableText.isNotEmpty())
+            if(!dialogPort.TLexternal.isErrorEnabled && !dialogPort.TLinternal.isErrorEnabled)
+                dialogPort.btn_adding_port.isEnabled = true
     }
 
     /*
@@ -257,7 +253,7 @@ class TunnelSSHFragment :  BaseFragment() {
                         textInputLayout.setError(error)
                     } else {
                         textInputLayout.setErrorEnabled(false)
-                        checkAddingHostPortButtonEnable(true)
+                        checkAddingHostButtonEnable()
                     }
                 }
             }
@@ -281,7 +277,7 @@ class TunnelSSHFragment :  BaseFragment() {
                         dialogPort.TLexternal.setError("Port number already exists")
                     } else {
                         textInputLayout.setErrorEnabled(false)
-                        checkAddingHostPortButtonEnable(false)
+                        checkAddingPortButtonEnable()
                     }
                 }
             }
