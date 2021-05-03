@@ -113,11 +113,6 @@ open class TunnelSSHViewModel(application: Application): BaseTunnelSSHViewModel(
             addPortEnabled.value = false
     }
 
-    fun notifyNow(){
-        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
-        Toast.makeText(context, "The Gitter Channel has been notified.", Toast.LENGTH_SHORT).show()
-    }
-
     fun handleNewList(readMessage: String) {
         var position = 0
         addPortText.value = "Add Port"; addHostText.value = "Add Host"

@@ -23,6 +23,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.TunnelUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logE
 import java.util.*
@@ -66,7 +67,7 @@ class TorTabFragment : BaseFragment() {
             dialog.show()
         }
         bind.notifyNow.setOnClickListener {
-            viewModel.addNow()
+            viewModel.notifyNow(requireContext())
         }
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked ->
             viewModel.addNotification(isChecked)
@@ -115,12 +116,13 @@ class TorTabFragment : BaseFragment() {
         })
         viewModel.portsNameList.observe(viewLifecycleOwner, Observer {
             portsName = it
-            try {
-                adapter = TunnelPortAdapter(requireContext(), portsName!!)
-                logE("adapter successful")
-            } catch (e: Exception) {
-                logE(e.toString())
-            }
+            adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
+//            try {
+//                adapter = TunnelPortAdapter(requireContext(), portsName!!)
+//                logE("adapter successful")
+//            } catch (e: Exception) {
+//                logE(e.toString())
+//            }
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
         })

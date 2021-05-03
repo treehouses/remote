@@ -58,11 +58,6 @@ open class TorTabViewModel(application: Application) : FragmentViewModel(applica
         Toast.makeText(context, "$hostName copied!", Toast.LENGTH_SHORT).show()
     }
 
-    fun addNow() {
-        sendMessage(getString(R.string.TREEHOUSES_TOR_NOTICE_NOW))
-        Toast.makeText(context, "The Gitter Channel has been notified.", Toast.LENGTH_SHORT).show()
-    }
-
     fun addNotification(isChecked: Boolean) {
         val noticeOn = R.string.TREEHOUSES_TOR_NOTICE_ON
         val noticeOff = R.string.TREEHOUSES_TOR_NOTICE_OFF

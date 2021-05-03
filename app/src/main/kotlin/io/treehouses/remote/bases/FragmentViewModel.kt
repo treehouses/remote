@@ -2,6 +2,7 @@ package io.treehouses.remote.bases
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
 import android.os.Handler
 import android.os.Message
 import android.widget.Toast
@@ -10,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
+import io.treehouses.remote.R
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.logE
 
@@ -128,6 +130,15 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      */
     fun disconnectBT() {
         mChatService.stop()
+    }
+
+    /**
+     * Sends a notification message to the Treehouses Gitter Channel
+     * @param context : Context = Current context of View Model
+     */
+    fun notifyNow(context: Context){
+        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE_NOW))
+        Toast.makeText(context, "The Gitter Channel has been notified.", Toast.LENGTH_SHORT).show()
     }
 
     /**

@@ -48,14 +48,14 @@ class TunnelSSHFragment :  BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bind.let { Tutorials.tunnelSSHTutorials(it, requireActivity()) }
+        Tutorials.tunnelSSHTutorials(bind, requireActivity())
     }
 
     private fun addListeners() {
         fun showDialog(dialog: Dialog) { dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show() }
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
         bind.btnAddPort.setOnClickListener{ showDialog(dialogPort) }; bind.btnAddHosts.setOnClickListener{ showDialog(dialogHosts) }
-        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }; bind.notifyNow.setOnClickListener{ viewModel.notifyNow() }
+        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }; bind.notifyNow.setOnClickListener{ viewModel.notifyNow(requireContext()) }
         bind.info.setOnClickListener{
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
             builder.setMessage(R.string.ssh_info); val dialog = builder.create();
@@ -79,53 +79,51 @@ class TunnelSSHFragment :  BaseFragment() {
             viewModel.addingHostButton(m1, m2)
             dialogHosts.dismiss()
         }
-        dialogPort.addPortCloseButton.setOnClickListener { dialogPort.dismiss() }
-        dialogHosts.addHostCloseButton.setOnClickListener { dialogHosts.dismiss() }
-        dialogKeys.addKeyCloseButton.setOnClickListener { dialogKeys.dismiss() }
         var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
         dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
         dialogKeys.btn_show_keys.setOnClickListener {
-            viewModel.keyClickListener(profile)
-            viewModel.handleShowKeys(profile)
+            viewModel.keyClickListener(profile); viewModel.handleShowKeys(profile)
         }
+        dialogPort.addPortCloseButton.setOnClickListener { dialogPort.dismiss() }
+        dialogHosts.addHostCloseButton.setOnClickListener { dialogHosts.dismiss() }
+        dialogKeys.addKeyCloseButton.setOnClickListener { dialogKeys.dismiss() }
         addPortListListener()
     }
 
     private fun addPortListListener() {
-//        bind.info.setOnClickListener{
-//            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
-//            builder.setMessage(R.string.ssh_info); val dialog = builder.create();
-//            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show();
-//        }
         bind.sshPorts.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             if (portsName!!.size > 1 && position == portsName!!.size - 1) {
                 DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { viewModel.deleteHostPorts() }
             } else {
                 val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 if (portsName!![position].contains("@")) {
-                    builder.setTitle("Delete Host  " + portsName!![position] + " ?")
-                    builder.setPositiveButton("Confirm") { dialog, _ ->
-                        viewModel.deleteHost(position)
-                        dialog.dismiss()
-                    }
-                } else {
-                    builder.setTitle("Delete Port " + portsName!![position] + " ?")
-                    builder.setPositiveButton("Confirm") { dialog, _ ->
-                        viewModel.deletePort(position)
-                        dialog.dismiss()
-                    }
+//                    builder.setTitle("Delete Host  " + portsName!![position] + " ?")
+//                    builder.setPositiveButton("Confirm") { dialog, _ ->
+//                        viewModel.deleteHost(position)
+//                        dialog.dismiss()
+//                    }
+                    setPortDialog(builder, position, "Delete Host  ")
                 }
+//                builder.setTitle("Delete Port " + portsName!![position] + " ?")
+//                builder.setPositiveButton("Confirm") { dialog, _ ->
+//                    viewModel.deletePort(position)
+//                    dialog.dismiss()
+//                }
+                setPortDialog(builder, position, "Delete Port ")
                 builder.setNegativeButton("Cancel", null)
                 val dialog = builder.create()
-                dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                dialog.show()
+                dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show()
             }
         }
-//        bind.sshPorts.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-//            if (portsName!!.size > 1 && position == portsName!!.size - 1) {
-//                DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { viewModel.deleteHostPorts() }
-//            }
-//        }
+    }
+
+    fun setPortDialog(builder: AlertDialog.Builder, position: Int, title: String){
+        builder.setTitle(title + portsName!![position] + " ?")
+        builder.setPositiveButton("Confirm") { dialog, _ ->
+            if (title.contains("Host")) viewModel.deleteHost(position)
+            else viewModel.deletePort(position)
+            dialog.dismiss()
+        }
     }
 
     fun loadObservers1(){
@@ -172,12 +170,13 @@ class TunnelSSHFragment :  BaseFragment() {
     fun loadObservers3(){
         viewModel.portsNameAdapter.observe(viewLifecycleOwner, Observer {
             portsName = it
-            try {
-                adapter = TunnelPortAdapter(requireContext(), portsName!!)
-                logE("adapter successful")
-            } catch (e: Exception) {
-                logE(e.toString())
-            }
+            adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
+//            try {
+//                adapter = TunnelPortAdapter(requireContext(), portsName!!)
+//                logE("adapter successful")
+//            } catch (e: Exception) {
+//                logE(e.toString())
+//            }
             bind.sshPorts.adapter = adapter
         })
         viewModel.hostsNameAdapter.observe(viewLifecycleOwner, Observer {
