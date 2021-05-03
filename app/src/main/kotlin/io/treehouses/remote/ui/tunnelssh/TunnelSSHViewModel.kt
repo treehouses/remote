@@ -4,31 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.text.Editable
 import android.text.Html
 import android.text.Spanned
-import android.text.TextWatcher
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.lifecycle.MutableLiveData
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
-import io.treehouses.remote.adapter.TunnelPortAdapter
-import io.treehouses.remote.bases.BaseTunnelSSHFragment
-import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
-import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
-import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
-import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
-import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
 open class TunnelSSHViewModel(application: Application): BaseTunnelSSHViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext

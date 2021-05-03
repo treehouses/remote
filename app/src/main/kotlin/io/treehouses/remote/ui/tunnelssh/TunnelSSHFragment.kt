@@ -2,14 +2,9 @@ package io.treehouses.remote.ui.tunnelssh
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.os.Message
 import android.text.Editable
-import android.text.Html
-import android.text.Spanned
 import android.text.TextWatcher
 import android.view.*
 import android.widget.*
@@ -59,18 +54,15 @@ class TunnelSSHFragment :  BaseFragment() {
     private fun addListeners() {
         fun showDialog(dialog: Dialog) { dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show() }
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
-        bind.btnAddPort.setOnClickListener{ showDialog(dialogPort) }
-        bind.btnAddHosts.setOnClickListener{ showDialog(dialogHosts) }
-        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }
-        bind.notifyNow.setOnClickListener{ viewModel.notifyNow() }
+        bind.btnAddPort.setOnClickListener{ showDialog(dialogPort) }; bind.btnAddHosts.setOnClickListener{ showDialog(dialogHosts) }
+        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }; bind.notifyNow.setOnClickListener{ viewModel.notifyNow() }
         addDialogListeners()
     }
 
     fun addDialogListeners(){
         dialogPort.btn_adding_port.setOnClickListener {
             if (dialogPort.ExternalTextInput.text!!.isNotEmpty() && dialogPort.InternalTextInput.text!!.isNotEmpty()) {
-                val s1 = dialogPort.InternalTextInput.text.toString()
-                val s2 = dialogPort.ExternalTextInput.text.toString()
+                val s1 = dialogPort.InternalTextInput.text.toString(); val s2 = dialogPort.ExternalTextInput.text.toString()
                 val parts = dialogPort.hosts?.selectedItem.toString().split(":")[0]
                 viewModel.addingPortButton(s1, s2, parts)
                 dialogPort.dismiss()
@@ -191,25 +183,18 @@ class TunnelSSHFragment :  BaseFragment() {
                     dialog.dismiss()
                 }
             }
-            initializeDialog3(builder, position)
+//            initializeDialog3(builder, position)
+            builder.setTitle("Delete Port " + portsName!![position] + " ?")
+            builder.setPositiveButton("Confirm") { dialog, _ ->
+                viewModel.deletePort(position)
+                dialog.dismiss()
+            }
             builder.setNegativeButton("Cancel", null)
             val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
-        initializeDialog4()
-    }
-
-    private fun initializeDialog3(builder: AlertDialog.Builder, position: Int) {
-        builder.setTitle("Delete Port " + portsName!![position] + " ?")
-        builder.setPositiveButton("Confirm") { dialog, _ ->
-            viewModel.deletePort(position)
-            dialog.dismiss()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private fun initializeDialog4() {
+//        initializeDialog4()
         var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
         dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
         dialogKeys.btn_show_keys.setOnClickListener {
@@ -218,10 +203,27 @@ class TunnelSSHFragment :  BaseFragment() {
         }
     }
 
+//    private fun initializeDialog3(builder: AlertDialog.Builder, position: Int) {
+//        builder.setTitle("Delete Port " + portsName!![position] + " ?")
+//        builder.setPositiveButton("Confirm") { dialog, _ ->
+//            viewModel.deletePort(position)
+//            dialog.dismiss()
+//        }
+//    }
+
+//    @RequiresApi(Build.VERSION_CODES.N)
+//    private fun initializeDialog4() {
+//        var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
+//        dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
+//        dialogKeys.btn_show_keys.setOnClickListener {
+//            viewModel.keyClickListener(profile)
+//            viewModel.handleShowKeys(profile)
+//        }
+//    }
+
     override fun setUserVisibleHint(visible: Boolean) {
         if (visible) {
             viewModel.setUserVisibleHint()
-            portsName = ArrayList(); adapter = TunnelPortAdapter(requireContext(), portsName!!)
         }
     }
 

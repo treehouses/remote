@@ -2,7 +2,6 @@ package io.treehouses.remote.ui.tunnelssh
 
 import android.app.AlertDialog
 import android.app.Application
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
@@ -10,16 +9,10 @@ import android.text.Spanned
 import android.view.View
 import android.widget.*
 import androidx.lifecycle.MutableLiveData
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
-import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.ui.network.BaseNetworkViewModel
 import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
 import org.json.JSONException
