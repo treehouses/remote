@@ -41,7 +41,7 @@ class TunnelSSHFragment :  BaseFragment() {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         viewModel.onCreateView()
         loadObservers1()
-        initializeDialog1()
+        initializeDialog()
         addListeners()
         return bind.root
     }
@@ -127,47 +127,21 @@ class TunnelSSHFragment :  BaseFragment() {
     }
 
     fun loadObservers1(){
-        viewModel.notifyNowEnabled.observe(viewLifecycleOwner, Observer {
-            bind.notifyNow.isEnabled = it
-        })
-        viewModel.switchChecked.observe(viewLifecycleOwner, Observer {
-            bind.switchNotification.isChecked = it
-        })
-        viewModel.switchEnabled.observe(viewLifecycleOwner, Observer {
-            bind.switchNotification.isEnabled = it
-        })
-        viewModel.addHostText.observe(viewLifecycleOwner, Observer {
-            bind.btnAddHosts.text = it
-        })
-        viewModel.addHostEnabled.observe(viewLifecycleOwner, Observer {
-            bind.btnAddHosts.isEnabled = it
-        })
+        viewModel.notifyNowEnabled.observe(viewLifecycleOwner, Observer { bind.notifyNow.isEnabled = it })
+        viewModel.switchChecked.observe(viewLifecycleOwner, Observer { bind.switchNotification.isChecked = it })
+        viewModel.switchEnabled.observe(viewLifecycleOwner, Observer { bind.switchNotification.isEnabled = it })
+        viewModel.addHostText.observe(viewLifecycleOwner, Observer { bind.btnAddHosts.text = it })
+        viewModel.addHostEnabled.observe(viewLifecycleOwner, Observer { bind.btnAddHosts.isEnabled = it })
+        viewModel.addPortText.observe(viewLifecycleOwner, Observer { bind.btnAddPort.text = it })
+        viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer { bind.btnAddPort.isEnabled = it })
+        viewModel.sshPortEnabled.observe(viewLifecycleOwner, Observer { bind.sshPorts.isEnabled = it })
         loadObservers2()
-        loadObservers3()
     }
 
     fun loadObservers2(){
-        viewModel.addPortText.observe(viewLifecycleOwner, Observer {
-            bind.btnAddPort.text = it
-        })
-        viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer {
-            bind.btnAddPort.isEnabled = it
-        })
-        viewModel.sshPortEnabled.observe(viewLifecycleOwner, Observer {
-            bind.sshPorts.isEnabled = it
-        })
-        viewModel.dialogKeysPublicText.observe(viewLifecycleOwner, Observer {
-            dialogKeys.public_key.text = it
-        })
-        viewModel.dialogKeysPrivateText.observe(viewLifecycleOwner, Observer {
-            dialogKeys.private_key.text = it
-        })
-        viewModel.progressBar.observe(viewLifecycleOwner, Observer {
-            dialogKeys.progress_bar.visibility = it
-        })
-    }
-
-    fun loadObservers3(){
+        viewModel.dialogKeysPublicText.observe(viewLifecycleOwner, Observer { dialogKeys.public_key.text = it })
+        viewModel.dialogKeysPrivateText.observe(viewLifecycleOwner, Observer { dialogKeys.private_key.text = it })
+        viewModel.progressBar.observe(viewLifecycleOwner, Observer { dialogKeys.progress_bar.visibility = it })
         viewModel.portsNameAdapter.observe(viewLifecycleOwner, Observer {
             portsName = it
             adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
@@ -195,7 +169,7 @@ class TunnelSSHFragment :  BaseFragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun initializeDialog1() {
+    private fun initializeDialog() {
         dialogPort = Dialog(requireContext()); dialogHosts = Dialog(requireContext()); dialogKeys = Dialog(requireContext())
         dialogPort.setContentView(R.layout.dialog_sshtunnel_ports); dialogHosts.setContentView(R.layout.dialog_sshtunnel_hosts)
         dialogKeys.setContentView(R.layout.dialog_sshtunnel_key)
@@ -250,20 +224,21 @@ class TunnelSSHFragment :  BaseFragment() {
     }
 
     /*
-       checks if the inputs in the host dialog are not empty. If so, check if their corresponding textLayouts don't have errors.
-       If so, then enable addingHostButton.
+       enables Add Host button or Add Port Button if the following parameters are checked, the text inputs are not empty
+       and the textLayouts don't have errors. uses @check todecide if it's Add Host or Add Port
          */
-    fun checkAddingHostButtonEnable(){
-        if(dialogHosts.UserNameInput.editableText.isNotEmpty() && dialogHosts.DomainIPInput.editableText.isNotEmpty()
-                && dialogHosts.PortNumberInput.editableText.isNotEmpty())
-            if(!dialogHosts.TLusername.isErrorEnabled && !dialogHosts.TLdomain.isErrorEnabled && !dialogHosts.TLportname.isErrorEnabled )
-                dialogHosts.btn_adding_host.isEnabled = true
-    }
+    fun checkAddingHostPortButtonEnable(check: Boolean){
+        if(check) {
+            if (dialogHosts.UserNameInput.editableText.isNotEmpty() && dialogHosts.DomainIPInput.editableText.isNotEmpty()
+                    && dialogHosts.PortNumberInput.editableText.isNotEmpty())
+                if (!dialogHosts.TLusername.isErrorEnabled && !dialogHosts.TLdomain.isErrorEnabled && !dialogHosts.TLportname.isErrorEnabled)
+                    dialogHosts.btn_adding_host.isEnabled = true
+        }else{
+            if(dialogPort.ExternalTextInput.editableText.isNotEmpty() && dialogPort.InternalTextInput.editableText.isNotEmpty())
+                if(!dialogPort.TLexternal.isErrorEnabled && !dialogPort.TLinternal.isErrorEnabled)
+                    dialogPort.btn_adding_port.isEnabled = true
+        }
 
-    fun checkAddingPortButtonEnable(){
-        if(dialogPort.ExternalTextInput.editableText.isNotEmpty() && dialogPort.InternalTextInput.editableText.isNotEmpty())
-            if(!dialogPort.TLexternal.isErrorEnabled && !dialogPort.TLinternal.isErrorEnabled)
-                dialogPort.btn_adding_port.isEnabled = true
     }
 
     /*
@@ -282,7 +257,7 @@ class TunnelSSHFragment :  BaseFragment() {
                         textInputLayout.setError(error)
                     } else {
                         textInputLayout.setErrorEnabled(false)
-                        checkAddingHostButtonEnable()
+                        checkAddingHostPortButtonEnable(true)
                     }
                 }
             }
@@ -306,7 +281,7 @@ class TunnelSSHFragment :  BaseFragment() {
                         dialogPort.TLexternal.setError("Port number already exists")
                     } else {
                         textInputLayout.setErrorEnabled(false)
-                        checkAddingPortButtonEnable()
+                        checkAddingHostPortButtonEnable(false)
                     }
                 }
             }
