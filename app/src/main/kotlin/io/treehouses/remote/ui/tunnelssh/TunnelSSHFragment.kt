@@ -40,7 +40,7 @@ class TunnelSSHFragment :  BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         viewModel.onCreateView()
-        loadObservers1()
+        loadObservers()
         initializeDialog()
         addListeners()
         return bind.root
@@ -126,7 +126,7 @@ class TunnelSSHFragment :  BaseFragment() {
         }
     }
 
-    fun loadObservers1(){
+    fun loadObservers(){
         viewModel.notifyNowEnabled.observe(viewLifecycleOwner, Observer { bind.notifyNow.isEnabled = it })
         viewModel.switchChecked.observe(viewLifecycleOwner, Observer { bind.switchNotification.isChecked = it })
         viewModel.switchEnabled.observe(viewLifecycleOwner, Observer { bind.switchNotification.isEnabled = it })
@@ -135,16 +135,11 @@ class TunnelSSHFragment :  BaseFragment() {
         viewModel.addPortText.observe(viewLifecycleOwner, Observer { bind.btnAddPort.text = it })
         viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer { bind.btnAddPort.isEnabled = it })
         viewModel.sshPortEnabled.observe(viewLifecycleOwner, Observer { bind.sshPorts.isEnabled = it })
-        loadObservers2()
-    }
-
-    fun loadObservers2(){
         viewModel.dialogKeysPublicText.observe(viewLifecycleOwner, Observer { dialogKeys.public_key.text = it })
         viewModel.dialogKeysPrivateText.observe(viewLifecycleOwner, Observer { dialogKeys.private_key.text = it })
         viewModel.progressBar.observe(viewLifecycleOwner, Observer { dialogKeys.progress_bar.visibility = it })
         viewModel.portsNameAdapter.observe(viewLifecycleOwner, Observer {
-            portsName = it
-            adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
+            portsName = it; adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
 //            try {
 //                adapter = TunnelPortAdapter(requireContext(), portsName!!)
 //                logE("adapter successful")
@@ -158,15 +153,36 @@ class TunnelSSHFragment :  BaseFragment() {
             try {
                 adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                 logE("adapter successful")
-            } catch (e: Exception) {
-                logE(e.toString())
-            }
+            } catch (e: Exception) { logE(e.toString()) }
             dialogPort.hosts.adapter = adapter2
         })
-        viewModel.hostsPositionAdapter.observe(viewLifecycleOwner, Observer {
-            hostsPosition = it
-        })
+        viewModel.hostsPositionAdapter.observe(viewLifecycleOwner, Observer { hostsPosition = it })
     }
+
+//    fun loadObservers2(){
+//        viewModel.dialogKeysPublicText.observe(viewLifecycleOwner, Observer { dialogKeys.public_key.text = it })
+//        viewModel.dialogKeysPrivateText.observe(viewLifecycleOwner, Observer { dialogKeys.private_key.text = it })
+//        viewModel.progressBar.observe(viewLifecycleOwner, Observer { dialogKeys.progress_bar.visibility = it })
+//        viewModel.portsNameAdapter.observe(viewLifecycleOwner, Observer {
+//            portsName = it; adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
+////            try {
+////                adapter = TunnelPortAdapter(requireContext(), portsName!!)
+////                logE("adapter successful")
+////            } catch (e: Exception) {
+////                logE(e.toString())
+////            }
+//            bind.sshPorts.adapter = adapter
+//        })
+//        viewModel.hostsNameAdapter.observe(viewLifecycleOwner, Observer {
+//            hostsName = it
+//            try {
+//                adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+//                logE("adapter successful")
+//            } catch (e: Exception) { logE(e.toString()) }
+//            dialogPort.hosts.adapter = adapter2
+//        })
+//        viewModel.hostsPositionAdapter.observe(viewLifecycleOwner, Observer { hostsPosition = it })
+//    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun initializeDialog() {
