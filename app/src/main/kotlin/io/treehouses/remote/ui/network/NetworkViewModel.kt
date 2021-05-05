@@ -48,8 +48,8 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
             sendMessage(getString(R.string.REBOOT))
             Thread.sleep(1000)
             if (mChatService.state != Constants.STATE_CONNECTED) {
-                showHome.value = true
                 Toast.makeText(context, "Bluetooth Disconnected: Reboot in progress", Toast.LENGTH_LONG).show()
+                showHome.value = true
             } else {
                 Toast.makeText(context, "Reboot Unsuccessful", Toast.LENGTH_LONG).show()
             }

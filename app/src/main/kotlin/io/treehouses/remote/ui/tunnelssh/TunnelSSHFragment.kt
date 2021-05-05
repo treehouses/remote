@@ -42,7 +42,8 @@ class TunnelSSHFragment :  BaseFragment() {
         viewModel.onCreateView()
         loadObservers1()
         initializeDialog()
-        addListeners()
+        addListeners1()
+        addListeners2()
         return bind.root
     }
 
@@ -51,7 +52,7 @@ class TunnelSSHFragment :  BaseFragment() {
         Tutorials.tunnelSSHTutorials(bind, requireActivity())
     }
 
-    private fun addListeners() {
+    private fun addListeners1() {
         fun showDialog(dialog: Dialog) { dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show() }
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
         bind.btnAddPort.setOnClickListener{ showDialog(dialogPort) }; bind.btnAddHosts.setOnClickListener{ showDialog(dialogHosts) }
@@ -75,37 +76,9 @@ class TunnelSSHFragment :  BaseFragment() {
             viewModel.addingHostButton(m1, m2)
             dialogHosts.dismiss()
         }
-        addPortListListener()
-//        addDialogListeners()
     }
 
-//    fun addDialogListeners(){
-//        dialogPort.btn_adding_port.setOnClickListener {
-//            if (dialogPort.ExternalTextInput.text!!.isNotEmpty() && dialogPort.InternalTextInput.text!!.isNotEmpty()) {
-//                val s1 = dialogPort.InternalTextInput.text.toString(); val s2 = dialogPort.ExternalTextInput.text.toString()
-//                val parts = dialogPort.hosts?.selectedItem.toString().split(":")[0]
-//                viewModel.addingPortButton(s1, s2, parts)
-//                dialogPort.dismiss()
-//            }
-//        }
-//        dialogHosts.btn_adding_host.setOnClickListener {
-//            val m1 = dialogHosts.PortNumberInput.text.toString()
-//            val m2 = dialogHosts.UserNameInput.text.toString() + "@" + dialogHosts.DomainIPInput.text.toString()
-//            viewModel.addingHostButton(m1, m2)
-//            dialogHosts.dismiss()
-//        }
-//        var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
-//        dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
-//        dialogKeys.btn_show_keys.setOnClickListener {
-//            viewModel.keyClickListener(profile); viewModel.handleShowKeys(profile)
-//        }
-//        dialogPort.addPortCloseButton.setOnClickListener { dialogPort.dismiss() }
-//        dialogHosts.addHostCloseButton.setOnClickListener { dialogHosts.dismiss() }
-//        dialogKeys.addKeyCloseButton.setOnClickListener { dialogKeys.dismiss() }
-//        addPortListListener()
-//    }
-
-    private fun addPortListListener() {
+    private fun addListeners2() {
         var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
         dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
         dialogKeys.btn_show_keys.setOnClickListener {
@@ -120,18 +93,8 @@ class TunnelSSHFragment :  BaseFragment() {
             } else {
                 val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 if (portsName!![position].contains("@")) {
-//                    builder.setTitle("Delete Host  " + portsName!![position] + " ?")
-//                    builder.setPositiveButton("Confirm") { dialog, _ ->
-//                        viewModel.deleteHost(position)
-//                        dialog.dismiss()
-//                    }
                     setPortDialog(builder, position, "Delete Host  ")
                 }
-//                builder.setTitle("Delete Port " + portsName!![position] + " ?")
-//                builder.setPositiveButton("Confirm") { dialog, _ ->
-//                    viewModel.deletePort(position)
-//                    dialog.dismiss()
-//                }
                 setPortDialog(builder, position, "Delete Port ")
                 builder.setNegativeButton("Cancel", null)
                 val dialog = builder.create()
