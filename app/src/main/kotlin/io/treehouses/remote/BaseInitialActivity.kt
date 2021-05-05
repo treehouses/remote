@@ -2,20 +2,14 @@ package io.treehouses.remote
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
-import android.os.Build
 import android.os.Handler
 import android.os.Message
-import android.util.DisplayMetrics
 import android.view.MenuItem
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.fragments.*
 import io.treehouses.remote.network.BluetoothChatService
@@ -150,7 +144,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
             R.id.menu_services -> ServicesFragment()
             R.id.menu_about -> AboutFragment()
             R.id.menu_status -> StatusFragment()
-            R.id.menu_tunnel2 -> SSHTunnelFragment()
+            R.id.menu_tunnel2 -> TunnelFragment()
             R.id.menu_ssh -> SSHConfigFragment()
             else -> HomeFragment()
         }

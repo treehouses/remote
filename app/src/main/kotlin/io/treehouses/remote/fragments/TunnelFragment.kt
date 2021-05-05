@@ -19,7 +19,7 @@ import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.logD
 
-class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
+class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
     private var tabLayout: TabLayout? = null
     private var tunnelView: TunnelViewPager? = null
