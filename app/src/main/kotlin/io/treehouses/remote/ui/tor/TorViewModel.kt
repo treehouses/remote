@@ -1,4 +1,4 @@
-package io.treehouses.remote.ui.tortab
+package io.treehouses.remote.ui.tor
 
 import android.app.Application
 import android.content.ClipData
@@ -11,10 +11,9 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.TunnelUtils
-import io.treehouses.remote.utils.logD
 import java.util.*
 
-open class TorTabViewModel(application: Application) : FragmentViewModel(application) {
+open class TorViewModel(application: Application) : FragmentViewModel(application) {
 
     private val context = getApplication<MainApplication>().applicationContext
     var myClipboard: ClipboardManager? = null

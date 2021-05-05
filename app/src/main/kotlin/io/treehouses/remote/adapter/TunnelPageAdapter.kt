@@ -7,7 +7,7 @@ import androidx.viewpager.widget.PagerAdapter
 import io.treehouses.remote.fragments.TunnelSSHFragment
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.ui.socks.SocksFragment
-import io.treehouses.remote.ui.tortab.TorTabFragment
+import io.treehouses.remote.ui.tor.TorFragment
 import java.util.*
 
 class TunnelPageAdapter : FragmentStatePagerAdapter {
@@ -25,7 +25,7 @@ class TunnelPageAdapter : FragmentStatePagerAdapter {
     override fun getItem(position: Int): Fragment {
         var fragment: Fragment? = null
         when (position) {
-            0 -> fragment = TorTabFragment()
+            0 -> fragment = TorFragment()
             1 -> fragment = TunnelSSHFragment()
             2 -> fragment = SocksFragment()
         }
