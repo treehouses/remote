@@ -1,8 +1,17 @@
 package io.treehouses.remote.fragments.preferencefragments
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.preference.Preference
+import androidx.preference.PreferenceManager
+import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BasePreferenceFragment
 import io.treehouses.remote.utils.KeyUtils
@@ -18,11 +27,39 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
         val clearNetworkProfiles = findPreference<Preference>("network_profiles")
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
+        val fontSize = findPreference<Preference>("font_size")
+
+        //fontSize?.setOnPreferenceChangeListener(object: Preference.OnPreferenceChangeListener(SharedPreferences, "font_size"))
+        fontSize?.setOnPreferenceChangeListener(object : Preference.OnPreferenceChangeListener{
+            @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+            override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+                PreferenceManager.getDefaultSharedPreferences(activity).edit().putInt("font_size", newValue.toString().toInt()).commit()
+                adjustFontScale(resources.configuration, newValue.toString().toInt())
+                activity?.recreate()
+                return false
+            }
+        })
         SettingsUtils.setClickListener(this, clearCommandsList)
         SettingsUtils.setClickListener(this, resetCommandsList)
         SettingsUtils.setClickListener(this, clearNetworkProfiles)
         SettingsUtils.setClickListener(this, clearSSHHosts)
         SettingsUtils.setClickListener(this, clearSSHKeys)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
+
+        configuration?.let {
+            it.fontScale = 0.05F*fontSize.toFloat()
+            val metrics: DisplayMetrics = resources.displayMetrics
+            val wm: WindowManager = getActivity()?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.defaultDisplay.getMetrics(metrics)
+            metrics.scaledDensity = configuration.fontScale * metrics.density
+
+            MainApplication.context.createConfigurationContext(it)
+            MainApplication.context.resources.displayMetrics.setTo(metrics)
+
+        }
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {
@@ -32,9 +69,11 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
             "network_profiles" -> networkProfiles()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
+
         }
         return false
     }
+
 
     private fun clearCommands() {
         createAlertDialog("Clear Commands List", "Would you like to completely clear the commands list that is found in terminal? ", "Clear", CLEAR_COMMANDS_ID)

@@ -15,7 +15,7 @@ import io.treehouses.remote.Tutorials
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.pojo.NetworkListItem
 
-class NetworkListAdapter(val context: Context, list: List<NetworkListItem>, private val chatService: BluetoothChatService) : BaseExpandableListAdapter() {
+class NetworkListAdapter(val context: Context, list: List<NetworkListItem>) : BaseExpandableListAdapter() {
     private val list: List<NetworkListItem>
     private val inflater: LayoutInflater
     private var listener: HomeInteractListener? = null

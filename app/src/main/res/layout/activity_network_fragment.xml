@@ -240,6 +240,34 @@
                     app:fontFamily="@font/roboto_light">
 
                 </Button>
+
+                <Button
+                    android:id="@+id/speed_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_grey_dark"
+                    android:text="Speed Test"
+                    android:textAllCaps="false"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/bg_white"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/roboto_light">
+                </Button>
+                <Button
+                    android:id="@+id/reverse_lookup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_grey_dark"
+                    android:text="Reverse Lookup"
+                    android:textAllCaps="false"
+                    android:textColor="@color/bg_white"
+                    android:textSize="16sp"
+                    app:fontFamily="@font/roboto_light">
+
+                </Button>
             </LinearLayout>
         </FrameLayout>
 
