@@ -43,10 +43,16 @@ class SocksFragment : Fragment() {
         messageObservers()
         addProfileButtonListeners(dialog)
         portList = bind!!.profiles
-        viewModel.listenerInitialized()
+
         return bind!!.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(isVisible){
+            viewModel.listenerInitialized()
+        }
+    }
     private fun initializeDialog() {
         dialog = Dialog(requireContext())
         addPortListListener()

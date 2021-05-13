@@ -25,16 +25,18 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
         logD("SOCKS MESSAGE " + output)
         if (output.contains("Error when")) {
             profileNameText = ArrayList()
+            refreshList.value = profileNameText
             sendMessage("treehouses shadowsocks list")
         } else if (output.contains("Use `treehouses shadowsock")) {
             addProfileButtonText.value = "Add Profile"
             addProfileButtonEnabled.value = true
             profileNameText = ArrayList()
+            refreshList.value = profileNameText
             sendMessage("treehouses shadowsocks list")
         } else {
             getMessage2(output)
         }
-        refreshList.value = profileNameText
+
     }
 
 
@@ -42,18 +44,23 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
         if (readMessage.contains("removed")) {
             makeText(context, "Removed, retrieving list again", LENGTH_SHORT).show()
             profileNameText = ArrayList()
+            refreshList.value = profileNameText
             sendMessage("treehouses shadowsocks list")
         } else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")) {
             if (readMessage.contains(' ')) {
                 var msgList = readMessage.split(' ')
                 msgList.forEach {
-                    if (it.trim().startsWith("tmptmp"))
-                        profileNameText.add(readMessage)
+                    if (it.trim().startsWith("tmptmp") && !profileNameText.contains(it)) {
+                        profileNameText.add(it)
+                        refreshList.value = profileNameText
+                    }
                 }
-            } else
+            } else {
                 profileNameText.add(readMessage)
+                refreshList.value = profileNameText
+            }
         }
-        refreshList.value = profileNameText
+
     }
 
     fun addProfile(stringMap: Map<String, String>) {
@@ -70,7 +77,6 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
             sendMessage(message)
             addProfileButtonText.value = "Adding......"
             addProfileButtonEnabled.value = false
-
             profileDialogDismiss.value = true
         } else {
             makeText(context, "Missing Information", LENGTH_SHORT).show()
@@ -79,6 +85,7 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
 
     fun listenerInitialized() {
         profileNameText = ArrayList()
+        refreshList.value = ArrayList()
         sendMessage("treehouses shadowsocks list")
     }
 }
