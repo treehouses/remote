@@ -22,7 +22,6 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
 
     override fun onRead(output: String) {
         super.onRead(output)
-        logD("SOCKS MESSAGE " + output)
         if (output.contains("Error when")) {
             profileNameText = ArrayList()
             refreshList.value = profileNameText
@@ -83,6 +82,7 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
     }
 
     fun listenerInitialized() {
+        logD("LIISTENER INITIALIZED")
         profileNameText = ArrayList()
         refreshList.value = ArrayList()
         sendMessage("treehouses shadowsocks list")
