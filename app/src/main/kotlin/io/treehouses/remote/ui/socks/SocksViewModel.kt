@@ -36,7 +36,6 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
         } else {
             getMessage2(output)
         }
-
     }
 
 
@@ -52,8 +51,8 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
                 msgList.forEach {
                     if (it.trim().startsWith("tmptmp") && !profileNameText.contains(it)) {
                         profileNameText.add(it)
-                        refreshList.value = profileNameText
                     }
+                    refreshList.value = profileNameText
                 }
             } else {
                 profileNameText.add(readMessage)
