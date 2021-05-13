@@ -15,7 +15,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
 import io.treehouses.remote.utils.DialogUtils
-import java.lang.Exception
 
 class SocksFragment : Fragment() {
 
@@ -49,11 +48,13 @@ class SocksFragment : Fragment() {
         return bind!!.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.listenerInitialized()
-    }
 
+    override fun onResume() {
+        super.onResume()
+        if (isVisible){
+            viewModel.listenerInitialized()
+        }
+    }
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser)

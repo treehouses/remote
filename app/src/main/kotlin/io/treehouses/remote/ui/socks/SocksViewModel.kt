@@ -82,7 +82,6 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
     }
 
     fun listenerInitialized() {
-        logD("LIISTENER INITIALIZED")
         profileNameText = ArrayList()
         refreshList.value = ArrayList()
         sendMessage("treehouses shadowsocks list")
