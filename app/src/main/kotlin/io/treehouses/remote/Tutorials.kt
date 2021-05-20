@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.view.get
 import androidx.fragment.app.FragmentActivity
-import io.treehouses.remote.R
 import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
 import me.toptas.fancyshowcase.FancyShowCaseQueue
@@ -28,7 +26,7 @@ object Tutorials {
 
         val d = fancyShowCaseView(activity, bind.btnGetStarted, "Go to Terminal and Send Commands to RPI", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a,b,c,d)
+        show(a, b, c, d)
     }
 
     fun networkTutorials(bind: ActivityNetworkFragmentBinding, activity: FragmentActivity) {
@@ -49,7 +47,7 @@ object Tutorials {
 
         val resetNetwork = fancyShowCaseView(activity, bind.resetNetwork, "Use this to Reset Network back to Default", FocusShape.ROUNDED_RECTANGLE)
 
-        val scrollDown =  fancyShowCaseViewRoundedRect(activity, bind.discoverBtn, "Scroll down to the bottom of the page")
+        val scrollDown = fancyShowCaseViewRoundedRect(activity, bind.discoverBtn, "Scroll down to the bottom of the page")
 
         val scanButton = fancyShowCaseView(activity, bind.rebootRaspberry, "Scan your Network to find other Connected Devices", FocusShape.ROUNDED_RECTANGLE)
 
@@ -57,20 +55,19 @@ object Tutorials {
     }
 
     @SuppressLint("ResourceType")
-    fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
+    fun systemTutorials(activity: FragmentActivity, views: List<View?>) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM, false)
         //Put animations here
-        val list = bind.listView.expandableListAdapter.getGroupView(0, false, bind.listView, bind.listView)
-        val a = fancyShowCaseViewBuilderSkippable(activity, bind.listView.expandableListAdapter.getGroupView(0, false, bind.listView, bind.listView), "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
-        val b = fancyShowCaseViewBuilder(activity, bind.listView, "Open VNC", FocusShape.ROUNDED_RECTANGLE)
-        val c = fancyShowCaseViewBuilder(activity, bind.listView, "Share Internet with Pi", FocusShape.ROUNDED_RECTANGLE)
-        val d = fancyShowCaseViewBuilder(activity, bind.listView, "Add SSH Key", FocusShape.ROUNDED_RECTANGLE)
-        val e = fancyShowCaseViewBuilder(activity, bind.listView, "Toggle Camera", FocusShape.ROUNDED_RECTANGLE)
-        val f = fancyShowCaseViewBuilder(activity, bind.listView, "Internet Blocking", FocusShape.ROUNDED_RECTANGLE)
-        val g = fancyShowCaseViewBuilder(activity, bind.listView, "SSH 2 Factor Authentication", FocusShape.ROUNDED_RECTANGLE)
+        val a = fancyShowCaseViewBuilderSkippable(activity, views!![0], "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
+        val b = fancyShowCaseView(activity, views!![1], "Open VNC", FocusShape.ROUNDED_RECTANGLE)
+        val c = fancyShowCaseView(activity, views!![2], "Share Internet with Pi", FocusShape.ROUNDED_RECTANGLE)
+        val d = fancyShowCaseView(activity, views!![3], "Add SSH Key", FocusShape.ROUNDED_RECTANGLE)
+        val e = fancyShowCaseView(activity, views!![4], "Toggle Camera", FocusShape.ROUNDED_RECTANGLE)
+        val f = fancyShowCaseView(activity, views!![5], "Internet Blocking", FocusShape.ROUNDED_RECTANGLE)
+        val g = fancyShowCaseView(activity, views!![6], "SSH 2 Factor Authentication", FocusShape.ROUNDED_RECTANGLE)
 
-        show(a)
+        show(a, b, c, d, e, f, g)
 
     }
 
@@ -90,7 +87,7 @@ object Tutorials {
 
         val e = fancyShowCaseView(activity, bind.buttonSend, "Use this button to Send Your Command to the Pi", FocusShape.CIRCLE)
 
-        show(a,b,c, d, e)
+        show(a, b, c, d, e)
     }
 
     fun servicesOverviewTutorials(bind: ActivityServicesTabFragmentBinding, activity: FragmentActivity) {
@@ -114,8 +111,7 @@ object Tutorials {
         show(a)
     }
 
-    fun tunnelTorTutorials(bind: ActivityTorFragmentBinding, activity: FragmentActivity)
-    {
+    fun tunnelTorTutorials(bind: ActivityTorFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
 
@@ -131,8 +127,7 @@ object Tutorials {
 //        //Put animations here
 //    }
 
-    fun tunnelSSHTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity)
-    {
+    fun tunnelSSHTutorials(bind: ActivityTunnelSshFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.TUNNEL, false)
 
@@ -163,11 +158,10 @@ object Tutorials {
 
         val g = fancyShowCaseViewRoundedRect(activity, bind.refreshBtn, "Refresh Anytime to Check Everything Again")
 
-        show(a,b,c,d,e,f,g)
+        show(a, b, c, d, e, f, g)
     }
 
-    fun sshTutorial(bind: DialogSshBinding, activity: FragmentActivity)
-    {
+    fun sshTutorial(bind: DialogSshBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SSH)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SSH, false)
 
@@ -180,7 +174,7 @@ object Tutorials {
         val d = fancyShowCaseViewRoundedRect(activity, bind.pastHosts, "View Your Previously Connected SSH Hosts")
 
         val e = fancyShowCaseViewRoundedRect(activity, bind.generateKeys, "Generate New SSH Keys")
-        
+
         val f = fancyShowCaseViewRoundedRect(activity, bind.showKeys, "View Your SSH Keys")
 
         show(a, b, c, d, e, f)
@@ -190,7 +184,7 @@ object Tutorials {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape)
                 .customView(R.layout.tutorial, object : OnViewInflateListener {
                     override fun onViewInflated(view: View) {
-                       val skipButton = view.findViewById<Button>(R.id.skipBtn)
+                        val skipButton = view.findViewById<Button>(R.id.skipBtn)
                         skipButton.setOnClickListener(mClickListener)
                         val text = view.findViewById<TextView>(R.id.text)
                         text.text = title
@@ -227,7 +221,7 @@ object Tutorials {
 
     private fun show(vararg view: FancyShowCaseView) {
         queue = FancyShowCaseQueue()
-        for(v in view) {
+        for (v in view) {
             queue.add(v)
         }
         queue.show()
