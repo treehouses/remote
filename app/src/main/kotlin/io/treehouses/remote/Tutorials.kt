@@ -1,10 +1,12 @@
 package io.treehouses.remote
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.view.get
 import androidx.fragment.app.FragmentActivity
+import io.treehouses.remote.R
 import io.treehouses.remote.databinding.*
 import io.treehouses.remote.utils.SaveUtils
 import me.toptas.fancyshowcase.FancyShowCaseQueue
@@ -54,11 +56,13 @@ object Tutorials {
         show(networkWifi, networkHotspot, networkBridge, networkEthernet, networkMode, rebootRaspberry, resetNetwork, scrollDown, scanButton)
     }
 
+    @SuppressLint("ResourceType")
     fun systemTutorials(bind: ActivitySystemFragmentBinding, activity: FragmentActivity) {
         if (!SaveUtils.getFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM)) return
         SaveUtils.setFragmentFirstTime(activity, SaveUtils.Screens.SYSTEM, false)
         //Put animations here
-        val a = fancyShowCaseViewBuilderSkippable(activity, bind.listView, "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
+        val list = bind.listView.expandableListAdapter.getGroupView(0, false, bind.listView, bind.listView)
+        val a = fancyShowCaseViewBuilderSkippable(activity, bind.listView.expandableListAdapter.getGroupView(0, false, bind.listView, bind.listView), "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE).build()
         val b = fancyShowCaseViewBuilder(activity, bind.listView, "Open VNC", FocusShape.ROUNDED_RECTANGLE)
         val c = fancyShowCaseViewBuilder(activity, bind.listView, "Share Internet with Pi", FocusShape.ROUNDED_RECTANGLE)
         val d = fancyShowCaseViewBuilder(activity, bind.listView, "Add SSH Key", FocusShape.ROUNDED_RECTANGLE)

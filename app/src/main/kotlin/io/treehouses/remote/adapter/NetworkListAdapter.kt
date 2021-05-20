@@ -27,6 +27,11 @@ class NetworkListAdapter(val context: Context, list: List<NetworkListItem>) : Ba
         }
     }
 
+    fun getViews(): Array<View?>{
+        return views
+    }
+
+
     override fun getGroupCount(): Int {
         return list.size
     }

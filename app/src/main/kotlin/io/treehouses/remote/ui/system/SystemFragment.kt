@@ -23,23 +23,33 @@ import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.pojo.NetworkListItem
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
+import me.toptas.fancyshowcase.FocusShape
 import java.util.*
 
 class SystemFragment : BaseFragment() {
 
     protected val viewModel: SystemViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivitySystemFragmentBinding
+    lateinit var adapter: NetworkListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySystemFragmentBinding.inflate(inflater, container, false)
-        val adapter = NetworkListAdapter(requireContext(), NetworkListItem.systemList)
+        adapter = NetworkListAdapter(requireContext(), NetworkListItem.systemList)
         adapter.setListener(listener)
         bind.listView.setOnGroupExpandListener { groupPosition: Int ->
             viewModel.onClickListItem(groupPosition)
         }
         bind.listView.setAdapter(adapter)
-        Tutorials.systemTutorials(bind, requireActivity())
+        //Tutorials.systemTutorials(bind, requireActivity())
         return bind.root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter.getViews().forEach {
+            Tutorials.fancyShowCaseViewBuilder(requireActivity(), it!!, "Shutdown & Reboot", FocusShape.ROUNDED_RECTANGLE)
+        }
     }
 
     override fun onResume() {
