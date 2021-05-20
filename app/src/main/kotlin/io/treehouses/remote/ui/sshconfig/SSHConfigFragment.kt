@@ -22,7 +22,6 @@ import io.treehouses.remote.adapter.ViewHolderSSHRow
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.sshconsole.SSHConsole
-import io.treehouses.remote.bases.BaseSSHConfig
 import io.treehouses.remote.callback.RVButtonClickListener
 import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.databinding.DialogSshBinding
