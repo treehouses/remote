@@ -38,13 +38,8 @@ class SystemFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Handler().postDelayed({
-            logD("View Size " + adapter.getViews().size)
-//            adapter.getViews().forEach {
-
-//
-//            }
             Tutorials.systemTutorials(requireActivity(),adapter.getViews());
-        }, 3000);
+        }, 1000);
     }
 
     override fun onResume() {
