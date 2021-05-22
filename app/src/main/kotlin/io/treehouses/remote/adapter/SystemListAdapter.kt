@@ -32,8 +32,6 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
         return groupHeader
     }
 
-
-
     override fun getGroupCount(): Int {
         return list.size
     }
