@@ -18,8 +18,8 @@
 
         <Button
             android:id="@+id/give_feedback"
-            android:layout_width="373dp"
-            android:layout_height="67dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:background="@drawable/ic_give_feedback"
             android:text="@string/give_feedback"
