@@ -34,7 +34,6 @@ import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
-import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 
 class HomeFragment : BaseHomeFragment() {
@@ -158,7 +157,6 @@ class HomeFragment : BaseHomeFragment() {
         bind.networkProfiles.setAdapter(profileAdapter)
         bind.networkProfiles.setOnChildClickListener { _: ExpandableListView?, _: View?, groupPosition: Int, childPosition: Int, _: Long ->
             if (groupPosition == 3) {
-                logD("Test default")
                 viewModel.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 context.toast("Switched to Default Network", Toast.LENGTH_LONG)
             } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.isNotEmpty()) {
