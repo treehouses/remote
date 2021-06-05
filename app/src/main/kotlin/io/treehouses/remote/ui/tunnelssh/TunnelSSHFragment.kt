@@ -2,7 +2,6 @@ package io.treehouses.remote.ui.tunnelssh
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -11,7 +10,6 @@ import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.Constants
@@ -22,19 +20,17 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.*
-import io.treehouses.remote.utils.Utils.toast
 import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
-class TunnelSSHFragment :  BaseFragment() {
+class TunnelSSHFragment : BaseFragment() {
     protected val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivityTunnelSshFragmentBinding
     var adapter: TunnelPortAdapter? = null
-    lateinit var adapter2: ArrayAdapter<String>
+    private lateinit var adapter2: ArrayAdapter<String>
     var portsName: java.util.ArrayList<String>? = null
     var hostsName: java.util.ArrayList<String>? = null
-    var hostsPosition: java.util.ArrayList<Int>? = null
     lateinit var dialogPort: Dialog
     lateinit var dialogHosts: Dialog
     lateinit var dialogKeys: Dialog
@@ -55,19 +51,27 @@ class TunnelSSHFragment :  BaseFragment() {
         Tutorials.tunnelSSHTutorials(bind, requireActivity())
     }
 
+    fun showDialog(dialog: Dialog) {
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show()
+    }
+
     private fun addListeners1() {
-        fun showDialog(dialog: Dialog) { dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show() }
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
-        bind.btnAddPort.setOnClickListener{ showDialog(dialogPort) }; bind.btnAddHosts.setOnClickListener{ showDialog(dialogHosts) }
-        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }; bind.notifyNow.setOnClickListener{ viewModel.notifyNow(requireContext()) }
-        bind.info.setOnClickListener{
+        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) };
+        bind.btnAddHosts.setOnClickListener { showDialog(dialogHosts) }
+        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) };
+        bind.notifyNow.setOnClickListener { viewModel.notifyNow(requireContext()) }
+        bind.info.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
-            builder.setMessage(R.string.ssh_info); val dialog = builder.create();
+            builder.setMessage(R.string.ssh_info);
+            val dialog = builder.create();
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show();
         }
         dialogPort.btn_adding_port.setOnClickListener {
             if (dialogPort.ExternalTextInput.text!!.isNotEmpty() && dialogPort.InternalTextInput.text!!.isNotEmpty()) {
-                val s1 = dialogPort.InternalTextInput.text.toString(); val s2 = dialogPort.ExternalTextInput.text.toString()
+                val s1 = dialogPort.InternalTextInput.text.toString();
+                val s2 = dialogPort.ExternalTextInput.text.toString()
                 val parts = dialogPort.hosts?.selectedItem.toString().split(":")[0]
                 viewModel.addingPortButton(s1, s2, parts)
                 dialogPort.dismiss()
@@ -106,7 +110,7 @@ class TunnelSSHFragment :  BaseFragment() {
         }
     }
 
-    fun setPortDialog(builder: AlertDialog.Builder, position: Int, title: String){
+    private fun setPortDialog(builder: AlertDialog.Builder, position: Int, title: String) {
         builder.setTitle(title + portsName!![position] + " ?")
         builder.setPositiveButton("Confirm") { dialog, _ ->
             if (title.contains("Host")) viewModel.deleteHost(position)
@@ -115,9 +119,9 @@ class TunnelSSHFragment :  BaseFragment() {
         }
     }
 
-    fun loadObservers1(){
+    private fun loadObservers1() {
         viewModel.tunnelSSHData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            when(it.status) {
+            when (it.status) {
                 Status.SUCCESS -> {
                     bind.notifyNow.isEnabled = it.data!!.enabledNotifyNow
                     bind.switchNotification.isEnabled = it.data!!.enableSwitchNotification
@@ -155,7 +159,8 @@ class TunnelSSHFragment :  BaseFragment() {
         addPortSyntaxCheck(dialogPort.ExternalTextInput, dialogPort.TLexternal)
         addPortSyntaxCheck(dialogPort.InternalTextInput, dialogPort.TLinternal)
         viewModel.initializeArrays()
-        val window = dialogPort.window; val windowHost = dialogHosts.window
+        val window = dialogPort.window;
+        val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -169,7 +174,7 @@ class TunnelSSHFragment :  BaseFragment() {
         }
     }
 
-    fun checkAddingHostButtonEnable(){
+    fun checkAddingHostButtonEnable() {
         if (dialogHosts.UserNameInput.editableText.isNotEmpty() && dialogHosts.DomainIPInput.editableText.isNotEmpty()
                 && dialogHosts.PortNumberInput.editableText.isNotEmpty())
             if (!dialogHosts.TLusername.isErrorEnabled && !dialogHosts.TLdomain.isErrorEnabled && !dialogHosts.TLportname.isErrorEnabled)
@@ -177,9 +182,9 @@ class TunnelSSHFragment :  BaseFragment() {
 
     }
 
-    fun checkAddingPortButtonEnable(){
-        if(dialogPort.ExternalTextInput.editableText.isNotEmpty() && dialogPort.InternalTextInput.editableText.isNotEmpty())
-            if(!dialogPort.TLexternal.isErrorEnabled && !dialogPort.TLinternal.isErrorEnabled)
+    fun checkAddingPortButtonEnable() {
+        if (dialogPort.ExternalTextInput.editableText.isNotEmpty() && dialogPort.InternalTextInput.editableText.isNotEmpty())
+            if (!dialogPort.TLexternal.isErrorEnabled && !dialogPort.TLinternal.isErrorEnabled)
                 dialogPort.btn_adding_port.isEnabled = true
     }
 
@@ -187,46 +192,48 @@ class TunnelSSHFragment :  BaseFragment() {
        adds a syntax check to textInputEditText. If input in textInputEditText does not match regex, outputs error message in textInputLayout
        and disables addingHostButton
          */
-    fun addHostSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout, regex: String, error: String){
+    fun addHostSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout, regex: String, error: String) {
         textInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                textInputLayout.setErrorEnabled(true)
-                if(s!!.isEmpty()){
+                textInputLayout.isErrorEnabled = true
+                if (s!!.isEmpty()) {
                     dialogHosts.btn_adding_host.isEnabled = false
                 } else {
-                    if(!s!!.toString().matches(regex.toRegex()) ){
+                    if (!s!!.toString().matches(regex.toRegex())) {
                         dialogHosts.btn_adding_host.isEnabled = false
-                        textInputLayout.setError(error)
+                        textInputLayout.error = error
                     } else {
-                        textInputLayout.setErrorEnabled(false)
+                        textInputLayout.isErrorEnabled = false
                         checkAddingHostButtonEnable()
                     }
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
-    fun addPortSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout){
+    fun addPortSyntaxCheck(textInputEditText: TextInputEditText, textInputLayout: TextInputLayout) {
         textInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                textInputLayout.setErrorEnabled(true)
+                textInputLayout.isErrorEnabled = true
                 if (s!!.isEmpty()) {
                     dialogPort.btn_adding_port.isEnabled = false
                 } else {
                     if (!s!!.toString().matches(Constants.portRegex.toRegex())) {
                         dialogPort.btn_adding_port.isEnabled = false
-                        textInputLayout.setError(Constants.portError)
-                    } else if (textInputEditText.equals(dialogPort.ExternalTextInput) && viewModel.searchArray(portsName, s!!.toString())) {
+                        textInputLayout.error = Constants.portError
+                    } else if (textInputEditText == dialogPort.ExternalTextInput && viewModel.searchArray(portsName, s!!.toString())) {
                         dialogPort.btn_adding_port.isEnabled = false
-                        dialogPort.TLexternal.setError("Port number already exists")
+                        dialogPort.TLexternal.error = "Port number already exists"
                     } else {
-                        textInputLayout.setErrorEnabled(false)
+                        textInputLayout.isErrorEnabled = false
                         checkAddingPortButtonEnable()
                     }
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
