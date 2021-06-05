@@ -10,16 +10,27 @@ import android.widget.Toast
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.enum.Resource
-import io.treehouses.remote.utils.TUNNEL_SSH_RESULTS
-import io.treehouses.remote.utils.TunnelUtils
-import io.treehouses.remote.utils.matchSshOutput
+import io.treehouses.remote.utils.*
 
 open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext
 
     override fun onRead(output: String) {
         super.onRead(output)
-        val s = matchSshOutput(output)
+        logD("ON READ " + output)
+
+        val s = matchSshOutput(output.trim())
+        if (jsonReceiving) {
+            jsonString += output
+            buildJSON()
+            if (s == TUNNEL_SSH_RESULTS.END_JSON) {
+                buildJSON()
+                jsonSend(false)
+            }
+        } else if (s == RESULTS.START_JSON) {
+            jsonReceiving = true
+            jsonString = output.trim()
+        }
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
                 enableButtons()
@@ -39,6 +50,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_OFF -> handleOffStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_NO_PORT -> handleNoPorts()
+
             s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> {
                 tunnelSSHObject.addPortText = "Add Port"
                 Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
@@ -61,24 +73,27 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 Toast.makeText(context, notified, Toast.LENGTH_SHORT).show()
                 tunnelSSHObject.enabledNotifyNow = true
             }
-            else -> if (jsonSent) handleJson(output)
+            else -> {
+
+            }
 
 
         }
-        Resource.success(tunnelSSHObject)
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
 
     }
 
 
     fun onCreateView() {
-        Resource.loading(tunnelSSHData)
+        tunnelSSHData.value = Resource.loading(tunnelSSHObject)
         tunnelSSHObject.enableSwitchNotification = true
         tunnelSSHObject.enabledNotifyNow = true
         tunnelSSHObject.hostNames = ArrayList()
-        Resource.success(tunnelSSHData)
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
     }
 
     fun setUserVisibleHint() {
+        logD("SET USER VISIBLE HINT")
         loadBT()
         initializeArrays()
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
@@ -87,7 +102,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
     fun searchArray(array: java.util.ArrayList<String>?, portnum: String): Boolean {
         for (name in array!!) {
             var check = name.substringAfter(":")
-            if (check.equals(portnum)) return true
+            if (check == portnum) return true
         }
         return false
     }
@@ -160,9 +175,11 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
 
         val strPhonePublicKey: Spanned;
         val strPhonePrivateKey: Spanned
-        if ((Build.VERSION.SDK_INT) >= 24) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n", Html.FROM_HTML_MODE_LEGACY)
             strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey", Html.FROM_HTML_MODE_LEGACY)
+
         } else {
             strPhonePublicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$storedPublicKey\n")
             strPhonePrivateKey = Html.fromHtml("<b>Phone Private Key for ${profile}:</b> <br>$storedPrivateKey")
@@ -199,7 +216,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.enableAddHost = true
         tunnelSSHObject.enableAddPort = true
         tunnelSSHObject.enableSSHPort = true
-        Resource.success(tunnelSSHData)
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
 
     }
 

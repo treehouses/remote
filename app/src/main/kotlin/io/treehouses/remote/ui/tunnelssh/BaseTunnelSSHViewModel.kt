@@ -28,38 +28,17 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
     protected var jsonSent = false
     protected var jsonString = ""
 
-
-    fun handleMoreMessages(readMessage: String) {
-        when {
-
-        }
-    }
-
     fun jsonSend(sent: Boolean) {
         jsonSent = sent
         if (sent) tunnelSSHData.value = Resource.loading()
         else {
-            // progressBar.value = View.GONE
+            tunnelSSHData.value = Resource.loading(tunnelSSHObject)
             jsonReceiving = false
         }
     }
 
-     fun handleJson(readMessage: String) {
-        val s = match(readMessage)
-        if (jsonReceiving) {
-            jsonString += readMessage
-            buildJSON()
-            if (s == RESULTS.END_JSON || s == RESULTS.END_HELP) {
-                buildJSON()
-                jsonSend(false)
-            }
-        } else if (s == RESULTS.START_JSON) {
-            jsonReceiving = true
-            jsonString = readMessage.trim()
-        }
-    }
 
-    private fun buildJSON() {
+   public fun buildJSON() {
         try {
             val jsonObject = JSONObject(jsonString)
             val profile = jsonObject.getString("profile")

@@ -39,6 +39,7 @@ fun matchSshOutput(output: String): TUNNEL_SSH_RESULTS {
         Matcher.isStartJSON(output) -> return TUNNEL_SSH_RESULTS.START_JSON
         Matcher.isEndCommandsJson(output) -> return TUNNEL_SSH_RESULTS.END_JSON_COMMANDS
         Matcher.isEndJSON(output) -> return TUNNEL_SSH_RESULTS.END_JSON
+
     }
     return TUNNEL_SSH_RESULTS.RESULT_NOT_FOUND
 }
