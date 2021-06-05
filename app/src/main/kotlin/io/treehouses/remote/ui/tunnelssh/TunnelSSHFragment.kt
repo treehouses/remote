@@ -58,9 +58,6 @@ class TunnelSSHFragment : BaseFragment() {
 
     private fun addListeners1() {
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
-        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) };
-        bind.btnAddHosts.setOnClickListener { showDialog(dialogHosts) }
-        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) };
         bind.notifyNow.setOnClickListener { viewModel.notifyNow(requireContext()) }
         bind.info.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
@@ -86,6 +83,9 @@ class TunnelSSHFragment : BaseFragment() {
     }
 
     private fun addListeners2() {
+        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) };
+        bind.btnAddHosts.setOnClickListener { showDialog(dialogHosts) }
+        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) };
         var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
         dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
         dialogKeys.btn_show_keys.setOnClickListener {
@@ -125,23 +125,16 @@ class TunnelSSHFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     bind.notifyNow.isEnabled = it.data!!.enabledNotifyNow
                     bind.switchNotification.isEnabled = it.data!!.enableSwitchNotification
-                    bind.btnAddHosts.text = it.data!!.addHostText
-                    bind.btnAddPort.text = it.data!!.addPortText
-                    bind.btnAddPort.isEnabled = it.data!!.enableAddPort
-                    bind.btnAddHosts.isEnabled = it.data!!.enableAddHost
+                    bind.btnAddHosts.text = it.data!!.addHostText; bind.btnAddPort.text = it.data!!.addPortText
+                    bind.btnAddPort.isEnabled = it.data!!.enableAddPort; bind.btnAddHosts.isEnabled = it.data!!.enableAddHost
                     bind.sshPorts.isEnabled = it.data!!.enableSSHPort
-                    dialogKeys.public_key.text = it.data!!.publicKey
-                    dialogKeys.private_key.text = it.data!!.privateKey
-                    dialogKeys.progress_bar.visibility = View.GONE
-                    dialogKeys.progress_bar.visibility = View.GONE
-                    portsName = it.data.portNames
-                    hostsName = it.data.hostNames
+                    dialogKeys.public_key.text = it.data!!.publicKey; dialogKeys.private_key.text = it.data!!.privateKey
+                    dialogKeys.progress_bar.visibility = View.GONE; dialogKeys.progress_bar.visibility = View.GONE
+                    portsName = it.data.portNames; hostsName = it.data.hostNames
                     adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
                     bind.sshPorts.adapter = adapter
-
                     adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                     dialogPort.hosts.adapter = adapter2
-
                 }
                 Status.LOADING -> {
                     if (it == null) return@Observer

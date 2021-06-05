@@ -28,9 +28,9 @@ fun matchSshOutput(output: String): TUNNEL_SSH_RESULTS {
         Matcher.isError(output) -> return TUNNEL_SSH_RESULTS.ERROR
         Matcher.isBoolean(output) -> return TUNNEL_SSH_RESULTS.BOOLEAN
         TunnelSSHMatcher.isHostNotFound(output) -> TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND
-        TunnelSSHMatcher.checkNoTunnelSetup(output) -> TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL
-        TunnelSSHMatcher.isAdded(output) -> TUNNEL_SSH_RESULTS.RESULT_ADDED
-        TunnelSSHMatcher.isRemoved(output) -> TUNNEL_SSH_RESULTS.RESULT_REMOVED
+        TunnelSSHMatcher.checkTunnelSetupAddedOrRemoved(output, "no tunnel has been set up") -> TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL
+        TunnelSSHMatcher.checkTunnelSetupAddedOrRemoved(output,"added") -> TUNNEL_SSH_RESULTS.RESULT_ADDED
+        TunnelSSHMatcher.checkTunnelSetupAddedOrRemoved(output, "removed") -> TUNNEL_SSH_RESULTS.RESULT_REMOVED
         TunnelSSHMatcher.isListModified(output) -> TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST
         TunnelSSHMatcher.contains(output, "@") -> TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST
         TunnelSSHMatcher.contains(output, "the command 'treehouses sshtunnel ports' returns nothing") -> TUNNEL_SSH_RESULTS.RESULT_NO_PORT
@@ -49,20 +49,12 @@ object TunnelSSHMatcher {
         return output.contains("Host / port not found")
     }
 
-    fun checkNoTunnelSetup(output: String): Boolean {
-        return Matcher.toLC(output.trim()).contains("no tunnel has been set up")
+    fun checkTunnelSetupAddedOrRemoved(output: String, check: String): Boolean {
+        return Matcher.toLC(output.trim()).contains(check)
     }
 
     fun isListModified(output: String): Boolean {
         return (arrayOf("Added", "Removed").filter { it in output }).isNotEmpty()
-    }
-
-    fun isAdded(output: String): Boolean {
-        return Matcher.toLC(output.trim()).contains("added")
-    }
-
-    fun isRemoved(output: String): Boolean {
-        return Matcher.toLC(output.trim()).contains("removed")
     }
 
     fun contains(output: String, key :String): Boolean {
