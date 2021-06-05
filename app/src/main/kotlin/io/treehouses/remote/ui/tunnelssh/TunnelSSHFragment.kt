@@ -160,8 +160,6 @@ class TunnelSSHFragment :  BaseFragment() {
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-//        try { initializeDialog2() }
-//        catch (exception: Exception) { }
     }
 
 
