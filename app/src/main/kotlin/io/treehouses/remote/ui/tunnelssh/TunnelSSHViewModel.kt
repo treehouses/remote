@@ -92,8 +92,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             }
             s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
             s == TUNNEL_SSH_RESULTS.RESULT_REMOVED -> {
-                tunnelSSHObject.portNames.clear()
-                tunnelSSHObject.enabledNotifyNow = false
+                tunnelSSHObject.portNames.clear(); tunnelSSHObject.enabledNotifyNow = false
                 sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             }
             s == TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST -> handleModifiedList()
@@ -203,11 +202,6 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
 
         if (tunnelSSHObject.portNames!!.size > 1) tunnelSSHObject.portNames!!.add("All")
         tunnelSSHObject.enableSSHPort = true
-    }
-
-    fun keyClickListener(profile: String) {
-        sendMessage("treehouses remote key send $profile")
-        jsonSend(true)
     }
 
     fun handleShowKeys(profileText: String) {

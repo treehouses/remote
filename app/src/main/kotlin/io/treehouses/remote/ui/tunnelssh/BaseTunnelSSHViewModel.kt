@@ -150,5 +150,10 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
         builder.setNeutralButton(text) { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
     }
 
+    fun keyClickListener(profile: String) {
+        sendMessage("treehouses remote key send $profile")
+        jsonSend(true)
+    }
+
 
 }
