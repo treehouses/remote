@@ -84,3 +84,9 @@ jobs:
           tag: v${{ steps.build_id.outputs.id }}
           overwrite: true
           file_glob: true
+
+      - name: Send Message
+        run: |
+          sudo npm install -g @treehouses/cli
+          export gitter_channel="${{ secrets.CHANNEL }}"
+          treehouses feedback "Download url: https://github.com/treehouses/remote/releases/tag/v$"
