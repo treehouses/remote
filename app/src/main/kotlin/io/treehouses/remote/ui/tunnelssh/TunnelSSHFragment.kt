@@ -57,8 +57,9 @@ class TunnelSSHFragment : BaseFragment() {
     }
 
     private fun addListeners1() {
+        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) }; bind.btnAddHosts.setOnClickListener { showDialog(dialogHosts) }
+        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }; bind.notifyNow.setOnClickListener { viewModel.notifyNow(requireContext()) }
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
-        bind.notifyNow.setOnClickListener { viewModel.notifyNow(requireContext()) }
         bind.info.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
             builder.setMessage(R.string.ssh_info);
@@ -83,9 +84,6 @@ class TunnelSSHFragment : BaseFragment() {
     }
 
     private fun addListeners2() {
-        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) };
-        bind.btnAddHosts.setOnClickListener { showDialog(dialogHosts) }
-        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) };
         var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
         dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
         dialogKeys.btn_show_keys.setOnClickListener {
