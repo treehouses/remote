@@ -134,8 +134,11 @@ class TunnelSSHFragment : BaseFragment() {
                     dialogKeys.private_key.text = it.data!!.privateKey
                     dialogKeys.progress_bar.visibility = View.GONE
                     dialogKeys.progress_bar.visibility = View.GONE
+                    portsName = it.data.portNames
+                    hostsName = it.data.hostNames
                     adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
                     bind.sshPorts.adapter = adapter
+
                     adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                     dialogPort.hosts.adapter = adapter2
 
