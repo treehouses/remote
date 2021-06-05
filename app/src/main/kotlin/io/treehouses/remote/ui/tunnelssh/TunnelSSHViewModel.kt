@@ -31,6 +31,57 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             jsonReceiving = true
             jsonString = output.trim()
         }
+        checkSSHResult(s, output)
+        checkOutput(output)
+//        when {
+//            s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
+//                enableButtons()
+//                Toast.makeText(context, "Host not found. Failure to delete port.", Toast.LENGTH_SHORT).show()
+//            }
+//            s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> {
+//                tunnelSSHObject.enableAddPort = false
+//            }
+//            s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
+//            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED -> {
+//                tunnelSSHObject.portNames.clear()
+//                tunnelSSHObject.enabledNotifyNow = false
+//                sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
+//            }
+//            s == TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST -> handleModifiedList()
+//            s == TUNNEL_SSH_RESULTS.RESULT_SSH_PORT && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS) -> handleNewList(output)
+//            s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
+//            s == TUNNEL_SSH_RESULTS.RESULT_STATUS_OFF -> handleOffStatus()
+//            s == TUNNEL_SSH_RESULTS.RESULT_NO_PORT -> handleNoPorts()
+//
+//            s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> {
+//                tunnelSSHObject.addPortText = "Add Port"
+//                Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
+//            }
+//            output.contains("Error: only 'list'") -> {
+//                val message = "Please swipe slower in the future as you have a slow rpi, getting ports again..."
+//                sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
+//                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+//            }
+//            output.contains("true") || output.contains("false") -> {
+//                sendMessage("treehouses remote key send")
+//                Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
+//            }
+//            output.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
+//            output.contains("unknown") -> jsonSend(false)
+//
+//            output.contains("OK.") -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
+//            output.contains("Thanks for the feedback!") -> {
+//                val notified = "Notified Gitter. Thank you!"
+//                Toast.makeText(context, notified, Toast.LENGTH_SHORT).show()
+//                tunnelSSHObject.enabledNotifyNow = true
+//            }
+//            else -> {
+//            }
+//        }
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
+    }
+
+    fun checkSSHResult(s: TUNNEL_SSH_RESULTS, output: String){
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
                 enableButtons()
@@ -50,11 +101,15 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_OFF -> handleOffStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_NO_PORT -> handleNoPorts()
-
             s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> {
                 tunnelSSHObject.addPortText = "Add Port"
                 Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    fun checkOutput(output: String){
+        when{
             output.contains("Error: only 'list'") -> {
                 val message = "Please swipe slower in the future as you have a slow rpi, getting ports again..."
                 sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
@@ -73,14 +128,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 Toast.makeText(context, notified, Toast.LENGTH_SHORT).show()
                 tunnelSSHObject.enabledNotifyNow = true
             }
-            else -> {
-
-            }
-
-
         }
-        tunnelSSHData.value = Resource.success(tunnelSSHObject)
-
     }
 
 

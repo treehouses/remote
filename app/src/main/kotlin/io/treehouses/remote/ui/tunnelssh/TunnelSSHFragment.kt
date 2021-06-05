@@ -68,8 +68,7 @@ class TunnelSSHFragment : BaseFragment() {
         }
         dialogPort.btn_adding_port.setOnClickListener {
             if (dialogPort.ExternalTextInput.text!!.isNotEmpty() && dialogPort.InternalTextInput.text!!.isNotEmpty()) {
-                val s1 = dialogPort.InternalTextInput.text.toString();
-                val s2 = dialogPort.ExternalTextInput.text.toString()
+                val s1 = dialogPort.InternalTextInput.text.toString(); val s2 = dialogPort.ExternalTextInput.text.toString()
                 val parts = dialogPort.hosts?.selectedItem.toString().split(":")[0]
                 viewModel.addingPortButton(s1, s2, parts)
                 dialogPort.dismiss()
