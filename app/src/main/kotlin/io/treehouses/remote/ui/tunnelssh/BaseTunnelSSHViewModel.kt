@@ -5,13 +5,13 @@ import android.app.Application
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
-import android.text.Spanned
-import android.view.View
-import android.widget.*
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
+import io.treehouses.remote.pojo.TunnelSSHData
+import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
@@ -20,23 +20,10 @@ import org.json.JSONObject
 
 open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext
-    var notifyNowEnabled: MutableLiveData<Boolean> = MutableLiveData() //notifyNow.isEnabled
-    var switchChecked: MutableLiveData<Boolean> = MutableLiveData() //switchNotification.isChecked
-    var switchEnabled: MutableLiveData<Boolean> = MutableLiveData() //switchNotification.isEnabled
-    var addHostText: MutableLiveData<String> = MutableLiveData() //btnAddHosts.text
-    var addHostEnabled: MutableLiveData<Boolean> = MutableLiveData() //btnAddHosts.isEnabled
-    var addPortText: MutableLiveData<String> = MutableLiveData()  //btnAddPort.text
-    var addPortEnabled: MutableLiveData<Boolean> = MutableLiveData()  //btnAddPort.isEnabled
-    var sshPortEnabled: MutableLiveData<Boolean> = MutableLiveData()  //sshPorts.isEnabled
-    var dialogKeysPublicText: MutableLiveData<Spanned> = MutableLiveData() //dialogKeys.public_key.text
-    var dialogKeysPrivateText: MutableLiveData<Spanned> = MutableLiveData() //dialogKeys.private_key.text
-    var portsNameArray: ArrayList<String>? = null
-    var portsNameAdapter: MutableLiveData<ArrayList<String>?> = MutableLiveData() // portsName
-    var hostsNameArray: ArrayList<String>? = null
-    var hostsNameAdapter: MutableLiveData<ArrayList<String>?> = MutableLiveData() // hostsName
-    var hostsPositionArray: ArrayList<Int>? = null
-    var hostsPositionAdapter: MutableLiveData<ArrayList<Int>?> = MutableLiveData() // hostsPosition
-    var progressBar: MutableLiveData<Int> = MutableLiveData() // hostsPosition
+
+    // hostsPosition
+    var tunnelSSHData: MutableLiveData<Resource<TunnelSSHData>> = MutableLiveData()
+    var tunnelSSHObject: TunnelSSHData = TunnelSSHData() // hostsPosition
     protected var jsonReceiving = false
     protected var jsonSent = false
     protected var jsonString = ""
@@ -44,31 +31,20 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
 
     fun handleMoreMessages(readMessage: String) {
         when {
-            readMessage.contains("Error: only 'list'") -> {
-                val message = "Please swipe slower in the future as you have a slow rpi, getting ports again..."
-                sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
-            readMessage.contains("true") || readMessage.contains("false") -> {
-                sendMessage("treehouses remote key send")
-                Toast.makeText(context, "Please wait...", Toast.LENGTH_SHORT).show()
-            }
-            readMessage.contains("Saved") -> Toast.makeText(context, "Keys successfully saved to Pi", Toast.LENGTH_SHORT).show()
-            readMessage.contains("unknown") -> jsonSend(false)
-            else -> if (jsonSent) handleJson(readMessage)
+
         }
     }
 
     fun jsonSend(sent: Boolean) {
         jsonSent = sent
-        if (sent) progressBar.value = View.VISIBLE
+        if (sent) tunnelSSHData.value = Resource.loading()
         else {
-            progressBar.value = View.GONE
+            // progressBar.value = View.GONE
             jsonReceiving = false
         }
     }
 
-    private fun handleJson(readMessage: String) {
+     fun handleJson(readMessage: String) {
         val s = match(readMessage)
         if (jsonReceiving) {
             jsonString += readMessage
@@ -105,7 +81,9 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
             else if (inNeither) Toast.makeText(context, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             // Keys are different, overwrite one or cancel
             else handleDifferentKeys(jsonObject)
-        } catch (e: JSONException) { e.printStackTrace() }
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
     }
 
     private fun handleDifferentKeys(jsonObject: JSONObject) {
@@ -192,7 +170,6 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
     private fun setNeutralButton(builder: AlertDialog.Builder, text: String) {
         builder.setNeutralButton(text) { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
     }
-
 
 
 }

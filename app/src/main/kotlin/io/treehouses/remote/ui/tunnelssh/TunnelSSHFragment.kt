@@ -2,6 +2,7 @@ package io.treehouses.remote.ui.tunnelssh
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -19,7 +20,9 @@ import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
+import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.*
+import io.treehouses.remote.utils.Utils.toast
 import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
@@ -113,40 +116,32 @@ class TunnelSSHFragment :  BaseFragment() {
     }
 
     fun loadObservers1(){
-        viewModel.notifyNowEnabled.observe(viewLifecycleOwner, Observer { bind.notifyNow.isEnabled = it })
-        viewModel.switchChecked.observe(viewLifecycleOwner, Observer { bind.switchNotification.isChecked = it })
-        viewModel.switchEnabled.observe(viewLifecycleOwner, Observer { bind.switchNotification.isEnabled = it })
-        viewModel.addHostText.observe(viewLifecycleOwner, Observer { bind.btnAddHosts.text = it })
-        viewModel.addHostEnabled.observe(viewLifecycleOwner, Observer { bind.btnAddHosts.isEnabled = it })
-        viewModel.addPortText.observe(viewLifecycleOwner, Observer { bind.btnAddPort.text = it })
-        viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer { bind.btnAddPort.isEnabled = it })
-        viewModel.sshPortEnabled.observe(viewLifecycleOwner, Observer { bind.sshPorts.isEnabled = it })
-        loadObservers2()
-    }
+        viewModel.tunnelSSHData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            when(it.status) {
+                Status.SUCCESS -> {
+                    bind.notifyNow.isEnabled = it.data!!.enabledNotifyNow
+                    bind.switchNotification.isEnabled = it.data!!.enableSwitchNotification
+                    bind.btnAddHosts.text = it.data!!.addHostText
+                    bind.btnAddPort.text = it.data!!.addPortText
+                    bind.btnAddPort.isEnabled = it.data!!.enableAddPort
+                    bind.btnAddHosts.isEnabled = it.data!!.enableAddHost
+                    bind.sshPorts.isEnabled = it.data!!.enableSSHPort
+                    dialogKeys.public_key.text = it.data!!.publicKey
+                    dialogKeys.private_key.text = it.data!!.privateKey
+                    dialogKeys.progress_bar.visibility = View.GONE
+                    dialogKeys.progress_bar.visibility = View.GONE
+                    adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
+                    bind.sshPorts.adapter = adapter
+                    adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                    dialogPort.hosts.adapter = adapter2
 
-    fun loadObservers2(){
-        viewModel.dialogKeysPublicText.observe(viewLifecycleOwner, Observer { dialogKeys.public_key.text = it })
-        viewModel.dialogKeysPrivateText.observe(viewLifecycleOwner, Observer { dialogKeys.private_key.text = it })
-        viewModel.progressBar.observe(viewLifecycleOwner, Observer { dialogKeys.progress_bar.visibility = it })
-        viewModel.portsNameAdapter.observe(viewLifecycleOwner, Observer {
-            portsName = it; adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
-//            try {
-//                adapter = TunnelPortAdapter(requireContext(), portsName!!)
-//                logE("adapter successful")
-//            } catch (e: Exception) {
-//                logE(e.toString())
-//            }
-            bind.sshPorts.adapter = adapter
+                }
+                Status.LOADING -> {
+                    if (it == null) return@Observer
+                    dialogKeys.progress_bar.visibility = View.VISIBLE
+                }
+            }
         })
-        viewModel.hostsNameAdapter.observe(viewLifecycleOwner, Observer {
-            hostsName = it
-            try {
-                adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
-                logE("adapter successful")
-            } catch (e: Exception) { logE(e.toString()) }
-            dialogPort.hosts.adapter = adapter2
-        })
-        viewModel.hostsPositionAdapter.observe(viewLifecycleOwner, Observer { hostsPosition = it })
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -169,34 +164,6 @@ class TunnelSSHFragment :  BaseFragment() {
 //        catch (exception: Exception) { }
     }
 
-//    @RequiresApi(Build.VERSION_CODES.N)
-//    private fun initializeDialog2() {
-//        bind.sshPorts.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-//            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-//            if (portsName!![position].contains("@")) {
-//                builder.setTitle("Delete Host  " + portsName!![position] + " ?")
-//                builder.setPositiveButton("Confirm") { dialog, _ ->
-//                    viewModel.deleteHost(position)
-//                    dialog.dismiss()
-//                }
-//            }
-//            builder.setTitle("Delete Port " + portsName!![position] + " ?")
-//            builder.setPositiveButton("Confirm") { dialog, _ ->
-//                viewModel.deletePort(position)
-//                dialog.dismiss()
-//            }
-//            builder.setNegativeButton("Cancel", null)
-//            val dialog = builder.create()
-//            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-//            dialog.show()
-//        }
-//        var profile = dialogKeys.findViewById<EditText>(R.id.sshtunnel_profile).text.toString()
-//        dialogKeys.btn_save_keys.setOnClickListener { viewModel.keyClickListener(profile); }
-//        dialogKeys.btn_show_keys.setOnClickListener {
-//            viewModel.keyClickListener(profile)
-//            viewModel.handleShowKeys(profile)
-//        }
-//    }
 
     override fun setUserVisibleHint(visible: Boolean) {
         if (visible) {
