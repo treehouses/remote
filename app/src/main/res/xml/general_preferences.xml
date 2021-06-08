@@ -16,7 +16,7 @@
             android:key="autocomplete"
             android:defaultValue="true" />
 
-        <ListPreference
+        <io.treehouses.remote.views.RoundedListPreference
             android:defaultValue="Follow System"
             android:entries="@array/dark_mode_options"
             android:entryValues="@array/dark_mode_options"
@@ -42,9 +42,7 @@
             android:layout="@layout/custom_pref_middle"
             android:key="reconnectBluetooth"/>
 
-
-
-        <ListPreference
+        <io.treehouses.remote.views.RoundedListPreference
             android:defaultValue="LED Heavy Metal"
             android:entries="@array/led_options"
             android:entryValues="@array/led_options"
