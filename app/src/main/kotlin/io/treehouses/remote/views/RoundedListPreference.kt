@@ -3,6 +3,8 @@ package io.treehouses.remote.views
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
 import androidx.preference.ListPreference
@@ -25,16 +27,18 @@ class RoundedListPreference : ListPreference {
     override fun onClick() {
         var currentIndex = findIndexOfValue(value)
 
-        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        var dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
-                .setSingleChoiceItems(entryValues, currentIndex) { dialog: DialogInterface, index: Int->
-                    if(callChangeListener(entryValues[index].toString())){
+                .setSingleChoiceItems(entryValues, currentIndex) { dialog: DialogInterface, index: Int ->
+                    if (callChangeListener(entryValues[index].toString())) {
                         setValueIndex(index)
                     }
                     dialog.dismiss()
                 }
-                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int  -> dialog.dismiss() }
-                .show()
+                .setNegativeButton(R.string.cancel) { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show()
     }
 
 //    private fun getValueIndex() = context.resources.getStringArray(R.array.app_language).indexOf(value)
