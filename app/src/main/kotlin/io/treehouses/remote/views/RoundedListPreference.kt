@@ -41,5 +41,4 @@ class RoundedListPreference : ListPreference {
         dialog.show()
     }
 
-//    private fun getValueIndex() = context.resources.getStringArray(R.array.app_language).indexOf(value)
 }
