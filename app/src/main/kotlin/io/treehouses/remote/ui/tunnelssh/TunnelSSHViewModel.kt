@@ -20,6 +20,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         logD("ON READ " + output)
 
         val s = matchSshOutput(output.trim())
+
         if (jsonReceiving) {
             jsonString += output
             buildJSON()
@@ -27,10 +28,13 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 buildJSON()
                 jsonSend(false)
             }
-        } else if (s == RESULTS.START_JSON) {
+            return
+        } else if (s == TUNNEL_SSH_RESULTS.START_JSON) {
             jsonReceiving = true
             jsonString = output.trim()
+            return
         }
+        logD("RESULT" + s.name);
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
                 enableButtons()
@@ -205,8 +209,10 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
 
     protected fun handleNoPorts() {
         tunnelSSHObject.enableSSHPort = true
-        tunnelSSHObject.addPortText = "Add Port"; tunnelSSHObject.addHostText = "Add Host"
-        tunnelSSHObject.enableAddPort = false; tunnelSSHObject.enableAddHost = true
+        tunnelSSHObject.addPortText = "Add Port";
+        tunnelSSHObject.addHostText = "Add Host"
+        tunnelSSHObject.enableAddPort = false;
+        tunnelSSHObject.enableAddHost = true
         Toast.makeText(context, "Add a host", Toast.LENGTH_SHORT).show()
     }
 

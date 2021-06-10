@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
-class TunnelSSHFragment : BaseFragment() {
+class TunnelSSHFragment : Fragment() {
     protected val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivityTunnelSshFragmentBinding
     var adapter: TunnelPortAdapter? = null
@@ -124,24 +125,22 @@ class TunnelSSHFragment : BaseFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     bind.notifyNow.isEnabled = it.data!!.enabledNotifyNow
-                    bind.switchNotification.isEnabled = it.data!!.enableSwitchNotification
-                    bind.btnAddHosts.text = it.data!!.addHostText
-                    bind.btnAddPort.text = it.data!!.addPortText
-                    bind.btnAddPort.isEnabled = it.data!!.enableAddPort
-                    bind.btnAddHosts.isEnabled = it.data!!.enableAddHost
-                    bind.sshPorts.isEnabled = it.data!!.enableSSHPort
-                    dialogKeys.public_key.text = it.data!!.publicKey
-                    dialogKeys.private_key.text = it.data!!.privateKey
+                    bind.switchNotification.isEnabled = it.data.enableSwitchNotification
+                    bind.btnAddHosts.text = it.data.addHostText
+                    bind.btnAddPort.text = it.data.addPortText
+                    bind.btnAddPort.isEnabled = it.data.enableAddPort
+                    bind.btnAddHosts.isEnabled = it.data.enableAddHost
+                    bind.sshPorts.isEnabled = it.data.enableSSHPort
+                    dialogKeys.public_key.text = it.data.publicKey
+                    dialogKeys.private_key.text = it.data.privateKey
                     dialogKeys.progress_bar.visibility = View.GONE
                     dialogKeys.progress_bar.visibility = View.GONE
                     portsName = it.data.portNames
                     hostsName = it.data.hostNames
                     adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
                     bind.sshPorts.adapter = adapter
-
                     adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                     dialogPort.hosts.adapter = adapter2
-
                 }
                 Status.LOADING -> {
                     if (it == null) return@Observer
