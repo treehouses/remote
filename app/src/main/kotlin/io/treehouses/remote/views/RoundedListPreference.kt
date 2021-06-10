@@ -25,9 +25,8 @@ class RoundedListPreference : ListPreference {
     constructor(context: Context?) : super(context)
 
     override fun onClick() {
-        var currentIndex = findIndexOfValue(value)
-
-        var dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        val currentIndex = findIndexOfValue(value)
+        val dialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 .setTitle(title)
                 .setSingleChoiceItems(entryValues, currentIndex) { dialog: DialogInterface, index: Int ->
                     if (callChangeListener(entryValues[index].toString())) {
