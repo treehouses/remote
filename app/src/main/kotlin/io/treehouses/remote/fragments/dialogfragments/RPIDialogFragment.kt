@@ -257,11 +257,9 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     override fun onDeviceDeleted(position: Int) {
-        var device = raspberryDevicesText[position]
+        var device = raspberryDevices[position]
         try {
-            val m: Method = device.javaClass
-                    .getMethod("removeBond", null)
-            m.invoke(device, null as Array<Any?>?)
+            device::class.java.getMethod("removeBond").invoke(device)
             raspberryDevicesText.removeAt(position)
             mArrayAdapter?.notifyDataSetChanged()
         } catch (e: Exception) {
