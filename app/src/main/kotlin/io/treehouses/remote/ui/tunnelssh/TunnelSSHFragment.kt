@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
 class TunnelSSHFragment : Fragment() {
-    protected val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
+    protected  val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivityTunnelSshFragmentBinding
     var adapter: TunnelPortAdapter? = null
     private lateinit var adapter2: ArrayAdapter<String>
@@ -50,6 +50,7 @@ class TunnelSSHFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Tutorials.tunnelSSHTutorials(bind, requireActivity())
+        viewModel.setUserVisibleHint()
     }
 
     fun showDialog(dialog: Dialog) {
@@ -169,12 +170,12 @@ class TunnelSSHFragment : Fragment() {
         windowHost.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 
-
-    override fun setUserVisibleHint(visible: Boolean) {
-        if (visible) {
-            viewModel.setUserVisibleHint()
-        }
-    }
+//
+//    override fun setUserVisibleHint(visible: Boolean) {
+//        if (visible) {
+//
+//        }
+//    }
 
     fun checkAddingHostButtonEnable() {
         if (dialogHosts.UserNameInput.editableText.isNotEmpty() && dialogHosts.DomainIPInput.editableText.isNotEmpty()

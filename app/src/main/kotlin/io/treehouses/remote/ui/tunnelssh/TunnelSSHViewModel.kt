@@ -20,7 +20,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         logD("ON READ " + output)
 
         val s = matchSshOutput(output.trim())
-
+        logD("RESULT " + s.name);
         if (jsonReceiving) {
             jsonString += output
             buildJSON()
@@ -34,12 +34,13 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             jsonString = output.trim()
             return
         }
-        logD("RESULT" + s.name);
+
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
                 enableButtons()
                 Toast.makeText(context, "Host not found. Failure to delete port.", Toast.LENGTH_SHORT).show()
             }
+
             s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> {
                 tunnelSSHObject.enableAddPort = false
             }
@@ -78,7 +79,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 tunnelSSHObject.enabledNotifyNow = true
             }
             else -> {
-
+                handleNoPorts()
             }
 
 
@@ -228,15 +229,16 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
 
     protected fun handleModifiedList() {
         Toast.makeText(context, "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
-        tunnelSSHObject.addPortText = "Retrieving";
-        tunnelSSHObject.addHostText = "Retrieving"
+        tunnelSSHObject.addPortText = "Retrieving...";
+        tunnelSSHObject.addHostText = "Retrieving..."
         initializeArrays()
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
     fun deleteHost(position: Int) {
         val parts = tunnelSSHObject.portNames!![position].split(":")[0]
-        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts)); tunnelSSHObject.addHostText = "deleting host ....."
+        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts));
+        tunnelSSHObject.addHostText = "deleting host ....."
         tunnelSSHObject.enableSSHPort = false; tunnelSSHObject.enableAddHost = false
     }
 

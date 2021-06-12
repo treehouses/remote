@@ -16,12 +16,15 @@ class RPIListAdapter(private val mContext: Context, private val data: List<Devic
         // Get the data item for this position
         var newView = convertView
         val deviceText = data[position].deviceName
+        val device = data[position]
+
         // Check if an existing view is being reused, otherwise inflate the view
         if (newView == null) {
             newView = LayoutInflater.from(getContext()).inflate(R.layout.list_rpi_item, parent, false)
         }
         val text = newView!!.findViewById<TextView>(R.id.device_info)
         val pairedImage = newView.findViewById<ImageView>(R.id.paired_icon)
+
         text.text = deviceText
         pairedImage.visibility = View.INVISIBLE
         if (data[position].isPaired) {
