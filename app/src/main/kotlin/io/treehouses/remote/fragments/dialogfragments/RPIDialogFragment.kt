@@ -22,14 +22,16 @@ import androidx.fragment.app.viewModels
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.RPIListAdapter
 import io.treehouses.remote.bases.BaseDialogFragment
+import io.treehouses.remote.callback.DeviceDeleteListener
 import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
+import java.lang.reflect.Method
 import java.util.*
 
-class RPIDialogFragment : BaseDialogFragment() {
+class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private val raspberryDevices: MutableList<BluetoothDevice> = ArrayList()
     private val allDevices: MutableList<BluetoothDevice> = ArrayList()
     private var pairedDevices: Set<BluetoothDevice>? = null
@@ -135,6 +137,7 @@ class RPIDialogFragment : BaseDialogFragment() {
         }
     }
 
+
     private fun switchViewOnClickListener() {
         bind!!.rpiSwitch.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             if (isChecked) {
@@ -148,6 +151,7 @@ class RPIDialogFragment : BaseDialogFragment() {
             }
         }
     }
+
 
     private fun finish(mView: View) {
         val mDialog = getAlertDialog(mView)
@@ -194,6 +198,7 @@ class RPIDialogFragment : BaseDialogFragment() {
 
     private fun setAdapterNotNull(listVal: List<DeviceInfo>) {
         mArrayAdapter = RPIListAdapter(requireContext(), listVal)
+        (mArrayAdapter as RPIListAdapter).deviceListener = this
         bind!!.listView.adapter = mArrayAdapter
     }
 
@@ -247,6 +252,20 @@ class RPIDialogFragment : BaseDialogFragment() {
                 if(deviceHardwareAddress.contains(item)) return true
             }
             return false
+        }
+
+    }
+
+    override fun onDeviceDeleted(position: Int) {
+        var device = raspberryDevicesText[position]
+        try {
+            val m: Method = device.javaClass
+                    .getMethod("removeBond", null)
+            m.invoke(device, null as Array<Any?>?)
+            raspberryDevicesText.removeAt(position)
+            mArrayAdapter?.notifyDataSetChanged()
+        } catch (e: Exception) {
+            logD(e.toString())
         }
 
     }
