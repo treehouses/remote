@@ -30,6 +30,7 @@ object Constants {
     const val PARSE_APPLICATION_ID = "treehouses"
     var value = ""
     private val groups = ArrayList<String>()
+    private val systemTutorialTitles = mutableListOf("one", "two", "three", "four")
 
     // Intent request code (use in BluetoothChatFragment)
     const val REQUEST_CONNECT_DEVICE_SECURE = 1

@@ -103,8 +103,10 @@ class TunnelSSHFragment : Fragment() {
                 val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 if (portsName!![position].contains("@")) {
                     setPortDialog(builder, position, "Delete Host  ")
+                }else{
+                    setPortDialog(builder, position, "Delete Port ")
                 }
-                setPortDialog(builder, position, "Delete Port ")
+
                 builder.setNegativeButton("Cancel", null)
                 val dialog = builder.create()
                 dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show()
