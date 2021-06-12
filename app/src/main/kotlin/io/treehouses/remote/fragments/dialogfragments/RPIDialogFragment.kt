@@ -259,7 +259,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                         device::class.java.getMethod("removeBond").invoke(device)
                         raspberryDevices.removeAt(position)
                         raspberryDevicesText.removeAt(position)
-                        raspberryDevices.removeAt(position)
                         allDevices.remove(device)
                         mArrayAdapter?.notifyDataSetChanged()
                     } catch (e: Exception) {
