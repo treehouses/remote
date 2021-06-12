@@ -254,7 +254,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     override fun onDeviceDeleted(position: Int) {
         var device = raspberryDevices[position]
         AlertDialog.Builder(activity)
-                .setMessage("Are you sure want to unpair this device??")
+                .setMessage(R.string.delete_device_message)
                 .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         try {
