@@ -257,6 +257,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 .setPositiveButton("Yes") { _, _ ->
                     try {
                         device::class.java.getMethod("removeBond").invoke(device)
+                        raspberryDevices.removeAt(position)
                         raspberryDevicesText.removeAt(position)
                         raspberryDevices.removeAt(position)
                         allDevices.remove(device)
