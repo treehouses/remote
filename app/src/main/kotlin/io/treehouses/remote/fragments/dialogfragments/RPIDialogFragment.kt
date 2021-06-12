@@ -49,11 +49,10 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         mBluetoothAdapter!!.startDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-//        if (mChatService == null) mChatService = listener!!.getChatService()
-//        mChatService!!.updateHandler(mHandler)
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
+            logD("DEVICE " + d)
             if (checkPiAddress(d.address)) {
                 addToDialog(d, raspberryDevicesText, raspberryDevices, false)
                 bind!!.progressBar.visibility = View.INVISIBLE
@@ -259,6 +258,8 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                     try {
                         device::class.java.getMethod("removeBond").invoke(device)
                         raspberryDevicesText.removeAt(position)
+                        raspberryDevices.removeAt(position)
+                        allDevices.remove(device)
                         mArrayAdapter?.notifyDataSetChanged()
                     } catch (e: Exception) {
                         Toast.makeText(activity, "Unable to delete device", Toast.LENGTH_LONG).show()
