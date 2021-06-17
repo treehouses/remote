@@ -17,5 +17,6 @@ data class TunnelSSHData(
         var publicKey: Spanned = SpannableString(""),
         var privateKey: Spanned = SpannableString(""),
         var hostNames: ArrayList<String> = ArrayList(),
-        var portNames: ArrayList<String> = ArrayList()
+        var portNames: ArrayList<String> = ArrayList(),
+        var hostPosition: ArrayList<Int> = ArrayList()
 ) : Serializable
