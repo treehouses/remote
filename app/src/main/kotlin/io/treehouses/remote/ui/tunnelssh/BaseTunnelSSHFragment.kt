@@ -31,7 +31,7 @@ open class BaseTunnelSSHFragment : Fragment() {
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
             viewModel.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
             Toast.makeText(context, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
-        }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
+        }.setNegativeButton("Cancel", null)
         builder.show()
     }
 
