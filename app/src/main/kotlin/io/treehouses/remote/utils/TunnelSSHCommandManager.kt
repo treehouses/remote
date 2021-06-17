@@ -63,7 +63,7 @@ object TunnelSSHMatcher {
     }
 
     fun isRemoved(output: String): Boolean {
-        return output.toLowerCase(Locale.ROOT).trim().contains("removed")
+        return Matcher.toLC(output).trim().contains("removed")
     }
 
     fun contains(output: String, key: String): Boolean {
