@@ -47,10 +47,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
                     if (it.data!!.showHandlePiKeySaveDialog)
                         handlePiKeySave(it.data.profile, it.data.storedPublicKey, it.data.storedPrivateKey)
                 }
-                Status.LOADING -> {
-                    if (it == null) return@Observer
-                    dialogKeys.progress_bar.visibility = View.VISIBLE
-                }
             }
         })
     }
