@@ -35,13 +35,13 @@ open class BaseTunnelSSHFragment : Fragment() {
         builder.show()
     }
 
-    protected fun handlePhoneKeySave(profile: String, piPublicKey: String, piPrivateKey: String) {
+    protected fun handlePhoneKeySave(data: TunnelSSHKeyDialogData) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Save Key To Phone")
-        builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
-                "Pi Private Key for ${profile}: \n$piPrivateKey")
+        builder.setMessage("Pi Public Key for ${data.profile}: \n${data.piPublicKey}\n" +
+                "Pi Private Key for ${data.profile}: \n$data.piPrivateKey")
         builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
-            viewModel.saveKeyToPhone(profile, piPublicKey, piPrivateKey)
+            viewModel.saveKeyToPhone(data.profile, data.piPublicKey, data.piPrivateKey)
         }
         setNeutralButtonAndShow(builder)
     }
