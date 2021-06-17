@@ -52,6 +52,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 tunnelSSHObject.enabledNotifyNow = false
                 sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             }
+            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED  -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_SSH_PORT && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS) -> handleNewList(output)
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
@@ -81,7 +82,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 tunnelSSHObject.enabledNotifyNow = true
             }
             else -> {
-                handleNoPorts()
+               // handleNoPorts()
             }
 
 
@@ -152,7 +153,9 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.enableAddPort = true
         tunnelSSHObject.enableAddHost = true
         tunnelSSHObject.enabledNotifyNow = true
-
+        if(tunnelSSHObject.hostNames.size>0){
+            tunnelSSHObject.portNames.removeAt(tunnelSSHObject.portNames.size-1);
+        }
         val hosts = readMessage.split('\n')
         for (host in hosts) {
             val ports = host.split(' ')

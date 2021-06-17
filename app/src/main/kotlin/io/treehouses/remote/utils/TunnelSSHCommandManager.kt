@@ -58,7 +58,7 @@ object TunnelSSHMatcher {
     }
 
     fun isAdded(output: String): Boolean {
-        return Matcher.toLC(output.trim()).contains("added")
+        return output.trim().contains("added")
     }
 
     fun isRemoved(output: String): Boolean {
