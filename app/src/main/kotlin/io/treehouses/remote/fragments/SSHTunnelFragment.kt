@@ -12,7 +12,6 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import io.treehouses.remote.R
-import io.treehouses.remote.adapter.TunnelPageAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
@@ -25,8 +24,8 @@ import io.treehouses.remote.views.TunnelViewPager
 class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
     private var tabLayout: TabLayout? = null
-    private var tunnelView: TunnelViewPager? = null
-    private var tunnelPageAdapter: TunnelPageAdapter? = null
+//    private var tunnelView: TunnelViewPager? = null
+//    private var tunnelPageAdapter: TunnelPageAdapter? = null
     private lateinit var bind: ActivitySshTunnelFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySshTunnelFragmentBinding.inflate(inflater, container, false)

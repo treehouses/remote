@@ -75,4 +75,13 @@ open class BaseTunnelSSHFragment : Fragment() {
         builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
         builder.show()
     }
+    protected fun setPortDialog(builder: AlertDialog.Builder, position: Int, title: String) {
+        builder.setTitle(title + portsName!![position] + " ?")
+        builder.setPositiveButton("Confirm") { dialog, _ ->
+            if (title.contains("Host")) viewModel.deleteHost(position)
+            else viewModel.deletePort(position)
+            dialog.dismiss()
+        }
+    }
+
 }

@@ -120,14 +120,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
         }
     }
 
-    private fun setPortDialog(builder: AlertDialog.Builder, position: Int, title: String) {
-        builder.setTitle(title + portsName!![position] + " ?")
-        builder.setPositiveButton("Confirm") { dialog, _ ->
-            if (title.contains("Host")) viewModel.deleteHost(position)
-            else viewModel.deletePort(position)
-            dialog.dismiss()
-        }
-    }
 
     private fun loadObservers1() {
         viewModel.tunnelSSHData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
