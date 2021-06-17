@@ -39,15 +39,13 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
     }
 
 
-    public fun buildJSON() {
+    protected fun buildJSON() {
         try {
             val jsonObject = JSONObject(jsonString)
-            logD(jsonString)
             val profile = jsonObject.getString("profile")
             val (piPublicKey, piPrivateKey) = getPublicKeys(jsonObject)
             val (storedPublicKey, storedPrivateKey) = getStoredKeys(profile)
             logKeys(piPublicKey, piPrivateKey, storedPublicKey, storedPrivateKey)
-
             val inPiAndPhone = piPublicKey == storedPublicKey && piPrivateKey == storedPrivateKey
             val inPiOnly = piPublicKey != "No public key found" && piPrivateKey != "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()
             val inPhoneOnly = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()
@@ -61,28 +59,20 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
             tunnelSSHKeyDialogObj.piPublicKey = piPublicKey!!
             if (inPiAndPhone) Toast.makeText(context, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
             // Key exists in Pi but not phone
-//            else if (inPiOnly) handlePhoneKeySave(profile, piPublicKey, piPrivateKey)
-
             else if (inPiOnly) {
-                tunnelSSHKeyDialogObj.showHandlePhoneKeySaveDialog = true
-                tunnelSSHKeyDialogData.value = Resource.success(tunnelSSHKeyDialogObj)
-                //  handlePhoneKeySave(profile, piPublicKey, piPrivateKey)
+                tunnelSSHKeyDialogObj.showHandlePhoneKeySaveDialog = true;tunnelSSHKeyDialogData.value = Resource.success(tunnelSSHKeyDialogObj)
             }
             // Key exists in phone but not Pi
-//            else if (inPhoneOnly) handlePiKeySave(profile, storedPublicKey, storedPrivateKey)
             else if (inPhoneOnly) {
-                tunnelSSHKeyDialogObj.showHandlePiKeySaveDialog = true
-                tunnelSSHKeyDialogData.value = Resource.success(tunnelSSHKeyDialogObj)
+                tunnelSSHKeyDialogObj.showHandlePiKeySaveDialog = true;tunnelSSHKeyDialogData.value = Resource.success(tunnelSSHKeyDialogObj)
             }
             // Keys don't exist in phone or Pi
             else if (inNeither) Toast.makeText(context, "No keys for $profile exist on either Pi or phone!", Toast.LENGTH_SHORT).show()
             // Keys are different, overwrite one or cancel
             else {
-                tunnelSSHKeyDialogObj.showHandleDifferentKeysDialog = true
-                tunnelSSHKeyDialogData.value = Resource.success(tunnelSSHKeyDialogObj)
+                tunnelSSHKeyDialogObj.showHandleDifferentKeysDialog = true;tunnelSSHKeyDialogData.value = Resource.success(tunnelSSHKeyDialogObj)
             }
         } catch (e: JSONException) {
-            e.printStackTrace()
         }
     }
 
