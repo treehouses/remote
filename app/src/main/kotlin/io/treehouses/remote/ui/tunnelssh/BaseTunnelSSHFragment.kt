@@ -43,8 +43,7 @@ open class BaseTunnelSSHFragment : Fragment() {
         builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
             viewModel.saveKeyToPhone(profile, piPublicKey, piPrivateKey)
         }
-        builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
-        builder.show()
+        setNeutralButtonAndShow(builder)
     }
 
 
@@ -72,6 +71,9 @@ open class BaseTunnelSSHFragment : Fragment() {
             viewModel.sendMessage("treehouses remote key receive \"${data.storedPublicKey}\" \"${data.storedPublicKey}\" ${data.profile}")
             Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
         }
+        setNeutralButtonAndShow(builder)
+    }
+    private  fun setNeutralButtonAndShow(builder: AlertDialog.Builder) {
         builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
         builder.show()
     }
