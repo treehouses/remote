@@ -20,11 +20,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
 
     override fun onRead(output: String) {
         super.onRead(output)
-        logD("treehouses ON READ " + output)
-
         val s = matchSshOutput(output.trim())
-        logD("treehouses RESULT " + s.name);
-
 
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {

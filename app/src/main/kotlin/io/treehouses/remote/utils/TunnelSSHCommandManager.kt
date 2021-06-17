@@ -1,5 +1,7 @@
 package io.treehouses.remote.utils
 
+import java.util.*
+
 
 enum class TUNNEL_SSH_RESULTS {
     //Errors
@@ -49,7 +51,7 @@ object TunnelSSHMatcher {
     }
 
     fun checkNoTunnelSetup(output: String): Boolean {
-        return Matcher.toLC(output.trim()).contains("no tunnel has been set up")
+        return output.toLowerCase(Locale.ROOT).trim().contains("no tunnel has been set up")
     }
 
     fun isListModified(output: String): Boolean {
@@ -61,7 +63,7 @@ object TunnelSSHMatcher {
     }
 
     fun isRemoved(output: String): Boolean {
-        return Matcher.toLC(output.trim()).contains("removed")
+        return output.toLowerCase(Locale.ROOT).trim().contains("removed")
     }
 
     fun contains(output: String, key: String): Boolean {
