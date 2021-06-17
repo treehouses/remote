@@ -44,8 +44,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
                         handleDifferentKeys(it.data)
                     if (it.data!!.showHandlePhoneKeySaveDialog)
                         handlePhoneKeySave(it.data.profile, it.data.piPublicKey, it.data.piPrivateKey)
-                    if (it.data!!.showHandlePiKeySaveDialog)
-                        handlePiKeySave(it.data.profile, it.data.storedPublicKey, it.data.storedPrivateKey)
+                    if (it.data!!.showHandlePiKeySaveDialog) handlePiKeySave(it.data.profile, it.data.storedPublicKey, it.data.storedPrivateKey)
                 }
             }
         })
