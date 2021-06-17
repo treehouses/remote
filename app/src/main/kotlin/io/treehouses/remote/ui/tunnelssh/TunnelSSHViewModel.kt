@@ -22,38 +22,28 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         val s = matchSshOutput(output.trim())
 
         when {
-            s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
-                enableButtons()
-                Toast.makeText(context, "Host not found. Failure to delete port.", Toast.LENGTH_SHORT).show()
-            }
-            s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> {
-                tunnelSSHObject.enableAddPort = false
-            }
+            s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> enableButtons()
+            s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> tunnelSSHObject.enableAddPort = false
             s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             s == TUNNEL_SSH_RESULTS.RESULT_REMOVED && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL) -> {
-                tunnelSSHObject.portNames!!.clear()
-                tunnelSSHObject.enabledNotifyNow = false
-                sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
+                tunnelSSHObject.portNames!!.clear();tunnelSSHObject.enabledNotifyNow = false; sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             }
-            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED  -> handleModifiedList()
+            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_SSH_PORT && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS) -> handleNewList(output)
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_OFF -> handleOffStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_NO_PORT -> handleNoPorts()
             s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> {
-                tunnelSSHObject.addPortText = "Add Port"
-                Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
-            }else -> {
-                handleMore(output)
+                tunnelSSHObject.addPortText = "Add Port"; Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
             }
+            else -> handleMore(output)
         }
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
-
     }
 
     private fun handleMore(output: String) {
-        when{
+        when {
             output.contains("Error: only 'list'") -> {
                 val message = "Please swipe slower in the future as you have a slow rpi, getting ports again..."
                 sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
@@ -156,8 +146,8 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.enableAddPort = true
         tunnelSSHObject.enableAddHost = true
         tunnelSSHObject.enabledNotifyNow = true
-        if(tunnelSSHObject.hostNames.size>0){
-            tunnelSSHObject.portNames.removeAt(tunnelSSHObject.portNames.size-1);
+        if (tunnelSSHObject.hostNames.size > 0) {
+            tunnelSSHObject.portNames.removeAt(tunnelSSHObject.portNames.size - 1);
         }
         val hosts = readMessage.split('\n')
         for (host in hosts) {
@@ -240,6 +230,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.enableAddPort = true
         tunnelSSHObject.enableSSHPort = true
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
+        Toast.makeText(context, "Host not found. Failure to delete port.", Toast.LENGTH_SHORT).show()
 
     }
 
