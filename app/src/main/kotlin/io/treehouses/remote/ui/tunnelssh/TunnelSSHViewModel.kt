@@ -121,7 +121,9 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
     }
 
     fun deleteHostPorts() {
-        tunnelSSHData.value = Resource.loading(tunnelSSHObject)
+        tunnelSSHObject.addHostText = "Deleting all hosts"
+        tunnelSSHObject.enableAddHost = false
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL))
     }
 
@@ -132,21 +134,20 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
     }
 
     fun addingHostButton(m1: String, m2: String) {
-        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, m1, m2))
         tunnelSSHObject.addHostText = "Adding......"
         tunnelSSHObject.enableAddHost = false
-        tunnelSSHData.value = Resource.loading(tunnelSSHObject)
-
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
+        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_HOST, m1, m2))
     }
 
     fun addingPortButton(s1: String, s2: String, parts: String) {
-        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL, s2, s1, parts))
         tunnelSSHObject.addPortText = "Adding......"
         tunnelSSHObject.enableAddPort = false
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
+        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL, s2, s1, parts))
     }
 
     fun handleNewList(readMessage: String) {
-        logD("HANDLE NEW LIST " + readMessage)
         var position = 0
         tunnelSSHObject.addPortText = "Add Port";
         tunnelSSHObject.addHostText = "Add Host"
@@ -226,6 +227,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.addHostText = "Add Host"
         tunnelSSHObject.enableAddPort = false;
         tunnelSSHObject.enableAddHost = true
+
         Toast.makeText(context, "Add a host", Toast.LENGTH_SHORT).show()
     }
 
@@ -251,7 +253,9 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         val parts = tunnelSSHObject.portNames!![position].split(":")[0]
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts));
         tunnelSSHObject.addHostText = "deleting host ....."
-        tunnelSSHObject.enableSSHPort = false; tunnelSSHObject.enableAddHost = false
+        tunnelSSHObject.enableSSHPort = false;
+        tunnelSSHObject.enableAddHost = false
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
     }
 
     fun deletePort(position: Int) {
