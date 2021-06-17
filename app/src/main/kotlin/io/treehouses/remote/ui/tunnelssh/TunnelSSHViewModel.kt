@@ -92,25 +92,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
     }
 
-    fun setUserVisibleHint() {
-        loadBT()
-        initializeArrays()
-        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
-    }
 
-    fun searchArray(array: java.util.ArrayList<String>?, portnum: String): Boolean {
-        for (name in array!!) {
-            var check = name.substringAfter(":")
-            if (check == portnum) return true
-        }
-        return false
-    }
-
-    fun initializeArrays() {
-        tunnelSSHObject.portNames = ArrayList()
-        tunnelSSHObject.hostNames = ArrayList()
-        tunnelSSHObject.hostPosition = ArrayList()
-    }
 
     fun deleteHostPorts() {
         tunnelSSHObject.addHostText = "Deleting all hosts..."

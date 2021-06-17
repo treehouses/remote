@@ -7,6 +7,7 @@ import android.text.Html
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication
+import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.TunnelSSHData
 import io.treehouses.remote.pojo.TunnelSSHKeyDialogData
@@ -111,11 +112,29 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
         myEdit.putString("${profile}_public_key", piPublicKey)
         myEdit.putString("${profile}_private_key", piPrivateKey)
         myEdit.apply()
-
         tunnelSSHObject.publicKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$piPublicKey\n")
         tunnelSSHObject.privateKey = Html.fromHtml("<b>Phone Public Key for ${profile}:</b> <br>$piPrivateKey\n")
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
         Toast.makeText(context, "Key saved to phone successfully", Toast.LENGTH_LONG).show()
     }
 
+    fun setUserVisibleHint() {
+        loadBT()
+        initializeArrays()
+        sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
+    }
+
+    fun searchArray(array: java.util.ArrayList<String>?, portnum: String): Boolean {
+        for (name in array!!) {
+            var check = name.substringAfter(":")
+            if (check == portnum) return true
+        }
+        return false
+    }
+
+    fun initializeArrays() {
+        tunnelSSHObject.portNames = ArrayList()
+        tunnelSSHObject.hostNames = ArrayList()
+        tunnelSSHObject.hostPosition = ArrayList()
+    }
 }
