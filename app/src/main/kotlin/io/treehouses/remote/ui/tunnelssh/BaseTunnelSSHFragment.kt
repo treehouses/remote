@@ -40,9 +40,7 @@ open class BaseTunnelSSHFragment : Fragment() {
         builder.setTitle("Save Key To Phone")
         builder.setMessage("Pi Public Key for ${data.profile}: \n${data.piPublicKey}\n" +
                 "Pi Private Key for ${data.profile}: \n$data.piPrivateKey")
-        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
-            viewModel.saveKeyToPhone(data.profile, data.piPublicKey, data.piPrivateKey)
-        }
+        setSaveKeyButton(builder, data)
         setNeutralButtonAndShow(builder)
     }
 
@@ -64,19 +62,25 @@ open class BaseTunnelSSHFragment : Fragment() {
                 strPhonePrivateKey)
 
         builder.setMessage(message)
-        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
-            viewModel.saveKeyToPhone(data.profile, data.piPublicKey, data.piPrivateKey)
-        }
+        setSaveKeyButton(builder, data)
         builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
             viewModel.sendMessage("treehouses remote key receive \"${data.storedPublicKey}\" \"${data.storedPublicKey}\" ${data.profile}")
             Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
         }
         setNeutralButtonAndShow(builder)
     }
-    private  fun setNeutralButtonAndShow(builder: AlertDialog.Builder) {
+
+    private fun setSaveKeyButton(builder: AlertDialog.Builder, data: TunnelSSHKeyDialogData) {
+        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
+            viewModel.saveKeyToPhone(data.profile, data.piPublicKey, data.piPrivateKey)
+        }
+    }
+
+    private fun setNeutralButtonAndShow(builder: AlertDialog.Builder) {
         builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
         builder.show()
     }
+
     protected fun setPortDialog(builder: AlertDialog.Builder, position: Int, title: String) {
         builder.setTitle(title + portsName!![position] + " ?")
         builder.setPositiveButton("Confirm") { dialog, _ ->
