@@ -24,19 +24,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
 
         val s = matchSshOutput(output.trim())
         logD("treehouses RESULT " + s.name);
-        if (jsonReceiving) {
-            jsonString += output
-            buildJSON()
-            if (s == TUNNEL_SSH_RESULTS.END_JSON) {
-                buildJSON()
-                jsonSend(false)
-            }
-            return
-        } else if (s == TUNNEL_SSH_RESULTS.START_JSON) {
-            jsonReceiving = true
-            jsonString = output.trim()
-            return
-        }
+
 
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> {
@@ -82,13 +70,27 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 tunnelSSHObject.enabledNotifyNow = true
             }
             else -> {
-               // handleNoPorts()
+                if (jsonSent) handleJson(output)
             }
-
 
         }
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
 
+    }
+
+    private fun handleJson(readMessage: String) {
+        val s = matchSshOutput(readMessage)
+        if (jsonReceiving) {
+            jsonString += readMessage
+            buildJSON()
+            if (s == TUNNEL_SSH_RESULTS.END_JSON) {
+                buildJSON()
+                jsonSend(false)
+            }
+        } else if (s == TUNNEL_SSH_RESULTS.START_JSON) {
+            jsonReceiving = true
+            jsonString = readMessage.trim()
+        }
     }
 
 
@@ -121,7 +123,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
     }
 
     fun deleteHostPorts() {
-        tunnelSSHObject.addHostText = "Deleting all hosts"
+        tunnelSSHObject.addHostText = "Deleting all hosts..."
         tunnelSSHObject.enableAddHost = false
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL))
@@ -184,8 +186,8 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         var profile = profileText
         if (profile.isBlank()) profile = "default"
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
-        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "key")
-        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "key")
+        var storedPublicKey: String? = sharedPreferences.getString("${profile}_public_key", "")
+        var storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
         if (storedPublicKey != null && storedPrivateKey != null) {
             if (storedPublicKey.isBlank()) storedPublicKey = "No public key found"
             if (storedPrivateKey.isBlank()) storedPrivateKey = "No private key found"

@@ -37,7 +37,6 @@ fun matchSshOutput(output: String): TUNNEL_SSH_RESULTS {
         TunnelSSHMatcher.contains(output, "Status: on") -> return TUNNEL_SSH_RESULTS.RESULT_STATUS_ON
         TunnelSSHMatcher.contains(output, "exists") -> return TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST
         Matcher.isStartJSON(output) -> return TUNNEL_SSH_RESULTS.START_JSON
-        Matcher.isEndCommandsJson(output) -> return TUNNEL_SSH_RESULTS.END_JSON_COMMANDS
         Matcher.isEndJSON(output) -> return TUNNEL_SSH_RESULTS.END_JSON
 
     }

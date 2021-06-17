@@ -4,11 +4,10 @@ import android.text.SpannableString
 import android.text.Spanned
 import java.io.Serializable
 
-
 data class TunnelSSHData(
         var checkSwitchNotification: Boolean = false,
         var enableSwitchNotification: Boolean = false,
-        var enabledNotifyNow :Boolean =false,
+        var enabledNotifyNow: Boolean = false,
         var addHostText: String = "Add Host",
         var addPortText: String = "Add Port",
         var enableAddHost: Boolean = false,
@@ -19,4 +18,5 @@ data class TunnelSSHData(
         var hostNames: ArrayList<String> = ArrayList(),
         var portNames: ArrayList<String> = ArrayList(),
         var hostPosition: ArrayList<Int> = ArrayList()
+
 ) : Serializable

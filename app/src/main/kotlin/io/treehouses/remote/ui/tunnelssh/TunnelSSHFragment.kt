@@ -2,6 +2,7 @@ package io.treehouses.remote.ui.tunnelssh
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -17,8 +18,8 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
-import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
+import io.treehouses.remote.pojo.TunnelSSHKeyDialogData
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
 class TunnelSSHFragment : Fragment() {
-    protected  val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
+    protected val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivityTunnelSshFragmentBinding
     var adapter: TunnelPortAdapter? = null
     private lateinit var adapter2: ArrayAdapter<String>
@@ -41,10 +42,84 @@ class TunnelSSHFragment : Fragment() {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         viewModel.onCreateView()
         loadObservers1()
+        loadDialogObservers()
         initializeDialog()
         addListeners1()
         addListeners2()
         return bind.root
+    }
+
+    private fun loadDialogObservers() {
+        viewModel.tunnelSSHKeyDialogData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    if (it.data!!.showHandleDifferentKeysDialog)
+                        handleDifferentKeys(it.data)
+                    if (it.data!!.showHandlePhoneKeySaveDialog)
+                        handlePhoneKeySave(it.data.profile, it.data.piPublicKey, it.data.piPrivateKey)
+                    if (it.data!!.showHandlePiKeySaveDialog)
+                        handlePiKeySave(it.data.profile, it.data.storedPublicKey, it.data.storedPrivateKey)
+                }
+                Status.LOADING -> {
+                    if (it == null) return@Observer
+                    dialogKeys.progress_bar.visibility = View.VISIBLE
+                }
+            }
+        })
+    }
+
+    private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Save Key To Pi")
+        builder.setMessage(
+                "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
+                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
+        builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
+            viewModel.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
+            Toast.makeText(context, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
+        }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
+        builder.show()
+    }
+
+
+    private fun handlePhoneKeySave(profile: String, piPublicKey: String, piPrivateKey: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Save Key To Phone")
+        builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
+                "Pi Private Key for ${profile}: \n$piPrivateKey")
+        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
+            viewModel.saveKeyToPhone(profile, piPublicKey, piPrivateKey)
+        }
+        builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
+        builder.show()
+    }
+
+    private fun handleDifferentKeys(data: TunnelSSHKeyDialogData) {
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Overwrite On Pi or Phone")
+
+        val strPiPublicKey = "Pi Public Key for ${data.profile}: \n${data.piPublicKey}"
+        val strPiPrivateKey = "Pi Private Key for ${data.profile}: \n${data.piPrivateKey}"
+        val strPhonePublicKey = "Phone Public Key for ${data.profile}: \n${data.storedPublicKey}"
+        val strPhonePrivateKey = "Phone Private Key for ${data.profile}: \n${data.storedPrivateKey}"
+
+        val message = ("There are different keys on the Pi and the phone. Would you like to overwrite the Pi's key or the phone's key?\n\n" +
+                strPiPublicKey + "\n\n" +
+                strPiPrivateKey + "\n\n" +
+                strPhonePublicKey + "\n\n" +
+                strPhonePrivateKey)
+
+        builder.setMessage(message)
+        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
+            viewModel.saveKeyToPhone(data.profile, data.piPublicKey, data.piPrivateKey)
+        }
+        builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
+            viewModel.sendMessage("treehouses remote key receive \"${data.storedPublicKey}\" \"${data.storedPublicKey}\" ${data.profile}")
+            Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
+        }
+        builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
+        builder.show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,7 +178,7 @@ class TunnelSSHFragment : Fragment() {
                 val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
                 if (portsName!![position].contains("@")) {
                     setPortDialog(builder, position, "Delete Host  ")
-                }else{
+                } else {
                     setPortDialog(builder, position, "Delete Port ")
                 }
 
@@ -144,6 +219,7 @@ class TunnelSSHFragment : Fragment() {
                     bind.sshPorts.adapter = adapter
                     adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
                     dialogPort.hosts.adapter = adapter2
+
                 }
                 Status.LOADING -> {
                     if (it == null) return@Observer
