@@ -105,7 +105,7 @@ open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(
     }
 
 
-    protected fun saveKeyToPhone(profile: String, piPublicKey: String, piPrivateKey: String) {
+    fun saveKeyToPhone(profile: String, piPublicKey: String, piPrivateKey: String) {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         myEdit.putString("${profile}_public_key", piPublicKey)

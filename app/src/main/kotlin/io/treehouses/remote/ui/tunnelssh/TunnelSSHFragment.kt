@@ -26,16 +26,8 @@ import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
-class TunnelSSHFragment : Fragment() {
-    protected val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
-    private lateinit var bind: ActivityTunnelSshFragmentBinding
-    var adapter: TunnelPortAdapter? = null
-    private lateinit var adapter2: ArrayAdapter<String>
-    var portsName: java.util.ArrayList<String>? = null
-    var hostsName: java.util.ArrayList<String>? = null
-    lateinit var dialogPort: Dialog
-    lateinit var dialogHosts: Dialog
-    lateinit var dialogKeys: Dialog
+class TunnelSSHFragment : BaseTunnelSSHFragment() {
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -68,59 +60,8 @@ class TunnelSSHFragment : Fragment() {
         })
     }
 
-    private fun handlePiKeySave(profile: String, storedPublicKey: String?, storedPrivateKey: String?) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Save Key To Pi")
-        builder.setMessage(
-                "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
-                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
-        builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            viewModel.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
-            Toast.makeText(context, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()
-        }.setNegativeButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
-        builder.show()
-    }
 
 
-    private fun handlePhoneKeySave(profile: String, piPublicKey: String, piPrivateKey: String) {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Save Key To Phone")
-        builder.setMessage("Pi Public Key for ${profile}: \n$piPublicKey\n" +
-                "Pi Private Key for ${profile}: \n$piPrivateKey")
-        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
-            viewModel.saveKeyToPhone(profile, piPublicKey, piPrivateKey)
-        }
-        builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
-        builder.show()
-    }
-
-    private fun handleDifferentKeys(data: TunnelSSHKeyDialogData) {
-
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Overwrite On Pi or Phone")
-
-        val strPiPublicKey = "Pi Public Key for ${data.profile}: \n${data.piPublicKey}"
-        val strPiPrivateKey = "Pi Private Key for ${data.profile}: \n${data.piPrivateKey}"
-        val strPhonePublicKey = "Phone Public Key for ${data.profile}: \n${data.storedPublicKey}"
-        val strPhonePrivateKey = "Phone Private Key for ${data.profile}: \n${data.storedPrivateKey}"
-
-        val message = ("There are different keys on the Pi and the phone. Would you like to overwrite the Pi's key or the phone's key?\n\n" +
-                strPiPublicKey + "\n\n" +
-                strPiPrivateKey + "\n\n" +
-                strPhonePublicKey + "\n\n" +
-                strPhonePrivateKey)
-
-        builder.setMessage(message)
-        builder.setPositiveButton("Save to Phone") { _: DialogInterface?, _: Int ->
-            viewModel.saveKeyToPhone(data.profile, data.piPublicKey, data.piPrivateKey)
-        }
-        builder.setNegativeButton("Save to Pi") { _: DialogInterface?, _: Int ->
-            viewModel.sendMessage("treehouses remote key receive \"${data.storedPublicKey}\" \"${data.storedPublicKey}\" ${data.profile}")
-            Toast.makeText(context, "The Pi's key has been overwritten with the phone's key successfully ", Toast.LENGTH_LONG).show()
-        }
-        builder.setNeutralButton("Cancel") { dialog: DialogInterface?, _: Int -> dialog?.dismiss() }
-        builder.show()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
