@@ -2,7 +2,6 @@ package io.treehouses.remote.ui.tunnelssh
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -10,16 +9,12 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
-import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
-import io.treehouses.remote.pojo.TunnelSSHKeyDialogData
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
@@ -61,8 +56,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
     }
 
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Tutorials.tunnelSSHTutorials(bind, requireActivity())
@@ -86,20 +79,20 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
             val dialog = builder.create();
             dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show();
         }
-        dialogPort.btn_adding_port.setOnClickListener {
-            if (dialogPort.ExternalTextInput.text!!.isNotEmpty() && dialogPort.InternalTextInput.text!!.isNotEmpty()) {
-                val s1 = dialogPort.InternalTextInput.text.toString();
-                val s2 = dialogPort.ExternalTextInput.text.toString()
-                val parts = dialogPort.hosts?.selectedItem.toString().split(":")[0]
-                viewModel.addingPortButton(s1, s2, parts)
-                dialogPort.dismiss()
-            }
-        }
+        dialogPort.btn_adding_port.setOnClickListener { handleAddPort() }
         dialogHosts.btn_adding_host.setOnClickListener {
             val m1 = dialogHosts.PortNumberInput.text.toString()
             val m2 = dialogHosts.UserNameInput.text.toString() + "@" + dialogHosts.DomainIPInput.text.toString()
             viewModel.addingHostButton(m1, m2)
             dialogHosts.dismiss()
+        }
+    }
+
+    private fun handleAddPort() {
+        if (dialogPort.ExternalTextInput.text!!.isNotEmpty() && dialogPort.InternalTextInput.text!!.isNotEmpty()) {
+            val parts = dialogPort.hosts?.selectedItem.toString().split(":")[0]
+            viewModel.addingPortButton(dialogPort.InternalTextInput.text.toString(), dialogPort.ExternalTextInput.text.toString(), parts)
+            dialogPort.dismiss()
         }
     }
 
@@ -122,7 +115,6 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
                 } else {
                     setPortDialog(builder, position, "Delete Port ")
                 }
-
                 builder.setNegativeButton("Cancel", null)
                 val dialog = builder.create()
                 dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show()
