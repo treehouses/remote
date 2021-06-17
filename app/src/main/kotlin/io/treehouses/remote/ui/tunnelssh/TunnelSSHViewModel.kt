@@ -12,7 +12,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.utils.TUNNEL_SSH_RESULTS
 import io.treehouses.remote.utils.TunnelUtils
-import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.matchSshOutput
 
 open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel(application) {
@@ -42,11 +41,19 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_OFF -> handleOffStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_NO_PORT -> handleNoPorts()
-
             s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> {
                 tunnelSSHObject.addPortText = "Add Port"
                 Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
+            }else -> {
+                handleMore(output)
             }
+        }
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
+
+    }
+
+    private fun handleMore(output: String) {
+        when{
             output.contains("Error: only 'list'") -> {
                 val message = "Please swipe slower in the future as you have a slow rpi, getting ports again..."
                 sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE))
@@ -68,10 +75,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             else -> {
                 if (jsonSent) handleJson(output)
             }
-
         }
-        tunnelSSHData.value = Resource.success(tunnelSSHObject)
-
     }
 
     private fun handleJson(readMessage: String) {
