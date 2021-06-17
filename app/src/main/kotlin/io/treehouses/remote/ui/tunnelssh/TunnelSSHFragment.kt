@@ -40,8 +40,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
         viewModel.tunnelSSHKeyDialogData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    if (it.data!!.showHandleDifferentKeysDialog)
-                        handleDifferentKeys(it.data)
+                    if (it.data!!.showHandleDifferentKeysDialog) handleDifferentKeys(it.data)
                     if (it.data!!.showHandlePhoneKeySaveDialog)
                         handlePhoneKeySave(it.data.profile, it.data.piPublicKey, it.data.piPrivateKey)
                     if (it.data!!.showHandlePiKeySaveDialog) handlePiKeySave(it.data.profile, it.data.storedPublicKey, it.data.storedPrivateKey)
@@ -101,19 +100,23 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
         dialogHosts.addHostCloseButton.setOnClickListener { dialogHosts.dismiss() }
         dialogKeys.addKeyCloseButton.setOnClickListener { dialogKeys.dismiss() }
         bind.sshPorts.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            if (portsName!!.size > 1 && position == portsName!!.size - 1) {
-                DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { viewModel.deleteHostPorts() }
+           handleDeletePort(position)
+        }
+    }
+
+    private fun handleDeletePort(position: Int) {
+        if (portsName!!.size > 1 && position == portsName!!.size - 1) {
+            DialogUtils.createAlertDialog(context, "Delete All Hosts and Ports?") { viewModel.deleteHostPorts() }
+        } else {
+            val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+            if (portsName!![position].contains("@")) {
+                setPortDialog(builder, position, "Delete Host  ")
             } else {
-                val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                if (portsName!![position].contains("@")) {
-                    setPortDialog(builder, position, "Delete Host  ")
-                } else {
-                    setPortDialog(builder, position, "Delete Port ")
-                }
-                builder.setNegativeButton("Cancel", null)
-                val dialog = builder.create()
-                dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show()
+                setPortDialog(builder, position, "Delete Port ")
             }
+            builder.setNegativeButton("Cancel", null)
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show()
         }
     }
 
