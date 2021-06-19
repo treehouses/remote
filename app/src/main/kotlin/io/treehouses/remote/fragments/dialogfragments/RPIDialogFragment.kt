@@ -252,8 +252,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     override fun onDeviceDeleted(position: Int) {
         var device = raspberryDevices[position]
-        AlertDialog.Builder(activity)
-                .setMessage(R.string.delete_device_message)
+        AlertDialog.Builder(activity).setMessage(R.string.delete_device_message)
                 .setPositiveButton("Yes") { _, _ ->
                     try {
                         device::class.java.getMethod("removeBond").invoke(device)
@@ -265,7 +264,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                         Toast.makeText(activity, "Unable to delete device", Toast.LENGTH_LONG).show()
                     }
                 }.setNegativeButton("No", null).show()
-
 
     }
 }
