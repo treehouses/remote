@@ -84,3 +84,10 @@ jobs:
           tag: v${{ steps.build_id.outputs.id }}
           overwrite: true
           file_glob: true
+
+      - name: Send Message
+        run: |
+          sudo npm install -g @treehouses/cli
+          export gitter_channel="${{ secrets.CHANNEL }}"
+          echo "https://github.com/treehouses/remote/releases/tag/v${{ steps.build_id.outputs.id }}"
+          treehouses feedback "new remote app: https://github.com/treehouses/remote/releases/tag/v${{ steps.build_id.outputs.id }}"
