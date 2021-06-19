@@ -317,6 +317,6 @@
         "\n"To view SSH keys, one must click on the green SSH key button
         "\n"To save a new key, one must copy and paste their SSH key and click save.
     </string>
-    <string name="delete_device_message">\"Are you sure want to unpair this device??\"</string>
+    <string name="delete_device_message">Are you sure want to unpair this device??</string>
 
 </resources>
