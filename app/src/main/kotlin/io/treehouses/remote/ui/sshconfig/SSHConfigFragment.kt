@@ -61,7 +61,8 @@ class SSHConfigFragment : BaseFragment(), RVButtonClickListener, OnHostStatusCha
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = DialogSshBinding.inflate(inflater, container, false)
         viewModel.createView()
-        loadObservers()
+        loadObservers1()
+        loadObservers2()
         return bind.root
     }
 
@@ -90,15 +91,15 @@ class SSHConfigFragment : BaseFragment(), RVButtonClickListener, OnHostStatusCha
         bind.showKeys.setOnClickListener { SSHAllKeyFragment().show(childFragmentManager, "AllKeys") }
     }
 
-    fun loadObservers(){
+    fun loadObservers1(){
         viewModel.sshTextInputText.observe(viewLifecycleOwner, Observer {
-            bind.sshTextInput.setText(it)
+            bind.sshTextInput.setText(it.toString())
         })
         viewModel.sshTextInputError.observe(viewLifecycleOwner, Observer {
             bind.sshTextInput.error = it
         })
         viewModel.noHostsVisibility.observe(viewLifecycleOwner, Observer {
-            bind.noHosts.visibility = if (it) View.VISIBLE else View.GONE
+            bind.noHosts.visibility = if (!it) View.GONE else View.VISIBLE
         })
         viewModel.pastsHostsVisibility.observe(viewLifecycleOwner, Observer {
             bind.pastHosts.visibility = if (it) View.VISIBLE else View.GONE
@@ -106,6 +107,9 @@ class SSHConfigFragment : BaseFragment(), RVButtonClickListener, OnHostStatusCha
         viewModel.pastHostsList.observe(viewLifecycleOwner, Observer {
             pastHosts = it
         })
+    }
+
+    fun loadObservers2(){
         viewModel.connectSshEnabled.observe(viewLifecycleOwner, Observer {
             bind.connectSsh.isEnabled = it
         })
