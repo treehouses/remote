@@ -1,17 +1,12 @@
 package io.treehouses.remote.ui.sshconfig
 
 import android.app.Application
-import android.content.Intent
-import android.net.Uri
-import android.text.Editable
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.sshconsole.SSHConsole
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
