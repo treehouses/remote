@@ -102,8 +102,8 @@ class SSHConfigFragment : BaseFragment(), RVButtonClickListener, OnHostStatusCha
             bind.noHosts.visibility = if (!it) View.GONE else View.VISIBLE
         })
         viewModel.pastsHostsVisibility.observe(viewLifecycleOwner, Observer {
-            if (it) bind.pastHosts.visibility = View.VISIBLE
-            else bind.pastHosts.visibility = View.GONE
+            var view = if (it) View.VISIBLE else View.GONE
+            bind.pastHosts.visibility = view
         })
         viewModel.pastHostsList.observe(viewLifecycleOwner, Observer {
             pastHosts = it
