@@ -5,10 +5,7 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -22,6 +19,7 @@ import androidx.fragment.app.viewModels
 import io.treehouses.remote.R
 import io.treehouses.remote.adapter.RPIListAdapter
 import io.treehouses.remote.bases.BaseDialogFragment
+import io.treehouses.remote.callback.DeviceDeleteListener
 import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
@@ -29,7 +27,7 @@ import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import java.util.*
 
-class RPIDialogFragment : BaseDialogFragment() {
+class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private val raspberryDevices: MutableList<BluetoothDevice> = ArrayList()
     private val allDevices: MutableList<BluetoothDevice> = ArrayList()
     private var pairedDevices: Set<BluetoothDevice>? = null
@@ -40,7 +38,7 @@ class RPIDialogFragment : BaseDialogFragment() {
     private val allDevicesText: MutableList<DeviceInfo> = ArrayList()
     private var pDialog: ProgressDialog? = null
 
-    private val viewModel : HomeViewModel by viewModels(ownerProducer = {requireParentFragment()})
+    private val viewModel: HomeViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     private var bind: ActivityRpiDialogFragmentBinding? = null
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -51,11 +49,10 @@ class RPIDialogFragment : BaseDialogFragment() {
         mBluetoothAdapter!!.startDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-//        if (mChatService == null) mChatService = listener!!.getChatService()
-//        mChatService!!.updateHandler(mHandler)
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
+            logD("DEVICE " + d)
             if (checkPiAddress(d.address)) {
                 addToDialog(d, raspberryDevicesText, raspberryDevices, false)
                 bind!!.progressBar.visibility = View.INVISIBLE
@@ -135,6 +132,7 @@ class RPIDialogFragment : BaseDialogFragment() {
         }
     }
 
+
     private fun switchViewOnClickListener() {
         bind!!.rpiSwitch.setOnCheckedChangeListener { buttonView: CompoundButton, isChecked: Boolean ->
             if (isChecked) {
@@ -148,6 +146,7 @@ class RPIDialogFragment : BaseDialogFragment() {
             }
         }
     }
+
 
     private fun finish(mView: View) {
         val mDialog = getAlertDialog(mView)
@@ -194,6 +193,7 @@ class RPIDialogFragment : BaseDialogFragment() {
 
     private fun setAdapterNotNull(listVal: List<DeviceInfo>) {
         mArrayAdapter = RPIListAdapter(requireContext(), listVal)
+        (mArrayAdapter as RPIListAdapter).deviceListener = this
         bind!!.listView.adapter = mArrayAdapter
     }
 
@@ -223,7 +223,6 @@ class RPIDialogFragment : BaseDialogFragment() {
     }
 
 
-
     companion object {
         var instance: RPIDialogFragment? = null
             private set
@@ -237,17 +236,34 @@ class RPIDialogFragment : BaseDialogFragment() {
         }
 
         fun checkPiAddress(deviceHardwareAddress: String): Boolean {
-            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "E4:5F:01", 
-                                                        "B8-27-EB", "DC-A6-32", "E4-5F-01",
-                                                        "B827.EB", "DCA6.32", "E45F.01",
-                                                        "b8:27:eb", "dc:a6:32", "e4:5f:01",
-                                                        "b8-27-eb", "dc-a6-32", "E4-5F-01",
-                                                        "b827.eb", "dca6.32", "E45F.01"))
-            for(item in piAddress){
-                if(deviceHardwareAddress.contains(item)) return true
+            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "E4:5F:01",
+                    "B8-27-EB", "DC-A6-32", "E4-5F-01",
+                    "B827.EB", "DCA6.32", "E45F.01",
+                    "b8:27:eb", "dc:a6:32", "e4:5f:01",
+                    "b8-27-eb", "dc-a6-32", "E4-5F-01",
+                    "b827.eb", "dca6.32", "E45F.01"))
+            for (item in piAddress) {
+                if (deviceHardwareAddress.contains(item)) return true
             }
             return false
         }
+
+    }
+
+    override fun onDeviceDeleted(position: Int) {
+        var device = raspberryDevices[position]
+        AlertDialog.Builder(activity).setMessage(R.string.delete_device_message)
+                .setPositiveButton("Yes") { _, _ ->
+                    try {
+                        device::class.java.getMethod("removeBond").invoke(device)
+                        raspberryDevices.removeAt(position)
+                        raspberryDevicesText.removeAt(position)
+                        allDevices.remove(device)
+                        mArrayAdapter?.notifyDataSetChanged()
+                    } catch (e: Exception) {
+                        Toast.makeText(activity, "Unable to delete device", Toast.LENGTH_LONG).show()
+                    }
+                }.setNegativeButton("No", null).show()
 
     }
 }
