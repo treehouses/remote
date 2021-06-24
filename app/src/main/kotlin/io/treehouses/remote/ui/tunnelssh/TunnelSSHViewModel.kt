@@ -26,6 +26,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
             s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> {
                 tunnelSSHObject.addHostText = "Add Host"
                 tunnelSSHObject.enableAddHost = true
+                tunnelSSHObject.enabledNotifyNow = false
                 tunnelSSHObject.enableAddPort = false
             }
             s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
@@ -201,7 +202,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.addHostText = "Add Host"
         tunnelSSHObject.enableAddPort = false;
         tunnelSSHObject.enableAddHost = true
-
+        tunnelSSHObject.enabledNotifyNow = false
         Toast.makeText(context, "Add a host", Toast.LENGTH_SHORT).show()
     }
 
@@ -211,6 +212,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
         tunnelSSHObject.enableAddHost = true
         tunnelSSHObject.enableAddPort = true
         tunnelSSHObject.enableSSHPort = true
+
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
         Toast.makeText(context, "Host not found. Failure to delete port.", Toast.LENGTH_SHORT).show()
 
