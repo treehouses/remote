@@ -18,6 +18,7 @@ class RPIListAdapter(private val mContext: Context, private val data: List<Devic
         // Get the data item for this position
         var newView = convertView
         val deviceText = data[position].deviceName
+
         // Check if an existing view is being reused, otherwise inflate the view
         if (newView == null) {
             newView = LayoutInflater.from(mContext).inflate(R.layout.list_rpi_item, parent, false)

@@ -37,7 +37,7 @@ class SocksFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySocksFragmentBinding.inflate(inflater, container, false)
         bindProfile = DialogAddProfileBinding.inflate(inflater, container, false)
-        viewModel.onLoad()
+//        viewModel.onLoad()
         addProfileButton = bind!!.btnAddProfile
         portList = bind!!.profiles
         initializeDialog()
@@ -48,20 +48,11 @@ class SocksFragment : Fragment() {
         return bind!!.root
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        if (isVisible){
+    override fun setUserVisibleHint(visible: Boolean) {
+        if (visible) {
+            viewModel.onLoad()
             viewModel.listenerInitialized()
         }
-    }
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser)
-            try {
-                viewModel.listenerInitialized()
-            } catch (e: Exception) {
-            }
     }
 
 
