@@ -21,7 +21,6 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
     override fun onRead(output: String) {
         super.onRead(output)
         val s = matchSshOutput(output.trim())
-        logD("treehouses ON READ " + s.name)
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> enableButtons()
             s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> {
@@ -30,20 +29,15 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 tunnelSSHObject.enableAddPort = false
             }
             s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
-            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL) -> {
-                tunnelSSHObject.portNames!!.clear();tunnelSSHObject.enabledNotifyNow = false; sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
-            }
+            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL) -> { tunnelSSHObject.portNames!!.clear();tunnelSSHObject.enabledNotifyNow = false; sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)); }
             s == TUNNEL_SSH_RESULTS.RESULT_REMOVED -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_SSH_PORT && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS) -> handleNewList(output)
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_ON -> handleOnStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_STATUS_OFF -> handleOffStatus()
             s == TUNNEL_SSH_RESULTS.RESULT_NO_PORT -> handleNoPorts()
-            s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> {
-                tunnelSSHObject.addPortText = "Add Port"; Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show()
-            }
-            else -> handleMore(output)
-        }
+            s == TUNNEL_SSH_RESULTS.RESULT_ALREADY_EXIST -> { tunnelSSHObject.addPortText = "Add Port"; Toast.makeText(context, "Port already exists", Toast.LENGTH_SHORT).show() }
+            else -> handleMore(output) }
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
     }
 
