@@ -65,7 +65,9 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
     private fun addListeners1() {
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
         bind.btnAddPort.setOnClickListener { showDialog(dialogPort) };
-        bind.btnAddHosts.setOnClickListener { showDialog(dialogHosts) }
+        bind.btnAddHosts.setOnClickListener {
+            logD("treehouses clicked add host")
+            showDialog(dialogHosts) }
         bind.btnKeys.setOnClickListener { showDialog(dialogKeys) };
         bind.notifyNow.setOnClickListener { viewModel.notifyNow(requireContext()) }
         bind.info.setOnClickListener {
@@ -126,6 +128,7 @@ class TunnelSSHFragment : BaseTunnelSSHFragment() {
         viewModel.tunnelSSHData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             when (it.status) {
                 Status.SUCCESS -> {
+                    logD("treehouses observer " + it.data?.enableAddHost)
                     bind.notifyNow.isEnabled = it.data!!.enabledNotifyNow
                     bind.switchNotification.isEnabled = it.data.enableSwitchNotification; bind.btnAddHosts.text = it.data.addHostText
                     bind.btnAddPort.text = it.data.addPortText; bind.btnAddPort.isEnabled = it.data.enableAddPort

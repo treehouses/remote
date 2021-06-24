@@ -12,6 +12,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.utils.TUNNEL_SSH_RESULTS
 import io.treehouses.remote.utils.TunnelUtils
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.matchSshOutput
 
 open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel(application) {
@@ -20,10 +21,14 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
     override fun onRead(output: String) {
         super.onRead(output)
         val s = matchSshOutput(output.trim())
-
+        logD("treehouses ON READ " + s.name)
         when {
             s == TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND -> enableButtons()
-            s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> tunnelSSHObject.enableAddPort = false
+            s == TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL -> {
+                tunnelSSHObject.addHostText = "Add Host"
+                tunnelSSHObject.enableAddHost = true
+                tunnelSSHObject.enableAddPort = false
+            }
             s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
             s == TUNNEL_SSH_RESULTS.RESULT_REMOVED && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL) -> {
                 tunnelSSHObject.portNames!!.clear();tunnelSSHObject.enabledNotifyNow = false; sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
@@ -66,6 +71,7 @@ open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel
                 if (jsonSent) handleJson(output)
             }
         }
+        tunnelSSHData.value = Resource.success(tunnelSSHObject)
     }
 
     private fun handleJson(readMessage: String) {

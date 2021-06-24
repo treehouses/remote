@@ -27,10 +27,10 @@ enum class TUNNEL_SSH_RESULTS {
 
 fun matchSshOutput(output: String): TUNNEL_SSH_RESULTS {
     when {
-        Matcher.isError(output) -> return TUNNEL_SSH_RESULTS.ERROR
-        Matcher.isBoolean(output) -> return TUNNEL_SSH_RESULTS.BOOLEAN
         TunnelSSHMatcher.isHostNotFound(output) -> return TUNNEL_SSH_RESULTS.RESULT_HOST_NOT_FOUND
         TunnelSSHMatcher.checkNoTunnelSetup(output) -> return TUNNEL_SSH_RESULTS.RESULT_NO_TUNNEL
+        Matcher.isError(output) -> return TUNNEL_SSH_RESULTS.ERROR
+        Matcher.isBoolean(output) -> return TUNNEL_SSH_RESULTS.BOOLEAN
         TunnelSSHMatcher.isAdded(output) -> return TUNNEL_SSH_RESULTS.RESULT_ADDED
         TunnelSSHMatcher.isRemoved(output) -> return TUNNEL_SSH_RESULTS.RESULT_REMOVED
         TunnelSSHMatcher.isListModified(output) -> return TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST
