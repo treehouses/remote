@@ -3,17 +3,18 @@ package io.treehouses.remote.ui.socks
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
 import io.treehouses.remote.utils.DialogUtils
-import kotlinx.android.synthetic.main.message.*
 
 class SocksFragment : Fragment() {
 
@@ -36,16 +37,24 @@ class SocksFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySocksFragmentBinding.inflate(inflater, container, false)
         bindProfile = DialogAddProfileBinding.inflate(inflater, container, false)
-        viewModel.onLoad()
+//        viewModel.onLoad()
         addProfileButton = bind!!.btnAddProfile
         portList = bind!!.profiles
         initializeDialog()
         messageObservers()
         addProfileButtonListeners(dialog)
         portList = bind!!.profiles
-        viewModel.listenerInitialized()
+
         return bind!!.root
     }
+
+    override fun setUserVisibleHint(visible: Boolean) {
+        if (visible) {
+            viewModel.onLoad()
+            viewModel.listenerInitialized()
+        }
+    }
+
 
     private fun initializeDialog() {
         dialog = Dialog(requireContext())
@@ -78,7 +87,7 @@ class SocksFragment : Fragment() {
                 viewModel.sendMessage("treehouses shadowsocks remove $selectedString ")
                 Toast.makeText(activity, "Removing profile...", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
-             }
+            }
         }
     }
 

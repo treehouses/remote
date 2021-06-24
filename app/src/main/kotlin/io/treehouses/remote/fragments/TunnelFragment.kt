@@ -7,28 +7,29 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import io.treehouses.remote.Tutorials
-import io.treehouses.remote.views.TunnelViewPager
-import io.treehouses.remote.adapter.TunnelPageAdapter
+import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
-import io.treehouses.remote.utils.logD
+import io.treehouses.remote.ui.socks.SocksFragment
+import io.treehouses.remote.ui.tor.TorFragment
+import io.treehouses.remote.ui.tunnelssh.TunnelSSHFragment
 
 class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
     private var tabLayout: TabLayout? = null
-    private var tunnelView: TunnelViewPager? = null
-    private var tunnelPageAdapter: TunnelPageAdapter? = null
+//    private var tunnelView: TunnelViewPager? = null
+//    private var tunnelPageAdapter: TunnelPageAdapter? = null
     private lateinit var bind: ActivitySshTunnelFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySshTunnelFragmentBinding.inflate(inflater, container, false)
         tabLayout = bind.tabLayout
-        tabLayout!!.setTabGravity(TabLayout.GRAVITY_FILL)
+        tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL
         tabLayout!!.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 replaceFragment(tab.position)
@@ -37,16 +38,19 @@ class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener,
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
-        tunnelView = bind.tabViewpager
-        tunnelPageAdapter = TunnelPageAdapter(childFragmentManager)
-        tunnelView!!.setAdapter(tunnelPageAdapter)
-        tunnelView!!.addOnPageChangeListener(this)
+        childFragmentManager.beginTransaction().replace(R.id.tab_content, TorFragment()).commit()
         return bind.root
     }
 
     fun replaceFragment(position: Int) {
-        logD("dasd $position")
-        tunnelView!!.currentItem = position
+        var fragment: Fragment? = null
+        when (position) {
+            0 -> fragment = TorFragment()
+            1 -> fragment = TunnelSSHFragment()
+            2 -> fragment = SocksFragment()
+        }
+//        tunnelView!!.currentItem = position
+        childFragmentManager.beginTransaction().replace(R.id.tab_content, fragment!!).commit()
     }
 
     //

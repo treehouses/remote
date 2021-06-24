@@ -68,8 +68,8 @@
     <string name="TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL">treehouses sshtunnel add port actual \"%1$s\" \"%2$s\" \"%3$s\"</string>
     <string name="TREEHOUSES_SSHTUNNEL_NOTICE_NOW">treehouses sshtunnel notice now</string>
     <string name="TREEHOUSES_SSHTUNNEL_PORTS">treehouses sshtunnel ports</string>
-    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host \"%1$s\" </string>
-    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port \"%1$s\" </string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_HOST">treehouses sshtunnel remove host %1$s</string>
+    <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT">treehouses sshtunnel remove port %1$s</string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_ALL">treehouses sshtunnel remove all</string>
     <string name="TREEHOUSES_SSHTUNNEL_REMOVE_PORT_SPECIFIC">treehouses sshtunnel remove port </string>
 
