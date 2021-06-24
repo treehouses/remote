@@ -1,36 +1,29 @@
-package io.treehouses.remote.ui.tortab
+package io.treehouses.remote.ui.tor
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
-import android.os.Message
 import android.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
-import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
+
 import io.treehouses.remote.utils.TunnelUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logE
 import java.util.*
 
-class TorTabFragment : BaseFragment() {
+class TorFragment : BaseFragment() {
     private lateinit var bind: ActivityTorFragmentBinding
-    protected val viewModel: TorTabViewModel by viewModels(ownerProducer = { this })
+    protected val viewModel: TorViewModel by viewModels(ownerProducer = { this })
     var portsName: ArrayList<String>? = null
     var adapter: TunnelPortAdapter? = null
     var hostName: String = ""

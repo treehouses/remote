@@ -1,4 +1,4 @@
-package io.treehouses.remote.ui.tunnelssh
+package io.treehouses.remote.ui.sshtunnel
 
 import android.app.Application
 import android.content.Context
@@ -16,7 +16,7 @@ import io.treehouses.remote.utils.logD
 import org.json.JSONException
 import org.json.JSONObject
 
-open class BaseTunnelSSHViewModel(application: Application) : FragmentViewModel(application) {
+open class BaseSSHTunnelViewModel(application: Application) : FragmentViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext
 
     // hostsPosition

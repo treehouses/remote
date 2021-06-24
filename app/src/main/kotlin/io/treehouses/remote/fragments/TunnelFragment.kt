@@ -17,11 +17,10 @@ import io.treehouses.remote.callback.ServicesListener
 import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.ui.socks.SocksFragment
-import io.treehouses.remote.ui.tortab.TorTabFragment
-import io.treehouses.remote.ui.tunnelssh.TunnelSSHFragment
-import io.treehouses.remote.views.TunnelViewPager
+import io.treehouses.remote.ui.tor.TorFragment
+import io.treehouses.remote.ui.sshtunnel.SSHTunnelFragment
 
-class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
+class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
     private var tabLayout: TabLayout? = null
 //    private var tunnelView: TunnelViewPager? = null
@@ -30,7 +29,7 @@ class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListen
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivitySshTunnelFragmentBinding.inflate(inflater, container, false)
         tabLayout = bind.tabLayout
-        tabLayout!!.setTabGravity(TabLayout.GRAVITY_FILL)
+        tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL
         tabLayout!!.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 replaceFragment(tab.position)
@@ -39,15 +38,15 @@ class SSHTunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListen
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
-        childFragmentManager.beginTransaction().replace(R.id.tab_content, TorTabFragment()).commit()
+        childFragmentManager.beginTransaction().replace(R.id.tab_content, TorFragment()).commit()
         return bind.root
     }
 
     fun replaceFragment(position: Int) {
         var fragment: Fragment? = null
         when (position) {
-            0 -> fragment = TorTabFragment()
-            1 -> fragment = TunnelSSHFragment()
+            0 -> fragment = TorFragment()
+            1 -> fragment = SSHTunnelFragment()
             2 -> fragment = SocksFragment()
         }
 //        tunnelView!!.currentItem = position
