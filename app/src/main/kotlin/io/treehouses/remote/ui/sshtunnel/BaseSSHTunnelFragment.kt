@@ -1,4 +1,4 @@
-package io.treehouses.remote.ui.tunnelssh
+package io.treehouses.remote.ui.sshtunnel
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -11,8 +11,8 @@ import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.databinding.ActivityTunnelSshFragmentBinding
 import io.treehouses.remote.pojo.TunnelSSHKeyDialogData
 
-open class BaseTunnelSSHFragment : Fragment() {
-    protected val viewModel: TunnelSSHViewModel by viewModels(ownerProducer = { this })
+open class BaseSSHTunnelFragment : Fragment() {
+    protected val viewModel: SSHTunnelViewModel by viewModels(ownerProducer = { this })
     protected lateinit var bind: ActivityTunnelSshFragmentBinding
     var adapter: TunnelPortAdapter? = null
     protected lateinit var adapter2: ArrayAdapter<String>

@@ -1,4 +1,4 @@
-package io.treehouses.remote.ui.tunnelssh
+package io.treehouses.remote.ui.sshtunnel
 
 import android.app.Application
 import android.content.Context
@@ -12,10 +12,9 @@ import io.treehouses.remote.R
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.utils.TUNNEL_SSH_RESULTS
 import io.treehouses.remote.utils.TunnelUtils
-import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.matchSshOutput
 
-open class TunnelSSHViewModel(application: Application) : BaseTunnelSSHViewModel(application) {
+open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext
 
     override fun onRead(output: String) {

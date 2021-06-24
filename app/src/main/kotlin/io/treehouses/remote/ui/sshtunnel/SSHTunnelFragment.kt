@@ -1,4 +1,4 @@
-package io.treehouses.remote.ui.tunnelssh
+package io.treehouses.remote.ui.sshtunnel
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.dialog_sshtunnel_hosts.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_key.*
 import kotlinx.android.synthetic.main.dialog_sshtunnel_ports.*
 
-class TunnelSSHFragment : BaseTunnelSSHFragment() {
+class SSHTunnelFragment : BaseSSHTunnelFragment() {
 
 
     @RequiresApi(Build.VERSION_CODES.N)

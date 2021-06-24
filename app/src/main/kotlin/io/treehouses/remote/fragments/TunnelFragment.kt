@@ -18,7 +18,7 @@ import io.treehouses.remote.databinding.ActivitySshTunnelFragmentBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.ui.socks.SocksFragment
 import io.treehouses.remote.ui.tor.TorFragment
-import io.treehouses.remote.ui.tunnelssh.TunnelSSHFragment
+import io.treehouses.remote.ui.sshtunnel.SSHTunnelFragment
 
 class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener, OnPageChangeListener {
 
@@ -46,7 +46,7 @@ class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener,
         var fragment: Fragment? = null
         when (position) {
             0 -> fragment = TorFragment()
-            1 -> fragment = TunnelSSHFragment()
+            1 -> fragment = SSHTunnelFragment()
             2 -> fragment = SocksFragment()
         }
 //        tunnelView!!.currentItem = position
