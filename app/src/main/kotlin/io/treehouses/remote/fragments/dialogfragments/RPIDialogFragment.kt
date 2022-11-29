@@ -236,7 +236,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         }
 
         fun checkPiAddress(deviceHardwareAddress: String): Boolean {
-            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "E4:5F:01", "28:CD:C1,
+            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "E4:5F:01", "28:CD:C1",
                                                         "B8-27-EB", "DC-A6-32", "E4-5F-01", "28-CD-C1",
                                                         "B827.EB", "DCA6.32", "E45F.01", "28CD.C1",
                                                         "b8:27:eb", "dc:a6:32", "e4:5f:01", "28:cd:c1",
