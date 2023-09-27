@@ -5,6 +5,11 @@ def appVersionCode = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.
 def appVersionName = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.GITHUB_RUN_NUMBER) + 6050: "1.0.0") + ""
 
 android {
+
+    namespace 'io.treehouses.remote'
+    lint {
+        abortOnError false
+    }
     compileSdkVersion 29
     defaultConfig {
         applicationId "io.treehouses.remote"
@@ -37,9 +42,6 @@ android {
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 //        }
 
-    }
-    lintOptions {
-        abortOnError false
     }
     compileOptions {
         sourceCompatibility = '1.8'
