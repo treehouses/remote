@@ -313,10 +313,10 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
              * This should only handle scrolling when terminalTextViewOverlay is `null`, but
              * we need to handle the page up/down gesture if it's enabled.
              */
-            override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
                 // activate consider if within x tolerance
                 val touchSlop = ViewConfiguration.get(this@TerminalView.context).scaledTouchSlop
-                if (Math.abs(e1.x - e2.x) < touchSlop * 4) {
+                if (Math.abs(e1!!.x - e2.x) < touchSlop * 4) {
                     // estimate how many rows we have scrolled through
                     // accumulate distance that doesn't trigger immediate scroll
                     totalY += distanceY
@@ -346,7 +346,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 return super.onSingleTapConfirmed(e)
             }
 
-            override fun onDoubleTap(e: MotionEvent?): Boolean {
+            override fun onDoubleTap(e: MotionEvent): Boolean {
                 try {
                     bridge.transport?.write(0x09)
                     bridge.tryKeyVibrate()

@@ -188,7 +188,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item == null) return false
         return when (item.itemId) {
             android.R.id.home -> {
