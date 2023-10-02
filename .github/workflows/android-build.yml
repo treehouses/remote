@@ -1,12 +1,10 @@
-name: Android Check CI
+name: build check
 
 on:
   push:
     branches:
       - '*'
       - '!master'
-
-#on:
 #  workflow_dispatch:
 #    inputs:
 
@@ -15,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: checkout 
+        uses: actions/checkout@v4
       - name: set up JDK 17
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: 17
-      - name: Install NDK
+      - name: install NDK
         run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
-
+      - name: build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
