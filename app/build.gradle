@@ -10,11 +10,11 @@ android {
     lint {
         abortOnError false
     }
-    compileSdkVersion 29
+    compileSdkVersion 34
     defaultConfig {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 34
         ndkVersion '21.3.6528147'
         multiDexEnabled true
         versionCode appVersionCode
