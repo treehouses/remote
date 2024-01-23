@@ -21,7 +21,7 @@ jobs:
         run: echo "::set-output name=id::$(($NUM+6050))"
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: setup JDK 17
         uses: actions/setup-java@v4
@@ -31,13 +31,26 @@ jobs:
           cache: 'gradle'
 
       - name: Install NDK
-        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
+        run: |
+          set -x
+          echo "ANDROID_HOME is set to: ${ANDROID_HOME}"
+          echo "ANDROID_SDK_ROOT is set to: ${ANDROID_SDK_ROOT}"
+          echo "ANDROID_NDK_VERSION is set to: ${ANDROID_NDK_VERSION}"
+          echo "y" | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;${ANDROID_NDK_VERSION}" --sdk_root=${ANDROID_SDK_ROOT} 2>&1
+          if [ $? -ne 0 ]; then
+              echo "SDK Manager command failed"
+              exit 1
+          fi
+          set +x
+          chmod +x ./gradlew
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Generate APK
-        run: ./gradlew build
+      - name: build release APK and AAB
+        run: |
+          ./gradlew assembleRelease bundleRelease
+          ls -alR app/build/outputs
+          mkdir -p sign
+          cp app/build/outputs/bundle/release/app-release.aab sign/.
+          cp app/build/outputs/apk/release/app-release-unsigned.apk sign/.
 
       - name: List APK
         run: ls app/build/outputs/apk
@@ -54,12 +67,42 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "30.0.2"
 
-      - name: Move Files to release
+      - name: copy builds to output and generate sha256
         run: |
-          cp app/build/outputs/mapping/release/mapping.txt build/release/signed/mapping.txt
-          cp app/build/outputs/apk/debug/* build/release/signed/
-          mv build/release/signed/remote-${{ steps.build_id.outputs.id }}-signed.apk build/release/signed/remote.apk
-          sha256sum build/release/signed/remote.apk > build/release/signed/remote.apk.sha256
+          mkdir -p output
+          cp sign/app-release-unsigned-signed.apk output/remote.apk
+          cp sign/app-release.aab output/remote.aab
+          sha256sum output/remote.apk > output/remote.apk.sha256
+          sha256sum output/remote.aab > output/remote.aab.sha256
+          ls -alR output
+
+      - name: publish AAB to playstore
+        if: github.ref == 'refs/heads/master'
+        uses: r0adkll/upload-google-play@v1.1.2
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: io.treehouses.remote
+          releaseFiles: output/remote.aab
+          track: internal
+          releaseName: "${{ env.ANDROID_VERSION_CODE }} (${{ env.ANDROID_VERSION_NAME }})"
+          status: completed
+
+      - name: rename APK and AAB with version and branch for artifact
+        if: github.ref != 'refs/heads/master'
+        run: |
+          mv output/remote.apk output/remote-${{ env.ANDROID_VERSION_NAME }}-${{ env.BRANCHNAME }}.apk
+          mv output/remote.apk.sha256 output/remote-${{ env.ANDROID_VERSION_NAME }}-${{ env.BRANCHNAME }}.apk.sha256
+          mv output/remote.aab output/remote-${{ env.ANDROID_VERSION_NAME }}-${{ env.BRANCHNAME }}.aab
+          mv output/remote.aab.sha256 output/remote-${{ env.ANDROID_VERSION_NAME }}-${{ env.BRANCHNAME }}.aab.sha256
+          ls -alR output
+
+      - name: upload APK and AAB as build artifact
+        if: github.ref != 'refs/heads/master'
+        uses: actions/upload-artifact@v3
+        with:
+          name: remote-${{ env.ANDROID_VERSION_NAME }}-${{ env.BRANCHNAME }}
+          path: output/*
+          retention-days: 9
 
       - name: Mobile Security Framework
         run: |
