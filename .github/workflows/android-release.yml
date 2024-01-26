@@ -51,7 +51,7 @@ jobs:
           ls -alR app/build/outputs
           mkdir -p sign
           cp app/build/outputs/bundle/release/app-release.aab sign/.
-          cp app/build/outputs/apk/release/app-release-unsigned.apk sign/.
+          cp app/build/outputs/apk/release/remote-${{ steps.version.outputs.id }}.apk sign/app-release-unsigned.apk
           ls -al sign
 
       - name: sign release APK and AAB
@@ -128,7 +128,7 @@ jobs:
           overwrite: true
           file_glob: true
 
-      - name: Send Message
+      - name: send success message to discord
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
