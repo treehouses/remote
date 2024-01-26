@@ -89,8 +89,9 @@ jobs:
           docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest 
           cd output
           ls -al
-          echo 1
           wget http://localhost:8000/api_docs
+          echo 1
+          cat api_docs
           echo 2
           MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
           echo 3
