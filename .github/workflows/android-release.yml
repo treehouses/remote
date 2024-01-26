@@ -89,7 +89,7 @@ jobs:
 #          docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest 
 #          cd output
 #          ls -al
-3          wget http://localhost:8000/api_docs
+#          wget http://localhost:8000/api_docs
 #          MOBSF_API_KEY=$(grep 'Api Key' api_docs)
 #          echo MOBSF_API_KEY
 #          MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
