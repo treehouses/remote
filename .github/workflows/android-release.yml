@@ -90,15 +90,11 @@ jobs:
           cd output
           ls -al
           wget http://localhost:8000/api_docs
-          echo 1
-          cat api_docs
-          echo 2
-          MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
-          echo 3
-          MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
-          echo 4
+          MOBSF_API_KEY=$(grep 'Api Key' api_docs)
+          echo MOBSF_API_KEY
+          MOBSF_API_KEY=${MOBSF_API_KEY:37:64}
+          echo MOBSF_API_KEY
           rm api_docs
-          echo 5
           HASH=$(md5sum remote.apk)
           echo 6
           HASH=${HASH:0:32}
