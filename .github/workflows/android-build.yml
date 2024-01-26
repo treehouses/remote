@@ -1,4 +1,4 @@
-name: Android Check CI
+name: treehouses remote build test
 
 on:
   push:
@@ -6,23 +6,34 @@ on:
       - '*'
       - '!master'
 
-#on:
-#  workflow_dispatch:
-#    inputs:
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ANDROID_NDK_VERSION: "21.3.6528147"
+      BUILD_TOOLS_VERSION: "30.0.2"
+
     steps:
-      - uses: actions/checkout@v1
-      - name: set up JDK 1.8
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v4
+      - name: setup JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: 1.8
-      - name: Install NDK
-        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-      - name: Build with Gradle
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+      - name: install NDK
+        run: |
+          set -x
+          echo "ANDROID_HOME is set to: ${ANDROID_HOME}"
+          echo "ANDROID_SDK_ROOT is set to: ${ANDROID_SDK_ROOT}"
+          echo "ANDROID_NDK_VERSION is set to: ${ANDROID_NDK_VERSION}"
+          echo "y" | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;${ANDROID_NDK_VERSION}" --sdk_root=${ANDROID_SDK_ROOT} 2>&1
+          if [ $? -ne 0 ]; then
+              echo "SDK Manager command failed"
+              exit 1
+          fi
+          set +x
+          chmod +x ./gradlew
+      - name: build debug as test
         run: ./gradlew assembleDebug

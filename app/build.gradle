@@ -5,11 +5,12 @@ def appVersionCode = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.
 def appVersionName = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.GITHUB_RUN_NUMBER) + 6050: "1.0.0") + ""
 
 android {
-    compileSdkVersion 29
+    namespace 'io.treehouses.remote'
+    compileSdkVersion 34
     defaultConfig {
         applicationId "io.treehouses.remote"
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 34
         ndkVersion '21.3.6528147'
         multiDexEnabled true
         versionCode appVersionCode
@@ -38,15 +39,15 @@ android {
 //        }
 
     }
-    lintOptions {
+    lint {
         abortOnError false
     }
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility = '17'
+        targetCompatibility = '17'
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 

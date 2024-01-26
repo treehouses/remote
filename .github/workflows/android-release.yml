@@ -1,93 +1,142 @@
-name: Release And Update
+name: treehouses remote release
 
 on:
   push:
     branches:
       - 'master'
-
-#on:
-#  workflow_dispatch:
-#    inputs:
+    workflow_dispatch:
 
 jobs:
   apk:
     name: Release APK
     runs-on: ubuntu-latest
+    env:
+      ANDROID_NDK_VERSION: "21.3.6528147"
+      BUILD_TOOLS_VERSION: "34.0.0"
     steps:
       - name: run number with offset
-        id: build_id
+        id: version
         env:
           NUM: ${{ github.run_number }}
         run: echo "::set-output name=id::$(($NUM+6050))"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: checkout repository code
+        uses: actions/checkout@v4
 
-      - name: Use Java8
-        uses: actions/setup-java@v1
+      - name: set more env
+        run: echo "BRANCHNAME="${GITHUB_REF##*/} >> $GITHUB_ENV
+
+      - name: setup JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: 1.8
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
 
-      - name: Install NDK
-        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
+      - name: install NDK
+        run: |
+          set -x
+          echo "ANDROID_HOME is set to: ${ANDROID_HOME}"
+          echo "ANDROID_SDK_ROOT is set to: ${ANDROID_SDK_ROOT}"
+          echo "ANDROID_NDK_VERSION is set to: ${ANDROID_NDK_VERSION}"
+          echo "y" | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;${ANDROID_NDK_VERSION}" --sdk_root=${ANDROID_SDK_ROOT} 2>&1
+          if [ $? -ne 0 ]; then
+              echo "SDK Manager command failed"
+              exit 1
+          fi
+          set +x
+          chmod +x ./gradlew
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+      - name: build release APK and AAB
+        run: |
+          ./gradlew assembleRelease bundleRelease
+          ls -alR app/build/outputs
+          mkdir -p sign
+          cp app/build/outputs/bundle/release/app-release.aab sign/.
+          cp app/build/outputs/apk/release/remote-${{ steps.version.outputs.id }}.apk sign/app-release-unsigned.apk
+          ls -al sign
 
-      - name: Generate APK
-        run: ./gradlew build
-
-      - name: List APK
-        run: ls app/build/outputs/apk
-
-      - name: Android Sign
-        uses: Tlaster/android-sign@v1.2.2
+      - name: sign release APK and AAB
+        uses: dogi/sign-android-release@v4.0.1
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: sign
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          output: build/release/signed
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "30.0.2"
-          
-      - name: Move Files to release
-        run: |
-          cp app/build/outputs/mapping/release/mapping.txt build/release/signed/mapping.txt
-          cp app/build/outputs/apk/debug/* build/release/signed/
-          mv build/release/signed/remote-${{ steps.build_id.outputs.id }}-signed.apk build/release/signed/remote.apk
-          sha256sum build/release/signed/remote.apk > build/release/signed/remote.apk.sha256
-      
-      - name: Mobile Security Framework
-        run: |
-          docker pull opensecurity/mobile-security-framework-mobsf
-          docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest 
-          cd build/release/signed/
-          ls -al
-          wget http://localhost:8000/api_docs
-          MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
-          MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
-          rm api_docs
-          HASH=$(md5sum remote.apk)
-          HASH=${HASH:0:32}
-          curl -F "file=@remote.apk" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
-          curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=remote.apk&hash=$HASH" -H "Authorization:$MOBSF_API_KEY"
-          curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=$HASH" -H "Authorization:$MOBSF_API_KEY" --output ${{ steps.build_id.outputs.id }}-security-scan.pdf
-          ls -al
 
-      - name: Upload binaries to release
+      - name: copy builds to output and generate sha256
+        run: |
+          mkdir -p output
+          cp sign/app-release-unsigned-signed.apk output/remote.apk
+          cp sign/app-release.aab output/remote.aab
+          sha256sum output/remote.apk > output/remote.apk.sha256
+          sha256sum output/remote.aab > output/remote.aab.sha256
+          ls -alR output
+
+#      - name: publish AAB to playstore
+#        if: github.ref == 'refs/heads/master'
+#        uses: r0adkll/upload-google-play@v1.1.2
+#        with:
+#          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+#          packageName: io.treehouses.remote
+#          releaseFiles: output/remote.aab
+#          track: internal
+#          releaseName: "${{ env.ANDROID_VERSION_CODE }} (${{ env.ANDROID_VERSION_NAME }})"
+#          status: completed
+
+#      - name: mobile security framework
+#        run: |
+#          docker pull opensecurity/mobile-security-framework-mobsf
+#          docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest 
+#          cd output
+#          ls -al
+#          wget http://localhost:8000/api_docs
+#          MOBSF_API_KEY=$(grep 'Api Key' api_docs)
+#          echo MOBSF_API_KEY
+#          MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
+#          echo MOBSF_API_KEY
+#          rm api_docs
+#          HASH=$(md5sum remote.apk)
+#          HASH=${HASH:0:32}
+#          curl -F "file=@remote.apk" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
+#          curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=remote.apk&hash=$HASH" -H "Authorization:$MOBSF_API_KEY"
+#          curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=$HASH" -H "Authorization:$MOBSF_API_KEY" --output remote-${{ steps.version.outputs.id }}.pdf
+#          ls -al
+
+      - name: rename APK and AAB with version and branch for artifact
+        if: github.ref != 'refs/heads/master'
+        run: |
+          mv output/remote.apk output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.apk
+          mv output/remote.apk.sha256 output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.apk.sha256
+          mv output/remote.aab output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.aab
+          mv output/remote.aab.sha256 output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.aab.sha256
+          #mv output/remote-${{ steps.version.outputs.id }}.pdf output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.pdf
+          #cp app/build/outputs/mapping/release/mapping.txt output/mapping.txt
+          ls -alR output
+
+      - name: upload APK and AAB as build artifact
+        if: github.ref != 'refs/heads/master'
+        uses: actions/upload-artifact@v3
+        with:
+          name: remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}
+          path: output/*
+          retention-days: 9
+
+      - name: release APK and AAB on GitHub
+        if: github.ref == 'refs/heads/master'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/release/signed/*
-          tag: v${{ steps.build_id.outputs.id }}
+          file: output/*
+          tag: v${{ steps.version.outputs.id }}
           overwrite: true
           file_glob: true
 
-      - name: Send Message
+      - name: send success message to discord
+        if: github.ref == 'refs/heads/master'
         run: |
           sudo npm install -g @treehouses/cli
-          export gitter_channel="${{ secrets.CHANNEL }}"
-          echo "https://github.com/treehouses/remote/releases/tag/v${{ steps.build_id.outputs.id }}"
-          treehouses feedback "new remote app: https://github.com/treehouses/remote/releases/tag/v${{ steps.build_id.outputs.id }}"
+          export discord_channel="${{ secrets.CHANNEL }}"
+          echo "https://github.com/treehouses/remote/releases/tag/v${{ steps.version.outputs.id }}"
+          treehouses feedback "new remote app: https://github.com/treehouses/remote/releases/tag/v${{ steps.version.outputs.id }}"

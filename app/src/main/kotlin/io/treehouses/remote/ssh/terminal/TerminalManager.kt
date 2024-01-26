@@ -357,9 +357,9 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     /* (non-Javadoc)
      * @see android.content.SharedPreferences.OnSharedPreferenceChangeListener#onSharedPreferenceChanged(android.content.SharedPreferences, java.lang.String)
      */
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
-                                           key: String) {
-        if (PreferenceConstants.BUMPY_ARROWS == key) wantKeyVibration = sharedPreferences.getBoolean(PreferenceConstants.BUMPY_ARROWS, true)
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?,
+                                           key: String?) {
+        if (PreferenceConstants.BUMPY_ARROWS == key) wantKeyVibration = sharedPreferences!!.getBoolean(PreferenceConstants.BUMPY_ARROWS, true)
         else if (PreferenceConstants.WIFI_LOCK == key) { } else if (PreferenceConstants.MEMKEYS == key) savingKeys = prefs!!.getBoolean(PreferenceConstants.MEMKEYS, true)
     }
 

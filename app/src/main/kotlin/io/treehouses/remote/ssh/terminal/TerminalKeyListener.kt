@@ -36,8 +36,8 @@ class TerminalKeyListener(tm: TerminalManager?,
         } else false
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
-                                           key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?,
+                                           key: String?) {
         if (PreferenceConstants.KEYMODE == key || PreferenceConstants.SHIFT_FKEYS == key || PreferenceConstants.CTRL_FKEYS == key || PreferenceConstants.VOLUME_FONT == key || PreferenceConstants.STICKY_MODIFIERS == key) {
             updatePrefs()
         }

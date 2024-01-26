@@ -37,8 +37,8 @@ class ViewHolderSSHAllKeyRow(private val binding: RowKeyBinding, private val lis
         menu?.children?.forEach { it.setOnMenuItemClickListener(this) }
     }
 
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.copy_public -> listener.onCopyPub(adapterPosition)
             R.id.delete_key -> listener.onDelete(adapterPosition)
             R.id.send_key -> listener.onSendToRaspberry(adapterPosition)
