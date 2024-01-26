@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_NDK_VERSION: "21.3.6528147"
-      BUILD_TOOLS_VERSION: "30.0.2"
+      BUILD_TOOLS_VERSION: "34.0.0"
     steps:
       - name: run number with offset
         id: version
