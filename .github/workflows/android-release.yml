@@ -89,14 +89,23 @@ jobs:
           docker run -itd -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest 
           cd output
           ls -al
+          echo 1
           wget http://localhost:8000/api_docs
+          echo 2
           MOBSF_API_KEY=$(grep 'REST API Key' api_docs)
+          echo 3
           MOBSF_API_KEY=${MOBSF_API_KEY:42:64}
+          echo 4
           rm api_docs
+          echo 5
           HASH=$(md5sum remote.apk)
+          echo 6
           HASH=${HASH:0:32}
+          echo 7
           curl -F "file=@remote.apk" http://localhost:8000/api/v1/upload -H "Authorization:$MOBSF_API_KEY"
+          echo 8
           curl -X POST --url http://localhost:8000/api/v1/scan --data "scan_type=apk&file_name=remote.apk&hash=$HASH" -H "Authorization:$MOBSF_API_KEY"
+          echo 9
           curl -X POST --url http://localhost:8000/api/v1/download_pdf --data "hash=$HASH" -H "Authorization:$MOBSF_API_KEY" --output remote-${{ steps.version.outputs.id }}.pdf
           ls -al
 
