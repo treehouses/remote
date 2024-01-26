@@ -109,7 +109,7 @@ jobs:
           mv output/remote.apk.sha256 output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.apk.sha256
           mv output/remote.aab output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.aab
           mv output/remote.aab.sha256 output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.aab.sha256
-          mv output/remote-${{ steps.version.outputs.id }}.pdf output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.pdf
+          #mv output/remote-${{ steps.version.outputs.id }}.pdf output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.pdf
           ls -alR output
 
       - name: upload APK and AAB as build artifact
