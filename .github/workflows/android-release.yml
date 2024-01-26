@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'master'
+      - '1820-update-this-projects-agp'
     workflow_dispatch:
 
 jobs:
