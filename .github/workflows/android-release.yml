@@ -1,4 +1,4 @@
-name: Release And Update
+name: treehouses remote release
 
 on:
   push:
