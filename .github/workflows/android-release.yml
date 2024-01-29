@@ -1,10 +1,11 @@
 name: treehouses remote release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'master'
-  workflow_dispatch:
+      - '1826-more-mac-addresses'
 
 jobs:
   apk:
