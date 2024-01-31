@@ -39,11 +39,21 @@ abstract class PermissionActivity : AppCompatActivity() {
     }
 
     fun requestPermission() {
-        if (!checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) || !checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION) || !checkPermission(Manifest.permission.CHANGE_WIFI_STATE)) {
+        if (!checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
+            !checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ||
+            !checkPermission(Manifest.permission.CHANGE_WIFI_STATE) ||
+            !checkPermission(Manifest.permission.BLUETOOTH) ||
+            !checkPermission(Manifest.permission.BLUETOOTH_ADMIN) ||
+            !checkPermission(Manifest.permission.BLUETOOTH_CONNECT) ||
+            !checkPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
             ActivityCompat.requestPermissions(this, arrayOf(
-                    Manifest.permission.CHANGE_WIFI_STATE,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN,
             ), PERMISSION_REQUEST_WIFI)
         } else {
             statusCheck()
