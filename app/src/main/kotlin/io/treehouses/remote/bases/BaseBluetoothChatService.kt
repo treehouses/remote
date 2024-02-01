@@ -55,7 +55,7 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
     }
 
     open fun start() {}
-    
+
     /**
      * Update UI title according to the current state of the chat connection
      */
