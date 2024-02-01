@@ -2,6 +2,7 @@ package io.treehouses.remote.bases
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -55,8 +56,6 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
 
     open fun start() {}
 
-
-
     /**
      * Update UI title according to the current state of the chat connection
      */
@@ -82,10 +81,10 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
 
     protected fun startNotification() {
         val disconnectIntent = Intent(DISCONNECT_ACTION)
-        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, 0)
+        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, FLAG_IMMUTABLE)
 
         val onClickIntent = Intent(this, InitialActivity::class.java)
-        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, FLAG_IMMUTABLE)
 
         val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
         val notification: Notification = notificationBuilder.setOngoing(true)
