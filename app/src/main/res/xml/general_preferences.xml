@@ -14,7 +14,7 @@
             android:layout="@layout/custom_pref_middle"
             android:summary="Enable or Disable Autocomplete Suggestions of Commands in Terminal"
             android:key="autocomplete"
-            android:defaultValue="true" />
+            android:defaultValue="false" />
 
         <io.treehouses.remote.views.RoundedListPreference
             android:defaultValue="Follow System"
