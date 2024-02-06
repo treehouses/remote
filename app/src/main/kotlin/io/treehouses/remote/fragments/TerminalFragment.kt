@@ -47,7 +47,7 @@ class TerminalFragment : BaseTerminalFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false)
         onLoad(mHandler)
-        val autocomplete = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autocomplete", true)
+        val autocomplete = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autocomplete", false)
         if (autocomplete) {
             jsonSend(true)
             listener.sendMessage(getString(R.string.TREEHOUSES_COMMANDS_JSON))
