@@ -45,11 +45,11 @@
             android:text="Treehouses Image"
             android:textColor="@color/bg_white"
             app:layout_constraintBottom_toTopOf="@+id/btn_version"
-            app:layout_constraintEnd_toStartOf="@+id/btn_gitter"
+            app:layout_constraintEnd_toStartOf="@+id/btn_discord"
             app:layout_constraintStart_toEndOf="@+id/btn_github" />
 
         <Button
-            android:id="@+id/btn_gitter"
+            android:id="@+id/btn_discord"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -57,7 +57,7 @@
             android:layout_marginBottom="16dp"
             android:background="@drawable/ic_about_btn"
             android:gravity="center"
-            android:text="gitter"
+            android:text="discord"
             android:textColor="@color/bg_white"
             android:textSize="@dimen/text_size_small"
             app:layout_constraintBottom_toTopOf="@+id/btn_version"

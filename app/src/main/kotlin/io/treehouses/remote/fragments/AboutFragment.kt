@@ -33,12 +33,12 @@ class AboutFragment : Fragment() {
     private fun setHyperlinks(view: View) {
         val gitHub = view.findViewById<Button>(R.id.btn_github)
         val images = view.findViewById<Button>(R.id.btn_image)
-        val gitter = view.findViewById<Button>(R.id.btn_gitter)
+        val discord = view.findViewById<Button>(R.id.btn_discord)
         val contributors = view.findViewById<Button>(R.id.btn_contributors)
 
         hyperLinks(gitHub, "https://github.com/treehouses/remote")
         hyperLinks(images, "https://treehouses.io/#!pages/download.md")
-        hyperLinks(gitter, "https://gitter.im/open-learning-exchange/raspberrypi")
+        hyperLinks(discord, "https://discord.gg/mtgGD4EnYW")
         hyperLinks(contributors, "https://github.com/treehouses/remote/graphs/contributors")
 
     }
