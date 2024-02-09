@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.*
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -43,7 +44,8 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private var bind: ActivityRpiDialogFragmentBinding? = null
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         instance = this
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        val bluetoothManager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+        mBluetoothAdapter = bluetoothManager?.adapter
         bluetoothCheck()
         if (mBluetoothAdapter!!.isDiscovering) mBluetoothAdapter!!.cancelDiscovery()
         mBluetoothAdapter!!.startDiscovery()
