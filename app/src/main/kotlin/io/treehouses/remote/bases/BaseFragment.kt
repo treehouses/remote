@@ -2,6 +2,7 @@ package io.treehouses.remote.bases
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
@@ -25,7 +26,7 @@ open class BaseFragment : Fragment() {
         super.onAttach(context)
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
         mChatService = listener.getChatService()
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        mBluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
 
     fun isListenerInitialized() = ::listener.isInitialized
@@ -39,7 +40,7 @@ open class BaseFragment : Fragment() {
     protected fun onLoad(mHandler: Handler?) {
 //        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler!!)
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        mBluetoothAdapter = (context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
 
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {

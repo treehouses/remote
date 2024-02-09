@@ -6,6 +6,7 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -21,22 +22,17 @@ import java.io.Serializable
 import java.util.*
 
 open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : Service(), Serializable {
-
     var mDevice: BluetoothDevice? = null
-    var context: Context?
+    var context: Context? = null
     var mNewState: Int
     var bNoReconnect = false
+    var state: Int
     //    private AcceptThread mSecureAcceptThread;
     //private AcceptThread mInsecureAcceptThread;
 
-    /**
-     * Return the current connection state.
-     */
-    @get:Synchronized
-    var state: Int
-        set
-
-    val mAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    val mAdapter: BluetoothAdapter? by lazy {
+        (applicationContext?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
+    }
 
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
@@ -109,7 +105,7 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
         state = Constants.STATE_NONE
         mNewState = state
         mHandler = handler
-        context = applicationContext
+        this.context = applicationContext
     }
 
     companion object {
