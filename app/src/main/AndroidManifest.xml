@@ -36,7 +36,7 @@
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -57,7 +57,7 @@
 
         <activity
             android:name=".InitialActivity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme.Base" />
 
         <meta-data
