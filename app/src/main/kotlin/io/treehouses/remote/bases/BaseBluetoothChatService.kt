@@ -27,8 +27,6 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
     var mNewState: Int
     var bNoReconnect = false
     var state: Int
-    //    private AcceptThread mSecureAcceptThread;
-    //private AcceptThread mInsecureAcceptThread;
 
     val mAdapter: BluetoothAdapter? by lazy {
         (applicationContext?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
@@ -109,15 +107,9 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
     }
 
     companion object {
-        // Debugging
         const val TAG = "BluetoothChatService"
         const val DISCONNECT_ACTION = "disconnect"
-        //private static final String NAME_INSECURE = "BluetoothChatInsecure";
-        // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB
         val MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
         var mHandler: Handler? = null
-
     }
-    //    private BluetoothSocket socket = null;
-
 }
