@@ -74,16 +74,16 @@ jobs:
           sha256sum output/remote.aab > output/remote.aab.sha256
           ls -alR output
 
-#      - name: publish AAB to playstore
-#        if: github.ref == 'refs/heads/master'
-#        uses: r0adkll/upload-google-play@v1.1.2
-#        with:
-#          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-#          packageName: io.treehouses.remote
-#          releaseFiles: output/remote.aab
-#          track: internal
-#          releaseName: "${{ env.ANDROID_VERSION_CODE }} (${{ env.ANDROID_VERSION_NAME }})"
-#          status: completed
+      - name: publish AAB to playstore
+        if: github.ref == 'refs/heads/master'
+        uses: dogi/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: io.treehouses.remote
+          releaseFiles: output/remote.aab
+          track: internal
+          releaseName: "${{ steps.version.outputs.id }}"
+          status: completed
 
 #      - name: mobile security framework
 #        run: |
