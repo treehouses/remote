@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 def appVersionCode = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.GITHUB_RUN_NUMBER) : 2) + 6050
 def appVersionName = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.GITHUB_RUN_NUMBER) + 6050: "1.0.0") + ""
 

@@ -20,6 +20,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityNetworkFragmentBinding
+import io.treehouses.remote.databinding.DialogSpeedtestBinding
 import io.treehouses.remote.fragments.DiscoverFragment
 import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
 import io.treehouses.remote.interfaces.FragmentDialogInterface
@@ -29,7 +30,6 @@ import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
 import io.treehouses.remote.utils.Utils
-import kotlinx.android.synthetic.main.dialog_speedtest.*
 open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
     private lateinit var speedDialog: Dialog
@@ -37,6 +37,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     private lateinit var speedDialogTest: Button
     private var speedDialogCheck: Boolean = false
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { this })
+    lateinit var dialogSpeedtestBinding: DialogSpeedtestBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ActivityNetworkFragmentBinding.inflate(inflater, container, false)
         loadObservers()
@@ -94,8 +95,8 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
             binding.speedTest == v -> speedTest()
             binding.reverseLookup == v -> reverseLookup()
             binding.discoverBtn == v -> listener.openCallFragment(DiscoverFragment())
-            speedDialog.speedBtnTest == v -> viewModel.treehousesInternet()
-            speedDialog.speedBtnDismiss == v -> speedDialog.dismiss()
+            dialogSpeedtestBinding.speedBtnTest == v -> viewModel.treehousesInternet()
+            dialogSpeedtestBinding.speedBtnDismiss == v -> speedDialog.dismiss()
         }
     }
 
@@ -130,11 +131,12 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
 
     private fun initializeSpeedDialog() {
         speedDialog = Dialog(requireContext())
-        speedDialog.setContentView(R.layout.dialog_speedtest)
+        dialogSpeedtestBinding = DialogSpeedtestBinding.inflate(layoutInflater)
+        speedDialog.setContentView(dialogSpeedtestBinding.root)
         speedDialogDismiss = speedDialog.findViewById(R.id.speedBtnDismiss); speedDialogTest = speedDialog.findViewById(R.id.speedBtnTest)
         speedDialogDismiss.setOnClickListener(this); speedDialogTest.setOnClickListener(this)
         viewModel.downloadUpload.observe(viewLifecycleOwner, Observer {
-            speedDialog.speed_text.text = it
+            dialogSpeedtestBinding.speedText.text = it
         })
         viewModel.dialogCheck.observe(viewLifecycleOwner, Observer {
             speedDialogCheck = it

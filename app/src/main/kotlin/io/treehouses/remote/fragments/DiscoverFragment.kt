@@ -15,14 +15,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import com.parse.Parse.getApplicationContext
 import io.treehouses.remote.Constants
-import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
-import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
+import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
-import kotlinx.android.synthetic.main.activity_discover_fragment.view.*
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -124,7 +123,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun updateGatewayIcon() {
-        val gatewayIcon = bind.gatewayContainer.gateway_icon
+        val gatewayIcon = bind.gatewayIcon
         bind.gatewayContainer.removeView(gatewayIcon)
 
 
