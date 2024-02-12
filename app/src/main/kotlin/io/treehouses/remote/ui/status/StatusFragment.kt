@@ -3,7 +3,6 @@ package io.treehouses.remote.ui.status
 import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -20,10 +19,10 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityStatusFragmentBinding
 import io.treehouses.remote.databinding.DialogRenameStatusBinding
+import io.treehouses.remote.databinding.DialogWificountryBinding
+import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.interfaces.FragmentDialogInterface
-import kotlinx.android.synthetic.main.dialog_wificountry.*
 
 class StatusFragment : BaseFragment(), FragmentDialogInterface {
 
@@ -46,9 +45,10 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
 
     private fun wifiCountry(adapter: ArrayAdapter<String?>) {
         val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_wificountry)
-        dialog.countries
-        countryList = dialog.countries
+        val dialogWifiCountryBinding = DialogWificountryBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogWifiCountryBinding.root)
+        dialogWifiCountryBinding.countries
+        countryList = dialogWifiCountryBinding.countries
         adapter.filter.filter("")
         countryList?.adapter = adapter
         countryList?.isTextFilterEnabled = true
@@ -57,10 +57,9 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
             dialog.dismiss()
         }
 
-        searchView(dialog)
+        searchView(dialogWifiCountryBinding)
         dialog.show()
     }
-
     private fun showBar(mutableData: MutableLiveData<Int>, barView: ProgressBar) {
         mutableData.observe(viewLifecycleOwner, Observer {
             ObjectAnimator.ofInt(barView, "progress", it).setDuration(600).start()
@@ -157,8 +156,8 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     }
 
 
-    private fun searchView(dialog: Dialog) {
-        val searchView = dialog.search_bar
+    private fun searchView(dialogWifiCountryBinding: DialogWificountryBinding) {
+        val searchView = dialogWifiCountryBinding.searchBar
         searchView.isIconifiedByDefault = false
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
