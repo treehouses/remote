@@ -17,13 +17,17 @@
 */
 package io.treehouses.remote.network
 
+import android.Manifest
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.*
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.bases.BaseBluetoothChatService
@@ -101,11 +105,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         return START_NOT_STICKY
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate() {
         super.onCreate()
         val i = IntentFilter()
         i.addAction(DISCONNECT_ACTION)
-        registerReceiver(receiver, i)
+        registerReceiver(receiver, i, RECEIVER_NOT_EXPORTED)
     }
 
     override fun onDestroy() {
@@ -159,6 +164,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @Synchronized
     fun connected(socket: BluetoothSocket?, device: BluetoothDevice, socketType: String) {
         logD("connected, Socket Type:$socketType")
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
         connectedDeviceName = device.name
         mDevice = device
         // Cancel the thread that completed the connection
@@ -264,6 +272,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             name = "ConnectThread$mSocketType"
             this@BluetoothChatService.state = Constants.STATE_CONNECTING
             // Always cancel discovery because it will slow down a connection
+            if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
             mAdapter?.cancelDiscovery()
 
             // Make a connection to the BluetoothSocket
@@ -301,7 +312,10 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             // given BluetoothDevice
             try {
 //                if (secure) {
-                tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
+                if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
+                }
+
                 //                } else {
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
             } catch (e: Exception) {
