@@ -125,7 +125,7 @@ jobs:
 
       - name: release APK and AAB on GitHub
         if: github.ref == 'refs/heads/master'
-        uses: svenstaro/upload-release-action@v2
+        uses: dogi/upload-release-action@v2.7.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: output/*
