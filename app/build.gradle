@@ -8,14 +8,14 @@ android {
     compileSdkVersion 34
     defaultConfig {
         applicationId "io.treehouses.remote"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 34
         ndkVersion '21.3.6528147'
         multiDexEnabled true
         versionCode appVersionCode
         versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        applicationVariants.all { variant ->
+        applicationVariants.configureEach { variant ->
             variant.outputs.all { output ->
                 outputFileName = new File("remote-" + android.defaultConfig.versionCode + ".apk")
             }

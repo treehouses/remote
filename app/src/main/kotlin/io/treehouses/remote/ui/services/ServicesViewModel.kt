@@ -1,11 +1,10 @@
 package io.treehouses.remote.ui.services
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
@@ -16,8 +15,14 @@ import io.treehouses.remote.pojo.ServicesData
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status.LOADING
 import io.treehouses.remote.pojo.enum.Status.SUCCESS
-import io.treehouses.remote.utils.*
+import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils.convertToObject
+import io.treehouses.remote.utils.constructServiceListFromData
+import io.treehouses.remote.utils.containsServiceAction
+import io.treehouses.remote.utils.formatServices
+import io.treehouses.remote.utils.isURL
+import io.treehouses.remote.utils.logE
+import io.treehouses.remote.utils.match
 
 class ServicesViewModel(application: Application) : FragmentViewModel(application) {
 
@@ -55,7 +60,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     /**
      * Format for fast retrieval of a services info; Publicly observable
      */
-    val servicesData : LiveData<Resource<HashMap<String, ServiceInfo>>> = Transformations.map(rawServicesData) {
+    val servicesData : LiveData<Resource<HashMap<String, ServiceInfo>>> = rawServicesData.map {
         return@map when (it.status) {
             SUCCESS -> {
                 val services = constructServiceListFromData(it.data)
@@ -112,7 +117,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         val rawData = data?.convertToObject(ServicesData::class.java)
         if (rawData?.available != null) {
             logE("SUCCESSFUL R CACHE GOT:$rawData")
-            cacheServiceData.value = rawData!!
+            cacheServiceData.value = rawData
         }
     }
 
