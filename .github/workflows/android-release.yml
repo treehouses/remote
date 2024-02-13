@@ -14,17 +14,15 @@ jobs:
       ANDROID_NDK_VERSION: "21.3.6528147"
       BUILD_TOOLS_VERSION: "34.0.0"
     steps:
-      - name: run number with offset
-        id: version
+      - name: set more env
         env:
           NUM: ${{ github.run_number }}
-        run: echo "::set-output name=id::$(($NUM+6050))"
+        run: |
+          echo "VERSION="$(($NUM+6050)) >> $GITHUB_ENV
+          echo "BRANCH="${GITHUB_REF##*/} >> $GITHUB_ENV
 
       - name: checkout repository code
         uses: actions/checkout@v4
-
-      - name: set more env
-        run: echo "BRANCHNAME="${GITHUB_REF##*/} >> $GITHUB_ENV
 
       - name: setup JDK 17
         uses: actions/setup-java@v4
@@ -53,11 +51,11 @@ jobs:
           ls -alR app/build/outputs
           mkdir -p sign
           cp app/build/outputs/bundle/release/app-release.aab sign/.
-          cp app/build/outputs/apk/release/remote-${{ steps.version.outputs.id }}.apk sign/app-release-unsigned.apk
+          cp app/build/outputs/apk/release/remote-${{ env.VERSION }}.apk sign/app-release-unsigned.apk
           ls -al sign
 
       - name: sign release APK and AAB
-        uses: dogi/sign-android-release@v4.0.1
+        uses: dogi/sign-android-release@v5
         with:
           releaseDirectory: sign
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
@@ -82,7 +80,7 @@ jobs:
           packageName: io.treehouses.remote
           releaseFiles: output/remote.aab
           track: internal
-          releaseName: "${{ steps.version.outputs.id }}"
+          releaseName: "${{ env.VERSION }}"
           status: completed
 
 #      - name: mobile security framework
@@ -107,11 +105,11 @@ jobs:
       - name: rename APK and AAB with version and branch for artifact
         if: github.ref != 'refs/heads/master'
         run: |
-          mv output/remote.apk output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.apk
-          mv output/remote.apk.sha256 output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.apk.sha256
-          mv output/remote.aab output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.aab
-          mv output/remote.aab.sha256 output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.aab.sha256
-          #mv output/remote-${{ steps.version.outputs.id }}.pdf output/remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}.pdf
+          mv output/remote.apk output/remote-${{ env.VERSION }}-${{ env.BRANCH }}.apk
+          mv output/remote.apk.sha256 output/remote-${{ env.VERSION }}-${{ env.BRANCH }}.apk.sha256
+          mv output/remote.aab output/remote-${{ env.VERSION }}-${{ env.BRANCH }}.aab
+          mv output/remote.aab.sha256 output/remote-${{ env.VERSION }}-${{ env.BRANCH }}.aab.sha256
+          #mv output/remote-${{ env.VERSION }}.pdf output/remote-${{ env.VERSION }}-${{ env.BRANCH }}.pdf
           #cp app/build/outputs/mapping/release/mapping.txt output/mapping.txt
           ls -alR output
 
@@ -119,17 +117,17 @@ jobs:
         if: github.ref != 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
-          name: remote-${{ steps.version.outputs.id }}-${{ env.BRANCHNAME }}
+          name: remote-${{ env.VERSION }}-${{ env.BRANCH }}
           path: output/*
           retention-days: 9
 
       - name: release APK and AAB on GitHub
         if: github.ref == 'refs/heads/master'
-        uses: svenstaro/upload-release-action@v2
+        uses: dogi/upload-release-action@v2.7.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: output/*
-          tag: v${{ steps.version.outputs.id }}
+          tag: v${{ env.VERSION }}
           overwrite: true
           file_glob: true
 
@@ -138,5 +136,5 @@ jobs:
         run: |
           sudo npm install -g @treehouses/cli
           export discord_channel="${{ secrets.CHANNEL }}"
-          echo "https://github.com/treehouses/remote/releases/tag/v${{ steps.version.outputs.id }}"
-          treehouses feedback "new remote app: https://github.com/treehouses/remote/releases/tag/v${{ steps.version.outputs.id }}"
+          echo "https://github.com/treehouses/remote/releases/tag/v${{ env.VERSION }}"
+          treehouses feedback "new remote app: https://github.com/treehouses/remote/releases/tag/v${{ env.VERSION }}"
