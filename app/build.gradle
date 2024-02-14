@@ -89,7 +89,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.5.2'
     implementation 'me.aflak.libraries:bluetooth:1.3.4'
     implementation 'com.caverock:androidsvg-aar:1.4'
-    implementation "androidx.core:core-ktx:1.3.1"
+    implementation "androidx.core:core-ktx:1.12.0"
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.3.3'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha07'
