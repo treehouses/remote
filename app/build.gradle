@@ -8,7 +8,7 @@ android {
     compileSdkVersion 34
     defaultConfig {
         applicationId "io.treehouses.remote"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 34
         ndkVersion '21.3.6528147'
         multiDexEnabled true
