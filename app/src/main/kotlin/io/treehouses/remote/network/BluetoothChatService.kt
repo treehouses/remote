@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.*
+import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.bases.BaseBluetoothChatService
@@ -101,11 +102,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         return START_NOT_STICKY
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate() {
         super.onCreate()
         val i = IntentFilter()
         i.addAction(DISCONNECT_ACTION)
-        registerReceiver(receiver, i)
+        registerReceiver(receiver, i, RECEIVER_NOT_EXPORTED)
     }
 
     override fun onDestroy() {
