@@ -19,6 +19,7 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
 
     <application
         android:name=".MainApplication"
@@ -68,6 +69,7 @@
             android:name=".network.BluetoothChatService"
             android:enabled="true"
             android:exported="false"
+            android:foregroundServiceType="connectedDevice"
             android:label="Bluetooth Connection" />
     </application>
 </manifest>
