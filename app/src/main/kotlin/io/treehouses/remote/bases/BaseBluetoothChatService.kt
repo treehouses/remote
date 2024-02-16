@@ -9,12 +9,15 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import io.treehouses.remote.Constants
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
@@ -90,7 +93,14 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
                 .setContentIntent(pendingClickIntent)
                 .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
                 .build()
-        startForeground(2, notification)
+        ServiceCompat.startForeground(this,2,
+            notification,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+            } else {
+                0
+            }
+        )
     }
 
     /**

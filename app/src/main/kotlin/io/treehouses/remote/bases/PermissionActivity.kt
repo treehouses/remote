@@ -15,8 +15,8 @@ import androidx.core.content.ContextCompat
 import io.treehouses.remote.R
 
 abstract class PermissionActivity : AppCompatActivity() {
-    private fun checkPermission(strPermission: String?): Boolean {
-        val result = ContextCompat.checkSelfPermission(this, strPermission!!)
+    private fun checkPermission(strPermission: String): Boolean {
+        val result = ContextCompat.checkSelfPermission(this, strPermission)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
@@ -30,31 +30,28 @@ abstract class PermissionActivity : AppCompatActivity() {
     private fun buildAlertMessageNoGps() {
         val builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes") { _: DialogInterface?, _: Int -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
-                .setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.cancel() }
+            .setCancelable(false)
+            .setPositiveButton("Yes") { _, _ -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+            .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
         val alert = builder.create()
-        alert.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alert.window?.setBackgroundDrawableResource(android.R.color.transparent)
         alert.show()
     }
 
     fun requestPermission() {
-        if (!checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
-            !checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ||
-            !checkPermission(Manifest.permission.CHANGE_WIFI_STATE) ||
-            !checkPermission(Manifest.permission.BLUETOOTH) ||
-            !checkPermission(Manifest.permission.BLUETOOTH_ADMIN) ||
-            !checkPermission(Manifest.permission.BLUETOOTH_CONNECT) ||
-            !checkPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
-            ActivityCompat.requestPermissions(this, arrayOf(
-                Manifest.permission.CHANGE_WIFI_STATE,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.BLUETOOTH_SCAN,
-            ), PERMISSION_REQUEST_WIFI)
+        val permissionsToRequest = mutableListOf(
+            Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_SCAN
+        )
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU && !checkPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (permissionsToRequest.any { !checkPermission(it) }) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_WIFI)
         } else {
             statusCheck()
         }
@@ -63,8 +60,7 @@ abstract class PermissionActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_WIFI) {
-            if (grantResults.isNotEmpty()
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 statusCheck()
             }
         }
