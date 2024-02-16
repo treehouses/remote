@@ -81,7 +81,7 @@ jobs:
           releaseFiles: output/remote.aab
           track: internal
           releaseName: "${{ env.VERSION }}"
-#          status: completed
+          status: completed
 
 #      - name: mobile security framework
 #        run: |

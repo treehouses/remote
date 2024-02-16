@@ -10,7 +10,7 @@ fun constructServiceListFromData(data: ServicesData?) : HashMap<String, ServiceI
     data.available.forEach{ service ->
         services[service] = ServiceInfo(
                 name = service,
-                size = data.size[service]?.toInt() ?: 0,
+                size = data.size[service]?.let { if (it.isNotBlank()) it.toInt() else 0 } ?: 0,
                 serviceStatus = ServiceInfo.SERVICE_AVAILABLE,
                 icon = data.icon[service],
                 info = data.info[service],
