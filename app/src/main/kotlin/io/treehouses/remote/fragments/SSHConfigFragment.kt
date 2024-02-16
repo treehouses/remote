@@ -24,10 +24,9 @@ import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
 import io.treehouses.remote.utils.logD
 
-
 class SSHConfigFragment : BaseSSHConfig() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogSshBinding.inflate(inflater, container, false)
         if (listener.getChatService().state == Constants.STATE_CONNECTED) {
             listener.sendMessage(getString(R.string.TREEHOUSES_NETWORKMODE_INFO))
@@ -42,14 +41,14 @@ class SSHConfigFragment : BaseSSHConfig() {
         addTextValidation()
         Tutorials.sshTutorial(bind, requireActivity())
         bind.connectSsh.setOnClickListener {
-            var uriString = bind.sshTextInput.text.toString()
+            val uriString = bind.sshTextInput.text.toString()
             connect(uriString, false)
         }
         setUpAdapter()
         bind.generateKeys.setOnClickListener { SSHKeyGenFragment().show(childFragmentManager, "GenerateKey") }
         bind.smartConnect.setOnClickListener {
             val shouldConnect = checkForSmartConnectKey()
-            var uriString = bind.sshTextInput.text.toString()
+            val uriString = bind.sshTextInput.text.toString()
             if (shouldConnect) connect(uriString, true)
         }
         bind.showKeys.setOnClickListener { SSHAllKeyFragment().show(childFragmentManager, "AllKeys") }
@@ -57,9 +56,9 @@ class SSHConfigFragment : BaseSSHConfig() {
 
     private fun checkForSmartConnectKey(): Boolean {
         if (!KeyUtils.getAllKeyNames(requireContext()).contains("SmartConnectKey")) {
-            if (listener?.getChatService()?.state == Constants.STATE_CONNECTED) {
+            if (listener.getChatService().state == Constants.STATE_CONNECTED) {
                 val key = KeyUtils.createSmartConnectKey(requireContext())
-                listener?.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
+                listener.sendMessage(getString(R.string.TREEHOUSES_SSHKEY_ADD, getOpenSSH(key)))
             } else {
                 context.toast("Bluetooth not connected. Could not send key to Pi.")
                 return false
@@ -115,14 +114,18 @@ class SSHConfigFragment : BaseSSHConfig() {
             bind.sshTextInput.setText(hostAddress)
             logD("GOT IP $ipAddress")
         } else if (s.contains("ip") || s.startsWith("essid")) {
-            val ipString = s.split(", ")[1]
-            val ipAddress = ipString.substring(4)
-            val hostAddress = "pi@$ipAddress"
-            bind.sshTextInput.setText(hostAddress)
-            logD("GOT IP $ipAddress")
+            val splitResult = s.split(", ")
+            if (splitResult.size > 1) {
+                val ipString = splitResult[1]
+                if (ipString.startsWith("ip:")) {
+                    val ipAddress = ipString.substring(4)
+                    val hostAddress = "pi@$ipAddress"
+                    bind.sshTextInput.setText(hostAddress)
+                    logD("GOT IP $ipAddress")
+                }
+            }
         }
     }
-
     override fun getMessage(msg: Message) {
         when (msg.what) {
             Constants.MESSAGE_READ -> {
