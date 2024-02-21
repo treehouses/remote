@@ -28,8 +28,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
         val fontSize = findPreference<Preference>("font_size")
-
-        //fontSize?.setOnPreferenceChangeListener(object: Preference.OnPreferenceChangeListener(SharedPreferences, "font_size"))
         fontSize?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putInt("font_size", newValue.toString().toInt()).commit()
@@ -46,7 +44,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
-
         configuration?.let {
             it.fontScale = 0.05F*fontSize.toFloat()
             val metrics: DisplayMetrics = resources.displayMetrics
@@ -56,7 +53,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
 
             MainApplication.context.createConfigurationContext(it)
             MainApplication.context.resources.displayMetrics.setTo(metrics)
-
         }
     }
 
@@ -67,7 +63,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
             "network_profiles" -> networkProfiles()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
-
         }
         return false
     }
