@@ -21,6 +21,7 @@ import androidx.preference.PreferenceManager
 import android.text.ClipboardManager
 import android.view.KeyCharacterMap
 import android.view.KeyEvent
+import io.treehouses.remote.MainApplication.Companion.context
 import io.treehouses.remote.views.terminal.VDUBuffer
 import io.treehouses.remote.views.terminal.vt320
 import io.treehouses.remote.PreferenceConstants
@@ -60,7 +61,7 @@ open class BaseTerminalKeyListener(var manager: TerminalManager?,
     private var clipboard: ClipboardManager? = null
     protected var selectingForCopy = false
     protected val selectionArea: SelectionArea = SelectionArea()
-    protected val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(manager)
+    protected val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     protected fun handleDpadCenter(keyCode: Int, flag: Boolean): Boolean {
         var newFlag = flag

@@ -30,15 +30,13 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
         val fontSize = findPreference<Preference>("font_size")
 
         //fontSize?.setOnPreferenceChangeListener(object: Preference.OnPreferenceChangeListener(SharedPreferences, "font_size"))
-        fontSize?.setOnPreferenceChangeListener(object : Preference.OnPreferenceChangeListener{
-            @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-            override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-                PreferenceManager.getDefaultSharedPreferences(activity).edit().putInt("font_size", newValue.toString().toInt()).commit()
+        fontSize?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putInt("font_size", newValue.toString().toInt()).commit()
                 adjustFontScale(resources.configuration, newValue.toString().toInt())
                 activity?.recreate()
-                return false
+                false
             }
-        })
         SettingsUtils.setClickListener(this, clearCommandsList)
         SettingsUtils.setClickListener(this, resetCommandsList)
         SettingsUtils.setClickListener(this, clearNetworkProfiles)
