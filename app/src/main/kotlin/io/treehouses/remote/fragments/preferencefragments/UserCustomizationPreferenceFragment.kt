@@ -28,17 +28,13 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
         val clearSSHHosts = findPreference<Preference>("ssh_hosts")
         val clearSSHKeys = findPreference<Preference>("ssh_keys")
         val fontSize = findPreference<Preference>("font_size")
-
-        //fontSize?.setOnPreferenceChangeListener(object: Preference.OnPreferenceChangeListener(SharedPreferences, "font_size"))
-        fontSize?.setOnPreferenceChangeListener(object : Preference.OnPreferenceChangeListener{
-            @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-            override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-                PreferenceManager.getDefaultSharedPreferences(activity).edit().putInt("font_size", newValue.toString().toInt()).commit()
+        fontSize?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putInt("font_size", newValue.toString().toInt()).commit()
                 adjustFontScale(resources.configuration, newValue.toString().toInt())
                 activity?.recreate()
-                return false
+                false
             }
-        })
         SettingsUtils.setClickListener(this, clearCommandsList)
         SettingsUtils.setClickListener(this, resetCommandsList)
         SettingsUtils.setClickListener(this, clearNetworkProfiles)
@@ -48,7 +44,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
-
         configuration?.let {
             it.fontScale = 0.05F*fontSize.toFloat()
             val metrics: DisplayMetrics = resources.displayMetrics
@@ -58,7 +53,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
 
             MainApplication.context.createConfigurationContext(it)
             MainApplication.context.resources.displayMetrics.setTo(metrics)
-
         }
     }
 
@@ -69,7 +63,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
             "network_profiles" -> networkProfiles()
             "ssh_hosts" -> clearSSHHosts()
             "ssh_keys" -> clearSSHKeys()
-
         }
         return false
     }

@@ -57,7 +57,7 @@ class HomeFragment : BaseHomeFragment() {
     private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
-        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         setupProfiles()
         showDialogOnce(preferences!!)
         connectRpiListener()
@@ -213,7 +213,7 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun testConnectionListener() {
         bind.testConnection.setOnClickListener {
-            val preference = PreferenceManager.getDefaultSharedPreferences(context).getString("led_pattern", "LED Heavy Metal")
+            val preference = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("led_pattern", "LED Heavy Metal")
             val options = listOf(*resources.getStringArray(R.array.led_options))
             val optionsCode = resources.getStringArray(R.array.led_options_commands)
             viewModel.selectedLed = options.indexOf(preference)
