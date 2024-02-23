@@ -2,7 +2,6 @@ package io.treehouses.remote.bases
 
 import android.Manifest
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -39,6 +38,22 @@ abstract class PermissionActivity : AppCompatActivity() {
     }
 
     fun requestPermission() {
+        showLocationPermissionDisclosure()
+    }
+
+    private fun showLocationPermissionDisclosure() {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
+        builder.setTitle("Location & GPS Usage")
+            .setMessage("This app needs to collect location data in the background to estimate the radius " +
+                    "from the nearest town, determining community users' general locations. " +
+                    "This helps in targeting support and organizing events by understanding user " +
+                    "distribution. To continue, you must enable Location.")
+            .setPositiveButton("Yes") { _, _ -> proceedWithLocationPermission() }
+            .setNegativeButton("No") { _, _ -> proceedWithoutLocationPermission() }
+            .show()
+    }
+
+    private fun proceedWithLocationPermission() {
         val permissionsToRequest = mutableListOf(
             Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH,
@@ -57,11 +72,29 @@ abstract class PermissionActivity : AppCompatActivity() {
         }
     }
 
+    private fun proceedWithoutLocationPermission() {
+        val permissionsToRequest = mutableListOf(
+            Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_SCAN
+        )
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU && !checkPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (permissionsToRequest.any { !checkPermission(it) }) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_WIFI)
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_WIFI) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                statusCheck()
+                if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    statusCheck()
+                }
             }
         }
     }
