@@ -1,5 +1,6 @@
 package io.treehouses.remote
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,7 +11,10 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
@@ -136,10 +140,14 @@ class InitialActivity : BaseInitialActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 99) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this@InitialActivity, "Permissions Granted", Toast.LENGTH_SHORT).show()
-            } //TODO re-request
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    dataSharing()
+                } else {
+                    Toast.makeText(this, "Permission denied. Cannot proceed to community features.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -167,25 +175,46 @@ class InitialActivity : BaseInitialActivity() {
                 FeedbackDialogFragment().show(supportFragmentManager.beginTransaction(), "feedbackDialogFragment")
             }
             R.id.action_community -> {
-                preferences = PreferenceManager.getDefaultSharedPreferences(this)
-                val v = layoutInflater.inflate(R.layout.alert_log_map, null)
-                if (!preferences?.getBoolean("send_log", false)!!) {
-                    val builder = DialogUtils.createAlertDialog(this@InitialActivity, "Sharing is Caring.", "The community map is only available with data sharing. " +
-                            "Please enable data sharing to access this feature.", v).setCancelable(false)
-                    DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
-                        preferences!!.edit().putBoolean("send_log", true).apply()
-                        goToCommunity()
-                    }, {MainApplication.showLogDialog = false })
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    showLocationPermissionDisclosureForCommunity()
+                } else {
+                    dataSharing()
                 }
-                else { goToCommunity() }
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
+    private fun dataSharing() {
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val v = layoutInflater.inflate(R.layout.alert_log_map, null)
+        if (!preferences?.getBoolean("send_log", false)!!) {
+            val builder = DialogUtils.createAlertDialog(this@InitialActivity, "Sharing is Caring.", "The community map is only available with data sharing. " +
+                    "Please enable data sharing to access this feature.", v).setCancelable(false)
+            DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
+                preferences!!.edit().putBoolean("send_log", true).apply()
+                goToCommunity()
+            }, {MainApplication.showLogDialog = false })
+        } else {
+            goToCommunity()
+        }
+    }
+
     private fun goToCommunity() {
         openCallFragment(CommunityFragment())
         title = getString(R.string.action_community)
+    }
+
+    private fun showLocationPermissionDisclosureForCommunity() {
+        AlertDialog.Builder(this)
+            .setTitle("Location & GPS Usage")
+            .setMessage("This app needs to collect location data in the background to estimate the radius " +
+                    "from the nearest town, determining community users' general locations. " +
+                    "This helps in targeting support and organizing events by understanding user " +
+                    "distribution. To continue, you must enable Location.")
+            .setPositiveButton("Yes") { _, _ ->
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY)
+            }.setNegativeButton("No", null).show()
     }
 
     fun changeAppBar() {
@@ -207,5 +236,9 @@ class InitialActivity : BaseInitialActivity() {
     fun resetMenuIcon() {
         mActionBarDrawerToggle.isDrawerIndicatorEnabled = true
         bind.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
+
+    companion object {
+        private const val REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY = 2
     }
 }
