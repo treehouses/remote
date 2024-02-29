@@ -31,6 +31,7 @@ class BluetoothFailedDialogFragment : FullScreenDialogFragment() {
         val questions = resources.getStringArray(R.array.faq_issues).toList()
         val answers = resources.getStringArray(R.array.faq_answers).toList()
         bind.faqList.setAdapter(BluetoothTroubleshootAdapter(requireContext(),questions, answers))
+        bind.errorDisplay.text = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString("connectError", "")
     }
 
     companion object {
