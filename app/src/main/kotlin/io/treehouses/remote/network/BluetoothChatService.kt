@@ -263,6 +263,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         private val mmSocket: BluetoothSocket?
         private val mSocketType: String
         override fun run() {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             name = "ConnectThread$mSocketType"
             this@BluetoothChatService.state = Constants.STATE_CONNECTING
             // Always cancel discovery because it will slow down a connection
@@ -276,6 +277,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             } catch (e: Exception) {
                 // Close the socket
                 logE("ERROR WHILE CONNECTING $e")
+                preferences.edit().putString("connectError", "$e").apply()
                 closeSocket()
                 connectionFailed()
                 return
