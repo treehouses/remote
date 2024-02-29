@@ -21,6 +21,7 @@ import androidx.core.app.ServiceCompat
 import io.treehouses.remote.Constants
 import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.R
+import io.treehouses.remote.utils.logD
 import java.io.Serializable
 import java.util.*
 
@@ -58,8 +59,13 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
      */
     @Synchronized
     fun updateUserInterfaceTitle() {
+        logD("ollonde5: $mNewState -> $state")
         Log.e(TAG, "updateUserInterfaceTitle() $mNewState -> $state")
-        if (mNewState != state) mHandler?.sendMessage(mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1))
+        if (mNewState != state) {
+            mHandler?.sendMessage(
+                mHandler!!.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1)
+            )
+        }
         mNewState = state
     }
 

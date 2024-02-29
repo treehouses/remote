@@ -134,6 +134,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         // Cancel any thread attempting to make a connection
         if (state == Constants.STATE_CONNECTING) {
             if (mConnectThread != null) {
+                logD("ollonde2: state1: ${Constants.STATE_CONNECTING}")
+                logD("ollonde2.1: mConnectThread1: $mConnectThread")
                 mConnectThread!!.cancel()
                 mConnectThread = null
             }
@@ -141,6 +143,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
         // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
+            logD("ollonde3: mConnectThread1: $mConnectThread")
             mConnectedThread!!.cancel()
             mConnectedThread = null
         }
@@ -272,6 +275,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             try {
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
+                logD("ollonde4: mmSocket = $mmSocket connected")
                 mmSocket!!.connect()
             } catch (e: Exception) {
                 // Close the socket

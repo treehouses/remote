@@ -34,6 +34,7 @@ import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 
 class HomeFragment : BaseHomeFragment() {
@@ -93,12 +94,29 @@ class HomeFragment : BaseHomeFragment() {
     private fun errorConnecting() {
         viewModel.errorConnecting.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
+
+            // Log that an error occurred and any details if available
+            logD("errorConnecting: $it") // Assuming 'it' contains error details
+
             connectionDialog?.dismiss()
-            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean(BluetoothFailedDialogFragment.DONT_SHOW_DIALOG, false)
-            if (!noDialog && viewModel.device != null) BluetoothFailedDialogFragment().show(childFragmentManager, "ERROR")
+            val noDialog = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(BluetoothFailedDialogFragment.DONT_SHOW_DIALOG, false)
+
+            // Optionally, log the preference value
+            logD("errorConnecting DONT_SHOW_DIALOG preference: $noDialog")
+
+            if (!noDialog && viewModel.device != null) {
+                try {
+                    BluetoothFailedDialogFragment().show(childFragmentManager, "ERROR")
+                } catch (e: Exception) {
+                    // Log any exceptions that occur when showing the dialog
+                    logD("errorConnecting Failed to show BluetoothFailedDialogFragment: $e" )
+                }
+            }
             viewModel.errorConnecting.value = null
         })
     }
+
     /**
      * Observe different viewModel states to implement changes to the UI
      */
@@ -232,26 +250,28 @@ class HomeFragment : BaseHomeFragment() {
      * @see Constants.STATE_NONE
      */
     private fun observeConnectionState() {
-        viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
+        viewModel.connectionStatus.observe(viewLifecycleOwner) { connected ->
             logE("CONNECTED STATE $connected")
             transition(connected == Constants.STATE_CONNECTED)
             connectionDialog?.dismiss()
-            when(connected) {
+            when (connected) {
                 Constants.STATE_CONNECTED -> {
                     showLogDialog(preferences!!)
                     viewModel.internetSent = true
                     viewModel.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                     Tutorials.homeTutorials(bind, requireActivity())
                 }
+
                 Constants.STATE_CONNECTING -> {
                     if (viewModel.device != null) showBTConnectionDialog()
                 }
+
                 else -> {
                     viewModel.hashSent.value = Resource.nothing()
                     (activity?.application as MainApplication).logSent = false
                 }
             }
-        })
+        }
         viewModel.loadBT()
     }
 
@@ -262,10 +282,7 @@ class HomeFragment : BaseHomeFragment() {
         connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
         connectionDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         connectionDialog?.setTitle("Connecting...")
-        connectionDialog?.setMessage("""
-    Device Name: ${viewModel.device?.name}
-    Device Address: ${viewModel.device?.address}
-    """.trimIndent())
+        connectionDialog?.setMessage("Device Name: ${viewModel.device?.name} Device Address: ${viewModel.device?.address}".trimIndent())
         connectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         connectionDialog?.show()
     }

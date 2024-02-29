@@ -54,7 +54,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
-            logD("DEVICE " + d)
+            logD("DEVICE $d")
             if (checkPiAddress(d.address)) {
                 addToDialog(d, raspberryDevicesText, raspberryDevices, false)
                 bind!!.progressBar.visibility = View.INVISIBLE
@@ -122,15 +122,20 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     private fun listViewOnClickListener(mView: View) {
         bind!!.listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val deviceList: List<BluetoothDevice> = if (bind!!.rpiSwitch.isChecked) raspberryDevices else allDevices
-            if (checkPiAddress(deviceList[position].address)) {
+            val deviceList: List<BluetoothDevice> =
+                if (bind!!.rpiSwitch.isChecked) {
+                    raspberryDevices
+                } else {
+                    allDevices
+                }
+//            if (checkPiAddress(deviceList[position].address)) {
                 viewModel.connect(deviceList[position])
                 mDialog!!.cancel()
                 finish(mView)
                 logD("Connecting Bluetooth. Position: $position ;; Status: ${viewModel.connectionStatus.value}")
-            } else {
-                Toast.makeText(context, "Device Unsupported", Toast.LENGTH_LONG).show()
-            }
+//            } else {
+//                Toast.makeText(context, "Device Unsupported", Toast.LENGTH_LONG).show()
+//            }
         }
     }
 

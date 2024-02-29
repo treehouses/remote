@@ -15,6 +15,7 @@ import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
 import java.util.*
@@ -72,6 +73,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      */
     fun connect(device: BluetoothDevice) {
         this.device = device
+        logD("ollonde1: device: $device")
         mChatService.connect(device, true)
     }
 
@@ -138,8 +140,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
             profile.isWifi -> {
                 //WIFI
                 sendMessage(
-                        getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI,
-                                profile.ssid, profile.password))
+                    getString(if (profile.isHidden) R.string.TREEHOUSES_WIFI_HIDDEN else R.string.TREEHOUSES_WIFI, profile.ssid, profile.password))
                 networkSsid = profile.ssid
             }
             profile.isHotspot -> {
