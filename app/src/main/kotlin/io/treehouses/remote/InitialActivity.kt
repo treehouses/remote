@@ -208,11 +208,9 @@ class InitialActivity : BaseInitialActivity() {
     private fun showLocationPermissionDisclosureForCommunity() {
         AlertDialog.Builder(this)
             .setTitle("Location & GPS Usage")
-            .setMessage("This app needs to collect location data in the background to estimate the radius " +
-                    "from the nearest town, determining community users' general locations. " +
-                    "This helps in targeting support and organizing events by understanding user " +
-                    "distribution. To continue, you must enable Location.")
-            .setPositiveButton("Yes") { _, _ ->
+            .setMessage("This app collects location data to create a community map and understand user distribution. " +
+                    "This helps us improve our services. To continue, please enable GPS.")
+            .setPositiveButton("Ok") { _, _ ->
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY)
             }.setNegativeButton("No", null).show()
     }
