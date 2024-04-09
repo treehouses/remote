@@ -51,7 +51,7 @@ class TorFragment : BaseFragment() {
     }
 
     private fun setListeners() {
-        bind.btnHostName.setOnClickListener() {
+        bind.btnHostName.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle("Tor Hostname")
                     .setMessage(hostName).setPositiveButton("Copy") { _, _ -> viewModel.addHostName(hostName) }
                     .setNegativeButton("Exit", null)
@@ -151,7 +151,7 @@ class TorFragment : BaseFragment() {
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         val window = dialog.window
         window!!.setGravity(Gravity.CENTER)
-        window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }
 

@@ -24,7 +24,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
     override fun getPosition(item: ServiceInfo?): Int {
         for (i in data.indices) {
-            if (data[i].name == item!!.name && data[i].serviceStatus == item!!.serviceStatus) {
+            if (data[i].name == item!!.name && data[i].serviceStatus == item.serviceStatus) {
                 return i
             }
         }

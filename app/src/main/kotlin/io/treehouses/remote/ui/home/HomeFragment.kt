@@ -133,7 +133,7 @@ class HomeFragment : BaseHomeFragment() {
                 }
                 Status.LOADING -> {
                     if (it == null || it.data?.ssid == null) return@Observer
-                    progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + it.data?.ssid, true)
+                    progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + it.data.ssid, true)
                     progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
                     progressDialog?.show()
                 }

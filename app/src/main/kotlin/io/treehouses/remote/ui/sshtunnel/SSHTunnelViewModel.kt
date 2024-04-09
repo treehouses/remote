@@ -29,7 +29,7 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
                 tunnelSSHObject.enableAddPort = false
             }
             s == TUNNEL_SSH_RESULTS.RESULT_ADDED -> sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE));
-            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL) -> { tunnelSSHObject.portNames!!.clear();tunnelSSHObject.enabledNotifyNow = false; sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)); }
+            s == TUNNEL_SSH_RESULTS.RESULT_REMOVED && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_ALL) -> { tunnelSSHObject.portNames.clear();tunnelSSHObject.enabledNotifyNow = false; sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_NOTICE)); }
             s == TUNNEL_SSH_RESULTS.RESULT_REMOVED -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_MODIFIED_LIST -> handleModifiedList()
             s == TUNNEL_SSH_RESULTS.RESULT_SSH_PORT && lastCommand == getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS) -> handleNewList(output)
@@ -135,16 +135,16 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         for (host in hosts) {
             val ports = host.split(' ')
             for (port in ports) {
-                if (port.length >= 3) tunnelSSHObject.portNames!!.add(port)
+                if (port.length >= 3) tunnelSSHObject.portNames.add(port)
                 if (port.contains("@")) {
-                    tunnelSSHObject.hostPosition!!.add(position)
-                    tunnelSSHObject.hostNames!!.add(port)
+                    tunnelSSHObject.hostPosition.add(position)
+                    tunnelSSHObject.hostNames.add(port)
                 }
                 position += 1
             }
         }
 
-        if (tunnelSSHObject.portNames!!.size > 1) tunnelSSHObject.portNames!!.add("All")
+        if (tunnelSSHObject.portNames.size > 1) tunnelSSHObject.portNames.add("All")
 
         tunnelSSHObject.enableSSHPort = true
     }
@@ -226,7 +226,7 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
     }
 
     fun deleteHost(position: Int) {
-        val parts = tunnelSSHObject.portNames!![position].split(":")[0]
+        val parts = tunnelSSHObject.portNames[position].split(":")[0]
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_HOST, parts));
         tunnelSSHObject.addHostText = "deleting host ....."
         tunnelSSHObject.enableSSHPort = false;
@@ -237,14 +237,14 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
     fun deletePort(position: Int) {
         var myPos: Int = 0
 
-        for (pos in tunnelSSHObject.hostPosition!!.indices) {
-            if (tunnelSSHObject.hostPosition!![pos] > position) {
+        for (pos in tunnelSSHObject.hostPosition.indices) {
+            if (tunnelSSHObject.hostPosition[pos] > position) {
                 myPos = pos
                 break
             }
         }
-        if (tunnelSSHObject.hostPosition!!.last() < position)
-            myPos = tunnelSSHObject.hostPosition!!.lastIndex
+        if (tunnelSSHObject.hostPosition.last() < position)
+            myPos = tunnelSSHObject.hostPosition.lastIndex
         val portName = TunnelUtils.getPortName(tunnelSSHObject.portNames, position);
         val formatArgs = portName + " " + tunnelSSHObject.hostNames[myPos].split(":")[0]
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs)); tunnelSSHObject.addPortText = "deleting port ....."

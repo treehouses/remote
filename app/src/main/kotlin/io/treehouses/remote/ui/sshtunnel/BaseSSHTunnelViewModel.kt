@@ -50,7 +50,8 @@ open class BaseSSHTunnelViewModel(application: Application) : FragmentViewModel(
             val inPhoneOnly = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && !storedPublicKey.isNullOrBlank() && !storedPrivateKey.isNullOrBlank()
             val inNeither = piPublicKey == "No public key found" && piPrivateKey == "No private key found " && storedPublicKey.isNullOrBlank() && storedPrivateKey.isNullOrBlank()
             tunnelSSHKeyDialogObj = TunnelSSHKeyDialogData()
-            tunnelSSHKeyDialogObj.profile = profile;tunnelSSHKeyDialogObj.storedPrivateKey = storedPrivateKey!!;tunnelSSHKeyDialogObj.storedPublicKey = storedPublicKey!!;tunnelSSHKeyDialogObj.piPrivateKey = piPrivateKey!!;tunnelSSHKeyDialogObj.piPublicKey = piPublicKey!!
+            tunnelSSHKeyDialogObj.profile = profile;tunnelSSHKeyDialogObj.storedPrivateKey = storedPrivateKey!!;tunnelSSHKeyDialogObj.storedPublicKey = storedPublicKey!!;tunnelSSHKeyDialogObj.piPrivateKey =
+                piPrivateKey;tunnelSSHKeyDialogObj.piPublicKey = piPublicKey
             // Pi and phone keys are the same
             if (inPiAndPhone) Toast.makeText(context, "The same keys for $profile are already saved in both Pi and phone", Toast.LENGTH_SHORT).show()
             // Key exists in Pi but not phone
