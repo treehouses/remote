@@ -3,6 +3,7 @@ package io.treehouses.remote.ui.system
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +14,6 @@ import io.treehouses.remote.adapter.SystemListAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.pojo.NetworkListItem
-import io.treehouses.remote.utils.logD
-import me.toptas.fancyshowcase.FocusShape
 
 class SystemFragment : BaseFragment() {
 
@@ -37,9 +36,9 @@ class SystemFragment : BaseFragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Handler().postDelayed({
-            Tutorials.systemTutorials(requireActivity(),adapter.getViews());
-        }, 1000);
+        Handler(Looper.getMainLooper()).postDelayed({
+            Tutorials.systemTutorials(requireActivity(),adapter.getViews())
+        }, 1000)
     }
 
     override fun onResume() {
