@@ -35,7 +35,7 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     private var piIP = ""
     private var deviceList = ArrayList<Device>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityDiscoverFragmentBinding.inflate(inflater, container, false)
         mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler)
@@ -197,8 +197,11 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         var text: String? = null
 
         if (res != null) {
-            if (separator == "") text = res.value
-            else text = res.value.split(separator.toRegex())[1]
+            text = if (separator == "") {
+                res.value
+            } else {
+                res.value.split(separator.toRegex())[1]
+            }
         }
 
         return text

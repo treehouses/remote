@@ -29,18 +29,21 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.StrictMode
 import android.text.ClipboardManager
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.widget.HorizontalScrollView
 import androidx.core.view.MenuItemCompat
 import androidx.preference.PreferenceManager
-import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.R
+import io.treehouses.remote.databinding.ActivitySshConsoleBinding
+import io.treehouses.remote.ssh.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.ssh.terminal.TerminalBridge
 import io.treehouses.remote.ssh.terminal.TerminalManager
 import io.treehouses.remote.ssh.terminal.TerminalManager.TerminalBinder
-import io.treehouses.remote.ssh.interfaces.BridgeDisconnectedListener
-import io.treehouses.remote.databinding.ActivitySshConsoleBinding
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 
@@ -59,7 +62,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
             // If we didn't find the requested connection, try opening it
             if (requestedNickname != null && requestedBridge == null) {
                 try {
-                    logD("${String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname)}")
+                    logD(String.format("We couldnt find an existing bridge with URI=%s (nickname=%s), so creating one now", requested.toString(), requestedNickname))
                     requestedBridge = bound!!.openConnection(requested)
                 } catch (e: Exception) {
                     logE("Problem while trying to create new requested bridge from URI $e")
@@ -267,7 +270,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        logD("${String.format("onConfigurationChanged; requestedOrientation=%d, newConfig.orientation=%d", requestedOrientation, newConfig.orientation)}")
+        logD(String.format("onConfigurationChanged; requestedOrientation=%d, newConfig.orientation=%d", requestedOrientation, newConfig.orientation))
         if (bound != null) {
             bound!!.isResizeAllowed = !(forcedOrientation &&
                     (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE &&

@@ -15,7 +15,7 @@ import io.treehouses.remote.databinding.DialogBluetoothTroubleshootingBinding
 
 class BluetoothFailedDialogFragment : FullScreenDialogFragment() {
     lateinit var bind : DialogBluetoothTroubleshootingBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogBluetoothTroubleshootingBinding.inflate(inflater, container, false)
         dialog!!.window!!.setBackgroundDrawable(InsetDrawable(ColorDrawable(Color.TRANSPARENT), 30))
         return bind.root

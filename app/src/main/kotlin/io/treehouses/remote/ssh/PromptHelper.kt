@@ -76,7 +76,7 @@ class PromptHelper(private val tag: Any) {
      */
     @Throws(InterruptedException::class)
     private fun requestPrompt(instructions: String?, hint: String, type: Any): Any? {
-        var response: Any? = null
+        val response: Any?
         promptToken.acquire()
         try {
             promptInstructions = instructions
@@ -115,10 +115,4 @@ class PromptHelper(private val tag: Any) {
         }
     }
 
-    init {
-
-        // Threads must acquire this before they can send a prompt.
-
-        // Responses will release this semaphore.
-    }
 }

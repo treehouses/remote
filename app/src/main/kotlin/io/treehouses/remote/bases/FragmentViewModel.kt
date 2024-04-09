@@ -24,7 +24,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
     /**
      * Monitors connection Status (has the specific connection state)
      */
-    private val _connectionStatus = MutableLiveData<Int>(Constants.STATE_NONE)
+    private val _connectionStatus = MutableLiveData(Constants.STATE_NONE)
     val connectionStatus : LiveData<Int>
         get() = _connectionStatus
 
