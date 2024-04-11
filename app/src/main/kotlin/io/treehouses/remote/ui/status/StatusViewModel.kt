@@ -93,8 +93,8 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         try { if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
                 val statusData = Gson().fromJson(output, StatusData::class.java)
                 temperature.value = statusData.temperature
-                var usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
-                var totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
+                val usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
+                val totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
                 storageBarValue.value = statusData.storage.split(" ")[3].dropLast(1).toInt()
                 storage.value = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
                 cpuModelText.value = "CPU: ARM " + statusData.arm
@@ -206,7 +206,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     }
 
     fun onSelectCountry(selectedString: String) {
-        var selected = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
+        val selected = selectedString.substring(selectedString.length - 4, selectedString.length - 2)
         sendMessage(getString(R.string.TREEHOUSES_WIFI_COUNTRY, selected))
         countryDisplayTextEnabled.value = false
         countryDisplayText.value = "Changing country"

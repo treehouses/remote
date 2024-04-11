@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.SaveUtils.deleteProfile
@@ -46,7 +47,7 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
     }
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup): View {
-        var newView: View
+        val newView: View
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         newView = layoutInflater.inflate(R.layout.list_group, null)
         val label = newView.findViewById<TextView>(R.id.lblListHeader)
@@ -60,12 +61,13 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
 
     private fun setLabelText(label: TextView, s: String, delete: Button) {
         label.text = s
-        label.setTextColor(context.resources.getColor(R.color.expandable_child_text))
+        label.setTextColor(ContextCompat.getColor(context, R.color.expandable_child_text))
+
         delete.visibility = View.GONE
     }
 
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
-        var newView: View?
+        val newView: View?
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         newView = layoutInflater.inflate(R.layout.row_profile, null)
         val label = newView.findViewById<TextView>(R.id.label)

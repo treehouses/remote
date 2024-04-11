@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.logE
@@ -43,8 +44,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
 
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = initView(position, parent)
-        return view
+        return initView(position, parent)
     }
 
     override fun isEnabled(position: Int): Boolean {
@@ -75,8 +75,8 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
                     drawable = R.drawable.circle_green
                 }
             }
-            name!!.setTextColor(context.resources.getColor(color))
-            status!!.setImageDrawable(context.resources.getDrawable(drawable))
+            name!!.setTextColor(ContextCompat.getColor(context, color))
+            status!!.setImageDrawable(ContextCompat.getDrawable(context, drawable))
         }
 
     }

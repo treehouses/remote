@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
@@ -72,7 +73,7 @@ open class BaseTerminalFragment : BaseFragment() {
 
     fun getViews(view: View, isRead: Boolean): View {
         val consoleView = view.findViewById<TextView>(R.id.listItem)
-        if (isRead) { consoleView.setTextColor(resources.getColor(R.color.terminal))
+        if (isRead) { consoleView.setTextColor(ContextCompat.getColor(requireContext(), R.color.terminal))
         } else { consoleView.setTextColor(Color.RED) }
         return view
     }
