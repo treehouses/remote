@@ -130,10 +130,10 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     private fun createFilteredList(constraint: CharSequence): List<ServiceInfo> {
         if (constraint.isEmpty()) return dataIn
         return dataIn.filter {
-            return@filter when (constraint.toString().toLowerCase(Locale.ROOT)) {
+            return@filter when (constraint.toString().lowercase(Locale.ROOT)) {
                 "installed" -> it.serviceStatus == ServiceInfo.SERVICE_INSTALLED
                 "available" -> it.serviceStatus == ServiceInfo.SERVICE_AVAILABLE
-                else -> it.name.toLowerCase(Locale.ROOT).contains(constraint.toString().toLowerCase(Locale.ROOT)) && !it.isHeader
+                else -> it.name.lowercase(Locale.ROOT).contains(constraint.toString().lowercase(Locale.ROOT)) && !it.isHeader
             }
         }
     }

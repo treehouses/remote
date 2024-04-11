@@ -51,7 +51,7 @@ object TunnelSSHMatcher {
     }
 
     fun checkNoTunnelSetup(output: String): Boolean {
-        return output.toLowerCase(Locale.ROOT).trim().contains("no tunnel has been set up")
+        return output.lowercase(Locale.ROOT).trim().contains("no tunnel has been set up")
     }
 
     fun isListModified(output: String): Boolean {
