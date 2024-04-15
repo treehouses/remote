@@ -3,6 +3,8 @@ package io.treehouses.remote.utils
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -66,10 +68,6 @@ object DialogUtils {
                 .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    fun getCustomProgressDialog(context: Context): CustomProgressDialog {
-        return CustomProgressDialog(context)
-    }
-
     class CustomProgressDialog(context: Context) {
         private val binding: DialogProgressBinding = DialogProgressBinding.inflate(LayoutInflater.from(context))
         private val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(context)
@@ -105,7 +103,9 @@ object DialogUtils {
         fun show() {
             if (dialog == null) {
                 dialog = dialogBuilder.create()
+                dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
             }
+            dialog?.show()
             dialog?.show()
         }
 
