@@ -259,7 +259,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     if ((mods &  4)==4 ) mousebut=2;
     */
         val mousecode: Int
-        mousecode = if (mouserpt == 9) 0x20 + mousebut /* same as press? appears so. */ else '#'.toInt()
+        mousecode = if (mouserpt == 9) 0x20 + mousebut /* same as press? appears so. */ else '#'.code
         val b = ByteArray(6)
         b[0] = 27
         b[1] = '['.code.toByte()
