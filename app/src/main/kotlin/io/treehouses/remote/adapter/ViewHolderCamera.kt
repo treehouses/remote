@@ -2,6 +2,7 @@ package io.treehouses.remote.adapter
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.ImageView
@@ -16,7 +17,7 @@ class ViewHolderCamera internal constructor(v: View, private val c: Context, lis
     private val mChatService: BluetoothChatService = listener.getChatService()
     private val cameraSwitch: Switch
     private val icon: ImageView
-    private val mHandler: Handler = object : Handler() {
+    private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
                 readCameraReply(msg.obj.toString())

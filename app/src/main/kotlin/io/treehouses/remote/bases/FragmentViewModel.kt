@@ -1,9 +1,9 @@
 package io.treehouses.remote.bases
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
@@ -39,8 +39,7 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
     /**
      * Handler to handle all messages from the bluetooth service
      */
-    protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
+    protected open val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_STATE_CHANGE -> {

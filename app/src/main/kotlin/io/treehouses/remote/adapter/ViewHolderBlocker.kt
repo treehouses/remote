@@ -1,15 +1,18 @@
 package io.treehouses.remote.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
 import io.treehouses.remote.Constants
-import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.logD
 
 class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
@@ -26,8 +29,7 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
+    val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {

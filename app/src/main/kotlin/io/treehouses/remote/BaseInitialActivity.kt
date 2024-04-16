@@ -3,6 +3,7 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
@@ -83,7 +84,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    val mHandler: Handler = object : Handler() {
+    val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
 //            FragmentActivity activity = getActivity();
             //InitialActivity activity = InitialActivity.this;

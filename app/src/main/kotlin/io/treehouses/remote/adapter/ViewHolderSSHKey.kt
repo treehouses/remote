@@ -2,6 +2,7 @@ package io.treehouses.remote.adapter
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.Button
@@ -15,7 +16,7 @@ import io.treehouses.remote.utils.Utils.toast
 
 class ViewHolderSSHKey internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
     private val mChatService: BluetoothChatService = listener.getChatService()
-    private val mHandler: Handler = object : Handler() {
+    private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
                 val readMessage = msg.obj as String
