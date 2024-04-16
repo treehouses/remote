@@ -17,7 +17,7 @@ import io.treehouses.remote.utils.logD
 
 class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : BaseExpandableListAdapter() {
     private val list: List<NetworkListItem>
-    private val inflater: LayoutInflater
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var listener: HomeInteractListener? = null
     private val views: MutableList<View>
     private val groupHeader: MutableList<View>
@@ -60,11 +60,10 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
         return false
     }
 
-    override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View {
-        val newView: View?
-        newView = inflater.inflate(R.layout.list_group, parent, false)
-        val listHeader = newView.findViewById<TextView>(R.id.lblListHeader)
-        listHeader.text = getGroup(i).toString()
+    override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View? {
+        val newView = inflater.inflate(R.layout.list_group, parent, false)
+        val listHeader = newView?.findViewById<TextView>(R.id.lblListHeader)
+        listHeader?.text = getGroup(i).toString()
         groupHeader.add(newView)
         return newView
     }
@@ -104,7 +103,6 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
     }
 
     init {
-        inflater = LayoutInflater.from(context)
         this.list = list
         views = mutableListOf()
         groupHeader = mutableListOf()

@@ -31,7 +31,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
 
         viewModel.servicesData.observe(viewLifecycleOwner, Observer {
             if (it.status == Status.SUCCESS) {
-                spinnerAdapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, resources.getColor(R.color.md_grey_600))
+                spinnerAdapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.md_grey_600))
                 serviceCardAdapter = ServiceCardAdapter(childFragmentManager, viewModel.formattedServices)
                 initialize()
                 goToSelected()

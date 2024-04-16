@@ -97,7 +97,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
                 checkVersionSent = true
                 sendMessage(getString(R.string.TREEHOUSES_REMOTE_VERSION, BuildConfig.VERSION_CODE))
             }
-            s == RESULTS.ERROR && !output.toLowerCase(Locale.ROOT).contains("error") -> {
+            s == RESULTS.ERROR && !output.lowercase(Locale.ROOT).contains("error") -> {
                 error.value = output
                 internetSent = false
             }

@@ -200,7 +200,7 @@ open class BaseTerminalBridge : VDUDisplay {
         // set underlined attributes if requested
         var newAddr = addr
         defaultPaint.isUnderlineText = currAttr and VDUBuffer.UNDERLINE != 0L
-        var isWideCharacter = currAttr and VDUBuffer.FULLWIDTH != 0L
+        val isWideCharacter = currAttr and VDUBuffer.FULLWIDTH != 0L
         if (isWideCharacter) newAddr++ else {
             // determine the amount of continuous characters with the same settings and print them all at once
             while (c + newAddr < vDUBuffer!!.columns
@@ -247,14 +247,14 @@ open class BaseTerminalBridge : VDUDisplay {
             var addr = 0
             val currAttr = vDUBuffer!!.charAttributes!![vDUBuffer!!.windowBase + l][c]
             run {
-                var (newFg, newBg) = setColors(currAttr)
+                val (newFg, newBg) = setColors(currAttr)
                 fg = newFg; bg = newBg
             }
 
-            var (newBg, newFg) = checkAndSwap(currAttr, bg, fg)
+            val (newBg, newFg) = checkAndSwap(currAttr, bg, fg)
             bg = newBg; fg = newFg
 
-            var (newAddr, newIsWideCharacter) = setAttributes(c, addr, l, currAttr)
+            val (newAddr, newIsWideCharacter) = setAttributes(c, addr, l, currAttr)
             addr = newAddr; isWideCharacter = newIsWideCharacter
             // Save the current clip region
             canvas.save()

@@ -143,8 +143,8 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
     }
 
     fun getSubString(stringStart: String, output: String) : String {
-        var startIndex = output.indexOf(stringStart)
-        var endIndex = output.indexOf("/s", startIndex)
+        val startIndex = output.indexOf(stringStart)
+        val endIndex = output.indexOf("/s", startIndex)
         return output.substring(startIndex, endIndex + 2)
     }
 

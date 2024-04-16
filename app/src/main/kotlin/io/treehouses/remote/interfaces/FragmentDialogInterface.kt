@@ -15,13 +15,10 @@ interface FragmentDialogInterface {
         alertDialog.show()
     }
 
-    fun createAlertDialog(context: Context?, id:Int, title:String, message:String): AlertDialog.Builder {
-        val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, id))
-                .setTitle(title)
-                .setMessage(message)
-
-        return alertDialog
-
+    fun createAlertDialog(context: Context?, id: Int, title: String, message: String): AlertDialog.Builder {
+        return AlertDialog.Builder(ContextThemeWrapper(context, id))
+            .setTitle(title)
+            .setMessage(message)
     }
 
     fun createAlertDialog(ctw:ContextThemeWrapper, view: View?, title:Int, icon:Int):AlertDialog.Builder{
