@@ -4,7 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.*
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.text.ClipboardManager
 import android.view.KeyEvent
 import android.view.View
