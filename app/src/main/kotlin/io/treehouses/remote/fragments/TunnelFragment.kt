@@ -26,7 +26,7 @@ class TunnelFragment : BaseFragment(), ServicesListener, OnItemSelectedListener,
 //    private var tunnelView: TunnelViewPager? = null
 //    private var tunnelPageAdapter: TunnelPageAdapter? = null
     private lateinit var bind: ActivitySshTunnelFragmentBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivitySshTunnelFragmentBinding.inflate(inflater, container, false)
         tabLayout = bind.tabLayout
         tabLayout!!.tabGravity = TabLayout.GRAVITY_FILL

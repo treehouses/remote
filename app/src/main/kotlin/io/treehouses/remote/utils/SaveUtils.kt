@@ -77,8 +77,8 @@ object SaveUtils {
         if (getStringList(context, COMMANDS_TITLES_KEY).isEmpty() || getStringList(context, COMMANDS_VALUES_KEY).isEmpty()) {
             val titles = context.resources.getStringArray(R.array.command_titles)
             val commands = context.resources.getStringArray(R.array.commands)
-            saveStringList(context, ArrayList(Arrays.asList(*titles)), COMMANDS_TITLES_KEY)
-            saveStringList(context, ArrayList(Arrays.asList(*commands)), COMMANDS_VALUES_KEY)
+            saveStringList(context, ArrayList(listOf(*titles)), COMMANDS_TITLES_KEY)
+            saveStringList(context, ArrayList(listOf(*commands)), COMMANDS_VALUES_KEY)
         }
     }
 

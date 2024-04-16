@@ -254,9 +254,9 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                 if (useAuthAgent != "no") it.requestAuthAgentForwarding(this)
                 it.requestPTY(emulation, columns, rows, width, height, null)
                 it.startShell()
-                stdin = it.getStdin()
-                stdout = it.getStdout()
-                stderr = it.getStderr()
+                stdin = it.stdin
+                stdout = it.stdout
+                stderr = it.stderr
 
             }
             isSessionOpen = true

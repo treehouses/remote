@@ -95,12 +95,12 @@ object PubKeyUtils {
     }
 
     fun getBitStrength(encoded : ByteArray, keyType: String) : Int {
-        val pubKey = decodeKey(encoded, keyType, "public");
+        val pubKey = decodeKey(encoded, keyType, "public")
         return when (keyType) {
-            PubKeyBean.KEY_TYPE_RSA -> (pubKey as RSAPublicKey).modulus.bitLength();
-            PubKeyBean.KEY_TYPE_DSA -> 1024;
-            PubKeyBean.KEY_TYPE_EC -> (pubKey as ECPublicKey).params.curve.field.fieldSize;
-            PubKeyBean.KEY_TYPE_ED25519 -> 256;
+            PubKeyBean.KEY_TYPE_RSA -> (pubKey as RSAPublicKey).modulus.bitLength()
+            PubKeyBean.KEY_TYPE_DSA -> 1024
+            PubKeyBean.KEY_TYPE_EC -> (pubKey as ECPublicKey).params.curve.field.fieldSize
+            PubKeyBean.KEY_TYPE_ED25519 -> 256
             else -> { 0; }
         }
     }

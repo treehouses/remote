@@ -15,7 +15,7 @@ import io.treehouses.remote.databinding.KeysDialogBinding
 import io.treehouses.remote.utils.KeyUtils
 
 class SSHKeyGenFragment: BaseSSHKeyGen() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = KeysDialogBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         allKeys = KeyUtils.getAllKeyNames(requireContext())
@@ -26,7 +26,7 @@ class SSHKeyGenFragment: BaseSSHKeyGen() {
         super.onViewCreated(view, savedInstanceState)
         bind.cancelButton.setOnClickListener { dismiss() }
 
-        bind.keyTypeSpinner.adapter = ArrayAdapter<String>(
+        bind.keyTypeSpinner.adapter = ArrayAdapter(
                 requireContext(),
                 R.layout.key_type_spinner_item,
                 R.id.itemTitle,

@@ -3,7 +3,6 @@ package io.treehouses.remote.fragments.dialogfragments
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +11,12 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
-import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.adapter.ViewHolderSSHAllKeyRow
 import io.treehouses.remote.bases.FullScreenDialogFragment
 import io.treehouses.remote.callback.KeyMenuListener
 import io.treehouses.remote.databinding.DialogViewKeysBinding
 import io.treehouses.remote.databinding.RowKeyBinding
+import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 
@@ -26,7 +25,7 @@ class SSHAllKeyFragment : FullScreenDialogFragment(), KeyMenuListener {
     private lateinit var bind : DialogViewKeysBinding
 
     private lateinit var allKeys: List<PubKeyBean>
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogViewKeysBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return bind.root
@@ -35,13 +34,13 @@ class SSHAllKeyFragment : FullScreenDialogFragment(), KeyMenuListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind.doneBtn.setOnClickListener { dismiss() }
-        registerForContextMenu(bind.allKeys);
+        registerForContextMenu(bind.allKeys)
         setUpKeys()
     }
 
     private fun setUpKeys() {
         allKeys = KeyUtils.getAllKeys(requireContext())
-        if (allKeys.isNullOrEmpty()) {
+        if (allKeys.isEmpty()) {
             bind.noHosts.visibility = View.VISIBLE
             bind.allKeys.visibility = View.GONE
         } else {
@@ -94,7 +93,7 @@ class SSHAllKeyFragment : FullScreenDialogFragment(), KeyMenuListener {
                 putString(DeleteSSHKeyFragment.KEY_TO_DELETE, allKeys[position].nickname)
             }
         }
-        dialog.setOnDismissListener(DialogInterface.OnDismissListener { setUpKeys() })
+        dialog.setOnDismissListener { setUpKeys() }
         dialog.show(parentFragmentManager, "Delete_key")
     }
 

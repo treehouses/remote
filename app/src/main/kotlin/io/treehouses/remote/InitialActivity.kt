@@ -3,35 +3,30 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
-import io.treehouses.remote.fragments.CommunityFragment
-import io.treehouses.remote.fragments.dialogfragments.FeedbackDialogFragment
-import io.treehouses.remote.fragments.DiscoverFragment
-import io.treehouses.remote.fragments.SettingsFragment
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityInitial2Binding
+import io.treehouses.remote.fragments.CommunityFragment
+import io.treehouses.remote.fragments.DiscoverFragment
+import io.treehouses.remote.fragments.SettingsFragment
 import io.treehouses.remote.fragments.ShowBluetoothFileFragment
+import io.treehouses.remote.fragments.dialogfragments.FeedbackDialogFragment
 import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.GPSService
 
 class InitialActivity : BaseInitialActivity() {
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityInitial2Binding.inflate(layoutInflater)
@@ -120,8 +115,8 @@ class InitialActivity : BaseInitialActivity() {
         bind.navView.setNavigationItemSelectedListener(this)
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
     override fun onBackPressed() {
+        super.onBackPressed()
         if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) bind.drawerLayout.closeDrawer(GravityCompat.START)
         else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)

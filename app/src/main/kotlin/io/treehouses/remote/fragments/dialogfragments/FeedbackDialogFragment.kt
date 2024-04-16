@@ -19,7 +19,7 @@ import java.util.*
 class FeedbackDialogFragment : FullScreenDialogFragment() {
     private lateinit var bind: DialogFeedbackBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogFeedbackBinding.inflate(inflater, container, false)
 
         val back = ColorDrawable(Color.TRANSPARENT)

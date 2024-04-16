@@ -180,7 +180,7 @@ object Tutorials {
         show(a, b, c, d, e, f)
     }
 
-    public fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
+    fun fancyShowCaseViewBuilderSkippable(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return fancyShowCaseViewBuilder(activity, view, title, focusShape)
                 .customView(R.layout.tutorial, object : OnViewInflateListener {
                     override fun onViewInflated(view: View) {
@@ -192,7 +192,7 @@ object Tutorials {
                 })
     }
 
-    public fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
+    fun fancyShowCaseViewBuilder(activity: FragmentActivity, view: View, title: String, focusShape: FocusShape = FocusShape.CIRCLE): FancyShowCaseView.Builder {
         return FancyShowCaseView.Builder(activity)
                 .focusOn(view)
                 .title(title)

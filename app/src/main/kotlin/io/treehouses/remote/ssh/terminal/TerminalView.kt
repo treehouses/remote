@@ -34,6 +34,7 @@ import io.treehouses.remote.views.terminal.vt320
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.abs
 
 /**
  * User interface [View] for showing a TerminalBridge in an
@@ -83,7 +84,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
                 } else {
                     mEventSender = AccessibilityEventSender()
                 }
-                postDelayed(mEventSender, TerminalView.ACCESSIBILITY_EVENT_THRESHOLD.toLong())
+                postDelayed(mEventSender, ACCESSIBILITY_EVENT_THRESHOLD.toLong())
             }
         }
         (context as Activity).runOnUiThread { terminalTextViewOverlay?.onBufferChanged() }
@@ -289,7 +290,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
     private fun scaleCursors() {
         // Create a scale matrix to scale our 1x1 representation of the cursor
         tempDst[0.0f, 0.0f, bridge.charWidth.toFloat()] = bridge.charHeight.toFloat()
-        scaleMatrix.setRectToRect(tempSrc, tempDst, TerminalView.scaleType)
+        scaleMatrix.setRectToRect(tempSrc, tempDst, scaleType)
     }
 
     companion object {
@@ -316,7 +317,7 @@ class TerminalView(context: Context, bridge: TerminalBridge, pager: TerminalView
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
                 // activate consider if within x tolerance
                 val touchSlop = ViewConfiguration.get(this@TerminalView.context).scaledTouchSlop
-                if (Math.abs(e1!!.x - e2.x) < touchSlop * 4) {
+                if (abs(e1!!.x - e2.x) < touchSlop * 4) {
                     // estimate how many rows we have scrolled through
                     // accumulate distance that doesn't trigger immediate scroll
                     totalY += distanceY

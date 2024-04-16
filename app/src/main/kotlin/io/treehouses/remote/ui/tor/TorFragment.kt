@@ -3,11 +3,18 @@ package io.treehouses.remote.ui.tor
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.*
-import android.widget.*
+import android.view.ContextThemeWrapper
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ListView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
@@ -15,11 +22,7 @@ import io.treehouses.remote.adapter.TunnelPortAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
-
 import io.treehouses.remote.utils.TunnelUtils
-import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.utils.logE
-import java.util.*
 
 class TorFragment : BaseFragment() {
     private lateinit var bind: ActivityTorFragmentBinding
@@ -28,7 +31,7 @@ class TorFragment : BaseFragment() {
     var adapter: TunnelPortAdapter? = null
     var hostName: String = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
         viewModel.createView()
         loadObservers1()
@@ -76,38 +79,38 @@ class TorFragment : BaseFragment() {
     }
 
     private fun loadObservers1(){
-        viewModel.hostNameText.observe(viewLifecycleOwner, Observer {
+        viewModel.hostNameText.observe(viewLifecycleOwner) {
             hostName = it
-        })
-        viewModel.hostNameVisible.observe(viewLifecycleOwner, Observer {visible ->
+        }
+        viewModel.hostNameVisible.observe(viewLifecycleOwner) { visible ->
             if (!visible) bind.btnHostName.visibility = View.GONE
             else bind.btnHostName.visibility = View.VISIBLE
-        })
-        viewModel.switchNotificationEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.switchNotificationEnabled.observe(viewLifecycleOwner) {
             bind.switchNotification.isEnabled = it
-        })
-        viewModel.switchNotificationCheck.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.switchNotificationCheck.observe(viewLifecycleOwner) {
             bind.switchNotification.isChecked = it
-        })
-        viewModel.torStartEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.torStartEnabled.observe(viewLifecycleOwner) {
             bind.btnTorStart.isEnabled = it
-        })
-        viewModel.torStartText.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.torStartText.observe(viewLifecycleOwner) {
             bind.btnTorStart.text = it
-        })
+        }
     }
 
     private fun loadObservers2() {
-        viewModel.addPortText.observe(viewLifecycleOwner, Observer {
+        viewModel.addPortText.observe(viewLifecycleOwner) {
             bind.btnAddPort.text = it
-        })
-        viewModel.addPortEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.addPortEnabled.observe(viewLifecycleOwner) {
             bind.btnAddPort.isEnabled = it
-        })
-        viewModel.portListEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.portListEnabled.observe(viewLifecycleOwner) {
             bind.portList.isEnabled = it
-        })
-        viewModel.portsNameList.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.portsNameList.observe(viewLifecycleOwner) {
             portsName = it
             adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
 //            try {
@@ -118,10 +121,10 @@ class TorFragment : BaseFragment() {
 //            }
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
-        })
-        viewModel.notifyNowEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.notifyNowEnabled.observe(viewLifecycleOwner) {
             bind.notifyNow.isEnabled = it
-        })
+        }
     }
 
 

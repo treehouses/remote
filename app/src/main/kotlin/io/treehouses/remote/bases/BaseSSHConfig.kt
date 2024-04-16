@@ -92,7 +92,7 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
 
     override fun onButtonClick(position: Int) {
         val edit = EditHostDialogFragment()
-        edit.setOnDismissListener(DialogInterface.OnDismissListener { setUpAdapter() })
+        edit.setOnDismissListener { setUpAdapter() }
         edit.arguments = Bundle().apply { putString(EditHostDialogFragment.SELECTED_HOST_URI, pastHosts[position].uri.toString())}
         edit.show(childFragmentManager, "EditHost")
     }

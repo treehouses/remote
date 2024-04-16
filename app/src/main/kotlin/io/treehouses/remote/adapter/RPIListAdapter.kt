@@ -13,7 +13,7 @@ import io.treehouses.remote.callback.DeviceDeleteListener
 import io.treehouses.remote.pojo.DeviceInfo
 
 class RPIListAdapter(private val mContext: Context, private val data: List<DeviceInfo>) : ArrayAdapter<DeviceInfo?>(mContext, 0, data) {
-    public var deviceListener: DeviceDeleteListener? = null
+    var deviceListener: DeviceDeleteListener? = null
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         // Get the data item for this position
         var newView = convertView

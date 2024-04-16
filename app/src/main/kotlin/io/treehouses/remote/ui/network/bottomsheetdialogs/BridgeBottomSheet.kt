@@ -19,7 +19,7 @@ import io.treehouses.remote.ui.network.NetworkViewModel
 class BridgeBottomSheet : BaseBottomSheetDialog() {
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogBridgeBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogBridgeBinding.inflate(inflater, container, false)
         try {
             bind.etEssid.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
@@ -47,7 +47,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
 
     private fun getValuesMap(): Map<String, String> {
         return mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
-                "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString());
+                "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -82,9 +82,8 @@ class HostBean {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        var flag = false
         other as HostBean
-        flag = when {
+        val flag: Boolean = when {
             nickname != other.nickname -> false
             hostname != other.hostname -> false
             username != other.username -> false

@@ -13,8 +13,6 @@ import io.treehouses.remote.adapter.SystemListAdapter
 import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.pojo.NetworkListItem
-import io.treehouses.remote.utils.logD
-import me.toptas.fancyshowcase.FocusShape
 
 class SystemFragment : BaseFragment() {
 
@@ -38,8 +36,8 @@ class SystemFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Handler().postDelayed({
-            Tutorials.systemTutorials(requireActivity(),adapter.getViews());
-        }, 1000);
+            Tutorials.systemTutorials(requireActivity(),adapter.getViews())
+        }, 1000)
     }
 
     override fun onResume() {

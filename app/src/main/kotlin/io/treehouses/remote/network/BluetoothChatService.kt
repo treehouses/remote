@@ -87,7 +87,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         mHandler = handler
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder {
         return mBinder
     }
 

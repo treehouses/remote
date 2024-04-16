@@ -9,8 +9,8 @@ import java.security.spec.InvalidKeySpecException
 /**
  * @author Kenny Root
  */
-class PubKeyBean constructor(var nickname: String = "",
-                             var type: String = "RSA", var privateKey: ByteArray? = null, var publicKey: ByteArray? = null) {
+class PubKeyBean(var nickname: String = "",
+                 var type: String = "RSA", var privateKey: ByteArray? = null, var publicKey: ByteArray? = null) {
     /* Database fields */
 //    var id: Long = 0
 //    var nickname: String = ""

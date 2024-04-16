@@ -13,6 +13,7 @@ import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logD
 import java.util.*
+import kotlin.math.pow
 
 class SystemViewModel(application: Application) : FragmentViewModel(application) {
 
@@ -96,7 +97,7 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
             val power = 3 - i
             result += try {
                 val ip = ipAddressInArray[i].toInt()
-                ip * Math.pow(256.0, power.toDouble()).toLong()
+                ip * 256.0.pow(power.toDouble()).toLong()
             } catch (e: NumberFormatException) {
                 return -1
             }

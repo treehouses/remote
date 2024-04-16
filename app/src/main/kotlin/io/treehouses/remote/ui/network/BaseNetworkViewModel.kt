@@ -18,7 +18,7 @@ open class BaseNetworkViewModel(application: Application) : FragmentViewModel(ap
 
     fun bridgeStartConfigListener(stringMap: Map<String, String>) {
         showNetworkProgress.value = true
-        logD(stringMap.getValue("etEssid"));
+        logD(stringMap.getValue("etEssid"))
         sendMessage(getString(R.string.TREEHOUSES_BRIDGE, stringMap.getValue("etEssid"), stringMap.getValue("etHotspotEssid"),
                 stringMap.getValue("etPassword"), stringMap.getValue("etHotspotPassword")))
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()

@@ -3,18 +3,14 @@ package io.treehouses.remote.ui.network
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
-import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.pojo.ReverseData
 import io.treehouses.remote.utils.RESULTS
+import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
-import io.treehouses.remote.pojo.NetworkProfile
-import io.treehouses.remote.utils.*
 
 class NetworkViewModel(application: Application) : BaseNetworkViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext

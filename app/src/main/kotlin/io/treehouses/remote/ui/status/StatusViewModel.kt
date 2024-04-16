@@ -1,19 +1,16 @@
 package io.treehouses.remote.ui.status
 
 import android.app.Application
-import android.os.Message
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import io.treehouses.remote.BuildConfig
-import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
-import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.pojo.ReverseData
 import io.treehouses.remote.pojo.StatusData
-import java.util.*
+import io.treehouses.remote.utils.Utils
+import java.util.Locale
 
 class StatusViewModel(application: Application) : FragmentViewModel(application) {
 
@@ -67,7 +64,7 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         for (i in countriesCode.indices) {
             countriesName[i] = getCountryName(countriesCode[i])
         }
-        countryList.value = countriesName;
+        countryList.value = countriesName
     }
 
     override fun onRead(output: String) {

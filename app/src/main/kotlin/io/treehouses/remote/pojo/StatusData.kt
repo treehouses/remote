@@ -1,8 +1,5 @@
 package io.treehouses.remote.pojo
 
-import java.io.Serializable
-import java.util.HashMap
-
 data class StatusData(val status: String = "",
                         val hostname: String = "",
                         val arm: String = "",

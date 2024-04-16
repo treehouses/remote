@@ -165,7 +165,7 @@ class TerminalBridge : DerivedTerminalBridge {
 //				transport.addPortForward(portForward);
 //		}
         outputLine(manager!!.res!!.getString(R.string.terminal_connecting, host!!.hostname, host!!.port, host!!.protocol))
-        val connectionThread = Thread(Runnable { transport!!.connect() })
+        val connectionThread = Thread { transport!!.connect() }
         connectionThread.name = "Connection"
         connectionThread.isDaemon = true
         connectionThread.start()
@@ -250,7 +250,9 @@ class TerminalBridge : DerivedTerminalBridge {
 
         // disconnection request hangs if we havent really connected to a host yet
         // temporary fix is to just spawn disconnection into a thread
-        val disconnectThread = Thread(Runnable { if (transport != null && transport!!.isConnected) transport!!.close() })
+        val disconnectThread = Thread { if (transport != null && transport!!.isConnected) {
+            transport!!.close()
+        } }
         disconnectThread.name = "Disconnect"
         disconnectThread.start()
         if (immediate || host!!.quickDisconnect && !host!!.stayConnected) {
@@ -274,13 +276,17 @@ class TerminalBridge : DerivedTerminalBridge {
             manager!!.requestReconnect(this)
             return
         }
-        val disconnectPromptThread = Thread(Runnable {
-            val result = promptHelper!!.requestPrompt<Boolean>(null, "Host has been Disconnected. Close session?", true)
+        val disconnectPromptThread = Thread {
+            val result = promptHelper!!.requestPrompt<Boolean>(
+                null,
+                "Host has been Disconnected. Close session?",
+                true
+            )
             if (result == null || result) {
                 isAwaitingClose = true
                 triggerDisconnectListener()
             }
-        })
+        }
         disconnectPromptThread.name = "DisconnectPrompt"
         disconnectPromptThread.isDaemon = true
         disconnectPromptThread.start()

@@ -44,7 +44,7 @@ class TerminalFragment : BaseTerminalFragment() {
      * Member object for the chat services
      */
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityTerminalFragmentBinding.inflate(inflater, container, false)
         onLoad(mHandler)
         val autocomplete = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("autocomplete", false)
@@ -56,9 +56,9 @@ class TerminalFragment : BaseTerminalFragment() {
         expandableListDetail = HashMap()
         expandableListDetail[TITLE_EXPANDABLE] = SaveUtils.getCommandsList(requireContext())
         setHasOptionsMenu(true)
-        bind.treehousesBtn.text = null;
-        bind.treehousesBtn.textOn = null;
-        bind.treehousesBtn.textOff = null;
+        bind.treehousesBtn.text = null
+        bind.treehousesBtn.textOn = null
+        bind.treehousesBtn.textOff = null
         return bind.root
     }
 

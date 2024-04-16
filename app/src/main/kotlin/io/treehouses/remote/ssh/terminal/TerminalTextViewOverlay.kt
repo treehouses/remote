@@ -16,7 +16,6 @@
  */
 package io.treehouses.remote.ssh.terminal
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
@@ -35,7 +34,6 @@ import kotlin.math.floor
  *
  * @author rhansby
  */
-@TargetApi(11)
 class TerminalTextViewOverlay(context: Context, var terminalView: TerminalView) : AppCompatTextView(context) {
     private var currentSelection = ""
     private var selectionActionMode: ActionMode? = null
@@ -142,7 +140,6 @@ class TerminalTextViewOverlay(context: Context, var terminalView: TerminalView) 
         return super.onTouchEvent(event)
     }
 
-    @TargetApi(12)
     override fun onGenericMotionEvent(event: MotionEvent): Boolean {
         if (MotionEventCompat.getSource(event) and InputDevice.SOURCE_CLASS_POINTER != 0) {
             when (event.action) {
@@ -174,10 +171,9 @@ class TerminalTextViewOverlay(context: Context, var terminalView: TerminalView) 
      * @param bridge
      * @return True if the event is handled.
      */
-    @TargetApi(14)
     private fun onMouseEvent(event: MotionEvent, bridge: TerminalBridge): Boolean {
-        val row = Math.floor(event.y / bridge.charHeight.toDouble()).toInt()
-        val col = Math.floor(event.x / bridge.charWidth.toDouble()).toInt()
+        val row = floor(event.y / bridge.charHeight.toDouble()).toInt()
+        val col = floor(event.x / bridge.charWidth.toDouble()).toInt()
         val meta = event.metaState
         val shiftOn = meta and KeyEvent.META_SHIFT_ON != 0
         val vtBuffer = bridge.vDUBuffer as vt320
@@ -290,7 +286,6 @@ class TerminalTextViewOverlay(context: Context, var terminalView: TerminalView) 
          * @return A Java InputEvent modifier int. See
          * http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputEvent.html
          */
-        @TargetApi(14)
         private fun mouseEventToJavaModifiers(mouseEvent: MotionEvent): Int {
             if (MotionEventCompat.getSource(mouseEvent) != InputDevice.SOURCE_MOUSE) return 0
             var mods = 0

@@ -1,9 +1,14 @@
 package io.treehouses.remote.ssh.terminal
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import android.preference.PreferenceManager
 import android.text.ClipboardManager
 import android.view.KeyEvent
@@ -13,8 +18,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.FrameLayout
 import android.widget.Toast
-import io.treehouses.remote.ssh.interfaces.FontSizeChangedListener
 import io.treehouses.remote.bases.BaseTerminalKeyListener
+import io.treehouses.remote.ssh.interfaces.FontSizeChangedListener
 
 open class BaseTerminalView(context: Context, bridge: TerminalBridge, pager: TerminalViewPager) : FrameLayout(context), FontSizeChangedListener {
 
@@ -44,7 +49,6 @@ open class BaseTerminalView(context: Context, bridge: TerminalBridge, pager: Ter
     var mAccessibilityActive = true
 
 
-    @TargetApi(11)
     fun setLayerTypeToSoftware() {
         setLayerType(View.LAYER_TYPE_SOFTWARE, null)
     }

@@ -83,7 +83,7 @@ class SelectionArea {
     }
 
     fun getTop(): Int {
-        return Math.min(top, bottom)
+        return top.coerceAtMost(bottom)
     }
 
     private fun setBottom(bottom: Int) {
@@ -91,7 +91,7 @@ class SelectionArea {
     }
 
     fun getBottom(): Int {
-        return Math.max(top, bottom)
+        return top.coerceAtLeast(bottom)
     }
 
     fun decrementColumn() {
@@ -114,7 +114,7 @@ class SelectionArea {
     }
 
     fun getLeft(): Int {
-        return Math.min(left, right)
+        return left.coerceAtMost(right)
     }
 
     private fun setRight(right: Int) {
@@ -122,7 +122,7 @@ class SelectionArea {
     }
 
     fun getRight(): Int {
-        return Math.max(left, right)
+        return left.coerceAtLeast(right)
     }
 
     fun copyFrom(vb: VDUBuffer): String {

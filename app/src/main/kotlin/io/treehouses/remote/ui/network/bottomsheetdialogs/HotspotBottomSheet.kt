@@ -12,7 +12,7 @@ import io.treehouses.remote.ui.network.NetworkViewModel
 class HotspotBottomSheet : BaseBottomSheetDialog() {
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogHotspotBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogHotspotBinding.inflate(inflater, container, false)
         bind.btnStartConfig.setOnClickListener {
             viewModel.hotspotStartConfigListener(bind.etHotspotSsid.text.toString(), bind.etHotspotPassword.text.toString(),

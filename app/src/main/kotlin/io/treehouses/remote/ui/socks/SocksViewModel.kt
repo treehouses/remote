@@ -6,7 +6,6 @@ import android.widget.Toast.makeText
 import androidx.lifecycle.MutableLiveData
 import io.treehouses.remote.MainApplication.Companion.context
 import io.treehouses.remote.bases.FragmentViewModel
-import io.treehouses.remote.utils.logD
 
 class SocksViewModel(application: Application) : FragmentViewModel(application) {
     val addProfileButtonText: MutableLiveData<String> = MutableLiveData()

@@ -8,11 +8,16 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ListView
+import android.widget.ProgressBar
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import io.treehouses.remote.R
 import io.treehouses.remote.Tutorials
 import io.treehouses.remote.bases.BaseFragment
@@ -31,15 +36,15 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     private lateinit var bind: ActivityStatusFragmentBinding
     private var notificationListener: NotificationCallback? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityStatusFragmentBinding.inflate(inflater, container, false)
         viewModel.onLoad()
         bind.refreshBtn.setOnClickListener { viewModel.refresh() }
         bind.remoteReverseBtn.setOnClickListener{ reverseLookup() }
-        viewModel.countryList.observe(viewLifecycleOwner, Observer {
+        viewModel.countryList.observe(viewLifecycleOwner) {
             val adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item_countries, it)
             bind.countryDisplay.setOnClickListener { wifiCountry(adapter) }
-        })
+        }
         return bind.root
     }
 
@@ -53,7 +58,7 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         countryList?.adapter = adapter
         countryList?.isTextFilterEnabled = true
         countryList?.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
-            viewModel.onSelectCountry(countryList!!.getItemAtPosition(p).toString());
+            viewModel.onSelectCountry(countryList!!.getItemAtPosition(p).toString())
             dialog.dismiss()
         }
 
@@ -61,78 +66,81 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         dialog.show()
     }
     private fun showBar(mutableData: MutableLiveData<Int>, barView: ProgressBar) {
-        mutableData.observe(viewLifecycleOwner, Observer {
+        mutableData.observe(viewLifecycleOwner) {
             ObjectAnimator.ofInt(barView, "progress", it).setDuration(600).start()
-        })
+        }
     }
 
     private fun barItemsObservers() {
-        viewModel.temperature.observe(viewLifecycleOwner, Observer {
+        viewModel.temperature.observe(viewLifecycleOwner) {
             bind.temperature.text = it
-        })
-        viewModel.memory.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.memory.observe(viewLifecycleOwner) {
             bind.memory.text = it
-        })
+        }
         showBar(viewModel.storageBarValue, bind.storageBar)
         showBar(viewModel.memoryBarValue, bind.memoryBar)
-        viewModel.storage.observe(viewLifecycleOwner, Observer {
+        viewModel.storage.observe(viewLifecycleOwner) {
             bind.storage.text = it
-        })
-        viewModel.temperature.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.temperature.observe(viewLifecycleOwner) {
             if (it.toFloatOrNull() != null)
-                ObjectAnimator.ofInt(bind.temperatureBar, "progress", (it.toFloat() / 80 * 100).toInt()).setDuration(600).start()
+                ObjectAnimator.ofInt(bind.temperatureBar, "progress",
+                    (it.toFloat() / 80 * 100).toInt()).setDuration(600).start()
             bind.temperature.text = "$it°C"
-        })
+        }
     }
 
     private fun upgradeBoxObservers() {
-        viewModel.showUpgrade.observe(viewLifecycleOwner, Observer {
+        viewModel.showUpgrade.observe(viewLifecycleOwner) {
             bind.upgrade.visibility = if (it) View.VISIBLE else View.GONE
-            bind.upgradeCheck.setImageDrawable(ContextCompat.getDrawable(requireContext(), if (it) R.drawable.tick_png else R.drawable.tick))
-        })
+            bind.upgradeCheck.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), if (it) R.drawable.tick_png else R.drawable.tick)
+            )
+        }
 
-        viewModel.upgradeCheckText.observe(viewLifecycleOwner, Observer {
+        viewModel.upgradeCheckText.observe(viewLifecycleOwner) {
             bind.tvUpgradeCheck.text = it
-        })
+        }
     }
 
     private fun rpiDetailObservers() {
-        viewModel.deviceName.observe(viewLifecycleOwner, Observer {
+        viewModel.deviceName.observe(viewLifecycleOwner) {
             bind.tvBluetooth.text = it
-        })
-        viewModel.rpiType.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.rpiType.observe(viewLifecycleOwner) {
             bind.tvRpiType.text = it
-        })
-        viewModel.hostName.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.hostName.observe(viewLifecycleOwner) {
             bind.tvRpiName.text = it
-        })
-        viewModel.imageText.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.imageText.observe(viewLifecycleOwner) {
             bind.imageText.text = it
-        })
-        viewModel.remoteVersion.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.remoteVersion.observe(viewLifecycleOwner) {
             bind.remoteVersionText.text = it
-        })
-        viewModel.cpuModelText.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.cpuModelText.observe(viewLifecycleOwner) {
             bind.cpuModelText.text = it
-        })
+        }
     }
 
     private fun networkBoxObservers() {
-        viewModel.ssidText.observe(viewLifecycleOwner, Observer {
+        viewModel.ssidText.observe(viewLifecycleOwner) {
             bind.ssidText.text = it
-        })
-        viewModel.ipAddressText.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.ipAddressText.observe(viewLifecycleOwner) {
             bind.ipAdrText.text = it
-        })
-        viewModel.deviceAddress.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.deviceAddress.observe(viewLifecycleOwner) {
             bind.deviceAddress.text = it
-        })
-        viewModel.networkModeText.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.networkModeText.observe(viewLifecycleOwner) {
             bind.networkModeTitle.text = it
-        })
-        viewModel.countryDisplayText.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.countryDisplayText.observe(viewLifecycleOwner) {
             bind.countryDisplay.setText(it)
-        })
+        }
     }
 
     private fun observers() {
@@ -141,18 +149,19 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         rpiDetailObservers()
         upgradeBoxObservers()
         networkBoxObservers()
-        viewModel.showNotification.observe(viewLifecycleOwner, Observer {
+        viewModel.showNotification.observe(viewLifecycleOwner) {
             notificationListener!!.setNotification(false)
-        })
-        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.isLoading.observe(viewLifecycleOwner) {
             bind.progressBar.visibility = if (it) View.VISIBLE else View.GONE
             bind.swiperefresh.isRefreshing = it
-        })
-        viewModel.countryDisplayTextEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.countryDisplayTextEnabled.observe(viewLifecycleOwner) {
             bind.countryDisplay.isEnabled = it
-            if (it)
-                bind.countryDisplay.visibility = View.VISIBLE;
-        })
+            if (it) {
+                bind.countryDisplay.visibility = View.VISIBLE
+            }
+        }
     }
 
 
@@ -178,9 +187,9 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addRefreshListener()
-        viewModel.hostName.observe(viewLifecycleOwner, Observer {
+        viewModel.hostName.observe(viewLifecycleOwner) {
             bind.tvBluetooth.text = it
-        })
+        }
 
         bind.upgrade.setOnClickListener {
             viewModel.upgrade()
@@ -199,9 +208,9 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
                 ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
                 ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
                 ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
-        viewModel.showRefresh.observe(viewLifecycleOwner, Observer {
+        viewModel.showRefresh.observe(viewLifecycleOwner) {
             bind.refreshBtn.isEnabled = it
-        })
+        }
     }
 
 
@@ -228,9 +237,9 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     private fun reverseLookup(){
         val a  = createRemoteReverseDialog(context)
         viewModel.treehousesRemoteReverse()
-        viewModel.reverseTextStatus.observe(viewLifecycleOwner, Observer {
+        viewModel.reverseTextStatus.observe(viewLifecycleOwner) {
             a!!.setMessage(it)
-        })
+        }
         a!!.show()
     }
 
