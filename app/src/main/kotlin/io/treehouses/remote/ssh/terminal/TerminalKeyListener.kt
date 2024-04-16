@@ -27,7 +27,7 @@ class TerminalKeyListener(tm: TerminalManager?,
 
         return if ((right && altRight || left && altLeft) && metaState and OUR_SLASH != 0) {
             metaState = metaState and OUR_TRANSIENT.inv()
-            bridge.transport!!.write('/'.toInt())
+            bridge.transport!!.write('/'.code)
             true
         } else if ((right && shiftRight || left && shiftLeft) && metaState and OUR_TAB != 0) {
             metaState = metaState and OUR_TRANSIENT.inv()
@@ -139,13 +139,13 @@ class TerminalKeyListener(tm: TerminalManager?,
         when (manager!!.prefs!!.getString(PreferenceConstants.CAMERA, PreferenceConstants.CAMERA_CTRLA_SPACE)) {
             PreferenceConstants.CAMERA_CTRLA_SPACE -> {
                 bridge.transport!!.write(0x01)
-                bridge.transport!!.write(' '.toInt())
+                bridge.transport!!.write(' '.code)
             }
             PreferenceConstants.CAMERA_CTRLA -> bridge.transport!!.write(0x01)
             PreferenceConstants.CAMERA_ESC -> (buffer as vt320).keyTyped(vt320.KEY_ESCAPE, ' ', 0)
             PreferenceConstants.CAMERA_ESC_A -> {
                 sendEscape()
-                bridge.transport!!.write('a'.toInt())
+                bridge.transport!!.write('a'.code)
             }
         }
     }
