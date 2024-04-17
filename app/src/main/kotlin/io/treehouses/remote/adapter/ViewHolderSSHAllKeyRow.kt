@@ -38,10 +38,13 @@ class ViewHolderSSHAllKeyRow(private val binding: RowKeyBinding, private val lis
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.copy_public -> listener.onCopyPub(adapterPosition)
-            R.id.delete_key -> listener.onDelete(adapterPosition)
-            R.id.send_key -> listener.onSendToRaspberry(adapterPosition)
+        val position = bindingAdapterPosition
+        if (position != RecyclerView.NO_POSITION) {
+            when (item.itemId) {
+                R.id.copy_public -> listener.onCopyPub(position)
+                R.id.delete_key -> listener.onDelete(position)
+                R.id.send_key -> listener.onSendToRaspberry(position)
+            }
         }
         return false
     }

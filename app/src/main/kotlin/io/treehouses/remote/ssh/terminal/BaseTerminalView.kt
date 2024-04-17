@@ -2,14 +2,8 @@ package io.treehouses.remote.ssh.terminal
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Canvas
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
-import android.preference.PreferenceManager
+import android.graphics.*
+import androidx.preference.PreferenceManager
 import android.text.ClipboardManager
 import android.view.KeyEvent
 import android.view.View

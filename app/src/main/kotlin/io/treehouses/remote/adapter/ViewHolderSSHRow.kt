@@ -10,7 +10,10 @@ class ViewHolderSSHRow(private val binding: RowSshBinding, private val listener:
     fun bind(host: HostBean) {
         binding.title.text = host.getPrettyFormat()
         binding.editButton.setOnClickListener {
-            listener.onButtonClick(adapterPosition)
+            val position = bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onButtonClick(position)
+            }
         }
     }
 
