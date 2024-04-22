@@ -234,12 +234,13 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         }
 
         fun checkPiAddress(deviceHardwareAddress: String): Boolean {
-            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "E4:5F:01", "28:CD:C1", "D8:3A:DD",
-                                                        "B8-27-EB", "DC-A6-32", "E4-5F-01", "28-CD-C1", "D8-3A-DD",
-                                                        "B827.EB", "DCA6.32", "E45F.01", "28CD.C1", "D83A.DD",
-                                                        "b8:27:eb", "dc:a6:32", "e4:5f:01", "28:cd:c1", "d8:3a:dd",
-                                                        "b8-27-eb", "dc-a6-32", "e4-5f-01", "28-cd-c1", "d8-3a-dd",
-                                                        "b827.eb", "dca6.32", "e45f.01", "28cd.c1", "d83a.dd"))
+            val piAddress: Set<String> = HashSet(listOf(
+                "B8:27:EB", "DC:A6:32", "E4:5F:01", "28:CD:C1", "D8:3A:DD", "2C:CF:67",
+                "B8-27-EB", "DC-A6-32", "E4-5F-01", "28-CD-C1", "D8-3A-DD", "2C-CF-67",
+                "B827.EB", "DCA6.32", "E45F.01", "28CD.C1", "D83A.DD", "2CCF.67",
+                "b8:27:eb", "dc:a6:32", "e4:5f:01", "28:cd:c1", "d8:3a:dd", "2c:cf:67",
+                "b8-27-eb", "dc-a6-32", "e4-5f-01", "28-cd-c1", "d8-3a-dd", "2c-cf-67",
+                "b827.eb", "dca6.32", "e45f.01", "28cd.c1", "d83a.dd", "2ccf.67",))
             for (item in piAddress) {
                 if (deviceHardwareAddress.contains(item)) return true
             }
