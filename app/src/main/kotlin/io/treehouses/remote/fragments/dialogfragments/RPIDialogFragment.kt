@@ -240,7 +240,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 "B827.EB", "DCA6.32", "E45F.01", "28CD.C1", "D83A.DD", "2CCF.67",
                 "b8:27:eb", "dc:a6:32", "e4:5f:01", "28:cd:c1", "d8:3a:dd", "2c:cf:67",
                 "b8-27-eb", "dc-a6-32", "e4-5f-01", "28-cd-c1", "d8-3a-dd", "2c-cf-67",
-                "b827.eb", "dca6.32", "e45f.01", "28cd.c1", "d83a.dd", "2ccf.67",))
+                "b827.eb", "dca6.32", "e45f.01", "28cd.c1", "d83a.dd", "2ccf.67"))
             for (item in piAddress) {
                 if (deviceHardwareAddress.contains(item)) return true
             }
