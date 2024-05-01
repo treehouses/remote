@@ -9,7 +9,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.text.ClipboardManager
 import android.view.KeyEvent
 import android.view.View
