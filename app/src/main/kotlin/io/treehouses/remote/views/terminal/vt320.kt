@@ -89,9 +89,9 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             for (i in 0 until len) {
                 c = s[start + i]
                 // Shortcut for my favorite ASCII
-                if (c.toInt() <= 0x7F) {
+                if (c.code <= 0x7F) {
                     if (lastChar != -1) putChar(lastChar.toChar(), isWide)
-                    lastChar = c.toInt()
+                    lastChar = c.code
                     isWide = false
                 } else if (!Character.isLowSurrogate(c) && !Character.isHighSurrogate(c)) {
                     if (Character.getType(c) == Character.NON_SPACING_MARK.toInt()) {
@@ -102,7 +102,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         }
                     } else {
                         if (lastChar != -1) putChar(lastChar.toChar(), isWide)
-                        lastChar = c.toInt()
+                        lastChar = c.code
                         if (fullwidths != null) {
                             val width = fullwidths[i]
                             isWide = (width.toInt() == AndroidCharacter.EAST_ASIAN_WIDTH_WIDE
@@ -174,8 +174,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         val mousecode: Int = if (mouserpt == 9) /* X10 Mouse */ 0x20 or mousebut.toInt() else  /* normal xterm mouse reporting */ mousebut.toInt() or 0x20 or (modifiers and 7 shl 2)
         val b = ByteArray(6)
         b[0] = 27
-        b[1] = '['.toByte()
-        b[2] = 'M'.toByte()
+        b[1] = '['.code.toByte()
+        b[2] = 'M'.code.toByte()
         b[3] = mousecode.toByte()
         b[4] = (0x20 + x + 1).toByte()
         b[5] = (0x20 + y + 1).toByte()
@@ -201,8 +201,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         val mousecode = (if (down) 0 else 1) + 96 or 0x20 or mods
         val b = ByteArray(6)
         b[0] = 27
-        b[1] = '['.toByte()
-        b[2] = 'M'.toByte()
+        b[1] = '['.code.toByte()
+        b[2] = 'M'.code.toByte()
         b[3] = mousecode.toByte()
         b[4] = (0x20 + x + 1).toByte()
         b[5] = (0x20 + y + 1).toByte()
@@ -233,8 +233,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         val mousecode = button + 0x40 or mods
         val b = ByteArray(6)
         b[0] = 27
-        b[1] = '['.toByte()
-        b[2] = 'M'.toByte()
+        b[1] = '['.code.toByte()
+        b[2] = 'M'.code.toByte()
         b[3] = mousecode.toByte()
         b[4] = (0x20 + x + 1).toByte()
         b[5] = (0x20 + y + 1).toByte()
@@ -259,11 +259,11 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     if ((mods &  4)==4 ) mousebut=2;
     */
         val mousecode: Int
-        mousecode = if (mouserpt == 9) 0x20 + mousebut /* same as press? appears so. */ else '#'.toInt()
+        mousecode = if (mouserpt == 9) 0x20 + mousebut /* same as press? appears so. */ else '#'.code
         val b = ByteArray(6)
         b[0] = 27
-        b[1] = '['.toByte()
-        b[2] = 'M'.toByte()
+        b[1] = '['.code.toByte()
+        b[2] = 'M'.code.toByte()
         b[3] = mousecode.toByte()
         b[4] = (0x20 + x + 1).toByte()
         b[5] = (0x20 + y + 1).toByte()
@@ -442,7 +442,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
          */
         val arr = ByteArray(s.length)
         for (i in 0 until s.length) {
-            arr[i] = s[i].toByte()
+            arr[i] = s[i].code.toByte()
         }
         write(arr)
         if (doecho) putString(s)
@@ -564,7 +564,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
      */
     private fun writeSpecial(s: String?): Boolean {
         var newS = s ?: return true
-        if (newS.length >= 3 && newS[0].toInt() == 27 && newS[1] == 'O') {
+        if (newS.length >= 3 && newS[0].code == 27 && newS[1] == 'O') {
             if (vt52mode) {
                 newS = if (newS[2] >= 'P' && newS[2] <= 'S') {
                     "\u001b" + newS.substring(2) /* ESC x */
@@ -577,7 +577,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 } /* else keep string as it is */
             }
         }
-        if (newS.length >= 3 && newS[0].toInt() == 27 && newS[1] == '[') {
+        if (newS.length >= 3 && newS[0].code == 27 && newS[1] == '[') {
             if (output8bit) {
                 newS = "\u009b" + newS.substring(2) /* CSI ... */
             } /* else keep */
@@ -596,7 +596,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             debugStr!!.append("keyPressed(")
                     .append(keyCode)
                     .append(", ")
-                    .append(keyChar.toInt())
+                    .append(keyChar.code)
                     .append(", ")
                     .append(modifiers)
                     .append(')')
@@ -682,7 +682,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         val control = modifiers and VDUInput.KEY_CONTROL != 0
         val shift = modifiers and VDUInput.KEY_SHIFT != 0
         val alt = modifiers and VDUInput.KEY_ALT != 0
-        if (debug > 1) debug("keyTyped(" + keyCode + ", " + keyChar.toInt() + ", " + modifiers + ")")
+        if (debug > 1) debug("keyTyped(" + keyCode + ", " + keyChar.code + ", " + modifiers + ")")
         if (keyChar == '\t') {
             if (shift) {
                 write(TabKey[1], false)
@@ -700,18 +700,18 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             return
         }
         if (alt) {
-            write((keyChar.toInt() or 0x80).toChar().toInt())
+            write((keyChar.code or 0x80).toChar().code)
             return
         }
-        if ((keyCode == KEY_ENTER || keyChar.toInt() == 10)
+        if ((keyCode == KEY_ENTER || keyChar.code == 10)
                 && !control) {
-            write('\r'.toInt())
+            write('\r'.code)
             if (localecho) putString("\r\n") // bad hack
             return
         }
         if (keyCode == 10 && !control) {
             debug("Sending \\r")
-            write('\r'.toInt())
+            write('\r'.code)
             return
         }
 
@@ -722,7 +722,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
         //    && control)
         if ((!vms && keyChar == '2' || keyChar == ' ') && control) write(0)
         if (vms) {
-            if (keyChar.toInt() == 127 && !control) {
+            if (keyChar.code == 127 && !control) {
                 if (shift) writeSpecial(Insert[0]) //  VMS shift delete = insert
                 else writeSpecial(Remove[0]) //  VMS delete = remove
                 return
@@ -788,8 +788,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
             }
             if (flag) return
         }
-        if (!(keyChar.toInt() == 8 || keyChar.toInt() == 127 || keyChar == '\r' || keyChar == '\n')) {
-            write(keyChar.toInt())
+        if (!(keyChar.code == 8 || keyChar.code == 127 || keyChar == '\r' || keyChar == '\n')) {
+            write(keyChar.code)
             return
         }
     }
@@ -824,7 +824,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
     }
 
     fun map_cp850_unicode(x: Char): Char {
-        return if (x.toInt() >= 0x100) x else unimap[x.toInt()]
+        return if (x.code >= 0x100) x else unimap[x.code]
     }
 
     private fun _SetCursor(row: Int, col: Int) {
@@ -907,8 +907,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     '\r' -> C = 0
                     '\n' -> {
                         if (!vms) {
-                            if (lastwaslf == 0 || lastwaslf == char.toInt()) {
-                                lastwaslf = char.toInt()
+                            if (lastwaslf == 0 || lastwaslf == char.code) {
+                                lastwaslf = char.code
                                 if (R == bottomMargin || R >= rows - 1) insertLine(R, 1, SCROLL_UP) else R++
                             }
                         }
@@ -930,8 +930,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                             onegl = -1
                         }
                         lastwaslf = 0
-                        if (char.toInt() < 32) {
-                            if (char.toInt() == 0) return@run
+                        if (char.code < 32) {
+                            if (char.code == 0) return@run
                         }
                         if (C >= columns) {
                             if (wraparound) {
@@ -968,12 +968,12 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                             }
                                         }
                                         if (char in '\u005f'..'\u007e') {
-                                            char = DECSPECIAL[char.toShort() - 0x5f]
+                                            char = DECSPECIAL[char.code.toShort() - 0x5f]
                                             mapped = true
                                         }
                                     }
                                     '<' -> {
-                                        char = (char.toInt() and 0x7f or 0x80).toChar()
+                                        char = (char.code and 0x7f or 0x80).toChar()
                                         mapped = true
                                     }
                                     'A', 'B' -> mapped = true
@@ -1035,7 +1035,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 }
             }
             TSTATE_OSC -> {
-                if (char.toInt() < 0x20 && char != ESC) { // NP - No printing character
+                if (char.code < 0x20 && char != ESC) { // NP - No printing character
                     handle_osc(osc)
                     term_state = TSTATE_DATA
                 }
@@ -1136,8 +1136,8 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     '8' -> {
                         C = Sc
                         R = Sr
-                        gl = Sgl.toInt()
-                        gr = Sgr.toInt()
+                        gl = Sgl.code
+                        gr = Sgr.code
                         if (Sgx != null) {
                             var i = 0
                             while (i < 4) {
@@ -1187,41 +1187,41 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                     '_' -> term_state = TSTATE_TITLE
                     '\\' ->                         // TODO save title
                         term_state = TSTATE_DATA
-                    else -> debug("ESC unknown letter: " + char + " (" + char.toInt() + ")")
+                    else -> debug("ESC unknown letter: " + char + " (" + char.code + ")")
                 }
             }
             TSTATE_VT52X -> {
-                C = char.toInt() - 37
+                C = char.code - 37
                 if (C < 0) C = 0 else if (C >= columns) C = columns - 1
                 term_state = TSTATE_VT52Y
             }
             TSTATE_VT52Y -> {
-                R = char.toInt() - 37
+                R = char.code - 37
                 if (R < 0) R = 0 else if (R >= rows) R = rows - 1
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG0 -> {
-                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC ( " + char + ": G0 char set?  (" + char.toInt() + ")") else {
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC ( " + char + ": G0 char set?  (" + char.code + ")") else {
                     gx[0] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG1 -> {
                 if (char != '0' && char != 'A' && char != 'B' && char != '<') {
-                    debug("ESC ) " + char + " (" + char.toInt() + ") :G1 char set?")
+                    debug("ESC ) " + char + " (" + char.code + ") :G1 char set?")
                 } else {
                     gx[1] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG2 -> {
-                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC*:G2 char set?  (" + char.toInt() + ")") else {
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC*:G2 char set?  (" + char.code + ")") else {
                     gx[2] = char
                 }
                 term_state = TSTATE_DATA
             }
             TSTATE_SETG3 -> {
-                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC+:G3 char set?  (" + char.toInt() + ")") else {
+                if (char != '0' && char != 'A' && char != 'B' && char != '<') debug("ESC+:G3 char set?  (" + char.code + ")") else {
                     gx[3] = char
                 }
                 term_state = TSTATE_DATA
@@ -1254,7 +1254,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 term_state = TSTATE_DATA
                 when (char) {
                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
-                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.toInt() - 48
+                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.code - 48
                         term_state = TSTATE_DCEQ
                     }
                     ';' -> {
@@ -1354,7 +1354,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 term_state = TSTATE_DATA
                 when (char) {
                     ESC -> term_state = TSTATE_ESC
-                    else -> debug("Unknown character ESC[! character is " + char.toInt())
+                    else -> debug("Unknown character ESC[! character is " + char.code)
                 }
             }
             TSTATE_CSI_TICKS -> {
@@ -1372,7 +1372,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                 term_state = TSTATE_DATA
                 when (char) {
                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
-                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.toInt() - 48
+                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.code - 48
                         term_state = TSTATE_CSI_EQUAL
                     }
                     ';' -> {
@@ -1434,7 +1434,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         term_state = TSTATE_DCEQ
                     }
                     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
-                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.toInt() - 48
+                        DCEvars[DCEvar] = DCEvars[DCEvar] * 10 + char.code - 48
                         term_state = TSTATE_CSI
                     }
                     ';' -> {
@@ -1709,7 +1709,7 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                         debugStr!!.append("ESC [ unknown letter: ")
                                 .append(char)
                                 .append(" (")
-                                .append(char.toInt())
+                                .append(char.code)
                                 .append(')')
                         debug(debugStr.toString())
                         debugStr!!.setLength(0)
