@@ -981,13 +981,13 @@ abstract class vt320 @JvmOverloads constructor(width: Int = 80, height: Int = 24
                                 }
                             }
                             if (!mapped && char >= '\u0080' && char <= '\u00ff') {
-                                when (gx[gr.toInt()]) {
+                                when (gx[gr]) {
                                     '0' -> if (char in '\u00df'..'\u00fe') {
                                         char = DECSPECIAL[char - '\u00df']
                                         mapped = true
                                     }
                                     '<', 'A', 'B' -> mapped = true
-                                    else -> debug("Unsupported GR mapping: " + gx[gr.toInt()])
+                                    else -> debug("Unsupported GR mapping: " + gx[gr])
                                 }
                             }
                         }

@@ -56,7 +56,7 @@ class GeneralPreferenceFragment: BasePreferenceFragment() {
     }
 
     private fun reactivateTutorials() {
-        for(screen in SaveUtils.Screens.values()) SaveUtils.setFragmentFirstTime(requireContext(), screen, true)
+        for(screen in SaveUtils.Screens.entries) SaveUtils.setFragmentFirstTime(requireContext(), screen, true)
         Toast.makeText(context, "Tutorials reactivated", Toast.LENGTH_LONG).show()
     }
 

@@ -240,7 +240,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
     fun addKey(pubkey: PubKeyBean, pair: KeyPair?, force: Boolean = false) {
         if (!savingKeys && !force) return
         loadedKeypairs.remove(pubkey.nickname)
-        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair);
+        val sshPubKey = PubKeyUtils.extractOpenSSHPublic(pair)
         val keyHolder = KeyHolder()
         keyHolder.bean = pubkey; keyHolder.pair = pair; keyHolder.openSSHPubkey = sshPubKey
         loadedKeypairs[pubkey.nickname] = keyHolder
@@ -253,7 +253,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
                 }
             }, pubkey.lifetime * 1000.toLong())
         }
-        logD("${String.format("Added key '%s' to in-memory cache", pubkey.nickname)}")
+        logD(String.format("Added key '%s' to in-memory cache", pubkey.nickname))
     }
 
     fun removeKey(publicKey: ByteArray?): Boolean {
@@ -265,7 +265,7 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             }
         }
         return if (nickname != null) {
-            logD("${String.format("Removed key '%s' to in-memory cache", nickname)}")
+            logD(String.format("Removed key '%s' to in-memory cache", nickname))
             loadedKeypairs.remove(nickname) != null
         } else false
     }

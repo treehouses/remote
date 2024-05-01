@@ -12,7 +12,7 @@ import io.treehouses.remote.databinding.FragmentCommunityBinding
 
 class CommunityFragment : BaseFragment(), BackPressReceiver {
     private lateinit var bind: FragmentCommunityBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = FragmentCommunityBinding.inflate(inflater, container, false)
         return bind.root
     }
