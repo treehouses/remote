@@ -3,6 +3,7 @@ package io.treehouses.remote.sshconsole
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import android.text.ClipboardManager
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -49,7 +50,7 @@ open class RootSSHConsole: AppCompatActivity() {
     protected var resize: MenuItem? = null
     protected var urlScan: MenuItem? = null
     protected var forcedOrientation = false
-    protected var handler = Handler()
+    protected var handler = Handler(Looper.getMainLooper())
     protected var mContentView: View? = null
     protected var actionBar: ActionBar? = null
     protected var inActionBarMenu = false
