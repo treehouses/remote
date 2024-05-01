@@ -2,7 +2,6 @@ package io.treehouses.remote.fragments.dialogfragments
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -25,8 +24,8 @@ import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
 import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.DialogUtils.CustomProgressDialog
 import io.treehouses.remote.utils.logD
-import java.util.*
 
 class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private val raspberryDevices: MutableList<BluetoothDevice> = ArrayList()
@@ -37,7 +36,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private var mDialog: AlertDialog? = null
     private val raspberryDevicesText: MutableList<DeviceInfo> = ArrayList()
     private val allDevicesText: MutableList<DeviceInfo> = ArrayList()
-    private var pDialog: ProgressDialog? = null
+    private var pDialog: CustomProgressDialog? = null
 
     private val viewModel: HomeViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
@@ -100,7 +99,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     private fun initDialog() {
-        pDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        pDialog = CustomProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
         mDialog = getAlertDialog(bind!!.root)
         mDialog!!.setTitle(R.string.select_device)
         listViewOnClickListener(bind!!.listView)
@@ -212,10 +211,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private fun addToDialog(device: BluetoothDevice, textList: MutableList<DeviceInfo>, mDevices: MutableList<BluetoothDevice>, inRange: Boolean) {
         if (!mDevices.contains(device)) {
             mDevices.add(device)
-            textList.add(DeviceInfo("""
-    ${device.name}
-    ${device.address}
-    """.trimIndent(), pairedDevices!!.contains(device), inRange))
+            textList.add(DeviceInfo("${device.name}\n ${device.address}".trimIndent(), pairedDevices!!.contains(device), inRange))
         } else textList[mDevices.indexOf(device)].isInRange = true
         mArrayAdapter!!.notifyDataSetChanged()
     }

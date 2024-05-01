@@ -1,7 +1,6 @@
 package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -31,6 +30,8 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.DialogUtils.CustomProgressDialog
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
@@ -42,7 +43,7 @@ class HomeFragment : BaseHomeFragment() {
     /**
      * Dialog to show that a Network Configuration is being switched
      */
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: CustomProgressDialog? = null
 
     /**
      * Test Connection Dialog
@@ -52,7 +53,7 @@ class HomeFragment : BaseHomeFragment() {
     /**
      * Bluetooth connection status dialog
      */
-    private var connectionDialog: ProgressDialog? = null
+    private var connectionDialog: CustomProgressDialog? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -140,8 +141,10 @@ class HomeFragment : BaseHomeFragment() {
                 }
                 Status.LOADING -> {
                     if (it == null || it.data?.ssid == null) return@Observer
-                    progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + it.data?.ssid, true)
-                    progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                    progressDialog = CustomProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+                    progressDialog?.setTitle("Connecting...")
+                    progressDialog?.setMessage("Switching to ${it.data.ssid}")
+                    progressDialog?.setIndeterminate(true)
                     progressDialog?.show()
                 }
             }
@@ -268,14 +271,9 @@ class HomeFragment : BaseHomeFragment() {
      * Show the connecting to Bluetooth dialog
      */
     private fun showBTConnectionDialog() {
-        connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-        connectionDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        connectionDialog = CustomProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
         connectionDialog?.setTitle("Connecting...")
-        connectionDialog?.setMessage("""
-    Device Name: ${viewModel.device?.name}
-    Device Address: ${viewModel.device?.address}
-    """.trimIndent())
-        connectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        connectionDialog?.setMessage("Device Name: ${viewModel.device?.name} \n Device Address: ${viewModel.device?.address}".trimIndent())
         connectionDialog?.show()
     }
 
