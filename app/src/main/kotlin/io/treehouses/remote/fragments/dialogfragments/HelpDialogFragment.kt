@@ -25,12 +25,12 @@ class HelpDialogFragment : FullScreenDialogFragment(), android.widget.SearchView
     private lateinit var bind: DialogHelpBinding
     private var jsonString = ""
     private val items = mutableListOf<HelpCommand>()
-    private val excludedHelpItems = listOf<String>("anime")
+    private val excludedHelpItems = listOf("anime")
     private var queryText = ""
 
     private var selectedItem: HelpCommand = HelpCommand()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogHelpBinding.inflate(inflater, container, false)
         bind.progressBar.visibility = View.VISIBLE
         val back = ColorDrawable(Color.TRANSPARENT)
@@ -93,7 +93,7 @@ class HelpDialogFragment : FullScreenDialogFragment(), android.widget.SearchView
         updateHighlight(item)
     }
 
-    private fun highlight(original: String, word: String): Spannable? {
+    private fun highlight(original: String, word: String): Spannable {
         val highlighted: Spannable = SpannableString(original)
         if (original.isEmpty() || word.isEmpty()) return highlighted
         var start = original.indexOf(word)

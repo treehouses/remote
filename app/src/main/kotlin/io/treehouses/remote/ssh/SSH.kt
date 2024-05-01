@@ -87,7 +87,7 @@ class SSH: BaseSSH {
 
         if (manager!!.loadedKeypairs.containsKey(pubkey.nickname)) {
             // load this key from memory if its already there
-            logD("${String.format("Found unlocked key '%s' already in-memory", pubkey.nickname)}")
+            logD(String.format("Found unlocked key '%s' already in-memory", pubkey.nickname))
             if (pubkey.isConfirmUse) {
                 if (!promptForPubkeyUse(pubkey.nickname)) return false
             }
@@ -127,7 +127,7 @@ class SSH: BaseSSH {
         // convert key to trilead format
         val pair = KeyPair(pubKey, privKey)
         logD("Unlocked key ${PubKeyUtils.formatKey(pubKey)}")
-        logD("${String.format("Unlocked key '%s'", pubkey.nickname)}")
+        logD(String.format("Unlocked key '%s'", pubkey.nickname))
 
         // save this key in memory
         manager!!.addKey(pubkey, pair)
@@ -216,7 +216,7 @@ class SSH: BaseSSH {
         // use a specific key for this host, as requested
         val pubkey = KeyUtils.getKey(manager!!.applicationContext, pubkeyId)
 
-        if (pubkey == null) bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid));
+        if (pubkey == null) bridge?.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_invalid))
         else if (tryPublicKey(pubkey)) finishConnection()
     }
 

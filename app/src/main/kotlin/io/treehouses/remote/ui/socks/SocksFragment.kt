@@ -7,10 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
@@ -34,7 +39,7 @@ class SocksFragment : Fragment() {
     var bind: ActivitySocksFragmentBinding? = null
     var bindProfile: DialogAddProfileBinding? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivitySocksFragmentBinding.inflate(inflater, container, false)
         bindProfile = DialogAddProfileBinding.inflate(inflater, container, false)
 //        viewModel.onLoad()
@@ -92,30 +97,30 @@ class SocksFragment : Fragment() {
     }
 
     private fun initializeObservers() {
-        viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
-            addingProfileButton?.setText(it)
-        })
+        viewModel.addProfileButtonText.observe(viewLifecycleOwner) {
+            addingProfileButton?.text = it
+        }
     }
 
     private fun messageObservers() {
-        viewModel.textStatusText.observe(viewLifecycleOwner, Observer {
+        viewModel.textStatusText.observe(viewLifecycleOwner) {
             textStatus?.text = it
-        })
+        }
 
 
 
-        viewModel.addProfileButtonText.observe(viewLifecycleOwner, Observer {
+        viewModel.addProfileButtonText.observe(viewLifecycleOwner) {
             addProfileButton?.text = it
-        })
+        }
 
-        viewModel.addProfileButtonEnabled.observe(viewLifecycleOwner, Observer {
+        viewModel.addProfileButtonEnabled.observe(viewLifecycleOwner) {
             addProfileButton?.isEnabled = it
-        })
+        }
 
-        viewModel.refreshList.observe(viewLifecycleOwner, Observer {
+        viewModel.refreshList.observe(viewLifecycleOwner) {
             adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, it)
             bind!!.profiles.adapter = adapter
-        })
+        }
     }
 
 
@@ -132,9 +137,11 @@ class SocksFragment : Fragment() {
                     "localAddress" to localAddress.text.toString(), "localPort" to localPort.text.toString(),
                     "serverPort" to serverPort.text.toString(), "password" to password.text.toString())
             viewModel.addProfile(stringMap)
-            viewModel.profileDialogDismiss.observe(viewLifecycleOwner, Observer {
-                if (it) dialog.dismiss()
-            })
+            viewModel.profileDialogDismiss.observe(viewLifecycleOwner) {
+                if (it) {
+                    dialog.dismiss()
+                }
+            }
         }
     }
 

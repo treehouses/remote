@@ -54,7 +54,7 @@ class IntroActivity : AppCompatActivity() {
     }
     class IntroSlideWelcome(val listener: IntroPagerListener) : Fragment() {
         private lateinit var welcomeBind: IntroScreenWelcomeBinding
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             welcomeBind = IntroScreenWelcomeBinding.inflate(inflater, container, false)
             return welcomeBind.root
         }
@@ -67,7 +67,7 @@ class IntroActivity : AppCompatActivity() {
 
     class IntroSlideDownload(val listener: IntroPagerListener) : Fragment() {
         private lateinit var downloadBind: IntroScreenDownloadBinding
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             downloadBind = IntroScreenDownloadBinding.inflate(inflater, container, false)
             return downloadBind.root
         }
@@ -84,7 +84,7 @@ class IntroActivity : AppCompatActivity() {
 
     class IntroSlideBluetooth(val listener: IntroPagerListener) : Fragment() {
         private lateinit var bluetoothBind: IntroScreenBluetoothBinding
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             bluetoothBind = IntroScreenBluetoothBinding.inflate(inflater, container, false)
             return bluetoothBind.root
         }
