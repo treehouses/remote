@@ -27,11 +27,11 @@ object Precomposer {
         var min = 0
         var max = precompositions.size - 1
         var mid: Int
-        val sought = (base.toInt() shl UNICODE_SHIFT or comb.toInt().toLong().toInt()).toLong()
+        val sought = (base.code shl UNICODE_SHIFT or comb.code.toLong().toInt()).toLong()
         var that: Long
         while (max >= min) {
             mid = (min + max) / 2
-            that = precompositions[mid][1].toLong() shl UNICODE_SHIFT or precompositions[mid][2].toLong()
+            that = precompositions[mid][1].code.toLong() shl UNICODE_SHIFT or precompositions[mid][2].code.toLong()
             if (that < sought) min = mid + 1 else if (that > sought) max = mid - 1 else return precompositions[mid][0]
         }
 

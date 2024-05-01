@@ -1,7 +1,6 @@
 package io.treehouses.remote.ui.home
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -31,6 +30,8 @@ import io.treehouses.remote.callback.NotificationCallback
 import io.treehouses.remote.databinding.ActivityHomeFragmentBinding
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
+import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.DialogUtils.CustomProgressDialog
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
@@ -42,7 +43,7 @@ class HomeFragment : BaseHomeFragment() {
     /**
      * Dialog to show that a Network Configuration is being switched
      */
-    private var progressDialog: ProgressDialog? = null
+    private var progressDialog: CustomProgressDialog? = null
 
     /**
      * Test Connection Dialog
@@ -52,10 +53,10 @@ class HomeFragment : BaseHomeFragment() {
     /**
      * Bluetooth connection status dialog
      */
-    private var connectionDialog: ProgressDialog? = null
+    private var connectionDialog: CustomProgressDialog? = null
 
     private lateinit var bind: ActivityHomeFragmentBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         setupProfiles()
@@ -76,13 +77,13 @@ class HomeFragment : BaseHomeFragment() {
             }
         }
 
-        viewModel.error.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.error.observe(viewLifecycleOwner) {
             showUpgradeCLI()
-        })
+        }
 
-        viewModel.remoteUpdateRequired.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.remoteUpdateRequired.observe(viewLifecycleOwner) {
             updateTreehousesRemote()
-        })
+        }
 
         observers()
         errorConnecting()
@@ -103,29 +104,36 @@ class HomeFragment : BaseHomeFragment() {
      * Observe different viewModel states to implement changes to the UI
      */
     private fun observers() {
-        viewModel.newCLIUpgradeAvailable.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.newCLIUpgradeAvailable.observe(viewLifecycleOwner) {
             notificationListener?.setNotification(it)
-        })
+        }
 
-        viewModel.internetStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            if (it) bind.internetstatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
-            else bind.internetstatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_red))
-        })
+        viewModel.internetStatus.observe(viewLifecycleOwner) {
+            if (it) {
+                bind.internetstatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_green))
+            } else {
+                bind.internetstatus.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.circle_red))
+            }
+        }
 
-        viewModel.testConnectionResult.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            if (it.status == Status.SUCCESS) dismissTestConnection()
-        })
+        viewModel.testConnectionResult.observe(viewLifecycleOwner) {
+            if (it.status == Status.SUCCESS) {
+                dismissTestConnection()
+            }
+        }
 
-        viewModel.hashSent.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            if (it.status == Status.SUCCESS) syncBluetooth(it.data ?: "error")
-        })
+        viewModel.hashSent.observe(viewLifecycleOwner) {
+            if (it.status == Status.SUCCESS) {
+                syncBluetooth(it.data ?: "error")
+            }
+        }
     }
 
     /**
      * Called when a network configuration status has changed
      */
     private fun observeNetworkProfileSwitch() {
-        viewModel.networkProfileResult.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.networkProfileResult.observe(viewLifecycleOwner, Observer {
             when(it.status) {
                 Status.SUCCESS, Status.ERROR, Status.NOTHING -> {
                     if (progressDialog != null) progressDialog!!.dismiss()
@@ -133,8 +141,10 @@ class HomeFragment : BaseHomeFragment() {
                 }
                 Status.LOADING -> {
                     if (it == null || it.data?.ssid == null) return@Observer
-                    progressDialog = ProgressDialog.show(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle), "Connecting...", "Switching to " + it.data?.ssid, true)
-                    progressDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                    progressDialog = CustomProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+                    progressDialog?.setTitle("Connecting...")
+                    progressDialog?.setMessage("Switching to ${it.data.ssid}")
+                    progressDialog?.setIndeterminate(true)
                     progressDialog?.show()
                 }
             }
@@ -232,26 +242,28 @@ class HomeFragment : BaseHomeFragment() {
      * @see Constants.STATE_NONE
      */
     private fun observeConnectionState() {
-        viewModel.connectionStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {connected ->
+        viewModel.connectionStatus.observe(viewLifecycleOwner) { connected ->
             logE("CONNECTED STATE $connected")
             transition(connected == Constants.STATE_CONNECTED)
             connectionDialog?.dismiss()
-            when(connected) {
+            when (connected) {
                 Constants.STATE_CONNECTED -> {
                     showLogDialog(preferences!!)
                     viewModel.internetSent = true
                     viewModel.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                     Tutorials.homeTutorials(bind, requireActivity())
                 }
+
                 Constants.STATE_CONNECTING -> {
                     if (viewModel.device != null) showBTConnectionDialog()
                 }
+
                 else -> {
                     viewModel.hashSent.value = Resource.nothing()
                     (activity?.application as MainApplication).logSent = false
                 }
             }
-        })
+        }
         viewModel.loadBT()
     }
 
@@ -259,14 +271,9 @@ class HomeFragment : BaseHomeFragment() {
      * Show the connecting to Bluetooth dialog
      */
     private fun showBTConnectionDialog() {
-        connectionDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-        connectionDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        connectionDialog = CustomProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
         connectionDialog?.setTitle("Connecting...")
-        connectionDialog?.setMessage("""
-    Device Name: ${viewModel.device?.name}
-    Device Address: ${viewModel.device?.address}
-    """.trimIndent())
-        connectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        connectionDialog?.setMessage("Device Name: ${viewModel.device?.name} \n Device Address: ${viewModel.device?.address}".trimIndent())
         connectionDialog?.show()
     }
 

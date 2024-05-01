@@ -3,7 +3,6 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -51,9 +50,7 @@ class SplashScreenActivity : AppCompatActivity() {
             wm.defaultDisplay.getMetrics(metrics)
             metrics.scaledDensity = configuration.fontScale * metrics.density
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                baseContext.applicationContext.createConfigurationContext(it)
-            }
+            baseContext.applicationContext.createConfigurationContext(it)
             baseContext.resources.displayMetrics.setTo(metrics)
 
         }

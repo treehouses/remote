@@ -19,7 +19,7 @@ class DeleteSSHKeyFragment : FullScreenDialogFragment() {
     private lateinit var keyToDelete : String
     private lateinit var dismissListener : DialogInterface.OnDismissListener
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogDeleteSshKeyBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         keyToDelete = arguments?.getString(KEY_TO_DELETE)!!
