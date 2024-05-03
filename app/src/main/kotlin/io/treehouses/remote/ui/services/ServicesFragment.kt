@@ -64,7 +64,7 @@ class ServicesFragment : BaseFragment() {
 
         viewModel.clickedService.observe(viewLifecycleOwner) {
             viewModel.selectedService.value = it
-            Objects.requireNonNull(bind.tabLayout.getTabAt(1))?.select()
+            bind.tabLayout.getTabAt(1)?.select()
             currentTab = 1
             replaceFragment(currentTab)
         }

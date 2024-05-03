@@ -43,7 +43,7 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     if (it.data!!.showHandleDifferentKeysDialog) handleDifferentKeys(it.data)
-                    if (it.data!!.showHandlePhoneKeySaveDialog)
+                    if (it.data.showHandlePhoneKeySaveDialog)
                         handlePhoneKeySave(it.data)
                     if (it.data!!.showHandlePiKeySaveDialog)
                         handlePiKeySave(
@@ -95,7 +95,7 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
 
     private fun handleAddPort() {
         if (dialogSshTunnelPortsBinding.ExternalTextInput.text!!.isNotEmpty() && dialogSshTunnelPortsBinding.InternalTextInput.text!!.isNotEmpty()) {
-            val parts = dialogSshTunnelPortsBinding.hosts?.selectedItem.toString().split(":")[0]
+            val parts = dialogSshTunnelPortsBinding.hosts.selectedItem.toString().split(":")[0]
             viewModel.addingPortButton(dialogSshTunnelPortsBinding.InternalTextInput.text.toString(), dialogSshTunnelPortsBinding.ExternalTextInput.text.toString(), parts)
             dialogPort.dismiss()
         }
@@ -217,7 +217,7 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
                 if (s!!.isEmpty()) {
                     dialogSshTunnelHostsBinding.btnAddingHost.isEnabled = false
                 } else {
-                    if (!s!!.toString().matches(regex.toRegex())) {
+                    if (!s.toString().matches(regex.toRegex())) {
                         dialogSshTunnelHostsBinding.btnAddingHost.isEnabled = false
                         textInputLayout.error = error
                     } else {
@@ -239,10 +239,10 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
                 if (s!!.isEmpty()) {
                     dialogSshTunnelPortsBinding.btnAddingPort.isEnabled = false
                 } else {
-                    if (!s!!.toString().matches(Constants.portRegex.toRegex())) {
+                    if (!s.toString().matches(Constants.portRegex.toRegex())) {
                         dialogSshTunnelPortsBinding.btnAddingPort.isEnabled = false
                         textInputLayout.error = Constants.portError
-                    } else if (textInputEditText == dialogSshTunnelPortsBinding.ExternalTextInput && viewModel.searchArray(portsName, s!!.toString())) {
+                    } else if (textInputEditText == dialogSshTunnelPortsBinding.ExternalTextInput && viewModel.searchArray(portsName, s.toString())) {
                         dialogSshTunnelPortsBinding.btnAddingPort.isEnabled = false
                         dialogSshTunnelPortsBinding.TLexternal.error = "Port number already exists"
                     } else {
