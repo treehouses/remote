@@ -65,7 +65,7 @@ class Output (val output: String) {
 }
 //Could remove IDs and simply use these functions
 object Matcher {
-    fun toLC(string: String) : String {return string.toLowerCase(Locale.ROOT).trim(); }
+    fun toLC(string: String) : String {return string.lowercase(Locale.ROOT).trim(); }
 
     fun isError(output: String): Boolean {
         val keys = listOf("error ", "unknown command", "usage: ", "not a valid option", "error: ", "not found")

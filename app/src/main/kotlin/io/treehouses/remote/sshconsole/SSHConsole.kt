@@ -155,7 +155,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         super.onCreateOptionsMenu(menu)
         val view = adapter!!.currentTerminalView
         val activeTerminal = view != null
-        var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
+        val (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         menu.setQwertyMode(true)
         disconnect = menu.add("Disconnect")
         if (hardKeyboard) disconnect!!.alphabeticShortcut = 'w'
@@ -181,7 +181,7 @@ open class SSHConsole : DerivedSSHConsole(), BridgeDisconnectedListener {
         volumeControlStream = AudioManager.STREAM_NOTIFICATION
         val view = adapter?.currentTerminalView
         val activeTerminal = view != null
-        var (sessionOpen, disconnected) = checkSession(view, activeTerminal)
+        val (sessionOpen, disconnected) = checkSession(view, activeTerminal)
         disconnect?.isEnabled = activeTerminal
         if (sessionOpen || !disconnected) disconnect?.title = "Disconnect" else disconnect?.title = "Close Console"
         paste?.isEnabled = activeTerminal

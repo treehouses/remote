@@ -45,7 +45,7 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
             sendMessage("treehouses shadowsocks list")
         } else if (readMessage.contains("tmptmp") && !readMessage.contains("disabled") && !readMessage.contains("stopped")) {
             if (readMessage.contains(' ')) {
-                var msgList = readMessage.split(' ')
+                val msgList = readMessage.split(' ')
                 msgList.forEach {
                     if (it.trim().startsWith("tmptmp") && !profileNameText.contains(it)) {
                         profileNameText.add(it)

@@ -110,7 +110,7 @@ open class BaseSSHConsole: RootSSHConsole() {
     protected fun onEmulatedKeyClicked(v: View) {
         val terminal = adapter!!.currentTerminalView ?: return
         val handler = terminal.bridge.keyHandler
-        var hideKeys = sendKeys(v, handler)
+        val hideKeys = sendKeys(v, handler)
         if (hideKeys) hideEmulatedKeys()
         else autoHideEmulatedKeys()
 

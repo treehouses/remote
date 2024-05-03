@@ -58,14 +58,10 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
     }
 
     override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View? {
-        val newView: View? = inflater.inflate(R.layout.list_group, parent, false)
+        val newView = inflater.inflate(R.layout.list_group, parent, false)
         val listHeader = newView?.findViewById<TextView>(R.id.lblListHeader)
-        if (listHeader != null) {
-            listHeader.text = getGroup(i).toString()
-        }
-        if (newView != null) {
-            groupHeader.add(newView)
-        }
+        listHeader?.text = getGroup(i).toString()
+        groupHeader.add(newView)
         return newView
     }
 

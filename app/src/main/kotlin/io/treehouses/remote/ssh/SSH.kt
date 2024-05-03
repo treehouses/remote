@@ -83,7 +83,7 @@ class SSH: BaseSSH {
      */
 //    @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class, IOException::class)
     private fun tryPublicKey(pubkey: PubKeyBean): Boolean {
-        var pair: KeyPair?
+        val pair: KeyPair?
 
         if (manager!!.loadedKeypairs.containsKey(pubkey.nickname)) {
             // load this key from memory if its already there
@@ -103,8 +103,7 @@ class SSH: BaseSSH {
                 if (password == null) return false
             }
             // load using internal generated format
-            val privKey: PrivateKey
-            privKey = try {
+            val privKey: PrivateKey = try {
                 PubKeyUtils.decodePrivate(pubkey.privateKey!!, pubkey.type, password)
             } catch (e: Exception) {
                 return onBadPassword(pubkey, e)
