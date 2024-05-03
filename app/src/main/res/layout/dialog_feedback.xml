@@ -37,41 +37,41 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/emailWrapper"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_height="wrap_content">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/emailWrapper"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_marginLeft="10dp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:fontFamily="sans-serif"
-            android:hint="@string/email"
-            android:textColor="@color/daynight_textColor"
-            android:inputType="textEmailAddress" />
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:id="@+id/editEmail"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:fontFamily="sans-serif"-->
+<!--            android:hint="@string/email"-->
+<!--            android:textColor="@color/daynight_textColor"-->
+<!--            android:inputType="textEmailAddress" />-->
 
-    </com.google.android.material.textfield.TextInputLayout>
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/phoneNumberWrapper"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/phoneNumberWrapper"-->
+<!--        android:layout_marginLeft="10dp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editPhoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:fontFamily="sans-serif"
-            android:hint="@string/phone_number"
-            android:textColor="@color/daynight_textColor"
-            android:inputType="phone" />
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:id="@+id/editPhoneNumber"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:fontFamily="sans-serif"-->
+<!--            android:hint="@string/phone_number"-->
+<!--            android:textColor="@color/daynight_textColor"-->
+<!--            android:inputType="phone" />-->
 
-    </com.google.android.material.textfield.TextInputLayout>
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/messageWrapper"
@@ -87,7 +87,7 @@
             app:fontFamily="sans-serif"
             android:hint="@string/message"
             android:textColor="@color/daynight_textColor"
-            android:inputType="textCapSentences"/>
+            android:inputType="textMultiLine"/>
 
     </com.google.android.material.textfield.TextInputLayout>
     <RadioGroup
