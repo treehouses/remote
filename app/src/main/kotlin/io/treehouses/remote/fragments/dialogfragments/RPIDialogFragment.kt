@@ -2,7 +2,6 @@ package io.treehouses.remote.fragments.dialogfragments
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -25,8 +24,8 @@ import io.treehouses.remote.databinding.ActivityRpiDialogFragmentBinding
 import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
 import io.treehouses.remote.utils.DialogUtils
+import io.treehouses.remote.utils.DialogUtils.CustomProgressDialog
 import io.treehouses.remote.utils.logD
-import java.util.*
 
 class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private val raspberryDevices: MutableList<BluetoothDevice> = ArrayList()
@@ -37,7 +36,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private var mDialog: AlertDialog? = null
     private val raspberryDevicesText: MutableList<DeviceInfo> = ArrayList()
     private val allDevicesText: MutableList<DeviceInfo> = ArrayList()
-    private var pDialog: ProgressDialog? = null
+    private var pDialog: CustomProgressDialog? = null
 
     private val viewModel: HomeViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
@@ -100,7 +99,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     private fun initDialog() {
-        pDialog = ProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
+        pDialog = CustomProgressDialog(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
         mDialog = getAlertDialog(bind!!.root)
         mDialog!!.setTitle(R.string.select_device)
         listViewOnClickListener(bind!!.listView)
@@ -212,10 +211,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private fun addToDialog(device: BluetoothDevice, textList: MutableList<DeviceInfo>, mDevices: MutableList<BluetoothDevice>, inRange: Boolean) {
         if (!mDevices.contains(device)) {
             mDevices.add(device)
-            textList.add(DeviceInfo("""
-    ${device.name}
-    ${device.address}
-    """.trimIndent(), pairedDevices!!.contains(device), inRange))
+            textList.add(DeviceInfo("${device.name}\n ${device.address}".trimIndent(), pairedDevices!!.contains(device), inRange))
         } else textList[mDevices.indexOf(device)].isInRange = true
         mArrayAdapter!!.notifyDataSetChanged()
     }
@@ -234,12 +230,13 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         }
 
         fun checkPiAddress(deviceHardwareAddress: String): Boolean {
-            val piAddress: Set<String> = HashSet(listOf("B8:27:EB", "DC:A6:32", "E4:5F:01", "28:CD:C1", "D8:3A:DD",
-                                                        "B8-27-EB", "DC-A6-32", "E4-5F-01", "28-CD-C1", "D8-3A-DD",
-                                                        "B827.EB", "DCA6.32", "E45F.01", "28CD.C1", "D83A.DD",
-                                                        "b8:27:eb", "dc:a6:32", "e4:5f:01", "28:cd:c1", "d8:3a:dd",
-                                                        "b8-27-eb", "dc-a6-32", "e4-5f-01", "28-cd-c1", "d8-3a-dd",
-                                                        "b827.eb", "dca6.32", "e45f.01", "28cd.c1", "d83a.dd"))
+            val piAddress: Set<String> = HashSet(listOf(
+                "B8:27:EB", "DC:A6:32", "E4:5F:01", "28:CD:C1", "D8:3A:DD", "2C:CF:67",
+                "B8-27-EB", "DC-A6-32", "E4-5F-01", "28-CD-C1", "D8-3A-DD", "2C-CF-67",
+                "B827.EB", "DCA6.32", "E45F.01", "28CD.C1", "D83A.DD", "2CCF.67",
+                "b8:27:eb", "dc:a6:32", "e4:5f:01", "28:cd:c1", "d8:3a:dd", "2c:cf:67",
+                "b8-27-eb", "dc-a6-32", "e4-5f-01", "28-cd-c1", "d8-3a-dd", "2c-cf-67",
+                "b827.eb", "dca6.32", "e45f.01", "28cd.c1", "d83a.dd", "2ccf.67"))
             for (item in piAddress) {
                 if (deviceHardwareAddress.contains(item)) return true
             }

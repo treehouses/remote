@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import io.treehouses.remote.bases.BaseFragment
-import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.FragmentShowBluetoothFileBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +14,7 @@ import kotlinx.coroutines.withContext
 class ShowBluetoothFileFragment : BaseFragment() {
     private lateinit var bluetoothBind : FragmentShowBluetoothFileBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bluetoothBind = FragmentShowBluetoothFileBinding.inflate(inflater, container, false)
         return bluetoothBind.root
     }

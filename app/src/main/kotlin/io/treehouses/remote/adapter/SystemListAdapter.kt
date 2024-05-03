@@ -8,16 +8,13 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.R
-import io.treehouses.remote.Tutorials
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.pojo.NetworkListItem
-import io.treehouses.remote.utils.logD
 
 class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : BaseExpandableListAdapter() {
     private val list: List<NetworkListItem>
-    private val inflater: LayoutInflater
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var listener: HomeInteractListener? = null
     private val views: MutableList<View>
     private val groupHeader: MutableList<View>
@@ -60,12 +57,15 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
         return false
     }
 
-    override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View {
-        val newView: View?
-        newView = inflater.inflate(R.layout.list_group, parent, false)
-        val listHeader = newView.findViewById<TextView>(R.id.lblListHeader)
-        listHeader.text = getGroup(i).toString()
-        groupHeader.add(newView)
+    override fun getGroupView(i: Int, b: Boolean, convertView: View?, parent: ViewGroup): View? {
+        val newView: View? = inflater.inflate(R.layout.list_group, parent, false)
+        val listHeader = newView?.findViewById<TextView>(R.id.lblListHeader)
+        if (listHeader != null) {
+            listHeader.text = getGroup(i).toString()
+        }
+        if (newView != null) {
+            groupHeader.add(newView)
+        }
         return newView
     }
 
@@ -104,7 +104,6 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
     }
 
     init {
-        inflater = LayoutInflater.from(context)
         this.list = list
         views = mutableListOf()
         groupHeader = mutableListOf()

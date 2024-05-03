@@ -26,7 +26,7 @@ class EditHostDialogFragment : FullScreenDialogFragment(), FragmentDialogInterfa
     private lateinit var allKeys: List<String>
     private lateinit var dismissListener : DialogInterface.OnDismissListener
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = EditHostBinding.inflate(inflater, container, false)
         logD("${BaseTerminalBridge.TAG} ARGUMENT: ${arguments?.getString(SELECTED_HOST_URI, "")!!}")
         host = SaveUtils.getHost(requireContext(), arguments?.getString(SELECTED_HOST_URI, "")!!)!!
@@ -68,7 +68,7 @@ class EditHostDialogFragment : FullScreenDialogFragment(), FragmentDialogInterfa
 
     private fun setUpKeys() {
         allKeys = mutableListOf(NO_KEY).plus(KeyUtils.getAllKeyNames(requireContext()))
-        bind.selectKey.adapter = ArrayAdapter<String>(
+        bind.selectKey.adapter = ArrayAdapter(
                 requireContext(),
                 R.layout.key_type_spinner_item,
                 R.id.itemTitle,

@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
@@ -30,6 +29,7 @@ import io.treehouses.remote.ui.network.bottomsheetdialogs.EthernetBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.HotspotBottomSheet
 import io.treehouses.remote.ui.network.bottomsheetdialogs.WifiBottomSheet
 import io.treehouses.remote.utils.Utils
+
 open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialogInterface {
     private lateinit var binding: ActivityNetworkFragmentBinding
     private lateinit var speedDialog: Dialog
@@ -63,19 +63,20 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     }
 
     fun loadObservers() {
-        viewModel.networkMode.observe(viewLifecycleOwner, Observer {
+        viewModel.networkMode.observe(viewLifecycleOwner) {
             binding.currentNetworkMode.text = it
-        })
-        viewModel.ipAddress.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.ipAddress.observe(viewLifecycleOwner) {
             binding.networkIP.text = it
-        })
-        viewModel.showNetworkProgress.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.showNetworkProgress.observe(viewLifecycleOwner) {
             binding.networkPbar.visibility = if (it) View.VISIBLE else View.GONE
-        })
-        viewModel.showHome.observe(viewLifecycleOwner, Observer {
-            if (it)
+        }
+        viewModel.showHome.observe(viewLifecycleOwner) {
+            if (it) {
                 listener.openCallFragment(HomeFragment())
-        })
+            }
+        }
     }
 
     private fun showBottomSheet(fragment: BottomSheetDialogFragment, tag: String) {
@@ -135,20 +136,20 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
         speedDialog.setContentView(dialogSpeedtestBinding.root)
         speedDialogDismiss = speedDialog.findViewById(R.id.speedBtnDismiss); speedDialogTest = speedDialog.findViewById(R.id.speedBtnTest)
         speedDialogDismiss.setOnClickListener(this); speedDialogTest.setOnClickListener(this)
-        viewModel.downloadUpload.observe(viewLifecycleOwner, Observer {
+        viewModel.downloadUpload.observe(viewLifecycleOwner) {
             dialogSpeedtestBinding.speedText.text = it
-        })
-        viewModel.dialogCheck.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.dialogCheck.observe(viewLifecycleOwner) {
             speedDialogCheck = it
-        })
+        }
     }
 
     private fun reverseLookup(){
         val dialog  = createRemoteReverseDialog(context)
         dialog!!.show()
-        viewModel.remoteNetworkText.observe(viewLifecycleOwner, Observer {
+        viewModel.remoteNetworkText.observe(viewLifecycleOwner) {
             Utils.setObserverMessage(dialog, it)
-        })
+        }
         viewModel.treehousesRemoteReverse()
     }
 

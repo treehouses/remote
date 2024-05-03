@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import io.treehouses.remote.Constants
 import io.treehouses.remote.bases.BaseBottomSheetDialog
 import io.treehouses.remote.databinding.DialogWifiBinding
@@ -19,7 +18,7 @@ import io.treehouses.remote.ui.network.NetworkViewModel
 class WifiBottomSheet : BaseBottomSheetDialog() {
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogWifiBinding
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = DialogWifiBinding.inflate(inflater, container, false)
         setObservers()
         setClickListeners()
@@ -37,12 +36,12 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
     }
 
     private fun setObservers() {
-        viewModel.wifiUserError.observe(viewLifecycleOwner, Observer {
+        viewModel.wifiUserError.observe(viewLifecycleOwner) {
             bind.wifiUsername.error = if (it) "Please enter a username" else null
-        })
-        viewModel.checkBoxChecked.observe(viewLifecycleOwner, Observer { visible ->
+        }
+        viewModel.checkBoxChecked.observe(viewLifecycleOwner) { visible ->
             bind.enterpriseLayout.visibility = if (visible) View.VISIBLE else View.GONE
-        })
+        }
     }
 
     private fun setClickListeners() {

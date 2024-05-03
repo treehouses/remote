@@ -3,17 +3,15 @@ package io.treehouses.remote
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
-import android.util.TypedValue
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
@@ -40,9 +38,7 @@ class SplashScreenActivity : AppCompatActivity() {
             logoText = findViewById(R.id.logo_text)
             textAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_text_anim)
             logoText?.animation = textAnimation
-            Handler().postDelayed({
-                goToNextActivity()
-            }, SPLASH_TIME_OUT.toLong())
+            Handler(Looper.getMainLooper()).postDelayed({ goToNextActivity() }, SPLASH_TIME_OUT.toLong())
         } else { goToNextActivity() }
     }
 
@@ -54,9 +50,7 @@ class SplashScreenActivity : AppCompatActivity() {
             wm.defaultDisplay.getMetrics(metrics)
             metrics.scaledDensity = configuration.fontScale * metrics.density
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                baseContext.applicationContext.createConfigurationContext(it)
-            }
+            baseContext.applicationContext.createConfigurationContext(it)
             baseContext.resources.displayMetrics.setTo(metrics)
 
         }

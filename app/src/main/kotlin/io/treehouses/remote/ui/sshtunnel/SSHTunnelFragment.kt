@@ -27,7 +27,7 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
     lateinit var dialogSshTunnelHostsBinding: DialogSshtunnelHostsBinding
 
     @RequiresApi(Build.VERSION_CODES.N)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityTunnelSshFragmentBinding.inflate(inflater, container, false)
         viewModel.onCreateView()
         loadObservers1()
@@ -39,17 +39,23 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
     }
 
     private fun loadDialogObservers() {
-        viewModel.tunnelSSHKeyDialogData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.tunnelSSHKeyDialogData.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     if (it.data!!.showHandleDifferentKeysDialog) handleDifferentKeys(it.data)
                     if (it.data.showHandlePhoneKeySaveDialog)
                         handlePhoneKeySave(it.data)
-                    if (it.data.showHandlePiKeySaveDialog)
-                        handlePiKeySave(it.data.profile, it.data.storedPublicKey, it.data.storedPrivateKey)
-                } else -> {}
+                    if (it.data!!.showHandlePiKeySaveDialog)
+                        handlePiKeySave(
+                            it.data.profile,
+                            it.data.storedPublicKey,
+                            it.data.storedPrivateKey
+                        )
+                }
+
+                else -> {}
             }
-        })
+        }
     }
 
 
@@ -60,23 +66,23 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
     }
 
     fun showDialog(dialog: Dialog) {
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
     private fun addListeners1() {
         bind.switchNotification.setOnCheckedChangeListener { _, isChecked -> viewModel.switchButton(isChecked) }
-        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) };
+        bind.btnAddPort.setOnClickListener { showDialog(dialogPort) }
         bind.btnAddHosts.setOnClickListener {
             logD("treehouses clicked add host")
             showDialog(dialogHosts) }
-        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) };
+        bind.btnKeys.setOnClickListener { showDialog(dialogKeys) }
         bind.notifyNow.setOnClickListener { viewModel.notifyNow(requireContext()) }
         bind.info.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)); builder.setTitle("SSH Help")
-            builder.setMessage(R.string.ssh_info);
-            val dialog = builder.create();
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show();
+            builder.setMessage(R.string.ssh_info)
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent); dialog.show()
         }
         dialogSshTunnelPortsBinding.btnAddingPort.setOnClickListener { handleAddPort() }
         dialogSshTunnelHostsBinding.btnAddingHost.setOnClickListener {
@@ -171,7 +177,7 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
         addPortSyntaxCheck(dialogSshTunnelPortsBinding.ExternalTextInput, dialogSshTunnelPortsBinding.TLexternal)
         addPortSyntaxCheck(dialogSshTunnelPortsBinding.InternalTextInput, dialogSshTunnelPortsBinding.TLinternal)
         viewModel.initializeArrays()
-        val window = dialogPort.window;
+        val window = dialogPort.window
         val windowHost = dialogHosts.window
         window!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         windowHost!!.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)

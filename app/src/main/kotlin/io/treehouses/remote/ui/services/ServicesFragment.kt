@@ -1,7 +1,6 @@
 package io.treehouses.remote.ui.services
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityServicesFragmentBinding
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.logE
-import java.util.*
+import java.util.Objects
 
 
 class ServicesFragment : BaseFragment() {
@@ -28,7 +27,7 @@ class ServicesFragment : BaseFragment() {
 
     private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {this})
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityServicesFragmentBinding.inflate(inflater, container, false)
         bind.tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         bind.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
@@ -50,7 +49,7 @@ class ServicesFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.serverServiceData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.serverServiceData.observe(viewLifecycleOwner) {
             logE("HERE WITH: $it")
             when (it.status) {
                 Status.LOADING -> bind.progressBar2.visibility = View.VISIBLE
@@ -58,16 +57,17 @@ class ServicesFragment : BaseFragment() {
                     bind.progressBar2.visibility = View.GONE
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
+
                 else -> bind.progressBar2.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.clickedService.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        viewModel.clickedService.observe(viewLifecycleOwner) {
             viewModel.selectedService.value = it
             bind.tabLayout.getTabAt(1)?.select()
             currentTab = 1
             replaceFragment(currentTab)
-        })
+        }
     }
 
     private fun showUI(){

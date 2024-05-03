@@ -1,24 +1,22 @@
 package io.treehouses.remote.bases
 
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.treehouses.remote.Constants
-import io.treehouses.remote.R
-import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.logE
-import java.lang.NullPointerException
 
 open class BaseFragment : Fragment() {
-    var lastMessage = " ";
+    var lastMessage = " "
     open lateinit var mChatService: BluetoothChatService
     var mBluetoothAdapter: BluetoothAdapter? = null
     lateinit var listener: HomeInteractListener
@@ -60,8 +58,7 @@ open class BaseFragment : Fragment() {
         DialogUtils.createAlertDialog(context, dialog) { listener.sendMessage(message) }
     }
 
-    protected open val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
+    protected open val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_STATE_CHANGE -> {
@@ -80,8 +77,7 @@ open class BaseFragment : Fragment() {
     open fun setupChat() {}
     open fun getMessage(msg: Message) {}
 
-    public fun writeMessage(msg: String)
-    {
+    fun writeMessage(msg: String) {
         lastMessage = msg
         listener.sendMessage(msg)
     }
