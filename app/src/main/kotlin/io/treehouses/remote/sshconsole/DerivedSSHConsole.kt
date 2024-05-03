@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Rect
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.KeyEvent
 import android.view.View
@@ -24,14 +25,14 @@ import io.treehouses.remote.adapter.TerminalPagerAdapter
 
 open class DerivedSSHConsole: BaseSSHConsole() {
     private var emulatedKeysListener = View.OnClickListener { v: View -> onEmulatedKeyClicked(v) }
-    private var keyRepeatHandler = Handler()
+    private var keyRepeatHandler = Handler(Looper.getMainLooper())
     private val currentPromptHelper: PromptHelper?
         get() {
             val view = adapter!!.currentTerminalView ?: return null
             return view.bridge.promptHelper
         }
 
-    protected var promptHandler: Handler = object : Handler() {
+    protected var promptHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             // someone below us requested to display a prompt
             updatePromptVisible()

@@ -1,9 +1,6 @@
 package io.treehouses.remote.ui.services
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +17,13 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityServicesTabFragmentBinding
 import io.treehouses.remote.pojo.enum.Status
 
-class ServicesOverviewFragment() : BaseFragment(), OnItemClickListener {
+class ServicesOverviewFragment : BaseFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
     private lateinit var bind: ActivityServicesTabFragmentBinding
 
     private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {requireParentFragment()})
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityServicesTabFragmentBinding.inflate(inflater, container, false)
         adapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.bg_white))
 

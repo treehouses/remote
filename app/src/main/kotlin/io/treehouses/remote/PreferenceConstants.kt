@@ -16,8 +16,6 @@
  */
 package io.treehouses.remote
 
-import android.os.Build
-
 /**
  * @author Kenny Root
  */

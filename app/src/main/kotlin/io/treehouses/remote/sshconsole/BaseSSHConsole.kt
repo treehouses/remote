@@ -75,7 +75,7 @@ open class BaseSSHConsole: RootSSHConsole() {
     private fun setConsolePassword(prompt: PromptHelper) {
         bind.consolePasswordGroup.visibility = View.VISIBLE
         val instructions = prompt.promptInstructions
-        if (instructions != null && instructions.isNotEmpty()) {
+        if (!instructions.isNullOrEmpty()) {
             bind.consolePasswordInstructions.visibility = View.VISIBLE
             bind.consolePasswordInstructions.text = instructions
         } else bind.consolePasswordInstructions.visibility = View.GONE
@@ -224,8 +224,7 @@ open class BaseSSHConsole: RootSSHConsole() {
             if (requestedBridge == null) {
                 // If we didn't find the requested connection, try opening it
                 try {
-                    logD("${String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," +
-                            "so creating one now", requested.toString(), requested!!.fragment)}")
+                    logD(String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," + "so creating one now", requested.toString(), requested!!.fragment))
                     bound!!.openConnection(requested)
                 } catch (e: Exception) {
                     logE("Problem while trying to create new requested bridge from URI $e")

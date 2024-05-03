@@ -8,12 +8,9 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentActivity
 import io.treehouses.remote.R
-import io.treehouses.remote.Tutorials
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.pojo.NetworkListItem
-import io.treehouses.remote.utils.logD
 
 class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : BaseExpandableListAdapter() {
     private val list: List<NetworkListItem>

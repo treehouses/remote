@@ -1,10 +1,10 @@
 package io.treehouses.remote.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.Button
@@ -12,9 +12,9 @@ import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
 import io.treehouses.remote.Constants
-import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
 
@@ -28,8 +28,7 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     /**
      * The Handler that gets information back from the BluetoothChatService
      */
-    val mHandler: Handler = @SuppressLint("HandlerLeak")
-    object : Handler() {
+    val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
@@ -130,7 +129,7 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
 
     private fun openAuthenticator(key:String){
         val uri:String = "otpauth://totp/" + "pi@treehouses" + "?secret=" + key + "&issuer=treehouses"
-        val intent:Intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
 
         if (Utils.checkAppIsInstalled(c, v, intent, arrayOf("No Authenticator Client Installed on your Device", "Install", "https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2"))) return
 

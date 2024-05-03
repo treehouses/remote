@@ -141,7 +141,7 @@ open class BaseTerminalBridge : VDUDisplay {
         synchronized(localOutput) {
             for (line in output.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
                 var line = line
-                if (line.length > 0 && line[line.length - 1] == '\r') {
+                if (line.isNotEmpty() && line[line.length - 1] == '\r') {
                     line = line.substring(0, line.length - 1)
                 }
                 val s = "$line\r\n"
@@ -316,14 +316,14 @@ open class BaseTerminalBridge : VDUDisplay {
      * and pasting clipboard.
      */
     fun injectString(string: String?) {
-        if (string == null || string.length == 0) return
-        val injectStringThread = Thread(Runnable {
+        if (string.isNullOrEmpty()) return
+        val injectStringThread = Thread {
             try {
                 transport!!.write(string.toByteArray(charset(host!!.encoding)))
             } catch (e: Exception) {
                 logE("Couldn't inject string to remote host: $e")
             }
-        })
+        }
         injectStringThread.name = "InjectString"
         injectStringThread.start()
     }

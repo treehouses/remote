@@ -26,17 +26,17 @@ import io.treehouses.remote.utils.logE
 
 class ServicesDetailsFragment : BaseServicesDetailsFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = ActivityServicesDetailsBinding.inflate(inflater, container, false)
 
-        viewModel.servicesData.observe(viewLifecycleOwner, Observer {
+        viewModel.servicesData.observe(viewLifecycleOwner) {
             if (it.status == Status.SUCCESS) {
                 spinnerAdapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.md_grey_600))
                 serviceCardAdapter = ServiceCardAdapter(childFragmentManager, viewModel.formattedServices)
                 initialize()
                 goToSelected()
             }
-        })
+        }
         return binding.root
     }
 
@@ -44,17 +44,17 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
         super.onViewCreated(view, savedInstanceState)
         Tutorials.servicesDetailsTutorials(binding, requireActivity())
 
-        viewModel.selectedService.observe(viewLifecycleOwner, Observer { goToSelected() })
+        viewModel.selectedService.observe(viewLifecycleOwner) { goToSelected() }
 
         observeServiceAction()
 
-        viewModel.error.observe(viewLifecycleOwner, Observer {
+        viewModel.error.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                 viewModel.error.value = ""
             }
             setScreenState(true)
-        })
+        }
         observeAutoRun()
         observeMoreActions()
     }
@@ -106,19 +106,20 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
      */
     private fun observeMoreActions() {
 
-        viewModel.getLinkAction.observe(viewLifecycleOwner, Observer {
+        viewModel.getLinkAction.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
                     openURL(it.data.toString())
                     binding.progressBar.visibility = View.GONE
                     viewModel.getLinkAction.value = Resource.nothing()
                 }
+
                 Status.LOADING -> binding.progressBar.visibility = View.VISIBLE
                 else -> binding.progressBar.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.editEnvAction.observe(viewLifecycleOwner, Observer {
+        viewModel.editEnvAction.observe(viewLifecycleOwner) {
             if (it.status == Status.SUCCESS) {
                 var tokens = it.data!!
                 val name = tokens[2]
@@ -126,7 +127,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
                 showEditDialog(name, tokens.size, tokens)
                 viewModel.editEnvAction.value = Resource.nothing()
             }
-        })
+        }
     }
 
     /**

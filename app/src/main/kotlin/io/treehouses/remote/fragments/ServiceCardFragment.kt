@@ -29,7 +29,7 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = ServiceCardBinding.inflate(inflater, container, false)
         binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
         binding!!.serviceInfo.isFocusable = true

@@ -1,14 +1,11 @@
 package io.treehouses.remote.fragments.preferencefragments
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.MainApplication
@@ -42,7 +39,6 @@ class UserCustomizationPreferenceFragment: BasePreferenceFragment() {
         SettingsUtils.setClickListener(this, clearSSHKeys)
     }
 
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
         configuration?.let {
             it.fontScale = 0.05F*fontSize.toFloat()
