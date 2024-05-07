@@ -38,7 +38,8 @@ abstract class PermissionActivity : AppCompatActivity() {
     }
 
     fun requestPermission() {
-        showLocationPermissionDisclosure()
+//        showLocationPermissionDisclosure()
+        proceedWithoutLocationPermission()
     }
 
     private fun showLocationPermissionDisclosure() {

@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.*
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
@@ -130,7 +131,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @Synchronized
     fun connect(device: BluetoothDevice, secure: Boolean) {
         logD("connect to: $device")
-
         // Cancel any thread attempting to make a connection
         if (state == Constants.STATE_CONNECTING) {
             if (mConnectThread != null) {
@@ -262,6 +262,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     private inner class ConnectThread(private val mmDevice: BluetoothDevice, secure: Boolean) : Thread() {
         private val mmSocket: BluetoothSocket?
         private val mSocketType: String
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        private var successfulConnectionCount: Int = 0
         override fun run() {
             name = "ConnectThread$mSocketType"
             this@BluetoothChatService.state = Constants.STATE_CONNECTING
@@ -273,6 +275,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
                 mmSocket!!.connect()
+                successfulConnectionCount = preferences.getInt("successfulConnectionCount", 0)
+                successfulConnectionCount++
+                preferences.edit().putInt("successfulConnectionCount", successfulConnectionCount).apply()
             } catch (e: Exception) {
                 // Close the socket
                 logE("ERROR WHILE CONNECTING $e")

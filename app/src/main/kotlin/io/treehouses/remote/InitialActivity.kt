@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -38,7 +39,12 @@ class InitialActivity : BaseInitialActivity() {
         setContentView(bind.root)
         requestPermission()
 //        g
-        //PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
+        val count = PreferenceManager.getDefaultSharedPreferences(this).getInt("successfulConnectionCount", 0)
+        Log.d("ollonde2", "$count")
+
+        if (count > 2 && (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            showLocationPermissionDisclosureForCommunity()
+        }
        // adjustFontScale(resources.configuration, PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1))
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
