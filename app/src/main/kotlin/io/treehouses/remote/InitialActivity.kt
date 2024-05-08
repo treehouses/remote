@@ -143,7 +143,6 @@ class InitialActivity : BaseInitialActivity() {
         when (requestCode) {
             REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-//                    dataSharing()
                     preferences?.edit()?.putBoolean("send_log", true)?.apply()
                     goToCommunity()
                 } else {

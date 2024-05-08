@@ -38,19 +38,8 @@ abstract class PermissionActivity : AppCompatActivity() {
     }
 
     fun requestPermission() {
-//        showLocationPermissionDisclosure()
         proceedWithoutLocationPermission()
     }
-
-//    private fun showLocationPermissionDisclosure() {
-//        val builder = AlertDialog.Builder(ContextThemeWrapper(this, R.style.CustomAlertDialogStyle))
-//        builder.setTitle("Location & GPS Usage")
-//            .setMessage("This app collects location data to create a community map and understand user distribution. " +
-//                    "This helps us improve our services. To continue, please enable GPS.")
-//            .setPositiveButton("Ok") { _, _ -> proceedWithLocationPermission() }
-//            .setNegativeButton("No") { _, _ -> proceedWithoutLocationPermission() }
-//            .show()
-//    }
 
     private fun proceedWithLocationPermission() {
         val permissionsToRequest = mutableListOf(
