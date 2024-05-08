@@ -3,6 +3,7 @@ package io.treehouses.remote.ui.home
 import android.app.Application
 import android.bluetooth.BluetoothDevice
 import android.os.Message
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.BuildConfig
@@ -201,6 +202,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(getApplication())
         val connectionCount = preferences!!.getInt("connection_count", 0)
         val sendLog = preferences.getBoolean("send_log", true)
+        Log.d("ollonde", "$sendLog")
         preferences.edit().putInt("connection_count", connectionCount + 1).apply()
         if (connectionCount >= 3 && sendLog) {
             val map = HashMap<String, String?>()

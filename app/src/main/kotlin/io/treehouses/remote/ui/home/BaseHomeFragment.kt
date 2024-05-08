@@ -1,17 +1,22 @@
 package io.treehouses.remote.ui.home
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
+import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.IntroActivity
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
@@ -81,9 +86,32 @@ open class BaseHomeFragment : BaseFragment() {
         if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
             if (connectionCount >= 3) {
                 preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
-                val builder = DialogUtils.createAlertDialog(activity, "Sharing is Caring  $emoji", "Treehouses wants to collect your activities. " +
-                        "Do you like to share it? It will help us to improve.", v).setCancelable(false)
-                DialogUtils.createAdvancedDialog(builder, Pair("Continue", "Cancel"), { preferences.edit().putBoolean("send_log", true).apply() }, { MainApplication.showLogDialog = false })
+                val builder = DialogUtils.createAlertDialog(activity,
+                    "Sharing is Caring  $emoji",
+                    "Treehouses wants to collect your activities. Do you like to share it? It will help us to improve.", v)
+                    .setCancelable(false)
+                DialogUtils.createAdvancedDialog(builder, Pair("Continue", "Cancel"), {
+                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                            REQUEST_LOCATION_PERMISSION_FOR_ACTIVITY_COLLECTION
+                        )
+                    } else {
+                        preferences.edit()?.putBoolean("send_log", true)?.apply()
+                    }
+                     }, { MainApplication.showLogDialog = false })
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION_FOR_ACTIVITY_COLLECTION  -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    preferences?.edit()?.putBoolean("send_log", true)?.apply()
+                } else {
+                    Toast.makeText(context, "Permission denied. We won't collect your activities", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -270,5 +298,9 @@ open class BaseHomeFragment : BaseFragment() {
                 }.create()
         alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
+    }
+
+    companion object {
+        private const val REQUEST_LOCATION_PERMISSION_FOR_ACTIVITY_COLLECTION = 2
     }
 }

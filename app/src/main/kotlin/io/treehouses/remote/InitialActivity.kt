@@ -143,7 +143,9 @@ class InitialActivity : BaseInitialActivity() {
         when (requestCode) {
             REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    dataSharing()
+//                    dataSharing()
+                    preferences?.edit()?.putBoolean("send_log", true)?.apply()
+                    goToCommunity()
                 } else {
                     Toast.makeText(this, "Permission denied. Cannot proceed to community features.", Toast.LENGTH_SHORT).show()
                 }
@@ -176,24 +178,26 @@ class InitialActivity : BaseInitialActivity() {
             }
             R.id.action_community -> {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    showLocationPermissionDisclosureForCommunity()
-                } else {
                     dataSharing()
+                } else {
+                    preferences?.edit()?.putBoolean("send_log", true)?.apply()
+                    goToCommunity()
                 }
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun dataSharing() {
+    fun dataSharing() {
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val v = layoutInflater.inflate(R.layout.alert_log_map, null)
-        if (!preferences?.getBoolean("send_log", false)!!) {
-            val builder = DialogUtils.createAlertDialog(this@InitialActivity, "Sharing is Caring.", "The community map is only available with data sharing. " +
-                    "Please enable data sharing to access this feature.", v).setCancelable(false)
+        if (preferences?.getBoolean("send_log", false) == false) {
+            val builder = DialogUtils.createAlertDialog(this@InitialActivity,
+                "Sharing is Caring.",
+                "The community map is only available with data sharing. Please enable data sharing to access this feature.", v)
+                .setCancelable(false)
             DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
-                preferences!!.edit().putBoolean("send_log", true).apply()
-                goToCommunity()
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY)
             }, {MainApplication.showLogDialog = false })
         } else {
             goToCommunity()
@@ -212,7 +216,8 @@ class InitialActivity : BaseInitialActivity() {
                     "This helps us improve our services. To continue, please enable GPS.")
             .setPositiveButton("Ok") { _, _ ->
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY)
-            }.setNegativeButton("No", null).show()
+            }
+                .setNegativeButton("No", null).show()
     }
 
     fun changeAppBar() {
