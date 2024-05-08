@@ -192,8 +192,8 @@ class InitialActivity : BaseInitialActivity() {
         val v = layoutInflater.inflate(R.layout.alert_log_map, null)
         if (preferences?.getBoolean("send_log", false) == false) {
             val builder = DialogUtils.createAlertDialog(this@InitialActivity,
-                "Sharing is Caring.",
-                "The community map is only available with data sharing. Please enable data sharing to access this feature.", v)
+                "Sharing is Caring",
+                "To enable the community map, Treehouses needs to collect some data and your approximate location. Would you like to enable data sharing?", v)
                 .setCancelable(false)
             DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION_PERMISSION_FOR_COMMUNITY)
