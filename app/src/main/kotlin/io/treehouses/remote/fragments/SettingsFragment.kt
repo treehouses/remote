@@ -103,9 +103,9 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         val emoji = String(Character.toChars(0x1F60A))
         val builder = DialogUtils.createAlertDialog(activity,
             "Sharing is Caring  $emoji",
-            "Treehouses wants to collect your activities. Do you like to share it? It will help us to improve.", v)
+            "To make Treehouses better, we'd like to collect some data and your approximate location. Would you like to enable data sharing?", v)
             .setCancelable(false)
-        DialogUtils.createAdvancedDialog(builder, Pair("Continue", "Cancel"), {
+        DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
                     REQUEST_LOCATION_PERMISSION_FOR_ACTIVITY_COLLECTION
