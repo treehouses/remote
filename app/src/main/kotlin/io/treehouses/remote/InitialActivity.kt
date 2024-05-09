@@ -41,6 +41,7 @@ class InitialActivity : BaseInitialActivity() {
         currentTitle = "Home"
         setUpDrawer()
         title = "Home"
+        GPSService()
         val a = (application as MainApplication).getCurrentBluetoothService()
         if (a != null) {
             mChatService = a
@@ -174,7 +175,6 @@ class InitialActivity : BaseInitialActivity() {
                     DialogUtils.createAdvancedDialog(builder, Pair("Enable Data Sharing", "Cancel"), {
                         preferences!!.edit().putBoolean("send_log", true).apply()
                         goToCommunity()
-                        GPSService()
                     }, {MainApplication.showLogDialog = false })
                 }
                 else { goToCommunity() }
