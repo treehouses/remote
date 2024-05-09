@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
@@ -54,7 +55,10 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <service android:name=".utils.GPSService" />
+
+        <service android:name=".utils.GPSService"
+            android:foregroundServiceType="location"
+            />
 
         <activity
             android:name=".InitialActivity"
