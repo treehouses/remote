@@ -38,6 +38,10 @@ abstract class PermissionActivity : AppCompatActivity() {
     }
 
     fun requestPermission() {
+        proceedWithoutLocationPermission()
+    }
+
+    private fun proceedWithLocationPermission() {
         val permissionsToRequest = mutableListOf(
             Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH,
@@ -56,11 +60,29 @@ abstract class PermissionActivity : AppCompatActivity() {
         }
     }
 
+    private fun proceedWithoutLocationPermission() {
+        val permissionsToRequest = mutableListOf(
+            Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_SCAN
+        )
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU && !checkPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (permissionsToRequest.any { !checkPermission(it) }) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_WIFI)
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_WIFI) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                statusCheck()
+                if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    statusCheck()
+                }
             }
         }
     }

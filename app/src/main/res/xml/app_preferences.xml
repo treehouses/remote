@@ -1,68 +1,78 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="General" app:layout="@layout/custom_pref_category">
+    <PreferenceCategory
+        android:title="General"
+        app:layout="@layout/custom_pref_category">
         <Preference
-            android:title="General"
             android:key="general"
-            android:layout="@layout/custom_pref_whole_expandable">
-        </Preference>
+            android:layout="@layout/custom_pref_whole_expandable"
+            android:title="General" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Privacy" android:layout="@layout/custom_pref_category">
+    <PreferenceCategory
+        android:layout="@layout/custom_pref_category"
+        android:title="Privacy">
         <SwitchPreferenceCompat
-            android:title="Share Data"
+            android:key="send_log"
             android:layout="@layout/custom_pref_whole"
             android:summary="Please enable to share data with the Treehouses Remote Team. This will help us to improve our services to give you the best possible experience!"
-            android:key="send_log"
-            />
+            android:title="Share Data" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="User Customization" app:layout="@layout/custom_pref_category">
+    <PreferenceCategory
+        android:title="User Customization"
+        app:layout="@layout/custom_pref_category">
         <Preference
-            android:title="User Customization"
             android:key="user_customization"
-            android:layout="@layout/custom_pref_whole_expandable">
-        </Preference>
+            android:layout="@layout/custom_pref_whole_expandable"
+            android:title="User Customization" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="About" app:layout="@layout/custom_pref_category">
+    <PreferenceCategory
+        android:title="About"
+        app:layout="@layout/custom_pref_category">
         <Preference
-            android:title="Contributors"
             android:key="contributors"
-            android:layout="@layout/custom_pref_top">
-            <intent android:action="android.intent.action.VIEW"
+            android:layout="@layout/custom_pref_top"
+            android:title="Contributors">
+            <intent
+                android:action="android.intent.action.VIEW"
                 android:data="https://github.com/treehouses/remote/graphs/contributors" />
         </Preference>
         <Preference
-            android:title="Help"
             android:key="help_button"
-            android:layout="@layout/custom_pref_middle">
-            <intent android:action="android.intent.action.VIEW"
+            android:layout="@layout/custom_pref_middle"
+            android:title="Help">
+            <intent
+                android:action="android.intent.action.VIEW"
                 android:data="https://treehouses.io/#!index.md" />
         </Preference>
         <Preference
-            android:title="Report an Issue"
             android:key="reportIssue"
-            android:layout="@layout/custom_pref_bottom">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="https://github.com/treehouses/remote/issues"/>
+            android:layout="@layout/custom_pref_bottom"
+            android:title="Report an Issue">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/treehouses/remote/issues" />
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Advanced" app:layout="@layout/custom_pref_category">
+    <PreferenceCategory
+        android:title="Advanced"
+        app:layout="@layout/custom_pref_category">
         <Preference
-            android:layout="@layout/custom_pref_top"
             android:icon="@drawable/bluetooth"
             android:key="bluetooth_file"
-            android:title="View Bluetooth Server File"/>
+            android:layout="@layout/custom_pref_top"
+            android:title="View Bluetooth Server File" />
 
         <SwitchPreference
-            android:layout="@layout/custom_pref_bottom"
             android:defaultValue="false"
             android:key="bluetooth_file_local_upgrade"
-            android:title="Sync Bluetooth File with Local File"
-            android:summary="Prompt for replacing the Bluetooth server on the Raspberry Pi with the one that is compatible with the one that is on the Remote."/>
+            android:layout="@layout/custom_pref_bottom"
+            android:summary="Prompt for replacing the Bluetooth server on the Raspberry Pi with the one that is compatible with the one that is on the Remote."
+            android:title="Sync Bluetooth File with Local File" />
     </PreferenceCategory>
 
 </PreferenceScreen>
