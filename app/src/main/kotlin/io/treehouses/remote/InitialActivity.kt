@@ -45,7 +45,7 @@ class InitialActivity : BaseInitialActivity() {
         currentTitle = "Home"
         setUpDrawer()
         title = "Home"
-        GPSService(this)
+        GPSService()
         val a = (application as MainApplication).getCurrentBluetoothService()
         if (a != null) {
             mChatService = a
