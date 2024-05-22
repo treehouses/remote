@@ -17,7 +17,6 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -87,7 +86,6 @@ open class GPSService : Service(), LocationListener {
     override fun onLocationChanged(location: Location) {
         val latitude = location.latitude
         val longitude = location.longitude
-        Log.d("GPSService", "Location changed: Lat: $latitude, Lng: $longitude")
         pref.edit().putString("last_lat", "$latitude").apply()
         pref.edit().putString("last_lng", "$longitude").apply()
     }
@@ -103,7 +101,7 @@ open class GPSService : Service(), LocationListener {
     }
 
     companion object {
-        private const val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 10 // 10 meters
-        private const val MIN_TIME_BW_UPDATES = 1000 * 60 * 5.toLong() // 5 minutes
+        private const val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 10
+        private const val MIN_TIME_BW_UPDATES = 1000 * 60 * 5.toLong()
     }
 }
