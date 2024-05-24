@@ -1,7 +1,6 @@
 package io.treehouses.remote.utils
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -41,23 +40,21 @@ open class GPSService : Service(), LocationListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        createNotificationChannel()
+        val notificationIntent = Intent(this, InitialActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification: Notification = notificationBuilder.setOngoing(true)
+            .setContentTitle("GPS Service")
+            .setContentText("Treehouses Remote is currently estimating your location")
+            .setSmallIcon(R.drawable.treehouses2)
+            .setContentIntent(pendingIntent)
+            .build()
 
-            createNotificationChannel()
-            val notificationIntent = Intent(this, InitialActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-            val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            val notification: Notification = notificationBuilder.setOngoing(true)
-                .setContentTitle("GPS Service")
-                .setContentText("Treehouses Remote is currently estimating your location")
-                .setSmallIcon(R.drawable.treehouses2)
-                .setContentIntent(pendingIntent)
-                .build()
-
-            startForeground(NOTIFICATION_ID, notification)
-
+        startForeground(NOTIFICATION_ID, notification)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) == PackageManager.PERMISSION_GRANTED) {
             locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             isGPSEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
             getLocation()
@@ -72,13 +69,16 @@ open class GPSService : Service(), LocationListener {
         return null
     }
 
-    @SuppressLint("MissingPermission")
     private fun getLocation() {
-        locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_DISTANCE_CHANGE_FOR_UPDATES, MIN_TIME_BW_UPDATES.toFloat(), this)
-        if (locationManager != null) {
-            val location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if (location != null) {
-                onLocationChanged(location)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) == PackageManager.PERMISSION_GRANTED) {
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_DISTANCE_CHANGE_FOR_UPDATES, MIN_TIME_BW_UPDATES.toFloat(), this)
+            if (locationManager != null) {
+                val location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                if (location != null) {
+                    onLocationChanged(location)
+                }
             }
         }
     }
