@@ -18,7 +18,7 @@ jobs:
         env:
           NUM: ${{ github.run_number }}
         run: |
-          echo "VERSION="$(($NUM+6048)) >> $GITHUB_ENV
+          echo "VERSION="$(($NUM+6047)) >> $GITHUB_ENV
           echo "BRANCH="${GITHUB_REF##*/} >> $GITHUB_ENV
 
       - name: checkout repository code
@@ -82,7 +82,7 @@ jobs:
           track: internal
           releaseName: "${{ env.VERSION }}"
           status: completed
-          changesNotSentForReview: true
+          #changesNotSentForReview: true
 
 #      - name: mobile security framework
 #        run: |
