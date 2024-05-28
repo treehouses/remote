@@ -72,8 +72,21 @@ jobs:
           sha256sum output/remote.aab > output/remote.aab.sha256
           ls -alR output
 
-      - name: publish AAB to playstore
+      - name: publish AAB to happy playstore
         if: github.ref == 'refs/heads/master'
+        continue-on-error: true
+        uses: dogi/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          packageName: io.treehouses.remote
+          releaseFiles: output/remote.aab
+          track: internal
+          releaseName: "${{ env.VERSION }}"
+          status: completed
+
+      - name: publish AAB to unhappy playstore
+        if: github.ref == 'refs/heads/master'
+        continue-on-error: true
         uses: dogi/upload-google-play@v1.1.3
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
