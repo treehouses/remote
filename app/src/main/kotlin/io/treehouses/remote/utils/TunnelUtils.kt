@@ -12,9 +12,8 @@ object TunnelUtils {
         var adapter: TunnelPortAdapter? = null
         try {
             adapter = TunnelPortAdapter(context, portsName!!)
-            logE("adapter successful")
         } catch (e: Exception) {
-            logE(e.toString())
+            e.printStackTrace()
         }
         return adapter
     }

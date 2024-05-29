@@ -12,7 +12,6 @@ import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.TunnelSSHData
 import io.treehouses.remote.pojo.TunnelSSHKeyDialogData
 import io.treehouses.remote.pojo.enum.Resource
-import io.treehouses.remote.utils.logD
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -78,12 +77,6 @@ open class BaseSSHTunnelViewModel(application: Application) : FragmentViewModel(
         val storedPrivateKey: String? = sharedPreferences.getString("${profile}_private_key", "")
         return Pair(storedPublicKey, storedPrivateKey)
     }
-
-    private fun logKeys(piPublicKey: String, piPrivateKey: String, storedPublicKey: String?, storedPrivateKey: String?) {
-        logD(piPublicKey); logD(piPrivateKey); if (storedPublicKey != null) logD(storedPublicKey)
-        if (storedPrivateKey != null) logD(storedPrivateKey)
-    }
-
 
     fun saveKeyToPhone(profile: String, piPublicKey: String, piPrivateKey: String) {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("SSHKeyPref", Context.MODE_PRIVATE)

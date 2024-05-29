@@ -13,7 +13,6 @@ import io.treehouses.remote.fragments.TextBoxValidation
 import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.R
 import io.treehouses.remote.databinding.ChpassDialogBinding
-import io.treehouses.remote.utils.logD
 
 /**
  * Created by going-gone on 4/19/2018.
@@ -24,7 +23,6 @@ class ChPasswordDialogFragment : DialogFragment(), FragmentDialogInterface {
     var bind: ChpassDialogBinding? = null
     private val textBoxValidation = TextBoxValidation()
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        logD("In onCreateDialog()")
         bind = ChpassDialogBinding.inflate(requireActivity().layoutInflater)
         val mDialog = getAlertDialog(bind!!.root)
         mDialog.setTitle(R.string.change_password)

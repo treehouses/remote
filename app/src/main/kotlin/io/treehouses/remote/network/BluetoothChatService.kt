@@ -28,8 +28,6 @@ import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.Constants
 import io.treehouses.remote.bases.BaseBluetoothChatService
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -98,7 +96,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        logD("BLUETOOTH START COMMAND")
         return START_NOT_STICKY
     }
 
@@ -111,7 +108,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     override fun onDestroy() {
-        logE("BLUETOOTH, Destroying...")
         stop()
         unregisterReceiver(receiver)
         super.onDestroy()
@@ -129,7 +125,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     @Synchronized
     fun connect(device: BluetoothDevice, secure: Boolean) {
-        logD("connect to: $device")
 
         // Cancel any thread attempting to make a connection
         if (state == Constants.STATE_CONNECTING) {
@@ -160,7 +155,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     @Synchronized
     fun connected(socket: BluetoothSocket?, device: BluetoothDevice, socketType: String) {
-        logD("connected, Socket Type:$socketType")
         connectedDeviceName = device.name
         mDevice = device
         // Cancel the thread that completed the connection
@@ -189,7 +183,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         msg?.data = bundle
         mHandler?.sendMessage(msg ?: Message())
         // Update UI title
-        logD("Connected")
     }
 
     /**
@@ -221,7 +214,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
      */
     fun write(out: ByteArray?) {
         // Create temporary object
-        logD("write: " + String(out!!))
         var r: ConnectedThread?
         // Synchronize a copy of the ConnectedThread
         synchronized(this) {
@@ -229,7 +221,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             r = mConnectedThread
         }
         // Perform the write unsynchronized
-        r!!.write(out)
+        if (out != null) {
+            r!!.write(out)
+        }
     }
 
 
@@ -275,7 +269,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 mmSocket!!.connect()
             } catch (e: Exception) {
                 // Close the socket
-                logE("ERROR WHILE CONNECTING $e")
                 closeSocket()
                 connectionFailed()
                 return
@@ -292,7 +285,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
         fun closeSocket() {
             try { mmSocket!!.close() }
-            catch (e: Exception) { logE("close() of connect $mSocketType socket failed, $e") }
+            catch (e: Exception) { e.printStackTrace() }
         }
 
         init {
@@ -307,7 +300,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 //                } else {
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
             } catch (e: Exception) {
-                logE("Socket Type: $mSocketType reate() failed, $e")
+                e.printStackTrace()
                 this@BluetoothChatService.state = Constants.STATE_NONE
             }
             this@BluetoothChatService.updateUserInterfaceTitle()
@@ -334,13 +327,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                     // Read from the InputStream
                     bytes = mmInStream!!.read(buffer)
                     out = String(buffer, 0, bytes)
-                    logD("out = $out, size of out = ${out.length}, bytes = $bytes")
                     mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
                     //                    mEmulatorView.write(buffer, bytes);
                     // Send the obtained bytes to the UI Activity
                     //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } catch (e: IOException) {
-                    logE("disconnected $e")
+                    e.printStackTrace()
                     connectionLost()
                     break
                 }
@@ -354,13 +346,12 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
          */
         fun write(buffer: ByteArray) {
             try {
-                logD("write: I am in inside write method")
                 mmOutStream!!.write(buffer)
 
                 // Share the sent message back to the UI Activity
                 mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)?.sendToTarget()
             } catch (e: IOException) {
-                logE("Exception during write $e")
+                e.printStackTrace()
             }
         }
 
@@ -368,12 +359,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             try {
                 mmSocket!!.close()
             } catch (e: Exception) {
-                logE("close() of connect socket failed $e")
+                e.printStackTrace()
             }
         }
 
         init {
-            logD("create ConnectedThread: $socketType")
             mmSocket = socket
             var tmpIn: InputStream? = null
             var tmpOut: OutputStream? = null
@@ -381,11 +371,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             // Get the BluetoothSocket input and output streams
             try {
                 tmpIn = socket!!.inputStream
-                logD("tmpIn = $tmpIn")
                 tmpOut = socket.outputStream
-                logD("tmpOut = $tmpOut")
             } catch (e: IOException) {
-                logD("temp sockets not created, $e")
+                e.printStackTrace()
             }
             mmInStream = tmpIn
             mmOutStream = tmpOut

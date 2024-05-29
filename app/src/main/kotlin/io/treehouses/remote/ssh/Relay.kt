@@ -19,7 +19,6 @@ package io.treehouses.remote.ssh
 import android.text.AndroidCharacter
 import io.treehouses.remote.views.terminal.vt320
 import io.treehouses.remote.ssh.terminal.TerminalBridge
-import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
@@ -71,7 +70,7 @@ class Relay(bridge: TerminalBridge, transport: SSH, buffer: vt320, encoding: Str
         try {
             handleData(wideAttribute)
         } catch (e: IOException) {
-            logE("Problem while handling incoming data in relay thread $e")
+            e.printStackTrace()
         }
     }
 

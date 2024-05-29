@@ -23,7 +23,6 @@ import io.treehouses.remote.databinding.ActivityTerminalFragmentBinding
 import io.treehouses.remote.pojo.CommandsList
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils.copyToClipboard
-import io.treehouses.remote.utils.logD
 import io.treehouses.remote.utils.match
 import org.json.JSONException
 import org.json.JSONObject
@@ -51,7 +50,6 @@ open class BaseTerminalFragment : BaseFragment() {
         // construct a string from the buffer
         val writeMessage = String(writeBuf)
         if (match(writeMessage) != RESULTS.PING_OUTPUT && !jsonSent) {
-            logD( "writeMessage = $writeMessage")
             mConversationArrayAdapter?.add("\nCommand:  $writeMessage")
         }
         return writeMessage
@@ -186,7 +184,6 @@ open class BaseTerminalFragment : BaseFragment() {
         }
         for (i in data.commands!!.indices) {
             val s = getRootCommand(data.commands!![i]).trim { it <= ' ' }
-            logD( "updateArrayAdapters: $s")
             if (!inSecondLevel!!.contains(s)) {
                 arrayAdapter2?.add(s)
                 inSecondLevel?.add(s)

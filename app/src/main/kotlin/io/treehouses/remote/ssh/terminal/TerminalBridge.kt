@@ -30,8 +30,6 @@ import io.treehouses.remote.ssh.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.ssh.interfaces.FontSizeChangedListener
 import io.treehouses.remote.views.terminal.vt320
 import io.treehouses.remote.bases.DerivedTerminalBridge
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import java.io.IOException
 import java.util.*
 
@@ -101,15 +99,13 @@ class TerminalBridge : DerivedTerminalBridge {
         // create terminal buffer and handle outgoing data
         // this is probably status reply information
         vDUBuffer = object : vt320() {
-            override fun debug(s: String?) {
-                logD("$s")
-            }
+            override fun debug(s: String?) {}
 
             override fun write(b: ByteArray?) {
                 try {
                     if (b != null && transport != null) transport!!.write(b)
                 } catch (e: IOException) {
-                    logE("Problem writing outgoing data in vt320() thread $e")
+                    e.printStackTrace()
                 }
             }
 
@@ -117,7 +113,7 @@ class TerminalBridge : DerivedTerminalBridge {
                 try {
                     if (transport != null) transport!!.write(b)
                 } catch (e: IOException) {
-                    logE("Problem writing outgoing data in vt320() thread $e")
+                    e.printStackTrace()
                 }
             }
 
@@ -207,9 +203,7 @@ class TerminalBridge : DerivedTerminalBridge {
 //			((vt320) buffer).setBackspace(vt320.DELETE_IS_BACKSPACE);
 //		else
         (vDUBuffer as vt320?)!!.setBackspace(vt320.DELETE_IS_DEL)
-        logD("ENTERED HERE3")
         if (isSessionOpen) {
-            logD("ENTERED HERE")
             // create thread to relay incoming connection data to buffer
             relay = Relay(this, transport!!, (vDUBuffer as vt320?)!!, host!!.encoding)
             val relayThread = Thread(relay)

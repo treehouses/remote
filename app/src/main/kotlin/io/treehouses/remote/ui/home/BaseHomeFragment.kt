@@ -16,7 +16,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
-import io.treehouses.remote.InitialActivity
 import io.treehouses.remote.IntroActivity
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
@@ -25,8 +24,7 @@ import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Matcher
 import io.treehouses.remote.utils.SaveUtils.Screens
 import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.utils.logE
-import java.util.*
+import java.util.Calendar
 
 open class BaseHomeFragment : BaseFragment() {
     protected var preferences: SharedPreferences? = null
@@ -124,7 +122,6 @@ open class BaseHomeFragment : BaseFragment() {
     protected fun rate(preferences: SharedPreferences) {
         val connectionCount = preferences.getInt("connection_count", 0)
         val ratingDialog = preferences.getBoolean("ratingDialog", true)
-        logE("$connectionCount  $ratingDialog")
         val lastDialogShown = preferences.getLong("last_dialog_shown", 0)
         val date = Calendar.getInstance()
         if (lastDialogShown < date.timeInMillis) {
@@ -148,7 +145,6 @@ open class BaseHomeFragment : BaseFragment() {
         val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
         if (firstTime) {
 //            showWelcomeDialog()
-            logE("FIRST TIME")
             val i = Intent(activity, IntroActivity::class.java)
             startActivity(i)
             val editor = preferences.edit()
@@ -212,13 +208,11 @@ open class BaseHomeFragment : BaseFragment() {
      * @param serverHash : String = the hash of the server Bluetooth File
      */
     protected fun syncBluetooth(serverHash: String) {
-        logE("SERVER: $serverHash")
         //Get the local Bluetooth file on the app
         val inputStream = context?.assets?.open("bluetooth-server.txt")
         val localString = inputStream?.bufferedReader().use { it?.readText() }
         inputStream?.close()
         val hashed = Utils.hashString(localString!!)
-        logE("LOCAL: $serverHash")
         //Bluetooth file is outdated, but RPI is connected to the internet
         if (Matcher.isError(serverHash) && viewModel.internetStatus.value == true) {
             askForBluetoothUpgradeOverInternet()
@@ -271,7 +265,6 @@ open class BaseHomeFragment : BaseFragment() {
         val dialog = DialogUtils.createAlertDialog(context, "Re-sync Bluetooth Server")
                 .setMessage("The bluetooth server on the Raspberry Pi does not match the one on your device. Would you like to update the CLI bluetooth server?")
                 .setPositiveButton("Upgrade") { _, _ ->
-                    logE("ENCODED $compressedLocalFile")
                     viewModel.sendMessage("remotesync $compressedLocalFile cnysetomer\n")
                     Toast.makeText(requireContext(), "Bluetooth Upgraded. Please reboot Raspberry Pi to apply the changes.", Toast.LENGTH_LONG).show()
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->

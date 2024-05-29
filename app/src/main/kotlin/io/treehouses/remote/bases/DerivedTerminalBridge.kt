@@ -6,8 +6,6 @@ import android.provider.Settings
 import android.text.ClipboardManager
 import io.treehouses.remote.ssh.terminal.PatternHolder
 import io.treehouses.remote.ssh.terminal.TerminalView
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import java.util.*
 import kotlin.math.ceil
 
@@ -56,7 +54,6 @@ open class DerivedTerminalBridge : BaseTerminalBridge() {
     @Synchronized
     fun parentChanged(parent: TerminalView) {
         if (manager != null && !manager!!.isResizeAllowed) {
-            logD("Resize is not allowed now")
             return
         }
         this.parent = parent
@@ -105,7 +102,7 @@ open class DerivedTerminalBridge : BaseTerminalBridge() {
             synchronized(vDUBuffer!!) { vDUBuffer!!.setScreenSize(columns, rows, true) }
             if (transport != null) transport!!.setDimensions(columns, rows, width, height)
         } catch (e: Exception) {
-            logE("Problem while trying to resize screen or PTY $e")
+            e.printStackTrace()
         }
     }
 

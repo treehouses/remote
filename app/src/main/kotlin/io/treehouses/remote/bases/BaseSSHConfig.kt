@@ -17,7 +17,6 @@ import io.treehouses.remote.callback.RVButtonClickListener
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
 
@@ -87,7 +86,7 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
 
     override fun onStop() {
         super.onStop()
-        try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
+        try {activity?.unbindService(connection)} catch (e: Exception) {e.printStackTrace()}
     }
 
     override fun onButtonClick(position: Int) {

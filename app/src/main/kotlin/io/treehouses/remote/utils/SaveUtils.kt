@@ -90,7 +90,6 @@ object SaveUtils {
             return ArrayList()
         }
         if (titles.size != values.size) {
-            logD("COMMANDLIST ERROR SIZE: COMMANDS and VALUES")
             return ArrayList()
         }
         for (i in titles.indices) {
@@ -128,7 +127,7 @@ object SaveUtils {
                 profile.isWifi -> wifi.add(profile)
                 profile.isHotspot -> hotspot.add(profile)
                 profile.isBridge -> bridge.add(profile)
-                else -> logD("SAVE UTILS Not a supported type")
+                else -> { }
             }
         }
         val profiles = HashMap<String, MutableList<NetworkProfile>>()
@@ -162,7 +161,6 @@ object SaveUtils {
     }
 
     private fun addHost(context: Context, hostBean: HostBean) {
-        logD("ADDING HOST ${hostBean.uri}  ${Gson().toJson(hostBean)}")
         val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
         editor.putString(hostBean.uri.toString(), Gson().toJson(hostBean))
         editor.apply()
@@ -177,8 +175,7 @@ object SaveUtils {
 
     fun getHost(context: Context, hostUri: String) : HostBean? {
         val hostString = PreferenceManager.getDefaultSharedPreferences(context).getString(hostUri, "")
-        logD("GOT HOST STRING ${hostString!!}")
-        return hostString.convertToObject(HostBean::class.java)
+        return hostString?.convertToObject(HostBean::class.java)
     }
     //Adds host to host list
     fun updateHostList (context: Context, hostBean: HostBean) {
