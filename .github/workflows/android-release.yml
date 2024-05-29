@@ -95,7 +95,7 @@ jobs:
           track: internal
           releaseName: "${{ env.VERSION }}"
           status: completed
-          #changesNotSentForReview: true
+          changesNotSentForReview: true
 
 #      - name: mobile security framework
 #        run: |

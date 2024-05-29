@@ -22,7 +22,6 @@ import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.countHeadersBefore
 import io.treehouses.remote.utils.indexOfService
-import io.treehouses.remote.utils.logE
 
 class ServicesDetailsFragment : BaseServicesDetailsFragment() {
 
@@ -74,7 +73,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
                     spinnerAdapter?.notifyDataSetChanged()
                     goToSelected()
                 }
-                else -> logE("UNKNOWNRECEIVED in ServiceAction: ${it.status}")
+                else -> {}
             }
             setScreenState(true)
         })
@@ -94,7 +93,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
                     Toast.makeText(context, "Switched autorun to ${it.data}", Toast.LENGTH_SHORT).show()
                     viewModel.autoRunAction.value = Resource.nothing()
                 }
-                else -> logE("UNKNOWN RECEIVED in AutoRun boolean")
+                else -> {}
             }
             setScreenState(true)
         })

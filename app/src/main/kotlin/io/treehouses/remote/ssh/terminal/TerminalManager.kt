@@ -35,7 +35,6 @@ import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.ssh.interfaces.BridgeDisconnectedListener
 import io.treehouses.remote.ssh.interfaces.OnHostStatusChangedListener
 import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.logD
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.security.KeyPair
@@ -217,7 +216,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
      */
     override fun onDisconnected(bridge: TerminalBridge) {
         //var shouldHideRunningNotification = false
-        logD("Bridge Disconnected. Removing it.")
         synchronized(bridges) {
             // remove this bridge from our list
             bridges.remove(bridge); mHostBridgeMap.remove(bridge.host); mNicknameBridgeMap.remove(bridge.host!!.nickname)
@@ -248,12 +246,10 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             val nickname = pubkey.nickname
             pubkeyTimer!!.schedule(object : TimerTask() {
                 override fun run() {
-                    logD("Unloading from memory key: $nickname")
                     loadedKeypairs.remove(pubkey.nickname)
                 }
             }, pubkey.lifetime * 1000.toLong())
         }
-        logD(String.format("Added key '%s' to in-memory cache", pubkey.nickname))
     }
 
     fun removeKey(publicKey: ByteArray?): Boolean {
@@ -265,7 +261,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
             }
         }
         return if (nickname != null) {
-            logD(String.format("Removed key '%s' to in-memory cache", nickname))
             loadedKeypairs.remove(nickname) != null
         } else false
     }
@@ -329,7 +324,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
                     idleTimer!!.schedule(IdleTask(), IDLE_TIMEOUT)
                 }
             } else {
-                logD("Stopping service immediately")
                 stopSelf()
             }
         } else {
@@ -343,7 +337,6 @@ class TerminalManager : Service(), BridgeDisconnectedListener, OnSharedPreferenc
 
     private inner class IdleTask : TimerTask() {
         override fun run() {
-            logD("${String.format("Stopping service after timeout of ~%d seconds", IDLE_TIMEOUT / 1000)}")
             if (bridges.size == 0) {
                 stopSelf()
             }

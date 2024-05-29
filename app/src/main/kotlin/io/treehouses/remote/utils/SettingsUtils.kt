@@ -13,15 +13,13 @@ object SettingsUtils {
         try {
             fragmentTransaction.commit()
         } catch (exception:IllegalStateException ){
-            logE("Error $exception")
+            exception.printStackTrace()
         }
     }
 
     fun setClickListener(listener: Preference.OnPreferenceClickListener, preference: Preference?) {
         if (preference != null) {
             preference.onPreferenceClickListener = listener
-        } else {
-            logD("SETTINGS Unknown key")
         }
     }
 }

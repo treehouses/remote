@@ -8,8 +8,6 @@ import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.utils.RESULTS
 import io.treehouses.remote.utils.Utils
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
 
 class NetworkViewModel(application: Application) : BaseNetworkViewModel(application) {
@@ -22,7 +20,6 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
     var dialogCheck: MutableLiveData<Boolean> = MutableLiveData()
 
     private fun updateNetworkText(mode: String) {
-        logD( "Current Network Mode: $mode" )
         networkMode.value = "Current Network Mode: $mode"
         showNetworkProgress.value = false
     }
@@ -34,7 +31,6 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
 
     private fun showIpAddress(output: String) {
         var ip = output.substringAfter("ip: ").substringBefore(", has")
-        logD( "Current ip: $ip" )
         if (ip == "") ip = "N/A"
         ipAddress.value = "IP Address: " + ip
     }
@@ -84,7 +80,7 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
             RESULTS.SPEED_TEST -> {
                 updateSpeed(output)
             }
-            else -> logE("NewNetworkFragment: Result not Found")
+            else -> { }
         }
 
     }

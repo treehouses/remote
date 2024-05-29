@@ -14,8 +14,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.ssh.PromptHelper
 import io.treehouses.remote.ssh.terminal.TerminalKeyListener
 import io.treehouses.remote.ssh.terminal.TerminalView
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 
 open class BaseSSHConsole: RootSSHConsole() {
 
@@ -41,7 +39,6 @@ open class BaseSSHConsole: RootSSHConsole() {
         // we dont have an active view, so hide any prompts
         if (view == null) return
         val prompt = view.bridge.promptHelper
-        logD("GOT HERE ")
         when {
             String::class.java == prompt!!.promptRequested -> {
                 hideEmulatedKeys()
@@ -102,7 +99,6 @@ open class BaseSSHConsole: RootSSHConsole() {
         updatePromptVisible()
         // If we just closed the last bridge, go back to the previous activity.
         if (bind.pager.childCount == 0) {
-            logD("FINISHING SSH FINISH")
             finish()
         }
     }
@@ -224,10 +220,9 @@ open class BaseSSHConsole: RootSSHConsole() {
             if (requestedBridge == null) {
                 // If we didn't find the requested connection, try opening it
                 try {
-                    logD(String.format("We couldnt find an existing bridge with URI=%s (nickname=%s)," + "so creating one now", requested.toString(), requested!!.fragment))
                     bound!!.openConnection(requested)
                 } catch (e: Exception) {
-                    logE("Problem while trying to create new requested bridge from URI $e")
+                    e.printStackTrace()
                     return
                 }
                 adapter!!.notifyDataSetChanged()

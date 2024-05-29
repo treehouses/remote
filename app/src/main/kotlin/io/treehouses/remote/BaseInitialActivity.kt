@@ -23,9 +23,7 @@ import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.ui.network.NetworkFragment
 import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.ui.status.StatusFragment
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SettingsUtils
-import io.treehouses.remote.utils.logD
 
 open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     protected var validBluetoothConnection = false
@@ -57,10 +55,8 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
 
     override fun sendMessage(s: String) {
         // Check that we're actually connected before trying anything
-        logD(s)
         if (mChatService.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@BaseInitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
-            LogUtils.mIdle()
             return
         }
 
@@ -93,7 +89,6 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
                     if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        logD("DEVICE$mConnectedDeviceName")
                         checkStatusNow()
                     }
                 }
@@ -104,19 +99,15 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     fun checkStatusNow() {
         validBluetoothConnection = when (mChatService.state) {
             Constants.STATE_CONNECTED -> {
-                LogUtils.mConnect()
                 true
             }
             Constants.STATE_NONE -> {
-                LogUtils.mOffline()
                 false
             }
             else -> {
-                LogUtils.mIdle()
                 false
             }
         }
-        logD("BOOLEAN $validBluetoothConnection")
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

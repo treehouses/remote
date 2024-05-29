@@ -35,7 +35,6 @@ import io.treehouses.remote.utils.DialogUtils.CustomProgressDialog
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
-import io.treehouses.remote.utils.logE
 
 class HomeFragment : BaseHomeFragment() {
     private var notificationListener: NotificationCallback? = null
@@ -243,7 +242,6 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun observeConnectionState() {
         viewModel.connectionStatus.observe(viewLifecycleOwner) { connected ->
-            logE("CONNECTED STATE $connected")
             transition(connected == Constants.STATE_CONNECTED)
             connectionDialog?.dismiss()
             when (connected) {

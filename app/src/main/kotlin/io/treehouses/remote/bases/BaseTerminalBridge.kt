@@ -18,8 +18,6 @@ import io.treehouses.remote.ssh.interfaces.FontSizeChangedListener
 import io.treehouses.remote.views.terminal.VDUBuffer
 import io.treehouses.remote.views.terminal.VDUDisplay
 import io.treehouses.remote.views.terminal.vt320
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import java.io.IOException
 
 open class BaseTerminalBridge : VDUDisplay {
@@ -135,9 +133,6 @@ open class BaseTerminalBridge : VDUDisplay {
      * Should never be called once the session is established.
      */
     fun outputLine(output: String) {
-        if (transport != null && transport!!.isSessionOpen) {
-            logD("Session established, cannot use outputLine! ${IOException("outputLine call traceback")}")
-        }
         synchronized(localOutput) {
             for (line in output.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
                 var line = line
@@ -321,7 +316,7 @@ open class BaseTerminalBridge : VDUDisplay {
             try {
                 transport!!.write(string.toByteArray(charset(host!!.encoding)))
             } catch (e: Exception) {
-                logE("Couldn't inject string to remote host: $e")
+                e.printStackTrace()
             }
         }
         injectStringThread.name = "InjectString"

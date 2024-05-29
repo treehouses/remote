@@ -19,7 +19,6 @@ import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.countHeadersBefore
-import io.treehouses.remote.utils.logD
 
 open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceActionListener {
 
@@ -62,7 +61,6 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
      */
     protected fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
-        logD("OPENING: http://$url||")
         val chooser = Intent.createChooser(intent, "Select a browser")
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)
     }

@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.logD
 
 
 class SplashScreenActivity : AppCompatActivity() {
@@ -87,7 +86,6 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun fontSize(): Int
     {
-        logD("FONT SIZE " + PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18).toString())
         return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18)
     }
 }

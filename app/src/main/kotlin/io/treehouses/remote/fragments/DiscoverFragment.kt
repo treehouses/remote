@@ -21,8 +21,6 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivityDiscoverFragmentBinding
 import io.treehouses.remote.fragments.dialogfragments.RPIDialogFragment
 import io.treehouses.remote.interfaces.FragmentDialogInterface
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -45,13 +43,12 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun requestNetworkInfo() {
-        logD("$TAG, Requesting Network Information")
         try {
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY_LIST))
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_GATEWAY))
             listener.sendMessage(getString(R.string.TREEHOUSES_DISCOVER_SELF))
         } catch (e: Exception) {
-            logE("Error Requesting Network Information")
+            e.printStackTrace()
         }
     }
 
@@ -212,11 +209,9 @@ class DiscoverFragment : BaseFragment(), FragmentDialogInterface {
         when (msg.what) {
             Constants.MESSAGE_WRITE -> {
                 val writeMsg = String((msg.obj as ByteArray))
-                logD("WRITE $writeMsg")
             }
             Constants.MESSAGE_READ -> {
                 val readMessage = msg.obj as String
-                logD("$TAG, READ = $readMessage")
 
                 if(!addDevices(readMessage))
                     if(!updateGatewayInfo(readMessage))

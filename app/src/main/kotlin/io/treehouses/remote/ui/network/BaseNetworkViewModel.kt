@@ -8,7 +8,6 @@ import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.logD
 
 open class BaseNetworkViewModel(application: Application) : FragmentViewModel(application) {
     private val context = getApplication<MainApplication>().applicationContext
@@ -18,7 +17,6 @@ open class BaseNetworkViewModel(application: Application) : FragmentViewModel(ap
 
     fun bridgeStartConfigListener(stringMap: Map<String, String>) {
         showNetworkProgress.value = true
-        logD(stringMap.getValue("etEssid"))
         sendMessage(getString(R.string.TREEHOUSES_BRIDGE, stringMap.getValue("etEssid"), stringMap.getValue("etHotspotEssid"),
                 stringMap.getValue("etPassword"), stringMap.getValue("etHotspotPassword")))
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()

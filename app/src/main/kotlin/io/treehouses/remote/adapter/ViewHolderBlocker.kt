@@ -13,7 +13,6 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.network.BluetoothChatService
-import io.treehouses.remote.utils.logD
 
 class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
     private val blockerBar: SeekBar = v.findViewById(R.id.blockerBar)
@@ -34,7 +33,6 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
             when (msg.what) {
                 Constants.MESSAGE_READ -> {
                     readMessage = msg.obj as String
-                    logD("readMessage = $readMessage")
                     updateSelection(readMessage)
                 }
             }
