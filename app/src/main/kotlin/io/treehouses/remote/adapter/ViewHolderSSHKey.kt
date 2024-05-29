@@ -14,8 +14,8 @@ import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.Utils.toast
 
-class ViewHolderSSHKey internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
-    private val mChatService: BluetoothChatService = listener.getChatService()
+class ViewHolderSSHKey internal constructor(v: View, private val c: Context, listener: HomeInteractListener?) {
+    private val mChatService: BluetoothChatService? = listener?.getChatService()
     private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             if (msg.what == Constants.MESSAGE_READ) {
@@ -32,12 +32,12 @@ class ViewHolderSSHKey internal constructor(v: View, private val c: Context, lis
     }
 
     init {
-        mChatService.updateHandler(mHandler)
+        mChatService?.updateHandler(mHandler)
         val btnStartConfig = v.findViewById<Button>(R.id.btn_save_key)
         editTextSSHKey = v.findViewById(R.id.editTextSSHKey)
         btnStartConfig.setOnClickListener {
             if (editTextSSHKey.text.toString() != "") {
-                listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD, editTextSSHKey.text.toString()))
+                listener?.sendMessage(c.resources.getString(R.string.TREEHOUSES_SSHKEY_ADD, editTextSSHKey.text.toString()))
             } else {
                 Toast.makeText(c, "Incorrect SSH Key Input", Toast.LENGTH_LONG).show()
             }

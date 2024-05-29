@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import io.treehouses.remote.Constants
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
@@ -19,15 +20,12 @@ import io.treehouses.remote.utils.Utils
 import io.treehouses.remote.utils.Utils.toast
 
 
-class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
+class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, listener: HomeInteractListener?) {
     val v = v
-    private val mChatService: BluetoothChatService = listener.getChatService()
+    private val mChatService: BluetoothChatService? = listener?.getChatService()
     private var readMessage  = ""
     private var counter = 0
 
-    /**
-     * The Handler that gets information back from the BluetoothChatService
-     */
     val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -53,20 +51,20 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     private val removeUser: Button = v.findViewById(R.id.removeBtn)
     private val showUser: Button = v.findViewById(R.id.showBtn)
     private val user:EditText = v.findViewById(R.id.user)
-    private val twoFASwitch: Switch = v.findViewById(R.id.switch2FA)
+    private val twoFASwitch: SwitchCompat = v.findViewById(R.id.switch2FA)
     private val keysDisplay: TextView = v.findViewById(R.id.keysDisplay)
 
     init {
-        mChatService.updateHandler(mHandler)
+        mChatService?.updateHandler(mHandler)
 
         fun sendCommand1(id:Int){
-            listener.sendMessage(c.resources.getString(id))
+            listener?.sendMessage(c.resources.getString(id))
         }
 
         sendCommand1(R.string.TREEHOUSES_SSH_2FA)
 
         fun sendCommand2(id:Int){
-            listener.sendMessage(c.resources.getString(id, user.text))
+            listener?.sendMessage(c.resources.getString(id, user.text))
         }
 
         addUser.setOnClickListener {
@@ -128,7 +126,7 @@ class ViewHolderSSH2FA internal constructor(v: View, private val c: Context, lis
     }
 
     private fun openAuthenticator(key:String){
-        val uri:String = "otpauth://totp/" + "pi@treehouses" + "?secret=" + key + "&issuer=treehouses"
+        val uri = "otpauth://totp/pi@treehouses?secret=$key&issuer=treehouses"
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
 
         if (Utils.checkAppIsInstalled(c, v, intent, arrayOf("No Authenticator Client Installed on your Device", "Install", "https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2"))) return

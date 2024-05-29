@@ -8,12 +8,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.Switch
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import com.google.android.material.textfield.TextInputEditText
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.utils.Utils.checkAppIsInstalled
 
-class ViewHolderVnc internal constructor(v: View, context: Context, listener: HomeInteractListener) {
+class ViewHolderVnc internal constructor(v: View, context: Context, listener: HomeInteractListener?) {
     private fun openVnc(context: Context, v: View, `in`: TextInputEditText) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(String.format("vnc://%s:5900", "192.168.1.1")))
 
@@ -32,21 +33,21 @@ class ViewHolderVnc internal constructor(v: View, context: Context, listener: Ho
 
     companion object {
         lateinit var editTextIp: TextInputEditText
-        lateinit var vnc:Switch
+        lateinit var vnc: SwitchCompat
     }
 
     init {
-        listener.sendMessage(context.getString(R.string.TREEHOUSES_VNC))
+        listener?.sendMessage(context.getString(R.string.TREEHOUSES_VNC))
         val btnStartConfig = v.findViewById<Button>(R.id.btn_start_config)
         vnc = v.findViewById(R.id.switchVnc)
         editTextIp = v.findViewById(R.id.editTextIp)
         btnStartConfig.setOnClickListener { openVnc(context, v, editTextIp) }
         vnc.setOnClickListener {
             if (vnc.isChecked) {
-                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_VNC_ON))
+                listener?.sendMessage(context.resources.getString(R.string.TREEHOUSES_VNC_ON))
                 Toast.makeText(context, "Connecting...", Toast.LENGTH_SHORT).show()
             } else {
-                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_VNC_OFF))
+                listener?.sendMessage(context.resources.getString(R.string.TREEHOUSES_VNC_OFF))
             }
         }
     }

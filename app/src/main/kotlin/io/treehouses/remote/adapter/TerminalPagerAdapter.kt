@@ -23,21 +23,15 @@ class TerminalPagerAdapter : PagerAdapter() {
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         if (terminalPager.getManager() == null || terminalPager.getManager()!!.bridges.size <= position) Log.w(BaseSSHConsole.TAG, "Activity not bound when creating TerminalView.")
         val bridge = terminalPager.getManager()!!.bridges[position]
-        bridge.promptHelper!!.setHandler(terminalPager.getHandler())
+        bridge.promptHelper?.setHandler(terminalPager.getHandler())
 
-        // inflate each terminal view
         val view = terminalPager.getInflater().inflate(R.layout.item_terminal, container, false) as RelativeLayout
-
-        // set the terminal name overlay text
         val terminalNameOverlay = view.findViewById<TextView>(R.id.terminal_name_overlay)
-        terminalNameOverlay.text = bridge.host!!.nickname
-
-        // and add our terminal view control, using index to place behind overlay
+        terminalNameOverlay.text = bridge.host?.nickname
         val terminal = TerminalView(container.context, bridge, terminalPager.getPager())
         terminal.id = R.id.terminal_view
         view.addView(terminal, 0)
 
-        // Tag the view with its bridge so it can be retrieved later.
         view.tag = bridge
         container.addView(view)
         terminalNameOverlay.startAnimation(terminalPager.getAnimation())
