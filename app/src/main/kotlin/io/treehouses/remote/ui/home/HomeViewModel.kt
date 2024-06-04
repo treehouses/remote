@@ -197,7 +197,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      */
     private fun sendLog(deviceName: String, readMessage: List<String>) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(getApplication())
-        val connectionCount = preferences!!.getInt("connection_count", 0)
+        val connectionCount = preferences.getInt("connection_count", 0)
         val sendLog = preferences.getBoolean("send_log", true)
         preferences.edit().putInt("connection_count", connectionCount + 1).apply()
         if (connectionCount >= 3 && sendLog) {

@@ -74,29 +74,33 @@ open class BaseHomeFragment : BaseFragment() {
      * - last time dialog was shows (only show after a week)
      * @param preferences : SharedPreferences = Preferences to save the user preferences to
      */
-    protected fun showLogDialog(preferences: SharedPreferences) {
-        val connectionCount = preferences.getInt("connection_count", 0)
-        val lastDialogShown = preferences.getLong("last_dialog_shown", 0)
+    protected fun showLogDialog(preferences: SharedPreferences?) {
+        val connectionCount = preferences?.getInt("connection_count", 0)
+        val lastDialogShown = preferences?.getLong("last_dialog_shown", 0)
         val date = Calendar.getInstance()
         date.add(Calendar.DAY_OF_YEAR, -7)
         val v = layoutInflater.inflate(R.layout.alert_log, null)
         val emoji = String(Character.toChars(0x1F60A))
-        if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
-            if (connectionCount >= 3) {
-                preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
-                val builder = DialogUtils.createAlertDialog(activity,
-                    "Sharing is Caring  $emoji",
-                    "Treehouses wants to collect your activities. Do you like to share it? It will help us to improve.", v)
-                    .setCancelable(false)
-                DialogUtils.createAdvancedDialog(builder, Pair("Continue", "Cancel"), {
-                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                            REQUEST_LOCATION_PERMISSION_FOR_ACTIVITY_COLLECTION
-                        )
-                    } else {
-                        preferences.edit()?.putBoolean("send_log", true)?.apply()
+        if (lastDialogShown != null) {
+            if (lastDialogShown < date.timeInMillis && !preferences.getBoolean("send_log", false)) {
+                if (connectionCount != null) {
+                    if (connectionCount >= 3) {
+                        preferences.edit().putLong("last_dialog_shown", Calendar.getInstance().timeInMillis).apply()
+                        val builder = DialogUtils.createAlertDialog(activity,
+                            "Sharing is Caring  $emoji",
+                            "Treehouses wants to collect your activities. Do you like to share it? It will help us to improve.", v)
+                            .setCancelable(false)
+                        DialogUtils.createAdvancedDialog(builder, Pair("Continue", "Cancel"), {
+                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                                    REQUEST_LOCATION_PERMISSION_FOR_ACTIVITY_COLLECTION
+                                )
+                            } else {
+                                preferences.edit()?.putBoolean("send_log", true)?.apply()
+                            }
+                        }, { MainApplication.showLogDialog = false })
                     }
-                     }, { MainApplication.showLogDialog = false })
+                }
             }
         }
     }
@@ -119,37 +123,41 @@ open class BaseHomeFragment : BaseFragment() {
      * - Should show at the same time as the sharing data dialog
      * @param preferences : SharedPreferences = preferences to save user preferences to
      */
-    protected fun rate(preferences: SharedPreferences) {
-        val connectionCount = preferences.getInt("connection_count", 0)
-        val ratingDialog = preferences.getBoolean("ratingDialog", true)
-        val lastDialogShown = preferences.getLong("last_dialog_shown", 0)
+    protected fun rate(preferences: SharedPreferences?) {
+        val connectionCount = preferences?.getInt("connection_count", 0)
+        val ratingDialog = preferences?.getBoolean("ratingDialog", true)
+        val lastDialogShown = preferences?.getLong("last_dialog_shown", 0)
         val date = Calendar.getInstance()
-        if (lastDialogShown < date.timeInMillis) {
-            if (connectionCount >= 3 && ratingDialog) {
-                val a = DialogUtils.createAlertDialog(activity,"Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
-                        "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
-                        .setPositiveButton("RATE IT NOW") { _: DialogInterface?, _: Int ->
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote")
-                            startActivity(intent)
-                            preferences.edit().putBoolean("ratingDialog", false).apply()
-                        }.setNeutralButton("REMIND ME LATER") { _: DialogInterface?, _: Int -> MainApplication.ratingDialog = false }
-                        .setNegativeButton("NO THANKS") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("ratingDialog", false).apply() }.create()
-                a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                a.show()
+        if (lastDialogShown != null) {
+            if (lastDialogShown < date.timeInMillis) {
+                if (connectionCount != null) {
+                    if (connectionCount >= 3 && ratingDialog == true) {
+                        val a = DialogUtils.createAlertDialog(activity,"Thank You").setCancelable(false).setMessage("We're so happy to hear that you love the Treehouses app! " +
+                                "It'd be really helpful if you rated us. Thanks so much for spending some time with us.")
+                            .setPositiveButton("RATE IT NOW") { _: DialogInterface?, _: Int ->
+                                val intent = Intent(Intent.ACTION_VIEW)
+                                intent.data = Uri.parse("https://play.google.com/store/apps/details?id=io.treehouses.remote")
+                                startActivity(intent)
+                                preferences.edit().putBoolean("ratingDialog", false).apply()
+                            }.setNeutralButton("REMIND ME LATER") { _: DialogInterface?, _: Int -> MainApplication.ratingDialog = false }
+                            .setNegativeButton("NO THANKS") { _: DialogInterface?, _: Int -> preferences.edit().putBoolean("ratingDialog", false).apply() }.create()
+                        a.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                        a.show()
+                    }
+                }
             }
         }
     }
 
-    protected fun showDialogOnce(preferences: SharedPreferences) {
-        val firstTime = preferences.getBoolean(Screens.FIRST_TIME.name, true)
-        if (firstTime) {
+    protected fun showDialogOnce(preferences: SharedPreferences?) {
+        val firstTime = preferences?.getBoolean(Screens.FIRST_TIME.name, true)
+        if (firstTime == true) {
 //            showWelcomeDialog()
             val i = Intent(activity, IntroActivity::class.java)
             startActivity(i)
             val editor = preferences.edit()
-            editor.putBoolean(Screens.FIRST_TIME.name, false)
-            editor.apply()
+            editor?.putBoolean(Screens.FIRST_TIME.name, false)
+            editor?.apply()
         }
     }
 
@@ -173,7 +181,7 @@ open class BaseHomeFragment : BaseFragment() {
         animationDrawableGreen.start()
         animationDrawableRed.start()
         val a = createTestConnectionDialog(mView, dismissable, title, messageID)
-        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.window?.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
         return a
     }
@@ -199,7 +207,7 @@ open class BaseHomeFragment : BaseFragment() {
                 }
                 .setNegativeButton("Upgrade Later") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
                 .create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 
@@ -212,7 +220,7 @@ open class BaseHomeFragment : BaseFragment() {
         val inputStream = context?.assets?.open("bluetooth-server.txt")
         val localString = inputStream?.bufferedReader().use { it?.readText() }
         inputStream?.close()
-        val hashed = Utils.hashString(localString!!)
+        val hashed = localString?.let { Utils.hashString(it) }
         //Bluetooth file is outdated, but RPI is connected to the internet
         if (Matcher.isError(serverHash) && viewModel.internetStatus.value == true) {
             askForBluetoothUpgradeOverInternet()
@@ -222,8 +230,10 @@ open class BaseHomeFragment : BaseFragment() {
             noInternetForBluetoothUpgrade()
         }
         //If there is no error, compare the server hashes to determine whether an upgrade is needed
-        else if (hashed.trim() != serverHash.trim() && PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("bluetooth_file_local_upgrade", false)) {
-            askForBluetoothUpgradeStable(localString)
+        else if (hashed?.trim() != serverHash.trim() && PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("bluetooth_file_local_upgrade", false)) {
+            if (localString != null) {
+                askForBluetoothUpgradeStable(localString)
+            }
         }
     }
 
@@ -238,7 +248,7 @@ open class BaseHomeFragment : BaseFragment() {
                 .setPositiveButton("Ok") { d, _ ->
                     d.dismiss()
                 }.create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
@@ -252,7 +262,7 @@ open class BaseHomeFragment : BaseFragment() {
                     viewModel.sendMessage(getString(R.string.TREEHOUSES_UPGRADE_BLUETOOTH_MASTER))
                 }
                 .setNegativeButton("Cancel") {dialog, _ -> dialog.dismiss()}.create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
@@ -270,7 +280,7 @@ open class BaseHomeFragment : BaseFragment() {
                 }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
                     dialog.dismiss()
                 }.create()
-        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
@@ -289,7 +299,7 @@ open class BaseHomeFragment : BaseFragment() {
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
                     }
                 }.create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
 

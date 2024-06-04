@@ -13,7 +13,6 @@ import io.treehouses.remote.utils.Utils
 import java.util.Locale
 
 class StatusViewModel(application: Application) : FragmentViewModel(application) {
-
     var updateRightNow = false
     val deviceName: MutableLiveData<String> = MutableLiveData()
     val error: MutableLiveData<String> = MutableLiveData()
@@ -87,27 +86,33 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
     }
 
     private fun updateViews(output: String) {
-        try { if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
+        try {
+            if (lastCommand == getString(R.string.TREEHOUSES_REMOTE_STATUSPAGE)) {
                 val statusData = Gson().fromJson(output, StatusData::class.java)
                 temperature.value = statusData.temperature
                 val usedMemory = statusData.memory_used.trim { it <= ' ' }.toDouble()
                 val totalMemory = statusData.memory_total.trim { it <= ' ' }.toDouble()
                 storageBarValue.value = statusData.storage.split(" ")[3].dropLast(1).toInt()
                 storage.value = statusData.storage.split(" ")[2].dropLast(1).replace("G", "GB")
-                cpuModelText.value = "CPU: ARM " + statusData.arm
+                cpuModelText.value = "CPU: ARM ${statusData.arm}"
                 writeNetworkInfo(statusData.networkmode, statusData.info)
-                hostName.value = "Hostname: " + statusData.hostname
+                hostName.value = "Hostname: ${statusData.hostname}"
                 memoryBarValue.value = (usedMemory / totalMemory * 100).toInt()
-                memory.value = usedMemory.toString() + "GB" + "/" + totalMemory.toString() + "GB"
+                memory.value = "${usedMemory}GB/${totalMemory}GB"
                 val res = statusData.status.trim().split(" ")
                 imageText.value = String.format("Image Version: %s", res[2].substring(8))
                 deviceAddress.value = res[1]
-                rpiType.value = "Model: " + res[4]
+                rpiType.value = "Model: ${res[4]}"
                 rpiVersion = res[3]
-                remoteVersion.value = "Remote Version: " + BuildConfig.VERSION_NAME
+                remoteVersion.value = "Remote Version: ${BuildConfig.VERSION_NAME}"
                 checkWifiStatus(statusData.internet)
                 isLoading.value = false
-            } else checkUpgradeStatus(output) } catch (e: Exception) { }
+            } else {
+                checkUpgradeStatus(output)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun checkUpgradeStatus(readMessage: String) {
@@ -144,17 +149,6 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         sendMessage("treehouses remote reverse")
     }
 
-//    fun showRemoteReverse(output: String){
-//        val reverseData = Gson().fromJson(output, ReverseData::class.java)
-//        val ip = "ip: " + reverseData.ip
-//        val postal = "postal: " + reverseData.postal
-//        val city = "city: " + reverseData.city
-//        val country = "country: " + reverseData.country
-//        val org = "org: " + reverseData.org
-//        val timezone = "timezone: " + reverseData.timezone
-//        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
-//    }
-
     private fun writeNetworkInfo(networkMode: String, readMessage: String) {
         val ssid = readMessage.substringAfter("essid: ").substringBefore(", ip:")
         var ip = readMessage.substringAfter("ip: ").substringBefore(", has")
@@ -171,8 +165,8 @@ class StatusViewModel(application: Application) : FragmentViewModel(application)
         if (ip == "") {
             ip = "N/A"
         }
-        ipAddressText.value = "IP Address: " + ip
-        ssidText.value = "SSID: " + ssid
+        ipAddressText.value = "IP Address: $ip"
+        ssidText.value = "SSID: $ssid"
     }
 
     fun setChecking() {

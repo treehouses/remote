@@ -9,9 +9,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -21,36 +18,21 @@ import io.treehouses.remote.databinding.ActivitySocksFragmentBinding
 import io.treehouses.remote.databinding.DialogAddProfileBinding
 import io.treehouses.remote.utils.DialogUtils
 
-class SocksFragment : Fragment() {
-
+open class SocksFragment : Fragment() {
     protected val viewModel: SocksViewModel by viewModels(ownerProducer = { this })
-    private var addProfileButton: Button? = null
-    private var addingProfileButton: Button? = null
-    private var cancelProfileButton: Button? = null
     private var textStatus: TextView? = null
     private var adapter: ArrayAdapter<String>? = null
     private lateinit var dialog: Dialog
-    private lateinit var password: EditText
-    private lateinit var serverPort: EditText
-    private lateinit var localPort: EditText
-    private lateinit var localAddress: EditText
-    private lateinit var serverHost: EditText
-    private var portList: ListView? = null
-    var bind: ActivitySocksFragmentBinding? = null
-    var bindProfile: DialogAddProfileBinding? = null
+    lateinit var bind: ActivitySocksFragmentBinding
+    private lateinit var bindProfile: DialogAddProfileBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivitySocksFragmentBinding.inflate(inflater, container, false)
         bindProfile = DialogAddProfileBinding.inflate(inflater, container, false)
-//        viewModel.onLoad()
-        addProfileButton = bind!!.btnAddProfile
-        portList = bind!!.profiles
         initializeDialog()
         messageObservers()
         addProfileButtonListeners(dialog)
-        portList = bind!!.profiles
-
-        return bind!!.root
+        return bind.root
     }
 
     override fun setUserVisibleHint(visible: Boolean) {
@@ -64,27 +46,18 @@ class SocksFragment : Fragment() {
     private fun initializeDialog() {
         dialog = Dialog(requireContext())
         addPortListListener()
-
-        dialog.setContentView(bindProfile!!.root)
-
-        serverHost = bindProfile!!.ServerHost
-        serverPort = bindProfile!!.serverPort
-        localAddress = bindProfile!!.LocalAddress
-        localPort = bindProfile!!.localPort
-        password = bindProfile!!.password
-        addingProfileButton = bindProfile!!.addingProfileButton
-        cancelProfileButton = bindProfile!!.cancel
+        dialog.setContentView(bindProfile.root)
         val window = dialog.window
-        window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        window.setBackgroundDrawableResource(android.R.color.transparent)
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         initializeObservers()
     }
 
 
     private fun addPortListListener() {
-        portList!!.onItemClickListener = AdapterView.OnItemClickListener { av: AdapterView<*>?, _: View?, position: Int, _: Long ->
+        bind.profiles.onItemClickListener = AdapterView.OnItemClickListener { av: AdapterView<*>?, _: View?, position: Int, _: Long ->
             val builder = AlertDialog.Builder(activity, R.style.CustomAlertDialogStyle)
             val selectedString = av?.getItemAtPosition(position)
             builder.setTitle("Delete Profile $selectedString ?")
@@ -98,7 +71,7 @@ class SocksFragment : Fragment() {
 
     private fun initializeObservers() {
         viewModel.addProfileButtonText.observe(viewLifecycleOwner) {
-            addingProfileButton?.text = it
+            bindProfile.addingProfileButton.text = it
         }
     }
 
@@ -107,35 +80,34 @@ class SocksFragment : Fragment() {
             textStatus?.text = it
         }
 
-
-
         viewModel.addProfileButtonText.observe(viewLifecycleOwner) {
-            addProfileButton?.text = it
+            bind.btnAddProfile.text = it
         }
 
         viewModel.addProfileButtonEnabled.observe(viewLifecycleOwner) {
-            addProfileButton?.isEnabled = it
+            bind.btnAddProfile.isEnabled = it
         }
 
         viewModel.refreshList.observe(viewLifecycleOwner) {
             adapter = ArrayAdapter(requireContext(), R.layout.select_dialog_item, it)
-            bind!!.profiles.adapter = adapter
+            bind.profiles.adapter = adapter
         }
     }
 
 
     private fun addProfileButtonListeners(dialog: Dialog) {
-
-        addProfileButton!!.setOnClickListener {
+        bind.btnAddProfile.setOnClickListener {
             dialog.show()
         }
-        cancelProfileButton!!.setOnClickListener {
+        bindProfile.cancel.setOnClickListener {
             dialog.dismiss()
         }
-        addingProfileButton!!.setOnClickListener {
-            val stringMap = mapOf("serverHost" to serverHost.text.toString(),
-                    "localAddress" to localAddress.text.toString(), "localPort" to localPort.text.toString(),
-                    "serverPort" to serverPort.text.toString(), "password" to password.text.toString())
+
+        bindProfile.addingProfileButton.setOnClickListener {
+            val stringMap = mapOf("serverHost" to "${bindProfile.ServerHost.text}",
+                "localAddress" to "${bindProfile.LocalAddress.text}", "localPort" to "${bindProfile.localPort.text}",
+                "serverPort" to "${bindProfile.serverPort.text}", "password" to "${bindProfile.password.text}"
+            )
             viewModel.addProfile(stringMap)
             viewModel.profileDialogDismiss.observe(viewLifecycleOwner) {
                 if (it) {
@@ -144,7 +116,6 @@ class SocksFragment : Fragment() {
             }
         }
     }
-
 }
 
 

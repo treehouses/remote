@@ -230,7 +230,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Clicked
      */
     fun editEnvVariableRequest(service: ServiceInfo) {
-        sendMessage("treehouses services " + service.name + " config edit request")
+        sendMessage("treehouses services ${service.name} config edit request")
         editEnvAction.value = Resource.loading()
     }
 
@@ -240,7 +240,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param newValue : Boolean = the new value of the desired autorun config
      */
     fun switchAutoRun(service: ServiceInfo, newValue: Boolean) {
-        sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, service.name, newValue.toString()))
+        sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, service.name, "$newValue"))
         autoRunAction.value = Resource.loading()
     }
 
@@ -249,7 +249,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Service clicked
      */
 
-    fun getLocalLink(service: ServiceInfo) {
+    fun getLocalLink(service: ServiceInfo?) {
         getLink(service, R.string.TREEHOUSES_SERVICES_URL_LOCAL)
     }
 
@@ -259,7 +259,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Service clicked
      */
 
-    fun getTorLink(service: ServiceInfo) {
+    fun getTorLink(service: ServiceInfo?) {
         getLink(service, R.string.TREEHOUSES_SERVICES_URL_TOR)
     }
 
@@ -268,8 +268,8 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Service clicked
      * @param id : Int = Identifier for command string
      */
-    private fun getLink(service: ServiceInfo, id: Int) {
-        sendMessage(getString(id, service.name))
+    private fun getLink(service: ServiceInfo?, id: Int) {
+        sendMessage(service?.name?.let { getString(id, it) })
         getLinkAction.value = Resource.loading()
     }
 
@@ -279,7 +279,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     override fun onCleared() {
         super.onCleared()
         if (error.value.isNullOrEmpty() && rawServicesData.value != null) {
-            updateServicesCache(Gson().toJson(rawServicesData.value!!.data))
+            updateServicesCache(Gson().toJson(rawServicesData.value?.data))
         }
     }
 

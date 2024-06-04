@@ -96,12 +96,14 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
     /**
      * @param toSend : String = A string to send to the Raspberry Pi
      */
-    fun sendMessage(toSend: String) {
-        lastCommand = toSend
+    fun sendMessage(toSend: String?) {
+        if (toSend != null) {
+            lastCommand = toSend
+        }
         if (_connectionStatus.value != Constants.STATE_CONNECTED) {
             Toast.makeText(getApplication(), "Not Connected to Bluetooth", Toast.LENGTH_LONG).show()
         }
-        else mChatService.write(toSend.toByteArray())
+        else mChatService.write(toSend?.toByteArray())
     }
 
     /**

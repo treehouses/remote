@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.Toast
@@ -29,10 +28,8 @@ import io.treehouses.remote.interfaces.FragmentDialogInterface
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils
 
-class StatusFragment : BaseFragment(), FragmentDialogInterface {
-
+open class StatusFragment : BaseFragment(), FragmentDialogInterface {
     protected val viewModel: StatusViewModel by viewModels(ownerProducer = { this })
-    var countryList: ListView? = null
     private lateinit var bind: ActivityStatusFragmentBinding
     private var notificationListener: NotificationCallback? = null
 
@@ -53,12 +50,11 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         val dialogWifiCountryBinding = DialogWificountryBinding.inflate(layoutInflater)
         dialog.setContentView(dialogWifiCountryBinding.root)
         dialogWifiCountryBinding.countries
-        countryList = dialogWifiCountryBinding.countries
         adapter.filter.filter("")
-        countryList?.adapter = adapter
-        countryList?.isTextFilterEnabled = true
-        countryList?.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
-            viewModel.onSelectCountry(countryList!!.getItemAtPosition(p).toString())
+        dialogWifiCountryBinding.countries.adapter = adapter
+        dialogWifiCountryBinding.countries.isTextFilterEnabled = true
+        dialogWifiCountryBinding.countries.onItemClickListener = AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, p: Int, _: Long ->
+            viewModel.onSelectCountry("${dialogWifiCountryBinding.countries.getItemAtPosition(p)}")
             dialog.dismiss()
         }
 
@@ -150,7 +146,7 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         upgradeBoxObservers()
         networkBoxObservers()
         viewModel.showNotification.observe(viewLifecycleOwner) {
-            notificationListener!!.setNotification(false)
+            notificationListener?.setNotification(false)
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             bind.progressBar.visibility = if (it) View.VISIBLE else View.GONE
@@ -175,9 +171,9 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (TextUtils.isEmpty(newText)) {
-                    countryList!!.clearTextFilter()
+                    dialogWifiCountryBinding.countries.clearTextFilter()
                 } else {
-                    countryList!!.setFilterText(newText)
+                    dialogWifiCountryBinding.countries.setFilterText(newText)
                 }
                 return true
             }
@@ -204,10 +200,10 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
             viewModel.refresh()
         }
         bind.swiperefresh.setColorSchemeColors(
-                ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
-                ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
-                ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
-                ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
+            ContextCompat.getColor(requireContext(), android.R.color.holo_red_light),
+            ContextCompat.getColor(requireContext(), android.R.color.holo_orange_light),
+            ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light),
+            ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
         viewModel.showRefresh.observe(viewLifecycleOwner) {
             bind.refreshBtn.isEnabled = it
         }
@@ -222,10 +218,10 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
     }
 
     private fun createRenameDialog(view: View, mEditText: EditText) {
-        val builder = DialogUtils.createAlertDialog(context, "Rename " + viewModel.hostName.value, view, R.drawable.dialog_icon)
+        val builder = DialogUtils.createAlertDialog(context, "Rename ${viewModel.hostName.value}", view, R.drawable.dialog_icon)
         DialogUtils.createAdvancedDialog(builder, Pair("Rename", "Cancel"), {
-            if (mEditText.text.toString() != "") {
-                viewModel.sendMessage(requireActivity().getString(R.string.TREEHOUSES_RENAME, mEditText.text.toString()))
+            if ("${mEditText.text}" != "") {
+                viewModel.sendMessage(requireActivity().getString(R.string.TREEHOUSES_RENAME, "${mEditText.text}"))
                 Toast.makeText(context, "Raspberry Pi Renamed", Toast.LENGTH_LONG).show()
                 viewModel.refresh()
             } else {
@@ -238,14 +234,13 @@ class StatusFragment : BaseFragment(), FragmentDialogInterface {
         val a  = createRemoteReverseDialog(context)
         viewModel.treehousesRemoteReverse()
         viewModel.reverseTextStatus.observe(viewLifecycleOwner) {
-            a!!.setMessage(it)
+            a?.setMessage(it)
         }
-        a!!.show()
+        a?.show()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         notificationListener = Utils.attach(context)
     }
-
 }

@@ -32,7 +32,7 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
     private fun showIpAddress(output: String) {
         var ip = output.substringAfter("ip: ").substringBefore(", has")
         if (ip == "") ip = "N/A"
-        ipAddress.value = "IP Address: " + ip
+        ipAddress.value = "IP Address: $ip"
     }
 
     fun rebootHelper() {
@@ -90,19 +90,6 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
          sendMessage(msg)
      }
 
-//    fun showRemoteReverse(output: String){
-//        val reverseData = Gson().fromJson(output, ReverseData::class.java)
-//        val ip = "ip: " + reverseData.ip
-//        val postal = "postal: " + reverseData.postal
-//        val city = "city: " + reverseData.city
-//        val country = "country: " + reverseData.country
-//        val org = "org: " + reverseData.org
-//        val timezone = "timezone: " + reverseData.timezone
-//        reverseText.value = ip + "\n" + org  + "\n" + country + "\n" + city + "\n" + postal + "\n" + timezone
-//
-////        reverseText.value = output
-//    }
-
     override fun onError(output: String) {
         super.onError(output)
         downloadUpload.value = "Speed Test Failed"
@@ -114,7 +101,7 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
         sendMessage("treehouses internet")
     }
 
-    fun updateInternet(output: String){
+    private fun updateInternet(output: String){
         if (output.contains("true")) {
             downloadUpload.value = "Internet check passed. Performing speed test......"
             sendMessage("treehouses speedtest")
@@ -123,21 +110,20 @@ class NetworkViewModel(application: Application) : BaseNetworkViewModel(applicat
         }
     }
 
-    fun updateSpeed(output: String){
+    private fun updateSpeed(output: String){
         if (output.contains("Download:") && output.contains("Upload:")){
             downloadUpload.value = getSubString("Download:", output)
-            downloadUpload.value += "\n" + getSubString("Upload", output)
+            downloadUpload.value += "\n ${getSubString("Upload", output)}"
         } else if (output.contains("Download:")){
             downloadUpload.value = getSubString("Download:", output)
         } else {
-            downloadUpload.value += "\n" + getSubString("Upload", output)
+            downloadUpload.value += "\n ${getSubString("Upload", output)}"
         }
     }
 
-    fun getSubString(stringStart: String, output: String) : String {
+    private fun getSubString(stringStart: String, output: String) : String {
         val startIndex = output.indexOf(stringStart)
         val endIndex = output.indexOf("/s", startIndex)
         return output.substring(startIndex, endIndex + 2)
     }
-
 }

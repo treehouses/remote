@@ -15,7 +15,7 @@ import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
 import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
 import io.treehouses.remote.ui.network.NetworkViewModel
 
-class WifiBottomSheet : BaseBottomSheetDialog() {
+open class WifiBottomSheet : BaseBottomSheetDialog() {
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogWifiBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,15 +46,12 @@ class WifiBottomSheet : BaseBottomSheetDialog() {
 
     private fun setClickListeners() {
         bind.btnStartConfig.setOnClickListener {
-            val booleanMap = mapOf("checkBoxHiddenWifi" to bind.checkBoxHiddenWifi.isChecked,
-                    "checkBoxEnterprise" to bind.checkBoxEnterprise.isChecked)
-            viewModel.sendWifiMessage(booleanMap, bind.editTextSSID.text.toString(),
-                    bind.wifipassword.text.toString(), bind.wifiUsername.text.toString())
+            val booleanMap = mapOf("checkBoxHiddenWifi" to bind.checkBoxHiddenWifi.isChecked, "checkBoxEnterprise" to bind.checkBoxEnterprise.isChecked)
+            viewModel.sendWifiMessage(booleanMap, "${bind.editTextSSID.text}", "${bind.wifipassword.text}", "${bind.wifiUsername.text}")
             dismiss()
         }
         bind.setWifiProfile.setOnClickListener {
-            viewModel.wifiSetAddProfileListener(bind.editTextSSID.text.toString(), bind.wifipassword.text.toString(),
-                    bind.checkBoxHiddenWifi.isChecked)
+            viewModel.wifiSetAddProfileListener("${bind.editTextSSID.text}", "${bind.wifipassword.text}", bind.checkBoxHiddenWifi.isChecked)
         }
         bind.checkBoxEnterprise.setOnCheckedChangeListener { _, isChecked ->
             viewModel.hiddenOrEnterprise(isChecked)

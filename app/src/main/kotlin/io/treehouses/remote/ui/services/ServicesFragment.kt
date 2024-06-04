@@ -19,7 +19,7 @@ class ServicesFragment : BaseFragment() {
     private var servicesTabFragment: ServicesOverviewFragment? = null
     private var servicesDetailsFragment: ServicesDetailsFragment? = null
     lateinit var bind: ActivityServicesFragmentBinding
-    var worked = false
+    private var worked = false
     private var currentTab:Int =  0
 
     private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {this})
@@ -93,10 +93,5 @@ class ServicesFragment : BaseFragment() {
             transaction.addToBackStack(null)
             transaction.commitAllowingStateLoss()
         }
-    }
-
-
-    companion object {
-        private const val TAG = "ServicesFragment"
     }
 }
