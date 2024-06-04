@@ -15,11 +15,8 @@ import io.treehouses.remote.pojo.DeviceInfo
 class RPIListAdapter(private val mContext: Context, private val data: List<DeviceInfo>) : ArrayAdapter<DeviceInfo?>(mContext, 0, data) {
     var deviceListener: DeviceDeleteListener? = null
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        // Get the data item for this position
         var newView = convertView
         val deviceText = data[position].deviceName
-
-        // Check if an existing view is being reused, otherwise inflate the view
         if (newView == null) {
             newView = LayoutInflater.from(mContext).inflate(R.layout.list_rpi_item, parent, false)
         }
@@ -36,14 +33,10 @@ class RPIListAdapter(private val mContext: Context, private val data: List<Devic
             pairedImage.setColorFilter(getTint(data[position]))
             deleteDevice.setColorFilter(getTint(data[position]))
         }
-
-        // Return the completed view to render on screen
         return newView
     }
 
     private fun getTint(deviceInfo: DeviceInfo): Int {
         return if (deviceInfo.isInRange) ContextCompat.getColor(mContext, R.color.md_green_500) else ContextCompat.getColor(mContext, R.color.md_grey_400)
     }
-
-
 }

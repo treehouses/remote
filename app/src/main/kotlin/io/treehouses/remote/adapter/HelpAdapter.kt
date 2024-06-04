@@ -9,7 +9,6 @@ import io.treehouses.remote.databinding.RowHelpBinding
 import io.treehouses.remote.pojo.HelpCommand
 
 class HelpAdapter : RecyclerView.Adapter<HelpViewHolder>() {
-
     private val sortedList: SortedList<HelpCommand> = SortedList(HelpCommand::class.java, object : SortedList.Callback<HelpCommand>() {
         override fun areItemsTheSame(item1: HelpCommand?, item2: HelpCommand?): Boolean {
             return item1?.title == item2?.title && item1?.preview == item2?.preview

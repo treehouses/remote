@@ -14,7 +14,7 @@ import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.network.BluetoothChatService
 
-class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
+class ViewHolderBlocker internal constructor(v: View, context: Context?, listener: HomeInteractListener?) {
     private val blockerBar: SeekBar = v.findViewById(R.id.blockerBar)
     private val levelText: TextView = v.findViewById(R.id.levelText)
     private val blockerDesc: TextView = v.findViewById(R.id.blockerDesc)
@@ -23,11 +23,8 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     private var blockerLevel:Int = 0
     private var previousLevel:Int = 0
     private var readMessage  = ""
-    private val mChatService: BluetoothChatService = listener.getChatService()
+    private val mChatService: BluetoothChatService? = listener?.getChatService()
 
-    /**
-     * The Handler that gets information back from the BluetoothChatService
-     */
     val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -56,10 +53,9 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
         }
     }
 
-
     init {
-        mChatService.updateHandler(mHandler)
-        listener.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER_CHECK))
+        mChatService?.updateHandler(mHandler)
+        listener?.sendMessage(context!!.resources.getString(R.string.TREEHOUSES_BLOCKER_CHECK))
         blockerBar.max = 5
         setBlocker.visibility = View.GONE
         moveText.visibility = View.VISIBLE
@@ -88,7 +84,7 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
 
         fun setBlocker(level:Int) {
             fun sendCommand(level:String) {
-                listener.sendMessage(context.resources.getString(R.string.TREEHOUSES_BLOCKER, level))
+                listener?.sendMessage(context?.resources?.getString(R.string.TREEHOUSES_BLOCKER, level))
             }
 
             when (level) {
@@ -140,6 +136,4 @@ class ViewHolderBlocker internal constructor(v: View, context: Context?, listene
     fun Context?.toast(s: String): Toast {
         return Toast.makeText(this, s, Toast.LENGTH_SHORT).apply { show() }
     }
-
-
 }

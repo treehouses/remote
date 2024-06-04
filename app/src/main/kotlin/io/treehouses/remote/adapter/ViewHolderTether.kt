@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 
-class ViewHolderTether internal constructor(v: View, listener: HomeInteractListener, context: Context) {
+class ViewHolderTether internal constructor(v: View, listener: HomeInteractListener?, context: Context) {
     private fun openHotspotSettings(context: Context) {
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -29,10 +29,12 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
 
     private fun showAlertDialog(context: Context) {
         return DialogUtils.createAlertDialog(context,"OUTPUT:","Hotspot is disabled, open hotspot settings?")
-                .setIcon(R.drawable.wificon)
-                .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int -> openHotspotSettings(context) }
-                .setNegativeButton("NO") { dialog: DialogInterface, _: Int -> dialog.cancel() }
-                .show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            .setIcon(R.drawable.wificon)
+            .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int ->
+                openHotspotSettings(context)
+            }.setNegativeButton("NO") { dialog: DialogInterface, _: Int ->
+                dialog.cancel()
+            }.show().window!!.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     companion object {
@@ -48,9 +50,9 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
             } catch (e: NoSuchMethodException) {
                 e.printStackTrace()
             }
-            method!!.isAccessible = true
+            method?.isAccessible = true
             try {
-                actualState = method.invoke(manager) as Int
+                actualState = method?.invoke(manager) as Int
             } catch (e: IllegalAccessException) {
                 e.printStackTrace()
             } catch (e: InvocationTargetException) {
@@ -74,7 +76,7 @@ class ViewHolderTether internal constructor(v: View, listener: HomeInteractListe
             val ssid = editTextSSID?.text.toString()
             val password = editTextPassword?.text.toString()
             if (ssid.isNotEmpty()) {
-                listener.sendMessage(context.getString(R.string.TREEHOUSES_WIFI, ssid, if (password.isEmpty()) "" else password))
+                listener?.sendMessage(context.getString(R.string.TREEHOUSES_WIFI, ssid, if (password.isEmpty()) "" else password))
                 Toast.makeText(context, "Connecting... This may take a few minutes", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(context, "Error: Invalid SSID", Toast.LENGTH_LONG).show()

@@ -6,16 +6,16 @@ import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.ImageView
-import android.widget.Switch
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import io.treehouses.remote.Constants
-import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
+import io.treehouses.remote.network.BluetoothChatService
 
-class ViewHolderCamera internal constructor(v: View, private val c: Context, listener: HomeInteractListener) {
-    private val mChatService: BluetoothChatService = listener.getChatService()
-    private val cameraSwitch: Switch
+class ViewHolderCamera internal constructor(v: View, private val c: Context, listener: HomeInteractListener?) {
+    private val mChatService: BluetoothChatService? = listener?.getChatService()
+    private val cameraSwitch: SwitchCompat
     private val icon: ImageView
     private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
@@ -40,14 +40,14 @@ class ViewHolderCamera internal constructor(v: View, private val c: Context, lis
     }
 
     init {
-        mChatService.updateHandler(mHandler)
+        mChatService?.updateHandler(mHandler)
         cameraSwitch = v.findViewById(R.id.CameraSwitch)
         icon = v.findViewById(R.id.cameraIcon)
-        listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA))
+        listener?.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA))
         cameraSwitch.isEnabled = false
         cameraSwitch.setOnClickListener {
-            if (cameraSwitch.isChecked) listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_ON))
-            else listener.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_OFF))
+            if (cameraSwitch.isChecked) listener?.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_ON))
+            else listener?.sendMessage(c.resources.getString(R.string.TREEHOUSES_CAMERA_OFF))
             cameraSwitch.isEnabled = false
         }
     }

@@ -12,12 +12,11 @@ import io.treehouses.remote.R
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.pojo.NetworkListItem
 
-class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : BaseExpandableListAdapter() {
-    private val list: List<NetworkListItem>
+class SystemListAdapter(val context: Context, private val list: List<NetworkListItem>) : BaseExpandableListAdapter() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var listener: HomeInteractListener? = null
-    private val views: MutableList<View>
-    private val groupHeader: MutableList<View>
+    private val views: MutableList<View> = mutableListOf()
+    private val groupHeader: MutableList<View> = mutableListOf()
     fun setListener(listener: HomeInteractListener?) {
         this.listener = listener
         if (listener == null) {
@@ -67,9 +66,6 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     override fun getChildView(i: Int, i1: Int, b: Boolean, convertView: View?, parent: ViewGroup): View {
-
-        // Needs to recycle views instead of creating new ones each time.
-        // if (convertView == null) creating bugs
         if (views.size > i) {
             return views[i]
         }
@@ -77,13 +73,13 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
         layout = list[i].layout
         position = i
         when (layout) {
-            R.layout.configure_shutdown_reboot -> ViewHolderShutdownReboot(newView, context, listener!!)
-            R.layout.open_vnc -> ViewHolderVnc(newView, context, listener!!)
-            R.layout.configure_tethering -> ViewHolderTether(newView, listener!!, context)
-            R.layout.configure_ssh_key -> ViewHolderSSHKey(newView, context, listener!!)
-            R.layout.configure_camera -> ViewHolderCamera(newView, context, listener!!)
-            R.layout.configure_blocker -> ViewHolderBlocker(newView, context, listener!!)
-            R.layout.configure_ssh2fa -> ViewHolderSSH2FA(newView, context, listener!!)
+            R.layout.configure_shutdown_reboot -> ViewHolderShutdownReboot(newView, context, listener)
+            R.layout.open_vnc -> ViewHolderVnc(newView, context, listener)
+            R.layout.configure_tethering -> ViewHolderTether(newView, listener, context)
+            R.layout.configure_ssh_key -> ViewHolderSSHKey(newView, context, listener)
+            R.layout.configure_camera -> ViewHolderCamera(newView, context, listener)
+            R.layout.configure_blocker -> ViewHolderBlocker(newView, context, listener)
+            R.layout.configure_ssh2fa -> ViewHolderSSH2FA(newView, context, listener)
         }
         views.add(newView)
         return newView
@@ -97,11 +93,5 @@ class SystemListAdapter(val context: Context, list: List<NetworkListItem>) : Bas
         var layout = 0
             private set
         var position = 0
-    }
-
-    init {
-        this.list = list
-        views = mutableListOf()
-        groupHeader = mutableListOf()
     }
 }

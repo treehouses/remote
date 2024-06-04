@@ -13,12 +13,7 @@ import io.treehouses.remote.callback.KeyMenuListener
 import io.treehouses.remote.databinding.RowKeyBinding
 
 
-class ViewHolderSSHAllKeyRow(private val binding: RowKeyBinding, private val listener: KeyMenuListener) :
-        RecyclerView.ViewHolder(binding.root),
-        View.OnCreateContextMenuListener,
-        MenuItem.OnMenuItemClickListener,
-        PopupMenu.OnMenuItemClickListener {
-
+class ViewHolderSSHAllKeyRow(private val binding: RowKeyBinding, private val listener: KeyMenuListener) : RecyclerView.ViewHolder(binding.root), View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
     fun bind(host: PubKeyBean) {
         itemView.setOnCreateContextMenuListener(this)
         binding.keyName.text = host.nickname

@@ -53,7 +53,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
      */
 
 
-    override fun sendMessage(s: String) {
+    override fun sendMessage(s: String?) {
         // Check that we're actually connected before trying anything
         if (mChatService.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@BaseInitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
@@ -61,7 +61,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
         }
 
         // Check that there's actually something to send
-        if (s.isNotEmpty()) {
+        if (s?.isNotEmpty() == true) {
             // Get the message bytes and tell the BluetoothChatService to write
             val send = s.toByteArray()
             mChatService.write(send)
