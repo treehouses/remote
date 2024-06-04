@@ -149,6 +149,6 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           sudo npm install -g @treehouses/cli
-          export discord_channel="${{ secrets.CHANNEL }}"
+          export discord_channel="${{ secrets.CHANNEL }}" #remote
           echo "https://github.com/treehouses/remote/releases/tag/v${{ env.VERSION }}"
           treehouses feedback "new remote app: https://github.com/treehouses/remote/releases/tag/v${{ env.VERSION }}"
