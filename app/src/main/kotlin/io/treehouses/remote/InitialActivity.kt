@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -58,6 +59,12 @@ class InitialActivity : BaseInitialActivity() {
         }
         checkStatusNow()
         openCallFragment(HomeFragment())
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleCustomOnBackPressed()
+            }
+        })
     }
 
     private fun startGPSService() {
@@ -85,8 +92,7 @@ class InitialActivity : BaseInitialActivity() {
         bind.navView.setNavigationItemSelectedListener(this)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    fun handleCustomOnBackPressed() {
         if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) bind.drawerLayout.closeDrawer(GravityCompat.START)
         else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)
