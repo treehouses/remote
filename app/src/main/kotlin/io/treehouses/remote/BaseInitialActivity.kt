@@ -2,6 +2,7 @@ package io.treehouses.remote
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -35,6 +36,13 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     /** Defines callbacks for service binding, passed to bindService()  */
 
     protected lateinit var currentTitle: String
+
+    lateinit var mChatService: BluetoothChatService
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mChatService = BluetoothChatService()
+    }
 
     override fun setChatService(service: BluetoothChatService) {
         mChatService = service
@@ -166,6 +174,5 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     companion object {
         @JvmStatic
         var instance: BaseInitialActivity? = null
-        lateinit var mChatService: BluetoothChatService
     }
 }
