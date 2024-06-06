@@ -70,7 +70,7 @@ open class TorFragment : BaseFragment() {
             viewModel.addNotification(isChecked)
         }
         bind.portList.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val deleteAllPortsButtonSelected = (portsName?.size ?: 0) > 1 && position == (portsName?.size ?: (0 - 1))
+            val deleteAllPortsButtonSelected = (portsName?.size ?: 0) > 1 && position == (portsName?.size ?: 0) - 1
             if (deleteAllPortsButtonSelected) DialogUtils.createAlertDialog(context, "Delete All Ports?") { viewModel.addPortList() }
             else DialogUtils.createAlertDialog(context, "Delete Port " + (portsName?.get(position)) + " ?") { viewModel.promptDeletePort(portsName, position) }
         }
