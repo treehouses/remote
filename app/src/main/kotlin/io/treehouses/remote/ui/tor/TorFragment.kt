@@ -24,12 +24,12 @@ import io.treehouses.remote.databinding.ActivityTorFragmentBinding
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.TunnelUtils
 
-class TorFragment : BaseFragment() {
+open class TorFragment : BaseFragment() {
     private lateinit var bind: ActivityTorFragmentBinding
     protected val viewModel: TorViewModel by viewModels(ownerProducer = { this })
-    var portsName: ArrayList<String>? = null
+    private var portsName: ArrayList<String>? = null
     var adapter: TunnelPortAdapter? = null
-    var hostName: String = ""
+    private var hostName: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = ActivityTorFragmentBinding.inflate(inflater, container, false)
@@ -56,10 +56,11 @@ class TorFragment : BaseFragment() {
     private fun setListeners() {
         bind.btnHostName.setOnClickListener {
             val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)).setTitle("Tor Hostname")
-                    .setMessage(hostName).setPositiveButton("Copy") { _, _ -> viewModel.addHostName(hostName) }
-                    .setNegativeButton("Exit", null)
+                .setMessage(hostName).setPositiveButton("Copy") { _, _ ->
+                    viewModel.addHostName(hostName)
+                }.setNegativeButton("Exit", null)
             val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
         bind.notifyNow.setOnClickListener {
@@ -69,9 +70,9 @@ class TorFragment : BaseFragment() {
             viewModel.addNotification(isChecked)
         }
         bind.portList.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
-            val deleteAllPortsButtonSelected = portsName!!.size > 1 && position == portsName!!.size - 1
+            val deleteAllPortsButtonSelected = (portsName?.size ?: 0) > 1 && position == (portsName?.size ?: 0) - 1
             if (deleteAllPortsButtonSelected) DialogUtils.createAlertDialog(context, "Delete All Ports?") { viewModel.addPortList() }
-            else DialogUtils.createAlertDialog(context, "Delete Port " + portsName!![position] + " ?") { viewModel.promptDeletePort(portsName, position) }
+            else DialogUtils.createAlertDialog(context, "Delete Port " + (portsName?.get(position)) + " ?") { viewModel.promptDeletePort(portsName, position) }
         }
         bind.btnTorStart.setOnClickListener {
             viewModel.addStart(bind.btnTorStart.text.toString())
@@ -113,12 +114,6 @@ class TorFragment : BaseFragment() {
         viewModel.portsNameList.observe(viewLifecycleOwner) {
             portsName = it
             adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
-//            try {
-//                adapter = TunnelPortAdapter(requireContext(), portsName!!)
-//                logE("adapter successful")
-//            } catch (e: Exception) {
-//                logE(e.toString())
-//            }
             val portList = requireView().findViewById<ListView>(R.id.portList)
             portList.adapter = adapter
         }
@@ -134,27 +129,27 @@ class TorFragment : BaseFragment() {
         bind.btnAddPort.setOnClickListener {
             inputExternal.clearFocus()
             inputInternal.clearFocus()
-            dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
             dialog.show()
         }
         val addingPortButton = dialog.findViewById<Button>(R.id.btn_adding_port)
         addingPortButton.setOnClickListener {
-            dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if (inputExternal.text.toString() !== "" && inputInternal.text.toString() !== "") {
                 viewModel.addingPort(inputInternal.text.toString(), inputExternal.text.toString())
                 dialog.dismiss()
                 inputInternal.text?.clear(); inputExternal.text?.clear()
-                dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+                dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             }
         }
         dialog.findViewById<ImageButton>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
     }
 
     private fun setWindowProperties(dialog: Dialog) {
-        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         val window = dialog.window
-        window!!.setGravity(Gravity.CENTER)
-        window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setGravity(Gravity.CENTER)
+        window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }
 

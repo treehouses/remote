@@ -23,8 +23,7 @@ open class BaseNetworkViewModel(application: Application) : FragmentViewModel(ap
     }
 
     fun bridgeSetAddProfileListener(stringMap: Map<String, String>) {
-        val networkProfile = NetworkProfile(stringMap.getValue("etEssid"), stringMap.getValue("etHotspotEssid"),
-                stringMap.getValue("etPassword"), stringMap.getValue("etHotspotPassword"))
+        val networkProfile = NetworkProfile(stringMap.getValue("etEssid"), stringMap.getValue("etHotspotEssid"), stringMap.getValue("etPassword"), stringMap.getValue("etHotspotPassword"))
         SaveUtils.addProfile(context, networkProfile)
         Toast.makeText(context, "Bridge Profile Added", Toast.LENGTH_LONG).show()
     }
@@ -33,26 +32,22 @@ open class BaseNetworkViewModel(application: Application) : FragmentViewModel(ap
         sendMessage(getString(R.string.TREEHOUSES_ETHERNET, ip, mask, gateway, dns))
     }
 
-    fun hotspotStartConfigListener(etHotspotSsid: String, etHotspotPassword: String,
-                                   checkBoxHiddenHotspot: Boolean, spnHotspotType: String) {
-        if (checkBoxHiddenHotspot) sendHotspotMessage(R.string.TREEHOUSES_AP_HIDDEN, spnHotspotType,
-                etHotspotSsid, etHotspotPassword)
-        else sendHotspotMessage(R.string.TREEHOUSES_AP, spnHotspotType, etHotspotSsid, etHotspotPassword)
+    fun hotspotStartConfigListener(etHotspotSsid: String, etHotspotPassword: String, checkBoxHiddenHotspot: Boolean, spnHotspotType: String) {
+        if (checkBoxHiddenHotspot) {
+            sendHotspotMessage(R.string.TREEHOUSES_AP_HIDDEN, spnHotspotType, etHotspotSsid, etHotspotPassword)
+        } else {
+            sendHotspotMessage(R.string.TREEHOUSES_AP, spnHotspotType, etHotspotSsid, etHotspotPassword)
+        }
         Toast.makeText(context, "Connecting...", Toast.LENGTH_LONG).show()
     }
 
     private fun sendHotspotMessage(command : Int, spnHotspotType: String, etHotspotSsid: String, etHotspotPassword: String) {
         showNetworkProgress.value = true
-        sendMessage(getString(command, spnHotspotType,
-                etHotspotSsid, etHotspotPassword))
-
+        sendMessage(getString(command, spnHotspotType, etHotspotSsid, etHotspotPassword))
     }
 
-    fun hotspotSetAddProfileListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: String,
-                                     etHotspotSsid: String, etHotspotPassword: String) {
-        SaveUtils.addProfile(context,
-                NetworkProfile(etHotspotSsid, etHotspotPassword,
-                        spnHotspotType, checkBoxHiddenHotspot))
+    fun hotspotSetAddProfileListener(checkBoxHiddenHotspot: Boolean, spnHotspotType: String, etHotspotSsid: String, etHotspotPassword: String) {
+        SaveUtils.addProfile(context, NetworkProfile(etHotspotSsid, etHotspotPassword, spnHotspotType, checkBoxHiddenHotspot))
         Toast.makeText(context, "Hotspot Profile Saved", Toast.LENGTH_LONG).show()
     }
 
@@ -73,8 +68,7 @@ open class BaseNetworkViewModel(application: Application) : FragmentViewModel(ap
     }
 
     fun wifiSetAddProfileListener(editTextSSID: String, wifipassword: String, checkBoxHiddenWifi: Boolean) {
-        SaveUtils.addProfile(context, NetworkProfile(editTextSSID,
-                wifipassword, checkBoxHiddenWifi))
+        SaveUtils.addProfile(context, NetworkProfile(editTextSSID, wifipassword, checkBoxHiddenWifi))
         Toast.makeText(context, "WiFi Profile Saved", Toast.LENGTH_LONG).show()
     }
 

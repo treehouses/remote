@@ -59,7 +59,7 @@ class HomeFragment : BaseHomeFragment() {
         bind = ActivityHomeFragmentBinding.inflate(inflater, container, false)
         preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         setupProfiles()
-        showDialogOnce(preferences!!)
+        showDialogOnce(preferences)
         connectRpiListener()
         testConnectionListener()
         return bind.root
@@ -68,8 +68,8 @@ class HomeFragment : BaseHomeFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         observeConnectionState()
         bind.btnGetStarted.setOnClickListener {
-            instance!!.checkStatusNow()
-            if (instance!!.hasValidConnection()) {
+            instance?.checkStatusNow()
+            if (instance?.hasValidConnection() == true) {
                 switchFragment(TerminalFragment(), "Terminal")
             } else {
                 switchFragment(AboutFragment(), "About")
@@ -135,7 +135,7 @@ class HomeFragment : BaseHomeFragment() {
         viewModel.networkProfileResult.observe(viewLifecycleOwner, Observer {
             when(it.status) {
                 Status.SUCCESS, Status.ERROR, Status.NOTHING -> {
-                    if (progressDialog != null) progressDialog!!.dismiss()
+                    if (progressDialog != null) progressDialog?.dismiss()
                     if (it.message.isNotEmpty()) context.toast(it.message)
                 }
                 Status.LOADING -> {
@@ -154,7 +154,7 @@ class HomeFragment : BaseHomeFragment() {
      * Switches fragment (To go to Terminal, or about for example)
      */
     private fun switchFragment(fragment: Fragment, title: String) {
-        instance!!.openCallFragment(fragment)
+        instance?.openCallFragment(fragment)
         activity?.let { it.title = title}
     }
 
@@ -168,9 +168,9 @@ class HomeFragment : BaseHomeFragment() {
             if (groupPosition == 3) {
                 viewModel.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 context.toast("Switched to Default Network", Toast.LENGTH_LONG)
-            } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.isNotEmpty()) {
-                if (SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!!.size <= childPosition) return@setOnChildClickListener false
-                viewModel.networkProfile = SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]!![childPosition]
+            } else if (SaveUtils.getProfiles(requireContext()).size > 0 && SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]?.isNotEmpty() == true) {
+                if ((SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]?.size ?: 0) <= childPosition) return@setOnChildClickListener false
+                viewModel.networkProfile = SaveUtils.getProfiles(requireContext())[listOf(*group_labels)[groupPosition]]?.get(childPosition)
                 viewModel.sendMessage(getString(R.string.TREEHOUSES_DEFAULT_NETWORK))
                 requireContext().toast("Configuring...", Toast.LENGTH_LONG)
             }
@@ -186,8 +186,8 @@ class HomeFragment : BaseHomeFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (MainApplication.showLogDialog) {
-            rate(preferences!!)
-            showLogDialog(preferences!!)
+            rate(preferences)
+            showLogDialog(preferences)
         }
         activity?.invalidateOptionsMenu()
     }
@@ -203,7 +203,7 @@ class HomeFragment : BaseHomeFragment() {
                 else vibe.vibrate(10)
             }
             if (viewModel.connectionStatus.value == Constants.STATE_CONNECTED) {
-                RPIDialogFragment.instance!!.bluetoothCheck("unregister")
+                RPIDialogFragment.instance?.bluetoothCheck("unregister")
                 viewModel.disconnectBT()
                 return@setOnClickListener
             }
@@ -228,7 +228,7 @@ class HomeFragment : BaseHomeFragment() {
             viewModel.selectedLed = options.indexOf(preference)
             viewModel.sendMessage(optionsCode[viewModel.selectedLed])
             testConnectionDialog = showTestConnectionDialog(false, "Testing Connection...", R.string.test_connection_message, viewModel.selectedLed)
-            testConnectionDialog?.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+            testConnectionDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
             testConnectionDialog?.show()
             viewModel.testConnectionResult.value = Resource.loading()
         }
@@ -246,7 +246,7 @@ class HomeFragment : BaseHomeFragment() {
             connectionDialog?.dismiss()
             when (connected) {
                 Constants.STATE_CONNECTED -> {
-                    showLogDialog(preferences!!)
+                    showLogDialog(preferences)
                     viewModel.internetSent = true
                     viewModel.sendMessage(getString(R.string.TREEHOUSES_INTERNET))
                     Tutorials.homeTutorials(bind, requireActivity())
@@ -297,7 +297,7 @@ class HomeFragment : BaseHomeFragment() {
      */
     private fun dismissTestConnection() {
         if (testConnectionDialog != null) {
-            testConnectionDialog!!.cancel()
+            testConnectionDialog?.cancel()
             showTestConnectionDialog(true, "Process Finished", R.string.test_finished, viewModel.selectedLed)
         }
     }

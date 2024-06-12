@@ -108,7 +108,7 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
         viewModel.getLinkAction.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
-                    openURL(it.data.toString())
+                    openURL("${it.data}")
                     binding.progressBar.visibility = View.GONE
                     viewModel.getLinkAction.value = Resource.nothing()
                 }
@@ -120,10 +120,10 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
 
         viewModel.editEnvAction.observe(viewLifecycleOwner) {
             if (it.status == Status.SUCCESS) {
-                var tokens = it.data!!
-                val name = tokens[2]
-                tokens = tokens.subList(6, tokens.size - 1)
-                showEditDialog(name, tokens.size, tokens)
+                var tokens = it.data
+                val name = tokens?.get(2)
+                tokens = tokens?.subList(6, tokens.size - 1)
+                tokens?.size?.let { it1 -> showEditDialog(name, it1, tokens) }
                 viewModel.editEnvAction.value = Resource.nothing()
             }
         }
@@ -193,19 +193,21 @@ class ServicesDetailsFragment : BaseServicesDetailsFragment() {
      * @param name : String = Name of Service
      * @param vars : List<String> = The variables that can be configured
      */
-    private fun showEditDialog(name: String, size: Int, vars: List<String>) {
+    private fun showEditDialog(name: String?, size: Int, vars: List<String>?) {
         val inflater = requireActivity().layoutInflater; val dialogBinding = EnvVarBinding.inflate(inflater)
         for (i in 0 until size) {
             val rowBinding = EnvVarItemBinding.inflate(inflater)
             val envName = rowBinding.envName
             val newVal = rowBinding.newVal
 
-            envName.text = vars[i].trim { it <= '\"'} + ":"
+            envName.text = "${(vars?.get(i)?.trim { it <= '\"'})}:"
             newVal.id = i
             envName.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor)); newVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.daynight_textColor))
             dialogBinding.varList.addView(rowBinding.root)
         }
-        createEditDialog(dialogBinding.root, name, size)
+        if (name != null) {
+            createEditDialog(dialogBinding.root, name, size)
+        }
     }
 
     /**

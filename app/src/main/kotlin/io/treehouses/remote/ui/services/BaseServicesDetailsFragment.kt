@@ -93,7 +93,7 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
                         .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
                             viewModel.onInstallClicked(s)
                         }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-                dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 dialog.show()
             }
         }
@@ -108,10 +108,10 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
     override fun onClickLink(s: ServiceInfo?) {
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         chooseBind.closeButton.setOnClickListener { alertDialog.dismiss() }
-        chooseBind.localButton.setOnClickListener { viewModel.getLocalLink(s!!); alertDialog.dismiss() }
-        chooseBind.torButton.setOnClickListener { viewModel.getTorLink(s!!); alertDialog.dismiss() }
+        chooseBind.localButton.setOnClickListener { viewModel.getLocalLink(s); alertDialog.dismiss() }
+        chooseBind.torButton.setOnClickListener { viewModel.getTorLink(s); alertDialog.dismiss() }
         alertDialog.show()
     }
 

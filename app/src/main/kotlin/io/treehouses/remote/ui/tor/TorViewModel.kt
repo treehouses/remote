@@ -16,9 +16,9 @@ import java.util.*
 open class TorViewModel(application: Application) : FragmentViewModel(application) {
 
     private val context = getApplication<MainApplication>().applicationContext
-    var myClipboard: ClipboardManager? = null
-    var myClip: ClipData? = null
-    var bind: ActivityTorFragmentBinding? = null
+    lateinit var myClipboard: ClipboardManager
+    lateinit var myClip: ClipData
+    lateinit var bind: ActivityTorFragmentBinding
     var hostNameText: MutableLiveData<String> = MutableLiveData()
     var hostNameVisible: MutableLiveData<Boolean> = MutableLiveData()
     var switchNotificationEnabled: MutableLiveData<Boolean> = MutableLiveData()
@@ -53,7 +53,7 @@ open class TorViewModel(application: Application) : FragmentViewModel(applicatio
     fun addHostName(hostName: String) {
         myClipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         myClip = ClipData.newPlainText("text", hostName)
-        myClipboard!!.setPrimaryClip(myClip!!)
+        myClipboard.setPrimaryClip(myClip)
         Toast.makeText(context, "$hostName copied!", Toast.LENGTH_SHORT).show()
     }
 
@@ -133,9 +133,9 @@ open class TorViewModel(application: Application) : FragmentViewModel(applicatio
             val ports = output.split(" ".toRegex()).toTypedArray()
             for (i in ports.indices) {
                 if (i == ports.size - 1) break
-                portNameArray!!.add(ports[i])
+                portNameArray?.add(ports[i])
             }
-            if (portNameArray!!.size > 1) portNameArray!!.add("All")
+            if ((portNameArray?.size ?: 0) > 1) portNameArray?.add("All")
             portsNameList.value = portNameArray
             sendMessage(getString(R.string.TREEHOUSES_TOR_STATUS))
         } else handleMoreMessages(output)

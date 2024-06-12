@@ -16,7 +16,7 @@ import io.treehouses.remote.fragments.dialogfragments.WifiDialogFragment
 import io.treehouses.remote.ui.network.NetworkFragment.Companion.openWifiDialog
 import io.treehouses.remote.ui.network.NetworkViewModel
 
-class BridgeBottomSheet : BaseBottomSheetDialog() {
+open class BridgeBottomSheet : BaseBottomSheetDialog() {
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { requireParentFragment() })
     private lateinit var bind: DialogBridgeBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,8 +46,9 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
     }
 
     private fun getValuesMap(): Map<String, String> {
-        return mapOf("etEssid" to bind.etEssid.text.toString(), "etHotspotEssid" to bind.etHotspotEssid.text.toString(),
-                "etPassword" to bind.etPassword.text.toString(), "etHotspotPassword" to bind.etHotspotPassword.text.toString())
+        return mapOf("etEssid" to "${bind.etEssid.text}", "etHotspotEssid" to "${bind.etHotspotEssid.text}",
+                "etPassword" to "${bind.etPassword.text}", "etHotspotPassword" to "${bind.etHotspotPassword.text}"
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -55,7 +56,7 @@ class BridgeBottomSheet : BaseBottomSheetDialog() {
             return
         }
         if (requestCode == Constants.REQUEST_DIALOG_WIFI) {
-            val ssid = data!!.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY)
+            val ssid = data?.getStringExtra(WifiDialogFragment.WIFI_SSID_KEY)
             bind.etEssid.setText(ssid)
         }
     }

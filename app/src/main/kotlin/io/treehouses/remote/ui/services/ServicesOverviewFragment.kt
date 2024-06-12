@@ -20,7 +20,6 @@ import io.treehouses.remote.pojo.enum.Status
 class ServicesOverviewFragment : BaseFragment(), OnItemClickListener {
     private var adapter: ServicesListAdapter? = null
     private lateinit var bind: ActivityServicesTabFragmentBinding
-
     private val viewModel by viewModels<ServicesViewModel>(ownerProducer = {requireParentFragment()})
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -28,7 +27,7 @@ class ServicesOverviewFragment : BaseFragment(), OnItemClickListener {
         adapter = ServicesListAdapter(requireContext(), viewModel.formattedServices, ContextCompat.getColor(requireContext(), R.color.bg_white))
 
         bind.searchBar.doOnTextChanged { text, _, _, _ ->
-            adapter?.filter?.filter(text.toString())
+            adapter?.filter?.filter("$text")
         }
         return bind.root
     }
@@ -50,9 +49,4 @@ class ServicesOverviewFragment : BaseFragment(), OnItemClickListener {
         val selected = viewModel.formattedServices[position]
         viewModel.clickedService.value = selected
     }
-
-    companion object {
-        private const val TAG = "ServicesTabFragment"
-    }
-
 }
