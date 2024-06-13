@@ -16,15 +16,13 @@ import io.treehouses.remote.utils.DialogUtils
 
 open class BaseFragment : Fragment() {
     var lastMessage = " "
-    lateinit var mChatService: BluetoothChatService
+    open lateinit var mChatService: BluetoothChatService
     var mBluetoothAdapter: BluetoothAdapter? = null
     lateinit var listener: HomeInteractListener
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
-        if (this::mChatService.isInitialized) {
-            mChatService = listener.getChatService()
-        }
+        mChatService = listener.getChatService()
         mBluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
 
