@@ -42,7 +42,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     /**
      * LiveData to fetch the cached services data
      */
-    private val cacheServiceData = MutableLiveData<ServicesData>()
+    private val cacheServiceData = MutableLiveData<ServicesData?>()
 
     /**
      * LiveData to observe the status of the Server Services result
