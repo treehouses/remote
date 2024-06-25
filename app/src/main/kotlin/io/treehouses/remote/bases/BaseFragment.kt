@@ -22,20 +22,17 @@ open class BaseFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
-        mChatService = listener.getChatService()
         mBluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
 
     fun isListenerInitialized() = ::listener.isInitialized
 
-
     open fun chatOpen():Boolean {
         return this::mChatService.isInitialized
     }
 
-
     protected fun onLoad(mHandler: Handler?) {
-//        mChatService = listener.getChatService()
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler!!)
         mBluetoothAdapter = (context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
 
