@@ -23,6 +23,7 @@ class MainApplication : Application() {
     var logSent = false
     private lateinit var appLifecycleObserver: AppLifecycleObserver
     private lateinit var activityLifecycleTracker: AppLifecycleTracker
+//    private var bluetoothService: BluetoothChatService? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -61,6 +62,9 @@ class MainApplication : Application() {
     }
 
     fun getCurrentBluetoothService(): BluetoothChatService? {
+        if (mChatService == null) {
+            mChatService = BluetoothChatService()
+        }
         return mChatService
     }
 

@@ -60,6 +60,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate() {
         super.onCreate()
+        context = applicationContext
         val i = IntentFilter()
         i.addAction(DISCONNECT_ACTION)
         registerReceiver(receiver, i, RECEIVER_NOT_EXPORTED)
