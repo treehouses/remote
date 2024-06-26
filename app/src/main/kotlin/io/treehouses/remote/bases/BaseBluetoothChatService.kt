@@ -77,14 +77,16 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
     }
 
     protected fun startNotification() {
-        val disconnectIntent = Intent(DISCONNECT_ACTION)
-        val disconnectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, FLAG_IMMUTABLE)
+        context?.let {
+            val disconnectIntent = Intent(DISCONNECT_ACTION)
+            val disconnectPendingIntent = PendingIntent.getBroadcast(this, 0, disconnectIntent, FLAG_IMMUTABLE)
 
-        val onClickIntent = Intent(this, InitialActivity::class.java)
-        val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, FLAG_IMMUTABLE)
+            val onClickIntent = Intent(this, InitialActivity::class.java)
+            val pendingClickIntent = PendingIntent.getActivity(this, 0, onClickIntent, FLAG_IMMUTABLE)
 
-        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
-        val notification: Notification = notificationBuilder.setOngoing(true)
+            val notificationBuilder: NotificationCompat.Builder =
+                NotificationCompat.Builder(this, getString(R.string.bt_notification_ID))
+            val notification: Notification = notificationBuilder.setOngoing(true)
                 .setContentTitle("Treehouses Remote is currently running")
                 .setContentText("Connected to ${mDevice?.name}")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -93,14 +95,15 @@ open class BaseBluetoothChatService @JvmOverloads constructor(handler: Handler? 
                 .setContentIntent(pendingClickIntent)
                 .addAction(R.drawable.bluetooth, "Disconnect", disconnectPendingIntent)
                 .build()
-        ServiceCompat.startForeground(this,2,
-            notification,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
-            } else {
-                0
-            }
-        )
+            ServiceCompat.startForeground(this, 2,
+                notification,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+                } else {
+                    0
+                }
+            )
+        }
     }
 
     /**

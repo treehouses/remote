@@ -1,20 +1,3 @@
-/*
-* Copyright 2017 The Android Open Source Project, Inc.
-*
-* Licensed to the Apache Software Foundation (ASF) under one or more contributor
-* license agreements. See the NOTICE file distributed with this work for additional
-* information regarding copyright ownership. The ASF licenses this file to you under
-* the Apache License, Version 2.0 (the "License"); you may not use this file except
-* in compliance with the License. You may obtain a copy of the License at
-
-* http://www.apache.org/licenses/LICENSE-2.0
-
-* Unless required by applicable law or agreed to in writing, software distributed under
-* the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-* ANY KIND, either express or implied. See the License for the specific language
-* governing permissions and limitations under the License.
-
-*/
 package io.treehouses.remote.network
 
 import android.bluetooth.BluetoothDevice
@@ -32,16 +15,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-
-/**
- * Created by yubo on 7/11/17.
- */
-/**
- * This class does all the work for setting up and managing Bluetooth
- * connections with other devices. It has a thread that listens for
- * incoming connections, a thread for connecting with a device, and a
- * thread for performing data transmissions when connected.
- */
 class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, applicationContext: Context? = null) : BaseBluetoothChatService(handler, applicationContext) {
     inner class DisconnectReceiver: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -52,34 +25,20 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
-    // Member fields
-
     private val mBinder = LocalBinder()
     private var mConnectThread: ConnectThread? = null
     private var mConnectedThread: ConnectedThread? = null
-
     private val receiver = DisconnectReceiver()
 
-    /**
-     * Start the chat service. Specifically start AcceptThread to begin a
-     * session in listening (server) mode. Called by the Activity onResume()
-     */
     @Synchronized
     override fun start() {
         bNoReconnect = false
-        // Cancel any thread attempting to make a connection
         mConnectThread?.cancel()
         mConnectThread = null
-
-        // Cancel any thread currently running a connection
         mConnectedThread?.cancel()
         mConnectedThread = null
-
-        // Update UI title
         updateUserInterfaceTitle()
     }
-
-
 
     fun updateHandler(handler: Handler) {
         mHandler = handler
@@ -90,7 +49,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     inner class LocalBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods
         val service: BluetoothChatService
             get() = this@BluetoothChatService
     }
@@ -102,6 +60,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate() {
         super.onCreate()
+        context = applicationContext
         val i = IntentFilter()
         i.addAction(DISCONNECT_ACTION)
         registerReceiver(receiver, i, RECEIVER_NOT_EXPORTED)
@@ -115,79 +74,50 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
     var connectedDeviceName: String = ""
 
-
-
-    /**
-     * Start the ConnectThread to initiate a connection to a remote device.
-     *
-     * @param device The BluetoothDevice to connect
-     * @param secure Socket Security type - Secure (true) , Insecure (false)
-     */
     @Synchronized
     fun connect(device: BluetoothDevice, secure: Boolean) {
-
-        // Cancel any thread attempting to make a connection
         if (state == Constants.STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread!!.cancel()
                 mConnectThread = null
             }
         }
-
-        // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
             mConnectedThread!!.cancel()
             mConnectedThread = null
         }
 
-        // Start the thread to connect with the given device
         mConnectThread = ConnectThread(device, secure)
         mConnectThread!!.start()
-        // Update UI title
         updateUserInterfaceTitle()
     }
 
-    /**
-     * Start the ConnectedThread to begin managing a Bluetooth connection
-     *
-     * @param socket The BluetoothSocket on which the connection was made
-     * @param device The BluetoothDevice that has been connected
-     */
     @Synchronized
     fun connected(socket: BluetoothSocket?, device: BluetoothDevice, socketType: String) {
         connectedDeviceName = device.name
         mDevice = device
-        // Cancel the thread that completed the connection
         if (mConnectThread != null) {
             mConnectThread!!.cancel()
             mConnectThread = null
         }
 
-        // Cancel any thread currently running a connection
         if (mConnectedThread != null) {
             mConnectedThread!!.cancel()
             mConnectedThread = null
         }
 
         startNotification()
-
-        // Start the thread to manage the connection and perform transmissions
         mConnectedThread = ConnectedThread(socket, socketType)
         mConnectedThread!!.start()
 
-        // Send the name of the connected device back to the UI Activity
         updateUserInterfaceTitle()
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_DEVICE_NAME)
         val bundle = Bundle()
         bundle.putString(Constants.DEVICE_NAME, device.name)
         msg?.data = bundle
         mHandler?.sendMessage(msg ?: Message())
-        // Update UI title
     }
 
-    /**
-     * Stop all threads
-     */
     @Synchronized
     fun stop() {
         bNoReconnect = true
@@ -202,37 +132,21 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
         state = Constants.STATE_NONE
         stopForeground(true)
-        // Update UI title
         updateUserInterfaceTitle()
     }
 
-    /**
-     * Write to the ConnectedThread in an unsynchronized manner
-     *
-     * @param out The bytes to write
-     * @see ConnectedThread.write
-     */
     fun write(out: ByteArray?) {
-        // Create temporary object
         var r: ConnectedThread?
-        // Synchronize a copy of the ConnectedThread
         synchronized(this) {
             if (state != Constants.STATE_CONNECTED) return
             r = mConnectedThread
         }
-        // Perform the write unsynchronized
         if (out != null) {
             r!!.write(out)
         }
     }
 
-
-
-    /**
-     * Indicate that the connection was lost and notify the UI Activity.
-     */
     private fun connectionLost() {
-        // Send a failure message back to the Activity
         callHandler("Device connection was lost")
         stopForeground(true)
 
@@ -241,43 +155,26 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             connect(mDevice!!, true)
         } else {
             state = Constants.STATE_NONE
-            // Update UI title
             updateUserInterfaceTitle()
-            // Start the service over to restart listening mode
             start()
         }
     }
 
-    /**
-     * This thread runs while attempting to make an outgoing connection
-     * with a device. It runs straight through; the connection either
-     * succeeds or fails.
-     */
     private inner class ConnectThread(private val mmDevice: BluetoothDevice, secure: Boolean) : Thread() {
         private val mmSocket: BluetoothSocket?
         private val mSocketType: String
         override fun run() {
             name = "ConnectThread$mSocketType"
             this@BluetoothChatService.state = Constants.STATE_CONNECTING
-            // Always cancel discovery because it will slow down a connection
             mAdapter?.cancelDiscovery()
-
-            // Make a connection to the BluetoothSocket
             try {
-                // This is a blocking call and will only return on a
-                // successful connection or an exception
                 mmSocket!!.connect()
             } catch (e: Exception) {
-                // Close the socket
                 closeSocket()
                 connectionFailed()
                 return
             }
-
-            // Reset the ConnectThread because we're done
             synchronized(this@BluetoothChatService) { mConnectThread = null }
-
-            // Start the connected thread
             connected(mmSocket, mmDevice, mSocketType)
         }
 
@@ -291,13 +188,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         init {
             var tmp: BluetoothSocket? = null
             mSocketType = if (secure) "Secure" else "Insecure"
-
-            // Get a BluetoothSocket for a connection with the
-            // given BluetoothDevice
             try {
-//                if (secure) {
                 tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
-                //                } else {
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -308,10 +200,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
-    /**
-     * This thread runs during a connection with a remote device.
-     * It handles all incoming and outgoing transmissions.
-     */
     private inner class ConnectedThread(socket: BluetoothSocket?, socketType: String) : Thread() {
         private val mmSocket: BluetoothSocket?
         private val mmInStream: InputStream?
@@ -320,17 +208,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             val buffer = ByteArray(10000)
             var bytes: Int
             var out: String
-
-            // Keep listening to the InputStream while connected
             while (true) {
                 try {
-                    // Read from the InputStream
                     bytes = mmInStream!!.read(buffer)
                     out = String(buffer, 0, bytes)
                     mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
-                    //                    mEmulatorView.write(buffer, bytes);
-                    // Send the obtained bytes to the UI Activity
-                    //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } catch (e: IOException) {
                     e.printStackTrace()
                     connectionLost()
@@ -339,16 +221,9 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             }
         }
 
-        /**
-         * Write to the connected OutStream.
-         *
-         * @param buffer The bytes to write
-         */
         fun write(buffer: ByteArray) {
             try {
                 mmOutStream!!.write(buffer)
-
-                // Share the sent message back to the UI Activity
                 mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)?.sendToTarget()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -367,8 +242,6 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             mmSocket = socket
             var tmpIn: InputStream? = null
             var tmpOut: OutputStream? = null
-
-            // Get the BluetoothSocket input and output streams
             try {
                 tmpIn = socket!!.inputStream
                 tmpOut = socket.outputStream
@@ -381,14 +254,4 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             this@BluetoothChatService.updateUserInterfaceTitle()
         }
     }
-
-//    inner class DisconnectReceiver : BroadcastReceiver() {
-//        override fun onReceive(context: Context?, intent: Intent?) {
-//            if (intent?.action == DISCONNECT_ACTION) {
-//                stop()
-//            }
-//        }
-//
-//    }
-
 }
