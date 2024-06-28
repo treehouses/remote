@@ -55,7 +55,7 @@ jobs:
           ls -al sign
 
       - name: sign release APK and AAB
-        uses: dogi/sign-android-release@v5
+        uses: dogi/sign-android-release@v5.1.0
         with:
           releaseDirectory: sign
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
