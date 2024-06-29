@@ -73,6 +73,7 @@ jobs:
           ls -alR output
 
       - name: publish AAB to happy playstore
+        id: playstore
         if: github.ref == 'refs/heads/master'
         continue-on-error: true
         uses: dogi/upload-google-play@v1.1.4
@@ -85,7 +86,7 @@ jobs:
           status: completed
 
       - name: publish AAB to unhappy playstore
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && steps.playstore.outcome == 'failure'
         continue-on-error: true
         uses: dogi/upload-google-play@v1.1.4
         with:
