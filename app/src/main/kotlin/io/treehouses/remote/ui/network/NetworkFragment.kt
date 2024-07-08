@@ -169,10 +169,11 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show()
             } else {
+                val fragmentManager = bottomSheetDialogFragment.parentFragmentManager
                 val dialogFrag = WifiDialogFragment.newInstance()
                 dialogFrag.setTargetFragment(bottomSheetDialogFragment, Constants.REQUEST_DIALOG_WIFI)
-                dialogFrag.show(bottomSheetDialogFragment.requireActivity().supportFragmentManager.beginTransaction(), "wifiDialog")
+                dialogFrag.show(fragmentManager, "wifiDialog")
             }
-        } //    Next Version:
+        }
     }
 }
