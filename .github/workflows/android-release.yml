@@ -55,7 +55,7 @@ jobs:
           ls -al sign
 
       - name: sign release APK and AAB
-        uses: dogi/sign-android-release@v5
+        uses: dogi/sign-android-release@v5.1.0
         with:
           releaseDirectory: sign
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
@@ -73,9 +73,10 @@ jobs:
           ls -alR output
 
       - name: publish AAB to happy playstore
+        id: playstore
         if: github.ref == 'refs/heads/master'
         continue-on-error: true
-        uses: dogi/upload-google-play@v1.1.3
+        uses: dogi/upload-google-play@v1.1.4
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: io.treehouses.remote
@@ -85,9 +86,9 @@ jobs:
           status: completed
 
       - name: publish AAB to unhappy playstore
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master' && steps.playstore.outcome == 'failure'
         continue-on-error: true
-        uses: dogi/upload-google-play@v1.1.3
+        uses: dogi/upload-google-play@v1.1.4
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: io.treehouses.remote
@@ -137,7 +138,7 @@ jobs:
 
       - name: release APK and AAB on GitHub
         if: github.ref == 'refs/heads/master'
-        uses: dogi/upload-release-action@v2.7.1
+        uses: dogi/upload-release-action@v2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: output/*
