@@ -117,7 +117,7 @@
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/windowBackground</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/treehouses2</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_image</item>
         <item name="windowSplashScreenAnimationDuration">200</item>
         <item name="postSplashScreenTheme">@style/MyMaterialTheme.Base</item>
     </style>
