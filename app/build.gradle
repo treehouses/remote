@@ -56,7 +56,7 @@ android.defaultConfig.vectorDrawables.useSupportLibrary = true
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.lifecycle:lifecycle-process:2.8.3'
+    implementation 'androidx.lifecycle:lifecycle-process:2.8.4'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.6.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -104,11 +104,11 @@ dependencies {
 }
 
 repositories {
-    google()
+    //google()
     mavenCentral()
-    maven { url "https://jitpack.io" }
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    maven { url "https://maven.google.com" }
+    //maven { url "https://jitpack.io" }
+    //maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    //maven { url "https://maven.google.com" }
     maven { url "https://maven.aliyun.com/repository/jcenter" }
 }
 
