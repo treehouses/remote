@@ -105,6 +105,7 @@ dependencies {
 
 repositories {
     mavenCentral()
+    maven { url "https://maven.aliyun.com/repository/jcenter" }
 }
 
 android.sourceSets.all {
