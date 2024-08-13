@@ -8,6 +8,7 @@ import androidx.lifecycle.map
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import io.treehouses.remote.LiveDataWrapper
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.ServiceInfo
@@ -96,7 +97,12 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     /**
      * Easy array to iterate over livedatas and update their values upon error
      */
-    private val lives = listOf(serviceAction, autoRunAction, getLinkAction, editEnvAction)
+    private val lives = listOf(
+        LiveDataWrapper(serviceAction),
+        LiveDataWrapper(autoRunAction),
+        LiveDataWrapper(getLinkAction),
+        LiveDataWrapper(editEnvAction)
+    )
     val error = MutableLiveData<String>()
 
     /**
@@ -135,7 +141,9 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         when {
             match(output) == RESULTS.ERROR && !output.contains("kill [") && !output.contains("tput: No") -> {       //kill to fix temporary issue
                 error.value = output
-                lives.forEach { it.value = Resource.nothing() }
+                lives.forEach { wrapper ->
+                    wrapper.liveData.value = Resource.nothing()
+                }
             }
             editEnvAction.value?.status == LOADING && output.startsWith("treehouses services") -> editEnvAction.value = Resource.success(output.split(" ").toMutableList())
             serverServiceData.value?.status == LOADING -> receiveJSON(output)
