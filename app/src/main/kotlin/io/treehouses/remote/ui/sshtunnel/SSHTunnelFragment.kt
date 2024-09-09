@@ -141,7 +141,7 @@ class SSHTunnelFragment : BaseSSHTunnelFragment() {
                     portsName = it.data?.portNames; hostsName = it.data?.hostNames
                     adapter = TunnelUtils.getPortAdapter(requireContext(), portsName)
                     bind.sshPorts.adapter = adapter
-                    adapter2 = ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, hostsName!!)
+                    adapter2 = ArrayAdapter(requireContext(), R.layout.simple_list_item, hostsName!!)
                     dialogSshTunnelPortsBinding.hosts.adapter = adapter2
                 }
                 Status.LOADING -> {
