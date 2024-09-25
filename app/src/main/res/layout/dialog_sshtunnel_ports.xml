@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="350dp"
     android:layout_height="wrap_content"
+    android:background="@drawable/alertdialog_background"
     android:orientation="vertical"
-    android:padding="@dimen/margin_medium"
-    android:background="@drawable/alertdialog_background">
+    android:padding="@dimen/margin_medium">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -33,7 +33,6 @@
             android:background="@null"
             android:scaleType="fitEnd"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -44,36 +43,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <Spinner
-        android:id="@+id/hosts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="80dp"
 
-       
-        android:spinnerMode="dropdown"/>
+        <Spinner
+            android:id="@+id/hosts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/CustomPopupMenu"
+            android:popupBackground="@color/card_background"
+            android:textSize="80sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TLexternal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/TLexternal">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/ExternalTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:textColorHint="@color/expandable_child_text"
-                android:textColor="@color/daynight_textColor"
                 android:hint="External"
                 android:inputType="number"
                 android:maxLength="5"
-                />
+                android:textColor="@color/daynight_textColor"
+                android:textColorHint="@color/expandable_child_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
@@ -84,21 +83,20 @@
         android:orientation="horizontal">
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TLinternal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/TLinternal">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/InternalTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/daynight_textColor"
-                android:textColorHint="@color/expandable_child_text"
                 android:fontFamily="sans-serif"
                 android:hint="Internal"
                 android:inputType="number"
                 android:maxLength="5"
-                />
+                android:textColor="@color/daynight_textColor"
+                android:textColorHint="@color/expandable_child_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
@@ -108,9 +106,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
-        android:text="Add Port"
         android:background="@drawable/addport_button"
         android:enabled="false"
-        android:textColor="#FFFFFF"/>
+        android:text="Add Port"
+        android:textColor="#FFFFFF" />
 
 </LinearLayout>
