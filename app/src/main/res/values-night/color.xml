@@ -42,4 +42,5 @@
 
     <color name="disconnect_button">#BC5C5C</color>
     <color name="disconnect_button_light">#c48787</color>
+    <color name="dialog_button_color">@color/colorAccent</color>
 </resources>

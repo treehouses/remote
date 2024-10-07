@@ -50,4 +50,5 @@
     <color name="key_background_layout">#55000000</color>
     <color name="key_separator">#00000000</color>
     <color name="keyboard_background">#55b0b0f0</color>
+    <color name="dialog_button_color">@color/colorAccent</color>
 </resources>

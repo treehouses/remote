@@ -52,7 +52,7 @@
         android:background="#00000000"
         android:id="@+id/rpi_close_button"
         android:text="Cancel"
-        android:textColor="@color/red"
+        android:textColor="@color/dialog_button_color"
         app:layout_constraintBottom_toBottomOf="@id/rpi_switch"
         app:layout_constraintTop_toTopOf="@id/rpi_switch"
         app:layout_constraintEnd_toEndOf="parent"
