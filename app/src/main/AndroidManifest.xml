@@ -34,6 +34,7 @@
         android:theme="@style/MyMaterialTheme.Base"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+
         <activity android:name=".IntroActivity" />
         <activity
             android:name=".SplashScreenActivity"
@@ -57,9 +58,9 @@
             android:theme="@style/Theme.AppCompat"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
-        <service android:name=".utils.GPSService"
-            android:foregroundServiceType="location"
-            />
+        <service
+            android:name=".utils.GPSService"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".InitialActivity"
