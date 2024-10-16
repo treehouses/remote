@@ -102,7 +102,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
             }
             s == RESULTS.VERSION && checkVersionSent -> checkVersion(output)
             s == RESULTS.REMOTE_CHECK -> {
-                sendLog(mChatService.connectedDeviceName, output.trim().split(" "))
+                sendLog("${mChatService.connectedDeviceName}", output.trim().split(" "))
                 sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
             }
             else -> moreActions(output, s)
