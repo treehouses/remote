@@ -16,7 +16,7 @@ object ParseDbService {
         testObject.put("description", "Connected to bluetooth")
         testObject.put("type", "BT Connection")
         testObject.put("versionCode", getVersionCode(context))
-        testObject.put("versionName", getVersionName(context))
+        testObject.put("versionName", getVersionName(context) ?: "")
         testObject.put("deviceName", Build.DEVICE)
         testObject.put("deviceManufacturer", Build.MANUFACTURER)
         testObject.put("deviceModel", Build.MODEL)

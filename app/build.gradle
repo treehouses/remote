@@ -5,7 +5,7 @@ def appVersionName = (System.env.GITHUB_RUN_NUMBER ? Integer.valueOf(System.env.
 
 android {
     namespace 'io.treehouses.remote'
-    compileSdkVersion 34
+    compileSdk 35
     defaultConfig {
         applicationId "io.treehouses.remote"
         minSdkVersion 21
