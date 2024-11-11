@@ -110,9 +110,14 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * Load the bluetooth service and update the handler and connection status
      */
     fun loadBT() {
-        mChatService = getApplication<MainApplication>().getCurrentBluetoothService()!!
-        mChatService.updateHandler(mHandler)
-        _connectionStatus.value = mChatService.state
+        val bluetoothService = getApplication<MainApplication>().getCurrentBluetoothService()
+        if (bluetoothService != null) {
+            mChatService = bluetoothService
+            mChatService.updateHandler(mHandler)
+            _connectionStatus.value = mChatService.state
+        } else {
+            _connectionStatus.value = Constants.STATE_NONE
+        }
     }
 
     /**
