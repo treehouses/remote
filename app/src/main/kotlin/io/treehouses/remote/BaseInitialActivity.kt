@@ -51,6 +51,9 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     }
 
     override fun getChatService(): BluetoothChatService {
+        if (!this::mChatService.isInitialized) {
+            mChatService = BluetoothChatService()
+        }
         return mChatService
     }
 
