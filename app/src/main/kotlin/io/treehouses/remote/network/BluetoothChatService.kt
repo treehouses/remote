@@ -72,48 +72,48 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         super.onDestroy()
     }
 
-    var connectedDeviceName: String = ""
+    var connectedDeviceName: String? = ""
 
     @Synchronized
-    fun connect(device: BluetoothDevice, secure: Boolean) {
+    fun connect(device: BluetoothDevice?, secure: Boolean) {
         if (state == Constants.STATE_CONNECTING) {
             if (mConnectThread != null) {
-                mConnectThread!!.cancel()
+                mConnectThread?.cancel()
                 mConnectThread = null
             }
         }
         if (mConnectedThread != null) {
-            mConnectedThread!!.cancel()
+            mConnectedThread?.cancel()
             mConnectedThread = null
         }
 
         mConnectThread = ConnectThread(device, secure)
-        mConnectThread!!.start()
+        mConnectThread?.start()
         updateUserInterfaceTitle()
     }
 
     @Synchronized
-    fun connected(socket: BluetoothSocket?, device: BluetoothDevice, socketType: String) {
-        connectedDeviceName = device.name
+    fun connected(socket: BluetoothSocket?, device: BluetoothDevice?) {
+        connectedDeviceName = device?.name
         mDevice = device
         if (mConnectThread != null) {
-            mConnectThread!!.cancel()
+            mConnectThread?.cancel()
             mConnectThread = null
         }
 
         if (mConnectedThread != null) {
-            mConnectedThread!!.cancel()
+            mConnectedThread?.cancel()
             mConnectedThread = null
         }
 
         startNotification()
-        mConnectedThread = ConnectedThread(socket, socketType)
-        mConnectedThread!!.start()
+        mConnectedThread = ConnectedThread(socket)
+        mConnectedThread?.start()
 
         updateUserInterfaceTitle()
         val msg = mHandler?.obtainMessage(Constants.MESSAGE_DEVICE_NAME)
         val bundle = Bundle()
-        bundle.putString(Constants.DEVICE_NAME, device.name)
+        bundle.putString(Constants.DEVICE_NAME, device?.name)
         msg?.data = bundle
         mHandler?.sendMessage(msg ?: Message())
     }
@@ -122,11 +122,11 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     fun stop() {
         bNoReconnect = true
         if (mConnectThread != null) {
-            mConnectThread!!.cancel()
+            mConnectThread?.cancel()
             mConnectThread = null
         }
         if (mConnectedThread != null) {
-            mConnectedThread!!.cancel()
+            mConnectedThread?.cancel()
             mConnectedThread = null
         }
 
@@ -142,7 +142,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             r = mConnectedThread
         }
         if (out != null) {
-            r!!.write(out)
+            r?.write(out)
         }
     }
 
@@ -152,7 +152,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         if (mDevice != null && !bNoReconnect && preferences.getBoolean("reconnectBluetooth", true)) {
-            connect(mDevice!!, true)
+            connect(mDevice, true)
         } else {
             state = Constants.STATE_NONE
             updateUserInterfaceTitle()
@@ -160,7 +160,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
-    private inner class ConnectThread(private val mmDevice: BluetoothDevice, secure: Boolean) : Thread() {
+    private inner class ConnectThread(private val mmDevice: BluetoothDevice?, secure: Boolean) : Thread() {
         private val mmSocket: BluetoothSocket?
         private val mSocketType: String
         override fun run() {
@@ -168,20 +168,21 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             this@BluetoothChatService.state = Constants.STATE_CONNECTING
             mAdapter?.cancelDiscovery()
             try {
-                mmSocket!!.connect()
+                mmSocket?.connect()
             } catch (e: Exception) {
+                e.printStackTrace()
                 closeSocket()
                 connectionFailed()
                 return
             }
             synchronized(this@BluetoothChatService) { mConnectThread = null }
-            connected(mmSocket, mmDevice, mSocketType)
+            connected(mmSocket, mmDevice)
         }
 
         fun cancel() { closeSocket() }
 
         fun closeSocket() {
-            try { mmSocket!!.close() }
+            try { mmSocket?.close() }
             catch (e: Exception) { e.printStackTrace() }
         }
 
@@ -189,7 +190,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             var tmp: BluetoothSocket? = null
             mSocketType = if (secure) "Secure" else "Insecure"
             try {
-                tmp = mmDevice.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
+                tmp = mmDevice?.createRfcommSocketToServiceRecord(MY_UUID_SECURE)
                 this@BluetoothChatService.state = Constants.STATE_CONNECTING
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -200,8 +201,8 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         }
     }
 
-    private inner class ConnectedThread(socket: BluetoothSocket?, socketType: String) : Thread() {
-        private val mmSocket: BluetoothSocket?
+    private inner class ConnectedThread(socket: BluetoothSocket?) : Thread() {
+        private val mmSocket: BluetoothSocket? = socket
         private val mmInStream: InputStream?
         private val mmOutStream: OutputStream?
         override fun run() {
@@ -210,7 +211,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
             var out: String
             while (true) {
                 try {
-                    bytes = mmInStream!!.read(buffer)
+                    bytes = mmInStream?.read(buffer) ?: 0
                     out = String(buffer, 0, bytes)
                     mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
                 } catch (e: IOException) {
@@ -223,7 +224,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
         fun write(buffer: ByteArray) {
             try {
-                mmOutStream!!.write(buffer)
+                mmOutStream?.write(buffer)
                 mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)?.sendToTarget()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -232,19 +233,18 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
 
         fun cancel() {
             try {
-                mmSocket!!.close()
+                mmSocket?.close()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
 
         init {
-            mmSocket = socket
             var tmpIn: InputStream? = null
             var tmpOut: OutputStream? = null
             try {
-                tmpIn = socket!!.inputStream
-                tmpOut = socket.outputStream
+                tmpIn = socket?.inputStream
+                tmpOut = socket?.outputStream
             } catch (e: IOException) {
                 e.printStackTrace()
             }
