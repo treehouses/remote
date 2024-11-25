@@ -2,17 +2,19 @@ package io.treehouses.remote.ui.network.bottomsheetdialogs
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
+import io.treehouses.remote.R
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import io.treehouses.remote.Constants
@@ -87,7 +89,7 @@ open class WifiBottomSheet : BaseBottomSheetDialog() {
     }
 
     private fun showLocationPermissionRationale() {
-        AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
             .setTitle("Location Permission Needed")
             .setMessage("This app requires location access to enable WiFi search functionality. Please grant location permission to continue.")
             .setPositiveButton("OK") { _, _ ->
@@ -95,7 +97,6 @@ open class WifiBottomSheet : BaseBottomSheetDialog() {
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
-                Toast.makeText(context, "Location permission is required to enable WiFi search", Toast.LENGTH_SHORT).show()
             }
             .show()
     }
