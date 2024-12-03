@@ -147,12 +147,19 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     private fun connectionLost() {
-        callHandler("Device connection was lost")
         stopForeground(true)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+
         if (mDevice != null && !bNoReconnect && preferences.getBoolean("reconnectBluetooth", true)) {
-            connect(mDevice, true)
+            try {
+                connect(mDevice, true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                state = Constants.STATE_NONE
+                updateUserInterfaceTitle()
+                start()
+            }
         } else {
             state = Constants.STATE_NONE
             updateUserInterfaceTitle()
@@ -208,17 +215,30 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
         override fun run() {
             val buffer = ByteArray(10000)
             var bytes: Int
-            var out: String
-            while (true) {
-                try {
-                    bytes = mmInStream?.read(buffer) ?: 0
-                    out = String(buffer, 0, bytes)
-                    mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    connectionLost()
-                    break
+
+            try {
+                while (true) {
+                    try {
+                        if ((mmInStream?.available() ?: 0) > 0) {
+                            bytes = mmInStream?.read(buffer) ?: -1
+                            if (bytes == -1) {
+                                break
+                            }
+
+                            val out = String(buffer, 0, bytes)
+                            mHandler?.obtainMessage(Constants.MESSAGE_READ, bytes, -1, out)?.sendToTarget()
+                        } else {
+                            sleep(50)
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        break
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                connectionLost()
             }
         }
 
@@ -228,6 +248,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 mHandler?.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)?.sendToTarget()
             } catch (e: IOException) {
                 e.printStackTrace()
+                connectionLost()
             }
         }
 
