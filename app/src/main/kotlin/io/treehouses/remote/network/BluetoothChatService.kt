@@ -147,6 +147,7 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
     }
 
     private fun connectionLost() {
+        callHandler("Device connection was lost")
         stopForeground(true)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
