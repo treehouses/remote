@@ -157,15 +157,17 @@ class BluetoothChatService @JvmOverloads constructor(handler: Handler? = null, a
                 connect(mDevice, true)
             } catch (e: Exception) {
                 e.printStackTrace()
-                state = Constants.STATE_NONE
-                updateUserInterfaceTitle()
-                start()
+                resetConnectionState()
             }
         } else {
-            state = Constants.STATE_NONE
-            updateUserInterfaceTitle()
-            start()
+            resetConnectionState()
         }
+    }
+
+    private fun resetConnectionState() {
+        state = Constants.STATE_NONE
+        updateUserInterfaceTitle()
+        start()
     }
 
     private inner class ConnectThread(private val mmDevice: BluetoothDevice?, secure: Boolean) : Thread() {
