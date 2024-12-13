@@ -283,147 +283,147 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //        return true
 //    }
 
-//    @Override
-//    public List<PortForwardBean> getPortForwards() {
-//        return portForwards;
-//    }
-//
-//    @Override
-//    public boolean addPortForward(PortForwardBean portForward) {
-//        return portForwards.add(portForward);
-//    }
-//
-//    @Override
-//    public boolean removePortForward(PortForwardBean portForward) {
-//        // Make sure we don't have a phantom forwarder.
-//        disablePortForward(portForward);
-//
-//        return portForwards.remove(portForward);
-//    }
-//
-//    @Override
-//    public boolean enablePortForward(PortForwardBean portForward) {
-//        if (!portForwards.contains(portForward)) {
-//            Log.e(TAG, "Attempt to enable port forward not in list");
-//            return false;
-//        }
-//
-//        if (!authenticated)
-//            return false;
-//
-//        if (HostDatabase.PORTFORWARD_LOCAL.equals(portForward.getType())) {
-//            LocalPortForwarder lpf = null;
-//            try {
-//                lpf = connection.createLocalPortForwarder(
-//                        new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()),
-//                        portForward.getDestAddr(), portForward.getDestPort());
-//            } catch (Exception e) {
-//                Log.e(TAG, "Could not create local port forward", e);
-//                return false;
-//            }
-//
-//            if (lpf == null) {
-//                Log.e(TAG, "returned LocalPortForwarder object is null");
-//                return false;
-//            }
-//
-//            portForward.setIdentifier(lpf);
-//            portForward.setEnabled(true);
-//            return true;
-//        } else if (HostDatabase.PORTFORWARD_REMOTE.equals(portForward.getType())) {
-//            try {
-//                connection.requestRemotePortForwarding("", portForward.getSourcePort(), portForward.getDestAddr(), portForward.getDestPort());
-//            } catch (Exception e) {
-//                Log.e(TAG, "Could not create remote port forward", e);
-//                return false;
-//            }
-//
-//            portForward.setEnabled(true);
-//            return true;
-//        } else if (HostDatabase.PORTFORWARD_DYNAMIC5.equals(portForward.getType())) {
-//            DynamicPortForwarder dpf = null;
-//
-//            try {
-//                dpf = connection.createDynamicPortForwarder(
-//                        new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()));
-//            } catch (Exception e) {
-//                Log.e(TAG, "Could not create dynamic port forward", e);
-//                return false;
-//            }
-//
-//            portForward.setIdentifier(dpf);
-//            portForward.setEnabled(true);
-//            return true;
-//        } else {
-//            // Unsupported type
-//            Log.e(TAG, String.format("attempt to forward unknown type %s", portForward.getType()));
-//            return false;
-//        }
-//    }
-//    @Override
-//    public boolean disablePortForward(PortForwardBean portForward) {
-//        if (!portForwards.contains(portForward)) {
-//            Log.e(TAG, "Attempt to disable port forward not in list");
-//            return false;
-//        }
-//
-//        if (!authenticated)
-//            return false;
-//
-//        if (HostDatabase.PORTFORWARD_LOCAL.equals(portForward.getType())) {
-//            LocalPortForwarder lpf = null;
-//            lpf = (LocalPortForwarder) portForward.getIdentifier();
-//
-//            if (!portForward.isEnabled() || lpf == null) {
-//                Log.d(TAG, String.format("Could not disable %s; it appears to be not enabled or have no handler", portForward.getNickname()));
-//                return false;
-//            }
-//
-//            portForward.setEnabled(false);
-//
-//            lpf.close();
-//
-//            return true;
-//        } else if (HostDatabase.PORTFORWARD_REMOTE.equals(portForward.getType())) {
-//            portForward.setEnabled(false);
-//
-//            try {
-//                connection.cancelRemotePortForwarding(portForward.getSourcePort());
-//            } catch (IOException e) {
-//                Log.e(TAG, "Could not stop remote port forwarding, setting enabled to false", e);
-//                return false;
-//            }
-//
-//            return true;
-//        } else if (HostDatabase.PORTFORWARD_DYNAMIC5.equals(portForward.getType())) {
-//            DynamicPortForwarder dpf = null;
-//            dpf = (DynamicPortForwarder) portForward.getIdentifier();
-//
-//            if (!portForward.isEnabled() || dpf == null) {
-//                Log.d(TAG, String.format("Could not disable %s; it appears to be not enabled or have no handler", portForward.getNickname()));
-//                return false;
-//            }
-//
-//            portForward.setEnabled(false);
-//
-//            dpf.close();
-//
-//            return true;
-//        } else {
-//            // Unsupported type
-//            Log.e(TAG, String.format("attempt to forward unknown type %s", portForward.getType()));
-//            return false;
-//        }
-//    }
+    //    @Override
+    //    public List<PortForwardBean> getPortForwards() {
+    //        return portForwards;
+    //    }
+    //
+    //    @Override
+    //    public boolean addPortForward(PortForwardBean portForward) {
+    //        return portForwards.add(portForward);
+    //    }
+    //
+    //    @Override
+    //    public boolean removePortForward(PortForwardBean portForward) {
+    //        // Make sure we don't have a phantom forwarder.
+    //        disablePortForward(portForward);
+    //
+    //        return portForwards.remove(portForward);
+    //    }
+    //
+    //    @Override
+    //    public boolean enablePortForward(PortForwardBean portForward) {
+    //        if (!portForwards.contains(portForward)) {
+    //            Log.e(TAG, "Attempt to enable port forward not in list");
+    //            return false;
+    //        }
+    //
+    //        if (!authenticated)
+    //            return false;
+    //
+    //        if (HostDatabase.PORTFORWARD_LOCAL.equals(portForward.getType())) {
+    //            LocalPortForwarder lpf = null;
+    //            try {
+    //                lpf = connection.createLocalPortForwarder(
+    //                        new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()),
+    //                        portForward.getDestAddr(), portForward.getDestPort());
+    //            } catch (Exception e) {
+    //                Log.e(TAG, "Could not create local port forward", e);
+    //                return false;
+    //            }
+    //
+    //            if (lpf == null) {
+    //                Log.e(TAG, "returned LocalPortForwarder object is null");
+    //                return false;
+    //            }
+    //
+    //            portForward.setIdentifier(lpf);
+    //            portForward.setEnabled(true);
+    //            return true;
+    //        } else if (HostDatabase.PORTFORWARD_REMOTE.equals(portForward.getType())) {
+    //            try {
+    //                connection.requestRemotePortForwarding("", portForward.getSourcePort(), portForward.getDestAddr(), portForward.getDestPort());
+    //            } catch (Exception e) {
+    //                Log.e(TAG, "Could not create remote port forward", e);
+    //                return false;
+    //            }
+    //
+    //            portForward.setEnabled(true);
+    //            return true;
+    //        } else if (HostDatabase.PORTFORWARD_DYNAMIC5.equals(portForward.getType())) {
+    //            DynamicPortForwarder dpf = null;
+    //
+    //            try {
+    //                dpf = connection.createDynamicPortForwarder(
+    //                        new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()));
+    //            } catch (Exception e) {
+    //                Log.e(TAG, "Could not create dynamic port forward", e);
+    //                return false;
+    //            }
+    //
+    //            portForward.setIdentifier(dpf);
+    //            portForward.setEnabled(true);
+    //            return true;
+    //        } else {
+    //            // Unsupported type
+    //            Log.e(TAG, String.format("attempt to forward unknown type %s", portForward.getType()));
+    //            return false;
+    //        }
+    //    }
+    //    @Override
+    //    public boolean disablePortForward(PortForwardBean portForward) {
+    //        if (!portForwards.contains(portForward)) {
+    //            Log.e(TAG, "Attempt to disable port forward not in list");
+    //            return false;
+    //        }
+    //
+    //        if (!authenticated)
+    //            return false;
+    //
+    //        if (HostDatabase.PORTFORWARD_LOCAL.equals(portForward.getType())) {
+    //            LocalPortForwarder lpf = null;
+    //            lpf = (LocalPortForwarder) portForward.getIdentifier();
+    //
+    //            if (!portForward.isEnabled() || lpf == null) {
+    //                Log.d(TAG, String.format("Could not disable %s; it appears to be not enabled or have no handler", portForward.getNickname()));
+    //                return false;
+    //            }
+    //
+    //            portForward.setEnabled(false);
+    //
+    //            lpf.close();
+    //
+    //            return true;
+    //        } else if (HostDatabase.PORTFORWARD_REMOTE.equals(portForward.getType())) {
+    //            portForward.setEnabled(false);
+    //
+    //            try {
+    //                connection.cancelRemotePortForwarding(portForward.getSourcePort());
+    //            } catch (IOException e) {
+    //                Log.e(TAG, "Could not stop remote port forwarding, setting enabled to false", e);
+    //                return false;
+    //            }
+    //
+    //            return true;
+    //        } else if (HostDatabase.PORTFORWARD_DYNAMIC5.equals(portForward.getType())) {
+    //            DynamicPortForwarder dpf = null;
+    //            dpf = (DynamicPortForwarder) portForward.getIdentifier();
+    //
+    //            if (!portForward.isEnabled() || dpf == null) {
+    //                Log.d(TAG, String.format("Could not disable %s; it appears to be not enabled or have no handler", portForward.getNickname()));
+    //                return false;
+    //            }
+    //
+    //            portForward.setEnabled(false);
+    //
+    //            dpf.close();
+    //
+    //            return true;
+    //        } else {
+    //            // Unsupported type
+    //            Log.e(TAG, String.format("attempt to forward unknown type %s", portForward.getType()));
+    //            return false;
+    //        }
+    //    }
 
-//
-//    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
-//        return if (port == defaultPort) {
-//            String.format(Locale.US, "%s@%s", username, hostname)
-//        } else {
-//            String.format(Locale.US, "%s@%s:%d", username, hostname, port)
-//        }
-//    }
+    //
+    //    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
+    //        return if (port == defaultPort) {
+    //            String.format(Locale.US, "%s@%s", username, hostname)
+    //        } else {
+    //            String.format(Locale.US, "%s@%s:%d", username, hostname, port)
+    //        }
+    //    }
 
     /**
      * Handle challenges from keyboard-interactive authentication mode.
@@ -501,6 +501,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
     override fun addIdentity(pair: KeyPair, comment: String, confirmUse: Boolean, lifetime: Int): Boolean {
         val pubkey = PubKeyBean()
+        //		pubkey.setType(PubkeyDatabase.KEY_TYPE_IMPORTED);
         pubkey.nickname = comment
         pubkey.isConfirmUse = confirmUse
         pubkey.lifetime = lifetime
