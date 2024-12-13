@@ -118,7 +118,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     protected var stdout: InputStream? = null
     protected var stderr: InputStream? = null
 
-    //    private List<PortForwardBean> portForwards = new ArrayList<>()
+    //    private List<PortForwardBean> portForwards = new ArrayList<>();
     protected var columns = 0
     protected var rows = 0
     private val width = 0
@@ -172,7 +172,8 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
 
         private fun onHostKeyChanged(algorithmName: String, fingerprint: String) {
-            val header = String.format("@   %s   @", manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
+            val header = String.format("@   %s   @",
+                manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
             val atsigns = CharArray(header.length)
             Arrays.fill(atsigns, '@')
             val border = String(atsigns)
@@ -416,14 +417,14 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     //        }
     //    }
 
-    //
-    //    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
-    //        return if (port == defaultPort) {
-    //            String.format(Locale.US, "%s@%s", username, hostname)
-    //        } else {
-    //            String.format(Locale.US, "%s@%s:%d", username, hostname, port)
-    //        }
-    //    }
+//
+//    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
+//        return if (port == defaultPort) {
+//            String.format(Locale.US, "%s@%s", username, hostname)
+//        } else {
+//            String.format(Locale.US, "%s@%s:%d", username, hostname, port)
+//        }
+//    }
 
     /**
      * Handle challenges from keyboard-interactive authentication mode.
