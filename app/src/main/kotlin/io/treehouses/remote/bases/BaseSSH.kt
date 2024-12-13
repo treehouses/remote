@@ -1,19 +1,3 @@
-/*
- * ConnectBot: simple, powerful, open-source SSH client for Android
- * Copyright 2007 Kenny Root, Jeffrey Sharkey
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.treehouses.remote.bases
 
 import com.trilead.ssh2.*
@@ -23,10 +7,10 @@ import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
 import io.treehouses.remote.R
 import io.treehouses.remote.ssh.Ed25519Provider.Companion.insertIfNeeded
-import io.treehouses.remote.ssh.terminal.TerminalBridge
-import io.treehouses.remote.ssh.terminal.TerminalManager
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.ssh.beans.PubKeyBean
+import io.treehouses.remote.ssh.terminal.TerminalBridge
+import io.treehouses.remote.ssh.terminal.TerminalManager
 import io.treehouses.remote.utils.KeyUtils
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
 import net.i2p.crypto.eddsa.EdDSAPublicKey
@@ -38,9 +22,6 @@ import java.security.interfaces.*
 import java.util.*
 import java.util.regex.Pattern
 
-/**
- * @author Kenny Root
- */
 open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     var host: HostBean? = null
     var bridge: TerminalBridge? = null
@@ -49,10 +30,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     var emulation: String? = null
 
     companion object {
-        //const val protocolName = "ssh"
         const val TAG = "CB.SSH"
-
-        //const val defaultPort = 22
         const val AUTH_PUBLICKEY = "publickey"
         const val AUTH_PASSWORD = "password"
         const val AUTH_KEYBOARDINTERACTIVE = "keyboard-interactive"
@@ -64,38 +42,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                 or ChannelCondition.CLOSED
                 or ChannelCondition.EOF)
 
-//        fun getUri(input: String?): Uri? {
-//            val matcher = hostmask.matcher(input)
-//            if (!matcher.matches()) return null
-//            val sb = StringBuilder()
-//            sb.append(protocolName)
-//                    .append("://")
-//                    .append(Uri.encode(matcher.group(1)))
-//                    .append('@')
-//                    .append(Uri.encode(matcher.group(2)))
-//            val portString = matcher.group(6)
-//            var port = defaultPort
-//            if (portString != null) {
-//                try {
-//                    port = portString.toInt()
-//                    if (port < 1 || port > 65535) {
-//                        port = defaultPort
-//                    }
-//                } catch (nfe: NumberFormatException) {
-//                    // Keep the default port
-//                }
-//            }
-//            if (port != defaultPort) {
-//                sb.append(':')
-//                        .append(port)
-//            }
-//            sb.append("/#")
-//                    .append(Uri.encode(input))
-//            return Uri.parse(sb.toString())
-//        }
-
         init {
-            // Since this class deals with EdDSA keys, we need to make sure this is available.
             insertIfNeeded()
         }
     }
@@ -117,8 +64,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     protected var stdin: OutputStream? = null
     protected var stdout: InputStream? = null
     protected var stderr: InputStream? = null
-
-    //    private List<PortForwardBean> portForwards = new ArrayList<>();
     protected var columns = 0
     protected var rows = 0
     private val width = 0
@@ -129,8 +74,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     inner class HostKeyVerifier : ExtendedServerHostKeyVerifier() {
         @Throws(IOException::class)
         override fun verifyServerHostKey(hostname: String, port: Int, serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
-
-            // read in all known hosts from hostdb
             val hosts = KeyUtils.getAllKnownHosts(manager!!.applicationContext)
             val matchName = String.format(Locale.US, "%s:%d", hostname, port)
             val print = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
@@ -145,10 +88,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
                     val hostWarn = manager!!.res!!.getString(id2, hostname)
                     bridge!!.outputLine(hostWarn)
                     bridge!!.outputLine(hostPrint)
-                    //                    if (result) {
-//                        // save this key in known database
-//                        manager.hostdb.saveKnownHost(hostname, port, serverHostKeyAlgorithm, serverHostKey);
-//                    }
                     promptKeys(hostname, port, serverHostKeyAlgorithm, serverHostKey)
                 }
                 KnownHosts.HOSTKEY_HAS_CHANGED -> {
@@ -172,8 +111,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
 
         private fun onHostKeyChanged(algorithmName: String, fingerprint: String) {
-            val header = String.format("@   %s   @",
-                    manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
+            val header = String.format("@   %s   @", manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
             val atsigns = CharArray(header.length)
             Arrays.fill(atsigns, '@')
             val border = String(atsigns)
@@ -185,7 +123,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
 
         private fun promptKeys(hostname: String, port: Int, serverHostKeyAlgorithm: String, serverHostKey: ByteArray): Boolean {
-            // Users have no way to delete keys, so we'll prompt them for now.
             if (continueConnecting()) {
                 KeyUtils.saveKnownHost(manager!!.applicationContext, "$hostname:$port", serverHostKeyAlgorithm, serverHostKey)
                 return true
@@ -217,27 +154,14 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
     @Throws(IOException::class)
     protected fun tryPublicKey(username: String?, keyNickname: String?, pair: KeyPair?): Boolean {
-        //bridge.outputLine(String.format("Attempting 'publickey' with key '%s' [%s]...", keyNickname, trileadKey.toString()));
         val success = connection!!.authenticateWithPublicKey(username, pair)
         if (!success) bridge!!.outputLine(manager!!.res!!.getString(R.string.terminal_auth_pubkey_fail, keyNickname))
         return success
     }
 
-    /**
-     * Internal method to request actual PTY terminal once we've finished
-     * authentication. If called before authenticated, it will just fail.
-     */
     protected fun finishConnection() {
         authenticated = true
 
-//        for (PortForwardBean portForward : portForwards) {
-//            try {
-//                enablePortForward(portForward);
-//                bridge.outputLine(manager.res.getString(R.string.terminal_enable_portfoward, portForward.getDescription()));
-//            } catch (Exception e) {
-//                Log.e(TAG, "Error setting up port forward during connect", e);
-//            }
-//        }
         if (!host!!.wantSession) {
             outputLine(R.string.terminal_no_session)
             bridge!!.onConnected()
@@ -261,17 +185,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         }
     }
 
-//    val options: Map<String, String>
-//        get() {
-//            val options: MutableMap<String, String> = HashMap()
-//            options["compression"] = java.lang.Boolean.toString(compression)
-//            return options
-//        }
-//
-//    fun setOptions(options: Map<String?, String?>) {
-//        if (options.containsKey("compression")) compression = java.lang.Boolean.parseBoolean(options["compression"])
-//    }
-
     protected fun onDisconnect() {
         bridge!!.dispatchDisconnect(false)
     }
@@ -280,182 +193,14 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         onDisconnect()
     }
 
-//    fun canForwardPorts(): Boolean {
-//        return true
-//    }
-
-    //    @Override
-    //    public List<PortForwardBean> getPortForwards() {
-    //        return portForwards;
-    //    }
-    //
-    //    @Override
-    //    public boolean addPortForward(PortForwardBean portForward) {
-    //        return portForwards.add(portForward);
-    //    }
-    //
-    //    @Override
-    //    public boolean removePortForward(PortForwardBean portForward) {
-    //        // Make sure we don't have a phantom forwarder.
-    //        disablePortForward(portForward);
-    //
-    //        return portForwards.remove(portForward);
-    //    }
-    //
-    //    @Override
-    //    public boolean enablePortForward(PortForwardBean portForward) {
-    //        if (!portForwards.contains(portForward)) {
-    //            Log.e(TAG, "Attempt to enable port forward not in list");
-    //            return false;
-    //        }
-    //
-    //        if (!authenticated)
-    //            return false;
-    //
-    //        if (HostDatabase.PORTFORWARD_LOCAL.equals(portForward.getType())) {
-    //            LocalPortForwarder lpf = null;
-    //            try {
-    //                lpf = connection.createLocalPortForwarder(
-    //                        new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()),
-    //                        portForward.getDestAddr(), portForward.getDestPort());
-    //            } catch (Exception e) {
-    //                Log.e(TAG, "Could not create local port forward", e);
-    //                return false;
-    //            }
-    //
-    //            if (lpf == null) {
-    //                Log.e(TAG, "returned LocalPortForwarder object is null");
-    //                return false;
-    //            }
-    //
-    //            portForward.setIdentifier(lpf);
-    //            portForward.setEnabled(true);
-    //            return true;
-    //        } else if (HostDatabase.PORTFORWARD_REMOTE.equals(portForward.getType())) {
-    //            try {
-    //                connection.requestRemotePortForwarding("", portForward.getSourcePort(), portForward.getDestAddr(), portForward.getDestPort());
-    //            } catch (Exception e) {
-    //                Log.e(TAG, "Could not create remote port forward", e);
-    //                return false;
-    //            }
-    //
-    //            portForward.setEnabled(true);
-    //            return true;
-    //        } else if (HostDatabase.PORTFORWARD_DYNAMIC5.equals(portForward.getType())) {
-    //            DynamicPortForwarder dpf = null;
-    //
-    //            try {
-    //                dpf = connection.createDynamicPortForwarder(
-    //                        new InetSocketAddress(InetAddress.getLocalHost(), portForward.getSourcePort()));
-    //            } catch (Exception e) {
-    //                Log.e(TAG, "Could not create dynamic port forward", e);
-    //                return false;
-    //            }
-    //
-    //            portForward.setIdentifier(dpf);
-    //            portForward.setEnabled(true);
-    //            return true;
-    //        } else {
-    //            // Unsupported type
-    //            Log.e(TAG, String.format("attempt to forward unknown type %s", portForward.getType()));
-    //            return false;
-    //        }
-    //    }
-    //    @Override
-    //    public boolean disablePortForward(PortForwardBean portForward) {
-    //        if (!portForwards.contains(portForward)) {
-    //            Log.e(TAG, "Attempt to disable port forward not in list");
-    //            return false;
-    //        }
-    //
-    //        if (!authenticated)
-    //            return false;
-    //
-    //        if (HostDatabase.PORTFORWARD_LOCAL.equals(portForward.getType())) {
-    //            LocalPortForwarder lpf = null;
-    //            lpf = (LocalPortForwarder) portForward.getIdentifier();
-    //
-    //            if (!portForward.isEnabled() || lpf == null) {
-    //                Log.d(TAG, String.format("Could not disable %s; it appears to be not enabled or have no handler", portForward.getNickname()));
-    //                return false;
-    //            }
-    //
-    //            portForward.setEnabled(false);
-    //
-    //            lpf.close();
-    //
-    //            return true;
-    //        } else if (HostDatabase.PORTFORWARD_REMOTE.equals(portForward.getType())) {
-    //            portForward.setEnabled(false);
-    //
-    //            try {
-    //                connection.cancelRemotePortForwarding(portForward.getSourcePort());
-    //            } catch (IOException e) {
-    //                Log.e(TAG, "Could not stop remote port forwarding, setting enabled to false", e);
-    //                return false;
-    //            }
-    //
-    //            return true;
-    //        } else if (HostDatabase.PORTFORWARD_DYNAMIC5.equals(portForward.getType())) {
-    //            DynamicPortForwarder dpf = null;
-    //            dpf = (DynamicPortForwarder) portForward.getIdentifier();
-    //
-    //            if (!portForward.isEnabled() || dpf == null) {
-    //                Log.d(TAG, String.format("Could not disable %s; it appears to be not enabled or have no handler", portForward.getNickname()));
-    //                return false;
-    //            }
-    //
-    //            portForward.setEnabled(false);
-    //
-    //            dpf.close();
-    //
-    //            return true;
-    //        } else {
-    //            // Unsupported type
-    //            Log.e(TAG, String.format("attempt to forward unknown type %s", portForward.getType()));
-    //            return false;
-    //        }
-    //    }
-
-//
-//    fun getDefaultNickname(username: String?, hostname: String?, port: Int): String {
-//        return if (port == defaultPort) {
-//            String.format(Locale.US, "%s@%s", username, hostname)
-//        } else {
-//            String.format(Locale.US, "%s@%s:%d", username, hostname, port)
-//        }
-//    }
-
-    /**
-     * Handle challenges from keyboard-interactive authentication mode.
-     */
     override fun replyToChallenge(name: String, instruction: String, numPrompts: Int, prompt: Array<String>, echo: BooleanArray): Array<String?> {
         interactiveCanContinue = true
         val responses = arrayOfNulls<String>(numPrompts)
         for (i in 0 until numPrompts) {
-            // request response from user for each prompt
             responses[i] = bridge!!.promptHelper!!.requestPrompt<String>(instruction, prompt[i], isBool = false)
         }
         return responses
     }
-
-//    fun createHost(uri: Uri): HostBean {
-//        val host = HostBean()
-//        host.protocol = protocolName
-//        host.hostname = uri.host
-//        var port = uri.port
-//        if (port < 0) port = defaultPort
-//        host.port = port
-//        host.username = uri.userInfo
-//        val nickname = uri.fragment
-//        if (nickname == null || nickname.isEmpty()) {
-//            host.nickname = getDefaultNickname(host.username,
-//                    host.hostname, host.port)
-//        } else {
-//            host.nickname = uri.fragment
-//        }
-//        return host
-//    }
 
     fun setUseAuthAgent(useAuthAgent: String) {
         this.useAuthAgent = useAuthAgent
@@ -467,10 +212,13 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             val pair = value?.pair
             try {
                 pubKeys[key] = when (pair?.private) {
-                    is RSAPrivateKey -> RSASHA1Verify.encodeSSHRSAPublicKey(pair.public as RSAPublicKey)
-                    is DSAPrivateKey -> DSASHA1Verify.encodeSSHDSAPublicKey(pair.public as DSAPublicKey)
-                    is ECPrivateKey -> ECDSASHA2Verify.encodeSSHECDSAPublicKey(pair.public as ECPublicKey)
-                    is EdDSAPrivateKey -> Ed25519Verify.encodeSSHEd25519PublicKey(pair.public as EdDSAPublicKey)
+                    is RSAPrivateKey -> RSASHA1Verify.get().encodePublicKey(pair.public as RSAPublicKey)
+                    is DSAPrivateKey -> DSASHA1Verify.get().encodePublicKey(pair.public as DSAPublicKey)
+                    is ECPrivateKey -> {
+                        val verifier = ECDSASHA2Verify.getVerifierForKey(pair.public as ECPublicKey)
+                        verifier.encodePublicKey(pair.public as ECPublicKey)
+                    }
+                    is EdDSAPrivateKey -> Ed25519Verify.get().encodePublicKey(pair.public as EdDSAPublicKey)
                     else -> ByteArray(0)
                 }
             } catch (e: IOException) {
@@ -499,7 +247,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
     override fun addIdentity(pair: KeyPair, comment: String, confirmUse: Boolean, lifetime: Int): Boolean {
         val pubkey = PubKeyBean()
-        //		pubkey.setType(PubkeyDatabase.KEY_TYPE_IMPORTED);
         pubkey.nickname = comment
         pubkey.isConfirmUse = confirmUse
         pubkey.lifetime = lifetime
