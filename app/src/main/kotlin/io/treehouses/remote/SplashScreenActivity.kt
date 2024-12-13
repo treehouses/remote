@@ -10,74 +10,72 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
-import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.logD
-
+import io.treehouses.remote.databinding.ActivitySplashScreenBinding
+import io.treehouses.remote.utils.SaveUtils.Screens.FIRST_TIME
 
 class SplashScreenActivity : AppCompatActivity() {
+    lateinit var activitySplashBinding: ActivitySplashScreenBinding
     private var logoAnimation: Animation? = null
     private var textAnimation: Animation? = null
-    private var logo: ImageView? = null
-    private var logoText: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this@SplashScreenActivity)
+        activitySplashBinding = ActivitySplashScreenBinding.inflate(layoutInflater)
+
+        // Install the splash screen
+        val splashScreen = installSplashScreen()
+
+        // Apply customizations (e.g., night mode, font scale)
         nightMode()
         adjustFontScale(resources.configuration, fontSize())
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (preferences.getBoolean("splashScreen", true)) {
-            setContentView(R.layout.activity_splash_screen)
-            logo = findViewById(R.id.splash_logo)
-            logoAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_logo_anim)
-            logo?.animation = logoAnimation
-            logoText = findViewById(R.id.logo_text)
+            // Keep the splash screen for the duration
+            splashScreen.setKeepOnScreenCondition { true }
+            setContentView(activitySplashBinding.root)
             textAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_text_anim)
-            logoText?.animation = textAnimation
-            Handler(Looper.getMainLooper()).postDelayed({ goToNextActivity() }, SPLASH_TIME_OUT.toLong())
-        } else { goToNextActivity() }
+            activitySplashBinding.logoText.animation = textAnimation
+            goToNextActivityAfterDelay()
+        } else {
+            goToNextActivity()
+        }
     }
 
-    fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
+    private fun adjustFontScale(configuration: Configuration?, fontSize: Int) {
         configuration?.let {
-            it.fontScale = 0.05F*fontSize.toFloat()
+            it.fontScale = 0.05F * fontSize.toFloat()
             val metrics: DisplayMetrics = resources.displayMetrics
             val wm: WindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             wm.defaultDisplay.getMetrics(metrics)
             metrics.scaledDensity = configuration.fontScale * metrics.density
-
             baseContext.applicationContext.createConfigurationContext(it)
             baseContext.resources.displayMetrics.setTo(metrics)
-
         }
+    }
+
+    private fun goToNextActivityAfterDelay() {
+        Handler(Looper.getMainLooper()).postDelayed({ goToNextActivity() }, SPLASH_TIME_OUT.toLong())
     }
 
     private fun goToNextActivity() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (preferences.getBoolean(SaveUtils.Screens.FIRST_TIME.name, true)) {
+        if (preferences.getBoolean(FIRST_TIME.name, true)) {
             startActivity(Intent(this, IntroActivity::class.java))
-            val editor = preferences.edit()
-            editor.putBoolean(SaveUtils.Screens.FIRST_TIME.name, false)
-            editor.apply()
-        }
-        else {
+            preferences.edit().putBoolean(FIRST_TIME.name, false).apply()
+        } else {
             startActivity(Intent(this@SplashScreenActivity, InitialActivity::class.java))
         }
         finish()
     }
 
-    companion object {
-        private const val SPLASH_TIME_OUT = 2000
-    }
-
     private fun nightMode() {
         val preference = PreferenceManager.getDefaultSharedPreferences(this).getString("dark_mode", "Follow System")
-        val options = listOf(*resources.getStringArray(R.array.dark_mode_options))
-        resources.getStringArray(R.array.led_options_commands)
+        val options = resources.getStringArray(R.array.dark_mode_options).toList()
         when (options.indexOf(preference)) {
             0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -85,9 +83,11 @@ class SplashScreenActivity : AppCompatActivity() {
         }
     }
 
-    private fun fontSize(): Int
-    {
-        logD("FONT SIZE " + PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18).toString())
+    private fun fontSize(): Int {
         return PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 18)
+    }
+
+    companion object {
+        private const val SPLASH_TIME_OUT = 2000
     }
 }

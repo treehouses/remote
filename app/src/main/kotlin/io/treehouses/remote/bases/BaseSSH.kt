@@ -28,8 +28,6 @@ import io.treehouses.remote.ssh.terminal.TerminalManager
 import io.treehouses.remote.ssh.beans.HostBean
 import io.treehouses.remote.ssh.beans.PubKeyBean
 import io.treehouses.remote.utils.KeyUtils
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
 import net.i2p.crypto.eddsa.EdDSAPublicKey
 import java.io.IOException
@@ -134,7 +132,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
             // read in all known hosts from hostdb
             val hosts = KeyUtils.getAllKnownHosts(manager!!.applicationContext)
-            logD("ALL HOSTS $hosts")
             val matchName = String.format(Locale.US, "%s:%d", hostname, port)
             val print = KnownHosts.createHexFingerprint(serverHostKeyAlgorithm, serverHostKey)
             val algo: String = if ("ssh-rsa" == serverHostKeyAlgorithm) "RSA" else if ("ssh-dss" == serverHostKeyAlgorithm) "DSA" else if (serverHostKeyAlgorithm.startsWith("ecdsa-")) "EC" else if ("ssh-ed25519" == serverHostKeyAlgorithm) "Ed25519" else serverHostKeyAlgorithm
@@ -207,7 +204,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
         override fun removeServerHostKey(host: String, port: Int, algorithm: String, hostKey: ByteArray) {
             KeyUtils.removeKnownHost(manager!!.applicationContext, "$host:$port")
-            logD("REMOVING HOST KEY For: $host:$port with algorithm: $algorithm")
         }
 
         override fun addServerHostKey(host: String, port: Int, algorithm: String, hostKey: ByteArray) {
@@ -233,7 +229,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
      */
     protected fun finishConnection() {
         authenticated = true
-        logD("SHOULD BE AUTHENTICATED HERE")
 
 //        for (PortForwardBean portForward : portForwards) {
 //            try {
@@ -262,7 +257,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
             isSessionOpen = true
             bridge!!.onConnected()
         } catch (e1: IOException) {
-            logE("Problem while trying to create PTY in finishConnection() $e1")
+            e1.printStackTrace()
         }
     }
 
@@ -488,7 +483,6 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
     override fun getKeyPair(publicKey: ByteArray): KeyPair? {
         val nickname = manager!!.getKeyNickname(publicKey) ?: return null
         if (useAuthAgent == "no") {
-            logD(TAG)
             return null
         } else if (useAuthAgent == "confirm" ||
                 manager!!.loadedKeypairs[nickname]!!.bean!!.isConfirmUse) {

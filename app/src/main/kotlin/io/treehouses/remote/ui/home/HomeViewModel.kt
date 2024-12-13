@@ -15,7 +15,6 @@ import io.treehouses.remote.pojo.NetworkProfile
 import io.treehouses.remote.pojo.enum.Resource
 import io.treehouses.remote.pojo.enum.Status
 import io.treehouses.remote.utils.RESULTS
-import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
 import java.util.*
 
@@ -103,7 +102,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
             }
             s == RESULTS.VERSION && checkVersionSent -> checkVersion(output)
             s == RESULTS.REMOTE_CHECK -> {
-                sendLog(mChatService.connectedDeviceName, output.trim().split(" "))
+                sendLog("${mChatService.connectedDeviceName}", output.trim().split(" "))
                 sendMessage(getString(R.string.TREEHOUSES_UPGRADE_CHECK))
             }
             else -> moreActions(output, s)
@@ -185,7 +184,6 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      * @see FragmentViewModel.onWrite
      */
     override fun onWrite(input: String) {
-        logE("ON WRITE $input")
     }
 
     override fun onOtherMessage(msg: Message) {
@@ -199,7 +197,7 @@ class HomeViewModel(application: Application) : FragmentViewModel(application) {
      */
     private fun sendLog(deviceName: String, readMessage: List<String>) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(getApplication())
-        val connectionCount = preferences!!.getInt("connection_count", 0)
+        val connectionCount = preferences.getInt("connection_count", 0)
         val sendLog = preferences.getBoolean("send_log", true)
         preferences.edit().putInt("connection_count", connectionCount + 1).apply()
         if (connectionCount >= 3 && sendLog) {

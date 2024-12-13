@@ -83,7 +83,6 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         }
     }
 
-
     fun onCreateView() {
         tunnelSSHData.value = Resource.loading(tunnelSSHObject)
         tunnelSSHObject.enableSwitchNotification = true
@@ -91,8 +90,6 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         tunnelSSHObject.hostNames = ArrayList()
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
     }
-
-
 
     fun deleteHostPorts() {
         tunnelSSHObject.addHostText = "Deleting all hosts..."
@@ -121,7 +118,7 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_ADD_PORT_ACTUAL, s2, s1, parts))
     }
 
-    fun handleNewList(readMessage: String) {
+    private fun handleNewList(readMessage: String) {
         var position = 0
         tunnelSSHObject.addPortText = "Add Port"
         tunnelSSHObject.addHostText = "Add Host"
@@ -180,7 +177,7 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         tunnelSSHObject.privateKey = strPhonePrivateKey
     }
 
-    protected fun handleOnStatus() {
+    private fun handleOnStatus() {
         tunnelSSHObject.checkSwitchNotification = true
         tunnelSSHObject.enableSwitchNotification = true
         tunnelSSHObject.enabledNotifyNow = true
@@ -188,14 +185,14 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
-    protected fun handleOffStatus() {
+    private fun handleOffStatus() {
         tunnelSSHObject.checkSwitchNotification = false
         tunnelSSHObject.enableSwitchNotification = true
         tunnelSSHObject.enabledNotifyNow = true
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_PORTS))
     }
 
-    protected fun handleNoPorts() {
+    private fun handleNoPorts() {
         tunnelSSHObject.enableSSHPort = true
         tunnelSSHObject.addPortText = "Add Port"
         tunnelSSHObject.addHostText = "Add Host"
@@ -214,10 +211,9 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
 
         tunnelSSHData.value = Resource.success(tunnelSSHObject)
         Toast.makeText(context, "Host not found. Failure to delete port.", Toast.LENGTH_SHORT).show()
-
     }
 
-    protected fun handleModifiedList() {
+    private fun handleModifiedList() {
         Toast.makeText(context, "Added/Removed. Retrieving port list.", Toast.LENGTH_SHORT).show()
         tunnelSSHObject.addPortText = "Retrieving..."
         tunnelSSHObject.addHostText = "Retrieving..."
@@ -246,7 +242,7 @@ open class SSHTunnelViewModel(application: Application) : BaseSSHTunnelViewModel
         if (tunnelSSHObject.hostPosition.last() < position)
             myPos = tunnelSSHObject.hostPosition.lastIndex
         val portName = TunnelUtils.getPortName(tunnelSSHObject.portNames, position)
-        val formatArgs = portName + " " + tunnelSSHObject.hostNames[myPos].split(":")[0]
+        val formatArgs = "$portName ${tunnelSSHObject.hostNames[myPos].split(":")[0]}"
         sendMessage(getString(R.string.TREEHOUSES_SSHTUNNEL_REMOVE_PORT, formatArgs)); tunnelSSHObject.addPortText = "deleting port ....."
         tunnelSSHObject.enableSSHPort = false; tunnelSSHObject.enableAddPort = false
 

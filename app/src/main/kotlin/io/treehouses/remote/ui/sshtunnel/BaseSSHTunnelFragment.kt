@@ -26,8 +26,8 @@ open class BaseSSHTunnelFragment : Fragment() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Save Key To Pi")
         builder.setMessage(
-                "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
-                        "Phone Private Key for ${profile}: \n$storedPrivateKey")
+            "Phone Public Key for ${profile}: \n$storedPublicKey\n\n" +
+                    "Phone Private Key for ${profile}: \n$storedPrivateKey")
         builder.setPositiveButton("Save to Pi") { _: DialogInterface?, _: Int ->
             viewModel.sendMessage("treehouses remote key receive \"${storedPublicKey}\" \"${storedPrivateKey}\" $profile")
             Toast.makeText(context, "Key saved to Pi successfully", Toast.LENGTH_LONG).show()

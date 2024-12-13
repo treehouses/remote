@@ -62,7 +62,6 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
     private fun setLabelText(label: TextView, s: String, delete: Button) {
         label.text = s
         label.setTextColor(ContextCompat.getColor(context, R.color.expandable_child_text))
-
         delete.visibility = View.GONE
     }
 
@@ -87,14 +86,13 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
 
     private fun showConfirmation(name: String, groupPosition: Int, childPosition: Int) {
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(context, R.style.CustomAlertDialogStyle))
-                .setTitle("Delete Profile?")
-                .setMessage("Are you sure you want to delete the following Network Profile: $name")
-                .setPositiveButton("Delete") { _, _ ->
-                    deleteProfile(context, groupPosition, childPosition)
-                    data[titles[groupPosition]]!!.removeAt(childPosition)
-                    notifyDataSetChanged()
-                }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }.create()
+            .setTitle("Delete Profile?")
+            .setMessage("Are you sure you want to delete the following Network Profile: $name")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteProfile(context, groupPosition, childPosition)
+                data[titles[groupPosition]]!!.removeAt(childPosition)
+                notifyDataSetChanged()
+            }.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }.create()
         alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
         alertDialog.show()
     }
@@ -102,5 +100,4 @@ class ProfilesListAdapter(private val context: Context, private val titles: List
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
         return true
     }
-
 }

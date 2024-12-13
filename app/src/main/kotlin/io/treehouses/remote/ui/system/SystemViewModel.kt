@@ -11,7 +11,6 @@ import io.treehouses.remote.adapter.ViewHolderTether
 import io.treehouses.remote.adapter.ViewHolderVnc
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.utils.DialogUtils
-import io.treehouses.remote.utils.logD
 import java.util.*
 import kotlin.math.pow
 
@@ -161,7 +160,6 @@ class SystemViewModel(application: Application) : FragmentViewModel(application)
         val readMessage = output.trim { it <= ' ' }
         val diff = ArrayList<Long>()
         readMessageConditions(readMessage)
-        logD("readMessage = $readMessage")
         notifyUser(readMessage)
         vncToast(readMessage)
         checkAndPrefilIp(readMessage, diff)

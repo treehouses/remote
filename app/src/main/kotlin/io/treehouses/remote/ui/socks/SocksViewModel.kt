@@ -12,7 +12,7 @@ class SocksViewModel(application: Application) : FragmentViewModel(application) 
     val addProfileButtonEnabled: MutableLiveData<Boolean> = MutableLiveData()
     val textStatusText: MutableLiveData<String> = MutableLiveData()
     val refreshList: MutableLiveData<List<String>> = MutableLiveData()
-    var profileNameText = mutableListOf<String>()
+    private var profileNameText = mutableListOf<String>()
     val profileDialogDismiss: MutableLiveData<Boolean> = MutableLiveData()
 
     fun onLoad() {

@@ -19,7 +19,6 @@ import io.treehouses.remote.databinding.ActivityServicesDetailsBinding
 import io.treehouses.remote.databinding.DialogChooseUrlBinding
 import io.treehouses.remote.pojo.ServiceInfo
 import io.treehouses.remote.utils.countHeadersBefore
-import io.treehouses.remote.utils.logD
 
 open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, ServiceActionListener {
 
@@ -62,7 +61,6 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
      */
     protected fun openURL(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://$url"))
-        logD("OPENING: http://$url||")
         val chooser = Intent.createChooser(intent, "Select a browser")
         if (intent.resolveActivity(requireContext().packageManager) != null) startActivity(chooser)
     }
@@ -95,7 +93,7 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
                         .setPositiveButton("Delete") { _: DialogInterface?, _: Int ->
                             viewModel.onInstallClicked(s)
                         }.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-                dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 dialog.show()
             }
         }
@@ -110,10 +108,10 @@ open class BaseServicesDetailsFragment: BaseFragment(), OnItemSelectedListener, 
     override fun onClickLink(s: ServiceInfo?) {
         val chooseBind = DialogChooseUrlBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(ContextThemeWrapper(activity, R.style.CustomAlertDialogStyle)).setView(chooseBind.root).create()
-        alertDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         chooseBind.closeButton.setOnClickListener { alertDialog.dismiss() }
-        chooseBind.localButton.setOnClickListener { viewModel.getLocalLink(s!!); alertDialog.dismiss() }
-        chooseBind.torButton.setOnClickListener { viewModel.getTorLink(s!!); alertDialog.dismiss() }
+        chooseBind.localButton.setOnClickListener { viewModel.getLocalLink(s); alertDialog.dismiss() }
+        chooseBind.torButton.setOnClickListener { viewModel.getTorLink(s); alertDialog.dismiss() }
         alertDialog.show()
     }
 

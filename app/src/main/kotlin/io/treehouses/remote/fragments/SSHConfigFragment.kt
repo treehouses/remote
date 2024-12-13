@@ -22,7 +22,6 @@ import io.treehouses.remote.utils.KeyUtils
 import io.treehouses.remote.utils.KeyUtils.getOpenSSH
 import io.treehouses.remote.utils.SaveUtils
 import io.treehouses.remote.utils.Utils.toast
-import io.treehouses.remote.utils.logD
 
 class SSHConfigFragment : BaseSSHConfig() {
 
@@ -77,7 +76,6 @@ class SSHConfigFragment : BaseSSHConfig() {
             host.fontSize = 7
         }
         SaveUtils.updateHostList(requireContext(), host)
-        logD("HOST URI " + host.uri.toString())
         launchSSH(requireActivity(), host)
     }
 
@@ -112,7 +110,6 @@ class SSHConfigFragment : BaseSSHConfig() {
             val ipAddress = s.substringAfterLast("ip: ").trim()
             val hostAddress = "pi@$ipAddress"
             bind.sshTextInput.setText(hostAddress)
-            logD("GOT IP $ipAddress")
         } else if (s.contains("ip") || s.startsWith("essid")) {
             val splitResult = s.split(", ")
             if (splitResult.size > 1) {
@@ -121,7 +118,6 @@ class SSHConfigFragment : BaseSSHConfig() {
                     val ipAddress = ipString.substring(4)
                     val hostAddress = "pi@$ipAddress"
                     bind.sshTextInput.setText(hostAddress)
-                    logD("GOT IP $ipAddress")
                 }
             }
         }

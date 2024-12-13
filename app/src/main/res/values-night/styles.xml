@@ -91,4 +91,13 @@
         <item name="buttonTint">@color/bg_white</item>
         <item name="android:textColor">@color/bg_white</item>
     </style>
+
+    <style name="PopupMenu" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:popupBackground">@color/card_background</item>
+    </style>
+
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:textColor">@color/daynight_textColor</item>
+    </style>
 </resources>

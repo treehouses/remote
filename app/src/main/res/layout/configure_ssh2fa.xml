@@ -17,7 +17,7 @@
         android:weightSum="6"
         android:orientation="horizontal">
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch2FA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -4,12 +4,14 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -37,15 +39,18 @@ class InitialActivity : BaseInitialActivity() {
         instance = this
         setContentView(bind.root)
         requestPermission()
-//        g
-        //PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1)
-       // adjustFontScale(resources.configuration, PreferenceManager.getDefaultSharedPreferences(this).getInt("font_size", 1))
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         currentTitle = "Home"
         setUpDrawer()
         title = "Home"
-        GPSService()
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            startGPSService()
+        }
+
         val a = (application as MainApplication).getCurrentBluetoothService()
         if (a != null) {
             mChatService = a
@@ -54,54 +59,22 @@ class InitialActivity : BaseInitialActivity() {
         }
         checkStatusNow()
         openCallFragment(HomeFragment())
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleCustomOnBackPressed()
+            }
+        })
     }
 
-
-
-//    override fun onStart() {
-//        super.onStart()
-        // Bind to LocalService
-//        if (!isBluetoothServiceRunning(BluetoothChatService::class.java)) {
-//            Log.e("InitialActivity", "STARTING SERVICE")
-//            Intent(this, BluetoothChatService::class.java).also { intent ->
-//                bindService(intent, connection, Context.BIND_AUTO_CREATE)
-//            }
-//        }
-//    }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        try {
-//            unbindService(connection)
-//        } catch (e: IllegalArgumentException) {
-//            e.printStackTrace()
-//        }
-
-//    }
-
-//    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context, intent: Intent) {
-//            Log.e("RECEIVED", "RECEIVE")
-//            Toast.makeText(applicationContext, "received", Toast.LENGTH_SHORT).show()
-//            val a = (application as MainApplication).getCurrentBluetoothService()
-//            if (a != null ) {
-//                setChatService(a)
-//                openCallFragment(HomeFragment())
-//            }
-//        }
-//    }
-
-//    override fun onResume() {
-//        val filter = IntentFilter()
-//        filter.addAction(MainApplication.BLUETOOTH_SERVICE_CONNECTED)
-//        applicationContext.registerReceiver(receiver, filter)
-//        super.onResume()
-//    }
-//
-//    override fun onPause() {
-//        applicationContext.unregisterReceiver(receiver)
-//        super.onPause()
-//    }
+    private fun startGPSService() {
+        val intent = Intent(this, GPSService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -119,8 +92,7 @@ class InitialActivity : BaseInitialActivity() {
         bind.navView.setNavigationItemSelectedListener(this)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    fun handleCustomOnBackPressed() {
         if (bind.drawerLayout.isDrawerOpen(GravityCompat.START)) bind.drawerLayout.closeDrawer(GravityCompat.START)
         else {
             val f = supportFragmentManager.findFragmentById(R.id.fragment_container)

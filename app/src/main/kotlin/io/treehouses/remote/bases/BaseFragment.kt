@@ -13,7 +13,6 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.network.BluetoothChatService
 import io.treehouses.remote.utils.DialogUtils
-import io.treehouses.remote.utils.logE
 
 open class BaseFragment : Fragment() {
     var lastMessage = " "
@@ -23,20 +22,17 @@ open class BaseFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = if (context is HomeInteractListener) context else throw RuntimeException("Implement interface first")
-        mChatService = listener.getChatService()
         mBluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
 
     fun isListenerInitialized() = ::listener.isInitialized
 
-
     open fun chatOpen():Boolean {
         return this::mChatService.isInitialized
     }
 
-
     protected fun onLoad(mHandler: Handler?) {
-//        mChatService = listener.getChatService()
+        mChatService = listener.getChatService()
         mChatService.updateHandler(mHandler!!)
         mBluetoothAdapter = (context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
 
@@ -66,7 +62,7 @@ open class BaseFragment : Fragment() {
                         Toast.makeText(activity, "Bluetooth disconnected", Toast.LENGTH_LONG).show()
                         listener.redirectHome()
                     } catch (exception:NullPointerException){
-                        logE("Error $exception")
+                        exception.printStackTrace()
                     }
                 }
                 else -> getMessage(msg)

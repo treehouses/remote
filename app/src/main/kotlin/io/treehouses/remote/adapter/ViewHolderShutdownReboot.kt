@@ -14,15 +14,12 @@ import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.Utils.toast
 
-class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, listener: HomeInteractListener) {
+class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, listener: HomeInteractListener?) {
     private var readMessage  = ""
-    private val mChatService: BluetoothChatService = listener.getChatService()
+    private val mChatService: BluetoothChatService? = listener?.getChatService()
     private val shutdownBtn: Button = v.findViewById(R.id.shutdownBtn)
     private val rebootBtn: Button = v.findViewById(R.id.rebootBtn)
 
-    /**
-     * The Handler that gets information back from the BluetoothChatService
-     */
     val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
@@ -33,16 +30,14 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
         }
     }
 
-
-
     init {
         fun action(command:Int, toast:String){
-            listener.sendMessage(context!!.getString(command))
+            listener?.sendMessage(context?.getString(command))
             context.toast(toast)
-            listener.openCallFragment(HomeFragment())
+            listener?.openCallFragment(HomeFragment())
         }
 
-        mChatService.updateHandler(mHandler)
+        mChatService?.updateHandler(mHandler)
         val rebootCallback = { action(R.string.TREEHOUSES_REBOOTS_NOW, "Rebooting Device") }
         val shutdownCallback = { action(R.string.TREEHOUSES_SHUTDOWN_NOW, "Shutting Down Device") }
         rebootBtn.setOnClickListener {
@@ -52,6 +47,4 @@ class ViewHolderShutdownReboot internal constructor(v: View, context: Context?, 
             DialogUtils.createAlertDialog(context, "Shutdown?", "Are you sure you want to shutdown?", shutdownCallback)
         }
     }
-
-
 }

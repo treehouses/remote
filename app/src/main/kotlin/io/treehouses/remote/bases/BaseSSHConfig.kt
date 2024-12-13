@@ -17,7 +17,6 @@ import io.treehouses.remote.callback.RVButtonClickListener
 import io.treehouses.remote.databinding.DialogSshBinding
 import io.treehouses.remote.databinding.RowSshBinding
 import io.treehouses.remote.utils.SaveUtils
-import io.treehouses.remote.utils.logD
 import java.lang.Exception
 import java.util.regex.Pattern
 
@@ -45,28 +44,36 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
     }
 
     protected fun setUpAdapter() {
-        pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
-        if (!isVisible) return
-        if (pastHosts.isEmpty()) {
-            bind.noHosts.visibility = View.VISIBLE
-            bind.pastHosts.visibility = View.GONE
-        }
-        adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHRow {
-                val holderBinding = RowSshBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return ViewHolderSSHRow(holderBinding, this@BaseSSHConfig)
+        if (context != null) {
+            pastHosts = SaveUtils.getAllHosts(requireContext()).reversed()
+            if (!isVisible) return
+            if (pastHosts.isEmpty()) {
+                bind.noHosts.visibility = View.VISIBLE
+                bind.pastHosts.visibility = View.GONE
             }
+            adapter = object : RecyclerView.Adapter<ViewHolderSSHRow>() {
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSSHRow {
+                    val holderBinding = RowSshBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    return ViewHolderSSHRow(holderBinding, this@BaseSSHConfig)
+                }
 
-            override fun getItemCount(): Int { return pastHosts.size }
+                override fun getItemCount(): Int {
+                    return pastHosts.size
+                }
 
-            override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) {
-                val host = pastHosts[position]
-                holder.bind(host)
-                if (bound?.mHostBridgeMap?.get(host)?.get() != null) holder.setConnected(true) else holder.setConnected(false)
+                override fun onBindViewHolder(holder: ViewHolderSSHRow, position: Int) {
+                    val host = pastHosts[position]
+                    holder.bind(host)
+                    if (bound?.mHostBridgeMap?.get(host)?.get() != null) {
+                        holder.setConnected(true)
+                    } else {
+                        holder.setConnected(false)
+                    }
+                }
             }
+            bind.pastHosts.adapter = adapter
+            addItemTouchListener()
         }
-        bind.pastHosts.adapter = adapter
-        addItemTouchListener()
     }
 
     private fun addItemTouchListener() {
@@ -87,7 +94,7 @@ open class BaseSSHConfig: BaseFragment(), RVButtonClickListener, OnHostStatusCha
 
     override fun onStop() {
         super.onStop()
-        try {activity?.unbindService(connection)} catch (e: Exception) {logD("SSHConfig $e")}
+        try {activity?.unbindService(connection)} catch (e: Exception) {e.printStackTrace()}
     }
 
     override fun onButtonClick(position: Int) {

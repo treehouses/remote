@@ -28,8 +28,6 @@ import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.ssh.terminal.TerminalBridge
 import io.treehouses.remote.ssh.terminal.TerminalManager
 import io.treehouses.remote.ssh.beans.SelectionArea
-import io.treehouses.remote.utils.logD
-import io.treehouses.remote.utils.logE
 import java.io.IOException
 
 /**
@@ -211,11 +209,10 @@ open class BaseTerminalKeyListener(var manager: TerminalManager?,
     }
 
     fun handleProblem(e: IOException) {
-        logD("message $e")
         try {
             bridge.transport!!.flush()
         } catch (ioe: IOException) {
-            logE("Our transport was closed, dispatching disconnect event")
+            ioe.printStackTrace()
             bridge.dispatchDisconnect(false)
         }
     }

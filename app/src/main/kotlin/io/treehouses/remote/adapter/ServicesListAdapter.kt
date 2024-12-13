@@ -11,11 +11,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import io.treehouses.remote.R
 import io.treehouses.remote.pojo.ServiceInfo
-import io.treehouses.remote.utils.logE
 import java.util.*
 
-class ServicesListAdapter //private Button start, install, restart, link, info;
-(private val mContext: Context, private val dataIn: MutableList<ServiceInfo>, private val headerColour: Int) : ArrayAdapter<ServiceInfo>(mContext, 0, dataIn) {
+class ServicesListAdapter(mContext: Context, private val dataIn: MutableList<ServiceInfo>, private val headerColour: Int) : ArrayAdapter<ServiceInfo>(mContext, 0, dataIn) {
     var data: MutableList<ServiceInfo> = dataIn
     private var name: TextView? = null
     private var status: ImageView? = null
@@ -82,8 +80,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
     }
 
     private fun initView(position: Int, parent: ViewGroup): View {
-        val convertView: View?
-        convertView = if (flag(position)) {
+        val convertView: View = if (flag(position)) {
             LayoutInflater.from(context).inflate(R.layout.services_row_layout, parent, false)
         } else {
             LayoutInflater.from(context).inflate(R.layout.services_section_header, parent, false)
@@ -93,7 +90,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
             name!!.text = data[position].name
             setStatus(data[position].serviceStatus)
         } catch (exception: java.lang.IndexOutOfBoundsException) {
-            logE("Error $exception")
+            exception.printStackTrace()
         }
         return convertView
     }
@@ -102,7 +99,7 @@ class ServicesListAdapter //private Button start, install, restart, link, info;
         try {
             return data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_AVAILABLE && data[position].serviceStatus != ServiceInfo.SERVICE_HEADER_INSTALLED
         } catch (exception: IndexOutOfBoundsException) {
-            logE("Error $exception")
+            exception.printStackTrace()
         }
         return false
     }

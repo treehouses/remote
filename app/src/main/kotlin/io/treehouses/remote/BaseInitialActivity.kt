@@ -2,6 +2,7 @@ package io.treehouses.remote
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -23,9 +24,7 @@ import io.treehouses.remote.ui.home.HomeFragment
 import io.treehouses.remote.ui.network.NetworkFragment
 import io.treehouses.remote.ui.services.ServicesFragment
 import io.treehouses.remote.ui.status.StatusFragment
-import io.treehouses.remote.utils.LogUtils
 import io.treehouses.remote.utils.SettingsUtils
-import io.treehouses.remote.utils.logD
 
 open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
     protected var validBluetoothConnection = false
@@ -38,6 +37,13 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
 
     protected lateinit var currentTitle: String
 
+    lateinit var mChatService: BluetoothChatService
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mChatService = BluetoothChatService()
+    }
+
     override fun setChatService(service: BluetoothChatService) {
         mChatService = service
         mChatService.updateHandler(mHandler)
@@ -45,6 +51,9 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     }
 
     override fun getChatService(): BluetoothChatService {
+        if (!this::mChatService.isInitialized) {
+            mChatService = BluetoothChatService()
+        }
         return mChatService
     }
 
@@ -55,17 +64,15 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
      */
 
 
-    override fun sendMessage(s: String) {
+    override fun sendMessage(s: String?) {
         // Check that we're actually connected before trying anything
-        logD(s)
         if (mChatService.state != Constants.STATE_CONNECTED) {
             Toast.makeText(this@BaseInitialActivity, R.string.not_connected, Toast.LENGTH_SHORT).show()
-            LogUtils.mIdle()
             return
         }
 
         // Check that there's actually something to send
-        if (s.isNotEmpty()) {
+        if (s?.isNotEmpty() == true) {
             // Get the message bytes and tell the BluetoothChatService to write
             val send = s.toByteArray()
             mChatService.write(send)
@@ -93,7 +100,6 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
                     // save the connected device's name
                     mConnectedDeviceName = msg.data.getString(Constants.DEVICE_NAME)
                     if (mConnectedDeviceName != "" || mConnectedDeviceName != null) {
-                        logD("DEVICE$mConnectedDeviceName")
                         checkStatusNow()
                     }
                 }
@@ -104,19 +110,15 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     fun checkStatusNow() {
         validBluetoothConnection = when (mChatService.state) {
             Constants.STATE_CONNECTED -> {
-                LogUtils.mConnect()
                 true
             }
             Constants.STATE_NONE -> {
-                LogUtils.mOffline()
                 false
             }
             else -> {
-                LogUtils.mIdle()
                 false
             }
         }
-        logD("BOOLEAN $validBluetoothConnection")
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -175,6 +177,5 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
     companion object {
         @JvmStatic
         var instance: BaseInitialActivity? = null
-        lateinit var mChatService: BluetoothChatService
     }
 }

@@ -14,11 +14,10 @@ import com.caverock.androidsvg.SVG
 import io.treehouses.remote.callback.ServiceActionListener
 import io.treehouses.remote.databinding.ServiceCardBinding
 import io.treehouses.remote.pojo.ServiceInfo
-import io.treehouses.remote.utils.logD
 
 class ServiceCardFragment : Fragment(), View.OnClickListener {
     private var actionListener: ServiceActionListener? = null
-    private var binding: ServiceCardBinding? = null
+    private lateinit var binding: ServiceCardBinding
     private lateinit var serviceData: ServiceInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,27 +30,27 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = ServiceCardBinding.inflate(inflater, container, false)
-        binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
-        binding!!.serviceInfo.isFocusable = true
+        binding.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
+        binding.serviceInfo.isFocusable = true
         if (!serviceData.isHeader) {
             setServiceInfo(serviceData.info)
             setServiceSize(serviceData.size)
             showIcon(serviceData.icon)
             updateButtons(serviceData.serviceStatus)
             setAutorun(serviceData.autorun)
-            binding!!.installButton.setOnClickListener(this)
-            binding!!.startButton.setOnClickListener(this)
-            binding!!.openLink.setOnClickListener(this)
-            binding!!.editEnvButton.setOnClickListener(this)
-            binding!!.autorunChecked.setOnClickListener {
-                actionListener!!.onClickAutorun(serviceData, binding?.autorunChecked?.isChecked ?: false)
+            binding.installButton.setOnClickListener(this)
+            binding.startButton.setOnClickListener(this)
+            binding.openLink.setOnClickListener(this)
+            binding.editEnvButton.setOnClickListener(this)
+            binding.autorunChecked.setOnClickListener {
+                actionListener?.onClickAutorun(serviceData, binding.autorunChecked.isChecked)
             }
         }
-        return binding!!.root
+        return binding.root
     }
 
     private fun setAutorun(autorun: String?) {
-        binding!!.autorunChecked.isChecked = autorun!!.contains("true")
+        binding.autorunChecked.isChecked = autorun?.contains("true") ?: false
     }
 
     private fun setButtons(started: Boolean, installed: Boolean) {
@@ -67,8 +66,8 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         var visibility2 = View.GONE
         var visibility3 = View.GONE
 
-        binding!!.startButton.text = string1
-        binding!!.openLink.visibility = visibility1
+        binding.startButton.text = string1
+        binding.openLink.visibility = visibility1
 
         if (installed) {
             string2 = "Uninstall"
@@ -80,10 +79,10 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
         if (installed && !started && serviceData.usesEnv == "true")
             visibility4 = View.VISIBLE
 
-        binding!!.installButton.text = string2
-        binding!!.startButton.visibility = visibility2
-        binding!!.autorunChecked.visibility = visibility3
-        binding!!.editEnvButton.visibility = visibility4
+        binding.installButton.text = string2
+        binding.startButton.visibility = visibility2
+        binding.autorunChecked.visibility = visibility3
+        binding.editEnvButton.visibility = visibility4
 
     }
 
@@ -97,40 +96,40 @@ class ServiceCardFragment : Fragment(), View.OnClickListener {
 
     private fun showIcon(s: String?) {
         try {
-            logD("${serviceData.name}, showIcon: ${serviceData.icon}")
             val svg = SVG.getFromString(s)
             val pd = PictureDrawable(svg.renderToPicture())
-            binding!!.serviceLogo.setImageDrawable(pd)
+            binding.serviceLogo.setImageDrawable(pd)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     private fun setServiceInfo(s: String?) {
-        val spannableString = SpannableString(s)
+        val spannableString = SpannableString(s ?: "")
         Linkify.addLinks(spannableString, Linkify.ALL)
-        binding!!.serviceInfo.text = spannableString
-        binding!!.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
+        binding.serviceInfo.text = spannableString
+        binding.serviceInfo.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun setServiceSize(sz: Int) {
-        if(sz != -1)
-            binding!!.serviceSize.text = "$sz MB"
+        if(sz != -1) {
+            binding.serviceSize.text = "$sz MB"
+        }
     }
 
     override fun onClick(v: View) {
         when {
-            binding!!.installButton == v -> {
-                actionListener!!.onClickInstall(serviceData)
+            binding.installButton == v -> {
+                actionListener?.onClickInstall(serviceData)
             }
-            binding!!.startButton == v -> {
-                actionListener!!.onClickStart(serviceData)
+            binding.startButton == v -> {
+                actionListener?.onClickStart(serviceData)
             }
-            binding!!.openLink == v -> {
-                actionListener!!.onClickLink(serviceData)
+            binding.openLink == v -> {
+                actionListener?.onClickLink(serviceData)
             }
-            binding!!.editEnvButton == v -> {
-                actionListener!!.onClickEditEnvVar(serviceData)
+            binding.editEnvButton == v -> {
+                actionListener?.onClickEditEnvVar(serviceData)
             }
         }
     }

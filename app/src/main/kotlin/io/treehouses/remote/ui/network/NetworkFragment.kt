@@ -37,7 +37,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
     private lateinit var speedDialogTest: Button
     private var speedDialogCheck: Boolean = false
     protected val viewModel: NetworkViewModel by viewModels(ownerProducer = { this })
-    lateinit var dialogSpeedtestBinding: DialogSpeedtestBinding
+    private lateinit var dialogSpeedtestBinding: DialogSpeedtestBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = ActivityNetworkFragmentBinding.inflate(inflater, container, false)
         loadObservers()
@@ -108,7 +108,7 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
                     viewModel.rebootHelper()
                     dialog.dismiss()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.window?.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
     }
 
@@ -118,12 +118,12 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
                 .setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                     viewModel.resetNetwork()
                 }.setNegativeButton("No") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        a.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        a.window?.setBackgroundDrawableResource(android.R.color.transparent)
         a.show()
     }
 
     private fun speedTest(){
-        speedDialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+        speedDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         speedDialog.show()
         if(!speedDialogCheck){
             viewModel.treehousesInternet()
@@ -169,10 +169,11 @@ open class NetworkFragment : BaseFragment(), View.OnClickListener, FragmentDialo
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 Toast.makeText(context, "Wifi scan requires at least android API 23", Toast.LENGTH_LONG).show()
             } else {
+                val fragmentManager = bottomSheetDialogFragment.parentFragmentManager
                 val dialogFrag = WifiDialogFragment.newInstance()
                 dialogFrag.setTargetFragment(bottomSheetDialogFragment, Constants.REQUEST_DIALOG_WIFI)
-                dialogFrag.show(bottomSheetDialogFragment.requireActivity().supportFragmentManager.beginTransaction(), "wifiDialog")
+                dialogFrag.show(fragmentManager, "wifiDialog")
             }
-        } //    Next Version:
+        }
     }
 }

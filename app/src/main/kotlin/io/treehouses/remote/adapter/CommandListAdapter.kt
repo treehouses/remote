@@ -10,12 +10,13 @@ import io.treehouses.remote.R
 import io.treehouses.remote.pojo.CommandListItem
 import java.util.*
 
-class CommandListAdapter(private val context: Context, private val expandableListTitle: List<String>,
-                         private val expandableListDetail: HashMap<String, List<CommandListItem>>) : BaseExpandableListAdapter() {
+class CommandListAdapter(private val context: Context, private val expandableListTitle: List<String>, private val expandableListDetail: HashMap<String, List<CommandListItem>>) : BaseExpandableListAdapter() {
     override fun getChild(listPosition: Int, expandedListPosition: Int): Any {
         return if (expandedListPosition < expandableListDetail[expandableListTitle[listPosition]]!!.size) {
             expandableListDetail[expandableListTitle[listPosition]]!![expandedListPosition].getTitle()
-        } else "Add"
+        } else {
+            "Add"
+        }
     }
 
     override fun getChildId(listPosition: Int, expandedListPosition: Int): Long {
@@ -38,7 +39,9 @@ class CommandListAdapter(private val context: Context, private val expandableLis
     override fun getChildrenCount(listPosition: Int): Int {
         return if (listPosition == 0) {
             expandableListDetail[expandableListTitle[listPosition]]!!.size + 1
-        } else expandableListDetail[expandableListTitle[listPosition]]!!.size
+        } else {
+            expandableListDetail[expandableListTitle[listPosition]]!!.size
+        }
     }
 
     override fun getGroup(listPosition: Int): Any {
@@ -53,20 +56,18 @@ class CommandListAdapter(private val context: Context, private val expandableLis
         return listPosition.toLong()
     }
 
-    override fun getGroupView(listPosition: Int, isExpanded: Boolean,
-                              convertView: View?, parent: ViewGroup): View {
+    override fun getGroupView(listPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup): View {
         var newView = convertView
         val listTitle = getGroup(listPosition) as String
         if (newView == null) {
             newView = getConvertView(R.layout.list_group)
         }
-        val listTitleTextView = newView
-                .findViewById<View>(R.id.lblListHeader) as TextView
+        val listTitleTextView = newView.findViewById<View>(R.id.lblListHeader) as TextView
         listTitleTextView.text = listTitle
         return newView
     }
 
-    fun getConvertView(layout_id: Int): View {
+    private fun getConvertView(layout_id: Int): View {
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         return layoutInflater.inflate(layout_id, null)
     }
@@ -78,5 +79,4 @@ class CommandListAdapter(private val context: Context, private val expandableLis
     override fun isChildSelectable(listPosition: Int, expandedListPosition: Int): Boolean {
         return true
     }
-
 }

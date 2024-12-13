@@ -34,11 +34,13 @@
         android:theme="@style/MyMaterialTheme.Base"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+
         <activity android:name=".IntroActivity" />
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -56,9 +58,9 @@
             android:theme="@style/Theme.AppCompat"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
-        <service android:name=".utils.GPSService"
-            android:foregroundServiceType="location"
-            />
+        <service
+            android:name=".utils.GPSService"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".InitialActivity"

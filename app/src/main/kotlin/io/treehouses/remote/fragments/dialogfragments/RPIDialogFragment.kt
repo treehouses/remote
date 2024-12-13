@@ -25,7 +25,6 @@ import io.treehouses.remote.pojo.DeviceInfo
 import io.treehouses.remote.ui.home.HomeViewModel
 import io.treehouses.remote.utils.DialogUtils
 import io.treehouses.remote.utils.DialogUtils.CustomProgressDialog
-import io.treehouses.remote.utils.logD
 
 class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private val raspberryDevices: MutableList<BluetoothDevice> = ArrayList()
@@ -53,7 +52,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
         for (d in pairedDevices!!) {
-            logD("DEVICE " + d)
             if (checkPiAddress(d.address)) {
                 addToDialog(d, raspberryDevicesText, raspberryDevices, false)
                 bind!!.progressBar.visibility = View.INVISIBLE
@@ -125,7 +123,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             viewModel.connect(deviceList[position])
             mDialog!!.cancel()
             finish(mView)
-            logD("Connecting Bluetooth. Position: $position ;; Status: ${viewModel.connectionStatus.value}")
         }
     }
 
@@ -203,7 +200,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                     bind!!.progressBar.visibility = View.INVISIBLE
                 }
                 addToDialog(device, allDevicesText, allDevices, true)
-                logD("Broadcast BT ${device.name}${device.address}".trimIndent())
             }
         }
     }

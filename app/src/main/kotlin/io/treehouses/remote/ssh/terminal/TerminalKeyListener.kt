@@ -9,7 +9,6 @@ import io.treehouses.remote.PreferenceConstants
 import io.treehouses.remote.views.terminal.VDUBuffer
 import io.treehouses.remote.views.terminal.vt320
 import io.treehouses.remote.bases.BaseTerminalKeyListener
-import io.treehouses.remote.utils.logE
 import java.io.IOException
 
 class TerminalKeyListener(tm: TerminalManager?,
@@ -65,7 +64,7 @@ class TerminalKeyListener(tm: TerminalManager?,
         } catch (e: IOException) {
             handleProblem(e)
         } catch (npe: NullPointerException) {
-            logE("Input before connection established ignored.")
+            npe.printStackTrace()
         }
         return false
     }

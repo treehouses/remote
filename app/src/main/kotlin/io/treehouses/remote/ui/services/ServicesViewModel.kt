@@ -8,6 +8,7 @@ import androidx.lifecycle.map
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import io.treehouses.remote.LiveDataWrapper
 import io.treehouses.remote.R
 import io.treehouses.remote.bases.FragmentViewModel
 import io.treehouses.remote.pojo.ServiceInfo
@@ -21,7 +22,6 @@ import io.treehouses.remote.utils.constructServiceListFromData
 import io.treehouses.remote.utils.containsServiceAction
 import io.treehouses.remote.utils.formatServices
 import io.treehouses.remote.utils.isURL
-import io.treehouses.remote.utils.logE
 import io.treehouses.remote.utils.match
 
 class ServicesViewModel(application: Application) : FragmentViewModel(application) {
@@ -43,7 +43,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     /**
      * LiveData to fetch the cached services data
      */
-    private val cacheServiceData = MutableLiveData<ServicesData>()
+    private val cacheServiceData = MutableLiveData<ServicesData?>()
 
     /**
      * LiveData to observe the status of the Server Services result
@@ -97,7 +97,12 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     /**
      * Easy array to iterate over livedatas and update their values upon error
      */
-    private val lives = listOf(serviceAction, autoRunAction, getLinkAction, editEnvAction)
+    private val lives = listOf(
+        LiveDataWrapper(serviceAction),
+        LiveDataWrapper(autoRunAction),
+        LiveDataWrapper(getLinkAction),
+        LiveDataWrapper(editEnvAction)
+    )
     val error = MutableLiveData<String>()
 
     /**
@@ -116,7 +121,6 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         val data = PreferenceManager.getDefaultSharedPreferences(getApplication()).getString(SERVICES_CACHE, "")
         val rawData = data?.convertToObject(ServicesData::class.java)
         if (rawData?.available != null) {
-            logE("SUCCESSFUL R CACHE GOT:$rawData")
             cacheServiceData.value = rawData
         }
     }
@@ -125,7 +129,6 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * Saves a JSON string to the cache
      */
     fun updateServicesCache(newJSON: String) {
-        logE("SAVING $newJSON")
         PreferenceManager.getDefaultSharedPreferences(getApplication()).edit().putString(SERVICES_CACHE, newJSON).apply()
     }
 
@@ -135,11 +138,12 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      *  2. A specific service action was triggered
      */
     override fun onRead(output: String) {
-        logE("GOT $output")
         when {
             match(output) == RESULTS.ERROR && !output.contains("kill [") && !output.contains("tput: No") -> {       //kill to fix temporary issue
                 error.value = output
-                lives.forEach { it.value = Resource.nothing() }
+                lives.forEach { wrapper ->
+                    wrapper.liveData.value = Resource.nothing()
+                }
             }
             editEnvAction.value?.status == LOADING && output.startsWith("treehouses services") -> editEnvAction.value = Resource.success(output.split(" ").toMutableList())
             serverServiceData.value?.status == LOADING -> receiveJSON(output)
@@ -163,7 +167,6 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
         servicesJSON += current
         if (currentlyReceivingJSON && servicesJSON.trim().endsWith("}}")) {
             try {
-                logE("GOT $servicesJSON")
                 val data = Gson().fromJson(servicesJSON, ServicesData::class.java)
                 serverServiceData.value = if (data != null) {
                     updateServicesCache(servicesJSON)
@@ -235,7 +238,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Clicked
      */
     fun editEnvVariableRequest(service: ServiceInfo) {
-        sendMessage("treehouses services " + service.name + " config edit request")
+        sendMessage("treehouses services ${service.name} config edit request")
         editEnvAction.value = Resource.loading()
     }
 
@@ -245,7 +248,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param newValue : Boolean = the new value of the desired autorun config
      */
     fun switchAutoRun(service: ServiceInfo, newValue: Boolean) {
-        sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, service.name, newValue.toString()))
+        sendMessage(getString(R.string.TREEHOUSES_SERVICES_AUTORUN, service.name, "$newValue"))
         autoRunAction.value = Resource.loading()
     }
 
@@ -254,7 +257,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Service clicked
      */
 
-    fun getLocalLink(service: ServiceInfo) {
+    fun getLocalLink(service: ServiceInfo?) {
         getLink(service, R.string.TREEHOUSES_SERVICES_URL_LOCAL)
     }
 
@@ -264,7 +267,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Service clicked
      */
 
-    fun getTorLink(service: ServiceInfo) {
+    fun getTorLink(service: ServiceInfo?) {
         getLink(service, R.string.TREEHOUSES_SERVICES_URL_TOR)
     }
 
@@ -273,8 +276,8 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
      * @param service : ServiceInfo = Service clicked
      * @param id : Int = Identifier for command string
      */
-    private fun getLink(service: ServiceInfo, id: Int) {
-        sendMessage(getString(id, service.name))
+    private fun getLink(service: ServiceInfo?, id: Int) {
+        sendMessage(service?.name?.let { getString(id, it) })
         getLinkAction.value = Resource.loading()
     }
 
@@ -284,7 +287,7 @@ class ServicesViewModel(application: Application) : FragmentViewModel(applicatio
     override fun onCleared() {
         super.onCleared()
         if (error.value.isNullOrEmpty() && rawServicesData.value != null) {
-            updateServicesCache(Gson().toJson(rawServicesData.value!!.data))
+            updateServicesCache(Gson().toJson(rawServicesData.value?.data))
         }
     }
 

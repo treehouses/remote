@@ -15,8 +15,7 @@ import io.treehouses.remote.bases.BaseFragment
 import io.treehouses.remote.databinding.ActivitySystemFragmentBinding
 import io.treehouses.remote.pojo.NetworkListItem
 
-class SystemFragment : BaseFragment() {
-
+open class SystemFragment : BaseFragment() {
     protected val viewModel: SystemViewModel by viewModels(ownerProducer = { this })
     private lateinit var bind: ActivitySystemFragmentBinding
     lateinit var adapter: SystemListAdapter
@@ -29,7 +28,6 @@ class SystemFragment : BaseFragment() {
             viewModel.onClickListItem(groupPosition)
         }
         bind.listView.setAdapter(adapter)
-        //Tutorials.systemTutorials(bind, requireActivity())
         return bind.root
     }
 
