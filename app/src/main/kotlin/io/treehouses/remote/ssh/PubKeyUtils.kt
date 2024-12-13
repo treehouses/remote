@@ -105,130 +105,130 @@ object PubKeyUtils {
         }
     }
 
-//    static String getAlgorithmForOid(String oid) throws NoSuchAlgorithmException {
-//        if ("1.2.840.10045.2.1".equals(oid)) {
-//            return "EC";
-//        } else if ("1.2.840.113549.1.1.1".equals(oid)) {
-//            return "RSA";
-//        } else if ("1.2.840.10040.4.1".equals(oid)) {
-//            return "DSA";
-//        } else {
-//            throw new NoSuchAlgorithmException("Unknown algorithm OID " + oid);
-//        }
-//    }
-//
-//    static String getOidFromPkcs8Encoded(byte[] encoded) throws NoSuchAlgorithmException {
-//        if (encoded == null) {
-//            throw new NoSuchAlgorithmException("encoding is null");
-//        }
-//
-//        try {
-//            SimpleDERReader reader = new SimpleDERReader(encoded);
-//            reader.resetInput(reader.readSequenceAsByteArray());
-//            reader.readInt();
-//            reader.resetInput(reader.readSequenceAsByteArray());
-//            return reader.readOid();
-//        } catch (IOException e) {
-//            Log.w(TAG, "Could not read OID", e);
-//            throw new NoSuchAlgorithmException("Could not read key", e);
-//        }
-//    }
-//    static BigInteger getRSAPublicExponentFromPkcs8Encoded(byte[] encoded) throws InvalidKeySpecException {
-//        if (encoded == null) {
-//            throw new InvalidKeySpecException("encoded key is null");
-//        }
-//
-//        try {
-//            SimpleDERReader reader = new SimpleDERReader(encoded);
-//            reader.resetInput(reader.readSequenceAsByteArray());
-//            if (!reader.readInt().equals(BigInteger.ZERO)) {
-//                throw new InvalidKeySpecException("PKCS#8 is not version 0");
-//            }
-//
-//            reader.readSequenceAsByteArray();  // OID sequence
-//            reader.resetInput(reader.readOctetString());  // RSA key bytes
-//            reader.resetInput(reader.readSequenceAsByteArray());  // RSA key sequence
-//
-//            if (!reader.readInt().equals(BigInteger.ZERO)) {
-//                throw new InvalidKeySpecException("RSA key is not version 0");
-//            }
-//
-//            reader.readInt();  // modulus
-//            return reader.readInt();  // public exponent
-//        } catch (IOException e) {
-//            Log.w(TAG, "Could not read public exponent", e);
-//            throw new InvalidKeySpecException("Could not read key", e);
-//        }
-//    }
-//    public static KeyPair convertToKeyPair(PubKeyBean keybean, String password) throws BadPasswordException {
-////        if (PubkeyDatabase.KEY_TYPE_IMPORTED.equals(keybean.getType())) {
-////            // load specific key using pem format
-////            try {
-////                return PEMDecoder.decode(new String(keybean.getPrivateKey(), "UTF-8").toCharArray(), password);
-////            } catch (Exception e) {
-////                Log.e(TAG, "Cannot decode imported key", e);
-////                throw new BadPasswordException();
-////            }
-////        } else {
-//            // load using internal generated format
-//            try {
-//                PrivateKey privKey = PubKeyUtils.decodePrivate(keybean.getPrivateKey(), keybean.getType(), password);
-//                PublicKey pubKey = PubKeyUtils.decodePublic(keybean.getPublicKey(), keybean.getType());
-//                Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey));
-//
-//                return new KeyPair(pubKey, privKey);
-//            } catch (Exception e) {
-//                Log.e(TAG, "Cannot decode pubkey from database", e);
-//                throw new BadPasswordException();
-//            }
-////        }
-//    }
-//    public static KeyPair recoverKeyPair(byte[] encoded) throws NoSuchAlgorithmException,
-//            InvalidKeySpecException {
-//        final String algo = getAlgorithmForOid(getOidFromPkcs8Encoded(encoded));
-//
-//        final KeySpec privKeySpec = new PKCS8EncodedKeySpec(encoded);
-//
-//        final KeyFactory kf = KeyFactory.getInstance(algo);
-//        final PrivateKey priv = kf.generatePrivate(privKeySpec);
-//
-//        return new KeyPair(recoverPublicKey(kf, priv), priv);
-//    }
-//
-//    static PublicKey recoverPublicKey(KeyFactory kf, PrivateKey priv)
-//            throws NoSuchAlgorithmException, InvalidKeySpecException {
-//        if (priv instanceof RSAPrivateCrtKey) {
-//            RSAPrivateCrtKey rsaPriv = (RSAPrivateCrtKey) priv;
-//            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), rsaPriv
-//                    .getPublicExponent()));
-//        } else if (priv instanceof RSAPrivateKey) {
-//            BigInteger publicExponent = getRSAPublicExponentFromPkcs8Encoded(priv.getEncoded());
-//            RSAPrivateKey rsaPriv = (RSAPrivateKey) priv;
-//            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), publicExponent));
-//        } else if (priv instanceof DSAPrivateKey) {
-//            DSAPrivateKey dsaPriv = (DSAPrivateKey) priv;
-//            DSAParams params = dsaPriv.getParams();
-//
-//            // Calculate public key Y
-//            BigInteger y = params.getG().modPow(dsaPriv.getX(), params.getP());
-//
-//            return kf.generatePublic(new DSAPublicKeySpec(y, params.getP(), params.getQ(), params
-//                    .getG()));
-//        } else if (priv instanceof ECPrivateKey) {
-//            ECPrivateKey ecPriv = (ECPrivateKey) priv;
-//            ECParameterSpec params = ecPriv.getParams();
-//
-//            // Calculate public key Y
-//            ECPoint generator = params.getGenerator();
-//            BigInteger[] wCoords = EcCore.multiplyPointA(new BigInteger[] { generator.getAffineX(),
-//                    generator.getAffineY() }, ecPriv.getS(), params);
-//            ECPoint w = new ECPoint(wCoords[0], wCoords[1]);
-//
-//            return kf.generatePublic(new ECPublicKeySpec(w, params));
-//        } else {
-//            throw new NoSuchAlgorithmException("Key type must be RSA, DSA, or EC");
-//        }
-//    }
+    //    static String getAlgorithmForOid(String oid) throws NoSuchAlgorithmException {
+    //        if ("1.2.840.10045.2.1".equals(oid)) {
+    //            return "EC";
+    //        } else if ("1.2.840.113549.1.1.1".equals(oid)) {
+    //            return "RSA";
+    //        } else if ("1.2.840.10040.4.1".equals(oid)) {
+    //            return "DSA";
+    //        } else {
+    //            throw new NoSuchAlgorithmException("Unknown algorithm OID " + oid);
+    //        }
+    //    }
+    //
+    //    static String getOidFromPkcs8Encoded(byte[] encoded) throws NoSuchAlgorithmException {
+    //        if (encoded == null) {
+    //            throw new NoSuchAlgorithmException("encoding is null");
+    //        }
+    //
+    //        try {
+    //            SimpleDERReader reader = new SimpleDERReader(encoded);
+    //            reader.resetInput(reader.readSequenceAsByteArray());
+    //            reader.readInt();
+    //            reader.resetInput(reader.readSequenceAsByteArray());
+    //            return reader.readOid();
+    //        } catch (IOException e) {
+    //            Log.w(TAG, "Could not read OID", e);
+    //            throw new NoSuchAlgorithmException("Could not read key", e);
+    //        }
+    //    }
+    //    static BigInteger getRSAPublicExponentFromPkcs8Encoded(byte[] encoded) throws InvalidKeySpecException {
+    //        if (encoded == null) {
+    //            throw new InvalidKeySpecException("encoded key is null");
+    //        }
+    //
+    //        try {
+    //            SimpleDERReader reader = new SimpleDERReader(encoded);
+    //            reader.resetInput(reader.readSequenceAsByteArray());
+    //            if (!reader.readInt().equals(BigInteger.ZERO)) {
+    //                throw new InvalidKeySpecException("PKCS#8 is not version 0");
+    //            }
+    //
+    //            reader.readSequenceAsByteArray();  // OID sequence
+    //            reader.resetInput(reader.readOctetString());  // RSA key bytes
+    //            reader.resetInput(reader.readSequenceAsByteArray());  // RSA key sequence
+    //
+    //            if (!reader.readInt().equals(BigInteger.ZERO)) {
+    //                throw new InvalidKeySpecException("RSA key is not version 0");
+    //            }
+    //
+    //            reader.readInt();  // modulus
+    //            return reader.readInt();  // public exponent
+    //        } catch (IOException e) {
+    //            Log.w(TAG, "Could not read public exponent", e);
+    //            throw new InvalidKeySpecException("Could not read key", e);
+    //        }
+    //    }
+    //    public static KeyPair convertToKeyPair(PubKeyBean keybean, String password) throws BadPasswordException {
+    ////        if (PubkeyDatabase.KEY_TYPE_IMPORTED.equals(keybean.getType())) {
+    ////            // load specific key using pem format
+    ////            try {
+    ////                return PEMDecoder.decode(new String(keybean.getPrivateKey(), "UTF-8").toCharArray(), password);
+    ////            } catch (Exception e) {
+    ////                Log.e(TAG, "Cannot decode imported key", e);
+    ////                throw new BadPasswordException();
+    ////            }
+    ////        } else {
+    //            // load using internal generated format
+    //            try {
+    //                PrivateKey privKey = PubKeyUtils.decodePrivate(keybean.getPrivateKey(), keybean.getType(), password);
+    //                PublicKey pubKey = PubKeyUtils.decodePublic(keybean.getPublicKey(), keybean.getType());
+    //                Log.d(TAG, "Unlocked key " + PubKeyUtils.formatKey(pubKey));
+    //
+    //                return new KeyPair(pubKey, privKey);
+    //            } catch (Exception e) {
+    //                Log.e(TAG, "Cannot decode pubkey from database", e);
+    //                throw new BadPasswordException();
+    //            }
+    ////        }
+    //    }
+    //    public static KeyPair recoverKeyPair(byte[] encoded) throws NoSuchAlgorithmException,
+    //            InvalidKeySpecException {
+    //        final String algo = getAlgorithmForOid(getOidFromPkcs8Encoded(encoded));
+    //
+    //        final KeySpec privKeySpec = new PKCS8EncodedKeySpec(encoded);
+    //
+    //        final KeyFactory kf = KeyFactory.getInstance(algo);
+    //        final PrivateKey priv = kf.generatePrivate(privKeySpec);
+    //
+    //        return new KeyPair(recoverPublicKey(kf, priv), priv);
+    //    }
+    //
+    //    static PublicKey recoverPublicKey(KeyFactory kf, PrivateKey priv)
+    //            throws NoSuchAlgorithmException, InvalidKeySpecException {
+    //        if (priv instanceof RSAPrivateCrtKey) {
+    //            RSAPrivateCrtKey rsaPriv = (RSAPrivateCrtKey) priv;
+    //            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), rsaPriv
+    //                    .getPublicExponent()));
+    //        } else if (priv instanceof RSAPrivateKey) {
+    //            BigInteger publicExponent = getRSAPublicExponentFromPkcs8Encoded(priv.getEncoded());
+    //            RSAPrivateKey rsaPriv = (RSAPrivateKey) priv;
+    //            return kf.generatePublic(new RSAPublicKeySpec(rsaPriv.getModulus(), publicExponent));
+    //        } else if (priv instanceof DSAPrivateKey) {
+    //            DSAPrivateKey dsaPriv = (DSAPrivateKey) priv;
+    //            DSAParams params = dsaPriv.getParams();
+    //
+    //            // Calculate public key Y
+    //            BigInteger y = params.getG().modPow(dsaPriv.getX(), params.getP());
+    //
+    //            return kf.generatePublic(new DSAPublicKeySpec(y, params.getP(), params.getQ(), params
+    //                    .getG()));
+    //        } else if (priv instanceof ECPrivateKey) {
+    //            ECPrivateKey ecPriv = (ECPrivateKey) priv;
+    //            ECParameterSpec params = ecPriv.getParams();
+    //
+    //            // Calculate public key Y
+    //            ECPoint generator = params.getGenerator();
+    //            BigInteger[] wCoords = EcCore.multiplyPointA(new BigInteger[] { generator.getAffineX(),
+    //                    generator.getAffineY() }, ecPriv.getS(), params);
+    //            ECPoint w = new ECPoint(wCoords[0], wCoords[1]);
+    //
+    //            return kf.generatePublic(new ECPublicKeySpec(w, params));
+    //        } else {
+    //            throw new NoSuchAlgorithmException("Key type must be RSA, DSA, or EC");
+    //        }
+    //    }
     /*
      * OpenSSH compatibility methods
      */
