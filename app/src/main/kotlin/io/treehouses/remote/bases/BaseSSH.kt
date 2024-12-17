@@ -173,7 +173,7 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 
         private fun onHostKeyChanged(algorithmName: String, fingerprint: String) {
             val header = String.format("@   %s   @",
-                    manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
+                manager!!.res!!.getString(R.string.host_verification_failure_warning_header))
             val atsigns = CharArray(header.length)
             Arrays.fill(atsigns, '@')
             val border = String(atsigns)
@@ -439,6 +439,10 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
         return responses
     }
 
+    fun setUseAuthAgent(useAuthAgent: String) {
+        this.useAuthAgent = useAuthAgent
+    }
+
 //    fun createHost(uri: Uri): HostBean {
 //        val host = HostBean()
 //        host.protocol = protocolName
@@ -457,20 +461,19 @@ open class BaseSSH : ConnectionMonitor, InteractiveCallback, AuthAgentCallback {
 //        return host
 //    }
 
-    fun setUseAuthAgent(useAuthAgent: String) {
-        this.useAuthAgent = useAuthAgent
-    }
-
     override fun retrieveIdentities(): Map<String, ByteArray> {
         val pubKeys: MutableMap<String, ByteArray> = HashMap(manager!!.loadedKeypairs.size)
         for ((key, value) in manager!!.loadedKeypairs) {
             val pair = value?.pair
             try {
                 pubKeys[key] = when (pair?.private) {
-                    is RSAPrivateKey -> RSASHA1Verify.encodeSSHRSAPublicKey(pair.public as RSAPublicKey)
-                    is DSAPrivateKey -> DSASHA1Verify.encodeSSHDSAPublicKey(pair.public as DSAPublicKey)
-                    is ECPrivateKey -> ECDSASHA2Verify.encodeSSHECDSAPublicKey(pair.public as ECPublicKey)
-                    is EdDSAPrivateKey -> Ed25519Verify.encodeSSHEd25519PublicKey(pair.public as EdDSAPublicKey)
+                    is RSAPrivateKey -> RSASHA1Verify.get().encodePublicKey(pair.public as RSAPublicKey)
+                    is DSAPrivateKey -> DSASHA1Verify.get().encodePublicKey(pair.public as DSAPublicKey)
+                    is ECPrivateKey -> {
+                        val verifier = ECDSASHA2Verify.getVerifierForKey(pair.public as ECPublicKey)
+                        verifier.encodePublicKey(pair.public as ECPublicKey)
+                    }
+                    is EdDSAPrivateKey -> Ed25519Verify.get().encodePublicKey(pair.public as EdDSAPublicKey)
                     else -> ByteArray(0)
                 }
             } catch (e: IOException) {
