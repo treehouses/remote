@@ -95,6 +95,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.connectbot:sshlib:2.2.9'
     implementation "androidx.core:core-splashscreen:1.0.1"
+    implementation "io.insert-koin:koin-android:3.5.3"
 
     def lifecycle_version = "2.9.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"

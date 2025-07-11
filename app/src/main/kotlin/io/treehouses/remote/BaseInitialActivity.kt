@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import io.treehouses.remote.fragments.*
 import io.treehouses.remote.network.BluetoothChatService
+import org.koin.android.ext.android.inject
 import io.treehouses.remote.bases.PermissionActivity
 import io.treehouses.remote.callback.HomeInteractListener
 import io.treehouses.remote.callback.NotificationCallback
@@ -27,6 +28,7 @@ import io.treehouses.remote.ui.status.StatusFragment
 import io.treehouses.remote.utils.SettingsUtils
 
 open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigationItemSelectedListener, HomeInteractListener, NotificationCallback {
+    private val injectedChatService: BluetoothChatService by inject()
     protected var validBluetoothConnection = false
     protected var mConnectedDeviceName: String? = null
     protected lateinit var bind: ActivityInitial2Binding
@@ -41,7 +43,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mChatService = BluetoothChatService()
+        mChatService = injectedChatService
     }
 
     override fun setChatService(service: BluetoothChatService) {
@@ -52,7 +54,7 @@ open class BaseInitialActivity: PermissionActivity(), NavigationView.OnNavigatio
 
     override fun getChatService(): BluetoothChatService {
         if (!this::mChatService.isInitialized) {
-            mChatService = BluetoothChatService()
+            mChatService = injectedChatService
         }
         return mChatService
     }
