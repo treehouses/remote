@@ -85,7 +85,9 @@ We assume you've already installed [Android Studio](https://developer.android.co
 
 1. In the android bluetooth settings, scan and pair with the Pi device (look for `treehouses`)
 
-2. Open the `treehouses remote` app 
+2. Open the `treehouses remote` app
+
+    Ensure that Bluetooth and location permissions are granted when prompted. Location access is required for Bluetooth scanning on modern Android versions.
 
 3. Click on "Connect to RPI"  
 
