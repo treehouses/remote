@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
+import io.treehouses.remote.MainApplication
 import io.treehouses.remote.callback.BackPressReceiver
 import io.treehouses.remote.databinding.ActivityInitial2Binding
 import io.treehouses.remote.fragments.CommunityFragment
@@ -51,12 +52,7 @@ class InitialActivity : BaseInitialActivity() {
             startGPSService()
         }
 
-        val a = (application as MainApplication).getCurrentBluetoothService()
-        if (a != null) {
-            mChatService = a
-            mChatService.updateHandler(mHandler)
-            openCallFragment(HomeFragment())
-        }
+        mChatService.updateHandler(mHandler)
         checkStatusNow()
         openCallFragment(HomeFragment())
 

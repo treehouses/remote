@@ -18,6 +18,10 @@ import io.treehouses.remote.utils.AppLifecycleObserver
 import io.treehouses.remote.utils.AppLifecycleTracker
 import io.treehouses.remote.utils.GPSService
 import io.treehouses.remote.utils.SaveUtils
+import io.treehouses.remote.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.java.KoinJavaComponent.getKoin
 
 class MainApplication : Application() {
     var logSent = false
@@ -29,6 +33,10 @@ class MainApplication : Application() {
         super.onCreate()
 
         context = this
+        startKoin {
+            androidContext(this@MainApplication)
+            modules(appModule)
+        }
         createNotificationChannel()
         startBluetoothService()
         terminalList = ArrayList()
@@ -61,11 +69,11 @@ class MainApplication : Application() {
         }
     }
 
-    fun getCurrentBluetoothService(): BluetoothChatService? {
+    fun getCurrentBluetoothService(): BluetoothChatService {
         if (mChatService == null) {
-            mChatService = BluetoothChatService()
+            mChatService = getKoin().get()
         }
-        return mChatService
+        return mChatService as BluetoothChatService
     }
 
     fun startBluetoothService() {

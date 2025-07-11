@@ -13,11 +13,14 @@ import io.treehouses.remote.Constants
 import io.treehouses.remote.MainApplication
 import io.treehouses.remote.R
 import io.treehouses.remote.network.BluetoothChatService
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-open class FragmentViewModel(application: Application) : AndroidViewModel(application) {
+open class FragmentViewModel(application: Application) : AndroidViewModel(application), KoinComponent {
     /**
      * To access bluetooth service for derived View Models
      */
+    private val bluetoothService: BluetoothChatService by inject()
     protected lateinit var mChatService : BluetoothChatService
     var lastCommand = ""
     /**
@@ -110,14 +113,9 @@ open class FragmentViewModel(application: Application) : AndroidViewModel(applic
      * Load the bluetooth service and update the handler and connection status
      */
     fun loadBT() {
-        val bluetoothService = getApplication<MainApplication>().getCurrentBluetoothService()
-        if (bluetoothService != null) {
-            mChatService = bluetoothService
-            mChatService.updateHandler(mHandler)
-            _connectionStatus.value = mChatService.state
-        } else {
-            _connectionStatus.value = Constants.STATE_NONE
-        }
+        mChatService = bluetoothService
+        mChatService.updateHandler(mHandler)
+        _connectionStatus.value = mChatService.state
     }
 
     /**
