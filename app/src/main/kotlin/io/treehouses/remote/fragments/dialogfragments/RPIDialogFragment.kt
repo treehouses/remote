@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.AdapterView
@@ -59,10 +58,8 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         val bluetoothManager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
         mBluetoothAdapter = bluetoothManager?.adapter
         bluetoothCheck()
-        
-        // Check location services before creating main dialog
+
         if (!checkLocationServices()) {
-            // Return a dummy dialog that will be replaced by location rationale
             return AlertDialog.Builder(requireContext()).create()
         }
         
@@ -85,11 +82,9 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // All permissions granted, load paired devices and start discovery
                 loadPairedDevices()
                 startBluetoothDiscovery()
             } else {
-                // Permissions denied, show message
                 Toast.makeText(requireContext(), "Bluetooth and location permissions are required to scan for devices", Toast.LENGTH_LONG).show()
             }
         }
@@ -145,7 +140,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
             requireActivity().registerReceiver(mReceiver, filter)
             isReceiverRegistered = true
-            Log.d("RPIDialogFragment", "Broadcast receiver registered")
         }
     }
 
@@ -166,7 +160,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 buttonView.setText(R.string.paired_devices)
                 if (raspberryDevices.isEmpty()) {
                     bind!!.progressBar.visibility = View.VISIBLE
-                    // Trigger a new scan when switching to Raspberry Pi devices
                     if (!isDiscovering) {
                         startBluetoothDiscovery()
                     }
@@ -174,7 +167,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             } else {
                 setAdapterNotNull(allDevicesText)
                 buttonView.setText(R.string.all_devices)
-                // Trigger a new scan when switching to all devices
                 bind!!.progressBar.visibility = View.VISIBLE
                 if (!isDiscovering) {
                     startBluetoothDiscovery()
@@ -193,17 +185,14 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Stop discovery and cleanup
         stopBluetoothDiscovery()
-        
-        // Only unregister if it was registered
+
         if (isReceiverRegistered) {
             try {
                 requireContext().unregisterReceiver(mReceiver)
                 isReceiverRegistered = false
-                Log.d("RPIDialogFragment", "Broadcast receiver unregistered")
             } catch (e: Exception) {
-                Log.e("RPIDialogFragment", "Error unregistering receiver", e)
+                e.printStackTrace()
             }
         }
     }
@@ -218,7 +207,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         
         if (!isLocationEnabled) {
-            // Show location rationale dialog immediately
             showLocationServiceRationale()
             return false
         }
@@ -226,41 +214,31 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     private fun showLocationServiceRationale() {
-        // Capture context at creation time
         val savedContext = requireContext()
-        
-        // Post to main thread to ensure dialog is shown after fragment is fully initialized
-        android.os.Handler(android.os.Looper.getMainLooper()).post {
+
+        Handler(Looper.getMainLooper()).post {
             val dialog = AlertDialog.Builder(savedContext)
                 .setTitle("Location Services Required")
                 .setMessage("To scan for Bluetooth devices, Android requires location services to be enabled. This is a system requirement and your location data is not collected by this app.\n\nWould you like to enable location services now?")
                 .setIcon(R.drawable.dialog_icon)
                 .setPositiveButton("Enable") { dialog, _ ->
-                    Log.d("RPIDialogFragment", "Enable button clicked")
-                    
-                    // Dismiss dialog first to prevent multiple clicks
                     dialog.dismiss()
-                    
-                    // Post the intent opening to avoid any timing issues
-                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+
+                    Handler(Looper.getMainLooper()).post {
                         openLocationSettings(savedContext)
                     }
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
-                    Log.d("RPIDialogFragment", "Cancel button clicked")
                     dialog.dismiss()
                     Toast.makeText(savedContext, "Location services are required to connect to Bluetooth devices. Please enable location services to scan for devices.", Toast.LENGTH_LONG).show()
                 }
                 .setCancelable(false)
                 .create()
-            
-            // Ensure dialog is fully focused and enabled
+
             dialog.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL)
             dialog.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-            
             dialog.show()
-            
-            // Ensure buttons are enabled after dialog is shown
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.isEnabled = true
         }
@@ -268,28 +246,24 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     
     private fun openLocationSettings(context: Context) {
         var settingsOpened = false
-        
-        // Try primary location settings intent
+
         try {
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
             settingsOpened = true
-            Log.d("RPIDialogFragment", "Opened location settings with ACTION_LOCATION_SOURCE_SETTINGS")
         } catch (e: Exception) {
-            Log.w("RPIDialogFragment", "Failed to open location settings with ACTION_LOCATION_SOURCE_SETTINGS", e)
+            e.printStackTrace()
         }
-        
-        // Try fallback to general settings if primary failed
+
         if (!settingsOpened) {
             try {
                 val intent = Intent(Settings.ACTION_SETTINGS)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
                 settingsOpened = true
-                Log.d("RPIDialogFragment", "Opened general settings as fallback")
             } catch (e: Exception) {
-                Log.e("RPIDialogFragment", "Failed to open any settings", e)
+                e.printStackTrace()
             }
         }
         
@@ -303,10 +277,8 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             pairedDevices = mBluetoothAdapter?.bondedDevices
             pairedDevices?.let { devices ->
                 for (d in devices) {
-                    // Add all paired devices to the allDevices list
                     addToDialog(d, allDevicesText, allDevices, false)
-                    
-                    // Add Raspberry Pi devices to the raspberryDevices list
+
                     if (checkPiAddress(d.address)) {
                         addToDialog(d, raspberryDevicesText, raspberryDevices, false)
                         bind!!.progressBar.visibility = View.INVISIBLE
@@ -314,16 +286,15 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 }
             }
         } catch (e: SecurityException) {
+            e.printStackTrace()
             Toast.makeText(requireContext(), "Bluetooth permissions are required to access paired devices", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun startBluetoothDiscovery() {
-        // Check if we have the required permissions based on Android version
         val permissionsToRequest = mutableListOf<String>()
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // Android 12+ requires BLUETOOTH_SCAN and BLUETOOTH_CONNECT
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.BLUETOOTH_SCAN)
             }
@@ -331,7 +302,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
             }
         } else {
-            // For older versions, check BLUETOOTH and BLUETOOTH_ADMIN
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
                 permissionsToRequest.add(Manifest.permission.BLUETOOTH)
             }
@@ -339,8 +309,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 permissionsToRequest.add(Manifest.permission.BLUETOOTH_ADMIN)
             }
         }
-        
-        // Location permissions are always required for Bluetooth scanning
+
         val fineLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
         val coarseLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
         
@@ -351,44 +320,29 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         }
         
         if (permissionsToRequest.isNotEmpty()) {
-            // Request permissions
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                permissionsToRequest.toTypedArray(),
-                REQUEST_BLUETOOTH_PERMISSIONS
-            )
+            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), REQUEST_BLUETOOTH_PERMISSIONS)
             return
         }
-        
-        // We have permissions, proceed with discovery
+
         try {
-            // Check bluetooth adapter state
             if (mBluetoothAdapter == null) {
-                Log.e("RPIDialogFragment", "Bluetooth adapter is null")
                 bind?.progressBar?.visibility = View.INVISIBLE
                 return
             }
             
             if (!mBluetoothAdapter!!.isEnabled) {
-                Log.e("RPIDialogFragment", "Bluetooth is not enabled")
                 Toast.makeText(requireContext(), "Please enable Bluetooth to scan for devices", Toast.LENGTH_LONG).show()
                 bind?.progressBar?.visibility = View.INVISIBLE
                 return
             }
             
-            Log.d("RPIDialogFragment", "Bluetooth adapter is enabled, checking discovery state")
-            
             if (mBluetoothAdapter!!.isDiscovering) {
-                Log.d("RPIDialogFragment", "Discovery already running, cancelling first")
                 mBluetoothAdapter!!.cancelDiscovery()
-                // Wait a bit for cancellation to complete
                 Thread.sleep(100)
             }
-            
-            // Cancel any existing timeout
+
             discoveryTimeoutRunnable?.let { discoveryTimeoutHandler?.removeCallbacks(it) }
-            
-            // Double-check permissions right before starting discovery
+
             val bluetoothScanCheck = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN)
             } else {
@@ -397,63 +351,50 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             
             val locationCheck = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             
-            Log.d("RPIDialogFragment", "Permission check before discovery - BLUETOOTH_SCAN/ADMIN: $bluetoothScanCheck, LOCATION: $locationCheck")
-            
             if (bluetoothScanCheck != PackageManager.PERMISSION_GRANTED || locationCheck != PackageManager.PERMISSION_GRANTED) {
-                Log.e("RPIDialogFragment", "Permissions not granted right before discovery")
                 Toast.makeText(requireContext(), "Bluetooth and location permissions are required", Toast.LENGTH_LONG).show()
                 bind?.progressBar?.visibility = View.INVISIBLE
                 return
             }
-            
-            // Start discovery
-            Log.d("RPIDialogFragment", "Attempting to start discovery")
+
             val discoveryStarted = mBluetoothAdapter!!.startDiscovery()
-            Log.d("RPIDialogFragment", "Discovery started: $discoveryStarted")
             
             if (discoveryStarted) {
                 isDiscovering = true
-                // Set up timeout handler (10 seconds)
                 discoveryTimeoutHandler = Handler(Looper.getMainLooper())
                 discoveryTimeoutRunnable = Runnable {
-                    Log.d("RPIDialogFragment", "Discovery timeout reached")
                     if (isDiscovering) {
                         stopBluetoothDiscovery()
                     }
                 }
-                discoveryTimeoutRunnable?.let { 
-                    Log.d("RPIDialogFragment", "Setting timeout for 10 seconds")
+                discoveryTimeoutRunnable?.let {
                     discoveryTimeoutHandler?.postDelayed(it, 10000) 
                 }
             } else {
-                Log.e("RPIDialogFragment", "Failed to start discovery - bluetooth adapter returned false")
                 bind?.progressBar?.visibility = View.INVISIBLE
                 Toast.makeText(requireContext(), "Failed to start device scan", Toast.LENGTH_SHORT).show()
             }
         } catch (e: SecurityException) {
-            Log.e("RPIDialogFragment", "Security exception starting discovery", e)
+            e.printStackTrace()
             Toast.makeText(requireContext(), "Bluetooth permissions are required for device discovery", Toast.LENGTH_LONG).show()
             bind?.progressBar?.visibility = View.INVISIBLE
         } catch (e: InterruptedException) {
-            Log.e("RPIDialogFragment", "Interrupted while waiting for discovery cancellation", e)
+            e.printStackTrace()
             bind?.progressBar?.visibility = View.INVISIBLE
         }
     }
 
     private fun stopBluetoothDiscovery() {
-        Log.d("RPIDialogFragment", "Stopping discovery")
         try {
             if (mBluetoothAdapter?.isDiscovering == true) {
                 mBluetoothAdapter?.cancelDiscovery()
-                Log.d("RPIDialogFragment", "Discovery cancelled")
             }
         } catch (e: SecurityException) {
-            Log.e("RPIDialogFragment", "Permission error stopping discovery", e)
+            e.printStackTrace()
         }
         isDiscovering = false
         discoveryTimeoutRunnable?.let { discoveryTimeoutHandler?.removeCallbacks(it) }
         bind?.progressBar?.visibility = View.INVISIBLE
-        Log.d("RPIDialogFragment", "Progress bar hidden")
     }
 
     fun bluetoothCheck(vararg args: String) {
@@ -487,31 +428,19 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     private val mReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("RPIDialogFragment", "Broadcast received: ${intent.action}")
             when (intent.action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                    val deviceName = try {
-                        device?.name ?: "Unknown"
-                    } catch (e: SecurityException) {
-                        "Unknown"
-                    }
-                    Log.d("RPIDialogFragment", "Device found: $deviceName - ${device?.address}")
                     if (checkPiAddress(device!!.address)) {
                         addToDialog(device, raspberryDevicesText, raspberryDevices, true)
-                        // Don't hide progress bar immediately - let timeout handle it
                     }
                     addToDialog(device, allDevicesText, allDevices, true)
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
-                    // Discovery started, show progress bar
-                    Log.d("RPIDialogFragment", "Discovery started broadcast received")
                     isDiscovering = true
                     bind?.progressBar?.visibility = View.VISIBLE
                 }
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    // Discovery has finished, stop everything
-                    Log.d("RPIDialogFragment", "Discovery finished broadcast received")
                     stopBluetoothDiscovery()
                 }
             }
@@ -524,6 +453,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             val deviceName = try {
                 device.name ?: "Unknown Device"
             } catch (e: SecurityException) {
+                e.printStackTrace()
                 "Unknown Device"
             }
             val isPaired = pairedDevices?.contains(device) ?: false
@@ -536,7 +466,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     companion object {
         var instance: RPIDialogFragment? = null
             private set
-        private var mainDevice: BluetoothDevice? = null
         private const val REQUEST_BLUETOOTH_PERMISSIONS = 1001
         fun newInstance(num: Int): DialogFragment {
             val rpiDialogFragment = RPIDialogFragment()
@@ -563,7 +492,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     override fun onDeviceDeleted(position: Int) {
-        var device = raspberryDevices[position]
+        val device = raspberryDevices[position]
         AlertDialog.Builder(activity).setMessage(R.string.delete_device_message)
                 .setPositiveButton("Yes") { _, _ ->
                     try {
@@ -573,6 +502,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                         allDevices.remove(device)
                         mArrayAdapter?.notifyDataSetChanged()
                     } catch (e: Exception) {
+                        e.printStackTrace()
                         Toast.makeText(activity, "Unable to delete device", Toast.LENGTH_LONG).show()
                     }
                 }.setNegativeButton("No", null).show()
