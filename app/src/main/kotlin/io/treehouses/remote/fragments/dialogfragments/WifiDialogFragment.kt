@@ -19,19 +19,19 @@ import java.util.*
 
 
 class WifiDialogFragment : DialogFragment() {
-    private var mDialog: AlertDialog? = null
+    private lateinit var mDialog: AlertDialog
     private var wifiManager: WifiManager? = null
     private val wifiList = ArrayList<String>()
     private var mContext: Context? = null
     private var SSID: String? = null
-    private var mView: View? = null
+    private lateinit var mView: View
     private var firstScan = true
     private var progressBar: ProgressBar? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val inflater = requireActivity().layoutInflater
         mView = inflater.inflate(R.layout.dialog_listview, null)
-        progressBar = mView!!.findViewById(R.id.progressBar)
+        progressBar = mView.findViewById(R.id.progressBar)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -40,20 +40,20 @@ class WifiDialogFragment : DialogFragment() {
         mDialog = DialogUtils.createAlertDialog(context, mView, R.drawable.dialog_icon)
                 .setTitle("Choose a network: ")
                 .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }.create()
-        mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        return mDialog!!
+        mDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        return mDialog
     }
 
     private fun setAdapter() {
-        val listView = mView!!.findViewById<ListView>(R.id.listView)
-        val arrayAdapter = ArrayAdapter(mContext!!, R.layout.simple_list_item, wifiList)
+        val listView = mView.findViewById<ListView>(R.id.listView)
+        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.simple_list_item, wifiList)
         listView.adapter = arrayAdapter
         listView.onItemClickListener = OnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
             SSID = wifiList[position]
             if (targetFragment != null) {
                 val intent = Intent()
-                intent.putExtra(WIFI_SSID_KEY, SSID!!.trim { it <= ' ' })
-                targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                intent.putExtra(WIFI_SSID_KEY, SSID?.trim { it <= ' ' })
+                targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
                 wifiList.clear()
                 dismiss()
             }
@@ -61,15 +61,15 @@ class WifiDialogFragment : DialogFragment() {
     }
 
     private fun setupWifi() {
-        wifiManager = mContext!!.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiManager = mContext?.applicationContext?.getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (wifiManager == null) return
-        wifiManager!!.isWifiEnabled = true
+        wifiManager?.isWifiEnabled = true
         val wifiScanReceiver = wifiBroadcastReceiver()
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
-        mContext!!.registerReceiver(wifiScanReceiver, intentFilter)
-        val success = wifiManager!!.startScan()
-        if (!success) {
+        mContext?.registerReceiver(wifiScanReceiver, intentFilter)
+        val success = wifiManager?.startScan()
+        if (success == false) {
             scanFailure()
         }
     }
@@ -88,10 +88,10 @@ class WifiDialogFragment : DialogFragment() {
         }
     }
 
-    private fun getSSIDs(results: List<ScanResult>) {
+    private fun getSSIDs(results: List<ScanResult>?) {
         wifiList.clear()
         // converts Object list to array
-        val `object`: Array<Any> = results.toTypedArray()
+        val `object`: Array<Any>? = results?.toTypedArray()
         val temp = `object`.contentToString()
         val resultArray = temp.split(",".toRegex()).toTypedArray()
 
@@ -109,24 +109,24 @@ class WifiDialogFragment : DialogFragment() {
     private fun addToList(ssid: String) {
         if (ssid.trim { it <= ' ' }.isNotEmpty()) {
             wifiList.add(ssid)
-            progressBar!!.visibility = View.INVISIBLE
+            progressBar?.visibility = View.INVISIBLE
         }
     }
 
     private fun scanSuccess() {
-        val results = wifiManager!!.scanResults
+        val results = wifiManager?.scanResults
         getSSIDs(results)
         setAdapter()
     }
 
     private fun scanFailure() {
         // handle failure: new scan did not succeed
-        val results = wifiManager!!.scanResults
+        val results = wifiManager?.scanResults
         getSSIDs(results)
-        if (results.size >= 1 && firstScan) {
+        if (results?.isNotEmpty() == true && firstScan) {
             Toast.makeText(context, "Scan unsuccessful. These are old results", Toast.LENGTH_LONG).show()
             setAdapter()
-        } else if (results.size < 1 && firstScan) {
+        } else if (results?.isEmpty() == true && firstScan) {
             ifResultListEmpty()
         }
         firstScan = false
