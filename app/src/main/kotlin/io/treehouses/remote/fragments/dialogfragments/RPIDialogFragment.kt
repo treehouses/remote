@@ -214,7 +214,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     private fun showLocationServiceRationale() {
-        val savedContext = requireContext()
+        val savedContext = ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)
 
         Handler(Looper.getMainLooper()).post {
             val dialog = AlertDialog.Builder(savedContext)
@@ -310,12 +310,10 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             }
         }
 
-        val fineLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        // Only request coarse location (no GPS) - required for Bluetooth scanning
         val coarseLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
         
-        if (fineLocationPermission != PackageManager.PERMISSION_GRANTED && 
-            coarseLocationPermission != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (coarseLocationPermission != PackageManager.PERMISSION_GRANTED) {
             permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
         
@@ -349,7 +347,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN)
             }
             
-            val locationCheck = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            val locationCheck = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
             
             if (bluetoothScanCheck != PackageManager.PERMISSION_GRANTED || locationCheck != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(requireContext(), "Bluetooth and location permissions are required", Toast.LENGTH_LONG).show()
@@ -372,7 +370,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 }
             } else {
                 bind?.progressBar?.visibility = View.INVISIBLE
-                Toast.makeText(requireContext(), "Failed to start device scan", Toast.LENGTH_SHORT).show()
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
