@@ -85,7 +85,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 loadPairedDevices()
                 startBluetoothDiscovery()
             } else {
-                Toast.makeText(requireContext(), "Bluetooth and location permissions are required to scan for devices", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Bluetooth permission is required to scan for devices", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -309,13 +309,6 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 permissionsToRequest.add(Manifest.permission.BLUETOOTH_ADMIN)
             }
         }
-
-        // Only request coarse location (no GPS) - required for Bluetooth scanning
-        val coarseLocationPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-        
-        if (coarseLocationPermission != PackageManager.PERMISSION_GRANTED) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
         
         if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), REQUEST_BLUETOOTH_PERMISSIONS)
@@ -347,10 +340,8 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                 ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN)
             }
             
-            val locationCheck = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-            
-            if (bluetoothScanCheck != PackageManager.PERMISSION_GRANTED || locationCheck != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(requireContext(), "Bluetooth and location permissions are required", Toast.LENGTH_LONG).show()
+            if (bluetoothScanCheck != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(requireContext(), "Bluetooth permissions are required", Toast.LENGTH_LONG).show()
                 bind?.progressBar?.visibility = View.INVISIBLE
                 return
             }
