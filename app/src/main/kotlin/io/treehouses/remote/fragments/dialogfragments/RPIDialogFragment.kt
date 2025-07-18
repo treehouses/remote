@@ -5,8 +5,15 @@ import android.app.Dialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.Manifest
 import android.content.*
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.AdapterView
@@ -14,6 +21,8 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import io.treehouses.remote.R
@@ -36,6 +45,10 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private val raspberryDevicesText: MutableList<DeviceInfo> = ArrayList()
     private val allDevicesText: MutableList<DeviceInfo> = ArrayList()
     private var pDialog: CustomProgressDialog? = null
+    private var discoveryTimeoutHandler: Handler? = null
+    private var discoveryTimeoutRunnable: Runnable? = null
+    private var isDiscovering = false
+    private var isReceiverRegistered = false
 
     private val viewModel: HomeViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
@@ -45,18 +58,16 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
         val bluetoothManager = context?.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
         mBluetoothAdapter = bluetoothManager?.adapter
         bluetoothCheck()
-        if (mBluetoothAdapter!!.isDiscovering) mBluetoothAdapter!!.cancelDiscovery()
-        mBluetoothAdapter!!.startDiscovery()
+
+        if (!checkLocationServices()) {
+            return AlertDialog.Builder(requireContext()).create()
+        }
+        
+        startBluetoothDiscovery()
         bind = ActivityRpiDialogFragmentBinding.inflate(requireActivity().layoutInflater)
         initDialog()
-        pairedDevices = mBluetoothAdapter!!.bondedDevices
         setAdapterNotNull(raspberryDevicesText)
-        for (d in pairedDevices!!) {
-            if (checkPiAddress(d.address)) {
-                addToDialog(d, raspberryDevicesText, raspberryDevices, false)
-                bind!!.progressBar.visibility = View.INVISIBLE
-            }
-        }
+        loadPairedDevices()
         intentFilter()
         mDialog!!.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -65,6 +76,18 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         observeConnectionStatus()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                loadPairedDevices()
+                startBluetoothDiscovery()
+            } else {
+                Toast.makeText(requireContext(), "Bluetooth permission is required to scan for devices", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun observeConnectionStatus() {
@@ -110,11 +133,14 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     private fun intentFilter() {
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
-        filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
-        requireActivity().registerReceiver(mReceiver, filter)
+        if (!isReceiverRegistered) {
+            val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+            filter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
+            requireActivity().registerReceiver(mReceiver, filter)
+            isReceiverRegistered = true
+        }
     }
 
     private fun listViewOnClickListener(mView: View) {
@@ -132,11 +158,19 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
             if (isChecked) {
                 setAdapterNotNull(raspberryDevicesText)
                 buttonView.setText(R.string.paired_devices)
-                if (raspberryDevices.isEmpty()) bind!!.progressBar.visibility = View.VISIBLE
+                if (raspberryDevices.isEmpty()) {
+                    bind!!.progressBar.visibility = View.VISIBLE
+                    if (!isDiscovering) {
+                        startBluetoothDiscovery()
+                    }
+                }
             } else {
                 setAdapterNotNull(allDevicesText)
                 buttonView.setText(R.string.all_devices)
-                bind!!.progressBar.visibility = View.INVISIBLE
+                bind!!.progressBar.visibility = View.VISIBLE
+                if (!isDiscovering) {
+                    startBluetoothDiscovery()
+                }
             }
         }
     }
@@ -151,15 +185,204 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        try {
-            requireContext().unregisterReceiver(mReceiver)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        stopBluetoothDiscovery()
+
+        if (isReceiverRegistered) {
+            try {
+                requireContext().unregisterReceiver(mReceiver)
+                isReceiverRegistered = false
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     private fun getAlertDialog(mView: View): AlertDialog {
         return DialogUtils.createAlertDialog(context, mView, R.drawable.dialog_icon).create()
+    }
+
+    private fun checkLocationServices(): Boolean {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || 
+                               locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        
+        if (!isLocationEnabled) {
+            showLocationServiceRationale()
+            return false
+        }
+        return true
+    }
+
+    private fun showLocationServiceRationale() {
+        val savedContext = ContextThemeWrapper(context, R.style.CustomAlertDialogStyle)
+
+        Handler(Looper.getMainLooper()).post {
+            val dialog = AlertDialog.Builder(savedContext)
+                .setTitle("Location Services Required")
+                .setMessage("To scan for Bluetooth devices, Android requires location services to be enabled. This is a system requirement and your location data is not collected by this app.\n\nWould you like to enable location services now?")
+                .setIcon(R.drawable.dialog_icon)
+                .setPositiveButton("Enable") { dialog, _ ->
+                    dialog.dismiss()
+
+                    Handler(Looper.getMainLooper()).post {
+                        openLocationSettings(savedContext)
+                    }
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                    Toast.makeText(savedContext, "Location services are required to connect to Bluetooth devices. Please enable location services to scan for devices.", Toast.LENGTH_LONG).show()
+                }
+                .setCancelable(false)
+                .create()
+
+            dialog.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL)
+            dialog.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            dialog.show()
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.isEnabled = true
+        }
+    }
+    
+    private fun openLocationSettings(context: Context) {
+        var settingsOpened = false
+
+        try {
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            settingsOpened = true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        if (!settingsOpened) {
+            try {
+                val intent = Intent(Settings.ACTION_SETTINGS)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                settingsOpened = true
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        
+        if (!settingsOpened) {
+            Toast.makeText(context, "Please manually enable location services in Settings > Location", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun loadPairedDevices() {
+        try {
+            pairedDevices = mBluetoothAdapter?.bondedDevices
+            pairedDevices?.let { devices ->
+                for (d in devices) {
+                    addToDialog(d, allDevicesText, allDevices, false)
+
+                    if (checkPiAddress(d.address)) {
+                        addToDialog(d, raspberryDevicesText, raspberryDevices, false)
+                        bind!!.progressBar.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Bluetooth permissions are required to access paired devices", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun startBluetoothDiscovery() {
+        val permissionsToRequest = mutableListOf<String>()
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.BLUETOOTH_SCAN)
+            }
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.BLUETOOTH)
+            }
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.BLUETOOTH_ADMIN)
+            }
+        }
+        
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), REQUEST_BLUETOOTH_PERMISSIONS)
+            return
+        }
+
+        try {
+            if (mBluetoothAdapter == null) {
+                bind?.progressBar?.visibility = View.INVISIBLE
+                return
+            }
+            
+            if (!mBluetoothAdapter!!.isEnabled) {
+                Toast.makeText(requireContext(), "Please enable Bluetooth to scan for devices", Toast.LENGTH_LONG).show()
+                bind?.progressBar?.visibility = View.INVISIBLE
+                return
+            }
+            
+            if (mBluetoothAdapter!!.isDiscovering) {
+                mBluetoothAdapter!!.cancelDiscovery()
+                Thread.sleep(100)
+            }
+
+            discoveryTimeoutRunnable?.let { discoveryTimeoutHandler?.removeCallbacks(it) }
+
+            val bluetoothScanCheck = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN)
+            } else {
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_ADMIN)
+            }
+            
+            if (bluetoothScanCheck != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(requireContext(), "Bluetooth permissions are required", Toast.LENGTH_LONG).show()
+                bind?.progressBar?.visibility = View.INVISIBLE
+                return
+            }
+
+            val discoveryStarted = mBluetoothAdapter!!.startDiscovery()
+            
+            if (discoveryStarted) {
+                isDiscovering = true
+                discoveryTimeoutHandler = Handler(Looper.getMainLooper())
+                discoveryTimeoutRunnable = Runnable {
+                    if (isDiscovering) {
+                        stopBluetoothDiscovery()
+                    }
+                }
+                discoveryTimeoutRunnable?.let {
+                    discoveryTimeoutHandler?.postDelayed(it, 10000) 
+                }
+            } else {
+                bind?.progressBar?.visibility = View.INVISIBLE
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Bluetooth permissions are required for device discovery", Toast.LENGTH_LONG).show()
+            bind?.progressBar?.visibility = View.INVISIBLE
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+            bind?.progressBar?.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun stopBluetoothDiscovery() {
+        try {
+            if (mBluetoothAdapter?.isDiscovering == true) {
+                mBluetoothAdapter?.cancelDiscovery()
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+        isDiscovering = false
+        discoveryTimeoutRunnable?.let { discoveryTimeoutHandler?.removeCallbacks(it) }
+        bind?.progressBar?.visibility = View.INVISIBLE
     }
 
     fun bluetoothCheck(vararg args: String) {
@@ -193,13 +416,21 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
 
     private val mReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (BluetoothDevice.ACTION_FOUND == intent.action) {
-                val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                if (checkPiAddress(device!!.address)) {
-                    addToDialog(device, raspberryDevicesText, raspberryDevices, true)
-                    bind!!.progressBar.visibility = View.INVISIBLE
+            when (intent.action) {
+                BluetoothDevice.ACTION_FOUND -> {
+                    val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                    if (checkPiAddress(device!!.address)) {
+                        addToDialog(device, raspberryDevicesText, raspberryDevices, true)
+                    }
+                    addToDialog(device, allDevicesText, allDevices, true)
                 }
-                addToDialog(device, allDevicesText, allDevices, true)
+                BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
+                    isDiscovering = true
+                    bind?.progressBar?.visibility = View.VISIBLE
+                }
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    stopBluetoothDiscovery()
+                }
             }
         }
     }
@@ -207,16 +438,23 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     private fun addToDialog(device: BluetoothDevice, textList: MutableList<DeviceInfo>, mDevices: MutableList<BluetoothDevice>, inRange: Boolean) {
         if (!mDevices.contains(device)) {
             mDevices.add(device)
-            textList.add(DeviceInfo("${device.name}\n ${device.address}".trimIndent(), pairedDevices!!.contains(device), inRange))
+            val deviceName = try {
+                device.name ?: "Unknown Device"
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+                "Unknown Device"
+            }
+            val isPaired = pairedDevices?.contains(device) ?: false
+            textList.add(DeviceInfo("$deviceName\n ${device.address}".trimIndent(), isPaired, inRange))
         } else textList[mDevices.indexOf(device)].isInRange = true
-        mArrayAdapter!!.notifyDataSetChanged()
+        mArrayAdapter?.notifyDataSetChanged()
     }
 
 
     companion object {
         var instance: RPIDialogFragment? = null
             private set
-        private var mainDevice: BluetoothDevice? = null
+        private const val REQUEST_BLUETOOTH_PERMISSIONS = 1001
         fun newInstance(num: Int): DialogFragment {
             val rpiDialogFragment = RPIDialogFragment()
             val bundle = Bundle()
@@ -242,7 +480,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
     }
 
     override fun onDeviceDeleted(position: Int) {
-        var device = raspberryDevices[position]
+        val device = raspberryDevices[position]
         AlertDialog.Builder(activity).setMessage(R.string.delete_device_message)
                 .setPositiveButton("Yes") { _, _ ->
                     try {
@@ -252,6 +490,7 @@ class RPIDialogFragment : BaseDialogFragment(), DeviceDeleteListener {
                         allDevices.remove(device)
                         mArrayAdapter?.notifyDataSetChanged()
                     } catch (e: Exception) {
+                        e.printStackTrace()
                         Toast.makeText(activity, "Unable to delete device", Toast.LENGTH_LONG).show()
                     }
                 }.setNegativeButton("No", null).show()
