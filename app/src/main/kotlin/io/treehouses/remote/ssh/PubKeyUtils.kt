@@ -232,17 +232,26 @@ object PubKeyUtils {
     /*
      * OpenSSH compatibility methods
      */
-    fun convertToOpenSSHFormat(pk: PublicKey, nickName: String) : String {
-        val rsaKey = if (pk is RSAPublicKey) String(Base64.encode(RSASHA1Verify.encodeSSHRSAPublicKey(pk))) else ""
+    fun convertToOpenSSHFormat(pk: PublicKey, nickName: String): String {
         return when (pk) {
-            is RSAPublicKey -> "ssh-rsa $rsaKey $nickName"
-            is DSAPublicKey -> "ssh-dss ${String(Base64.encode(DSASHA1Verify.encodeSSHDSAPublicKey(pk)))} $nickName"
-            is ECPublicKey -> {
-                val keyType = ECDSASHA2Verify.getCurveName(pk.params.curve.field.fieldSize)
-                val data = String(Base64.encode(ECDSASHA2Verify.encodeSSHECDSAPublicKey(pk)))
-                "${ECDSASHA2Verify.ECDSA_SHA2_PREFIX} $keyType $data $nickName"
+            is RSAPublicKey -> {
+                val rsaKey = String(Base64.encode(RSASHA1Verify.get().encodePublicKey(pk)))
+                "ssh-rsa $rsaKey $nickName"
             }
-            is EdDSAPublicKey -> "${Ed25519Verify.ED25519_ID} ${String(Base64.encode(Ed25519Verify.encodeSSHEd25519PublicKey(pk)))} $nickName"
+            is DSAPublicKey -> {
+                val dsaKey = String(Base64.encode(DSASHA1Verify.get().encodePublicKey(pk)))
+                "ssh-dss $dsaKey $nickName"
+            }
+            is ECPublicKey -> {
+                val verifier = ECDSASHA2Verify.getVerifierForKey(pk)
+                val keyType = verifier.keyFormat
+                val data = String(Base64.encode(verifier.encodePublicKey(pk)))
+                "$keyType $data $nickName"
+            }
+            is EdDSAPublicKey -> {
+                val edKey = String(Base64.encode(Ed25519Verify.get().encodePublicKey(pk)))
+                "${Ed25519Verify.get().keyFormat} $edKey $nickName"
+            }
             else -> throw InvalidKeyException("Unknown Key Type")
         }
     }
@@ -256,10 +265,10 @@ object PubKeyUtils {
     fun extractOpenSSHPublic(pair: KeyPair?): ByteArray? {
         return try {
             when (val pubKey = pair?.public) {
-                is RSAPublicKey -> RSASHA1Verify.encodeSSHRSAPublicKey(pubKey)
-                is DSAPublicKey -> DSASHA1Verify.encodeSSHDSAPublicKey(pubKey)
-                is ECPublicKey -> ECDSASHA2Verify.encodeSSHECDSAPublicKey(pubKey)
-                is EdDSAPublicKey -> Ed25519Verify.encodeSSHEd25519PublicKey(pubKey)
+                is RSAPublicKey -> RSASHA1Verify.get().encodePublicKey(pubKey)
+                is DSAPublicKey -> DSASHA1Verify.get().encodePublicKey(pubKey)
+                is ECPublicKey -> ECDSASHA2Verify.getVerifierForKey(pubKey).encodePublicKey(pubKey)
+                is EdDSAPublicKey -> Ed25519Verify.get().encodePublicKey(pubKey)
                 else -> null
             }
         } catch (e: IOException) {
