@@ -56,7 +56,7 @@
         <item name="android:tint">@color/daynight_textColor</item>
     </style>
 
-    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowBackground">@color/card_background</item>
         <item name="android:textColor">@color/daynight_textColor</item>
         <item name="colorAccent">@color/colorAccent</item>
