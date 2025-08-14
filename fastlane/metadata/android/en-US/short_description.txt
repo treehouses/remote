@@ -1,1 +1,1 @@
-Communicate with headless Raspberry Pi mobile server running treehouses image via Bluetooth.
+Communicate with headless RaspPi server running treehouses image via Bluetooth
