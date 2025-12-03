@@ -8,7 +8,7 @@ android {
     compileSdk 36
     defaultConfig {
         applicationId "io.treehouses.remote"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 36
         ndkVersion '21.3.6528147'
         multiDexEnabled true
@@ -96,7 +96,7 @@ dependencies {
     implementation 'org.connectbot:sshlib:2.2.9'
     implementation "androidx.core:core-splashscreen:1.2.0"
 
-    def lifecycle_version = "2.9.4"
+    def lifecycle_version = "2.10.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
