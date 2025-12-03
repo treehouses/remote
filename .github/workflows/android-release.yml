@@ -22,7 +22,7 @@ jobs:
           echo "BRANCH="${GITHUB_REF##*/} >> $GITHUB_ENV
 
       - name: checkout repository code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: prepare debug keystore directory
         run: |

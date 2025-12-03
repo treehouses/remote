@@ -18,7 +18,7 @@ jobs:
       BUILD_TOOLS_VERSION: "30.0.2"
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: prepare debug keystore directory
         run: |
           mkdir -p $HOME/.android
