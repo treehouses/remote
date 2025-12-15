@@ -135,7 +135,7 @@ jobs:
 
       - name: upload APK and AAB as build artifact
         if: github.ref != 'refs/heads/master'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: remote-${{ env.VERSION }}-${{ env.BRANCH }}
           path: output/*
