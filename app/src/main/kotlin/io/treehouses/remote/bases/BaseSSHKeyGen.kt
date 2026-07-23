@@ -82,15 +82,17 @@ open class BaseSSHKeyGen : FullScreenDialogFragment() {
         bind.passwordInput.isEnabled = false
 
         lifecycleScope.launch(Dispatchers.Default) {
-            val key = generateKey(name, algorithm, password, bitSize)
-            if (isActive) {
-                withContext(Dispatchers.Main) {
-                    KeyUtils.saveKey(requireContext(), key)
-                    bind.progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
-                    dismiss()
-                }
-            }
+val key = generateKey(name, algorithm, password, bitSize)
+if (isActive) {
+    synchronized(key) {
+        withContext(Dispatchers.Main) {
+            KeyUtils.saveKey(requireContext(), key)
+            bind.progressBar.visibility = View.GONE
+            Toast.makeText(requireContext(), "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
+            dismiss()
+        }
+    }
+}
         }
     }
 
