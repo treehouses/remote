@@ -98,18 +98,21 @@ private fun startKeyGen(name: String, algorithm: String, password: String, bitSi
                     dismiss()
                 }
             }
-        }
-    }
-}
-
-    private fun startKeyGenInBackground(name: String, algorithm: String, password: String, bitSize: Int) {
-        requireActivity().run {
-            GlobalScope.launch(Dispatchers.Default) {
+private fun startKeyGenInBackground(name: String, algorithm: String, password: String, bitSize: Int) {
+    requireActivity().run {
+        GlobalScope.launch(Dispatchers.Default) {
+            if (bitSize <= 1024) { // Check the key size is within the valid range for DSA
                 val key = generateKey(name, algorithm, password, bitSize)
                 if (isActive) KeyUtils.saveKey(applicationContext, key)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(applicationContext, "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
                 }
+            } else { // If the key size is not within the valid range, throw an exception
+                throw InvalidKeyException("Invalid key size for algorithm DSA")
+            }
+        }
+    }
+}
             }
         }
         dismiss()
