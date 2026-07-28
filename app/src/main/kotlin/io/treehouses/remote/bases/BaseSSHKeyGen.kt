@@ -71,30 +71,36 @@ open class BaseSSHKeyGen : FullScreenDialogFragment() {
         return validateBitSize(Integer.parseInt(intToParse), getSelectedAlgo())
     }
 
-    private fun startKeyGen(name: String, algorithm: String, password: String, bitSize: Int) {
-        bind.progressBar.visibility = View.VISIBLE
-        bind.generateKey.isEnabled = false
-        bind.keyNameInput.isEnabled = false
-        bind.keyTypeSpinner.isEnabled = false
-        bind.keyStrength.isEnabled = false
-        bind.strengthShow.isEnabled = false
-        bind.inBackground.isEnabled = false
-        bind.passwordInput.isEnabled = false
-
-        lifecycleScope.launch(Dispatchers.Default) {
-val key = generateKey(name, algorithm, password, bitSize)
-if (isActive) {
-    synchronized(key) {
-        withContext(Dispatchers.Main) {
-            KeyUtils.saveKey(requireContext(), key)
-            bind.progressBar.visibility = View.GONE
-            Toast.makeText(requireContext(), "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
-            dismiss()
+private fun startKeyGen(name: String, algorithm: String, password: String, bitSize: Int) {
+    bind.progressBar.visibility = View.VISIBLE
+    bind.generateKey.isEnabled = false
+    bind.keyNameInput.isEnabled = false
+    bind.keyTypeSpinner.isEnabled = false
+    bind.keyStrength.isEnabled = false
+    bind.strengthShow.isEnabled = false
+    bind.inBackground.isEnabled = false
+    bind.passwordInput.isEnabled = false
+    
+    val keySize = if (algorithm == "DSA") {
+        1024 // DSA keys are only supported with a key size of 1024 bits
+    } else {
+        bitSize // use the specified key size for other algorithms
+    }
+    
+    lifecycleScope.launch(Dispatchers.Default) {
+        val key = generateKey(name, algorithm, password, keySize)
+        if (isActive) {
+            synchronized(key) {
+                withContext(Dispatchers.Main) {
+                    KeyUtils.saveKey(requireContext(), key)
+                    bind.progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "Key Generation Complete: $name $algorithm-$bitSize-bit", Toast.LENGTH_LONG).show()
+                    dismiss()
+                }
+            }
         }
     }
 }
-        }
-    }
 
     private fun startKeyGenInBackground(name: String, algorithm: String, password: String, bitSize: Int) {
         requireActivity().run {
