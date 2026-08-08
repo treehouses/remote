@@ -107,16 +107,16 @@ private fun startKeyGen(name: String, algorithm: String, password: String, bitSi
         dismiss()
     }
 
-    private suspend fun generateKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
-        return suspendCoroutine {
-            val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
-                initialize(bitSize)
-            }.generateKeyPair()
-            val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
-            if (password.isNotEmpty()) key.isEncrypted = true
-            it.resume(key)
-        }
+private suspend fun generateKey(name: String, algorithm: String, password: String, bitSize: Int): PubKeyBean {
+    return suspendCoroutine {
+        val keyPair = KeyPairGenerator.getInstance(algorithm).apply {
+            initialize(if (algorithm == "DSA" && bitSize == 1024) 2048 else bitSize)
+        }.generateKeyPair()
+        val key = PubKeyBean(name, algorithm, PubKeyUtils.getEncodedPrivate(keyPair.private, password), keyPair.public.encoded)
+        if (password.isNotEmpty()) key.isEncrypted = true
+        it.resume(key)
     }
+}
 
 
     protected fun setStrength(strength: Int, updateText: Boolean = true) {
